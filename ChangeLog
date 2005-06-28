@@ -1,3 +1,4 @@
+== 1.9.0 released ==
 2005-06-28  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/__init__.py: Kill pygtk.require() it won't be missed since 
