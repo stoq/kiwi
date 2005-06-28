@@ -1,0 +1,91 @@
+Kiwi: A Framework for developing graphical applications in Python
+
+Kiwi is a framework composed of a set of modules, which eases Python
+development using PyGTK. Kiwi makes graphical applications *much* faster
+to code, with good architecture and more Python-like bindings; it also
+offers extended widgets based upon the original PyGTK widgets.
+
+* Requirements
+
+    - GTK+ 2.x.x       ftp://ftp.gtk.org/pub/gtk/v2.x/XXX
+    - PyGTK 2.x.x      ftp://ftp.gtk.org/pub/gtk/python/v2.x/XXX
+    - Python > 2.3     http://www.python.org/download/         
+
+  Optional
+
+    - libglade 2.x     http://ftp.gnome.org/pub/GNOME/sources/libglade/XXX
+    - gazpacho 0.5.3   http://ftp.gnome.org/pub/GNOME/sources/gazpacho/XXX
+
+* Installation
+
+    To install (having made sure that the dependencies are installed and
+    working) do (as root normally):
+
+        python setup.py install 
+
+    (You can optionally provide a prefix using the following form,
+    but if you do remember to setup PYTHONPATH accordingly)
+    
+        python setup.py install [--prefix=<prefix>]
+
+* Documentation
+
+    Included in doc/howto/ and doc/api/ are HTML versions of the
+    developer's guide and API reference, respectively. You can also
+    browse the online versions at:
+
+        - Developer's guide: http://www.async.com.br/projects/kiwi/howto/
+        - API documentation: http://www.async.com.br/projects/kiwi/api/
+
+    The developer's guide is available in PostScript format from:
+
+        http://www.async.com.br/projects/kiwi/howto.ps
+
+    You can regenerate all the documentation; just see doc/Makefile.
+    To generate the API docs you will need:
+
+        - epydoc                        http://epydoc.sf.net/
+
+    To generate the developer's guide you will need:
+
+        - Python source (the tarball)   http://www.python.org/download/
+        - LaTeX                         (various distributions)
+        - latex2html    http://saftsack.fs.uni-bayreuth.de/~latex2ht/current/
+        - GhostScript                   http://www.cs.wisc.edu/~ghost/
+        - NetPBM (for latex2html)       http://netbpm.sf.net/
+
+* Directory Layout
+
+    examples/
+
+        Contains a number of examples, most of which are referenced in
+        the documentation.
+
+    kiwi/
+
+        Contains the module code itself; this is installed into your
+        Python's site-packages directory by setup.py.
+
+    doc/
+
+        Contains documentation for Kiwi, including the LaTeX source code
+        which can be used to rebuild the docs. doc/Makefile contains
+        commands to regenerate the full set of docs.
+
+    extra/
+
+        Contains patches to GTK+ and PyGTK code, and helper scripts that
+        can be used to accelerate certain tasks.
+
+    tests/
+
+        Contains a number of test cases for the Kiwi widgets and
+        framework. All checkins and additions of new code should be
+        preceded by a working testcase.
+
+* Contact info:
+
+    URL and download: http://www.async.com.br/projects/kiwi/
+
+    Maintainer: Christian Reis <kiko@async.com.br>
+

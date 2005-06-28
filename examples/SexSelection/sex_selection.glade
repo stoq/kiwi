@@ -1,0 +1,81 @@
+<?xml version="1.0" ?>
+<glade-interface>
+    <requires lib="Kiwi2.Widgets"/>
+    <widget class="GtkWindow" id="sex_selection">
+        <property name="title" context="True" translatable="True">Sex Selection</property>
+        <property name="role"></property>
+        <property name="events">all-events-mask | button-motion-mask | button-press-mask | button-release-mask | button1-motion-mask | button2-motion-mask | button3-motion-mask | enter-notify-mask | exposure-mask | focus-change-mask | key-press-mask | key-release-mask | leave-notify-mask | pointer-motion-hint-mask | pointer-motion-mask | property-change-mask | proximity-in-mask | proximity-out-mask | scroll-mask | structure-mask | substructure-mask | visibility-notify-mask</property>
+        <child>
+            <widget class="GtkVBox" id="vbox1">
+                <property name="events">all-events-mask | button-motion-mask | button-press-mask | button-release-mask | button1-motion-mask | button2-motion-mask | button3-motion-mask | enter-notify-mask | exposure-mask | focus-change-mask | key-press-mask | key-release-mask | leave-notify-mask | pointer-motion-hint-mask | pointer-motion-mask | property-change-mask | proximity-in-mask | proximity-out-mask | scroll-mask | structure-mask | substructure-mask | visibility-notify-mask</property>
+                <property name="visible">True</property>
+                <child>
+                    <widget class="GtkLabel" id="label1">
+                        <property name="pattern" context="True" translatable="True"></property>
+                        <property name="label" context="True" translatable="True">Choose your sex:</property>
+                        <property name="events">all-events-mask | button-motion-mask | button-press-mask | button-release-mask | button1-motion-mask | button2-motion-mask | button3-motion-mask | enter-notify-mask | exposure-mask | focus-change-mask | key-press-mask | key-release-mask | leave-notify-mask | pointer-motion-hint-mask | pointer-motion-mask | property-change-mask | proximity-in-mask | proximity-out-mask | scroll-mask | structure-mask | substructure-mask | visibility-notify-mask</property>
+                        <property name="visible">True</property>
+                    </widget>
+                    <packing>
+                        <property name="expand">False</property>
+                    </packing>
+                </child>
+                <child>
+                    <widget class="GtkHBox" id="hbox1">
+                        <property name="events">all-events-mask | button-motion-mask | button-press-mask | button-release-mask | button1-motion-mask | button2-motion-mask | button3-motion-mask | enter-notify-mask | exposure-mask | focus-change-mask | key-press-mask | key-release-mask | leave-notify-mask | pointer-motion-hint-mask | pointer-motion-mask | property-change-mask | proximity-in-mask | proximity-out-mask | scroll-mask | structure-mask | substructure-mask | visibility-notify-mask</property>
+                        <property name="visible">True</property>
+                        <child>
+                            <widget class="Kiwi2+Widgets+RadioButton+RadioButton" id="male">
+                                <property name="model_attribute">sex</property>
+                                <property name="data_value">Male</property>
+                                <property name="group">other</property>
+                                <property name="label" context="True" translatable="True">Male</property>
+                                <property name="events">all-events-mask | button-motion-mask | button-press-mask | button-release-mask | button1-motion-mask | button2-motion-mask | button3-motion-mask | enter-notify-mask | exposure-mask | focus-change-mask | key-press-mask | key-release-mask | leave-notify-mask | pointer-motion-hint-mask | pointer-motion-mask | property-change-mask | proximity-in-mask | proximity-out-mask | scroll-mask | structure-mask | substructure-mask | visibility-notify-mask</property>
+                                <property name="can_focus">True</property>
+                                <property name="data_type">str</property>
+                                <property name="draw_indicator">True</property>
+                                <property name="visible">True</property>
+                            </widget>
+                            <packing/>
+                        </child>
+                        <child>
+                            <widget class="Kiwi2+Widgets+RadioButton+RadioButton" id="female">
+                                <property name="model_attribute">sex</property>
+                                <property name="data_value">Female</property>
+                                <property name="group">other</property>
+                                <property name="label" context="True" translatable="True">Female</property>
+                                <property name="events">all-events-mask | button-motion-mask | button-press-mask | button-release-mask | button1-motion-mask | button2-motion-mask | button3-motion-mask | enter-notify-mask | exposure-mask | focus-change-mask | key-press-mask | key-release-mask | leave-notify-mask | pointer-motion-hint-mask | pointer-motion-mask | property-change-mask | proximity-in-mask | proximity-out-mask | scroll-mask | structure-mask | substructure-mask | visibility-notify-mask</property>
+                                <property name="can_focus">True</property>
+                                <property name="data_type">str</property>
+                                <property name="draw_indicator">True</property>
+                                <property name="visible">True</property>
+                            </widget>
+                            <packing>
+                                <property name="position">1</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="Kiwi2+Widgets+RadioButton+RadioButton" id="other">
+                                <property name="model_attribute">sex</property>
+                                <property name="data_value">other</property>
+                                <property name="label" context="True" translatable="True">other</property>
+                                <property name="events">all-events-mask | button-motion-mask | button-press-mask | button-release-mask | button1-motion-mask | button2-motion-mask | button3-motion-mask | enter-notify-mask | exposure-mask | focus-change-mask | key-press-mask | key-release-mask | leave-notify-mask | pointer-motion-hint-mask | pointer-motion-mask | property-change-mask | proximity-in-mask | proximity-out-mask | scroll-mask | structure-mask | substructure-mask | visibility-notify-mask</property>
+                                <property name="active">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="data_type">str</property>
+                                <property name="draw_indicator">True</property>
+                                <property name="visible">True</property>
+                            </widget>
+                            <packing>
+                                <property name="position">2</property>
+                            </packing>
+                        </child>
+                    </widget>
+                    <packing>
+                        <property name="position">1</property>
+                    </packing>
+                </child>
+            </widget>
+        </child>
+    </widget>
+</glade-interface>

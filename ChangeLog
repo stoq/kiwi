@@ -1,0 +1,1208 @@
+2005-06-28  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/__init__.py: Kill pygtk.require() it won't be missed since 
+	all systems which we can run on has pygtk 2.x installed as default. 
+	Should also speed up imports.
+
+	* kiwi/__init__.py:
+	* kiwi/environ.py:
+	* kiwi/interfaces.py:
+	* kiwi/ui/gazpacholoader.py:
+	* kiwi/ui/libgladeloader.py:
+	* kiwi/ui/loader.py:
+	* kiwi/ui/views.py:
+
+	Kill loader. Move glade/imagepath handling to kiwi.environ.
+	Move abstract adaptor to kiwi.interfaces
+
+2005-06-28  Johan Dahlin  <jdahlin@async.com.br>
+
+	* README:
+	* kiwi/__init__.py:
+	* kiwi/ui/gazpacholoader.py:
+	* kiwi/ui/libgladeloader.py:
+	* kiwi/ui/loader.py:
+	* kiwi/ui/views.py:
+
+	How much I hate this, but: Write a libglade loader to use as fallback
+	when gazpacho cannot be found. Add a hook to require gazpacho.
+
+2005-06-27  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/views.py: Allow us to function without a broker.
+
+	* kiwi/ui/gadgets.py:
+	* kiwi/ui/widgets/label.py:
+	* kiwi/ui/widgets/proxy.py:
+	* kiwi/utils.py:
+
+	Move gtk related functions from kiwi.utils to kiwi.ui.gadgets
+
+2005-06-27  Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/PersonalInformation/personalinformation.py:
+	* kiwi/initgtk.py:
+	* kiwi/ui/__init__.py:
+	* kiwi/ui/views.py:
+	* kiwi/ui/wizard.py:
+
+	Kill initgtk, move quit_if_last to views and 
+	pygtk.require() to kiwi.ui, adds a warning.
+
+2005-06-27  Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/PersonalInformation/personalinformation.glade:
+	* examples/PersonalInformation/personalinformation.py:
+	* gazpacho-plugin/kiwi2.py:
+	* kiwi/interfaces.py:
+	* kiwi/proxies.py:
+	* kiwi/ui/delegates.py:
+	* kiwi/ui/views.py:
+	* kiwi/ui/widgets/__init__.py:
+	* kiwi/ui/widgets/checkbutton.py:
+	* kiwi/ui/widgets/combobox.py:
+	* kiwi/ui/widgets/datatypes.py:
+	* kiwi/ui/widgets/entry.py:
+	* kiwi/ui/widgets/label.py:
+	* kiwi/ui/widgets/proxy.py:
+	* kiwi/ui/widgets/radiobutton.py:
+	* kiwi/ui/widgets/spinbutton.py:
+	* kiwi/ui/widgets/textview.py:
+
+	Make the personinformation example work again.
+
+2005-06-20  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/ComboBox.py:
+	* Kiwi2/Widgets/WidgetProxy.py:
+	* examples/PersonalInformation/personalinformation.glade:
+	* examples/PersonalInformation/personalinformation.py:
+
+	More validation work, allow non-string types to be validated.
+	ComboBox cleanups, adding a mode variable (string or data) which
+	helps. ComboBoxEntry only works for normal mode, editable,
+	searchable and auto-completion currently broken
+
+2005-06-18  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/WidgetProxy.py
+	(MixinSupportValidation._check_for_complaints): quit the idle, stops
+	us from eating up the CPU. 
+
+	* Kiwi2/Delegates.py:
+	* Kiwi2/Models.py:
+	* Kiwi2/Proxies.py:
+	* Kiwi2/Widgets/CheckButton.py:
+	* Kiwi2/Widgets/List.py:
+	* Kiwi2/Widgets/RadioButton.py:
+	* Kiwi2/Widgets/Wizard.py:
+
+	More imports cleanup, remove unused cruft.
+
+2005-06-18  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Delegates.py:
+	* Kiwi2/Proxies.py:
+	* Kiwi2/Views.py:
+	* Kiwi2/Widgets/Entry.py:
+	* Kiwi2/Widgets/Label.py:
+	* Kiwi2/Widgets/SpinButton.py:
+	* Kiwi2/Widgets/TextView.py:
+	* Kiwi2/Widgets/WidgetProxy.py:
+	* Kiwi2/__init__.py:
+	* examples/News/news2.py:
+	* examples/News/news4.py:
+	* examples/PersonalInformation/personalinformation.py:
+	* examples/Wizard/survey.py:
+	* tests/Proxies/None.py:
+	* tests/Proxies/Separator.py:
+	* tests/test_Action.py:
+	* tests/test_CheckButton.py:
+	* tests/test_Entry.py:
+	* tests/test_Label.py:
+	* tests/test_List.py:
+	* tests/test_SpinButton.py:
+
+	Remove unused imports. Clean up the rest we touched
+	Remove Proxies.OldVirtualProxy
+	
+2005-06-18  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Proxies.py:
+	* Kiwi2/Views.py:
+	* Kiwi2/Widgets/ComboBox.py:
+	* Kiwi2/Widgets/Entry.py:
+	* Kiwi2/Widgets/SpinButton.py:
+	* Kiwi2/Widgets/TextView.py:
+	* Kiwi2/Widgets/WidgetProxy.py:
+	* examples/PersonalInformation/personalinformation.py:
+
+	Rework validation. Only validate when the model content changes.
+	Simplify internal implementation of validation.
+	Fix ComboBoxEntry validation once for all.
+	Updated example and added comments and docstrings
+	
+2005-06-14  Johan Dahlin  <jdahlin@async.com.br>
+
+	* gazpacho-plugin/kiwi2.py: Clean up and fix a bug, when moving rows
+	update up/down buttons.
+
+2005-06-14  Henrique Romano  <henrique@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Views.py: Correcting the way as widgets verification is made.
+
+2005-06-14  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/List.py:
+	* gazpacho-plugin/kiwi2.xml:
+
+	Add List::selection-mode
+
+2005-06-13  Henrique Romano  <henrique@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/TextView.py: Just removing a useless callback.
+
+2005-06-07  Henrique Romano  <henrique@async.com.br>
+
+	* Kiwi2/Proxies.py: Also block/unblock all signals connected when
+	updating widgets.
+	* Kiwi2/Views.py: Allow signal_name to be None, if so block/unblock all
+	the connected
+
+2005-06-01  Henrique Romano  <henrique@async.com.br>
+
+	reviwed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/WidgetProxy.py:
+	* Kiwi2/datatypes.py:
+	* examples/PersonalInformation/personalinformation.py:
+	* tests/test_datatypes.py:
+	Add set_format, update testsuite.
+
+2005-05-30  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/List.py:
+	* Kiwi2/Widgets/WidgetProxy.py:
+	* Kiwi2/Widgets/datatypes.py:
+
+	Clean up datatypes. Introduce ConverterRegistry which is global object
+	you can use to convert to and from strings. Use the new API 
+	everywhere, cleanup WidgetProxy a little bit.
+
+2005-05-25  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Views.py (SlaveView.attach_slave): Change show_all 
+	into show.
+
+2005-05-24  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Delegates.py:
+	* Kiwi2/Models.py:
+	* Kiwi2/Proxies.py:
+	* Kiwi2/Views.py:
+	* Kiwi2/Widgets/CheckButton.py:
+	* Kiwi2/Widgets/ComboBox.py:
+	* Kiwi2/Widgets/WidgetProxy.py:
+	* Kiwi2/Widgets/Wizard.py:
+	* Kiwi2/utils.py:
+	pychecker fixes, remove ListDelegate. (replaced by the List widget)
+	
+2005-05-24  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/List.py: Clean up column handling a bit futher.
+	Make pychecker happy. Remove decimal separator, we depend on 2.3
+	where we can set LC_NUMERIC properly
+
+2005-05-23  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Views.py (SignalBroker.handler_block,
+	SignalBroker.handler_unblock): New methods, to block a signal tied
+	to a widget. Patch by Henrique
+
+	* Kiwi2/Widgets/List.py: Ensure we can't hide all columns.
+	(ContextMenu): New object, factor out context menu from List. Make
+	rebuild it when columns change lazily. It now displays the columns
+	in correct order when columns are moved (or added/removed).	
+
+2005-05-20  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/ComboBox.py: First validate, then return
+	return get_selected_data(), which will return the data if you have
+	some, otherwise the label will be returned. Fixes bug reported 
+	by Henrique.
+
+	* Kiwi2/Widgets/List.py: Clean up justification handling.
+	Rename col_definition to column, and always refer to treeview columns
+	as treeview_column, to avoid confusion.
+	(List): Setup sorting in a slightly saner way
+
+2005-05-19  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Controllers.py:
+	* Kiwi2/Proxies.py:
+	* Kiwi2/Views.py:
+	* Kiwi2/Widgets/List.py:
+	* Kiwi2/utils.py: Update docstrings, to make epydoc happy
+	* doc/Makefile: Clean up and add some more files
+
+	* Kiwi2/WidgetProxies: Remove
+
+2005-05-19  Johan Dahlin  <jdahlin@async.com.br>
+
+	* AUTHORS:
+	* Kiwi2/Controllers.py:
+	* Kiwi2/Delegates.py:
+	* Kiwi2/Models.py:
+	* Kiwi2/Proxies.py:
+	* Kiwi2/Views.py:
+	* Kiwi2/Widgets/CheckButton.py:
+	* Kiwi2/Widgets/ComboBox.py:
+	* Kiwi2/Widgets/Entry.py:
+	* Kiwi2/Widgets/Label.py:
+	* Kiwi2/Widgets/List.py:
+	* Kiwi2/Widgets/RadioButton.py:
+	* Kiwi2/Widgets/SpinButton.py:
+	* Kiwi2/Widgets/TextView.py:
+	* Kiwi2/Widgets/WidgetProxy.py:
+	* Kiwi2/Widgets/Wizard.py:
+	* Kiwi2/Widgets/__init__.py:
+	* Kiwi2/Widgets/datatypes.py:
+	* Kiwi2/__init__.py:
+	* Kiwi2/accessors.py:
+	* Kiwi2/initgtk.py:
+	* Kiwi2/utils.py:
+	* Kiwi2/version.py:
+
+	Update authors, remove #! in all files and 
+	add licenses to a few files.
+
+2005-05-19  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/CheckButton.py:
+	* Kiwi2/Widgets/ComboBox.py:
+	* Kiwi2/Widgets/Entry.py:
+	* Kiwi2/Widgets/Label.py:
+	* Kiwi2/Widgets/List.py:
+	* Kiwi2/Widgets/RadioButton.py:
+	* Kiwi2/Widgets/SpinButton.py:
+	* Kiwi2/Widgets/TextView.py:
+	* Kiwi2/Widgets/__init__.py:
+	* Kiwi2/__init__.py:
+
+	Add documentation strings
+
+2005-05-19  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Widgets/WidgetProxy.py (MixinSupportValidation._validate_data): 
+	if the data is None don't try to validate
+
+	* examples/PersonalInformation/personalinformation.py: validators
+	don't need to handler the None case now.
+
+	* Kiwi2/Widgets/SpinButton.py (SpinButton.update): fix stupid mistake
+
+	* Kiwi2/Widgets/WidgetProxy.py (MixinSupportValidation.set_mandatory): 
+	don't redraw the widget here since that is done in the validate_data
+	method.
+
+	* examples/PersonalInformation/personalinformation.py : 
+	fix this example by allowing data to be None in the weight
+	validation
+
+	* Kiwi2/Widgets/SpinButton.py: simplify this class but using just
+	the changed signal and forget about value-changed and output signals.
+	Fix it for gtk+ 2.4 using the same technique as in the Entry
+
+	* Kiwi2/Widgets/Entry.py: 
+	(Entry.__init__): setup the chain function in the constructor
+	instead of the expose handler
+
+	* Kiwi2/Widgets/ComboBox.py: 
+	- Make expose events work with GTK 2.4 and 2.6
+	- Put as much validation code as possible in MixinSupportValidation
+	- Add some comments and docstring to parts that are not trivial
+	- Fix drawing mandatory icons. Now when somebody changes a widget
+	(either a proxy or the user) we check if the widget is empty to
+	draw the mandatory icon (if the widget mandatory prop is True)
+	- Reuse the validate signal in the ComboBoxEntry to perform aditional
+	validations
+
+	* Kiwi2/Widgets/WidgetProxy.py (MixinSupportValidation.is_correct) 
+	(MixinSupportValidation._validate_data) 
+	(MixinSupportValidation.__init__): properly initialize and manage
+	the _blank_data attribute
+
+	* Kiwi2/Views.py (SlaveView.check_widgets_validity) 
+	(SlaveView.register_validate_function): use the is_correct method
+	to check if the data of a widget is ok. Document the
+	register_validate_function to understand the meaning of its only
+	parameter
+	(SlaveView.attach_slave): show the slave after the attacment process
+
+	* Kiwi2/Widgets/WidgetProxy.py (MixinSupportValidation.__init__): 
+	changed self.valid_data to self._blank_data to avoid confusing
+	names
+
+	* Kiwi2/Widgets/ComboBox.py (ComboBoxEntry.read): fix validation
+	errors that were going to the console instead of showing in the
+	interface.
+	Update the model when the user edit the entry
+	Don't listen to model row changes since we don't want to inform our
+	proxy about them and we don't need to do anything special in the
+	comboboxentry itself
+	
+	* Kiwi2/Proxies.py (Proxy._initialize_widgets): block the widgets
+	when we initialize them so we don't get updates back to the model
+
+2005-05-18  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/List.py: Add expand property to Column.
+
+2005-05-18  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Widgets/ComboBox.py (ComboProxyMixin.select_item_by_data) 
+	(ComboProxyMixin.select_item_by_label): improve error messages to
+	easily detect programming errors.
+
+	* Kiwi2/Proxies.py (Proxy._setup_widgets): provides the widget name
+	in the warning message. Now is much easier to fix this programming
+	error.
+
+2005-05-17  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Widgets/List.py (Column.set_from_string, Column.__str__): 
+	swap the order the tooltip and format are read/wrote since that's
+	the order Gazpacho is expecting
+
+2005-05-17  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/List.py (List._setup_columns): Check if it's
+	configured before adding the columns, prevents the columns from
+	being added twice when specifying data_types for all columns.
+
+2005-05-16  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Widgets/List.py (List.add_list): if we add an empty list
+	we should not select and focus any row
+
+2005-05-16  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/List.py: Reformat to fit in 79 columns.
+
+2005-05-14  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/List.py: Protect selection, it's None if called
+	after List is destroyed.
+
+	* Kiwi2/initgtk.py: Guard pygtk.require, so we can import gtk before
+
+2005-05-12  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Widgets/List.py (List._create_column) 
+	(List._on_header__button_release_event): change the event from
+	button_press to button_release to fix a bug related to right
+	click menu on the List headers
+
+2005-05-12  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/List.py:
+	* Kiwi2/Widgets/datatypes.py: 
+	Add support for Column.Data, does not allow it for booleans.
+	Remove some unused code and comments from gazpacho.
+	Use locale.format to format strings, also use this for
+	float types.
+
+	r=lgs
+
+2005-05-10  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/List.py (List._setup_column): Fix justification.
+
+2005-05-10  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Widgets/List.py (str2type): remove the default data type
+	attribute following kiko's suggestion since it's cleaner and
+	easier to detect future errors.
+
+2005-05-09  Sidnei da Silva  <sidnei@awkly.org>
+
+	reviewed by Johan Dahlin <jdahlin@async.com.br>
+	
+	* setup.py (packages): add Kiwi2.Widgets.
+
+2005-05-07  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Widgets/List.py: added support for dates in KiwiList.
+	(List._on_column__clicked): removed some code that should
+	never been there 
+
+2005-05-04  Gustavo Rahal <gustavo@async.com.br>
+	
+	* Kiwi2/Widgets/Kiwi2/RadioButton.py: fixed error data-value
+	* Kiwi2/Widgets/Kiwi2/List.py: minor code improvements from comments 
+	of last checkin
+	* Kiwi2/Widgets/Kiwi2/Label.py: now kiwilabels have the ability to
+	update the model
+	* Kiwi2/Widgets/Kiwi2/WidgetProxy.py: minor fix in do_get_property
+
+2005-05-03  Gustavo Rahal <gustavo@async.com.br>
+
+	* tests/test_Entry.py: test now checks for ValueUnset instead of None
+	* Kiwi2/Widgets/ComboBox.py: proper error checking
+	* Kiwi2/Widgets/List.py: column with number are right justified by
+	default. Fixed justification error
+	
+2005-04-26 Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/Widgets/List.py: fixed bug 1962
+
+2005-04-26  Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/Widgets/SpinButton.py: minor cosmetic change in code to be
+	similar to other widgets.
+	* Kiwi2/Widgets/TextView.py: is data is None set text as empty
+
+2005-04-25  Johan Dahlin  <jdahlin@async.com.br>
+
+	reviewed by: Gustavo
+
+	* Kiwi2/Proxies.py:
+	* Kiwi2/Widgets/ComboBox.py:
+	* Kiwi2/Widgets/WidgetProxy.py: use ValueUnset instead of None for
+	MixinSupportValidation._validate_data. Update widgets slightly for this
+	Fixes #1961
+
+2005-04-25  Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/Widgets/ComboBox.py: bugs fixes. 1955, 1953, 1952, 1923
+	* Kiwi2/Widgets/TextView.py
+	* Kiwi2/Widgets/Entry.py
+	* Kiwi2/Widgets/SpinButton.py: checking of pygtk version done inside
+	init
+	* Kiwi2/Widgets/WidgetProxy.py: now check widgets validity is only
+	called when the widget is attached to a view/delegate
+
+2005-04-25  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Views.py: Compare references, since some widgets overrides 
+	equality checks (eg, __nonzero__ for ComboBoxEntry)
+
+2005-04-19  Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/View.py:
+	* Kiwi2/Widgets/ComboBox.py:
+	* Kiwi2/Widgets/TextView.py
+	* Kiwi2/Widgets/List.py:
+	* Kiwi2/Widgets/Entry.py
+	* Kiwi2/Widgets/SpinButton.py:
+	* Kiwi2/Widgets/WidgetProxy.py: code clean up
+	* gazpacho-plugin/kiwi2.py: added support for object data-type
+	* Kiwi2/Widgets/datatype.py: added support for object data-type
+
+2005-04-19  Daniel Saran R. da Cunha  <daniel@async.com.br>
+
+	* Kiwi2/Widgets/ComboBox.py (ComboBoxEntry): Now ComboBoxEntry works
+	properly with objects
+	
+2005-04-19  Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/Proxies.py: all widgets will have an attribute that specify the
+	views/delegate/etc... that owns it.
+	* Kiwi2/Views.py: added a global validation that check for correctness
+	on all widgets,
+	* Kiwi2/Widgets/ComboBox.py: refactoring, added ability to add items to
+	the comboboxentry list (dafault it not to add).
+	* Kiwi2/Widgets/List.py: added ability to slice kiwilist model
+	* Kiwi2/Widgets/TextView.py: 
+	* Kiwi2/Widgets/Entry.py:
+	* Kiwi2/Widgets/SpinButton.py: code refactoring due to changes on
+	combobox. Some minor changes due to pygtk 2.6
+	* Kiwi2/Widgets/WidgetProxy.py: code refactoring
+	* Kiwi2/examples/PersonalInformation/personalinformation.py: shows how
+	to use global validation
+
+2005-04-13  Daniel Saran R. da Cunha  <daniel@async.com.br>
+
+	* Kiwi2/Widgets/ComboBox.py: make the Widget work properly with 
+	ValueUnset
+
+2005-04-13  Gustavo Rahal <gustavo@asyn.com.br>
+
+	* tests/test_Entry.py: test work with different locales
+	* Kiwi2/Widgets/ComboBox.py: apparently mandatory icon is displayed
+	correctly at all times! Uhu! 
+ 	* Kiwi2/Widgets/TextView.py: 
+	* Kiwi2/Widgets/Entry.py:
+	* Kiwi2/Widgets/SpinButton.py:
+	* Kiwi2/Widgets/WidgetProxy.py: moved code around
+
+2005-04-13  Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/Widgets/TextView.py: added Kiwi TextView Widget
+	* Kiwi2/Widgets/ComboBox.py: fixed mandatory icon display
+	* Kiwi2/Widgets/CheckButton.py: renamed MixinSupportMandatory to 
+	MixinSupportValidation
+	* Kiwi2/Widgets/RadioButton.py: same as CheckButton
+	* Kiwi2/Widgets/__init__.py: added Kiwi TextView Widget 
+	* Kiwi2/Widgets/Entry.py: moved validation code to
+	WidgetProxy.MixinSupportValidation
+	* Kiwi2/Widgets/SpinButton.py: code reorganization to support
+	custom validation
+	* Kiwi2/Widgets/WidgetProxy.py: added custom validation code to the
+	MixinSupportValidation class.
+	* gazpacho-plugin/pixmaps/kiwitextview.png: added icon
+	* gazpacho-plugin/kiwi2.xml: added kiwitextview
+	* examples/PersonalInformation/personalinformation.py: added custom
+	validation examples
+	* examples/PersonalInformation/personalinformation.glade: added more
+	widgets for custom validation examples
+
+2005-04-11  Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/Widgets/CheckButton: fixed minor name mistake
+	* Kiwi2/examples/survey.py: renamed survey object
+	* Kiwi2/Views.py: added support for non-glade files to be slaves
+	* Kiwi2/Widgets/Wizard.py: wizard interface is not a glade file anymore
+
+2005-04-08  Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/Widgets/ComboBox.py:
+    * Kiwi2/Widgets/Entry.py:
+    * Kiwi2/Widgets/SpinButtonpy: added mandatory input capabilities
+    * Kiwi2/Widgets/WidgetProxy.py: renamed class WidgetProxyMinin to Mixin and created a new class named MixinSupportMandatory for Kiwi Widgets that needs to be set as mandatory
+    * Kiwi2/Widgets/RadioButton.py:
+    * Kiwi2/Widgets/Label.py:
+    * Kiwi2/Widgets/CheckButton.py: class renaming
+
+2005-04-07  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Widgets/ComboBox.py: 
+	* Kiwi2/Widgets/CheckButton.py: 
+	* Kiwi2/Widgets/RadioButton.py: 
+	* Kiwi2/Widgets/Label.py: 
+	* Kiwi2/Widgets/Entry.py: 
+	* Kiwi2/Widgets/WidgetProxy.py: 
+	* Kiwi2/Widgets/SpinButtonpy: make the widgets play nicely
+	with ValueUnset
+
+	* Kiwi2/Widgets/datatypes.py (set_date_format): fix a typo
+
+	* Kiwi2/Proxies.py (Proxy._initialize_widgets): allow to call
+	update on the widgets with ValueUnset
+
+	* tests/actions.glade: updated the format of the glade file
+
+	* tests/test_datatypes.py (DataTypesTest.teststr2date): update the
+	exceptions that are raised when the dates are wrong
+
+2005-04-06  Gustavo Rahal <gustavo@async.com.br>
+	
+	* some code refactor of last commit
+
+2005-04-05  Gustavo Rahal <gustavo@async.com.br>
+	
+	* Kiwi2/Widgets/Entry.py: fixed and improved input checking
+	* Kiwi2/Widgets/datatypes.py: improve float number and date
+	checkings to support locale variations
+	* examples/PersonalInformation/personalinformation.py: added
+	height entry
+	* test/test_Entry.py: added KiwiEntry test case
+
+2005-04-01  Evandro Vale Miquelito <evandro@async.com.br>
+
+	* Kiwi2/Widgets/List.py:
+	Adding a new select_instance method.
+
+2005-04-01  Daniel Saran R. da Cunha  <daniel@async.com.br>
+
+	* Kiwi2/Widgets/ComboBox.py (ComboProxyMixin.select_item_by_data): 
+	Cleaning the code 
+
+2005-04-01  Daniel Saran R. da Cunha  <daniel@async.com.br>
+
+	* Kiwi2/Widgets/ComboBox.py (ComboProxyMixin.select_item_by_data): 
+	Don't try to select a row if there is no data in the combo.
+
+2005-03-30  Gustavo Rahal <gustavo@async.com.br>
+
+	* doc/Makefile: generates epydoc api
+
+2005-03-30  Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/Widgets/Label.py: added support for bold, italic and size
+	attributes for labels
+	* tests/test_Label.py: added a test case for Labels
+	
+2005-03-30  Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/Widgets/SpinButton.py: fixed set_data_type function
+	* Kiwi2/Widgets/WidgetProxy.py: fixed __init__.py to set initial values
+	for _data_type and _model_attribute
+
+2005-03-30  Daniel Saran R. da Cunha  <daniel@async.com.br>
+
+	* Kiwi2/Widgets/ComboBox.py: ComboBox now use the data, when it exists,
+	instead of label of its items to update the model and view.
+
+2005-03-29  Gustavo Rahal <gustavo@async.com.br>
+	
+	* Kiwi2/Widgets/SpinButton.py: added Spin Button support to Kiwi
+	* Kiwi2/Widgets/__init__.py: spinbutton
+	* Kiwi2/tests/test_SpinButton.py: test spinbutton
+	* Kiwi2/gazpacho-plugin/kiwi2.xml: spin button
+	* Kiwi2/gazpacho-plugin/kiwi2.py: new SpinBtnDataTypeAdaptor to deal
+	with int and float only
+
+2001-12-02  Daniel Saran R. da Cunha  <daniel@async.com.br>
+
+	* Kiwi2/Widgets/WidgetProxy.py:  don't try to set the widget content 
+	if the data is None
+
+	* Kiwi2/Widgets/RadioButton.py: don't update the view if there is no
+	data in the model 
+
+2005-03-29  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Widgets/RadioButton.py (RadioButton.read): fixed small stylist
+	problems
+
+2001-12-02  Daniel Saran R. da Cunha  <daniel@async.com.br>
+
+	* Kiwi2/Widgets/RadioButton.py: fix for a wrong return type
+
+2005-03-29  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/__init__.py (imagepath): 
+	* Kiwi2/Views.py (GazpachoWidgetTree.__init__): use a path resolver
+	to correctly load images
+	(image_path_resolver): 
+
+2005-03-24 Gustavo Rahal <gustavo@async.com.br>
+	
+	* Kiwi2/__init__.py: fixed KIWI_GLADE_PATH
+	* Kiwi2/Widgets/Wizard.py: new wizard widget
+	* Kiwi2/Widgets/Wizard.glade: glade file that defines the structure of
+	the wizard.
+	* Kiwi2/examples/Wizard: directory with a new three step wizard example
+	* Kiwi2/Widgets/CheckButton.py: since default data-types of widgets are
+	string is was necessary a modication on the constructor to set to
+	boolean
+	* Kiwi2/Widgets/__init__.py: added Wizard widget
+
+2005-03-24  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Widgets/WidgetProxy.py (WidgetProxyMixin.update): add a warning
+	when setting None in a widget
+
+	* Kiwi2/examples/PersonalInformation: validation example
+	
+	* Kiwi2/Widgets/Entry.py: inform the user if he made a mistake while
+	typing a entry by setting the background of the entry and adding a
+	tooltip with a message explaining the error
+
+	* Kiwi2/Widgets/datatypes.py (str2int, str2float): custom converter
+	functions that raise exceptions with nice messages if they find
+	errors in the data the user enters
+
+	* Kiwi2/Widgets/WidgetProxy.py: 
+	(WidgetProxyMixin.set_default_value): allow to set a custom default
+	value
+	(WidgetProxyMixin.__init__): added a flag to know if the user set
+	a default value different that the default value associated with the
+	data type
+
+	* Kiwi2/utils.py (merge_colors): function to merge the background of
+	a widget between two different colors
+
+	* Kiwi2/Proxies.py (Proxy._on_widget__content_changed): only update
+	the model if the data is correct
+
+2005-03-24 Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/Widgets/CheckButton.py: bool data-type is an object not a string
+	anymore
+
+
+2001-11-27  Daniel Saran R. da Cunha  <daniel@async.com.br>
+
+	* Kiwi2/Widgets/Label.py (Label.set_color): method to change label's
+	color
+
+2005-03-23  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* gazpacho-plugin/kiwi2.py (DataTypeAdaptor.create_editor): add support
+	for date types
+
+2001-11-27  Daniel Saran R. da Cunha  <daniel@async.com.br>
+	
+	* examples/SexSelection: New example to test Radio Button
+	
+	* Kiwi2/Widgets/WidgetProxy.py (WidgetProxyMixin.__init__): The default
+	data type is a string because we always need a default. Otherwise 
+	gazpacho doesn't save this property.
+
+	* gazpacho-plugin/kiwi2.xml: 
+	* Kiwi2/Widgets/__init__.py: 
+	* Kiwi2/Widgets/RadioButton.py : support for Radio Buttons
+
+2005-03-23  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Widgets/datatypes.py: added a date type and functions to
+	set a data from a string a viceversa
+
+	* tests/test_datatypes.py: added some tests for the datetypes
+
+	* tests/test_Action.py: 
+	* tests/test_BaseView.py: 
+	* tests/test_CheckButton.py: 
+	* tests/test_ComboBox.py: 
+	* tests/test_Delegate.py: 
+	* tests/test_Entry.py: 
+	* tests/test_List.py: don't use delays and remove all the non essential
+	refreshes. Also make it more unittest friendly
+
+2001-11-26  Daniel Saran R. da Cunha  <daniel@async.com.br>
+
+	* gazpacho-plugin/kiwi2.xml: 
+	* gazpacho-plugin/kiwi2.py (DataTypeAdaptor.create_editor): now the
+	data-type does not need custom setter (neither getters). This fix a
+	bug about Gazpacho not saving the data type properties.
+
+	* gazpacho-plugin/kiwi2.xml: disabled hadjustment and vadjustment
+	properties on the List since they are ScrollWindow properties that
+	do not make sense with the list.
+
+2005-03-22  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* gazpacho-plugin/kiwi2.py (DataTypeAdaptor.create_editor): handle
+	data-types as objects, not as strings
+
+	* Kiwi2/Widgets/WidgetProxy.py: make data-type be an object property
+	instead of a string one.
+
+	* Kiwi2/Widgets/List.py: 
+	* Kiwi2/Widgets/datatypes.py: 
+	* Kiwi2/Widgets/__init__.py: put all the type functionality in
+	datatypes.py
+
+	* Kiwi2/Proxies.py (Proxy._setup_widgets): make sure all the
+	KiwiWidgets have a data-type
+
+	* Kiwi2/Widgets/ComboBox.py (ComboBoxEntry.__init__): fixed a typo
+
+2005-03-22  Johan Dahlin  <johan@async.com.br>
+
+	* Kiwi2/Controllers.py:
+	* Kiwi2/Delegates.py:
+	* Kiwi2/Proxies.py:
+	* Kiwi2/Views.py:
+	* Kiwi2/WidgetProxies/Base.py:
+	* Kiwi2/WidgetProxies/CheckButton.py:
+	* Kiwi2/WidgetProxies/Entry.py:
+	* Kiwi2/WidgetProxies/OptionMenu.py:
+	* Kiwi2/Widgets/List.py:
+	* Kiwi2/Widgets/WidgetProxy.py:
+	* Kiwi2/accessors.py:
+	* Kiwi2/initgtk.py:
+	
+	Convert exceptions to use raise(x) instead of raise, x
+
+2005-03-22  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/ComboBox.py (ComboProxyMixin.__len__): Add
+	(ComboBox.clear): Call ComboProxyMixin.clear
+	(ComboBoxEntry.clear): Ditto
+	(ComboProxyMixin.get_selected_label): Add
+	(ComboProxyMixin.select_item_by_position) 
+	(ComboProxyMixin.select_item_by_label) 
+	(ComboProxyMixin.select_item_by_data): Simplify
+
+2005-03-22 Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/tests/test_CheckButton.py: added a test for CheckButtons
+	* Kiwi2/Widgets/CheckButton.py: test for bool value in set_data_type
+
+2005-03-22 Gustavo Rahal <gustavo@async.com.br>
+
+	* Kiwi2/Widgets/CheckButton.py: added Checkbutton kiwi widget
+	* Kiwi2/Widgets/__init__.py: support for Checkbutton
+	* kiwi2.xml: added checkbutton to gazpacho-plugin
+
+2005-03-22  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Kiwi2/Widgets/ComboBox.py
+	(ComboProxyMixin.select_item_by_label): Use iter_next, not
+	next_iter!
+	(ComboProxyMixin.get_selected_data): Impl. for Henrique.
+
+2005-03-22  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* examples/NewsForm/newsform.py: added a size field to test
+	validations in integer entries
+
+	* Kiwi2/Widgets/WidgetProxy.py (WidgetProxyMixin.__init__): allow to
+	initialize a widget with None values for their properties so we
+	can correctly get the default value when setting the data type
+
+	* gazpacho-plugin/kiwi2.xml: disable text-column which is not useful
+	in ComboBoxEntry
+
+	* Kiwi2/Widgets/ComboBox.py (ComboProxyMixin.prefill): allow 
+	prefill with the empty list
+
+	* examples/FavouriteColor/color2.py: example of ComboBoxEntry
+
+	* examples/FavouriteColor/color.py: example of ComboBox
+
+	* kiwi2.xml: added combos to gazpacho-plugin
+	
+	* Kiwi2/Widgets/__init__.py: 
+	* Kiwi2/Widgets/ComboBox.py: first support for ComboBoxes 
+	(old OptionMenu) and ComboBoxEntries (old Combos)
+
+2005-03-21  Evandro Vale Miquelito  <evandro@async.com.br>
+
+	* Kiwi2/Widgets/List.py (List.update_instance): A small fix for
+	update_instance method. Now we verify if the instance even
+	exists in the list.
+	
+2005-03-21  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* tests/test_List.py (DataTests.testContains): added a test for
+	__contains__
+	(DataTests.testUpdatingOneInstance): fixed test
+
+	* Kiwi2/Widgets/List.py (List.update_instance): added update_instance
+	(List.__contains__): added __contains__ method
+
+	* tests/test_List.py (DataTests.testUpdatingOneInstance): added a test
+	for update_instance
+
+2005-03-18  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* tests/test_List.py (DataTests.testClearList): added test for the
+	clear method
+
+	* Kiwi2/Widgets/List.py (List.clear): added
+
+	* Kiwi2/Views.py (SignalBroker._autoconnect_by_method_name): allow
+	to connect to the actions objects and also improve error message
+	when a method's signature is bad
+
+	* Kiwi2/Widgets/List.py (List.remove_instance): added
+
+	* tests/test_List.py: added several tests for removing and adding data
+	to the list
+
+	* tests/test_Action.py: test that menubars and toolbars work with
+	Kiwi autoconnect mechanism
+
+	* tests/test_Delegate.py: added tests to make sure that a signal
+	handler is only called once
+
+2005-03-16  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Views.py (SlaveView._init_glade_adaptor): allow the container
+	name to have the same name as the gladefile. Fix a bug with Daniel code
+
+2005-03-15  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* gazpacho-plugin/kiwi2.xml: add a libglade-module attribute since that
+	is used now for writing the 'requires' tag
+
+	* gazpacho-plugin/kiwi2.py: change the order of the arguments in the
+	update_editor methods since that was changed in Gazpacho
+	
+2005-03-11  Lorenzo Gil Sanchez   <lgs@sicem.biz>
+
+	* Kiwi2/Views.py (GladeSignalBroker._connect_glade_signals): remove
+	the double connection
+
+	* tests/test_Delegate.py (DelegateTest.testButtons): add another test
+	to check if the callbacks are being called more than one time
+
+	* Kiwi2/Widgets/List.py: add two extra flags: _columns_created and
+	_columns_configured to avoid creating the columns several times
+
+	* tests/test_List.py (ListTest.testAddingOneInstance): improve test
+	to check that the columns remain sane
+
+2005-03-10  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Views.py (GladeSignalBroker._connect_glade_signals): don't
+	call autoconnect_by_method_name twice
+
+	* Kiwi2/utils.py (get_foreground): fix the call to gdk_color_to_string
+
+	* Kiwi2/Views.py (SlaveView.__init__): if we don't have a toplevel
+	try to get it from the toplevel_name attribute
+
+	* Kiwi2/Widgets/List.py (List): fixed several minor bugs discovered
+	by writing a simple test
+
+	* Kiwi2/Views.py (SlaveView): use Johan gsignal and gproperty functions
+	to make	the code more readable
+
+	* Kiwi2/Widgets/List.py: remove some print debugging stuff
+
+	* Kiwi2/Views.py (find_in_gladepath): fixed a typo
+
+	* examples/* adapt examples to work with the new changes
+	
+	* Kiwi2/Controllers.py: don't use string module and ListType and
+	TupleType.
+
+	* Kiwi2/utils.py: put here some useful functions that are needed from 
+	several different places.
+
+	* Kiwi2/Widgets/List.py: 
+	* Kiwi2/Widgets/Entry.py: 
+	* Kiwi2/Widgets/Label.py: 
+	* Kiwi2/Widgets/__init__.py: 
+	* Kiwi2/Widgets/WidgetProxy.py: new module to keep the KiwiWidgets.
+	These widgets inherit from a gtk widget and from WidgetProxyMixin,
+	which provides the functionality to work together with the Proxy
+	Kiwi Framework class.
+
+	* Kiwi2/__init__.py: move some utility functions to utils.py and
+	better API of gladepath
+
+	* Kiwi2/Delegates.py: remove GladeDelegate and GladeSlaveDelegate and
+	put more arguments to Delegate and SlaveDelegate so we keep the
+	same functionality.
+
+	* Kiwi2/Views.py: remove GladeView and GladeSlaveView. Rename 
+	AbstractView to SlaveView so now we just have SlaveView and BaseView
+	and they now how to handle glade files if the user gives them the
+	apropiate constructor argument.
+	Also, add add_proxy method to the views and make them work with
+	proxies by composition.
+
+	* Kiwi2/Proxies.py: change the VirtualProxy class to be the only Proxy
+	class and work by composition of the View classes
+
+	* gazpacho-plugin/kiwi2.py: 
+	* gazpacho-plugin/kiwi2.xml: added support for Kiwi Label and Kiwi
+	Entry
+
+	* gazpacho-plugin/README: added a note about how to create kiwi widget
+	icons
+	
+2005-03-07  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/List.py (List.__init__): fix a typo
+
+	* examples/Faren/faren3.py: this one uses a GladeDelegate
+
+	* examples/Faren/faren2.py: second version of Faren example
+
+	* examples/Faren/faren.py: ported the basic Temperature example
+
+	* examples/Simple/simple.py: ported another example to Kiwi2
+
+2005-03-05  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Views.py (GazpachoWidgetTree.__init__): move the gladename
+	and gladefile class attributes to GladeSlaveView and GladeView. Fix
+	#1843
+	(GladeSlaveView, GladeView): 
+
+	* examples/HeyPlanet/heyglade3.py (MyView.gladefile): provide an
+	example of setting the gladefile as a class attribute
+
+	* Kiwi2/Delegates.py: add a keyactions argument to all the Delegates
+	so we can use it for the Controller
+
+	* examples/News/news4.py (Shell.__init__): provide an example of
+	keyactions
+
+	* Kiwi2/initgtk.py (quit_if_last): also quit if there is no toplevels
+	(e.g., this function was called after hiding the last toplevel)
+
+	* examples/News/news3.py (Shell.on_ok__clicked): stay on the safe
+	side by checking if there is something selected
+
+	* Kiwi2/Views.py (BaseView._setup_keypress_handler): put this
+	method only in BaseView to avoid warnings
+
+	* Kiwi2/List.py: use kgetattr instead of getattr when accesing the
+	attributes of an instance
+
+	* Kiwi2/initgtk.py (quit_if_last): don't treat hide windows as
+	toplevels when seeing if we need to quit because usually there are
+	several windows in a glade file.
+
+2005-03-04  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Views.py (SignalBroker): super() only works with new style
+	classes
+
+2005-03-03  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/List.py (List.add_list): block and unblock the selection signal
+	on the selection object instead of the treeview object
+	(List._load): add a progress_handler (non used so far) argument so
+	the call from add_list() works
+	(List._create_best_renderer_for_type): don't make the cells editable
+	until we have a 'editable' property to switch this feature on and off.
+	This is needed so we can still double click on the rows
+
+	* Kiwi2/Views.py (GladeSlaveView.__init__): fix some errors so we can
+	use this view
+
+	* examples/News/news4.py: new version using a GladeSlaveDelegate with
+	the KiwList in the file news_list.glade. Note how the column
+	definitions are in the glade file this time and how we setup
+	the signals of the KiwiList as any other widget.
+
+2005-03-02  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/List.py: several changes to make the Columns serializable and
+	so we can use List from Gazpacho
+
+	* Kiwi2/__init__.py (ValueUnset): put this class at the beginning to
+	avoid import problems
+	(str2bool, str2enum, str2type): utility functions
+
+2005-02-28  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/List.py: renamed KiwiList to List
+	* Kiwi2/Delegates.py (ListDelegate.__init__): 
+	* examples/News/news3.py: 
+	* examples/News/news2.py: 
+
+	* Kiwi2/Delegates.py (KiwiListDelegate.__init__): don't need a 
+	scroll window anymore since that functionality is already in the
+	KiwiList.
+
+	* examples/News/news3.py: don't use KiwiListDelegate anymore but just
+	a simple SlaveDelegate. Also fix the small bug about the color
+
+	* Kiwi2/List.py (KiwiList.__init__): for now, use right click button
+	on the header to show the popup menu. Thunderbird style button on top
+	of the vertical scrollbar will be done later.
+
+2005-02-26  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* examples/News/news3.py: adapt the example to use the new signal
+	feature of the KiwiList
+
+	* Kiwi2/List.py: improve the List with a menu to show/hide columns
+	and do column sorting and reordering.
+
+	* Kiwi2/Delegates.py: move more things into KiwiList from
+	KiwiListDelegate. Use signals in KiwiList for the selection and
+	double click events.
+
+	* Kiwi2/Views.py: optimize color conversion to string by using
+	shifts instead of divisions
+
+	* tests/run_all_tests.py: fix the first line of the script
+
+2005-02-21  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/AbstractViews.py: we don't use this file anymore. Its contents
+	were moved to Views.py
+	
+	* Kiwi2/__init__.py: put the ValueUnset class here so we avoid
+	some cyclic dependencies
+
+	* Kiwi2/Views.py (GladeSignalBroker._connect_glade_signals): make
+	AbstractView inherit form GObject so we can enjoy GSignals in the
+	views.
+	(BaseView.connect): can't proxy these methods anymore because we
+	have our own signals now
+
+	* Kiwi2/Delegates.py: added the KiwiListDelegated. Not sure if we
+	should deprecate this delegate now that we are pushing all the
+	functionality to the Kiwi2.List class.
+
+	* Kiwi2/initgtk.py: we need gobject for signals
+
+	* examples/News/news3.py: 
+	* examples/News/news2.py: converted examples to use Kiwi2
+
+2005-02-18  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Views.py: implement attach_slave for GazpachoTree and so for
+	GladeView and GladeSlaveView
+
+	* Kiwi2/initgtk.py (quit_if_last): only see TOPLEVEL windows, no
+	POPUPs
+
+	* examples/News/news.py: adapted to Kiwi2. Also use TreeView instead
+	of CList
+
+2005-02-17  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/Views.py: forget about GazpachoViews. Make GladeView and
+	GladeSlaveView use Gazpacho internally with delegation and don't use
+	AbstractGladeView anymore. I still need to implement attach_slave
+	with this delegation aproach.
+
+	* Kiwi2/Delegates.py: minor PEP-8 changes and change Kiwi to Kiwi2
+
+	* tests/run_all_tests.py: convenience script to run all of the tests
+
+	* tests/test_BaseViewInherit.py: adapted to run under unittest
+
+	* examples/HeyPlanet/heygazpacho3.py: copy of heygazpacho3.py using
+	Gazpachoview
+
+	* examples/HeyPlanet/heygazpacho2.py: copy of heyglade2.py using
+	GazpachoView
+
+	* examples/HeyPlanet/heygazpacho.py: copy of heyglade.py using
+	GazpachoView
+
+	* Kiwi2/initgtk.py (quit_if_last): mainquit is deprecated, did you know
+	that?
+
+	* examples/HeyPlanet/heyglade3.py: 
+	* examples/HeyPlanet/heyglade2.py: 
+	* examples/HeyPlanet/heyglade.py: 
+	* examples/HeyPlanet/hey.py: adapted to Kiwi2
+
+	* examples/HeyPlanet/hey.glade: generated by Gazpacho, not Glade-2
+
+2005-02-16  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* tests/test_BaseView.py: make all the tests run under the unittest
+	facilities. Integrate test_BaseView2.py here also.
+
+	* Kiwi2/Views.py (AbstractView._gdk_color_to_string) 
+	(AbstractView.get_background, AbstractView.get_foreground): provide
+	method to get the colors of a widget in the #XXXXX format
+	- Comment out the classes we don't care about right now:
+	GladeSlaveView and GladeView
+
+	* Kiwi2/initgtk.py: don't load main_quit, it's deprecated
+	(quit_if_last): add this function to be used as a delete-event handler
+	so the user can open and close windows without worrying about when
+	to call gtk.mainquit
+
+2005-02-11  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/__init__.py (standard_widgets): fixed a bug about not importing
+	sys and using sys.stderr
+
+	* Kiwi2/AbstractViews.py (SignalBroker.__init__): refactor SignalBroker
+	__init__ method so subclasses can customize it
+	(SignalBroker._do_connections): new method that do all the connections
+	this signal broker is supposed to make. In the base SignalBroker it
+	only calls _autoconnect_by_method_name but in GladeSignalBroker it
+	also calls _connect_glade_signals
+
+2005-02-10  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* Kiwi2/initgtk.py: added explanation on why do we have a separate
+	initgtk.py module
+
+2005-02-05  Lorenzo Gil Sanchez  <lgs@sicem.biz>
+
+	* setup.py: remove non used imports
+

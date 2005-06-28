@@ -1,0 +1,111 @@
+<?xml version="1.0" ?>
+<glade-interface>
+    <widget class="GtkWindow" id="news_shell">
+        <property name="default_width">550</property>
+        <property name="default_height">300</property>
+        <property name="title" context="True" translatable="True">News Browser</property>
+        <child>
+            <widget class="GtkVBox" id="vbox1">
+                <property name="visible">True</property>
+                <child>
+                    <widget class="GtkEventBox" id="header">
+                        <property name="visible">True</property>
+                        <child>
+                            <widget class="GtkLabel" id="title">
+                                <property name="ypad">10</property>
+                                <property name="pattern"></property>
+                                <property name="label" context="True" translatable="True">Select news item to view in Web browser</property>
+                                <property name="xpad">5</property>
+                                <property name="xalign">0.0</property>
+                                <property name="justify">center</property>
+                                <property name="visible">True</property>
+                            </widget>
+                        </child>
+                    </widget>
+                    <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                    </packing>
+                </child>
+                <child>
+                    <widget class="GtkHSeparator" id="hseparator1">
+                        <property name="visible">True</property>
+                    </widget>
+                    <packing>
+                        <property name="position">1</property>
+                        <property name="expand">False</property>
+                    </packing>
+                </child>
+                <child>
+                    <widget class="GtkEventBox" id="placeholder">
+                        <property name="border_width">5</property>
+                        <property name="visible">True</property>
+                        <child>
+                            <widget class="GtkLabel" id="labelX">
+                                <property name="pattern"></property>
+                                <property name="label" context="True" translatable="True">Slave comes here
+(this widget is called "placeholder"
+and is packed inside a GtkEventBox)</property>
+                                <property name="justify">center</property>
+                                <property name="visible">True</property>
+                            </widget>
+                        </child>
+                    </widget>
+                    <packing>
+                        <property name="position">2</property>
+                    </packing>
+                </child>
+                <child>
+                    <widget class="GtkHSeparator" id="hseparator2">
+                        <property name="visible">True</property>
+                    </widget>
+                    <packing>
+                        <property name="position">3</property>
+                        <property name="expand">False</property>
+                    </packing>
+                </child>
+                <child>
+                    <widget class="GtkEventBox" id="footer">
+                        <property name="visible">True</property>
+                        <child>
+                            <widget class="GtkHButtonBox" id="hbuttonbox1">
+                                <property name="layout_style">end</property>
+                                <property name="spacing">5</property>
+                                <property name="border_width">5</property>
+                                <property name="visible">True</property>
+                                <child>
+                                    <widget class="GtkButton" id="cancel">
+                                        <property name="receives_default">True</property>
+                                        <property name="label" context="True" translatable="True">Cancel</property>
+                                        <property name="can_default">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="visible">True</property>
+                                    </widget>
+                                    <packing/>
+                                </child>
+                                <child>
+                                    <widget class="GtkButton" id="ok">
+                                        <property name="receives_default">True</property>
+                                        <property name="label" context="True" translatable="True">OK</property>
+                                        <property name="can_default">True</property>
+                                        <property name="has_default">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="visible">True</property>
+                                    </widget>
+                                    <packing>
+                                        <property name="position">1</property>
+                                    </packing>
+                                </child>
+                            </widget>
+                        </child>
+                    </widget>
+                    <packing>
+                        <property name="position">4</property>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                    </packing>
+                </child>
+            </widget>
+        </child>
+    </widget>
+</glade-interface>

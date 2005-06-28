@@ -1,0 +1,115 @@
+<?xml version="1.0" ?>
+<glade-interface>
+    <requires lib="kiwi2"/>
+    <widget class="GtkWindow" id="newsform">
+        <property name="title" context="True" translatable="True">News Editor</property>
+        <child>
+            <widget class="GtkTable" id="table1">
+                <property name="row_spacing">6</property>
+                <property name="column_spacing">6</property>
+                <property name="border_width">6</property>
+                <property name="n_rows">4</property>
+                <property name="n_columns">2</property>
+                <property name="visible">True</property>
+                <child>
+                    <widget class="kiwi+ui+widgets+entry+Entry" id="size">
+                        <property name="model_attribute">size</property>
+                        <property name="can_focus">True</property>
+                        <property name="data_type">int</property>
+                        <property name="visible">True</property>
+                    </widget>
+                    <packing>
+                        <property name="left_attach">1</property>
+                        <property name="bottom_attach">4</property>
+                        <property name="top_attach">3</property>
+                        <property name="right_attach">2</property>
+                    </packing>
+                </child>
+                <child>
+                    <widget class="GtkLabel" id="label4">
+                        <property name="label" translatable="True">Size:</property>
+                        <property name="xalign">1.0</property>
+                        <property name="visible">True</property>
+                    </widget>
+                    <packing>
+                        <property name="bottom_attach">4</property>
+                        <property name="top_attach">3</property>
+                    </packing>
+                </child>
+                <child>
+                    <widget class="GtkLabel" id="label3">
+                        <property name="label" context="True" translatable="True">_URL:</property>
+                        <property name="use_underline">True</property>
+                        <property name="xalign">1.0</property>
+                        <property name="visible">True</property>
+                    </widget>
+                    <packing>
+                        <property name="bottom_attach">3</property>
+                        <property name="top_attach">2</property>
+                    </packing>
+                </child>
+                <child>
+                    <widget class="GtkLabel" id="label2">
+                        <property name="label" context="True" translatable="True">_Author:</property>
+                        <property name="use_underline">True</property>
+                        <property name="xalign">1.0</property>
+                        <property name="visible">True</property>
+                    </widget>
+                    <packing>
+                        <property name="bottom_attach">2</property>
+                        <property name="top_attach">1</property>
+                    </packing>
+                </child>
+                <child>
+                    <widget class="GtkLabel" id="label1">
+                        <property name="label" context="True" translatable="True">_Title:</property>
+                        <property name="use_underline">True</property>
+                        <property name="xalign">1.0</property>
+                        <property name="visible">True</property>
+                    </widget>
+                    <packing/>
+                </child>
+                <child>
+                    <widget class="kiwi+ui+widgets+entry+Entry" id="title">
+                        <property name="model_attribute">title</property>
+                        <property name="can_focus">True</property>
+                        <property name="data_type">str</property>
+                        <property name="visible">True</property>
+                    </widget>
+                    <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                    </packing>
+                </child>
+                <child>
+                    <widget class="kiwi+ui+widgets+entry+Entry" id="author">
+                        <property name="model_attribute">author</property>
+                        <property name="can_focus">True</property>
+                        <property name="data_type">str</property>
+                        <property name="visible">True</property>
+                    </widget>
+                    <packing>
+                        <property name="left_attach">1</property>
+                        <property name="bottom_attach">2</property>
+                        <property name="top_attach">1</property>
+                        <property name="right_attach">2</property>
+                    </packing>
+                </child>
+                <child>
+                    <widget class="kiwi+ui+widgets+entry+Entry" id="url">
+                        <property name="model_attribute">url</property>
+                        <property name="can_focus">True</property>
+                        <property name="data_type">str</property>
+                        <property name="visible">True</property>
+                    </widget>
+                    <packing>
+                        <property name="left_attach">1</property>
+                        <property name="bottom_attach">3</property>
+                        <property name="top_attach">2</property>
+                        <property name="right_attach">2</property>
+                    </packing>
+                </child>
+            </widget>
+        </child>
+    </widget>
+</glade-interface>
