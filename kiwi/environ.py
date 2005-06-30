@@ -26,25 +26,28 @@
 import os
 import string
 
+__all__ = ['set_gladepath', 'get_gladepath', 'find_in_gladepath',
+           'set_imagepath', 'get_imagepath', 'image_path_resolver',
+           'require_gazpacho',]
 #
 # Gladepath handling
 #
 
-gladepath = []
+_gladepath = []
 
 if os.environ.has_key('KIWI_GLADE_PATH'):
-    gladepath = os.environ['KIWI_GLADE_PATH'].split(':')
+    _gladepath = os.environ['KIWI_GLADE_PATH'].split(':')
 
 def set_gladepath(path):
     """Sets a new path to be used to search for glade files when creating
     GladeViews or it's subclasses
     """
-    global gladepath
-    gladepath = path
+    global _gladepath
+    _gladepath = path
 
 def get_gladepath():
-    global gladepath
-    return gladepath
+    global _gladepath
+    return _gladepath
 
 def find_in_gladepath(filename):
     """Looks in gladepath for the file specified"""
@@ -78,18 +81,18 @@ def find_in_gladepath(filename):
 # Image path resolver
 #
 
-imagepath = ''
+_imagepath = ''
 
 if os.environ.has_key ('KIWI_IMAGE_PATH'):
-    imagepath = string.split(os.environ['KIWI_IMAGE_PATH'])
+    _imagepath = string.split(os.environ['KIWI_IMAGE_PATH'])
 
 def set_imagepath(path):
-    global imagepath
-    imagepath = path
+    global _imagepath
+    _imagepath = path
 
 def get_imagepath():
-    global imagepath
-    return imagepath
+    global _imagepath
+    return _imagepath
 
 def image_path_resolver(filename):
     imagepath = get_imagepath()
@@ -119,9 +122,9 @@ def image_path_resolver(filename):
                                                               imagepath))
 
 
-require_gazpacho_loader = False
+_require_gazpacho_loader = False
 
 def require_gazpacho():
-    global require_gazpacho_loader
-    require_gazpacho_loader = True
+    global _require_gazpacho_loader
+    _require_gazpacho_loader = True
 
