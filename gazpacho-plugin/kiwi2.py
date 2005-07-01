@@ -39,7 +39,7 @@ widget_prefix = 'Kiwi'
 try:
     from gazpacho.widget import get_widget_from_gtk_widget as from_widget
 except ImportError:
-    from_gtk_widget = Widget.from_widget
+    from_widget = Widget.from_widget
 
 class DataTypeAdaptor(object):
     def create_editor(self, context):
