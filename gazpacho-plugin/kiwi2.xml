@@ -1,10 +1,8 @@
 <?xml version="1.0"?>
 <glade-catalog name="kiwi2"
-               library="kiwi2"
-               libglade-module="Kiwi2.Widgets"
-               resource-path="/home/gustavo/devel/Kiwi2/gazpacho-plugin">
+               library="kiwi2">
   <glade-widget-classes>
-    <glade-widget-class name="Kiwi2+Widgets+List+List"
+    <glade-widget-class name="kiwi+ui+widgets+list+List"
                         generic-name="kiwilist"
                         title="Kiwi List" >
       <function name="fill-empty" type="ignore" />
@@ -31,7 +29,7 @@
       </properties>
     </glade-widget-class>
 
-    <glade-widget-class name="Kiwi2+Widgets+Entry+Entry"
+    <glade-widget-class name="kiwi+ui+widgets+entry+Entry"
                         generic-name="kiwientry"
                         title="Kiwi Entry" >
       <properties>
@@ -54,7 +52,7 @@
       </properties>
     </glade-widget-class>
 
-    <glade-widget-class name="Kiwi2+Widgets+Label+Label"
+    <glade-widget-class name="kiwi+ui+widgets+label+Label"
                         generic-name="kiwilabel"
                         title="Kiwi Label" >
       <properties>
@@ -77,7 +75,7 @@
       </properties>
     </glade-widget-class>
 
-    <glade-widget-class name="Kiwi2+Widgets+ComboBox+ComboBox"
+    <glade-widget-class name="kiwi+ui+widgets+combobox+ComboBox"
                         generic-name="kiwicombobox"
                         title="Kiwi Combo Box">
       <properties>
@@ -103,7 +101,7 @@
       </properties>
     </glade-widget-class>
 
-    <glade-widget-class name="Kiwi2+Widgets+ComboBox+ComboBoxEntry"
+    <glade-widget-class name="kiwi+ui+widgets+combobox+ComboBoxEntry"
                         generic-name="kiwicomboboxentry"
                         title="Kiwi Combo Box Entry">
       <properties>
@@ -129,7 +127,7 @@
       </properties>
     </glade-widget-class>
 
-  <glade-widget-class name="Kiwi2+Widgets+CheckButton+CheckButton"
+  <glade-widget-class name="kiwi+ui+widgets+checkbutton+CheckButton"
                         generic-name="kiwicheckbutton"
                         title="Kiwi Check Button">
       <properties>
@@ -143,7 +141,7 @@
      </properties>
     </glade-widget-class>
 
- <glade-widget-class name="Kiwi2+Widgets+RadioButton+RadioButton"
+ <glade-widget-class name="kiwi+ui+widgets+radiobutton+RadioButton"
                         generic-name="kiwiradiobutton"
                         title="Kiwi Radio Button">
       <properties>
@@ -168,7 +166,7 @@
      </properties>
     </glade-widget-class>
 
-    <glade-widget-class name="Kiwi2+Widgets+SpinButton+SpinButton"
+    <glade-widget-class name="kiwi+ui+widgets+spinbutton+SpinButton"
                         generic-name="kiwispinbutton"
                         title="Kiwi Spin Button">
       <properties>
@@ -191,7 +189,7 @@
      </properties>
     </glade-widget-class>
     
-    <glade-widget-class name="Kiwi2+Widgets+TextView+TextView"
+    <glade-widget-class name="kiwi+ui+widgets+textview+TextView"
                         generic-name="kiwitextview"
                         title="Kiwi TextView">
       
@@ -219,15 +217,15 @@
 </glade-widget-classes>
 
   <glade-widget-group name="kiwi2" title="Kiwi Widgets">
-    <glade-widget-class-ref name="Kiwi2+Widgets+Entry+Entry"/>
-    <glade-widget-class-ref name="Kiwi2+Widgets+Label+Label"/>
-    <glade-widget-class-ref name="Kiwi2+Widgets+ComboBox+ComboBox"/>
-    <glade-widget-class-ref name="Kiwi2+Widgets+ComboBox+ComboBoxEntry"/>
-    <glade-widget-class-ref name="Kiwi2+Widgets+List+List"/>
-    <glade-widget-class-ref name="Kiwi2+Widgets+CheckButton+CheckButton"/>
-    <glade-widget-class-ref name="Kiwi2+Widgets+RadioButton+RadioButton"/>
-    <glade-widget-class-ref name="Kiwi2+Widgets+SpinButton+SpinButton"/>
-    <glade-widget-class-ref name="Kiwi2+Widgets+TextView+TextView"/>
+    <glade-widget-class-ref name="kiwi+ui+widgets+entry+Entry"/>
+    <glade-widget-class-ref name="kiwi+ui+widgets+label+Label"/>
+    <glade-widget-class-ref name="kiwi+ui+widgets+combobox+ComboBox"/>
+    <glade-widget-class-ref name="kiwi+ui+widgets+combobox+ComboBoxEntry"/>
+    <glade-widget-class-ref name="kiwi+ui+widgets+list+List"/>
+    <glade-widget-class-ref name="kiwi+ui+widgets+checkbutton+CheckButton"/>
+    <glade-widget-class-ref name="kiwi+ui+widgets+radiobutton+RadioButton"/>
+    <glade-widget-class-ref name="kiwi+ui+widgets+spinbutton+SpinButton"/>
+    <glade-widget-class-ref name="kiwi+ui+widgets+textview+TextView"/>
   </glade-widget-group>
   
 </glade-catalog>
