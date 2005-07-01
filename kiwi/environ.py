@@ -28,7 +28,7 @@ import string
 
 __all__ = ['set_gladepath', 'get_gladepath', 'find_in_gladepath',
            'set_imagepath', 'get_imagepath', 'image_path_resolver',
-           'require_gazpacho',]
+           'require_gazpacho', 'is_gazpacho_required']
 #
 # Gladepath handling
 #
@@ -128,3 +128,6 @@ def require_gazpacho():
     global _require_gazpacho_loader
     _require_gazpacho_loader = True
 
+def is_gazpacho_required():
+    global _require_gazpacho_loader
+    return _require_gazpacho_loader
