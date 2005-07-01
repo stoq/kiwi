@@ -35,6 +35,12 @@ from kiwi.ui.widgets.textview import TextView
 root_library = 'kiwi.ui.widgets'
 widget_prefix = 'Kiwi'
 
+# When we can use a never version of gazpacho, remove this
+try:
+    from gazpacho.widget import get_widget_from_gtk_widget as from_widget
+except ImportError:
+    from_gtk_widget = Widget.from_widget
+
 class DataTypeAdaptor(object):
     def create_editor(self, context):
         model = gtk.ListStore(str, object)
@@ -73,7 +79,7 @@ class DataTypeAdaptor(object):
         proxy.set_value(value)
 
     def save(self, context, widget):
-        gwidget = Widget.from_widget(widget)
+        gwidget = from_widget(widget)
         data_type = gwidget.get_glade_property('data-type')
         # data type is one of (str, float, int, bool)
         return data_type._value.__name__
