@@ -4,8 +4,8 @@ import os
 import gtk
 
 from kiwi import utils
-from kiwi.ui.delegates import Delegates, SlaveDelegate
-from kiwi.ui.gadgets import quit_if_last
+from kiwi.ui import gadgets
+from kiwi.ui.delegates import Delegate, SlaveDelegate
 from kiwi.ui.widgets.list import List, Column
 
 class NewsItem:
@@ -27,7 +27,7 @@ news = [
           "http://www.pigdog.org/auto/viva_la_musica/link/2678.html")
 ]
 
-my_columns = [Column("title", sorted=True, tooltip="Title of article"), 
+my_columns = [Column("title", sorted=True, tooltip="Title of article", width=50), 
               Column("author", tooltip="Author of article"), 
               Column("url", title="Address", visible=False, 
                      tooltip="Address of article")]
@@ -36,13 +36,13 @@ class Shell(Delegate):
     widgets = ["ok", "cancel", "header", "footer", "title"]
     def __init__(self):
         Delegate.__init__(self, gladefile="news_shell", 
-                          delete_handler=quit_if_last)
+                          delete_handler=gadgets.quit_if_last)
 
         # paint header and footer; they are eventboxes that hold a
         # label and buttonbox respectively
-        utils.set_background(self.header, "white") 
-        utils.set_background(self.footer, "#A0A0A0")
-        utils.set_foreground(self.title, "blue")
+        gadgets.set_background(self.header, "white") 
+        gadgets.set_background(self.footer, "#A0A0A0")
+        gadgets.set_foreground(self.title, "blue")
 
         # Create the delegate and set it up
         kiwilist = List(my_columns, news)
