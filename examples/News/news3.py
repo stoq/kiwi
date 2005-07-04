@@ -4,7 +4,6 @@ import os
 import gtk
 
 from kiwi import utils
-from kiwi.ui import gadgets
 from kiwi.ui.delegates import Delegate, SlaveDelegate
 from kiwi.ui.widgets.list import List, Column
 
@@ -36,7 +35,7 @@ class Shell(Delegate):
     widgets = ["ok", "cancel", "header", "footer", "title"]
     def __init__(self):
         Delegate.__init__(self, gladefile="news_shell", 
-                          delete_handler=gadgets.quit_if_last)
+                          delete_handler=self.quit_if_last)
 
         # paint header and footer; they are eventboxes that hold a
         # label and buttonbox respectively
