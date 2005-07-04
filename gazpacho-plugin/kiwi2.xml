@@ -112,6 +112,9 @@
                   name="Model Attribute"
                   translatable="False" />
 
+    	<property id="list-writable"
+                  name="List writable"/>
+              
         <property id="data-type"
                   name="Data Type"
                   translatable="False"

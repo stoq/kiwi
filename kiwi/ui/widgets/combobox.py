@@ -37,7 +37,7 @@ import gtk.keysyms
 from kiwi import ValueUnset
 from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
 from kiwi.ui.widgets.proxy import WidgetMixin, WidgetMixinSupportValidation
-from kiwi.utils import gsignal
+from kiwi.utils import gsignal, gproperty
 
 (COL_COMBO_LABEL,
  COL_COMBO_DATA) = range(2)
@@ -301,6 +301,8 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
     # not the combo box itself.
     #gsignal('expose-event', 'override')
     
+    gproperty("list-writable", bool, False, 
+              "List Writable", gobject.PARAM_READWRITE)
     def __init__(self):
         gtk.ComboBoxEntry.__init__(self)
         WidgetMixinSupportValidation.__init__(self, widget=self.child)
@@ -318,6 +320,18 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
         self.set_events(gtk.gdk.KEY_RELEASE_MASK)
         self.connect("key-release-event", self._on__key_release_event)
     
+        self._list_writable = True
+    
+    def get_list_writable(self):
+        return self._list_writable
+    
+    def set_list_writable(self, writable):
+        if self.mode == COMBO_MODE_DATA:
+            return
+        
+        self.child.set_editable(writable)
+        self._list_writable = writable
+
     def _update_selection(self, text=None):
         if text is None:
             text = self.child.get_text()
@@ -342,6 +356,9 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
         """Checks for "Enter" key presses and add the entry text to 
         the combo list if the combo list is set as editable.
         """
+        if not self._list_writable:
+            return
+
         if event.keyval in (gtk.keysyms.KP_Enter, gtk.keysyms.Return):
             self._add_text_to_combo_list()
         
@@ -387,6 +404,9 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
         return self.read()
 
     def update(self, data):
+        # This is kinda strange, find out why.
+        data = self.read()
+        
         # first, trigger some basic validation
         WidgetMixinSupportValidation.update(self, data)
         
