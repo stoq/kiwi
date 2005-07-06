@@ -184,6 +184,10 @@ class Column:
 \t\ttitle_pixmap=%(title_pixmap)s, %(pixmap_spec)s,
 \t\t%(expand)s)""" % cdict
 
+    # This is meant to be subclassable, we're using kgetattr, as
+    # a staticmethod as an optimization, so we can avoid a function call.
+    get_attribute = staticmethod(kgetattr)
+    
     def __repr__(self):
         ns = self.__dict__.copy()
         attr = ns['attribute']
@@ -420,12 +424,12 @@ class List(gtk.ScrolledWindow):
         """
         for column in self._columns:
             if column.data_type is None:
-                column.data_type = self._guess_type(instance,
-                                                    column.attribute)
+                column.data_type = self._guess_type(column, instance)
 
-    def _guess_type(self, instance, name):
+    def _guess_type(self, column, instance):
+        
         # steal attribute from sample instance and use its type
-        value = kgetattr(instance, name, ValueUnset)
+        value = column.get_attribute(instance, column.attribute, ValueUnset)
         if value is ValueUnset:
             raise TypeError("Failed to get attribute '%s' for %s" %
                             (name, instance))
@@ -566,7 +570,7 @@ class List(gtk.ScrolledWindow):
     def _cell_data_func(self, column, cellrenderer, model, iter, definition):
         renderer_prop = cellrenderer.get_data('renderer-property')
         instance = model.get_value(iter, 0)
-        data = kgetattr(instance, definition.attribute, None)
+        data = definition.get_attribute(instance, definition.attribute, None)
         if definition.format:
             data = datatypes.lformat(definition.format, data)
         cellrenderer.set_property(renderer_prop, data)
@@ -619,8 +623,8 @@ class List(gtk.ScrolledWindow):
         obj2 = model.get_value(iter2, 0)
         cd = self._columns[self._sort_column_definition_index]
         attr = cd.attribute
-        value1 = kgetattr(obj1, attr)
-        value2 = kgetattr(obj2, attr)
+        value1 = cd.get_attribute(obj1, attr)
+        value2 = cd.get_attribute(obj2, attr)
         return cmp(value1, value2)
 
     def _on_column__clicked(self, treeview_column, column):
