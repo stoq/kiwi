@@ -209,6 +209,9 @@ class ComboProxyMixin(object):
             raise KeyError("No item correspond to data %r in the combo %s" 
                            % (data, self.name))
 
+    def get_model_strings(self):
+        return [row[COL_COMBO_LABEL] for row in self.get_model()]
+
     def get_model_items(self):
         if self.mode != COMBO_MODE_DATA:
             raise TypeError("get_model_items can only be used in data mode")
@@ -343,15 +346,13 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
         if not text.strip():
             return
 
-        # XXX: Fix this to work in string and data mode
-        return
-    
-        if text in self.get_model_items():
+        if text in self.get_model_strings():
             return
         
+        self.child.set_text('')
         self.append_item(text)
         self._update_selection(text)
-     
+        
     def _on__key_release_event(self, widget, event):
         """Checks for "Enter" key presses and add the entry text to 
         the combo list if the combo list is set as editable.
