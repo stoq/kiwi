@@ -57,7 +57,7 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
             self.chain_expose = \
                               lambda e: gtk.SpinButton.do_expose_event(self, e)
         
-    def set_data_type(self, data_type):
+    def prop_set_data_type(self, data_type):
         """Overriden from super class. Since spinbuttons should
         only accept float or int numbers we need to make a special
         treatment.

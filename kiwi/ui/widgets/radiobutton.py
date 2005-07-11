@@ -51,7 +51,7 @@ class RadioButton(gtk.RadioButton, WidgetMixin):
     def read(self):
         for rb in self.get_group():
             if rb.get_active():
-                return self.str2type(rb.get_data_value())
+                return self.str2type(rb.get_property('data-value'))
 
     def update(self, data):
         # first, trigger some basic validation
@@ -60,7 +60,7 @@ class RadioButton(gtk.RadioButton, WidgetMixin):
             return
         data = self.type2str(data)
         for rb in self.get_group():
-            if rb.get_data_value() == data:
+            if rb.get_property('data-value') == data:
                 rb.set_active(True)
     
     def prop_set_data_value(self, data):

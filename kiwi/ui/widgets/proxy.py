@@ -49,18 +49,12 @@ class WidgetMixin(Mixin):
 
     def __init__(self, data_type=str, model_attribute=None,
                  default_value=None):
-        # we need initial values so this variables always exist
-        self._default_value = None
-        self._data_type = None
-        self._model_attribute = None
+        self._default_value = default_value
+        self._data_type = data_type
+        self._model_attribute = model_attribute
         self._data_format = None
         # this attibute will be set to the view that owns the widget
         self.owner = None
-        
-        # now we setup the variables with our parameters
-        self.set_data_type(data_type)
-        self.set_model_attribute(model_attribute)
-        self.set_default_value(default_value)
 
     def set_data_format(self, format):
         self._data_format = format
@@ -104,10 +98,10 @@ class WidgetMixin(Mixin):
             raise AttributeError("Invalid property name: %s" % pspec.name)
         return func(value)
     
-    def get_data_type(self):
+    def prop_get_data_type(self):
         return self._data_type
 
-    def set_data_type(self, obj):
+    def prop_set_data_type(self, obj):
         """Set the data type for the widget
         
         data_type can be None, a type object or a string with the name of the
@@ -133,16 +127,16 @@ class WidgetMixin(Mixin):
 
         self._data_type = data_type
 
-    def get_model_attribute(self):
+    def prop_get_model_attribute(self):
         return self._model_attribute
 
-    def set_model_attribute(self, attribute):
+    def prop_set_model_attribute(self, attribute):
         self._model_attribute = attribute
 
-    def get_default_value(self):
+    def prop_get_default_value(self):
         return self._default_value
 
-    def set_default_value(self, value):
+    def prop_set_default_value(self, value):
         if isinstance(value, basestring):
             value = self.str2type(value)
             
@@ -240,11 +234,11 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
 
         self.owner = None
         
-    def get_mandatory(self):
+    def prop_get_mandatory(self):
         """Checks if the Kiwi Widget is set to mandatory"""
         return self._mandatory
     
-    def set_mandatory(self, mandatory):
+    def prop_set_mandatory(self, mandatory):
         """Sets the Kiwi Widget as mandatory, in other words, 
         the user needs to provide data to the widget 
         """

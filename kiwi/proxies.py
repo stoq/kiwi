@@ -301,7 +301,7 @@ class Proxy:
                 value = kgetattr(self.model, attribute, ValueUnset)
                 if value is ValueUnset:
                     # get the default value from the widget if it has any
-                    defvalue = widget.get_default_value()
+                    defvalue = widget.get_property('default-value')
                     if defvalue is not None:
                         value = defvalue
 

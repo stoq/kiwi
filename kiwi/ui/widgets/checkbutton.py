@@ -39,16 +39,17 @@ class CheckButton(gtk.CheckButton, WidgetMixin):
     gsignal('toggled', 'override')
         
     def __init__(self):
-        # changed default data_type because checkbuttons can only accept bool values
+        # changed default data_type because checkbuttons can only
+        # accept bool values
         WidgetMixin.__init__(self, data_type=bool)
         gtk.CheckButton.__init__(self)
         self.set_property("data-type", bool)
     
-    def set_data_type(self, data_type):
+    def prop_set_data_type(self, data_type):
         if data_type == bool or data_type is None:
-            WidgetMixin.set_data_type(self, data_type)
+            WidgetMixin.prop_set_data_type(self, data_type)
         else:
-            raise TypeError, "CheckButtons only accept boolean values"
+            raise TypeError("CheckButtons only accept boolean values")
 
     def do_toggled(self):
         self.emit('content-changed')
