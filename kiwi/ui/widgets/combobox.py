@@ -325,10 +325,10 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
     
         self._list_writable = True
     
-    def get_list_writable(self):
+    def prop_get_list_writable(self):
         return self._list_writable
     
-    def set_list_writable(self, writable):
+    def prop_set_list_writable(self, writable):
         if self.mode == COMBO_MODE_DATA:
             return
         

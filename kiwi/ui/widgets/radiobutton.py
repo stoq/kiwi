@@ -63,10 +63,10 @@ class RadioButton(gtk.RadioButton, WidgetMixin):
             if rb.get_data_value() == data:
                 rb.set_active(True)
     
-    def set_data_value(self, data):
+    def prop_set_data_value(self, data):
         self._data_value = data
     
-    def get_data_value(self):
+    def prop_get_data_value(self):
         return self._data_value
 
 gobject.type_register(RadioButton)

@@ -92,14 +92,14 @@ class WidgetMixin(Mixin):
         
     def do_get_property(self, pspec):
         prop_name = pspec.name.replace("-", "_")
-        func = getattr(self, "get_%s" % prop_name, None)
+        func = getattr(self, "prop_get_%s" % prop_name, None)
         if not func:
             raise AttributeError("Invalid property name: %s" % pspec.name)
         return func()
 
     def do_set_property(self, pspec, value):
         prop_name = pspec.name.replace("-", "_")
-        func = getattr(self, "set_%s" % prop_name)
+        func = getattr(self, "prop_set_%s" % prop_name)
         if not func:
             raise AttributeError("Invalid property name: %s" % pspec.name)
         return func(value)
