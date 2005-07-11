@@ -116,36 +116,14 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         if not len(model):
             return
         
-        modelstr = model[iter][0]
-        
-        # check if the user has typed in a space char,
-        # get the last word and check if it matches something
-        if " " in key and not key.endswith(" "):
-            key = key.split()[-1]
-        
-        return modelstr.startswith(key)
+        return model[iter][0].startswith(key)
 
     def _completion_match_selected(self, completion, model, iter):
         if not len(model):
             return
-        
-        modelstr = model[iter][0]
 
-        # if more than a word has been typed, we throw away the
-        # last one because we want to replace it with the matching word
-        # note: the user may have typed only a part of the entire word
-        #       and so this step is necessary
-        text = self.get_text()
-        if " " in text:
-            text = " ".join(text.split()[:-1])
-            text = "%s %s" % (text, modelstr)
-        else:
-            text = modelstr
-
-        self.set_text(text)
+        self.set_text(model[iter][0])
         self.set_position(-1)
-
-        return True
     
     def read(self):
         """Called after each character is typed. If the input is wrong start 
