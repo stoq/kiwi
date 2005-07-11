@@ -45,10 +45,12 @@
           </editor>
 
         </property>
-	    <property id="model-attribute"
+        <property id="model-attribute"
                   name="Model Attribute"
                   translatable="False" />
 
+    	<property id="completion"
+                  name="Completion"/>
       </properties>
     </glade-widget-class>
 

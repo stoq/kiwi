@@ -33,7 +33,7 @@ import gtk
 from kiwi import ValueUnset
 from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
-from kiwi.utils import gsignal
+from kiwi.utils import gproperty, gsignal
 
 class Entry(gtk.Entry, WidgetMixinSupportValidation):
     """The Kiwi Entry widget has many special features that extend the basic
@@ -57,9 +57,13 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
     # mandatory widgets need to have this signal connected
     gsignal('expose-event', 'override')
     
+    gproperty("completion", bool, False, 
+              "Completion", gobject.PARAM_READWRITE)
+
     def __init__(self):
         gtk.Entry.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
+        self._completion = False
         
         if gtk.pygtk_version < (2,6):
             self.chain_expose = self.chain
@@ -76,6 +80,73 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         self.chain()
         self.emit('content-changed')
 
+    def prop_get_completion(self):
+        return self._completion
+    
+    def prop_set_completion(self, value):
+        self._completion = value
+
+        if not self.get_completion():
+            self._enable_completion()
+
+    def _enable_completion(self):
+        completion = gtk.EntryCompletion()
+        completion.set_model(gtk.ListStore(str))
+        completion.set_text_column(0)
+        completion.set_match_func(self._completion_match_func)
+        completion.connect("match-selected", self._completion_match_selected)
+        self.set_completion(completion)
+        return completion
+    
+    def set_completion_strings(self, strings):
+        # Check so we have completion enabled, not this does not
+        # depend on the property, the user can manually override it,
+        # as long as there is a completion object set
+        completion = self.get_completion()
+        if not completion:
+            completion = self._enable_completion()
+            
+        model = completion.get_model()
+        model.clear()
+        for s in strings:
+            model.append([s])
+            
+    def _completion_match_func(self, completion, key, iter):
+        model = completion.get_model()
+        if not len(model):
+            return
+        
+        modelstr = model[iter][0]
+        
+        # check if the user has typed in a space char,
+        # get the last word and check if it matches something
+        if " " in key and not key.endswith(" "):
+            key = key.split()[-1]
+        
+        return modelstr.startswith(key)
+
+    def _completion_match_selected(self, completion, model, iter):
+        if not len(model):
+            return
+        
+        modelstr = model[iter][0]
+
+        # if more than a word has been typed, we throw away the
+        # last one because we want to replace it with the matching word
+        # note: the user may have typed only a part of the entire word
+        #       and so this step is necessary
+        text = self.get_text()
+        if " " in text:
+            text = " ".join(text.split()[:-1])
+            text = "%s %s" % (text, modelstr)
+        else:
+            text = modelstr
+
+        self.set_text(text)
+        self.set_position(-1)
+
+        return True
+    
     def read(self):
         """Called after each character is typed. If the input is wrong start 
         complaining

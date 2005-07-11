@@ -1,3 +1,11 @@
+2005-07-11  Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/completion.py:
+	* gazpacho-plugin/kiwi2.xml: 
+	* kiwi/ui/widgets/entry.py:
+
+	Add entry completion support and a small example.
+
 == 1.9.0 released ==
 2005-06-28  Johan Dahlin  <jdahlin@async.com.br>
 
