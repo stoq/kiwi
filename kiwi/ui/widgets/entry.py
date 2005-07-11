@@ -109,16 +109,18 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         model = completion.get_model()
         model.clear()
         for s in strings:
+            if type(s) != unicode:
+                s = unicode(s)
+                
             model.append([s])
             
-    def _completion_match_func(self, completion, key, iter):
+    def _completion_match_func(self, completion, _, iter):
         model = completion.get_model()
         if not len(model):
             return
 
-        key = self.get_text()
         content = model[iter][0]
-        return content.startswith(key)
+        return content.startswith(self.get_text())
 
     def _on_completion__match_selected(self, completion, model, iter):
         if not len(model):
