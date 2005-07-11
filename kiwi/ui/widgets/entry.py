@@ -87,14 +87,14 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         self._completion = value
 
         if not self.get_completion():
-            self._enable_completion()
+            self.enable_completion()
 
-    def _enable_completion(self):
+    def enable_completion(self):
         completion = gtk.EntryCompletion()
         completion.set_model(gtk.ListStore(str))
         completion.set_text_column(0)
         completion.set_match_func(self._completion_match_func)
-        completion.connect("match-selected", self._completion_match_selected)
+        completion.connect("match-selected", self._on_completion__match_selected)
         self.set_completion(completion)
         return completion
     
@@ -104,7 +104,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         # as long as there is a completion object set
         completion = self.get_completion()
         if not completion:
-            completion = self._enable_completion()
+            completion = self.enable_completion()
             
         model = completion.get_model()
         model.clear()
@@ -118,7 +118,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         
         return model[iter][0].startswith(key)
 
-    def _completion_match_selected(self, completion, model, iter):
+    def _on_completion__match_selected(self, completion, model, iter):
         if not len(model):
             return
 
