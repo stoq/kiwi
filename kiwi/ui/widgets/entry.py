@@ -115,8 +115,10 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         model = completion.get_model()
         if not len(model):
             return
-        
-        return model[iter][0].startswith(key)
+
+        key = self.get_text()
+        content = model[iter][0]
+        return content.startswith(key)
 
     def _on_completion__match_selected(self, completion, model, iter):
         if not len(model):
