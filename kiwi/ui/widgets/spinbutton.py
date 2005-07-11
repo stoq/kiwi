@@ -63,7 +63,7 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
         treatment.
         """
         old_datatype = self._data_type
-        WidgetMixinSupportValidation.set_data_type(self, data_type)
+        WidgetMixinSupportValidation.prop_set_data_type(self, data_type)
         if self._data_type not in (int, float):
             self._data_type = old_datatype
             raise TypeError("SpinButtons only accept integer or float values")
