@@ -646,7 +646,8 @@ class List(gtk.ScrolledWindow):
             column.order = gtk.SORT_DESCENDING
 
         # reverse the order
-        old_order = column.order
+        old_order = colu                print 'next'
+mn.order
         if old_order == gtk.SORT_ASCENDING:
             new_order = gtk.SORT_DESCENDING
         else:
@@ -670,11 +671,23 @@ class List(gtk.ScrolledWindow):
         self.emit('double-click', selected_obj)
         
     # Python virtual methods
+    def __iter__(self):
+        class ModelIterator:
+            def __init__(self):
+                self._index = -1
+                
+            def next(self, model=self.model):
+                try:
+                    self._index += 1
+                    return model[self._index][0]
+                except IndexError:
+                    raise StopIteration
+                
+        return ModelIterator()
+    
     def __getitem__(self, arg):
-        if isinstance(arg, int):
+        if isinstance(arg, (int, gtk.TreeIter, str)):
             item = self.model[arg][0]
-        elif isinstance(arg, gtk.TreeIter):
-            item = self.model.get_value(arg, 0)
         elif isinstance(arg, slice):
             # for some reason when we try to slice the whole
             # list ([:]) we get a slice object with the content
@@ -692,10 +705,8 @@ class List(gtk.ScrolledWindow):
         return item
 
     def __setitem__(self, arg, item):
-        if isinstance(arg, int):
+        if isinstance(arg, (int, gtk.TreeIter, str)):
             self.model[arg] = (item,)
-        elif isinstance(arg, gtk.TreeIter):
-            self.model.set_value(arg, 0, item)
         else:
             raise TypeError("argument arg must be int or gtk.Treeiter,"
                             " not %s" % type(arg))
@@ -707,7 +718,10 @@ class List(gtk.ScrolledWindow):
         return True
 
     def __contains__(self, instance):
-        return self._get_iter_from_instance(instance) != None
+        for row in self.model:
+            if row[0] == instance:
+                return True
+        return False
 
     # utility methods used by public api methods   
     def _load(self, instance_list, progress_handler=None):

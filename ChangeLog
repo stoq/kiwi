@@ -1,3 +1,10 @@
+2005-07-12  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/list.py (List.__contains__): Clean up, 
+	use == instead of is
+	(List.__setitem__, List.__getitem__): Support strings, refactor
+	(List.__iter__): Impl.
+
 2005-07-11  Johan Dahlin  <jdahlin@async.com.br>
 
 	* examples/completion.py:
