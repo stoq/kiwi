@@ -31,7 +31,7 @@ import datetime
 import gobject
 import gtk
 
-from kiwi import datatypes, ValueUnset
+from kiwi import _warn, datatypes, ValueUnset
 from kiwi.accessors import kgetattr
 from kiwi.utils import gsignal, gproperty
 
@@ -396,7 +396,7 @@ class List(gtk.ScrolledWindow):
         # any
         self._sort_column_definition_index = -1
 
-        if instance_list is not None:
+        if instance_list:
             self.treeview.freeze_notify()
             self._load(instance_list)
             self.treeview.thaw_notify()
@@ -408,6 +408,11 @@ class List(gtk.ScrolledWindow):
         # Set selection mode last to avoid spurious events
         self.set_selection_mode(mode)
 
+        # Select the first item if no items are selected
+        if mode != gtk.SELECTION_NONE and instance_list:
+            selection = self.treeview.get_selection()
+            selection.select_iter(self.model[0].iter)
+            
     # Columns handling
     def _has_enough_type_information(self):
         """True if all the columns has a type set.
@@ -432,13 +437,13 @@ class List(gtk.ScrolledWindow):
         value = column.get_attribute(instance, column.attribute, ValueUnset)
         if value is ValueUnset:
             raise TypeError("Failed to get attribute '%s' for %s" %
-                            (name, instance))
+                            (column.attribute, instance))
             
         tp = type(value)
         if tp is type(None):
             raise TypeError("Detected invalid type None for column `%s'; "
                             "please specify type in Column constructor.""" %
-                            name)
+                            column.attribute)
         return tp
     
     def _create_column(self, column):
@@ -646,8 +651,7 @@ class List(gtk.ScrolledWindow):
             column.order = gtk.SORT_DESCENDING
 
         # reverse the order
-        old_order = colu                print 'next'
-mn.order
+        old_order = column.order
         if old_order == gtk.SORT_ASCENDING:
             new_order = gtk.SORT_DESCENDING
         else:
@@ -956,15 +960,45 @@ mn.order
                 selection.select_iter(treeiter)
 
     def get_selected(self):
+        """Returns the currently selected object
+        If an object is not selected, None is returned
+        """
         selection = self.treeview.get_selection()
-        result = ()
-        if selection:
-            model, paths = selection.get_selected_rows()
-            if paths:
-                result = tuple([model[path][0] for (path,) in paths])
-            
-        return result
+        if not selection:
+            # AssertionError ?
+            return
+
+        mode = selection.get_mode()
+        if mode == gtk.SELECTION_NONE:
+            raise TypeError("Selection not allowed in %r mode" % mode)
+        elif mode not in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
+            _warn('get_selected() called when multiple rows can be selected')
+
+        model, iter = selection.get_selected()
+        if iter:
+            return model[iter][0]
+
+    def get_selected_rows(self):
+        """Returns a list of currently selected objects
+        If no objects are selected an empty list is returned
+        """
+        selection = self.treeview.get_selection()
+        if not selection:
+            # AssertionError ?
+            return
         
+        mode = selection.get_mode()
+        if mode == gtk.SELECTION_NONE:
+            raise TypeError("Selection not allowed in %r mode" % mode)
+        elif mode in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
+            _warn('get_selected_rows() called when only a single row '
+                  'can be selected')
+
+        model, paths = selection.get_selected_rows()
+        if paths:
+            return [model[path][0] for (path,) in paths]
+        return []
+    
     def add_list(self, list, clear=True, restore_selection=False,
                  progress_handler=None):
         """

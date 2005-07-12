@@ -4,6 +4,10 @@
 	use == instead of is
 	(List.__setitem__, List.__getitem__): Support strings, refactor
 	(List.__iter__): Impl.
+	(List.get_selected, List.get_selected_rows): Separate, mimic gtk+
+	closely.
+	(List.__init__): Select first item in list if we selection is allowed
+	and we're inserting a list.
 
 2005-07-11  Johan Dahlin  <jdahlin@async.com.br>
 
