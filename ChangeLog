@@ -1,3 +1,11 @@
+2005-07-13  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/list.py (List.add_list): Remove selection,
+	GtkTreeView is different from a GtkCList, if this turns out to be
+	a problem we'll rewrite/readd this code.
+	(List.get_column_by_name): New method
+	(List.__init__): require a list or column, tuples are not allowed
+
 2005-07-12  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/list.py (List.__contains__): Clean up, 

@@ -387,7 +387,9 @@ class List(gtk.ScrolledWindow):
         # allow to specify only one column
         if isinstance(columns, Column):
             columns = [columns]
-
+        elif not isinstance(columns, list):
+            raise TypeError("columns must be a list or a Column")
+        
         # when setting the column definition the columns are created
         self.set_columns(columns)
 
@@ -837,6 +839,14 @@ class List(gtk.ScrolledWindow):
     def get_columns(self):
         return self._columns_string
 
+    def get_column_by_name(self, name):
+        """Returns the name of a column"""
+        for column in self._columns:
+            if column.attribute == name:
+                return column
+
+        raise LookupError("There is no column called %s" % name)
+    
     def set_columns(self, value):
         """This function can be called in two different ways:
          - value is a string with the column definitions in a special format
@@ -999,62 +1009,24 @@ class List(gtk.ScrolledWindow):
             return [model[path][0] for (path,) in paths]
         return []
     
-    def add_list(self, list, clear=True, restore_selection=False,
-                 progress_handler=None):
+    def add_list(self, list, clear=True, progress_handler=None):
         """
         Allows a list to be loaded, by default clearing it first.
         freeze() and thaw() are called internally to avoid flashing.
         
           - list: a list to be added
           - clear: a boolean that specifies whether or not to clear the list
-          - restore_selection: a boolean that specifies whether or not to
-            try and preserve the original selection in the list (provided that
-            at least some instances are still present in the new list).
           - progress_handler: a callback function to be called while the list
             is being filled
-
-        There is a problem with select=True and mode SELECTION_BROWSE. The
-        focus_row is not updated, and the end result is that you have a
-        row selected but another row focused, which is a serious bug. I
-        have implemented a workaround for this in pygtk-0.6.12.
         """
-        # change mode to selection single to avoid generating spurious
-        # select_row signals. yes, we could do this using emit_stop_by_name 
-        # and then emit, but I think this is easier on the eyes
+
         self.treeview.freeze_notify()
-        old_mode = self.get_selection_mode()
-        old_sel = self.get_selected()
-        self.set_selection_mode(gtk.SELECTION_SINGLE)
+
         if clear:
             self.unselect_all()
             self.model.clear()
 
         ret = self._load(list, progress_handler)
-
-        # Avoid spurious selection or signal emissions when swapping
-        # selection mode
-        selection = self.treeview.get_selection()
-        if selection:
-            selection.handler_block(self._selection_changed_id)
-            self.set_selection_mode(old_mode)
-            selection.handler_unblock(self._selection_changed_id)
-
-        if restore_selection:
-            for instance in old_sel:
-                # we need to find the rows because some instances may
-                # have disappeared with the clear/_load
-                row_iter = self._find_iter_from_data(instance)
-                if row_iter is not None:
-                    self._select_and_focus_row(row_iter)
-        elif (old_mode in (gtk.SELECTION_BROWSE, gtk.SELECTION_EXTENDED)
-              and clear):
-            # If the mode was browse, and we cleared the list, we need
-            # to make sure that at least one selection signal is
-            # emitted, or applications might end up with inconsistent
-            # state.
-            row_iter = self.model.get_iter_first()
-            if row_iter:
-                self._select_and_focus_row(row_iter)
             
         self.treeview.thaw_notify()
         return ret
