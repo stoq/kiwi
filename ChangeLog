@@ -5,6 +5,8 @@
 	a problem we'll rewrite/readd this code.
 	(List.get_column_by_name): New method
 	(List.__init__): require a list or column, tuples are not allowed
+	(List.add_instance): Remove selection restore here aswell
+	(List.__getitem__): Oh my, fix slicing.
 
 2005-07-12  Johan Dahlin  <jdahlin@async.com.br>
 

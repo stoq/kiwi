@@ -695,16 +695,24 @@ class List(gtk.ScrolledWindow):
         if isinstance(arg, (int, gtk.TreeIter, str)):
             item = self.model[arg][0]
         elif isinstance(arg, slice):
-            # for some reason when we try to slice the whole
-            # list ([:]) we get a slice object with the content
-            # slice(None, None, None)
+            length = len(self.model)
             stop = arg.stop
-            start = arg.start
-            if not stop:
-                stop = len(self.model)
-                start = 0
+            if stop == None:
+                stop = length
+            elif stop < 0:
+                stop += length
+            elif stop > length:
+                stop = length
                 
-            return [self.model[arg][item] for item in range(start, stop)]
+            start = arg.start
+            if start == None:
+                start = 0
+            elif start < 0:
+                start += length
+            elif start > length:
+                start = length
+                
+            return [self.model[item][0] for item in range(start, stop)]
         else:
             raise TypeError("argument arg must be int, gtk.Treeiter or "
                             "slice, not %s" % type(arg))
@@ -903,19 +911,10 @@ class List(gtk.ScrolledWindow):
 
         # Freeze and save original selection mode to avoid blinking
         self.treeview.freeze_notify()
-        old_mode = self.get_selection_mode()
-        self.set_selection_mode(gtk.SELECTION_SINGLE)
-        
+
         row_iter = self.model.append((instance,))
         if self._autosize:
             self.treeview.columns_autosize()
-
-        # Avoid spurious selection or signal emissions when swapping
-        # selection mode
-        selection = self.treeview.get_selection()
-        selection.handler_block(self._selection_changed_id)
-        self.set_selection_mode(old_mode)
-        selection.handler_unblock(self._selection_changed_id)
 
         if select:
             self._select_and_focus_row(row_iter)
