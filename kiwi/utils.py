@@ -116,20 +116,22 @@ def slicerange(slice, limit):
     # readonly, we need to copy them
     start, stop, step = slice.start, slice.stop, slice.step
 
-    # [:n]
+    # start is not set if [:n]
     if start != None:
-        # [:-n]
         if start < 0:
+            # [-n:m]
             start += limit
         args.append(start)
         
-    # [n:m]
+    # stop is always set
     if stop < 0:
         # [n:-m]
         stop += limit
+        
+    # [:] -> [0:maxint], so cut at limit
     args.append(min(stop, limit))
 
-    # [n:m:o]?
+    # step is only set if [n:m:o]
     if slice.step != None:
         args.append(step)
 
