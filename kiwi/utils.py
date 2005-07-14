@@ -110,29 +110,5 @@ def slicerange(slice, limit):
 
     @param slice: slice object
     @param limit: maximum value allowed"""
-
-    args = []
-
-    # readonly, we need to copy them
-    start, stop, step = slice.start, slice.stop, slice.step
-
-    # start is only set if [n:m]
-    if start != None:
-        if start < 0:
-            # [-n:m]
-            start += limit
-        args.append(start)
-        
-    # stop is always set
-    if stop < 0:
-        # [n:-m]
-        stop += limit
-        
-    # [:] -> [0:maxint], so cut at limit
-    args.append(min(stop, limit))
-
-    # step is only set if [n:m:o]
-    if slice.step != None:
-        args.append(step)
-
-    return xrange(*args)
+    
+    return xrange(*slice.indices(limit))
