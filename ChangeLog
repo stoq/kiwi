@@ -1,3 +1,10 @@
+2005-07-14  Johan Dahlin  <jdahlin@async.com.br>
+
+	* tests/test_utils.py (SliceTest): Add tests for slicerange
+	* kiwi/ui/widgets/list.py: Clean up treemodel usage, use python api
+	and define COL_MODEL as 0 and use it everywhere
+	(List.__getitem__): Fix slicing once and for all.
+
 2005-07-13  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/list.py (List.add_list): Remove selection,

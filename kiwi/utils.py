@@ -90,3 +90,47 @@ def gproperty(name, type, default=None, nick=None,
             
     dict[name] = (type, name, nick, default, flags)
 
+def clamp(x, low, high):
+    """
+    Ensures that x is between the limits set by low and high.
+    For example,
+    * clamp(5, 10, 15) is 10.
+    * clamp(15, 5, 10) is 10.
+    * clamp(20, 15, 25) is 20. 
+
+    @param    x: the value to clamp.
+    @param  low: the minimum value allowed.
+    @param high: the maximum value allowed.
+    """
+    
+    return min(max(x, low), high)
+
+def slicerange(slice, limit):
+    """Takes a slice object and returns a range iterator
+
+    @param slice: slice object
+    @param limit: maximum value allowed"""
+
+    args = []
+
+    # readonly, we need to copy them
+    start, stop, step = slice.start, slice.stop, slice.step
+
+    # [:n]
+    if start != None:
+        # [:-n]
+        if start < 0:
+            start += limit
+        args.append(start)
+        
+    # [n:m]
+    if stop < 0:
+        # [n:-m]
+        stop += limit
+    args.append(min(stop, limit))
+
+    # [n:m:o]?
+    if slice.step != None:
+        args.append(step)
+
+    return xrange(*args)

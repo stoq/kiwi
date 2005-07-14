@@ -33,7 +33,7 @@ import gtk
 
 from kiwi import _warn, datatypes, ValueUnset
 from kiwi.accessors import kgetattr
-from kiwi.utils import gsignal, gproperty
+from kiwi.utils import slicerange, gsignal, gproperty
 
 # Minimum number of rows where we show busy cursor when sorting numeric columns
 MANY_ROWS = 1000
@@ -313,7 +313,8 @@ class ContextMenu(gtk.Menu):
                                          if child.get_active()]
             if len(active_children) == 1:
                 active_children[0].set_sensitive(False)
-        
+
+COL_MODEL = 0
 class List(gtk.ScrolledWindow):
     """An enhanced version of GtkTreeView, which provides pythonic wrappers
     for accessing rows, and optional facilities for column sorting (with
@@ -363,7 +364,7 @@ class List(gtk.ScrolledWindow):
         self._autosize = True
         
         self.model = gtk.ListStore(object)
-        self.model.set_sort_func(0, self._sort_function)
+        self.model.set_sort_func(COL_MODEL, self._sort_function)
         self.treeview = gtk.TreeView(self.model)
         self.treeview.show()
         self.add(self.treeview)
@@ -405,7 +406,7 @@ class List(gtk.ScrolledWindow):
 
         if self._sort_column_definition_index != -1:
             cd = self._columns[self._sort_column_definition_index]
-            self.model.set_sort_column_id(0, cd.order)
+            self.model.set_sort_column_id(COL_MODEL, cd.order)
 
         # Set selection mode last to avoid spurious events
         self.set_selection_mode(mode)
@@ -413,7 +414,7 @@ class List(gtk.ScrolledWindow):
         # Select the first item if no items are selected
         if mode != gtk.SELECTION_NONE and instance_list:
             selection = self.treeview.get_selection()
-            selection.select_iter(self.model[0].iter)
+            selection.select_iter(self.model[COL_MODEL].iter)
             
     # Columns handling
     def _has_enough_type_information(self):
@@ -576,7 +577,7 @@ class List(gtk.ScrolledWindow):
 
     def _cell_data_func(self, column, cellrenderer, model, iter, definition):
         renderer_prop = cellrenderer.get_data('renderer-property')
-        instance = model.get_value(iter, 0)
+        instance = model.get_value(iter, COL_MODEL)
         data = definition.get_attribute(instance, definition.attribute, None)
         if definition.format:
             data = datatypes.lformat(definition.format, data)
@@ -591,7 +592,7 @@ class List(gtk.ScrolledWindow):
 
     def _on_renderer__edited(self, renderer, path, new_text, column):
         row_iter = self.model.get_iter(path)
-        instance = self.model.get_value(row_iter, 0)
+        instance = self.model.get_value(row_iter, COL_MODEL)
         model_attribute = column.attribute
         data_type = column.data_type
         value = new_text
@@ -603,7 +604,7 @@ class List(gtk.ScrolledWindow):
         
     def _on_renderer__toggled(self, renderer, path, column):
         row_iter = self.model.get_iter(path)
-        instance = self.model.get_value(row_iter, 0)
+        instance = self.model.get_value(row_iter, COL_MODEL)
         value = not renderer.get_active()
         model_attribute = column.attribute
         setattr(instance, model_attribute, value)
@@ -619,15 +620,15 @@ class List(gtk.ScrolledWindow):
     # selection methods
     def _find_iter_from_data(self, instance):
         for row in self.model:
-            if instance == row[0]:
+            if instance == row[COL_MODEL]:
                 return row.iter
 
     def _select_and_focus_row(self, row_iter):
         self.treeview.set_cursor(self.model.get_path(row_iter))
                     
     def _sort_function(self, model, iter1, iter2):
-        obj1 = model.get_value(iter1, 0)
-        obj2 = model.get_value(iter2, 0)
+        obj1 = model.get_value(iter1, COL_MODEL)
+        obj2 = model.get_value(iter2, COL_MODEL)
         cd = self._columns[self._sort_column_definition_index]
         attr = cd.attribute
         value1 = cd.get_attribute(obj1, attr)
@@ -665,7 +666,7 @@ class List(gtk.ScrolledWindow):
         treeview_column.set_sort_order(new_order)
 
         # This performs the actual ordering
-        self.model.set_sort_column_id(0, new_order)
+        self.model.set_sort_column_id(COL_MODEL, new_order)
 
     # handlers
     def _on_selection__changed(self, selection):
@@ -673,7 +674,7 @@ class List(gtk.ScrolledWindow):
 
     def _on_treeview__row_activated(self, treeview, path, view_column):
         row_iter = self.model.get_iter(path)
-        selected_obj = self.model.get_value(row_iter, 0)
+        selected_obj = self.model[row_iter][COL_MODEL]
         self.emit('double-click', selected_obj)
         
     # Python virtual methods
@@ -685,7 +686,7 @@ class List(gtk.ScrolledWindow):
             def next(self, model=self.model):
                 try:
                     self._index += 1
-                    return model[self._index][0]
+                    return model[self._index][COL_MODEL]
                 except IndexError:
                     raise StopIteration
                 
@@ -693,26 +694,10 @@ class List(gtk.ScrolledWindow):
     
     def __getitem__(self, arg):
         if isinstance(arg, (int, gtk.TreeIter, str)):
-            item = self.model[arg][0]
+            item = self.model[arg][COL_MODEL]
         elif isinstance(arg, slice):
-            length = len(self.model)
-            stop = arg.stop
-            if stop == None:
-                stop = length
-            elif stop < 0:
-                stop += length
-            elif stop > length:
-                stop = length
-                
-            start = arg.start
-            if start == None:
-                start = 0
-            elif start < 0:
-                start += length
-            elif start > length:
-                start = length
-                
-            return [self.model[item][0] for item in range(start, stop)]
+            model = self.model
+            return [model[item][COL_MODEL] for item in slicerange(arg, len(self.model))]
         else:
             raise TypeError("argument arg must be int, gtk.Treeiter or "
                             "slice, not %s" % type(arg))
@@ -733,7 +718,7 @@ class List(gtk.ScrolledWindow):
 
     def __contains__(self, instance):
         for row in self.model:
-            if row[0] == instance:
+            if row[COL_MODEL] == instance:
                 return True
         return False
 
@@ -761,7 +746,7 @@ class List(gtk.ScrolledWindow):
         If the instance is not in the list it returns None
         """
         for row in self.model:
-            if row[0] is instance:
+            if row[COL_MODEL] is instance:
                 return row.iter
 
     def get_iter(self, instance):
@@ -985,7 +970,7 @@ class List(gtk.ScrolledWindow):
 
         model, iter = selection.get_selected()
         if iter:
-            return model[iter][0]
+            return model[iter][COL_MODEL]
 
     def get_selected_rows(self):
         """Returns a list of currently selected objects
@@ -1005,7 +990,7 @@ class List(gtk.ScrolledWindow):
 
         model, paths = selection.get_selected_rows()
         if paths:
-            return [model[path][0] for (path,) in paths]
+            return [model[path][COL_MODEL] for (path,) in paths]
         return []
     
     def add_list(self, list, clear=True, progress_handler=None):
