@@ -116,7 +116,7 @@ def slicerange(slice, limit):
     # readonly, we need to copy them
     start, stop, step = slice.start, slice.stop, slice.step
 
-    # start is not set if [:n]
+    # start is only set if [n:m]
     if start != None:
         if start < 0:
             # [-n:m]
