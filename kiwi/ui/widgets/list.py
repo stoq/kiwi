@@ -33,7 +33,8 @@ import gtk
 
 from kiwi import _warn, datatypes, ValueUnset
 from kiwi.accessors import kgetattr
-from kiwi.utils import slicerange, gsignal, gproperty
+from kiwi.utils import PropertyObject, PropertyMeta, slicerange, \
+                       gsignal, gproperty
 
 # Minimum number of rows where we show busy cursor when sorting numeric columns
 MANY_ROWS = 1000
@@ -51,37 +52,24 @@ def str2bool(value, default_value=False,
     "converts a boolean to a enum"
     return from_string(bool, value, default_value)
 
-class Column:
+class Column(PropertyObject):
     """Specifies a column in a List"""
-    # put default values as class variables
-    attribute = None
-    title = None
-    data_type = None
-    visible = True
-    justify = None
-    format = None
-    tooltip = None
-    title_pixmap = None
-    width = None
-    sorted = False
-    order = gtk.SORT_ASCENDING
-    pixmap_spec = None
-    expand = False
-    def __init__(self, 
-                 attribute     = None,
-                 title         = None, 
-                 data_type     = None,
-                 visible       = None, 
-                 justify       = None,
-                 format        = None,
-                 tooltip       = None,
-                 title_pixmap  = None,
-                 width         = None,
-                 sorted        = None,
-                 order         = None,
-                 pixmap_spec   = None,
-                 expand        = None,
-                 ):
+    __metaclass__ = PropertyMeta
+
+    gproperty('title', str)
+    gproperty('data-type', object)
+    gproperty('visible', bool, default=True)
+    gproperty('format', str)
+    gproperty('tooltip', str)
+    gproperty('title_pixmap', str)
+    gproperty('width', int, default=1, maximum=2**16)
+    gproperty('sorted', bool, default=False)
+    gproperty('pixmap_spec', str)
+    gproperty('expand', bool, default=False)
+    gproperty('justify', gtk.Justification, default=gtk.JUSTIFY_LEFT)
+    gproperty('order', gtk.SortType, default=gtk.SORT_ASCENDING)
+    
+    def __init__(self, attribute, **kwargs):
         """
         Creates a new Column, which describes how a column in a
         List should be rendered.
@@ -90,7 +78,7 @@ class Column:
             column represents
           - title: the title of the column, defaulting to the capitalized form
             of the attribute
-          - type: the type of the attribute that will be inserted into the
+          - data_type: the type of the attribute that will be inserted into the
             column 
           - visible: a boolean specifying if it is initially hidden or shown
           - justify: one of gtk.JUSTIFY_LEFT, gtk.JUSTIFY_RIGHT or
@@ -115,106 +103,40 @@ class Column:
           - expand: if set column will expand. Note: this space is shared
             equally amongst all columns that have the expand set to True.
         """
+        
         # XXX: filter function?
-        if attribute is not None:
-            if ' ' in attribute:
-                msg = ("The attribute can not contain spaces, otherwise I can"
-                       " not find the value in the instances: %s" % attribute)
-                raise AttributeError(msg)
-            self.attribute = attribute
-        if title is not None:
-            self.title = title
-        elif self.title is None and attribute is not None:
-            self.title = self.attribute.capitalize()
-        if data_type is not None:
-            self.data_type = data_type
-        if visible is not None:
-            self.visible = visible
-        if justify is not None:
-            if not isinstance(justify, gtk.Justification):
-                raise TypeError('justify parameter should be %r instead of %r'
-                                % (gtk.Justification, type(justify)))
-            self.justify = justify
-        if format is not None:
-            self.format = format
-        if width is not None:
-            self.width = width
-        if sorted is not None:
-            self.sorted = sorted
-        if order is not None:
-            self.order = order
-        if title_pixmap is not None:
-            self.title_pixmap = title_pixmap
-        if self.title_pixmap: 
-            # if title is a pixmap, we offer the title itself as tooltip
-            # if a tip is not specifically set.
-            self.tooltip = tooltip or self.title
-        elif tooltip is not None:
-            # set a tooltip when provided; we don't use the title
-            # because it's silly to have identical tooltip and title 
-            self.tooltip = tooltip
-        if pixmap_spec is not None:
-            self.pixmap_spec = pixmap_spec
-        if self.expand is not None:
-            self.expand = expand
+        if ' ' in attribute:
+            msg = ("The attribute can not contain spaces, otherwise I can"
+                   " not find the value in the instances: %s" % attribute)
+            raise AttributeError(msg)
+        self.attribute = attribute
+        
+        if not 'title' in kwargs:
+            kwargs['title'] = attribute[0].upper() + attribute[1:]
             
-        # XXX: validate bizarre option combinations
-        # Tip: when adding items here, remember to update
-        # CListDelegate.dump_column_code()
-
-    def dump_code(self):
-        cdict = {}
-        for name in dir(self):
-            cdict[name] = getattr(self, name)
-        cdict["attribute"] = repr(self.attribute)
-        cdict["title"]  = repr(self.title)
-        cdict["title_pixmap"]  = repr(self.title_pixmap)
-        cdict["format"]  = repr(self.format)
-        cdict["tooltip"] = repr(self.tooltip)
-        if self.pixmap_spec:
-            name = "pixmap_spec_%s" % self.attribute
-            cdict["pixmap_spec"] = ", pixmap_spec=%s" % name
-        else:
-            cdict["pixmap_spec"] = ""
-        # Isn't printing text lovely?
-        return """
-\tColumn(attribute=%(attribute)s, title=%(title)s, visible=%(visible)s,
-\t\tjustify=%(justify)s, format=%(format)s, tooltip=%(tooltip)s, 
-\t\twidth=%(width)s, sorted=%(sorted)s, order=%(order)s, 
-\t\ttitle_pixmap=%(title_pixmap)s, %(pixmap_spec)s,
-\t\t%(expand)s)""" % cdict
-
+        PropertyObject.__init__(self, **kwargs)
+    
     # This is meant to be subclassable, we're using kgetattr, as
     # a staticmethod as an optimization, so we can avoid a function call.
     get_attribute = staticmethod(kgetattr)
-    
+                                             
     def __repr__(self):
         ns = self.__dict__.copy()
         attr = ns['attribute']
         del ns['attribute']
         return "<%s %s: %s>" % (self.__class__.__name__, attr, ns)
 
+    # XXX: Replace these two with a gazpacho loader adapter
     def __str__(self):
-        attr = self.attribute or ''
-        title = self.title or ''
         if self.data_type is None:
             data_type = ''
         else:
             data_type = self.data_type.__name__
-        visible = str(self.visible)
-        if self.justify is None:
-            justify = ''
-        else:
-            justify = self.justify.value_nick
-        format = self.format or ''
-        tooltip = self.tooltip or ''
-        width = self.width and int(self.width) or ''
-        sorted_value = str(self.sorted)
-        order = self.order.value_nick
-        # XXX: expand
-        return "%s|%s|%s|%s|%s|%s|%s|%s|%s|%s" % \
-               (attr, title, data_type, visible, justify,
-                tooltip, format, width, sorted_value, order)
+
+        return "%s|%s|%s|%s|%d|%s|%s|%d|%s|%d" % \
+               (self.attribute, self.title, data_type, self.visible,
+                self.justify, self.tooltip, self.format, self.width,
+                self.sorted, self.order)
     
     def set_from_string(self, data_string):
         fields = data_string.split('|')
@@ -315,6 +237,7 @@ class ContextMenu(gtk.Menu):
                 active_children[0].set_sensitive(False)
 
 COL_MODEL = 0
+
 class List(gtk.ScrolledWindow):
     """An enhanced version of GtkTreeView, which provides pythonic wrappers
     for accessing rows, and optional facilities for column sorting (with
@@ -346,8 +269,7 @@ class List(gtk.ScrolledWindow):
     #                           with the pointer.
     #   gtk.SELECTION_MULTIPLE	Multiple items can be selected at once.
     gproperty('selection-mode', gtk.SelectionMode,
-              default=gtk.SELECTION_BROWSE,
-              nick="SelectionMode")
+              default=gtk.SELECTION_BROWSE, nick="SelectionMode")
     
     def __init__(self, columns=[],
                  instance_list=None,
