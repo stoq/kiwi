@@ -41,5 +41,4 @@ setup(
     packages = ['kiwi',
                 'kiwi.ui',
                 'kiwi.ui.widgets'],
-    package_dir = {'kiwi':'kiwi'},
     )
