@@ -114,7 +114,7 @@ class Column(PropertyObject):
         
         self.attribute = attribute
 
-        kwargs['title'] = title or attribute.captialize()
+        kwargs['title'] = title or attribute.capitalize()
         if data_type:
             kwargs['data_type'] = data_type
         
