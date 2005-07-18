@@ -69,25 +69,27 @@ class Column(PropertyObject):
     gproperty('justify', gtk.Justification, default=gtk.JUSTIFY_LEFT)
     gproperty('order', gtk.SortType, default=gtk.SORT_ASCENDING)
     
-    def __init__(self, attribute, **kwargs):
+    def __init__(self, attribute, title=None, data_type=None, **kwargs):
         """
         Creates a new Column, which describes how a column in a
         List should be rendered.
 
           - attribute: a string with the name of the instance attribute the
-            column represents
+            column represents.
           - title: the title of the column, defaulting to the capitalized form
-            of the attribute
+            of the attribute.
           - data_type: the type of the attribute that will be inserted into the
-            column 
-          - visible: a boolean specifying if it is initially hidden or shown
+            column.
+            
+          Optional keyword arguments:
+          - visible: a boolean specifying if it is initially hidden or shown.
           - justify: one of gtk.JUSTIFY_LEFT, gtk.JUSTIFY_RIGHT or
             gtk.JUSTIFY_CENTER or None. If None, the justification will be
             determined by the type of the attribute value of the first
             instance to be inserted in the List (integers and floats
             will be right-aligned).
           - format: a format string to be applied to the attribute value upon
-            insertion in the list
+            insertion in the list.
           - width: the width in pixels of the column, if not set, uses the
             default to List. If no Column specifies a width,
             columns_autosize() will be called on the List upon add_instance()
@@ -109,11 +111,13 @@ class Column(PropertyObject):
             msg = ("The attribute can not contain spaces, otherwise I can"
                    " not find the value in the instances: %s" % attribute)
             raise AttributeError(msg)
-        self.attribute = attribute
         
-        if not 'title' in kwargs:
-            kwargs['title'] = attribute[0].upper() + attribute[1:]
-            
+        self.attribute = attribute
+
+        kwargs['title'] = title or attribute.captialize()
+        if data_type:
+            kwargs['data_type'] = data_type
+        
         PropertyObject.__init__(self, **kwargs)
     
     # This is meant to be subclassable, we're using kgetattr, as
