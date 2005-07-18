@@ -24,10 +24,22 @@
 
 import os
 
-from gazpacho.loader.widgettree import WidgetTree
+from gazpacho.loader.loader import ObjectBuilder
+from gazpacho.loader.custom import Adapter, PythonWidgetAdapter
 
 from kiwi import _warn
 from kiwi.environ import find_in_gladepath, image_path_resolver
+from kiwi.ui.widgets.checkbutton import CheckButton
+from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
+from kiwi.ui.widgets.entry import Entry
+from kiwi.ui.widgets.label import Label
+from kiwi.ui.widgets.list import Column, List
+from kiwi.ui.widgets.radiobutton import RadioButton
+from kiwi.ui.widgets.spinbutton import SpinButton
+from kiwi.ui.widgets.textview import TextView
+
+class Builder(ObjectBuilder):
+    find_resource = image_path_resolver
 
 class GazpachoWidgetTree:
     """Example class of GladeAdaptor that uses Gazpacho loader to load the
@@ -46,8 +58,7 @@ class GazpachoWidgetTree:
         self._gladefile = find_in_gladepath(filename + ".glade")
         self._widgets =  (widgets or view.widgets or [])[:]
         self.gladename = gladename or filename
-        self._tree = WidgetTree(self._gladefile,
-                                path_resolver=image_path_resolver)
+        self._tree = Builder(self._gladefile)
 
         self._attach_widgets()
         
@@ -75,3 +86,38 @@ class GazpachoWidgetTree:
 
     def signal_autoconnect(self, dic):
         self._tree.signal_autoconnect(dic)        
+
+class CheckButtonAdapter(PythonWidgetAdapter):
+    object_type = CheckButton
+    
+class ComboBoxdapter(PythonWidgetAdapter):
+    object_type = ComboBox
+    
+class ComboBoxEntryAdapter(PythonWidgetAdapter):
+    object_type = ComboBoxEntry
+    
+class EntryAdapter(PythonWidgetAdapter):
+    object_type = Entry
+    
+class LabelAdapter(PythonWidgetAdapter):
+    object_type = Label
+
+class ColumnAdapter(Adapter):
+    object_type = Column
+    def construct(self, name, gtype, properties):
+        print name, properties
+        obj = Column(name)
+        return obj
+    
+class ListAdapter(PythonWidgetAdapter):
+    object_type = List
+    
+class RadioButtonAdapter(PythonWidgetAdapter):
+    object_type = RadioButton
+    
+class SpinButtonAdapter(PythonWidgetAdapter):
+    object_type = SpinButton
+    
+class TextViewAdapter(PythonWidgetAdapter):
+    object_type = TextView
+
