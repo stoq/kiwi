@@ -18,8 +18,8 @@ from datetime import date
 from gettext import gettext as _
 
 import gtk
-
 from gazpacho.custompropertyeditor import CustomPropertyEditor
+from gazpacho.loader.custom import Adapter, PythonWidgetAdapter
 from gazpacho.util import get_bool_from_string_with_default
 from gazpacho.widget import Widget
 
@@ -27,19 +27,49 @@ from kiwi.ui.widgets.checkbutton import CheckButton
 from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
 from kiwi.ui.widgets.entry import Entry
 from kiwi.ui.widgets.label import Label
-from kiwi.ui.widgets.list import List
+from kiwi.ui.widgets.list import Column, List
 from kiwi.ui.widgets.radiobutton import RadioButton
 from kiwi.ui.widgets.spinbutton import SpinButton
 from kiwi.ui.widgets.textview import TextView
 
 root_library = 'kiwi.ui.widgets'
 widget_prefix = 'Kiwi'
+                  
+class CheckButtonAdapter(PythonWidgetAdapter):
+    object_type = CheckButton
+    
+class ComboBoxdapter(PythonWidgetAdapter):
+    object_type = ComboBox
+    
+class ComboBoxEntryAdapter(PythonWidgetAdapter):
+    object_type = ComboBoxEntry
+    
+class EntryAdapter(PythonWidgetAdapter):
+    object_type = Entry
+    
+class LabelAdapter(PythonWidgetAdapter):
+    object_type = Label
+
+class ColumnAdapter(Adapter):
+    object_type = Column
+    def construct(self, name, gtype, properties):
+        print name, properties
+        obj = Column(name)
+        return obj
+    
+class ListAdapter(PythonWidgetAdapter):
+    object_type = List
+    
+class RadioButtonAdapter(PythonWidgetAdapter):
+    object_type = RadioButton
+    
+class SpinButtonAdapter(PythonWidgetAdapter):
+    object_type = SpinButton
+    
+class TextViewAdapter(PythonWidgetAdapter):
+    object_type = TextView
 
 # When we can use a never version of gazpacho, remove this
-try:
-    from gazpacho.widget import get_widget_from_gtk_widget as from_widget
-except ImportError:
-    from_widget = Widget.from_widget
 
 class DataTypeAdaptor(object):
     def create_editor(self, context):
@@ -79,7 +109,7 @@ class DataTypeAdaptor(object):
         proxy.set_value(value)
 
     def save(self, context, widget):
-        gwidget = from_widget(widget)
+        gwidget = Widget.from_widget(widget)
         data_type = gwidget.get_glade_property('data-type')
         # data type is one of (str, float, int, bool)
         return data_type._value.__name__
@@ -214,7 +244,7 @@ class ListColumnDefinitionsEditor(CustomPropertyEditor):
         return col
 
     def _get_default_values(self):
-        return ('', '', 'str', True, 'left', '', '', 0, False, '')
+        return ('unnamed', '', 'str', True, 'left', '', '', 1, False, '')
 
     def _update_proxy(self):
         cols = []
