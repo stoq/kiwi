@@ -1,3 +1,11 @@
+2005-07-15  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/list.py (Column): Almost a complete rewrite,
+	using a GObject and properties.
+
+	* kiwi/utils.py: Add a new PropertyObject, fix gproperty to work
+	with float,int and enums
+
 2005-07-14  Johan Dahlin  <jdahlin@async.com.br>
 
 	* tests/test_utils.py (SliceTest): Add tests for slicerange
