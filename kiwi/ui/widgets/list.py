@@ -138,7 +138,7 @@ class Column(PropertyObject):
                 self.justify, self.tooltip, self.format, self.width,
                 self.sorted, self.order)
     
-    def set_from_string(self, data_string):
+    def from_string(data_string):
         fields = data_string.split('|')
         if len(fields) != 10:
             msg = 'every column should have 10 fields, not %d' % len(fields)
@@ -146,23 +146,29 @@ class Column(PropertyObject):
 
         # the attribute is mandatory
         if not fields[0]:
-            return False
+            raise TypeError
+        
+        column = Column(fields[0])
+        column.title = fields[1] or ''
+        column.data_type = str2type(fields[2])
+        column.visible = str2bool(fields[3], default_value=True)
+        column.justify = str2enum(fields[4], gtk.JUSTIFY_LEFT)
+        column.tooltip = fields[5]
+        column.format = fields[6]
 
-        self.attribute = fields[0] or None
-        self.title = fields[1] or None
-        self.data_type = str2type(fields[2])
-        self.visible = str2bool(fields[3], default_value=True)
-        self.justify = str2enum(fields[4], gtk.JUSTIFY_LEFT)
-        self.tooltip = fields[5]
-        self.format = fields[6]
-        self.width = (fields[7] and int(fields[7])) or None
-        self.sorted = str2bool(fields[8], default_value=False)
-        self.order = str2enum(fields[9], gtk.SORT_ASCENDING) \
+        try:
+            column.width = int(fields[7])
+        except ValueError:
+            pass
+        
+        column.sorted = str2bool(fields[8], default_value=False)
+        column.order = str2enum(fields[9], gtk.SORT_ASCENDING) \
                      or gtk.SORT_ASCENDING
         # XXX: expand, remember to sync with __str__
         
-        return True
-
+        return column
+    from_string = staticmethod(from_string)
+    
 class ContextMenu(gtk.Menu):
     """
     ContextMenu is a wrapper for the menu that's displayed when right
@@ -776,10 +782,8 @@ class List(gtk.ScrolledWindow):
             for col in value.split('^'):
                 if not col:
                     continue
-                c = Column()
-                success = c.set_from_string(col)
-                if success:
-                    self._columns.append(c)
+                c = Column.from_string(col)
+                self._columns.append(c)
         elif isinstance(value, (list, tuple)):
             self._columns = value
             self._columns_string = '^'.join([str(col) for col in value])
