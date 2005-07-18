@@ -25,7 +25,7 @@
 import os
 
 from gazpacho.loader.loader import ObjectBuilder
-from gazpacho.loader.custom import Adapter, PythonWidgetAdapter
+from gazpacho.loader.custom import Adapter, PythonWidgetAdapter, adapter_registry
 
 from kiwi import _warn
 from kiwi.environ import find_in_gladepath, image_path_resolver
@@ -87,37 +87,45 @@ class GazpachoWidgetTree:
     def signal_autoconnect(self, dic):
         self._tree.signal_autoconnect(dic)        
 
+
 class CheckButtonAdapter(PythonWidgetAdapter):
     object_type = CheckButton
+adapter_registry.register_adapter(CheckButtonAdapter)
     
-class ComboBoxdapter(PythonWidgetAdapter):
+class ComboBoxAdapter(PythonWidgetAdapter):
     object_type = ComboBox
+adapter_registry.register_adapter(ComboBoxAdapter)
     
 class ComboBoxEntryAdapter(PythonWidgetAdapter):
     object_type = ComboBoxEntry
+adapter_registry.register_adapter(ComboBoxEntryAdapter)
     
 class EntryAdapter(PythonWidgetAdapter):
     object_type = Entry
+adapter_registry.register_adapter(EntryAdapter)
     
 class LabelAdapter(PythonWidgetAdapter):
     object_type = Label
+adapter_registry.register_adapter(LabelAdapter)
 
 class ColumnAdapter(Adapter):
     object_type = Column
     def construct(self, name, gtype, properties):
-        print name, properties
-        obj = Column(name)
-        return obj
+        return Column(name)
+adapter_registry.register_adapter(ColumnAdapter)
     
 class ListAdapter(PythonWidgetAdapter):
     object_type = List
+adapter_registry.register_adapter(ListAdapter)
     
 class RadioButtonAdapter(PythonWidgetAdapter):
     object_type = RadioButton
+adapter_registry.register_adapter(RadioButtonAdapter)
     
 class SpinButtonAdapter(PythonWidgetAdapter):
     object_type = SpinButton
+adapter_registry.register_adapter(SpinButtonAdapter)
     
 class TextViewAdapter(PythonWidgetAdapter):
     object_type = TextView
-
+adapter_registry.register_adapter(TextViewAdapter)
