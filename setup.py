@@ -34,7 +34,7 @@ setup(
         ('share/gazpacho/catalogs',
          listfiles('gazpacho-plugin', 'kiwi.xml')),
         ('share/gazpacho/resources/kiwi',
-         listfiles('gazpacho-plugin', 'pixmaps', '*.png')),
+         listfiles('gazpacho-plugin', 'resources', '*.png')),
         ('lib/gazpacho/widgets',
          listfiles('gazpacho-plugin', 'kiwi.py')),
         ],
