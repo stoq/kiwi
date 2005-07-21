@@ -150,13 +150,12 @@ def gproperty(name, type, *args, **kwargs):
         nick = name
     args = [type, name, nick]
 
-    default = kwargs.get('default', None)
     if type == str:
-        args.append(default or '')
+        args.append(kwargs.get('default', ''))
     elif type == int:
         args.append(kwargs.get('minmum', 0))
         args.append(kwargs.get('maximum', _MAX_INT))
-        args.append(kwargs.get('default', 0.0))
+        args.append(kwargs.get('default', 0))
     elif type == float:
         args.append(kwargs.get('minmum', 0.0))
         args.append(kwargs.get('maximum', _MAX_FLOAT))
@@ -166,8 +165,9 @@ def gproperty(name, type, *args, **kwargs):
         args.append(kwargs.get('maximum', _MAX_LONG))
         args.append(kwargs.get('default', 0L))
     elif type == bool:
-        args.append(default or True)
+        args.append(kwargs.get('default', True))
     elif gobject.type_is_a(type, gobject.GEnum):
+        default = kwargs.get('default')
         if default is None:
             raise TypeError("enum properties needs a default value")
         elif not isinstance(default, type):
