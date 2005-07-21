@@ -62,7 +62,7 @@ class Column(PropertyObject):
     gproperty('format', str)
     gproperty('tooltip', str)
     gproperty('title_pixmap', str)
-    gproperty('width', int, default=1, maximum=2**16)
+    gproperty('width', int, maximum=2**16)
     gproperty('sorted', bool, default=False)
     gproperty('pixmap_spec', str)
     gproperty('expand', bool, default=False)
@@ -447,7 +447,7 @@ class List(gtk.ScrolledWindow):
         treeview_column.set_visible(column.visible)
 
         treeview_column.connect("clicked", self._on_column__clicked, column)
-        if column.width is not None:
+        if column.width:
             treeview_column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
             treeview_column.set_fixed_width(column.width)
         if column.tooltip is not None:
@@ -463,7 +463,7 @@ class List(gtk.ScrolledWindow):
             self._sort_column_definition_index = index
             treeview_column.set_sort_indicator(True)
             
-        if column.width is not None:
+        if column.width:
             self._autosize = False
 
         # typelist here may be none. It's okay; justify_columns will try
