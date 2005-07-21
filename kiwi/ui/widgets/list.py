@@ -307,12 +307,8 @@ class List(gtk.ScrolledWindow):
         self._tooltips = gtk.Tooltips()
 
         # convenience connections
-        selection = self.treeview.get_selection()
-        signal_id = selection.connect("changed", self._on_selection__changed)
-        self._selection_changed_id = signal_id
-        signal_id = self.treeview.connect_after("row-activated",
-                                                self._on_treeview__row_activated)
-        self._row_activated_id = signal_id
+        self.treeview.connect_after("row-activated",
+                                    self._after_treeview__row_activated)
 
         # create a popup menu for showing or hiding columns
         self._popup = ContextMenu(self.treeview)
@@ -341,11 +337,11 @@ class List(gtk.ScrolledWindow):
             self.model.set_sort_column_id(COL_MODEL, cd.order)
 
         # Set selection mode last to avoid spurious events
-        self.set_selection_mode(mode)
-
+        selection = self.treeview.get_selection()
+        selection.connect("changed", self._on_selection__changed)
+        selection.set_mode(mode)
         # Select the first item if no items are selected
         if mode != gtk.SELECTION_NONE and instance_list:
-            selection = self.treeview.get_selection()
             selection.select_iter(self.model[COL_MODEL].iter)
             
     # Columns handling
@@ -604,7 +600,7 @@ class List(gtk.ScrolledWindow):
     def _on_selection__changed(self, selection):
         self.emit('selection-change')
 
-    def _on_treeview__row_activated(self, treeview, path, view_column):
+    def _after_treeview__row_activated(self, treeview, path, view_column):
         row_iter = self.model.get_iter(path)
         selected_obj = self.model[row_iter][COL_MODEL]
         self.emit('double-click', selected_obj)
