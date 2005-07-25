@@ -34,16 +34,16 @@ class PropertyMeta(type):
         # attribute __gproperties__. It's fixed in PyGTK CVS, so it can be
         # remove when we can depend on PyGTK 2.8
         pytypes = {}
-        for name, value in cdict.get('__gproperties__', {}).items():
+        for prop_name, value in cdict.get('__gproperties__', {}).items():
             if gobject.type_is_a(value[0], gobject.GEnum):
-                name = name.replace('-', '_')
-                pytypes[name] = value[3]
+                prop_name = prop_name.replace('-', '_')
+                pytypes[prop_name] = value[3]
 
-        cls = type(name, bases, cdict)
+        cls = type.__new__(self, name, bases, cdict)
         # Register the type, here so don't have to do it explicitly, it
         # can be removed in PyGTK 2.8, since it does this magic for us.
         gobject.type_register(cls)
-            
+
         # Create python properties for gobject properties, store all
         # the values in self._attributes, so do_set/get_property
         # can access them. Using set property for attribute assignments
