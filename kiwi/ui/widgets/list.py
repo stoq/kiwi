@@ -33,8 +33,7 @@ import gtk
 
 from kiwi import _warn, datatypes, ValueUnset
 from kiwi.accessors import kgetattr
-from kiwi.utils import PropertyObject, PropertyMeta, slicerange, \
-                       gsignal, gproperty
+from kiwi.utils import PropertyObject, slicerange, gsignal, gproperty
 
 # Minimum number of rows where we show busy cursor when sorting numeric columns
 MANY_ROWS = 1000
@@ -54,8 +53,6 @@ def str2bool(value, default_value=False,
 
 class Column(PropertyObject):
     """Specifies a column in a List"""
-    __metaclass__ = PropertyMeta
-
     gproperty('title', str)
     gproperty('data-type', object)
     gproperty('visible', bool, default=True)
@@ -119,7 +116,7 @@ class Column(PropertyObject):
             kwargs['data_type'] = data_type
         
         PropertyObject.__init__(self, **kwargs)
-    
+
     # This is meant to be subclassable, we're using kgetattr, as
     # a staticmethod as an optimization, so we can avoid a function call.
     get_attribute = staticmethod(kgetattr)
