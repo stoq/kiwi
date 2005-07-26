@@ -190,7 +190,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     The validatation feature provides a way to check the data entered and to
     display information about what is wrong.
     """
-    
+
     def __init__(self, data_type=str, model_attribute=None,
                  default_value=None, widget=None):
         WidgetMixin.__init__(self, data_type, model_attribute, default_value)
@@ -254,7 +254,9 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         data - the data to validate
         returns the widget data-type
         """
-
+        
+        old_state = self.is_correct()
+        
         # check if we should draw the man a stringdatory icon
         # this need to be done before any data conversion because we
         # we don't want to end drawing two icons
@@ -295,19 +297,18 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
             # Show the error icon
             self._validation_error(e)
             data = ValueUnset
-            
-        # Step 3: Inform the user code wether their widgets
-        #         are valid or not
-        self._notify_validity()
+
+        # Step 3, iff validation changed, emit a signal
+        new_state = self.is_correct()
+        if old_state != new_state:
+            self.emit('validation-changed', new)
 
         return data
     
     def _validation_error(self, e):
         if self._invalid_data:
             self._blank_data = False
-            # check if the remaining widgets are ok
-            self._notify_validity()
-        
+            
         self._invalid_data = True
         self._validation_error_message = str(e)
         self._error_tooltip.set_error_text(self._validation_error_message)
@@ -440,10 +441,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         area_window.draw_pixbuf(None, pixbuf, 0, 0, 
                                 winw - pixw, (winh - pixh)/2, 
                                 pixw, pixh)
-
-    def _notify_validity(self):
-        if self.owner:
-            self.owner.notify_validity()
 
     def is_correct(self):
         if self._invalid_data:

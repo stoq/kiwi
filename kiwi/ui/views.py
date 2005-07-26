@@ -229,6 +229,10 @@ class SlaveView(gobject.GObject):
     # This signal is emited when the view wants to return a result value
     gsignal("result", object)
     
+    # This is emitted when validation changed for a view
+    # Used by parents views to know when child slaves changes
+    gsignal('validation-changed', bool)
+    
     def __init__(self, toplevel=None, widgets=None, gladefile=None,
                  gladename=None, toplevel_name=None):
         """ Creates a new SlaveView. Sets up self.toplevel and self.widgets
@@ -252,10 +256,6 @@ class SlaveView(gobject.GObject):
         self.toplevel_name = toplevel_name
         self.toplevel = toplevel
         self.widgets = widgets or self.widgets or []
-        
-        # stores the function that will be called when widgets 
-        # validity is checked
-        self._validate_function = None
 
         self.__broker = None
         
@@ -271,6 +271,16 @@ class SlaveView(gobject.GObject):
         self.glade_adaptor = None
         if self.gladefile is not None:
             self._init_glade_adaptor()
+
+        # Validation status
+        self._valid = True
+
+        # Dictionary slave/widget name -> validation status
+        self._validation = {}
+        
+        # stores the function that will be called when widgets 
+        # validity is checked
+        self._validate_function = None
 
         if self.toplevel_name is not None and self.toplevel is None:
             self.toplevel = getattr(self, self.toplevel_name, None)
@@ -288,24 +298,27 @@ class SlaveView(gobject.GObject):
 
         self.slaves = {}
 
-    # Global validations
-    def notify_validity(self):
-        """Checks if there are widgets with invalid data.
-        Calls the registered validate function
-        """
-        
-        if self._validate_function is None:
-            return
-        
-        valid = True
-        for widget_name in self.widgets:
-            widget = self.get_widget(widget_name)
-            if isinstance(widget, MixinSupportValidation):
-                if not widget.is_correct():
-                    valid = False
-                    break
+    # Children of the view, eg slaves or widgets are connected to this signal
+    # When validation changes of a validatable child this callback is called
+    def _on_child__validation_changed(self, name, value):
+        self._validation[name] = value
 
-        self._validate_function(valid)
+        self._check_and_notify_validity()
+        
+    def _check_and_notify_validity(self):
+        # Current view is only valid if we have no invalid children
+        # their status are stored as values in the dictionary
+        valid = False not in self._validation.values()
+
+        # Check if validation really changed
+        if self._valid == valid:
+            return
+
+        self._valid = valid
+        self.emit('validation-changed', valid)
+        
+        if self._validate_function:
+            self._validate_function(valid)
 
     def register_validate_function(self, function):
         """The signature of the validate function is:
@@ -584,16 +597,19 @@ class SlaveView(gobject.GObject):
 
         # when attaching a slave we usually want it visible
         parent.show()
-        
         # call slave's callback
         slave.on_attach(self)
-
+        
         if self.slaves.has_key(name):
             # I prefer to don't emit a raise here because it's really
             # possible to change a certain slave in runtime.
             _warn("You already have a slave %s attached" % name)
         self.slaves[name] = slave
 
+        slave.connect_object('validation-changed',
+                             self._on_child__validation_changed,
+                             name)
+        
         # return placeholder we just removed
         return placeholder
 
@@ -684,8 +700,20 @@ class SlaveView(gobject.GObject):
         no way to get that proxy later on. You have been warned (tm)
         """
         widgets = widgets or self.widgets
+
+        for widget_name in widgets:
+            widget = getattr(self, widget_name, None)
+            if (widget is None or
+                not isinstance(widget, MixinSupportValidation)):
+                continue
+            
+            widget.connect_object('validation-changed',
+                                  self._on_child__validation_changed,
+                                  widget_name)
+
         proxy = Proxy(self, model, widgets)
         self.proxies.append(proxy)
+
         return proxy
     
 gobject.type_register(SlaveView)

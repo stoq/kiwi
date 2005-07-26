@@ -71,6 +71,7 @@ def implementsIProxy():
         dic = local_namespace['__gsignals__']
 
     dic['content-changed'] = (gobject.SIGNAL_RUN_LAST, None, ())
+    dic['validation-changed'] = (gobject.SIGNAL_RUN_LAST, None, (bool,))
     
     # the line below is used for triggering custom validation.
     # if you want a custom validation on a widget make a method on the
