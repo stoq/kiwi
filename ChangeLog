@@ -1,3 +1,13 @@
+2005-07-26  Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/lang.glade:
+	* examples/slaves.py:
+	* kiwi/interfaces.py:
+	* kiwi/ui/views.py:
+	* kiwi/ui/widgets/proxy.py:
+	Add per view validation, including example. Fixes #2096
+	r=kiko
+	
 2005-07-15  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/list.py (Column): Almost a complete rewrite,
