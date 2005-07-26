@@ -26,7 +26,7 @@ import os
 from gtk.glade import XML
 
 from kiwi import _warn
-from kiwi.environ import find_in_gladepath
+from kiwi.environ import environ
 
 class LibgladeWidgetTree(XML):
     def __init__(self, view, gladefile, widgets, gladename=None):
@@ -39,7 +39,7 @@ class LibgladeWidgetTree(XML):
         filename = os.path.splitext(os.path.basename(gladefile))[0]
         
         self._view = view
-        self._gladefile = find_in_gladepath(filename + ".glade")
+        self._gladefile = environ.find_resource("glade", filename + ".glade")
         self._widgets =  (widgets or view.widgets or [])[:]
         self.gladename = gladename or filename
         XML.__init__(self, self._gladefile)

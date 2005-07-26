@@ -24,103 +24,51 @@
 #         
 
 import os
-import string
 
-__all__ = ['set_gladepath', 'get_gladepath', 'find_in_gladepath',
-           'set_imagepath', 'get_imagepath', 'image_path_resolver',
-           'require_gazpacho', 'is_gazpacho_required']
-#
-# Gladepath handling
-#
+__all__ = ['environ']
 
-_gladepath = []
+class KiwiEnvironment:
+    """Environment control
 
-if os.environ.has_key('KIWI_GLADE_PATH'):
-    _gladepath = os.environ['KIWI_GLADE_PATH'].split(':')
+    When you want to access a resource on the filesystem, such as
+    an image or a glade file you use this object.
 
-def set_gladepath(path):
-    """Sets a new path to be used to search for glade files when creating
-    GladeViews or it's subclasses
-    """
-    global _gladepath
-    _gladepath = path
+    External libraries or applications are free to add extra directories"""
 
-def get_gladepath():
-    global _gladepath
-    return _gladepath
+    def __init__(self):
+        self._resources = {}
 
-def find_in_gladepath(filename):
-    """Looks in gladepath for the file specified"""
-
-    gladepath = get_gladepath()
-    
-    # check to see if gladepath is a list or tuple
-    if not isinstance(gladepath, (tuple, list)):
-        msg ="gladepath should be a list or tuple, found %s"
-        raise ValueError(msg % type(gladepath))
-    if os.sep in filename or not gladepath:
-        if os.path.isfile(filename):
-            return filename
+    def add_resource(self, resource, path):
+        if not resource in self._resources:
+            paths = self._resources[resource] = []
         else:
-            raise IOError("%s not found" % filename)
+            paths = self._resources[resource]
 
-    for path in gladepath:
-        # append slash to dirname
-        if not path:
-            continue
-        # if absolute path
-        fname = os.path.join(path, filename)
-        if os.path.isfile(fname):
-            return fname
+        paths.append(path)
+        
+    def add_resource_variable(self, resource, variable):
+        """Add resources from an environment variable"""
+        env = os.environ.get(variable, '')
+        for path in env.split(':'):
+            self.add_resource(resource, env)
+            
+    def find_resource(self, resource, name):
+        """Locate a specific resource of called name of type resource"""
+        
+        if not resource in self._resources:
+            raise EnvironmentError("No resource called: %s" % resource)
 
-    raise IOError("%s not found in path %s.  You probably need to "
-                  "kiwi.environ.set_gladepath() correctly" % (filename,
-                                                              gladepath))
+        for path in self._resources[resource]:
+            filename = os.path.join(path, name)
+            if os.path.exists(filename):
+                return filename
 
-#
-# Image path resolver
-#
-
-_imagepath = ''
-
-if os.environ.has_key ('KIWI_IMAGE_PATH'):
-    _imagepath = string.split(os.environ['KIWI_IMAGE_PATH'])
-
-def set_imagepath(path):
-    global _imagepath
-    _imagepath = path
-
-def get_imagepath():
-    global _imagepath
-    return _imagepath
-
-def image_path_resolver(filename):
-    imagepath = get_imagepath()
-
-    # check to see if imagepath is a list or tuple
-    if not isinstance(imagepath, (list, tuple)):
-        msg ="imagepath should be a list or tuple, found %s"
-        raise ValueError(msg % type(imagepath))
-
-    if not imagepath:
-        if os.path.isfile(filename):
-            return filename
-        else:
-            raise IOError("%s not found" % filename)
-
-    basefilename = os.path.basename(filename)
-    
-    for path in imagepath:
-        if not path:
-            continue
-        fname = os.path.join(path, basefilename)
-        if os.path.isfile(fname):
-            return fname
-
-    raise IOError("%s not found in path %s. You probably need to "
-                  "kiwi.environ.set_imagepath() correctly" % (filename,
-                                                              imagepath))
-
+        raise EnvironmentError("Could not find %s resource: %s" % (
+            resource, name))
+                               
+environ = KiwiEnvironment()
+environ.add_resource_variable("glade", "KIWI_GLADE_PATH")
+environ.add_resource_variable("image", "KIWI_IMAGE_PATH")
 
 _require_gazpacho_loader = False
 

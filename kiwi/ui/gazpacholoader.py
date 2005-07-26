@@ -28,7 +28,7 @@ from gazpacho.loader.loader import ObjectBuilder
 from gazpacho.loader.custom import Adapter, PythonWidgetAdapter, adapter_registry
 
 from kiwi import _warn
-from kiwi.environ import find_in_gladepath, image_path_resolver
+from kiwi.environ import environ
 from kiwi.ui.widgets.checkbutton import CheckButton
 from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
 from kiwi.ui.widgets.entry import Entry
@@ -39,7 +39,8 @@ from kiwi.ui.widgets.spinbutton import SpinButton
 from kiwi.ui.widgets.textview import TextView
 
 class Builder(ObjectBuilder):
-    find_resource = image_path_resolver
+    def find_resource(self, filename):
+        return environ.find_resource("pixmap", filename)
 
 class GazpachoWidgetTree:
     """Example class of GladeAdaptor that uses Gazpacho loader to load the
@@ -55,7 +56,7 @@ class GazpachoWidgetTree:
         filename = os.path.splitext(os.path.basename(gladefile))[0]
         
         self._view = view
-        self._gladefile = find_in_gladepath(filename + ".glade")
+        self._gladefile = environ.find_resource("glade", filename + ".glade")
         self._widgets =  (widgets or view.widgets or [])[:]
         self.gladename = gladename or filename
         self._tree = Builder(self._gladefile)
