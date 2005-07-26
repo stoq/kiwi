@@ -26,6 +26,21 @@ import sys
 
 import gobject
 
+def list_properties(gtype, parent=True):
+    """
+    Return a list of all properties for GType gtype, excluding
+    properties in parent classes
+    """
+    pspecs = gobject.list_properties(gtype)
+    if parent:
+        return pspecs
+    
+    parent = gobject.type_parent(gtype)
+    parent_pspecs = gobject.list_properties(parent)
+    return [pspec for pspec in pspecs
+                      if pspec not in parent_pspecs]
+            
+
 class PropertyMeta(type):
     def __new__(self, name, bases, cdict):
         # The default value for enum GParamSpecs (returned by list_properties)
@@ -49,7 +64,7 @@ class PropertyMeta(type):
         # can access them. Using set property for attribute assignments
         # allows us to add hooks (notify::attribute) when they change.
         default_values = {}
-        for pspec in gobject.list_properties(cls):
+        for pspec in list_properties(cls, parent=False):
             prop_name = pspec.name.replace('-', '_')
 
             p = property(lambda self, n=prop_name: self._attributes[n],
@@ -64,7 +79,17 @@ class PropertyMeta(type):
                 
             default_values[prop_name] = default_value
 
-        cls._default_values = default_values
+        subclass = False
+        for base in cls.__bases__:
+            if type(base) == self:
+                subclass = True
+                break
+            
+        # For subclasses, do not overwrite _default_values
+        if subclass:
+            cls._default_values.update(default_values)
+        else:
+            cls._default_values = default_values
         return cls
 
 class PropertyObject(gobject.GObject):
