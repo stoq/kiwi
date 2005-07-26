@@ -301,7 +301,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         # Step 3, iff validation changed, emit a signal
         new_state = self.is_correct()
         if old_state != new_state:
-            self.emit('validation-changed', new)
+            self.emit('validation-changed', new_state)
 
         return data
     
