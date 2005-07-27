@@ -524,12 +524,11 @@ class List(gtk.ScrolledWindow):
         instance = model[iter][COL_MODEL]
         attribute = definition.attribute
         
-        if definition.format_func:
-            data = definition.format_func(kgetattr(instance, attribute, None))
-        else:
-            data = definition.get_attribute(instance, attribute, None)
-            if definition.format:
-                data = datatypes.lformat(definition.format, data)
+        data = definition.get_attribute(instance, attribute, None)
+        if definition.format:
+            data = datatypes.lformat(definition.format, data)
+        elif definition.format_func:
+            data = definition.format_func(data)
         cellrenderer.set_property(renderer_prop, data)
 
     def _on_header__button_release_event(self, button, event):
