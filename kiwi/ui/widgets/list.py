@@ -56,15 +56,14 @@ class Column(PropertyObject):
     gproperty('title', str)
     gproperty('data-type', object)
     gproperty('visible', bool, default=True)
+    gproperty('justify', gtk.Justification, default=gtk.JUSTIFY_LEFT)
     gproperty('format', str)
-    gproperty('tooltip', str)
-    gproperty('title_pixmap', str)
     gproperty('width', int, maximum=2**16)
     gproperty('sorted', bool, default=False)
-    gproperty('pixmap_spec', str)
-    gproperty('expand', bool, default=False)
-    gproperty('justify', gtk.Justification, default=gtk.JUSTIFY_LEFT)
     gproperty('order', gtk.SortType, default=gtk.SORT_ASCENDING)
+    #gproperty('title_pixmap', str)
+    gproperty('expand', bool, default=False)
+    gproperty('tooltip', str)
     
     def __init__(self, attribute, title=None, data_type=None, **kwargs):
         """
@@ -95,12 +94,15 @@ class Column(PropertyObject):
             If no Columns are sorted, the List will be created unsorted.
           - order: one of gtk.SORT_ASCENDING or gtk.SORT_DESCENDING or -1. The
             value -1 is used internally when the column is not sorted.
-          - title_pixmap: if set to a filename (that can be in gladepath),
-            a pixmap will be used *instead* of the title set. The title string
-            will still be used to identify the column in the column selection
-            and in a tooltip, if a tooltip is not set.
           - expand: if set column will expand. Note: this space is shared
             equally amongst all columns that have the expand set to True.
+          - tooltip: a string which will be used as a tooltip for the column
+            header
+          TODO
+          - title_pixmap: if set to a filename a pixmap will be used *instead*
+            of the title set. The title string will still be used to
+            identify the column in the column selection and in a tooltip,
+            if a tooltip is not set.
         """
         
         # XXX: filter function?
@@ -443,7 +445,7 @@ class List(gtk.ScrolledWindow):
         if column.width:
             treeview_column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
             treeview_column.set_fixed_width(column.width)
-        if column.tooltip is not None:
+        if column.tooltip:
             widget = self._get_column_button(treeview_column)
             if widget is not None:
                 self._tooltips.set_tip(widget, column.tooltip)

@@ -1,3 +1,9 @@
+2005-07-27  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/list.py (Column.__init__): Mark title_pixmap as 
+	todo, since it's not implemented yet. Sort the other properties after
+	the doc string. Add tooltips doc string.
+
 2005-07-26  Johan Dahlin  <jdahlin@async.com.br>
 
 	* examples/lang.glade:
