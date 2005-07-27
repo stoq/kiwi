@@ -64,6 +64,7 @@ class Column(PropertyObject):
     #gproperty('title_pixmap', str)
     gproperty('expand', bool, default=False)
     gproperty('tooltip', str)
+    gproperty('format_func', object)
     
     def __init__(self, attribute, title=None, data_type=None, **kwargs):
         """
@@ -98,6 +99,13 @@ class Column(PropertyObject):
             equally amongst all columns that have the expand set to True.
           - tooltip: a string which will be used as a tooltip for the column
             header
+          - format_func: a callable which will be used to format the output
+            of a column. The function will take one argument which is the
+            value to convert and is expected to return a string.
+            Note that you cannot use format and format_func at the same time,
+            if you provide a format function you'll be responsible for
+            converting the value to a string.
+            
           TODO
           - title_pixmap: if set to a filename a pixmap will be used *instead*
             of the title set. The title string will still be used to
@@ -116,6 +124,14 @@ class Column(PropertyObject):
         kwargs['title'] = title or attribute.capitalize()
         if data_type:
             kwargs['data_type'] = data_type
+
+        format_func = kwargs.get('format_func')
+        if format_func:
+            if not callable(format_func):
+                raise TypeError("format_func must be callable")
+            if 'format' in kwargs:
+                raise TypeError(
+                    "format and format_func can not be used at the same time")
         
         PropertyObject.__init__(self, **kwargs)
 
@@ -141,7 +157,7 @@ class Column(PropertyObject):
                 self.justify, self.tooltip, self.format, self.width,
                 self.sorted, self.order)
     
-    def from_string(data_string):
+    def from_string(cls, data_string):
         fields = data_string.split('|')
         if len(fields) != 10:
             msg = 'every column should have 10 fields, not %d' % len(fields)
@@ -151,7 +167,7 @@ class Column(PropertyObject):
         if not fields[0]:
             raise TypeError
         
-        column = Column(fields[0])
+        column = cls(fields[0])
         column.title = fields[1] or ''
         column.data_type = str2type(fields[2])
         column.visible = str2bool(fields[3], default_value=True)
@@ -170,7 +186,7 @@ class Column(PropertyObject):
         # XXX: expand, remember to sync with __str__
         
         return column
-    from_string = staticmethod(from_string)
+    from_string = classmethod(from_string)
     
 class ContextMenu(gtk.Menu):
     """
@@ -436,9 +452,10 @@ class List(gtk.ScrolledWindow):
                 raise AssertionError
             renderer.set_property("xalign", xalign)
             
+        renderer_property = renderer.get_data('renderer-property')
         treeview_column.pack_start(renderer)
         treeview_column.set_cell_data_func(renderer, self._cell_data_func,
-                                           column)
+                                           (column, renderer_property))
         treeview_column.set_visible(column.visible)
 
         treeview_column.connect("clicked", self._on_column__clicked, column)
@@ -502,12 +519,17 @@ class List(gtk.ScrolledWindow):
         
         return renderer
 
-    def _cell_data_func(self, column, cellrenderer, model, iter, definition):
-        renderer_prop = cellrenderer.get_data('renderer-property')
-        instance = model.get_value(iter, COL_MODEL)
-        data = definition.get_attribute(instance, definition.attribute, None)
-        if definition.format:
-            data = datatypes.lformat(definition.format, data)
+    def _cell_data_func(self, column, cellrenderer, model, iter,
+                        (definition, renderer_prop)):
+        instance = model[iter][COL_MODEL]
+        attribute = definition.attribute
+        
+        if definition.format_func:
+            data = definition.format_func(kgetattr(instance, attribute, None))
+        else:
+            data = definition.get_attribute(instance, attribute, None)
+            if definition.format:
+                data = datatypes.lformat(definition.format, data)
         cellrenderer.set_property(renderer_prop, data)
 
     def _on_header__button_release_event(self, button, event):

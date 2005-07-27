@@ -3,6 +3,11 @@
 	* kiwi/ui/widgets/list.py (Column.__init__): Mark title_pixmap as 
 	todo, since it's not implemented yet. Sort the other properties after
 	the doc string. Add tooltips doc string.
+	(List._cell_data_func): Clean up a little bit and add support for 
+	format func
+	(Column): Add format_func attribute, documentation and 
+	basic error handling
+	(Column.from_string): Make it a classmethod, not a staticmethod
 
 2005-07-26  Johan Dahlin  <jdahlin@async.com.br>
 
