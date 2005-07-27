@@ -430,7 +430,7 @@ class List(gtk.ScrolledWindow):
         if treeview_column is None:
             treeview_column = self._create_column(column)  
             
-        renderer = self._create_best_renderer_for_type(column)
+        renderer, renderer_prop = self._guess_renderer_for_type(column)
         
         justify = column.justify
         # If we don't specify a justification, right align it for int/float
@@ -452,10 +452,9 @@ class List(gtk.ScrolledWindow):
                 raise AssertionError
             renderer.set_property("xalign", xalign)
             
-        renderer_property = renderer.get_data('renderer-property')
         treeview_column.pack_start(renderer)
         treeview_column.set_cell_data_func(renderer, self._cell_data_func,
-                                           (column, renderer_property))
+                                           (column, renderer_prop))
         treeview_column.set_visible(column.visible)
 
         treeview_column.connect("clicked", self._on_column__clicked, column)
@@ -486,50 +485,34 @@ class List(gtk.ScrolledWindow):
 #        self._justify_columns(columns, typelist)
 
             
-    def _create_best_renderer_for_type(self, column):
-        """Create the best CellRenderer for a given type.
+    def _guess_renderer_for_type(self, column):
+        """Gusses which CellRenderer we should use for a given type.
         It also set the property of the renderer that depends on the model,
         in the renderer.
         """
         
+        # TODO: Move to column
+        # TODO: Editing
         data_type = column.data_type
-        if data_type in (int, float):
+        if issubclass(data_type, (datetime.date,  basestring, int, float)):
             renderer = gtk.CellRendererText()
-            renderer.set_data('renderer-property', 'text')
-#            renderer.set_property('editable', True)
-#            renderer.connect('edited', self._on_renderer__edited,
-#                             column)
+            return renderer, 'text'
         elif data_type is bool:
             renderer = gtk.CellRendererToggle()
-            renderer.set_data('renderer-property', 'active')
- #           renderer.set_property('activatable', True)
- #           renderer.connect('toggled', self._on_renderer__toggled,
- #                            column)
-        elif issubclass(data_type, datetime.date):
-            renderer = gtk.CellRendererText()
-            renderer.set_data('renderer-property', 'text')
-        elif issubclass(data_type, basestring):
-            renderer = gtk.CellRendererText()
-            renderer.set_data('renderer-property', 'text')
-#            renderer.set_property('editable', True)
-#            renderer.connect('edited', self._on_renderer__edited,
-#                             column)
+            # TODO: radio, activatable
+            return renderer, 'active'
         else:
             raise ValueError("the type %s is not supported yet" % data_type)
-        
-        return renderer
 
-    def _cell_data_func(self, column, cellrenderer, model, iter,
+    def _cell_data_func(self, column, renderer, model, iter,
                         (definition, renderer_prop)):
-        instance = model[iter][COL_MODEL]
-        attribute = definition.attribute
-        
-        data = definition.get_attribute(instance, attribute, None)
+        data = definition.get_attribute(model[iter][COL_MODEL],
+                                        definition.attribute, None)
         if definition.format:
             data = datatypes.lformat(definition.format, data)
         elif definition.format_func:
             data = definition.format_func(data)
-        cellrenderer.set_property(renderer_prop, data)
+        renderer.set_property(renderer_prop, data)
 
     def _on_header__button_release_event(self, button, event):
         if event.button == 3:
@@ -538,24 +521,17 @@ class List(gtk.ScrolledWindow):
 
         return False
 
-    def _on_renderer__edited(self, renderer, path, new_text, column):
-        row_iter = self.model.get_iter(path)
-        instance = self.model.get_value(row_iter, COL_MODEL)
-        model_attribute = column.attribute
+    def _on_renderer__edited(self, renderer, path, value, column):
         data_type = column.data_type
-        value = new_text
         if data_type in (int, float):
-            value = data_type(new_text)
+            value = data_type(value)
+            
         # XXX convert new_text to the proper data type
-
-        setattr(instance, model_attribute, value)
+        setattr(self.model[path][COL_MODEL],  column.attribute, value)
         
     def _on_renderer__toggled(self, renderer, path, column):
-        row_iter = self.model.get_iter(path)
-        instance = self.model.get_value(row_iter, COL_MODEL)
-        value = not renderer.get_active()
-        model_attribute = column.attribute
-        setattr(instance, model_attribute, value)
+        setattr(self.model[path][COL_MODEL], column.attribute,
+                not renderer.get_active())
 
     def _clear_columns(self):
         while self.treeview.get_columns():
@@ -572,11 +548,11 @@ class List(gtk.ScrolledWindow):
                 return row.iter
 
     def _select_and_focus_row(self, row_iter):
-        self.treeview.set_cursor(self.model.get_path(row_iter))
+        self.treeview.set_cursor(self.model[row_iter].path)
                     
     def _sort_function(self, model, iter1, iter2):
-        obj1 = model.get_value(iter1, COL_MODEL)
-        obj2 = model.get_value(iter2, COL_MODEL)
+        obj1 = model[iter1][COL_MODEL]
+        obj2 = model[iter2][COL_MODEL]
         cd = self._columns[self._sort_column_definition_index]
         attr = cd.attribute
         value1 = cd.get_attribute(obj1, attr)
@@ -621,9 +597,7 @@ class List(gtk.ScrolledWindow):
         self.emit('selection-change')
 
     def _after_treeview__row_activated(self, treeview, path, view_column):
-        row_iter = self.model.get_iter(path)
-        selected_obj = self.model[row_iter][COL_MODEL]
-        self.emit('double-click', selected_obj)
+        self.emit('double-click', self.model[path][COL_MODEL])
         
     # Python virtual methods
     def __iter__(self):
@@ -645,7 +619,8 @@ class List(gtk.ScrolledWindow):
             item = self.model[arg][COL_MODEL]
         elif isinstance(arg, slice):
             model = self.model
-            return [model[item][COL_MODEL] for item in slicerange(arg, len(self.model))]
+            return [model[item][COL_MODEL]
+                        for item in slicerange(arg, len(self.model))]
         else:
             raise TypeError("argument arg must be int, gtk.Treeiter or "
                             "slice, not %s" % type(arg))
@@ -870,7 +845,7 @@ class List(gtk.ScrolledWindow):
 
     def update_instance(self, new_instance):
         treeiter = self.get_iter(new_instance)
-        self.model.row_changed(self.model.get_path(treeiter), treeiter)
+        self.model.row_changed(self.model[treeiter].path, treeiter)
         
     def set_column_visibility(self, column_index, visibility):
         column = self.treeview.get_column(column_index)
