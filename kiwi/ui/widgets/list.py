@@ -326,16 +326,16 @@ class List(gtk.ScrolledWindow):
         # by default we are unordered. This index points to the column
         # definition of the column that dictates the order, in case there is
         # any
-        self._sort_column_definition_index = -1
+        self._sort_column_index = -1
 
         if instance_list:
             self._treeview.freeze_notify()
             self._load(instance_list)
             self._treeview.thaw_notify()
 
-        if self._sort_column_definition_index != -1:
-            cd = self._columns[self._sort_column_definition_index]
-            self._model.set_sort_column_id(COL_MODEL, cd.order)
+        if self._sort_column_index != -1:
+            column = self._columns[self._sort_column_index]
+            self._model.set_sort_column_id(COL_MODEL, column.order)
 
         # Set selection mode last to avoid spurious events
         selection = self._treeview.get_selection()
@@ -536,7 +536,7 @@ class List(gtk.ScrolledWindow):
             treeview_column.set_expand(True)
 
         if column.sorted:
-            self._sort_column_definition_index = index
+            self._sort_column_index = index
             treeview_column.set_sort_indicator(True)
             
         if column.width:
@@ -553,8 +553,8 @@ class List(gtk.ScrolledWindow):
         """True if all the columns has a type set.
         This is used to know if we can create the treeview columns.
         """
-        for c in self._columns:
-            if c.data_type is None:
+        for column in self._columns:
+            if column.data_type is None:
                 return False
         return True
         
@@ -597,14 +597,14 @@ class List(gtk.ScrolledWindow):
         else:
             raise ValueError("the type %s is not supported yet" % data_type)
 
-    def _cell_data_func(self, column, renderer, model, iter,
-                        (definition, renderer_prop)):
-        data = definition.get_attribute(model[iter][COL_MODEL],
-                                        definition.attribute, None)
-        if definition.format:
-            data = datatypes.lformat(definition.format, data)
-        elif definition.format_func:
-            data = definition.format_func(data)
+    def _cell_data_func(self, tree_column, renderer, model, iter,
+                        (column, renderer_prop)):
+        data = column.get_attribute(model[iter][COL_MODEL],
+                                    column.attribute, None)
+        if column.format:
+            data = datatypes.lformat(column.format, data)
+        elif column.format_func:
+            data = column.format_func(data)
         renderer.set_property(renderer_prop, data)
 
     def _on_header__button_release_event(self, button, event):
@@ -628,7 +628,7 @@ class List(gtk.ScrolledWindow):
 
     def _clear_columns(self):
         while self._treeview.get_columns():
-            self._treeview.remove_column(self._treeview.get_column(0))
+            self._treeview.remove_column(self._treeview.get_column(COL_MODEL))
 
         self._popup.clean()
 
@@ -644,27 +644,24 @@ class List(gtk.ScrolledWindow):
         self._treeview.set_cursor(self._model[row_iter].path)
                     
     def _sort_function(self, model, iter1, iter2):
-        obj1 = model[iter1][COL_MODEL]
-        obj2 = model[iter2][COL_MODEL]
-        cd = self._columns[self._sort_column_definition_index]
-        attr = cd.attribute
-        value1 = cd.get_attribute(obj1, attr)
-        value2 = cd.get_attribute(obj2, attr)
-        return cmp(value1, value2)
+        column = self._columns[self._sort_column_index]
+        attr = column.attribute
+        return cmp(column.get_attribute(model[iter1][COL_MODEL], attr),
+                   column.get_attribute(model[iter2][COL_MODEL], attr))
 
     def _on_column__clicked(self, treeview_column, column):
-        if self._sort_column_definition_index == -1:
+        if self._sort_column_index == -1:
             # this mean we are not sorting at all
             return
 
-        old_column = self._treeview.get_column(
-            self._sort_column_definition_index)
-        old_column.set_sort_indicator(False)
+        old_treeview_column = self._treeview.get_column(
+            self._sort_column_index)
+        old_treeview_column.set_sort_indicator(False)
         
         # reverse the old order or start with SORT_DESCENDING if there was no
         # previous order
         column_index = self._columns.index(column)
-        self._sort_column_definition_index = column_index
+        self._sort_column_index = column_index
 
         # maybe it's the first time this column is ordered
         if column.order is None:
@@ -868,8 +865,8 @@ class List(gtk.ScrolledWindow):
         self._model.row_changed(self._model[treeiter].path, treeiter)
         
     def set_column_visibility(self, column_index, visibility):
-        column = self._treeview.get_column(column_index)
-        column.set_visible(visibility)
+        treeview_column = self._treeview.get_column(column_index)
+        treeview_column.set_visible(visibility)
 
     def get_selection_mode(self):
         selection = self._treeview.get_selection()
