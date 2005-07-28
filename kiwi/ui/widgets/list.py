@@ -199,9 +199,9 @@ class ContextMenu(gtk.Menu):
         gtk.Menu.__init__(self)
         
         self._dirty = True
-        self.signal_ids = []
-        self.treeview = treeview
-        self.treeview.connect('columns-changed',
+        self._signal_ids = []
+        self._treeview = treeview
+        self._treeview.connect('columns-changed',
                               self._on_treeview__columns_changed)
         self._create()
         
@@ -209,9 +209,9 @@ class ContextMenu(gtk.Menu):
         for child in self.get_children():
             self.remove(child)
             
-        for menuitem, signal_id in self.signal_ids:
+        for menuitem, signal_id in self._signal_ids:
             menuitem.disconnect(signal_id)
-        self.signal_ids = []
+        self._signal_ids = []
 
     def popup(self, event):
         self._create()
@@ -224,7 +224,7 @@ class ContextMenu(gtk.Menu):
         
         self.clean()
         
-        for column in self.treeview.get_columns():
+        for column in self._treeview.get_columns():
             header_widget = column.get_widget()
             title = header_widget.get_text()
                 
@@ -233,7 +233,7 @@ class ContextMenu(gtk.Menu):
             signal_id = menuitem.connect("activate",
                                          self._on_menuitem__activate,
                                          column)
-            self.signal_ids.append((menuitem, signal_id))
+            self._signal_ids.append((menuitem, signal_id))
             menuitem.show()
             self.append(menuitem)
             
@@ -302,23 +302,23 @@ class List(gtk.ScrolledWindow):
         self._columns_configured = False
         self._autosize = True
         
-        self.model = gtk.ListStore(object)
-        self.model.set_sort_func(COL_MODEL, self._sort_function)
-        self.treeview = gtk.TreeView(self.model)
-        self.treeview.show()
-        self.add(self.treeview)
+        self._model = gtk.ListStore(object)
+        self._model.set_sort_func(COL_MODEL, self._sort_function)
+        self._treeview = gtk.TreeView(self._model)
+        self._treeview.show()
+        self.add(self._treeview)
 
-        self.treeview.set_rules_hint(True)
+        self._treeview.set_rules_hint(True)
 
         # these tooltips are used for the columns
         self._tooltips = gtk.Tooltips()
 
         # convenience connections
-        self.treeview.connect_after("row-activated",
+        self._treeview.connect_after("row-activated",
                                     self._after_treeview__row_activated)
 
         # create a popup menu for showing or hiding columns
-        self._popup = ContextMenu(self.treeview)
+        self._popup = ContextMenu(self._treeview)
 
         # when setting the column definition the columns are created
         self.set_columns(columns)
@@ -329,21 +329,21 @@ class List(gtk.ScrolledWindow):
         self._sort_column_definition_index = -1
 
         if instance_list:
-            self.treeview.freeze_notify()
+            self._treeview.freeze_notify()
             self._load(instance_list)
-            self.treeview.thaw_notify()
+            self._treeview.thaw_notify()
 
         if self._sort_column_definition_index != -1:
             cd = self._columns[self._sort_column_definition_index]
-            self.model.set_sort_column_id(COL_MODEL, cd.order)
+            self._model.set_sort_column_id(COL_MODEL, cd.order)
 
         # Set selection mode last to avoid spurious events
-        selection = self.treeview.get_selection()
+        selection = self._treeview.get_selection()
         selection.connect("changed", self._on_selection__changed)
         selection.set_mode(mode)
         # Select the first item if no items are selected
         if mode != gtk.SELECTION_NONE and instance_list:
-            selection.select_iter(self.model[COL_MODEL].iter)
+            selection.select_iter(self._model[COL_MODEL].iter)
 
     # Python list object implementation
     # These methods makes the kiwi list behave more or less
@@ -365,7 +365,7 @@ class List(gtk.ScrolledWindow):
 
     def __len__(self):
         "len(list)"
-        return len(self.model)
+        return len(self._model)
 
     def __nonzero__(self):
         "if list"
@@ -373,7 +373,7 @@ class List(gtk.ScrolledWindow):
 
     def __contains__(self, instance):
         "item in list"
-        for row in self.model:
+        for row in self._model:
             if row[COL_MODEL] == instance:
                 return True
         return False
@@ -384,7 +384,7 @@ class List(gtk.ScrolledWindow):
             def __init__(self):
                 self._index = -1
                 
-            def next(self, model=self.model):
+            def next(self, model=self._model):
                 try:
                     self._index += 1
                     return model[self._index][COL_MODEL]
@@ -396,11 +396,11 @@ class List(gtk.ScrolledWindow):
     def __getitem__(self, arg):
         "list[n]"
         if isinstance(arg, (int, gtk.TreeIter, str)):
-            item = self.model[arg][COL_MODEL]
+            item = self._model[arg][COL_MODEL]
         elif isinstance(arg, slice):
-            model = self.model
+            model = self._model
             return [model[item][COL_MODEL]
-                        for item in slicerange(arg, len(self.model))]
+                        for item in slicerange(arg, len(self._model))]
         else:
             raise TypeError("argument arg must be int, gtk.Treeiter or "
                             "slice, not %s" % type(arg))
@@ -409,7 +409,7 @@ class List(gtk.ScrolledWindow):
     def __setitem__(self, arg, item):
         "list[n] = m"
         if isinstance(arg, (int, gtk.TreeIter, str)):
-            self.model[arg] = (item,)
+            self._model[arg] = (item,)
         elif isinstance(arg, slice):
             raise NotImplementedError("slices for list are not implemented")
         else:
@@ -444,13 +444,13 @@ class List(gtk.ScrolledWindow):
             self._setup_columns()
             
         for instance in instance_list:
-            self.model.append((instance,))
+            self._model.append((instance,))
             
         # As soon as we have data for that list, we can autosize it, and
         # we don't want to autosize again, or we may cancel user
         # modifications.
         if self._autosize:
-            self.treeview.columns_autosize()
+            self._treeview.columns_autosize()
             self._autosize = False
 
     def _guess_types(self, instance):
@@ -491,7 +491,7 @@ class List(gtk.ScrolledWindow):
             raise TypeError("format is not supported for boolean columns") 
 
         index = self._columns.index(column)
-        treeview_column = self.treeview.get_column(index)
+        treeview_column = self._treeview.get_column(index)
         if treeview_column is None:
             treeview_column = self._create_column(column)  
             
@@ -569,7 +569,7 @@ class List(gtk.ScrolledWindow):
         treeview_column.set_resizable(True)
         treeview_column.set_clickable(True)
         treeview_column.set_reorderable(True)
-        self.treeview.append_column(treeview_column)
+        self._treeview.append_column(treeview_column)
 
         # setup the button to show the popup menu
         button = self._get_column_button(treeview_column)
@@ -620,15 +620,15 @@ class List(gtk.ScrolledWindow):
             value = data_type(value)
             
         # XXX convert new_text to the proper data type
-        setattr(self.model[path][COL_MODEL], column.attribute, value)
+        setattr(self._model[path][COL_MODEL], column.attribute, value)
         
     def _on_renderer__toggled(self, renderer, path, column):
-        setattr(self.model[path][COL_MODEL], column.attribute,
+        setattr(self._model[path][COL_MODEL], column.attribute,
                 not renderer.get_active())
 
     def _clear_columns(self):
-        while self.treeview.get_columns():
-            self.treeview.remove_column(self.treeview.get_column(0))
+        while self._treeview.get_columns():
+            self._treeview.remove_column(self._treeview.get_column(0))
 
         self._popup.clean()
 
@@ -636,12 +636,12 @@ class List(gtk.ScrolledWindow):
         
     # selection methods
     def _find_iter_from_data(self, instance):
-        for row in self.model:
+        for row in self._model:
             if instance == row[COL_MODEL]:
                 return row.iter
 
     def _select_and_focus_row(self, row_iter):
-        self.treeview.set_cursor(self.model[row_iter].path)
+        self._treeview.set_cursor(self._model[row_iter].path)
                     
     def _sort_function(self, model, iter1, iter2):
         obj1 = model[iter1][COL_MODEL]
@@ -657,7 +657,7 @@ class List(gtk.ScrolledWindow):
             # this mean we are not sorting at all
             return
 
-        old_column = self.treeview.get_column(
+        old_column = self._treeview.get_column(
             self._sort_column_definition_index)
         old_column.set_sort_indicator(False)
         
@@ -683,20 +683,20 @@ class List(gtk.ScrolledWindow):
         treeview_column.set_sort_order(new_order)
 
         # This performs the actual ordering
-        self.model.set_sort_column_id(COL_MODEL, new_order)
+        self._model.set_sort_column_id(COL_MODEL, new_order)
 
     # handlers
     def _on_selection__changed(self, selection):
         self.emit('selection-change')
 
     def _after_treeview__row_activated(self, treeview, path, view_column):
-        self.emit('double-click', self.model[path][COL_MODEL])
+        self.emit('double-click', self._model[path][COL_MODEL])
         
     def _get_iter_from_instance(self, instance):
         """Returns the treeiter where this instance is using a linear search.
         If the instance is not in the list it returns None
         """
-        for row in self.model:
+        for row in self._model:
             if row[COL_MODEL] is instance:
                 return row.iter
 
@@ -749,7 +749,7 @@ class List(gtk.ScrolledWindow):
             self._vscrollbar = widget
 
     def _get_header_height(self):
-        treeview_column = self.treeview.get_column(0)
+        treeview_column = self._treeview.get_column(0)
         button = self._get_column_button(treeview_column)
         alloc = button.get_allocation()
         return alloc.height
@@ -780,6 +780,14 @@ class List(gtk.ScrolledWindow):
     #
     # Public API
     #
+    def get_model(self):
+        "Return treemodel of the current list"
+        return self._model
+
+    def get_treeview(self):
+        "Return treeview of the current list"
+        return self._treeview
+    
     def get_columns(self):
         return self._columns_string
 
@@ -828,15 +836,15 @@ class List(gtk.ScrolledWindow):
             self._setup_columns()
 
         # Freeze and save original selection mode to avoid blinking
-        self.treeview.freeze_notify()
+        self._treeview.freeze_notify()
 
-        row_iter = self.model.append((instance,))
+        row_iter = self._model.append((instance,))
         if self._autosize:
-            self.treeview.columns_autosize()
+            self._treeview.columns_autosize()
 
         if select:
             self._select_and_focus_row(row_iter)
-        self.treeview.thaw_notify()
+        self._treeview.thaw_notify()
 
     def remove_instance(self, instance):
         """Remove an instance from the list.
@@ -850,37 +858,37 @@ class List(gtk.ScrolledWindow):
         # linear search for the instance to remove
         treeiter = self._get_iter_from_instance(instance)
         if treeiter:
-            self.model.remove(treeiter)
+            self._model.remove(treeiter)
             return True
             
         return False
 
     def update_instance(self, new_instance):
         treeiter = self.get_iter(new_instance)
-        self.model.row_changed(self.model[treeiter].path, treeiter)
+        self._model.row_changed(self._model[treeiter].path, treeiter)
         
     def set_column_visibility(self, column_index, visibility):
-        column = self.treeview.get_column(column_index)
+        column = self._treeview.get_column(column_index)
         column.set_visible(visibility)
 
     def get_selection_mode(self):
-        selection = self.treeview.get_selection()
+        selection = self._treeview.get_selection()
         if selection:
             return selection.get_mode()
     
     def set_selection_mode(self, mode):
-        selection = self.treeview.get_selection()
+        selection = self._treeview.get_selection()
         if selection:
             self.notify('selection-mode')
             return selection.set_mode(mode)
 
     def unselect_all(self):
-        selection = self.treeview.get_selection()
+        selection = self._treeview.get_selection()
         if selection:
             selection.unselect_all()
 
     def select_instance(self, instance):
-        selection = self.treeview.get_selection()
+        selection = self._treeview.get_selection()
         if selection:
             treeiter = self.get_iter(instance)
             if treeiter:
@@ -890,7 +898,7 @@ class List(gtk.ScrolledWindow):
         """Returns the currently selected object
         If an object is not selected, None is returned
         """
-        selection = self.treeview.get_selection()
+        selection = self._treeview.get_selection()
         if not selection:
             # AssertionError ?
             return
@@ -909,7 +917,7 @@ class List(gtk.ScrolledWindow):
         """Returns a list of currently selected objects
         If no objects are selected an empty list is returned
         """
-        selection = self.treeview.get_selection()
+        selection = self._treeview.get_selection()
         if not selection:
             # AssertionError ?
             return
@@ -937,22 +945,22 @@ class List(gtk.ScrolledWindow):
             is being filled
         """
 
-        self.treeview.freeze_notify()
+        self._treeview.freeze_notify()
 
         if clear:
             self.unselect_all()
-            self.model.clear()
+            self._model.clear()
 
         ret = self._load(list, progress_handler)
             
-        self.treeview.thaw_notify()
+        self._treeview.thaw_notify()
         return ret
 
     def clear(self):
         """Removes all the instances of the list"""
-        self.treeview.freeze_notify()
-        self.model.clear()
-        self.treeview.thaw_notify()
+        self._treeview.freeze_notify()
+        self._model.clear()
+        self._treeview.thaw_notify()
         
 gobject.type_register(List)
 
