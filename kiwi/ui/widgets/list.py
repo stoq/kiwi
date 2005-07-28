@@ -267,40 +267,32 @@ class List(gtk.ScrolledWindow):
     """An enhanced version of GtkTreeView, which provides pythonic wrappers
     for accessing rows, and optional facilities for column sorting (with
     types) and column selection."""
+    
     gsignal('selection-change')
     gsignal('double-click', object)
 
     # this property is used to serialize the columns of a List. The format
     # is a big string with '^' as the column separator and '|' as the field
     # separator
-    # Each column has the following fields:
-    #  - attribute: name of the model attribute this column shows
-    #  - title: the title that shows in the column header. Default to ''
-    #  - data_type: one of 'str', 'int', 'float', 'date'. Default to str
-    #  - visible: if this column is visible or not. Default to True
-    #  - justify: a gtk.Justification value. Defaults to gtk.JUSTIFY_LEFT.
-    #  - tooltip: the tooltip on the column header. Deafult to ''
-    #  - format: string format for numeric types. Deafult to ''
-    #  - width: the number of pixels for the widget. Default to 0, which
-    #    means autosize
-    #  - sorted: if the data is sorted by this column. Default to False
-    #  - order: one of 'ascending', 'descending' or ''. Default to ''
     gproperty('column-definitions', str, nick="ColumnDefinitions")
-
-    # This is the selection mode of the list, must be one of:
-    #   gtk.SELECTION_NONE	No selection allowed.
-    #   gtk.SELECTION_SINGLE	A single selection allowed by clicking.
-    #   gtk.SELECTION_BROWSE	A single selection allowed by browsing
-    #                           with the pointer.
-    #   gtk.SELECTION_MULTIPLE	Multiple items can be selected at once.
     gproperty('selection-mode', gtk.SelectionMode,
               default=gtk.SELECTION_BROWSE, nick="SelectionMode")
     
     def __init__(self, columns=[],
                  instance_list=None,
                  mode=gtk.SELECTION_BROWSE):
-        """Create a new Kiwi TreeView.
-        """
+        
+        # allow to specify only one column
+        if isinstance(columns, Column):
+            columns = [columns]
+        elif not isinstance(columns, list):
+            raise TypeError("columns must be a list or a Column")
+
+        if not isinstance(mode, gtk.SelectionMode):
+            raise TypeError("mode must be an gtk.SelectionMode enum")
+        elif mode == gtk.SELECTION_EXTENDED:
+            raise TypeError("gtk.SELECTION_EXTENDED is deprecated")
+        
         gtk.ScrolledWindow.__init__(self)
         # we always want a vertical scrollbar. Otherwise the button on top
         # of it doesn't make sense. This button is used to display the popup
@@ -328,12 +320,6 @@ class List(gtk.ScrolledWindow):
         # create a popup menu for showing or hiding columns
         self._popup = ContextMenu(self.treeview)
 
-        # allow to specify only one column
-        if isinstance(columns, Column):
-            columns = [columns]
-        elif not isinstance(columns, list):
-            raise TypeError("columns must be a list or a Column")
-        
         # when setting the column definition the columns are created
         self.set_columns(columns)
 
@@ -358,17 +344,115 @@ class List(gtk.ScrolledWindow):
         # Select the first item if no items are selected
         if mode != gtk.SELECTION_NONE and instance_list:
             selection.select_iter(self.model[COL_MODEL].iter)
-            
-    # Columns handling
-    def _has_enough_type_information(self):
-        """True if all the columns has a type set.
-        This is used to know if we can create the treeview columns.
-        """
-        for c in self._columns:
-            if c.data_type is None:
-                return False
+
+    # Python list object implementation
+    # These methods makes the kiwi list behave more or less
+    # like a normal python list
+    #
+    # TODO:
+    #   methods
+    #      append, count, extend, index, insert,
+    #      pop, remove, reverse, sort
+    #
+    #   operators
+    #      __add__, __eq__, __ge__, __gt__, __iadd__,
+    #      __imul__,  __le__, __lt__, __mul__, __ne__,
+    #      __rmul__
+    #
+    #   misc
+    #     __delitem__, __hash__, __reduce__, __reduce_ex__
+    #     __reversed__
+
+    def __len__(self):
+        "len(list)"
+        return len(self.model)
+
+    def __nonzero__(self):
+        "if list"
         return True
-        
+
+    def __contains__(self, instance):
+        "item in list"
+        for row in self.model:
+            if row[COL_MODEL] == instance:
+                return True
+        return False
+
+    def __iter__(self):
+        "for item in list"
+        class ModelIterator:
+            def __init__(self):
+                self._index = -1
+                
+            def next(self, model=self.model):
+                try:
+                    self._index += 1
+                    return model[self._index][COL_MODEL]
+                except IndexError:
+                    raise StopIteration
+                
+        return ModelIterator()
+    
+    def __getitem__(self, arg):
+        "list[n]"
+        if isinstance(arg, (int, gtk.TreeIter, str)):
+            item = self.model[arg][COL_MODEL]
+        elif isinstance(arg, slice):
+            model = self.model
+            return [model[item][COL_MODEL]
+                        for item in slicerange(arg, len(self.model))]
+        else:
+            raise TypeError("argument arg must be int, gtk.Treeiter or "
+                            "slice, not %s" % type(arg))
+        return item
+
+    def __setitem__(self, arg, item):
+        "list[n] = m"
+        if isinstance(arg, (int, gtk.TreeIter, str)):
+            self.model[arg] = (item,)
+        elif isinstance(arg, slice):
+            raise NotImplementedError("slices for list are not implemented")
+        else:
+            raise TypeError("argument arg must be int or gtk.Treeiter,"
+                            " not %s" % type(arg))
+    
+    # GObject property handling
+    def do_get_property(self, pspec):
+        if pspec.name == 'column-definitions':
+            return self.get_columns()
+        elif pspec.name == 'selection-mode':
+            return self.get_selection_mode()
+        else:
+            raise AttributeError('Unknown property %s' % pspec.name)
+
+    def do_set_property(self, pspec, value):
+        if pspec.name == 'column-definitions':
+            self.set_columns(value)
+        elif pspec.name == 'selection-mode':
+            self.set_selection_mode(value)
+        else:
+            raise AttributeError('Unknown property %s' % pspec.name)
+
+    # Columns handling
+    def _load(self, instance_list, progress_handler=None):
+        # do nothing if empty list or None provided
+        if not instance_list: 
+            return
+
+        if not self._has_enough_type_information():
+            self._guess_types(instance_list[0])
+            self._setup_columns()
+            
+        for instance in instance_list:
+            self.model.append((instance,))
+            
+        # As soon as we have data for that list, we can autosize it, and
+        # we don't want to autosize again, or we may cancel user
+        # modifications.
+        if self._autosize:
+            self.treeview.columns_autosize()
+            self._autosize = False
+
     def _guess_types(self, instance):
         """Iterates through columns, using the type attribute when found or
         the type of the associated attribute from the sample instance provided.
@@ -391,25 +475,6 @@ class List(gtk.ScrolledWindow):
                             "please specify type in Column constructor.""" %
                             column.attribute)
         return tp
-    
-    def _create_column(self, column):
-        treeview_column = gtk.TreeViewColumn()
-        # we need to set our own widget because otherwise
-        # __get_column_button won't work
-
-        label = gtk.Label(column.title)
-        label.show()
-        treeview_column.set_widget(label)
-        treeview_column.set_resizable(True)
-        treeview_column.set_clickable(True)
-        treeview_column.set_reorderable(True)
-        self.treeview.append_column(treeview_column)
-
-        # setup the button to show the popup menu
-        button = self._get_column_button(treeview_column)
-        button.connect('button-release-event',
-                       self._on_header__button_release_event)
-        return treeview_column
     
     def _setup_columns(self):
         if self._columns_configured:
@@ -484,6 +549,34 @@ class List(gtk.ScrolledWindow):
         # justification by looking at the first instance's data.
 #        self._justify_columns(columns, typelist)
 
+    def _has_enough_type_information(self):
+        """True if all the columns has a type set.
+        This is used to know if we can create the treeview columns.
+        """
+        for c in self._columns:
+            if c.data_type is None:
+                return False
+        return True
+        
+    def _create_column(self, column):
+        treeview_column = gtk.TreeViewColumn()
+        # we need to set our own widget because otherwise
+        # __get_column_button won't work
+
+        label = gtk.Label(column.title)
+        label.show()
+        treeview_column.set_widget(label)
+        treeview_column.set_resizable(True)
+        treeview_column.set_clickable(True)
+        treeview_column.set_reorderable(True)
+        self.treeview.append_column(treeview_column)
+
+        # setup the button to show the popup menu
+        button = self._get_column_button(treeview_column)
+        button.connect('button-release-event',
+                       self._on_header__button_release_event)
+        return treeview_column
+    
             
     def _guess_renderer_for_type(self, column):
         """Gusses which CellRenderer we should use for a given type.
@@ -527,7 +620,7 @@ class List(gtk.ScrolledWindow):
             value = data_type(value)
             
         # XXX convert new_text to the proper data type
-        setattr(self.model[path][COL_MODEL],  column.attribute, value)
+        setattr(self.model[path][COL_MODEL], column.attribute, value)
         
     def _on_renderer__toggled(self, renderer, path, column):
         setattr(self.model[path][COL_MODEL], column.attribute,
@@ -599,71 +692,6 @@ class List(gtk.ScrolledWindow):
     def _after_treeview__row_activated(self, treeview, path, view_column):
         self.emit('double-click', self.model[path][COL_MODEL])
         
-    # Python virtual methods
-    def __iter__(self):
-        class ModelIterator:
-            def __init__(self):
-                self._index = -1
-                
-            def next(self, model=self.model):
-                try:
-                    self._index += 1
-                    return model[self._index][COL_MODEL]
-                except IndexError:
-                    raise StopIteration
-                
-        return ModelIterator()
-    
-    def __getitem__(self, arg):
-        if isinstance(arg, (int, gtk.TreeIter, str)):
-            item = self.model[arg][COL_MODEL]
-        elif isinstance(arg, slice):
-            model = self.model
-            return [model[item][COL_MODEL]
-                        for item in slicerange(arg, len(self.model))]
-        else:
-            raise TypeError("argument arg must be int, gtk.Treeiter or "
-                            "slice, not %s" % type(arg))
-        return item
-
-    def __setitem__(self, arg, item):
-        if isinstance(arg, (int, gtk.TreeIter, str)):
-            self.model[arg] = (item,)
-        else:
-            raise TypeError("argument arg must be int or gtk.Treeiter,"
-                            " not %s" % type(arg))
-            
-    def __len__(self):
-        return len(self.model)
-
-    def __nonzero__(self):
-        return True
-
-    def __contains__(self, instance):
-        for row in self.model:
-            if row[COL_MODEL] == instance:
-                return True
-        return False
-
-    # utility methods used by public api methods   
-    def _load(self, instance_list, progress_handler=None):
-        if not instance_list: # do nothing if empty list or None provided
-            return
-
-        if not self._has_enough_type_information():
-            self._guess_types(instance_list[0])
-            self._setup_columns()
-            
-        for instance in instance_list:
-            self.model.append((instance,))
-            
-        # As soon as we have data for that list, we can autosize it, and
-        # we don't want to autosize again, or we may cancel user
-        # modifications.
-        if self._autosize:
-            self.treeview.columns_autosize()
-            self._autosize = False
-
     def _get_iter_from_instance(self, instance):
         """Returns the treeiter where this instance is using a linear search.
         If the instance is not in the list it returns None
@@ -789,22 +817,6 @@ class List(gtk.ScrolledWindow):
         if self._has_enough_type_information():
             self._setup_columns()
         
-    def do_get_property(self, pspec):
-        if pspec.name == 'column-definitions':
-            return self.get_columns()
-        elif pspec.name == 'selection-mode':
-            return self.get_selection_mode()
-        else:
-            raise AttributeError('Unknown property %s' % pspec.name)
-
-    def do_set_property(self, pspec, value):
-        if pspec.name == 'column-definitions':
-            self.set_columns(value)
-        elif pspec.name == 'selection-mode':
-            self.set_selection_mode(value)
-        else:
-            raise AttributeError('Unknown property %s' % pspec.name)
-    
     def add_instance(self, instance, select=False):
         """Adds an instance to the list.
         - instance: the instance to be added (according to the columns spec)
