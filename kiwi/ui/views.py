@@ -303,15 +303,15 @@ class SlaveView(gobject.GObject):
     def _on_child__validation_changed(self, name, value):
         self._validation[name] = value
 
-        self._check_and_notify_validity()
+        self.check_and_notify_validity()
         
-    def _check_and_notify_validity(self):
+    def check_and_notify_validity(self, force=False):
         # Current view is only valid if we have no invalid children
         # their status are stored as values in the dictionary
         valid = False not in self._validation.values()
 
         # Check if validation really changed
-        if self._valid == valid:
+        if self._valid == valid and force == False:
             return
 
         self._valid = valid
@@ -609,6 +609,8 @@ class SlaveView(gobject.GObject):
         slave.connect_object('validation-changed',
                              self._on_child__validation_changed,
                              name)
+        # Fire of an initial notification
+        slave.check_and_notify_validity(force=True)
         
         # return placeholder we just removed
         return placeholder

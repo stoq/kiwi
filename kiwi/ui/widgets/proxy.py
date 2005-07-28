@@ -247,7 +247,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     def before_validate(self, data):
         pass
     
-    def validate_data(self, data):
+    def validate_data(self, data, force=False):
         """Checks if the data is valid.
         
         Validates data-type and custom validation.
@@ -298,10 +298,13 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
             self._validation_error(e)
             data = ValueUnset
 
-        # Step 3, iff validation changed, emit a signal
+        # Step 3, if validation changed, emit a signal
+        #         unless force is used, then we're always emitting
         new_state = self.is_correct()
-        if old_state != new_state:
-            self.emit('validation-changed', new_state)
+        if old_state == new_state and force == False:
+            return data
+        
+        self.emit('validation-changed', new_state)
 
         return data
     

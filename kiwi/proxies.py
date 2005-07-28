@@ -315,7 +315,7 @@ class Proxy:
             # we'll do an initial validation check
             if isinstance(widget, MixinSupportValidation):
                 value = widget.read()
-                widget.validate_data(value)
+                widget.validate_data(value, force=True)
 
     def _register_proxy_in_model(self, attribute):
         model = self.model

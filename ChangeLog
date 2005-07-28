@@ -1,3 +1,17 @@
+2005-07-28  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/proxies.py:
+	* kiwi/ui/views.py:
+	* kiwi/ui/widgets/proxy.py:
+	It turned out that the last patch was not flexible enough.
+	Slaves and proxies had to be attached in the correct order, and
+	sometimes the validation state of the widgets were not emitted.
+
+	This patch changes the following two things:
+	1) Always emit validation state for all widgets when attaching
+	a proxy to a view
+	2) Always emit validation state for slaves attached to views 
+	
 2005-07-27  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/list.py (Column.__init__): Mark title_pixmap as 
