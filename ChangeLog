@@ -1,3 +1,14 @@
+2005-07-29  Johan Dahlin  <jdahlin@async.com.br>
+
+	* bin/kiwi-i18n:
+	* kiwi/i18n/__init__.py:
+	* kiwi/i18n/i18n.py:
+	* kiwi/i18n/msgfmt.py:
+	* kiwi/i18n/pygettext.py:
+	Add kiwi-i18n and copy in msgfmt/pygettext from the python 
+	distribution, modify msgfmt slightly to be usable from outside
+	of the script. 	
+	
 2005-07-28  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/proxies.py:
