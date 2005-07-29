@@ -36,9 +36,7 @@ class ListSlave(SlaveDelegate):
                                widgets=["news_list"])
         self.news_list.add_list(news)
 
-    def on_news_list__selection_change(self, *args):
-        # only one item can be selected in mode SELECTION_BROWSE
-        item = self.news_list.get_selected()[0]
+    def on_news_list__selection_changed(self, list, item):
         print "%s %s %s\n" % (item.title, item.author, item.url)
 
     def on_news_list__double_click(self, the_list, selected_object):
@@ -66,13 +64,13 @@ class Shell(Delegate):
         self.slave.show()
         self.slave.focus_toplevel() # Must be done after attach
     
-    def on_ok__clicked(self, *args):
+    def on_ok__clicked(self, button):
         kiwilist = self.slave.news_list
-        item = kiwilist.get_selected()[0]
+        item = kiwilist.get_selected()
         self.emit('result', item.url)
         self.hide_and_quit()
 
-    def on_cancel__clicked(self, *args):
+    def on_cancel__clicked(self, button):
         self.hide_and_quit()
 
 url = None

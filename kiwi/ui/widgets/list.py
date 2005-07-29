@@ -268,7 +268,7 @@ class List(gtk.ScrolledWindow):
     for accessing rows, and optional facilities for column sorting (with
     types) and column selection."""
     
-    gsignal('selection-change')
+    gsignal('selection-changed', object)
     gsignal('double-click', object)
 
     # this property is used to serialize the columns of a List. The format
@@ -684,8 +684,15 @@ class List(gtk.ScrolledWindow):
 
     # handlers
     def _on_selection__changed(self, selection):
-        self.emit('selection-change')
-
+        mode = selection.get_mode()
+        if mode == gtk.SELECTION_MULTIPLE:
+            item = self.get_selected_rows()
+        elif mode in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
+            item = self.get_selected()
+        else:
+            raise AssertionError
+        self.emit('selection-changed', item)
+        
     def _after_treeview__row_activated(self, treeview, path, view_column):
         self.emit('double-click', self._model[path][COL_MODEL])
         
