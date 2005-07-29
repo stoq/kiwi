@@ -38,7 +38,9 @@ setup(
         ('lib/gazpacho/widgets',
          listfiles('gazpacho-plugin', 'kiwi.py')),
         ],
+    scripts = ['bin/kiwi-i18n'],
     packages = ['kiwi',
+                'kiwi.i18n',
                 'kiwi.ui',
                 'kiwi.ui.widgets'],
     )
