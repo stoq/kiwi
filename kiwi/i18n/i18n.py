@@ -26,35 +26,17 @@ from optparse import OptionParser
 import os
 from shutil import copyfile
 
+# This is a template, used to generate a list of translatable file
+# which intltool can understand.
+# It reuses the syntax from distutils MANIFEST files, a POTFILES.in
+# will be generate from it, see update_po()
+POTFILES = 'POTFILES.list'
+
 def listfiles(*dirs):
     dir, pattern = os.path.split(os.path.join(*dirs))
     return [os.path.join(dir, filename)
             for filename in os.listdir(os.path.abspath(dir))
                 if filename[0] != '.' and fnmatch(filename, pattern)]
-
-def is_skipped(filename, skips):
-    for skip in skips:
-        if fnmatch(filename, skip):
-            return True
-    return False
-    
-def listfiles_recursive(directory, pattern, skips=[]):
-    files = []
-    for short in os.listdir(directory):
-        if short == '.':
-            continue
-
-        if is_skipped(short, skips):
-            continue
-            
-        filename = os.path.join(directory, short)
-        if fnmatch(filename, pattern):
-            files.append(filename)
-            
-        if os.path.isdir(filename):
-            files.extend(listfiles_recursive(filename, pattern))
-
-    return files
 
 def check_directory(root):
     po_dir = os.path.join(root, 'po')
@@ -72,9 +54,10 @@ def check_pot_file(root, package):
     pot_file = os.path.join(root, 'po', '%s.pot' % package)
     if not os.path.exists(pot_file):
         raise SystemExit("Need a pot file, run --update first")
-    
+    return pot_file
+
 def get_translatable_files(root):
-    pofiles = os.path.join(root, 'po', 'POFILES.in')
+    pofiles = os.path.join(root, 'po', POTFILES)
     if not os.path.exists(pofiles):
         print 'Warning: Could not find %s' % pofiles
         return []
@@ -87,25 +70,33 @@ def get_translatable_files(root):
     return filelist.files
 
 def list_languages(root):
-    for po_file in listfiles(root, 'po', '*.po'):
-        lang = os.path.basename(po_file[:-3])
-        print lang
+    return [os.path.basename(po_file[:-3])
+                for po_file in listfiles(root, 'po', '*.po')]
         
-def update_pot(root, pot_file):
-    from kiwi.i18n.pygettext import extract_strings, Options
-
+def update_po(root, package):
     files = get_translatable_files(root)
-    opt = Options()
-    opt.outfile = pot_file
-    extract_strings(opt, files)
+    potfiles_in = os.path.join(root, 'po', 'POTFILES.in')
+    fd = open(potfiles_in, 'w')
+    for filename in files:
+        fd.write(filename + '\n')
+    fd.close()
 
-def update_po_files(root, pot_file):
-    for po_file in listfiles(root, 'po', '*.po'):
-        if os.system('msgmerge -q %s %s -o %s.tmp' % (po_file,
-                                                      pot_file, po_file)) != 0:
-            raise SystemExit
-        os.rename(po_file + '.tmp', po_file)
+    old = os.getcwd()
+    os.chdir(os.path.join(root, 'po'))
 
+    # POT file first
+    os.system('intltool-update --pot --gettext-package=%s' % package)
+    
+    for lang in list_languages(root):
+        new = lang + '.new.po'
+        os.system('intltool-update --dist --gettext-package=%s '
+                  '-o %s %s > /dev/null 2>&1' % (package, new, lang))
+        os.rename(new, lang + '.po')
+
+    os.chdir(old)
+
+    os.unlink(potfiles_in)
+        
 def compile_po_files(root, package):
     from kiwi.i18n.msgfmt import make
     mo_file = package + '.mo'
@@ -154,17 +145,16 @@ def main(args):
         package = os.path.split(root)[1]
 
     if options.lang:
-        check_pot_file(root, package)
+        pot_file = check_pot_file(root, package)
         copyfile(pot_file, os.path.join(root, 'po', options.lang + '.po'))
         return
     elif options.list:
-        list_languages(root)
+        for lang in list_languages(root):
+            print lang
         return
     
     if options.update:
-        pot_file = os.path.join(root, 'po', '%s.pot' % package)
-        update_pot(root, pot_file)
-        update_po_files(root, pot_file)
+        update_po(root, package)
 
     if options.compile:
         check_pot_file(root, package)
