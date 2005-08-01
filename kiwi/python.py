@@ -32,6 +32,12 @@ class ClassInittableObject(object):
     """
     I am an object which will call a classmethod called
     __class_init__ when I am created.
+    Subclasses of me will also have __class_init__ called.
+    
+    Note that __class_init__ is called when the class is created,
+    eg when the file is imported at the first time.
+    It's called after the class is created, but before it is put
+    in the namespace of the module where it is defined.
     """
     __metaclass__ = _ClassInittableMetaType
 

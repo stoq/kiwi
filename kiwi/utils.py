@@ -61,15 +61,10 @@ class PropertyObject(ClassInittableObject):
             self._set(name, value)
 
     def __class_init__(cls, namespace):
-        # Do not try to register yourself, eg PropertyObject
-        # This is rather tricky since this is called before
-        # the object is put into the namespace, so instead of
-        # doing a issubclass(cls, PropertyObject)
-        # We have to carefully check the inheritence structure
-        if ClassInittableObject in cls.__bases__:
-            if issubclass(cls, gobject.GObject):
-                raise RuntimeError("You cannot subclass both "
-                                   "ClassInittableObject and GObject")
+        # Do not try to register gobject subclasses
+        # If you try to instantiate an object you'll get a warning,
+        # So it is safe to ignore here.
+        if not issubclass(cls, gobject.GObject):
             return
 
         # The default value for enum GParamSpecs (returned by list_properties)
