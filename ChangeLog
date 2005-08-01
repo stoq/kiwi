@@ -1,3 +1,16 @@
+2005-08-01  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/list.py (Column): subclass GObject implicitly.
+
+	* kiwi/utils.py (PropertyObject): update to use ClassInittableObject
+	refactor a little bit and add extra checks so we don't accidentally
+	try to register a GObject type for it.
+	Move out so it's not a subclass of GObject, but require it to
+	be a subclass of GObject, this will make it possible to use
+	the class for GObject subclasses
+
+	* kiwi/python.py: New file, add ClassInittableObject.
+
 2005-07-29  Johan Dahlin  <jdahlin@async.com.br>
 
 	* bin/kiwi-i18n:

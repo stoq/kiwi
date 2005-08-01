@@ -51,7 +51,7 @@ def str2bool(value, default_value=False,
     "converts a boolean to a enum"
     return from_string(bool, value, default_value)
 
-class Column(PropertyObject):
+class Column(PropertyObject, gobject.GObject):
     """Specifies a column in a List"""
     gproperty('title', str)
     gproperty('data-type', object)
@@ -134,6 +134,7 @@ class Column(PropertyObject):
                     "format and format_func can not be used at the same time")
         
         PropertyObject.__init__(self, **kwargs)
+        gobject.GObject.__init__(self)
 
     # This is meant to be subclassable, we're using kgetattr, as
     # a staticmethod as an optimization, so we can avoid a function call.
