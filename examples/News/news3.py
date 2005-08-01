@@ -3,7 +3,7 @@ import os
 
 import gtk
 
-from kiwi import utils
+from kiwi.ui import gadgets
 from kiwi.ui.delegates import Delegate, SlaveDelegate
 from kiwi.ui.widgets.list import List, Column
 
@@ -45,7 +45,7 @@ class Shell(Delegate):
 
         # Create the delegate and set it up
         kiwilist = List(my_columns, news)
-        kiwilist.connect('selection-change', self.news_selected)
+        kiwilist.connect('selection-changed', self.news_selected)
         kiwilist.connect('double-click', self.double_click)
         slave = SlaveDelegate(toplevel=kiwilist)
         
@@ -54,10 +54,8 @@ class Shell(Delegate):
         
         self.slave = slave
     
-    def news_selected(self, the_list):
-        # only one item can be selected in mode SELECTION_BROWSE
+    def news_selected(self, the_list, item):
         kiwilist = self.slave.get_toplevel()
-        item = kiwilist.get_selected()[0]
         print "%s %s %s\n" % (item.title, item.author, item.url)
 
     def double_click(self, the_list, selected_object):
@@ -66,9 +64,8 @@ class Shell(Delegate):
         
     def on_ok__clicked(self, *args):
         kiwilist = self.slave.get_toplevel()
-        selected = kiwilist.get_selected()
-        if selected is not None:
-            item = selected[0]
+        item = kiwilist.get_selected()
+        if item:
             self.emit('result', item.url)
         self.hide_and_quit()
 
