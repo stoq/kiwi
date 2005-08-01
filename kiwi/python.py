@@ -25,7 +25,7 @@ __all__ = ['ClassInittableObject']
 
 class _ClassInittableMetaType(type):
     def __init__(cls, name, bases, namespace):
-        super(ClassInittableMetaType, cls).__init__(name, bases, namespace)
+        super(_ClassInittableMetaType, cls).__init__(name, bases, namespace)
         cls.__class_init__(namespace)
 
 class ClassInittableObject(object):
