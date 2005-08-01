@@ -341,6 +341,7 @@ class List(gtk.ScrolledWindow):
         selection = self._treeview.get_selection()
         selection.connect("changed", self._on_selection__changed)
         selection.set_mode(mode)
+
         # Select the first item if no items are selected
         if mode != gtk.SELECTION_NONE and instance_list:
             selection.select_iter(self._model[COL_MODEL].iter)
@@ -439,12 +440,30 @@ class List(gtk.ScrolledWindow):
         if not instance_list: 
             return
 
+        instance = instance_list[0]
         if not self._has_enough_type_information():
-            self._guess_types(instance_list[0])
+            self._guess_types(instance)
             self._setup_columns()
             
+        model = self._model
+        # In the case of an empty model, select the first instance
+        if not len(model):
+            # Append the first instance, so we can get a reference to
+            # the iterator so we later can select it
+            instance_iter = self._model.append((instance,))
+            
+            # Slice out the first, already inserted instance, the
+            # rest of the list is inserted below
+            instance_list = instance_list[1:]
+
+            # Finally select the iterator, but only if we allow
+            # items to be selectable
+            selection = self._treeview.get_selection()
+            if selection.get_mode() != gtk.SELECTION_NONE:
+                selection.select_iter(instance_iter)
+            
         for instance in instance_list:
-            self._model.append((instance,))
+            model.append((instance,))
             
         # As soon as we have data for that list, we can autosize it, and
         # we don't want to autosize again, or we may cancel user
@@ -452,7 +471,7 @@ class List(gtk.ScrolledWindow):
         if self._autosize:
             self._treeview.columns_autosize()
             self._autosize = False
-
+        
     def _guess_types(self, instance):
         """Iterates through columns, using the type attribute when found or
         the type of the associated attribute from the sample instance provided.
