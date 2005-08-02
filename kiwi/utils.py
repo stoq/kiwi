@@ -54,8 +54,11 @@ class PropertyObject(ClassInittableObject):
 
         if not isinstance(self, gobject.GObject):
             raise TypeError("%r must be a GObject subclass" % self)
-        
+
         defaults = self._default_values.copy()
+        for kwarg in kwargs:
+            if not kwarg in defaults:
+                raise TypeError("Unknown keyword argument: %s" % kwarg)
         defaults.update(kwargs)
         for name, value in defaults.items():
             self._set(name, value)
