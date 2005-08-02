@@ -1,3 +1,7 @@
+2005-08-02  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/list.py (Column, List): Add support for cell editing.
+
 2005-08-01  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/list.py (Column): subclass GObject implicitly.

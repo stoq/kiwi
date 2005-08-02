@@ -65,6 +65,7 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('expand', bool, default=False)
     gproperty('tooltip', str)
     gproperty('format_func', object)
+    gproperty('editable', bool, default=False)
     
     def __init__(self, attribute, title=None, data_type=None, **kwargs):
         """
@@ -105,7 +106,8 @@ class Column(PropertyObject, gobject.GObject):
             Note that you cannot use format and format_func at the same time,
             if you provide a format function you'll be responsible for
             converting the value to a string.
-            
+          - editable: if true the field is editable and when you modify the
+            contents of the cell the model will be updated.
           TODO
           - title_pixmap: if set to a filename a pixmap will be used *instead*
             of the title set. The title string will still be used to
@@ -597,7 +599,12 @@ class List(gtk.ScrolledWindow):
                        self._on_header__button_release_event)
         return treeview_column
     
-            
+    def _on_renderer_text__edited(self, renderer, path, text,
+                                  model, attribute, column):
+        obj = model[path][COL_MODEL]
+        value = datatypes.converter.from_string(column.data_type, text)
+        setattr(obj, attribute, value)
+        
     def _guess_renderer_for_type(self, column):
         """Gusses which CellRenderer we should use for a given type.
         It also set the property of the renderer that depends on the model,
@@ -605,18 +612,24 @@ class List(gtk.ScrolledWindow):
         """
         
         # TODO: Move to column
-        # TODO: Editing
         data_type = column.data_type
         if issubclass(data_type, (datetime.date,  basestring, int, float)):
             renderer = gtk.CellRendererText()
-            return renderer, 'text'
+            prop = 'text'
+            if column.editable:
+                renderer.set_property('editable', True)
+                renderer.connect('edited', self._on_renderer_text__edited,
+                                 self._model, column.attribute, column)
+
         elif data_type is bool:
             renderer = gtk.CellRendererToggle()
             # TODO: radio, activatable
-            return renderer, 'active'
+            prop = 'active'
         else:
             raise ValueError("the type %s is not supported yet" % data_type)
 
+        return renderer, prop
+    
     def _cell_data_func(self, tree_column, renderer, model, iter,
                         (column, renderer_prop)):
         data = column.get_attribute(model[iter][COL_MODEL],
