@@ -67,6 +67,8 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('format_func', object)
     gproperty('editable', bool, default=False)
     
+    cell_data_func = None
+    
     def __init__(self, attribute, title=None, data_type=None, **kwargs):
         """
         Creates a new Column, which describes how a column in a
@@ -190,6 +192,24 @@ class Column(PropertyObject, gobject.GObject):
         
         return column
     from_string = classmethod(from_string)
+
+class SequentialColumn(Column):
+    def __init__(self, title='#', justify=gtk.JUSTIFY_RIGHT, **kwargs):
+        Column.__init__(self, '_kiwi_sequence_id',
+                        data_type=int, title=title, **kwargs)
+
+    def cell_data_func(self, tree_column, renderer, model, iter,
+                       (column, renderer_prop)):
+        reversed = tree_column.get_sort_order() == gtk.SORT_DESCENDING
+
+        row = model[iter]
+        sequence_id = row.path[0] + 1
+        if reversed:
+            sequence_id = len(model) - sequence_id + 1
+            
+        row[COL_MODEL]._kiwi_sequence_id = sequence_id
+        
+        renderer.set_property(renderer_prop, sequence_id)
     
 class ContextMenu(gtk.Menu):
     """
@@ -540,9 +560,12 @@ class List(gtk.ScrolledWindow):
             else:
                 raise AssertionError
             renderer.set_property("xalign", xalign)
-            
+
+        cell_data_func = self._cell_data_func
+        if column.cell_data_func:
+            cell_data_func = column.cell_data_func
         treeview_column.pack_start(renderer)
-        treeview_column.set_cell_data_func(renderer, self._cell_data_func,
+        treeview_column.set_cell_data_func(renderer, cell_data_func,
                                            (column, renderer_prop))
         treeview_column.set_visible(column.visible)
 
