@@ -221,11 +221,12 @@ class SlaveView(gobject.GObject):
     """
     controller = None
     toplevel = None
-    widgets = None
+    widgets = []
     toplevel_name = None
     gladefile = None
     gladename = None
-
+    domain = None
+    
     # This signal is emited when the view wants to return a result value
     gsignal("result", object)
     
@@ -234,7 +235,7 @@ class SlaveView(gobject.GObject):
     gsignal('validation-changed', bool)
     
     def __init__(self, toplevel=None, widgets=None, gladefile=None,
-                 gladename=None, toplevel_name=None):
+                 gladename=None, toplevel_name=None, domain=None):
         """ Creates a new SlaveView. Sets up self.toplevel and self.widgets
         and checks for reserved names.
         """
@@ -242,21 +243,14 @@ class SlaveView(gobject.GObject):
 
         # setup the initial state with the value of the arguments or the
         # class variables
-
-        if not gladefile:
-            gladefile = self.gladefile
-        if not gladename:
-            gladename = self.gladename
-        if not toplevel_name:
-            toplevel_name = self.toplevel_name
-        if not toplevel:
-            toplevel = self.toplevel
-        self.gladefile = gladefile
-        self.gladename = gladename
-        self.toplevel_name = toplevel_name
-        self.toplevel = toplevel
-        self.widgets = widgets or self.widgets or []
-
+        klass = type(self)
+        self.toplevel = toplevel or klass.toplevel
+        self.widgets = widgets or klass.widgets
+        self.gladefile = gladefile or klass.widgets
+        self.gladename = gladename or klass.gladename
+        self.toplevel_name = toplevel_name or klass.toplevel_name
+        self.domain = domain or klass.domain
+            
         self.__broker = None
         
         for reserved in ["widgets", "toplevel", "gladefile",
@@ -337,7 +331,8 @@ class SlaveView(gobject.GObject):
     def _init_glade_adaptor(self):
         """Special init code that subclasses may want to override."""
         self.glade_adaptor = WidgetTree(self, self.gladefile,
-                                        self.widgets, self.gladename)
+                                        self.widgets, self.gladename,
+                                        self.domain)
 
         container_name = self.toplevel_name or self.gladename or self.gladefile
             
@@ -724,13 +719,14 @@ class BaseView(SlaveView):
     """A view with a toplevel window."""
     
     def __init__(self, toplevel=None, delete_handler=None, widgets=None,
-                 gladefile=None, gladename=None, toplevel_name=None):
+                 gladefile=None, gladename=None, toplevel_name=None,
+                 domain=None):
         """ toplevel is the widget to be set as `toplevel' (and which will
         be aliased as `win'); delete_handler allows setting a function
         to be called when this view's window is deleted."""
         try:
             SlaveView.__init__(self, toplevel, widgets, gladefile, gladename,
-                               toplevel_name)
+                               toplevel_name, domain)
         except KeyError:
             raise KeyError("Some widgets were defined in self.widgets "
                            "but not found in the glade tree (see previous "

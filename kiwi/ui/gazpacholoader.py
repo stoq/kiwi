@@ -25,7 +25,8 @@
 import os
 
 from gazpacho.loader.loader import ObjectBuilder
-from gazpacho.loader.custom import Adapter, PythonWidgetAdapter, adapter_registry
+from gazpacho.loader.custom import Adapter, PythonWidgetAdapter, \
+     adapter_registry
 
 from kiwi import _warn
 from kiwi.environ import environ
@@ -46,7 +47,7 @@ class GazpachoWidgetTree:
     """Example class of GladeAdaptor that uses Gazpacho loader to load the
     glade files
     """
-    def __init__(self, view, gladefile, widgets, gladename=None):
+    def __init__(self, view, gladefile, widgets, gladename=None, domain=None):
 
         if not gladefile:
             raise ValueError("A gladefile wasn't provided.")
@@ -59,7 +60,7 @@ class GazpachoWidgetTree:
         self._gladefile = environ.find_resource("glade", filename + ".glade")
         self._widgets =  (widgets or view.widgets or [])[:]
         self.gladename = gladename or filename
-        self._tree = Builder(self._gladefile)
+        self._tree = Builder(self._gladefile, domain=domain)
 
         self._attach_widgets()
         

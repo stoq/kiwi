@@ -34,13 +34,14 @@ class SlaveDelegate(SlaveView, BaseController):
     intended to be plugged in to a View or Delegate using attach_slave().
     """
     def __init__(self, toplevel=None, widgets=[], gladefile=None,
-                 gladename=None, toplevel_name=None, keyactions=None):
+                 gladename=None, toplevel_name=None, domain=None,
+                 keyactions=None):
         """Create new SlaveDelegate. toplevel is the toplevel widget,
         defaults to the value of the class' toplevel attribute, and if not
         present, raises AttributeError.
         """
         SlaveView.__init__(self, toplevel, widgets, gladefile, gladename,
-                           toplevel_name)
+                           toplevel_name, domain)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
 class Delegate(BaseView, BaseController):
@@ -49,10 +50,10 @@ class Delegate(BaseView, BaseController):
     """
     def __init__(self, toplevel=None, delete_handler=None, widgets=[],
                  gladefile=None, gladename=None, toplevel_name=None,
-                 keyactions=None):
+                 domain=None, keyactions=None):
         """Creates a new Delegate. For parameters , see BaseView.__init__"""
         BaseView.__init__(self, toplevel, delete_handler, widgets,
-                          gladefile, gladename, toplevel_name)
+                          gladefile, gladename, toplevel_name, domain)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
 
