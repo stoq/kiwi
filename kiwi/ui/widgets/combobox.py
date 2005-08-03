@@ -254,6 +254,7 @@ class ComboBox(gtk.ComboBox, ComboProxyMixin, WidgetMixin):
         renderer = gtk.CellRendererText()
         self.pack_start(renderer)
         self.add_attribute(renderer, 'text', COL_COMBO_LABEL)
+        self.show()
 
     def do_changed(self):
         self.emit('content-changed')
@@ -324,6 +325,7 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
         self.connect("key-release-event", self._on__key_release_event)
     
         self._list_writable = True
+        self.show()
     
     def prop_get_list_writable(self):
         return self._list_writable

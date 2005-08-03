@@ -56,6 +56,7 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
         else:
             self.chain_expose = \
                               lambda e: gtk.SpinButton.do_expose_event(self, e)
+        self.show()
         
     def prop_set_data_type(self, data_type):
         """Overriden from super class. Since spinbuttons should

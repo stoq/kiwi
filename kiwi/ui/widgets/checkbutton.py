@@ -44,6 +44,7 @@ class CheckButton(gtk.CheckButton, WidgetMixin):
         WidgetMixin.__init__(self, data_type=bool)
         gtk.CheckButton.__init__(self)
         self.set_property("data-type", bool)
+        self.show()
     
     def prop_set_data_type(self, data_type):
         if data_type == bool or data_type is None:

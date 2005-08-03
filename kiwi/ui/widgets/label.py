@@ -43,6 +43,7 @@ class Label(gtk.Label, WidgetMixin):
         self._size_list = ('xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large')
         
         self.connect("notify::label", self._on_label_changed)
+        self.show()
     
     def _on_label_changed(self, label, param):
         # Since most of the time labels do not have a model attached to it

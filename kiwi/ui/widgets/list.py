@@ -348,6 +348,8 @@ class List(gtk.ScrolledWindow):
         # Select the first item if no items are selected
         if mode != gtk.SELECTION_NONE and instance_list:
             selection.select_iter(self._model[COL_MODEL].iter)
+            
+        self.show()
 
     # Python list object implementation
     # These methods makes the kiwi list behave more or less

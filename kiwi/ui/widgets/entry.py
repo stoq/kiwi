@@ -69,6 +69,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
             self.chain_expose = self.chain
         else:
             self.chain_expose = lambda e: gtk.Entry.do_expose_event(self, e)
+        self.show()
         
     def do_changed(self):
         """Called when the content of the entry changes.

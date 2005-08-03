@@ -56,6 +56,7 @@ class TextView(gtk.TextView, WidgetMixinSupportValidation):
         # due to changes on pygtk 2.6 we have to make some ajustments here
         if gtk.pygtk_version < (2,6):
             self.do_expose_event = self.chain
+        self.show()
     
     def _on_textbuffer__changed(self, textbuffer):
         self._last_change_time = time.time()

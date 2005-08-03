@@ -43,6 +43,7 @@ class RadioButton(gtk.RadioButton, WidgetMixin):
         WidgetMixin.__init__(self)
         gtk.RadioButton.__init__(self)
         self._data_value = None
+        self.show()
     
     def do_toggled(self):
         self.emit('content-changed')
