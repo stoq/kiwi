@@ -194,6 +194,14 @@ class Column(PropertyObject, gobject.GObject):
     from_string = classmethod(from_string)
 
 class SequentialColumn(Column):
+    """I am a column which will display a sequence of numbers, which
+    represent the row number. The value is independent of the data in
+    the other columns, so no matter what I will always display 1 in
+    the first column, unless you reverse it by clicking on the column
+    header.
+
+    If you don't give me any argument I'll have the title of a hash (#) and
+    right justify the sequences."""
     def __init__(self, title='#', justify=gtk.JUSTIFY_RIGHT, **kwargs):
         Column.__init__(self, '_kiwi_sequence_id',
                         data_type=int, title=title, **kwargs)
