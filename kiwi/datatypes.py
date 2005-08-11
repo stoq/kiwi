@@ -179,14 +179,6 @@ class DateConverter:
     def update_format(self):
         self._format = locale.nl_langinfo(locale.D_FMT)
 
-        tmp = self._format[:]
-        for code, replacement in (('%y', 'yy'),
-                                  ('%Y', 'yyyy'),
-                                  ('%m', 'mm'),
-                                  ('%d', 'dd')):
-            tmp = tmp.replace(code, replacement)
-        self._readable_format = tmp
-
     def as_string(self, value, format=None):
         "Convert a date to a string"
         if format is None:
@@ -196,13 +188,17 @@ class DateConverter:
     
     def from_string(self, value):
         "Convert a string to a date"
+        
+        # We're only supporting strptime values for now,
+        # perhaps we should add macros, to be able to write
+        # yyyy instead of %Y
+        
         try:
             dateinfo = time.strptime(value, self._format)
-            year, month, day = dateinfo[0:3]
-            return date(year, month, day)
+            return date(*dateinfo[:3]) # year, month, day
         except ValueError:
             raise ValidationError('This field requires a date of '
-                                  'the format "%s"' % self._readable_format)
+                                  'the format "%s"' % self._format)
 converter.add(DateConverter)
 
 class ObjectConverter:
