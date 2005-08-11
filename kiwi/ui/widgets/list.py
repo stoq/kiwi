@@ -26,7 +26,7 @@
 
 """Defines an enhanced version of GtkTreeView"""
 
-import datetime
+from datetime import date, datetime, time
 
 import gobject
 import gtk
@@ -66,7 +66,9 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('tooltip', str)
     gproperty('format_func', object)
     gproperty('editable', bool, default=False)
-    
+
+    # This can be set in subclasses, to be able to allow custom
+    # cell_data_functions, used by SequentialColumn
     cell_data_func = None
     
     def __init__(self, attribute, title=None, data_type=None, **kwargs):
@@ -211,9 +213,10 @@ class SequentialColumn(Column):
         reversed = tree_column.get_sort_order() == gtk.SORT_DESCENDING
 
         row = model[iter]
-        sequence_id = row.path[0] + 1
         if reversed:
-            sequence_id = len(model) - sequence_id + 1
+            sequence_id = len(model) - row.path[0]
+        else:
+            sequence_id = row.path[0] + 1
             
         row[COL_MODEL]._kiwi_sequence_id = sequence_id
         
@@ -646,7 +649,7 @@ class List(gtk.ScrolledWindow):
         
         # TODO: Move to column
         data_type = column.data_type
-        if issubclass(data_type, (datetime.date,  basestring, int, float)):
+        if issubclass(data_type, (date,  time, basestring, int, float)):
             renderer = gtk.CellRendererText()
             prop = 'text'
             if column.editable:
@@ -668,10 +671,22 @@ class List(gtk.ScrolledWindow):
         data = column.get_attribute(model[iter][COL_MODEL],
                                     column.attribute, None)
         if column.format:
-            data = datatypes.lformat(column.format, data)
+            text = datatypes.lformat(column.format, data)
         elif column.format_func:
-            data = column.format_func(data)
-        renderer.set_property(renderer_prop, data)
+            text = column.format_func(data)
+        elif column.data_type == date:
+            # date according to current locale
+            text = data.strftime('%x') 
+        elif column.data_type == time:
+            # time according to current locale
+            text = data.strftime('%X')
+        elif column.data_type == datetime:
+            # date and time according to current locale
+            text = data.strftime('%c')
+        else:
+            text = data
+            
+        renderer.set_property(renderer_prop, text)
 
     def _on_header__button_release_event(self, button, event):
         if event.button == 3:
