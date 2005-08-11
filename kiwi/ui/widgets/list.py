@@ -26,7 +26,7 @@
 
 """Defines an enhanced version of GtkTreeView"""
 
-from datetime import date, datetime, time
+import datetime
 
 import gobject
 import gtk
@@ -649,7 +649,8 @@ class List(gtk.ScrolledWindow):
         
         # TODO: Move to column
         data_type = column.data_type
-        if issubclass(data_type, (date,  time, basestring, int, float)):
+        if issubclass(data_type, (datetime.date, datetime.time,
+                                  basestring, int, float)):
             renderer = gtk.CellRendererText()
             prop = 'text'
             if column.editable:
@@ -674,13 +675,13 @@ class List(gtk.ScrolledWindow):
             text = datatypes.lformat(column.format, data)
         elif column.format_func:
             text = column.format_func(data)
-        elif column.data_type == date:
+        elif column.data_type == datetime.date:
             # date according to current locale
             text = data.strftime('%x') 
-        elif column.data_type == time:
+        elif column.data_type == datetime.time:
             # time according to current locale
             text = data.strftime('%X')
-        elif column.data_type == datetime:
+        elif column.data_type == datetime.datetime:
             # date and time according to current locale
             text = data.strftime('%c')
         else:
