@@ -19,7 +19,6 @@ from gettext import gettext as _
 
 import gtk
 from gazpacho.custompropertyeditor import CustomPropertyEditor
-from gazpacho.properties import prop_registry, CustomProperty, StringType
 from gazpacho.util import get_bool_from_string_with_default
 from gazpacho.widget import Widget
 
@@ -66,20 +65,6 @@ class DataTypeAdaptor(object):
         active_iter = combo.get_active_iter()
         value = model.get_value(active_iter, 1)
         proxy.set_value(value)
-
-class DataTypeProperty(CustomProperty, StringType):
-    translatable = False
-    def save(self):
-        value = self.get()
-        return value.__name__
-
-class LabelDataType(DataTypeProperty):
-    pass
-prop_registry.override_property('kiwi+ui+widgets+label+Label::data-type', LabelDataType)
-
-class SpinButtonDataType(DataTypeProperty):
-    pass
-prop_registry.override_property('kiwi+ui+widgets+spinbutton+SpinButton::data-type', SpinButtonDataType)
 
 class SpinBtnDataTypeAdaptor(DataTypeAdaptor):
     def create_editor(self, context):

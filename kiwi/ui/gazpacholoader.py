@@ -27,6 +27,7 @@ import os
 from gazpacho.loader.loader import ObjectBuilder
 from gazpacho.loader.custom import Adapter, PythonWidgetAdapter, \
      adapter_registry
+from gazpacho.properties import prop_registry, CustomProperty
 
 from kiwi import _warn
 from kiwi.environ import environ
@@ -89,26 +90,41 @@ class GazpachoWidgetTree:
     def signal_autoconnect(self, dic):
         self._tree.signal_autoconnect(dic)        
 
+class DataTypeProperty(CustomProperty):
+    translatable = False
+    def save(self):
+        value = self.get()
+        return value.__name__
 
 class CheckButtonAdapter(PythonWidgetAdapter):
     object_type = CheckButton
 adapter_registry.register_adapter(CheckButtonAdapter)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+checkbutton+CheckButton::data-type', DataTypeProperty)
     
 class ComboBoxAdapter(PythonWidgetAdapter):
     object_type = ComboBox
 adapter_registry.register_adapter(ComboBoxAdapter)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+combobox+ComboBox::data-type', DataTypeProperty)
     
 class ComboBoxEntryAdapter(PythonWidgetAdapter):
     object_type = ComboBoxEntry
 adapter_registry.register_adapter(ComboBoxEntryAdapter)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+combobox+ComboBoxEntry::data-type', DataTypeProperty)
     
 class EntryAdapter(PythonWidgetAdapter):
     object_type = Entry
 adapter_registry.register_adapter(EntryAdapter)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+entry+Entry::data-type', DataTypeProperty)
     
 class LabelAdapter(PythonWidgetAdapter):
     object_type = Label
 adapter_registry.register_adapter(LabelAdapter)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+label+Label::data-type', DataTypeProperty)
 
 class ColumnAdapter(Adapter):
     object_type = Column
@@ -123,11 +139,19 @@ adapter_registry.register_adapter(ListAdapter)
 class RadioButtonAdapter(PythonWidgetAdapter):
     object_type = RadioButton
 adapter_registry.register_adapter(RadioButtonAdapter)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+radiobutton+RadioButton::data-type', DataTypeProperty)
     
 class SpinButtonAdapter(PythonWidgetAdapter):
     object_type = SpinButton
 adapter_registry.register_adapter(SpinButtonAdapter)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+spinbutton+SpinButton::data-type', DataTypeProperty)
     
 class TextViewAdapter(PythonWidgetAdapter):
     object_type = TextView
 adapter_registry.register_adapter(TextViewAdapter)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+textview+TextView::data-type', DataTypeProperty)
+
+
