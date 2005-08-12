@@ -68,6 +68,7 @@ class DataTypeAdaptor(object):
         proxy.set_value(value)
 
 class DataTypeProperty(CustomProperty, StringType):
+    translatable = False
     def save(self):
         value = self.get()
         return value.__name__
