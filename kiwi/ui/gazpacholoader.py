@@ -96,35 +96,48 @@ class DataTypeProperty(CustomProperty):
         value = self.get()
         return value.__name__
 
+class ModelProperty(CustomProperty):
+    translatable = False
+    
 class CheckButtonAdapter(PythonWidgetAdapter):
     object_type = CheckButton
 adapter_registry.register_adapter(CheckButtonAdapter)
 prop_registry.override_simple(
     'kiwi+ui+widgets+checkbutton+CheckButton::data-type', DataTypeProperty)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+checkbutton+CheckButton::model-attribute', ModelProperty)
     
 class ComboBoxAdapter(PythonWidgetAdapter):
     object_type = ComboBox
 adapter_registry.register_adapter(ComboBoxAdapter)
 prop_registry.override_simple(
     'kiwi+ui+widgets+combobox+ComboBox::data-type', DataTypeProperty)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+combobox+ComboBox::model-attribute', ModelProperty)
     
 class ComboBoxEntryAdapter(PythonWidgetAdapter):
     object_type = ComboBoxEntry
 adapter_registry.register_adapter(ComboBoxEntryAdapter)
 prop_registry.override_simple(
     'kiwi+ui+widgets+combobox+ComboBoxEntry::data-type', DataTypeProperty)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+combobox+ComboBoxEntry::model-attribute', ModelProperty)
     
 class EntryAdapter(PythonWidgetAdapter):
     object_type = Entry
 adapter_registry.register_adapter(EntryAdapter)
 prop_registry.override_simple(
     'kiwi+ui+widgets+entry+Entry::data-type', DataTypeProperty)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+entry+Entry::model-attribute', ModelProperty)
     
 class LabelAdapter(PythonWidgetAdapter):
     object_type = Label
 adapter_registry.register_adapter(LabelAdapter)
 prop_registry.override_simple(
     'kiwi+ui+widgets+label+Label::data-type', DataTypeProperty)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+label+Label::model-attribute', ModelProperty)
 
 class ColumnAdapter(Adapter):
     object_type = Column
@@ -141,17 +154,23 @@ class RadioButtonAdapter(PythonWidgetAdapter):
 adapter_registry.register_adapter(RadioButtonAdapter)
 prop_registry.override_simple(
     'kiwi+ui+widgets+radiobutton+RadioButton::data-type', DataTypeProperty)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+radiobutton+RadioButton::model-attribute', ModelProperty)
     
 class SpinButtonAdapter(PythonWidgetAdapter):
     object_type = SpinButton
 adapter_registry.register_adapter(SpinButtonAdapter)
 prop_registry.override_simple(
     'kiwi+ui+widgets+spinbutton+SpinButton::data-type', DataTypeProperty)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+spinbutton+SpinButton::model-attribute', ModelProperty)
     
 class TextViewAdapter(PythonWidgetAdapter):
     object_type = TextView
 adapter_registry.register_adapter(TextViewAdapter)
 prop_registry.override_simple(
     'kiwi+ui+widgets+textview+TextView::data-type', DataTypeProperty)
+prop_registry.override_simple(
+    'kiwi+ui+widgets+textview+TextView::model-attribute', ModelProperty)
 
 
