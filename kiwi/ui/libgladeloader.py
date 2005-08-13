@@ -29,7 +29,7 @@ from kiwi import _warn
 from kiwi.environ import environ
 
 class LibgladeWidgetTree(XML):
-    def __init__(self, view, gladefile, widgets, gladename=None, domain=domain):
+    def __init__(self, view, gladefile, widgets, gladename=None, domain=None):
 
         if not gladefile:
             raise ValueError("A gladefile wasn't provided.")
