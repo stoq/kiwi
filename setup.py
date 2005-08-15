@@ -4,9 +4,10 @@
 # Code by Async Open Source <http://www.async.com.br>
 # setup.py writen by Christian Reis <kiko@async.com.br>
 
+from distutils.core import setup
 from fnmatch import fnmatch
 import os
-from distutils.core import setup
+import sys
 
 def listfiles(*dirs):
     dir, pattern = os.path.split(os.path.join(*dirs))
@@ -32,11 +33,11 @@ setup(
     license = "GNU LGPL 2.1 (see COPYING)",
     data_files = [
         ('share/gazpacho/catalogs',
-         listfiles('gazpacho-plugin', 'kiwi.xml')),
-        ('share/gazpacho/resources/kiwi',
+         listfiles('gazpacho-plugin', 'kiwiwidgets.xml')),
+        ('share/gazpacho/resources/kiwiwidgets',
          listfiles('gazpacho-plugin', 'resources', '*.png')),
-        ('lib/gazpacho/widgets',
-         listfiles('gazpacho-plugin', 'kiwi.py')),
+        ('lib/python%d.%d/site-packages/gazpacho/widgets' % sys.version_info[:2],
+         listfiles('gazpacho-plugin', 'kiwiwidgets.py')),
         ],
     scripts = ['bin/kiwi-i18n'],
     packages = ['kiwi',

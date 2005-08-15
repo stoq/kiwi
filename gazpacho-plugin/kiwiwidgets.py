@@ -18,7 +18,6 @@ from datetime import date
 from gettext import gettext as _
 
 import gtk
-from gazpacho.custompropertyeditor import CustomPropertyEditor
 from gazpacho.util import get_bool_from_string_with_default
 from gazpacho.widget import Widget
 
@@ -116,11 +115,8 @@ class ColumnDefinitionsAdaptor(object):
  SORTED,
  ORDER) = range(10)
 
-class ListColumnDefinitionsEditor(CustomPropertyEditor):
+class ListColumnDefinitionsEditor(object):
     """This dialog is used to edit the column definitions of a Kiwi List"""
-
-    def __init__(self):
-        CustomPropertyEditor.__init__(self)
 
     def set_widget(self, widget, proxy):
         super(ListColumnDefinitionsEditor, self).set_widget(widget, proxy)
