@@ -302,18 +302,24 @@ class SlaveView(gobject.GObject):
     def check_and_notify_validity(self, force=False):
         # Current view is only valid if we have no invalid children
         # their status are stored as values in the dictionary
-        valid = False not in self._validation.values()
+        is_valid = True
+        if False in self._validation.values():
+            is_valid = False
 
         # Check if validation really changed
-        if self._valid == valid and force == False:
+        if self._valid == is_valid and force == False:
             return
 
-        self._valid = valid
-        self.emit('validation-changed', valid)
-        
-        if self._validate_function:
-            self._validate_function(valid)
+        self._valid = is_valid
+        self.emit('validation-changed', is_valid)
 
+        # FIXME: Remove and update all callsites to use validation-changed
+        if self._validate_function:
+            self._validate_function(is_valid)
+
+    def force_validation(self):
+        self.check_and_notify_validity(force=True)
+        
     def register_validate_function(self, function):
         """The signature of the validate function is:
 
