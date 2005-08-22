@@ -22,12 +22,16 @@
 #            Johan Dahlin <jdahlin@async.com.br>
 #
 
+import gettext
 import os
+from datetime import date
 
+import gtk
+from gazpacho.editor import PropertyCustomEditor
 from gazpacho.loader.loader import ObjectBuilder
 from gazpacho.loader.custom import Adapter, PythonWidgetAdapter, \
      adapter_registry
-from gazpacho.properties import prop_registry, CustomProperty
+from gazpacho.properties import prop_registry, CustomProperty, StringType
 
 from kiwi import _warn
 from kiwi.environ import environ
@@ -39,6 +43,8 @@ from kiwi.ui.widgets.list import Column, List
 from kiwi.ui.widgets.radiobutton import RadioButton
 from kiwi.ui.widgets.spinbutton import SpinButton
 from kiwi.ui.widgets.textview import TextView
+
+_ = gettext.gettext
 
 class Builder(ObjectBuilder):
     def find_resource(self, filename):
@@ -90,7 +96,143 @@ class GazpachoWidgetTree:
     def signal_autoconnect(self, dic):
         self._tree.signal_autoconnect(dic)        
 
-class DataTypeProperty(CustomProperty):
+class DataTypeAdaptor(PropertyCustomEditor):
+    def create_editor(self):
+        model = gtk.ListStore(str, object)
+        for datatype in self.get_data_types():
+            model.append(datatype)
+        combo = gtk.ComboBox(model)
+        renderer = gtk.CellRendererText()
+        combo.pack_start(renderer)
+        combo.add_attribute(renderer, 'text', 0)
+        combo.set_active(0)
+        combo.set_data('connection-id', -1)
+        return combo        
+
+    def get_data_types(self):
+        raise NotImplementedError
+    
+    def update_editor(self, context, combo, kiwiwidget, proxy):
+        connection_id = combo.get_data('connection-id')
+        if (connection_id != -1):
+            combo.disconnect(connection_id)
+        connection_id = combo.connect('changed', self._editor_edit, kiwiwidget,
+                                      proxy, context)
+        combo.set_data('connection-id', connection_id)
+        model = combo.get_model()
+        value = kiwiwidget.get_property('data-type')
+        for row in model:
+            if row[1] == value:
+                combo.set_active_iter(row.iter)
+                break
+            
+    def _editor_edit(self, combo, kiwilist, proxy, context):
+        model = combo.get_model()
+        active_iter = combo.get_active_iter()
+        value = model.get_value(active_iter, 1)
+        proxy.set_value(value)
+
+
+class SpinBtnDataTypeAdaptor(DataTypeAdaptor):
+    def __init__(self):
+        super(SpinBtnDataTypeAdaptor, self).__init__()
+        self._input = self.create_editor()
+        
+    def get_data_types(self):
+        return [(_('Integer'), int),
+                (_('Float'), float)]
+
+    def get_editor_widget(self):
+        return self._input
+
+
+class EntryDataTypeAdaptor(DataTypeAdaptor):
+    def __init__(self):
+        super(EntryDataTypeAdaptor, self).__init__()
+        self._input = self.create_editor()
+
+    def get_data_types(self):
+        return [(_('Integer'), int),
+                (_('Float'), float),
+                (_('Date'), date),
+                (_('String'), str)]
+
+    def get_editor_widget(self):
+        return self._input
+
+
+class TextViewDataTypeAdaptor(DataTypeAdaptor):
+    def __init__(self):
+        super(TextViewDataTypeAdaptor, self).__init__()
+        self._input = self.create_editor()
+
+    def get_data_types(self):
+        return [(_('Integer'), int),
+                (_('Float'), float),
+                (_('Date'), date),
+                (_('String'), str)]
+
+    def get_editor_widget(self):
+        return self._input
+
+
+class RadioBtnDataTypeAdaptor(DataTypeAdaptor):
+    def __init__(self):
+        super(RadioBtnDataTypeAdaptor, self).__init__()
+        self._input = self.create_editor()
+
+    def get_data_types(self):
+        return [(_('Boolean'), bool)]
+
+    def get_editor_widget(self):
+        return self._input
+
+
+class CheckBtnDataTypeAdaptor(DataTypeAdaptor):
+    def __init__(self):
+        super(CheckBtnDataTypeAdaptor, self).__init__()
+        self._input = self.create_editor()
+
+    def get_data_types(self):
+        return [(_('Boolean'), bool)]
+
+    def get_editor_widget(self):
+        return self._input
+
+
+class ComboBoxDataTypeAdaptor(DataTypeAdaptor):
+    def __init__(self):
+        super(ComboBoxDataTypeAdaptor, self).__init__()
+        self._input = self.create_editor()
+
+    def get_data_types(self):
+        return [(_('Boolean'), bool),
+                (_('String'), str),
+                (_('Integer'), int),
+                (_('Float'), float),
+                (_('Object'), object)]
+
+    def get_editor_widget(self):
+        return self._input
+
+
+class ComboBoxEntryDataTypeAdaptor(DataTypeAdaptor):
+    def __init__(self):
+        super(ComboBoxEntryDataTypeAdaptor, self).__init__()
+        self._input = self.create_editor()
+
+    def get_data_types(self):
+        return [(_('Boolean'), bool),
+                (_('String'), str),
+                (_('Integer'), int),
+                (_('Float'), float),
+                (_('Object'), object)]
+
+    def get_editor_widget(self):
+        return self._input
+
+
+class DataTypeProperty(CustomProperty, StringType):
     translatable = False
     def save(self):
         value = self.get()
@@ -103,7 +245,8 @@ class CheckButtonAdapter(PythonWidgetAdapter):
     object_type = CheckButton
 adapter_registry.register_adapter(CheckButtonAdapter)
 prop_registry.override_simple(
-    'kiwi+ui+widgets+checkbutton+CheckButton::data-type', DataTypeProperty)
+    'kiwi+ui+widgets+checkbutton+CheckButton::data-type', DataTypeProperty,
+    editor=CheckBtnDataTypeAdaptor)
 prop_registry.override_simple(
     'kiwi+ui+widgets+checkbutton+CheckButton::model-attribute', ModelProperty)
     
@@ -111,7 +254,8 @@ class ComboBoxAdapter(PythonWidgetAdapter):
     object_type = ComboBox
 adapter_registry.register_adapter(ComboBoxAdapter)
 prop_registry.override_simple(
-    'kiwi+ui+widgets+combobox+ComboBox::data-type', DataTypeProperty)
+    'kiwi+ui+widgets+combobox+ComboBox::data-type', DataTypeProperty,
+    editor=ComboBoxDataTypeAdaptor)
 prop_registry.override_simple(
     'kiwi+ui+widgets+combobox+ComboBox::model-attribute', ModelProperty)
     
@@ -119,7 +263,8 @@ class ComboBoxEntryAdapter(PythonWidgetAdapter):
     object_type = ComboBoxEntry
 adapter_registry.register_adapter(ComboBoxEntryAdapter)
 prop_registry.override_simple(
-    'kiwi+ui+widgets+combobox+ComboBoxEntry::data-type', DataTypeProperty)
+    'kiwi+ui+widgets+combobox+ComboBoxEntry::data-type', DataTypeProperty,
+    editor=ComboBoxEntryDataTypeAdaptor)
 prop_registry.override_simple(
     'kiwi+ui+widgets+combobox+ComboBoxEntry::model-attribute', ModelProperty)
     
@@ -127,7 +272,8 @@ class EntryAdapter(PythonWidgetAdapter):
     object_type = Entry
 adapter_registry.register_adapter(EntryAdapter)
 prop_registry.override_simple(
-    'kiwi+ui+widgets+entry+Entry::data-type', DataTypeProperty)
+    'kiwi+ui+widgets+entry+Entry::data-type', DataTypeProperty,
+    editor=EntryDataTypeAdaptor)
 prop_registry.override_simple(
     'kiwi+ui+widgets+entry+Entry::model-attribute', ModelProperty)
     
@@ -153,7 +299,8 @@ class RadioButtonAdapter(PythonWidgetAdapter):
     object_type = RadioButton
 adapter_registry.register_adapter(RadioButtonAdapter)
 prop_registry.override_simple(
-    'kiwi+ui+widgets+radiobutton+RadioButton::data-type', DataTypeProperty)
+    'kiwi+ui+widgets+radiobutton+RadioButton::data-type', DataTypeProperty,
+    editor=RadioBtnDataTypeAdaptor)
 prop_registry.override_simple(
     'kiwi+ui+widgets+radiobutton+RadioButton::model-attribute', ModelProperty)
     
@@ -161,16 +308,21 @@ class SpinButtonAdapter(PythonWidgetAdapter):
     object_type = SpinButton
 adapter_registry.register_adapter(SpinButtonAdapter)
 prop_registry.override_simple(
-    'kiwi+ui+widgets+spinbutton+SpinButton::data-type', DataTypeProperty)
+    'kiwi+ui+widgets+spinbutton+SpinButton::data-type', DataTypeProperty,
+    editor=SpinBtnDataTypeAdaptor)
 prop_registry.override_simple(
     'kiwi+ui+widgets+spinbutton+SpinButton::model-attribute', ModelProperty)
-    
+
 class TextViewAdapter(PythonWidgetAdapter):
     object_type = TextView
 adapter_registry.register_adapter(TextViewAdapter)
 prop_registry.override_simple(
-    'kiwi+ui+widgets+textview+TextView::data-type', DataTypeProperty)
+    'kiwi+ui+widgets+textview+TextView::data-type', DataTypeProperty,
+    editor=TextViewDataTypeAdaptor)
 prop_registry.override_simple(
     'kiwi+ui+widgets+textview+TextView::model-attribute', ModelProperty)
 
+    
 
+
+    

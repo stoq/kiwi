@@ -3,222 +3,32 @@
   <glade-widget-classes>
     <glade-widget-class name="kiwi+ui+widgets+list+List"
                         generic-name="kiwilist"
-                        title="Kiwi List" >
-      <function name="fill-empty" type="ignore" />
-      <properties>
-
-        <property id="column-definitions" 
-                  name="Column Definitions" 
-                  translatable="False" 
-                  adaptor-class="ColumnDefinitionsAdaptor">
-          <type>String</type>
-          <function name="get" type="ignore"/>
-          <function name="set" type="override"/>
-          <editor>
-            <function name="create" type="override"/>
-            <function name="update" type="override"/>
-          </editor>
-
-        </property>
-        <property id="selection-mode" 
-                  name="Selection Mode"/>
-        <property id="hadjustment" disabled="True"/>
-        <property id="vadjustment" disabled="True"/>
-
-      </properties>
-    </glade-widget-class>
-
+                        title="Kiwi List" />
     <glade-widget-class name="kiwi+ui+widgets+entry+Entry"
                         generic-name="kiwientry"
-                        title="Kiwi Entry" >
-      <properties>
-
-        <property id="data-type"
-                  name="Data Type"
-                  translatable="False"
-                  adaptor-class="DataTypeAdaptor">
-	  <function name="save" type="override"/>
-          <editor>
-            <function name="create" type="override"/>
-            <function name="update" type="override"/>
-          </editor>
-
-        </property>
-        <property id="model-attribute"
-                  name="Model Attribute"
-                  translatable="False" />
-
-    	<property id="completion"
-                  name="Completion"/>
-      </properties>
-    </glade-widget-class>
-
+                        title="Kiwi Entry" />
     <glade-widget-class name="kiwi+ui+widgets+label+Label"
                         generic-name="kiwilabel"
-                        title="Kiwi Label" >
-      <properties>
-
-        <property id="data-type"
-                  name="Data Type"
-                  translatable="False"
-                  adaptor-class="DataTypeAdaptor">
-	  <function name="save" type="override"/>
-          <editor>
-            <function name="create" type="override"/>
-            <function name="update" type="override"/>
-          </editor>
-
-        </property>
-	    <property id="model-attribute"
-                  name="Model Attribute"
-                  translatable="False" />
-
-      </properties>
-    </glade-widget-class>
-
+                        title="Kiwi Label" />
     <glade-widget-class name="kiwi+ui+widgets+combobox+ComboBox"
                         generic-name="kiwicombobox"
-                        title="Kiwi Combo Box">
-      <properties>
-        <!-- These properties are buggie in GTK+ 2.4 -->
-        <property id="column-span-column" disabled="True" />
-        <property id="row-span-column" disabled="True" />
-    	<property id="model-attribute"
-                  name="Model Attribute"
-                  translatable="False" />
-
-        <property id="data-type"
-                  name="Data Type"
-                  translatable="False"
-                  adaptor-class="DataTypeAdaptor">
-	  <function name="save" type="override"/>
-          <editor>
-            <function name="create" type="override"/>
-            <function name="update" type="override"/>
-          </editor>
-
-        </property>
-
-      </properties>
-    </glade-widget-class>
-
+                        title="Kiwi Combo Box"/>
     <glade-widget-class name="kiwi+ui+widgets+combobox+ComboBoxEntry"
                         generic-name="kiwicomboboxentry"
-                        title="Kiwi Combo Box Entry">
-      <properties>
-        <!-- These properties are buggie in GTK+ 2.4 -->
-        <property id="column-span-column" disabled="True" />
-        <property id="row-span-column" disabled="True" />
-    	<property id="model-attribute"
-                  name="Model Attribute"
-                  translatable="False" />
-
-    	<property id="list-writable"
-                  name="List writable"/>
-              
-        <property id="data-type"
-                  name="Data Type"
-                  translatable="False"
-                  adaptor-class="DataTypeAdaptor">
-	  <function name="save" type="override"/>
-          <editor>
-            <function name="create" type="override"/>
-            <function name="update" type="override"/>
-          </editor>
-
-        </property>
-        <property id="text-column" disabled="True" />
-      </properties>
-    </glade-widget-class>
-
-  <glade-widget-class name="kiwi+ui+widgets+checkbutton+CheckButton"
+                        title="Kiwi Combo Box Entry"/>
+    <glade-widget-class name="kiwi+ui+widgets+checkbutton+CheckButton"
                         generic-name="kiwicheckbutton"
-                        title="Kiwi Check Button">
-      <properties>
-
-        <property id="data-type" disabled="True" />
-    	<property id="model-attribute"
-                  name="Model Attribute"
-                  translatable="False" />
-
-        
-     </properties>
-    </glade-widget-class>
-
- <glade-widget-class name="kiwi+ui+widgets+radiobutton+RadioButton"
+                        title="Kiwi Check Button"/>
+    <glade-widget-class name="kiwi+ui+widgets+radiobutton+RadioButton"
                         generic-name="kiwiradiobutton"
-                        title="Kiwi Radio Button">
-      <properties>
-
-    	<property id="model-attribute"
-                  name="Model Attribute"
-                  translatable="False" />
-    	<property id="data-value"
-                  name="Data Value"
-                  translatable="False" />
-        <property id="data-type"
-                  name="Data Type"
-                  translatable="False"
-                  adaptor-class="DataTypeAdaptor">
-              <function name="save" type="override"/>
-                <editor>
-                  <function name="create" type="override"/>
-                  <function name="update" type="override"/>
-                </editor>
-        </property>
-        
-     </properties>
-    </glade-widget-class>
-
+                        title="Kiwi Radio Button"/>
     <glade-widget-class name="kiwi+ui+widgets+spinbutton+SpinButton"
                         generic-name="kiwispinbutton"
-                        title="Kiwi Spin Button">
-      <properties>
-
-    	<property id="model-attribute"
-                  name="Model Attribute"
-                  translatable="False" />
-                  
-        <property id="data-type"
-                  name="Data Type"
-                  translatable="False"
-                  adaptor-class="SpinBtnDataTypeAdaptor">
-              <function name="save" type="override"/>
-                <editor>
-                  <function name="create" type="override"/>
-                  <function name="update" type="override"/>
-                </editor>
-        </property>
-        
-     </properties>
-    </glade-widget-class>
-    
+                        title="Kiwi Spin Button"/>
     <glade-widget-class name="kiwi+ui+widgets+textview+TextView"
                         generic-name="kiwitextview"
-                        title="Kiwi TextView">
-      
-      <properties>
-
-    	<property id="model-attribute"
-                  name="Model Attribute"
-                  translatable="False" />
-                  
-        <property id="data-type"
-                  name="Data Type"
-                  translatable="False"
-                  adaptor-class="DataTypeAdaptor">
-              <function name="save" type="override"/>
-                <editor>
-                  <function name="create" type="override"/>
-                  <function name="update" type="override"/>
-                </editor>
-        </property>
-        
-     </properties>
-    </glade-widget-class>
-    
-
-</glade-widget-classes>
+                        title="Kiwi TextView"/>
+  </glade-widget-classes>
 
   <glade-widget-group name="kiwi" title="Kiwi Widgets">
     <glade-widget-class-ref name="kiwi+ui+widgets+entry+Entry"/>

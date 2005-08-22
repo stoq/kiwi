@@ -1,3 +1,10 @@
+2005-06-14  Henrique Romano  <henrique@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/gazpacholoader.py: Update to work with gazpacho trunk. 
+	Add better data-type filters for various widgets.
+	
 2005-08-02  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/list.py (Column, List): Add support for cell editing.

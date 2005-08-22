@@ -26,58 +26,6 @@ import kiwi.ui.gazpacholoader
 root_library = 'kiwi.ui.widgets'
 widget_prefix = 'Kiwi'
                   
-# When we can use a never version of gazpacho, remove this
-
-class DataTypeAdaptor(object):
-    def create_editor(self, context):
-        model = gtk.ListStore(str, object)
-        model.append((_('String'), str))
-        model.append((_('Integer'), int))
-        model.append((_('Float'), float))
-        model.append((_('Boolean'), bool))
-        model.append((_('Date'), date))
-        model.append((_('Object'), object))
-        combo = gtk.ComboBox(model)
-        renderer = gtk.CellRendererText()
-        combo.pack_start(renderer)
-        combo.add_attribute(renderer, 'text', 0)
-        combo.set_active(0)
-        combo.set_data('connection-id', -1)
-        return combo        
-    
-    def update_editor(self, context, combo, kiwiwidget, proxy):
-        connection_id = combo.get_data('connection-id')
-        if (connection_id != -1):
-            combo.disconnect(connection_id)
-        connection_id = combo.connect('changed', self._editor_edit, kiwiwidget,
-                                      proxy, context)
-        combo.set_data('connection-id', connection_id)
-        model = combo.get_model()
-        value = kiwiwidget.get_property('data-type')
-        for row in model:
-            if row[1] == value:
-                combo.set_active_iter(row.iter)
-                break
-            
-    def _editor_edit(self, combo, kiwilist, proxy, context):
-        model = combo.get_model()
-        active_iter = combo.get_active_iter()
-        value = model.get_value(active_iter, 1)
-        proxy.set_value(value)
-
-class SpinBtnDataTypeAdaptor(DataTypeAdaptor):
-    def create_editor(self, context):
-        model = gtk.ListStore(str, object)
-        model.append((_('Integer'), int))
-        model.append((_('Float'), float))
-        combo = gtk.ComboBox(model)
-        renderer = gtk.CellRendererText()
-        combo.pack_start(renderer)
-        combo.add_attribute(renderer, 'text', 0)
-        combo.set_active(0)
-        combo.set_data('connection-id', -1)
-        return combo
-
 class ColumnDefinitionsAdaptor(object):
     def __init__(self):
         self._editor = ListColumnDefinitionsEditor()

@@ -197,8 +197,9 @@
                                 <property name="mandatory">True</property>
                                 <property name="model_attribute">nationality</property>
                                 <property name="events"></property>
-                                <property name="data_type">int</property>
+                                <property name="data_type">str</property>
                                 <property name="visible">True</property>
+                                <property name="list-writable">True</property>
                             </widget>
                             <packing>
                                 <property name="left_attach">1</property>
