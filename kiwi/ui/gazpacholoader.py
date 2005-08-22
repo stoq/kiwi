@@ -97,6 +97,21 @@ class GazpachoWidgetTree:
         self._tree.signal_autoconnect(dic)        
 
 class DataTypeAdaptor(PropertyCustomEditor):
+    def __init__(self):
+        super(DataTypeAdaptor, self).__init__()
+        self._input = self.create_editor()
+        
+    def get_editor_widget(self):
+        return self._input
+    
+    def get_data_types(self):
+        """
+        Subclasses should override this.
+        Expected to return a list of 2 sized tuples with
+        name of type and type, to be used in a combo box.
+        """
+        raise NotImplementedError
+    
     def create_editor(self):
         model = gtk.ListStore(str, object)
         for datatype in self.get_data_types():
@@ -109,9 +124,6 @@ class DataTypeAdaptor(PropertyCustomEditor):
         combo.set_data('connection-id', -1)
         return combo        
 
-    def get_data_types(self):
-        raise NotImplementedError
-    
     def update_editor(self, context, combo, kiwiwidget, proxy):
         connection_id = combo.get_data('connection-id')
         if (connection_id != -1):
@@ -132,105 +144,48 @@ class DataTypeAdaptor(PropertyCustomEditor):
         value = model.get_value(active_iter, 1)
         proxy.set_value(value)
 
-
 class SpinBtnDataTypeAdaptor(DataTypeAdaptor):
-    def __init__(self):
-        super(SpinBtnDataTypeAdaptor, self).__init__()
-        self._input = self.create_editor()
-        
     def get_data_types(self):
         return [(_('Integer'), int),
                 (_('Float'), float)]
 
-    def get_editor_widget(self):
-        return self._input
-
-
 class EntryDataTypeAdaptor(DataTypeAdaptor):
-    def __init__(self):
-        super(EntryDataTypeAdaptor, self).__init__()
-        self._input = self.create_editor()
-
     def get_data_types(self):
         return [(_('Integer'), int),
                 (_('Float'), float),
                 (_('Date'), date),
                 (_('String'), str)]
-
-    def get_editor_widget(self):
-        return self._input
-
 
 class TextViewDataTypeAdaptor(DataTypeAdaptor):
-    def __init__(self):
-        super(TextViewDataTypeAdaptor, self).__init__()
-        self._input = self.create_editor()
-
     def get_data_types(self):
         return [(_('Integer'), int),
                 (_('Float'), float),
                 (_('Date'), date),
                 (_('String'), str)]
 
-    def get_editor_widget(self):
-        return self._input
-
-
 class RadioBtnDataTypeAdaptor(DataTypeAdaptor):
-    def __init__(self):
-        super(RadioBtnDataTypeAdaptor, self).__init__()
-        self._input = self.create_editor()
-
     def get_data_types(self):
         return [(_('Boolean'), bool)]
-
-    def get_editor_widget(self):
-        return self._input
-
 
 class CheckBtnDataTypeAdaptor(DataTypeAdaptor):
-    def __init__(self):
-        super(CheckBtnDataTypeAdaptor, self).__init__()
-        self._input = self.create_editor()
-
     def get_data_types(self):
         return [(_('Boolean'), bool)]
 
-    def get_editor_widget(self):
-        return self._input
-
-
 class ComboBoxDataTypeAdaptor(DataTypeAdaptor):
-    def __init__(self):
-        super(ComboBoxDataTypeAdaptor, self).__init__()
-        self._input = self.create_editor()
-
     def get_data_types(self):
         return [(_('Boolean'), bool),
                 (_('String'), str),
                 (_('Integer'), int),
                 (_('Float'), float),
                 (_('Object'), object)]
-
-    def get_editor_widget(self):
-        return self._input
-
 
 class ComboBoxEntryDataTypeAdaptor(DataTypeAdaptor):
-    def __init__(self):
-        super(ComboBoxEntryDataTypeAdaptor, self).__init__()
-        self._input = self.create_editor()
-
     def get_data_types(self):
         return [(_('Boolean'), bool),
                 (_('String'), str),
                 (_('Integer'), int),
                 (_('Float'), float),
                 (_('Object'), object)]
-
-    def get_editor_widget(self):
-        return self._input
-
 
 class DataTypeProperty(CustomProperty, StringType):
     translatable = False
