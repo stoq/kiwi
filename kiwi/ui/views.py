@@ -246,11 +246,11 @@ class SlaveView(gobject.GObject):
         klass = type(self)
         self.toplevel = toplevel or klass.toplevel
         self.widgets = widgets or klass.widgets
-        self.gladefile = gladefile or klass.widgets
+        self.gladefile = gladefile or klass.gladefile
         self.gladename = gladename or klass.gladename
         self.toplevel_name = toplevel_name or klass.toplevel_name
         self.domain = domain or klass.domain
-            
+
         self.__broker = None
         
         for reserved in ["widgets", "toplevel", "gladefile",
