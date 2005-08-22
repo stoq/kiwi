@@ -1,21 +1,15 @@
 #!/usr/bin/env python
-from kiwi import Delegates
-from kiwi.initgtk import gtk, quit_if_last
+import gtk
 
-class Farenheit(Delegates.Delegate):
+from kiwi.ui.delegates import Delegate
+
+class Farenheit(Delegate):
     widgets = ["quitbutton", "temperature", "celsius", "farenheit",
                "celsius_label" , "farenheit_label", "temperature_label"]
+    gladefile = "faren"
     def __init__(self):
-        Delegates.Delegate.__init__(self, gladefile="faren", 
-                                    delete_handler=quit_if_last)
-        # Make labels bold
-        self.temperature_label.set_markup("<b>%s</b>" % \
-                                          self.temperature_label.get_text())
-        self.farenheit_label.set_markup("<b>%s</b>" % \
-                                        self.farenheit_label.get_text())
-        self.celsius_label.set_markup("<b>%s</b>" % \
-                                      self.celsius_label.get_text())
-    
+        Delegate.__init__(self, delete_handler=self.quit_if_last)
+        
     def convert_temperature(self, temp):
         farenheit = (temp * 9/5.0) + 32
         celsius = (temp - 32) * 5/9.0

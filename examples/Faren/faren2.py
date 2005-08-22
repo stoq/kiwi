@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-from kiwi import Views, Controllers
-from kiwi.initgtk import gtk, quit_if_last
+import gtk
 
-class FarenControl(Controllers.BaseController):
-    def __init__(self, view):
-        Controllers.BaseController.__init__(self, view)
+from kiwi.controllers import BaseController
+from kiwi.ui.views import BaseView
+
+class FarenControl(BaseController):
 
     def convert_temperature(self, temp):
         celsius = (temp - 32) * 5/9.0
@@ -23,19 +23,12 @@ class FarenControl(Controllers.BaseController):
             farenheit, celsius = self.convert_temperature(float(temp))
             self.view.update_temp(farenheit, celsius)
 
-class FarenView(Views.BaseView):
+class FarenView(BaseView):
     widgets = ["quitbutton", "temperature", "celsius", "farenheit",
                "celsius_label" , "farenheit_label", "temperature_label"]
     def __init__(self):
-        Views.BaseView.__init__(self, gladefile="faren",
-                                delete_handler=quit_if_last)
-        # Make labels bold
-        self.temperature_label.set_markup("<b>%s</b>" % \
-                                          self.temperature_label.get_text())
-        self.farenheit_label.set_markup("<b>%s</b>" % \
-                                        self.farenheit_label.get_text())
-        self.celsius_label.set_markup("<b>%s</b>" % \
-                                      self.celsius_label.get_text())
+        BaseView.__init__(self, gladefile="faren",
+                          delete_handler=self.quit_if_last)
 
     def get_temp(self):
         return self.temperature.get_text() or None

@@ -1,10 +1,11 @@
 #!/usr/bin/env python
-from kiwi import Views, Controllers
-from kiwi.initgtk import gtk, quit_if_last
+import gtk
 
-class FarenControl(Controllers.BaseController):
-    def __init__(self, view):
-        Controllers.BaseController.__init__(self, view)
+from kiwi.controllers import BaseController
+from kiwi.ui.views import BaseView
+from kiwi.ui.gadgets import quit_if_last
+
+class FarenControl(BaseController):
 
     def on_quitbutton__clicked(self, *args):
         self.view.hide_and_quit()
@@ -20,8 +21,8 @@ class FarenControl(Controllers.BaseController):
         self.view.farenheit.set_text("%.2f" % farenheit)
 
 widgets = ["quitbutton", "temperature", "celsius", "farenheit"]
-view = Views.BaseView(gladefile="faren", delete_handler=quit_if_last,
-                      widgets=widgets)
+view = BaseView(gladefile="faren", delete_handler=quit_if_last,
+                widgets=widgets)
 ctl = FarenControl(view)
 view.show()
 gtk.main()
