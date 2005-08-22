@@ -176,10 +176,9 @@ def gproperty(name, type, *args, **kwargs):
     finally:
         del frame
         
-    nick = kwargs.get('nick', None)
-    if nick is None:
-        nick = name
-    args = [type, name, nick]
+    nick = kwargs.get('nick', name)
+    blurb = kwargs.get('blurb', '')
+    args = [type, nick, blurb]
 
     if type == str:
         args.append(kwargs.get('default', ''))
