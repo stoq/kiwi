@@ -25,7 +25,7 @@ root_library = 'kiwi.ui.widgets'
 widget_prefix = 'Kiwi'
 
 # pyflakes
-kiwi
+assert kiwi
                   
 class ColumnDefinitionsAdaptor(object):
     def __init__(self):
