@@ -21,9 +21,18 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #         
 
+import gobject
+
+# When we can depend on 2.8 clean this up, so ClassInittable does not
+# need to be tied to GObjectMeta, since it doesn't need to be a GObject
+if gobject.pygtk_version >= (2, 7, 0):
+   metabase = gobject.GObjectMeta
+else:
+   metabase = type
+
 __all__ = ['ClassInittableObject']
 
-class _ClassInittableMetaType(type):
+class _ClassInittableMetaType(metabase):
     def __init__(cls, name, bases, namespace):
         super(_ClassInittableMetaType, cls).__init__(name, bases, namespace)
         cls.__class_init__(namespace)
