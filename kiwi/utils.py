@@ -183,15 +183,15 @@ def gproperty(name, type, *args, **kwargs):
     if type == str:
         args.append(kwargs.get('default', ''))
     elif type == int:
-        args.append(kwargs.get('minmum', 0))
+        args.append(kwargs.get('minimum', 0))
         args.append(kwargs.get('maximum', _MAX_INT))
         args.append(kwargs.get('default', 0))
     elif type == float:
-        args.append(kwargs.get('minmum', 0.0))
+        args.append(kwargs.get('minimum', 0.0))
         args.append(kwargs.get('maximum', _MAX_FLOAT))
         args.append(kwargs.get('default', 0.0))
     elif type == long:
-        args.append(kwargs.get('minmum', 0L))
+        args.append(kwargs.get('minimum', 0L))
         args.append(kwargs.get('maximum', _MAX_LONG))
         args.append(kwargs.get('default', 0L))
     elif type == bool:
