@@ -14,17 +14,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-from datetime import date
 from gettext import gettext as _
 
 import gtk
 from gazpacho.util import get_bool_from_string_with_default
-from gazpacho.widget import Widget
 
 # Register adapters
 import kiwi.ui.gazpacholoader
 root_library = 'kiwi.ui.widgets'
 widget_prefix = 'Kiwi'
+
+# pyflakes
+kiwi
                   
 class ColumnDefinitionsAdaptor(object):
     def __init__(self):

@@ -4,10 +4,8 @@ import os
 
 import gtk
 
-from kiwi import utils
 from kiwi.ui.delegates import Delegate, SlaveDelegate
 from kiwi.ui.gadgets import quit_if_last, set_background, set_foreground
-from kiwi.ui.widgets.list import List, Column
 
 class NewsItem:
     def __init__(self, title, author, url):

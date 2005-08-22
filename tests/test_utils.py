@@ -1,6 +1,5 @@
 import unittest
 
-import gtk
 import gobject
 
 from kiwi.utils import slicerange, PropertyObject, gproperty

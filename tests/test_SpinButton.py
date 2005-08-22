@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 import unittest
 
-import gtk
-
 from kiwi.ui.widgets.spinbutton import SpinButton
 
 class SpinButtonTest(unittest.TestCase):

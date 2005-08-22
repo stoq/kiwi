@@ -15,7 +15,9 @@ def listfiles(*dirs):
             for filename in os.listdir(os.path.abspath(dir))
                 if filename[0] != '.' and fnmatch(filename, pattern)]
 
+version = ''
 execfile("kiwi/__version__.py")
+assert version
 
 setup(
     name = "kiwi",

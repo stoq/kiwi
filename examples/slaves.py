@@ -2,8 +2,6 @@
 import gtk
 
 from kiwi.datatypes import ValidationError
-from kiwi.ui.views import SlaveView
-from kiwi.ui.widgets.entry import Entry
 from kiwi.ui.widgets.combobox import ComboBoxEntry
 from kiwi.ui.delegates import Delegate, SlaveDelegate
 

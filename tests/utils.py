@@ -1,6 +1,5 @@
 import gtk
 
-from kiwi.initgtk import gtk
 from time import sleep
 import sys
 

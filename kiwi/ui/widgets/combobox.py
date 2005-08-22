@@ -32,7 +32,7 @@ import time
 
 import gobject
 import gtk
-import gtk.keysyms 
+from gtk import keysyms 
 
 from kiwi import ValueUnset
 from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
@@ -362,7 +362,8 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
         if not self._list_writable:
             return
 
-        if event.keyval in (gtk.keysyms.KP_Enter, gtk.keysyms.Return):
+        if event.keyval in (keysyms.KP_Enter,
+                            keysyms.Return):
             self._add_text_to_combo_list()
         
     def _on_child_entry__expose_event(self, widget, event):
