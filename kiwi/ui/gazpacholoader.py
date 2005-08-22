@@ -192,7 +192,7 @@ class DataTypeProperty(CustomProperty, StringType):
     def save(self):
         value = self.get()
         return value.__name__
-
+    
 class ModelProperty(CustomProperty):
     translatable = False
     
@@ -235,8 +235,10 @@ prop_registry.override_simple(
 class LabelAdapter(PythonWidgetAdapter):
     object_type = Label
 adapter_registry.register_adapter(LabelAdapter)
+# This is disabled until we can figure if we need it
 prop_registry.override_simple(
-    'kiwi+ui+widgets+label+Label::data-type', DataTypeProperty)
+    'kiwi+ui+widgets+label+Label::data-type', DataTypeProperty,
+    editable=False)
 prop_registry.override_simple(
     'kiwi+ui+widgets+label+Label::model-attribute', ModelProperty)
 
