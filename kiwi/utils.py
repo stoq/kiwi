@@ -126,7 +126,8 @@ class PropertyObject(ClassInittableObject):
         self._set(prop_name, value)
         
     def do_get_property(self, pspec):
-        return self._attributes[pspec.name]
+        prop_name = pspec.name.replace('-', '_')
+        return self._attributes[prop_name]
     
 def gsignal(name, *args, **kwargs):
     """
