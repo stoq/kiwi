@@ -355,8 +355,12 @@ class SlaveView(gobject.GObject):
             msg = "Container %s should be a Window, found %s"
             raise TypeError(msg % (container_name, type(shell)))
 
+        print shell
+        if shell.get_property('visible'):
+            _warn('Toplevel window %s in %s should not be visible' % (container_name,
+                                                                      self.gladefile))
         # XXX grab the accel groups
-
+        
         self.toplevel = shell.get_child()
         shell.remove(self.toplevel)
         shell.destroy()
