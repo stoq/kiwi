@@ -414,13 +414,13 @@ class SlaveView(gobject.GObject):
 
             - widgets: a list of widget names to be searched through
         """
-        widget = self.get_topmost_widget(widgets, can_focus=1)
+        widget = self.get_topmost_widget(widgets, can_focus=True)
         if widget is not None: 
             widget.grab_focus()
         # So it can be idle_added safely
         return False
 
-    def get_topmost_widget(self, widgets=None, can_focus=True):
+    def get_topmost_widget(self, widgets=None, can_focus=False):
         """
         A real hack; returns the widget that is most to the left and
         top of the window. 
@@ -627,7 +627,7 @@ class SlaveView(gobject.GObject):
     # Signal connection
     #
 
-    def connect_multiple(self, widgets, signal, handler, after=0):
+    def connect_multiple(self, widgets, signal, handler, after=False):
         """
         Connect the same handler to the specified signal for a number of
         widgets.
