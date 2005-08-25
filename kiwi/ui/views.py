@@ -542,7 +542,7 @@ class SlaveView(gobject.GObject):
         reasons but will print a warning.
         """
         if not isinstance(slave, SlaveView):
-            _warn("slave specified must be a SlaveView, found %s" % slave)
+            raise TypeError("slave must be a SlaveView, not a %s" % type(slave))
 
         if not hasattr(slave, "get_toplevel"):
             raise TypeError("Slave does not have a get_toplevel method")
