@@ -551,26 +551,26 @@ class List(gtk.ScrolledWindow):
             treeview_column = self._create_column(column)  
             
         renderer, renderer_prop = self._guess_renderer_for_type(column)
-        
+
         justify = column.justify
         # If we don't specify a justification, right align it for int/float
         # and left align it for everything else. 
-        if (justify is None and 
-            issubclass(column.data_type, (int, float))):
-            justify = gtk.JUSTIFY_RIGHT
-        else:
-            justify = gtk.JUSTIFY_LEFT
-            
-        if justify is not None:
-            if justify == gtk.JUSTIFY_RIGHT:
-                xalign = 1.0
-            elif justify == gtk.JUSTIFY_CENTER:
-                xalign = 0.5
-            elif justify == gtk.JUSTIFY_LEFT:
-                xalign = 0.0
-            else:
-                raise AssertionError
-            renderer.set_property("xalign", xalign)
+	if justify is None:
+	    if issubclass(column.data_type, (int, float)):
+		justify = gtk.JUSTIFY_RIGHT
+	    else:
+		justify = gtk.JUSTIFY_LEFT
+		
+	if justify == gtk.JUSTIFY_RIGHT:
+	    xalign = 1.0
+	elif justify == gtk.JUSTIFY_CENTER:
+	    xalign = 0.5
+	elif justify in (gtk.JUSTIFY_LEFT, 
+			 gtk.JUSTIFY_FILL):
+	    xalign = 0.0
+	else:
+	    raise AssertionError
+	renderer.set_property("xalign", xalign)
 
         cell_data_func = self._cell_data_func
         if column.cell_data_func:
