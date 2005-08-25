@@ -544,9 +544,6 @@ class SlaveView(gobject.GObject):
         if not isinstance(slave, SlaveView):
             raise TypeError("slave must be a SlaveView, not a %s" % type(slave))
 
-        if not hasattr(slave, "get_toplevel"):
-            raise TypeError("Slave does not have a get_toplevel method")
-
         shell = slave.get_toplevel()
 
         if isinstance(shell, gtk.Window): # view with toplevel window
