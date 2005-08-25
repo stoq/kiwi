@@ -292,34 +292,6 @@ class SlaveView(gobject.GObject):
 
         self.slaves = {}
 
-    # Children of the view, eg slaves or widgets are connected to this signal
-    # When validation changes of a validatable child this callback is called
-    def _on_child__validation_changed(self, name, value):
-        self._validation[name] = value
-
-        self.check_and_notify_validity()
-        
-    def check_and_notify_validity(self, force=False):
-        # Current view is only valid if we have no invalid children
-        # their status are stored as values in the dictionary
-        is_valid = True
-        if False in self._validation.values():
-            is_valid = False
-
-        # Check if validation really changed
-        if self._valid == is_valid and force == False:
-            return
-
-        self._valid = is_valid
-        self.emit('validation-changed', is_valid)
-
-        # FIXME: Remove and update all callsites to use validation-changed
-        if self._validate_function:
-            self._validate_function(is_valid)
-
-    def force_validation(self):
-        self.check_and_notify_validity(force=True)
-        
     def register_validate_function(self, function):
         """The signature of the validate function is:
 
@@ -448,7 +420,7 @@ class SlaveView(gobject.GObject):
         # So it can be idle_added safely
         return False
 
-    def get_topmost_widget(self, widgets=None, can_focus=0):
+    def get_topmost_widget(self, widgets=None, can_focus=True):
         """
         A real hack; returns the widget that is most to the left and
         top of the window. 
@@ -521,6 +493,7 @@ class SlaveView(gobject.GObject):
     #
     # Slave handling
     #
+    
     def attach_slave(self, name, slave):
         """Attaches a slaveview to the current view, substituting the
         widget specified by name.  the widget specified *must* be a
@@ -727,7 +700,39 @@ class SlaveView(gobject.GObject):
         self.proxies.append(proxy)
 
         return proxy
+
+    #
+    # Validation
+    #
     
+    def _on_child__validation_changed(self, name, value):
+        # Children of the view, eg slaves or widgets are connected to this signal
+        # When validation changes of a validatable child this callback is called
+        self._validation[name] = value
+
+        self.check_and_notify_validity()
+        
+    def check_and_notify_validity(self, force=False):
+        # Current view is only valid if we have no invalid children
+        # their status are stored as values in the dictionary
+        is_valid = True
+        if False in self._validation.values():
+            is_valid = False
+
+        # Check if validation really changed
+        if self._valid == is_valid and force == False:
+            return
+
+        self._valid = is_valid
+        self.emit('validation-changed', is_valid)
+
+        # FIXME: Remove and update all callsites to use validation-changed
+        if self._validate_function:
+            self._validate_function(is_valid)
+
+    def force_validation(self):
+        self.check_and_notify_validity(force=True)
+        
 gobject.type_register(SlaveView)
 
 class BaseView(SlaveView):
