@@ -541,6 +541,12 @@ class SlaveView(gobject.GObject):
         instead of the eventbox) is still supported for compatibility
         reasons but will print a warning.
         """
+        if name in self.slaves:
+            # XXX: TypeError
+            _warn("A slave with name %s is already attached to %r"  % (
+                  name, self))
+        self.slaves[name] = slave
+
         if not isinstance(slave, SlaveView):
             raise TypeError("slave must be a SlaveView, not a %s" % type(slave))
 
@@ -601,12 +607,6 @@ class SlaveView(gobject.GObject):
         # call slave's callback
         slave.on_attach(self)
         
-        if self.slaves.has_key(name):
-            # I prefer to don't emit a raise here because it's really
-            # possible to change a certain slave in runtime.
-            _warn("You already have a slave %s attached" % name)
-        self.slaves[name] = slave
-
         slave.connect_object('validation-changed',
                              self._on_child__validation_changed,
                              name)
@@ -616,6 +616,15 @@ class SlaveView(gobject.GObject):
         # return placeholder we just removed
         return placeholder
 
+    def detach_slave(self, name):
+        """
+        Detatch a slave called name from view
+        """
+        if not name in self.slaves:
+            raise LookupError("There is no slaved called %s attached to %r" %
+                              (name, self))
+        del self.slaves[name]
+        
     def _attach_groups(self, win, accel_groups):
         # get groups currently attached to the window; we use them
         # to avoid reattaching an accelerator to the same window, which
