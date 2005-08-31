@@ -53,8 +53,6 @@ class WidgetMixin(Mixin):
         self._data_type = data_type
         self._model_attribute = model_attribute
         self._data_format = None
-        # this attibute will be set to the view that owns the widget
-        self.owner = None
 
     def set_data_format(self, format):
         self._data_format = format
@@ -221,7 +219,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         self._draw_mandatory_icon = False
         
         self._draw_info_icon = False
-        self._error_tooltip_visible = False    
 
         # this attribute stores the info on where to draw icons and paint
         # the background
@@ -229,8 +226,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
             widget = self
         self._widget_to_draw = widget
 
-        self.owner = None
-        
     def prop_get_mandatory(self):
         """Checks if the Kiwi Widget is set to mandatory"""
         return self._mandatory
@@ -393,7 +388,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         x = window_x + entry_x + entry_width - tooltip_width/2
         y = window_y + entry_y - entry_height
         self._error_tooltip.display(x, y)
-        self._error_tooltip_visible = True 
                 
         return True
 
@@ -461,8 +455,6 @@ class ErrorTooltip(gtk.Window):
     (information) icon"""
     def __init__(self, widget):
         gtk.Window.__init__(self, gtk.WINDOW_POPUP)
-        
-        self._widget = widget
         
         eventbox = gtk.EventBox()
         set_background(eventbox, "#fcffcd")
