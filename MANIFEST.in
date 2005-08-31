@@ -1,10 +1,6 @@
 recursive-include tests *
 recursive-include doc *
 recursive-include examples *
-recursive-include extra *
-recursive-include Kiwi *
-global-exclude *~ .*~ .cvsignore *.old core *.bak *.pickle
-global-exclude *.log *.l2h *.aux *.dvi old/* *.pyc *.ps
 include AUTHORS
 include COPYING
 include MANIFEST.in
