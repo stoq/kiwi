@@ -404,8 +404,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
             return
             
         (iconx, icony,
-         pixbuf,
-         pixw, pixh) = self._render_icon(icon, self._widget_to_draw)
+         pixw, pixh, pixbuf) = self._render_icon(icon, self._widget_to_draw)
         
         self._draw_pixbuf(window, iconx, icony, pixbuf, pixw, pixh)
         
@@ -416,23 +415,21 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
                                         icony, icony_range)
 
     def _render_icon(self, icon, widget):
+        widget_x, widget_y, widget_w, widget_h = widget.get_allocation()
         pixbuf = self.render_icon(icon, gtk.ICON_SIZE_MENU)
         pixw = pixbuf.get_width()
         pixh = pixbuf.get_height()
-        widget_x, widget_y, widget_w, widget_h = widget.get_allocation()
         
-        iconx = widget_x + widget_w - pixw
-        icony = widget_y + widget_h - pixh
-        
-        return iconx, icony, pixbuf, pixw, pixh
+        return (widget_x + widget_w - pixw,
+                widget_y + widget_h - pixh,
+                pixw, pixh, pixbuf)
 
     def _draw_pixbuf(self, window, iconx, icony, pixbuf, pixw, pixh):
         area_window = window.get_children()[0]
         winw, winh = area_window.get_size()
             
         area_window.draw_pixbuf(None, pixbuf, 0, 0, 
-                                winw - pixw, (winh - pixh)/2, 
-                                pixw, pixh)
+                                winw - pixw, (winh - pixh)/2, pixw, pixh)
 
     def is_correct(self):
         if self._invalid_data:
