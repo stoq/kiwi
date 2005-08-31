@@ -26,7 +26,9 @@ import gtk
 
 def gdk_color_to_string(color):
     """Convert a color to a #AABBCC string"""
-    return rgb_color_to_string(color.red, color.green, color.blue)
+    return "#%02X%02X%02X" % (int(color.red) >> 8, 
+                              int(color.green) >> 8, 
+                              int(color.blue) >> 8)
 
 def set_foreground(widget, color, state=gtk.STATE_NORMAL):
     """
