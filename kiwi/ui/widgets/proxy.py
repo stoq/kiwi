@@ -206,8 +206,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         # this is the last time the user changed the widget
         self._last_change_time = None
 
-        self._validation_error_message = ""
-        
         # id that paints the background red
         self._background_timeout_id = -1
         # id for idle that checks the cursor position
@@ -313,8 +311,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
             self._blank_data = False
             
         self._invalid_data = True
-        self._validation_error_message = str(e)
-        self._error_tooltip.set_error_text(self._validation_error_message)
+        self._error_tooltip.set_error_text(str(e))
         if self._complaint_checker_id == -1:
             self._complaint_checker_id = \
                 gobject.idle_add(self._check_for_complaints)
