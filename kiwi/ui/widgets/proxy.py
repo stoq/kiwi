@@ -221,7 +221,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         self._draw_mandatory_icon = False
         
         self._draw_info_icon = False
-        self._show_error_tooltip = False
         self._error_tooltip_visible = False    
 
         # this attribute stores the info on where to draw icons and paint
@@ -340,7 +339,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         if self._background_timeout_id != -1:
             return True
         
-        self._show_error_tooltip = True
         self._draw_info_icon = True
         self.queue_draw()
         func = merge_colors(self._widget_to_draw, 
