@@ -30,8 +30,9 @@ class Form(Delegate):
         #                          ('Yankee', 2),
         #                          ('Other', 3)])
         self.sex.prefill(('Male', 'Female'))
-        self.register_validate_function(self.validity)
         self.height.set_data_format('%4.4f')
+        self.register_validate_function(self.validity)
+        self.force_validation()
         
     # here we define our custom validation. When a user types anything,
     # the validate signal calls methods with the signature 
