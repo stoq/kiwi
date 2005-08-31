@@ -27,18 +27,42 @@
 
 import time
 
-import gtk
 import gobject
+import gtk
+from gtk import gdk
 
 from kiwi import ValueUnset
 from kiwi.datatypes import ValidationError, converter
 from kiwi.interfaces import Mixin, MixinSupportValidation
-from kiwi.ui.gadgets import set_background, merge_colors
+from kiwi.ui.gadgets import set_background
 
 MERGE_COLORS_DELAY = 100
 CURSOR_POS_CHECKING_DELAY = 200
 
 __pychecker__ = 'no-classattr'
+
+def merge_colors(widget, src_color, dst_color, steps=10):
+    """
+    Change the background of widget from src_color to dst_color
+    in the number of steps specified
+    """
+    gdk_src = gdk.color_parse(src_color)
+    gdk_dst = gdk.color_parse(dst_color)
+    rs, gs, bs = gdk_src.red, gdk_src.green, gdk_src.blue
+    rd, gd, bd = gdk_dst.red, gdk_dst.green, gdk_dst.blue
+    rinc = (rd - rs) / float(steps)
+    ginc = (gd - gs) / float(steps)
+    binc = (bd - bs) / float(steps)
+    for dummy in xrange(steps):
+        rs += rinc
+        gs += ginc
+        bs += binc
+        set_background(widget, "#%02X%02X%02X" % (int(rs) >> 8,
+                                                  int(gs) >> 8,
+                                                  int(bs) >> 8))
+        yield True
+
+    yield False
 
 class WidgetMixin(Mixin):
     """This class is a mixin that provide a common interface for KiwiWidgets.
@@ -317,19 +341,20 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         """Check for existing complaints and when to start complaining is case
         the input is wrong
         """
-        if self._last_change_time is None:
+        if not self._last_change_time:
             # the user has not started to type
             return True
         
-        now = time.time()
-        elapsed_time = now - self._last_change_time
-        
+        elapsed_time = time.time() - self._last_change_time
         if elapsed_time < COMPLAIN_DELAY:
             return True
         
         if not self._invalid_data:
             return True
-        
+
+        return self._maybe_draw_icon()
+    
+    def _maybe_draw_icon(self):
         # if we are already complaining, don't complain again
         if self._background_timeout_id != -1:
             return True
@@ -353,7 +378,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
             gobject.source_remove(self._complaint_checker_id)
             # before removing the get_cursor_position idle we need to be sure
             # that the tooltip is not been displayed
-            self._error_tooltip.disappear()
+            self._error_tooltip.hide()
             gobject.source_remove(self._get_cursor_position_id)
             self._background_timeout_id = -1
             self._complaint_checker_id = -1
@@ -366,7 +391,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         on top of the information icon
         """
         if not self._info_icon_position:
-            self._error_tooltip.disappear()
+            self._error_tooltip.hide()
             return True
         
         icon_x, icon_x_range, icon_y, icon_y_range = self._info_icon_position
@@ -375,19 +400,13 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         pointer_x, pointer_y = toplevel.get_pointer()
         
         if pointer_x not in icon_x_range or pointer_y not in icon_y_range:
-            self._error_tooltip.disappear()
+            self._error_tooltip.hide()
             return True
         
-        if self._error_tooltip.visible():
+        if self._error_tooltip.flags() & gtk.VISIBLE:
             return True
             
-        gdk_window = toplevel.window
-        window_x, window_y = gdk_window.get_origin()
-        entry_x, entry_y, entry_width, entry_height = self.get_allocation()
-        tooltip_width, tooltip_height = self._error_tooltip.get_size()
-        x = window_x + entry_x + entry_width - tooltip_width/2
-        y = window_y + entry_y - entry_height
-        self._error_tooltip.display(x, y)
+        self._error_tooltip.display(toplevel, self)
                 
         return True
 
@@ -458,21 +477,20 @@ class ErrorTooltip(gtk.Window):
 
         alignment = gtk.Alignment()
         alignment.set_border_width(4)
-        self.label = gtk.Label()
-        alignment.add(self.label)
+        self._label = gtk.Label()
+        alignment.add(self._label)
         eventbox.add(alignment)
         self.add(eventbox)
 
     def set_error_text(self, text):
-        self.label.set_text(text)
+        self._label.set_text(text)
     
-    def display(self, x, y):
+    def display(self, window, widget):
+        window_x, window_y = window.window.get_origin()
+        entry_x, entry_y, entry_width, entry_height = widget.get_allocation()
+        tooltip_width, tooltip_height = self.get_size()
+        x = window_x + entry_x + entry_width - tooltip_width/2
+        y = window_y + entry_y - entry_height
+        
         self.move(x, y)
         self.show_all()
-        
-    def visible(self):
-        return self.get_property("visible")
-    
-    def disappear(self):
-        self.hide()
-
