@@ -7,14 +7,13 @@ offers extended widgets based upon the original PyGTK widgets.
 
 * Requirements
 
-    - GTK+ 2.x.x       ftp://ftp.gtk.org/pub/gtk/v2.x/XXX
-    - PyGTK 2.x.x      ftp://ftp.gtk.org/pub/gtk/python/v2.x/XXX
-    - Python > 2.3     http://www.python.org/download/         
+    - GTK+ 2.6.x      ftp://ftp.gtk.org/pub/gtk/v2.6/
+    - PyGTK 2.6.x     ftp://ftp.gtk.org/pub/gtk/python/v2.6/
+    - Python > 2.3    http://www.python.org/download/         
 
   Optional
 
-    - libglade 2.x     http://ftp.gnome.org/pub/GNOME/sources/libglade/XXX
-    - gazpacho 0.5.3   http://ftp.gnome.org/pub/GNOME/sources/gazpacho/XXX
+    - gazpacho 0.6.x   http://ftp.gnome.org/pub/GNOME/sources/gazpacho/
 
 * Installation
 
