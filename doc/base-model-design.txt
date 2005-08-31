@@ -1,0 +1,33 @@
+Current
+
+class BaseModel:
+    def block_proxy(self, proxy):
+        pass
+    
+    def unblock_proxy(self, proxy):
+        pass
+
+    def register_proxy_for_attribute(self, attribute, proxy):
+        pass
+
+    def unregister_proxy(self, proxy):
+        pass
+
+Suggested:
+
+class BaseModel:
+    def proxy_block(self, proxy):
+        pass
+    
+    def proxy_unblock(self, proxy):
+        pass
+
+    def proxy_register_attribute(self, proxy, attribute):
+        pass
+
+    def proxy_register(self, proxy):
+        pass
+    
+    def proxy_unregister(self, proxy):
+        pass
+
