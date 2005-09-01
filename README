@@ -85,5 +85,6 @@ offers extended widgets based upon the original PyGTK widgets.
 * Contact info:
 
     URL and download: http://www.async.com.br/projects/kiwi/
-
-    Maintainer: Christian Reis <kiko@async.com.br>
+    
+    Maintainer: Johan Dahlin <jdahlin@async.com.br>
+    Original author: Christian Reis <kiko@async.com.br>
