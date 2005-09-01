@@ -534,6 +534,10 @@ class List(gtk.ScrolledWindow):
     def _setup_columns(self):
         if self._columns_configured:
             return
+
+        if [column.sorted for column in self._columns].count(True) > 1:
+            raise ValueError("More than one column has the sorted "
+                             "attribute defined.")
         
         for column in self._columns:
             self._setup_column(column)
