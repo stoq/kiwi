@@ -67,7 +67,8 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('format_func', object)
     gproperty('editable', bool, default=False)
     gproperty('searchable', bool, default=False)
-
+    gproperty('radio', bool, default=False)
+    
     # This can be set in subclasses, to be able to allow custom
     # cell_data_functions, used by SequentialColumn
     cell_data_func = None
@@ -116,6 +117,8 @@ class Column(PropertyObject, gobject.GObject):
           - searchable: if true the attribute values of the column can
             be searched using type ahead search. Only string attributes are
             currently supported.
+          - radio: If true render the column as a radio instead of toggle.
+            Only applicable for columns with boolean data types.
           TODO
           - title_pixmap: if set to a filename a pixmap will be used *instead*
             of the title set. The title string will still be used to
@@ -631,6 +634,10 @@ class List(gtk.ScrolledWindow):
             self._treeview.set_search_column(index)
             self._treeview.set_search_equal_func(self._search_equal_func,
                                                  column)
+
+        if column.radio:
+            if not issubclass(column.data_type, bool):
+                raise TypeError("You can only use radio for boolean columns")
             
         # typelist here may be none. It's okay; justify_columns will try
         # and use the specified justifications and if not present will
@@ -667,6 +674,34 @@ class List(gtk.ScrolledWindow):
                        self._on_header__button_release_event)
         return treeview_column
     
+    def _on_renderer_toggle__toggled(self, renderer, path, model, attribute):
+        # Deactive old one
+        old = renderer.get_data('kiwilist::radio-active')
+        
+        # If we don't have the radio-active set it means we're doing
+        # This for the first time, so scan and see which one is currently
+        # active, so we can deselect it
+        if not old:
+            # XXX: Handle multiple values set to True, this
+            #      algorithm just takes the first one it finds
+            for row in self._model:
+                obj = row[COL_MODEL]
+                value = getattr(obj, attribute)
+                if value == True:
+                    old = obj
+                    break
+            else:
+                raise TypeError("You need an initial attribute value set "
+                                "to true when using radio")
+
+        setattr(old, attribute, False)
+
+        # Active new and save a reference to the object of the
+        # previously selected row
+        new = model[path][COL_MODEL]
+        setattr(new, attribute, True)
+        renderer.set_data('kiwilist::radio-active', new)
+        
     def _on_renderer_text__edited(self, renderer, path, text,
                                   model, attribute, column):
         obj = model[path][COL_MODEL]
@@ -681,7 +716,18 @@ class List(gtk.ScrolledWindow):
         
         # TODO: Move to column
         data_type = column.data_type
-        if issubclass(data_type, (datetime.date, datetime.time,
+        if data_type is bool:
+            renderer = gtk.CellRendererToggle()
+            if column.radio:
+                renderer.set_radio(True)
+
+            if column.editable:
+                renderer.set_property('activatable', True)
+                renderer.connect('toggled', self._on_renderer_toggle__toggled,
+                                 self._model, column.attribute)
+                
+            prop = 'active'
+        elif issubclass(data_type, (datetime.date, datetime.time,
                                   basestring, int, float)):
             renderer = gtk.CellRendererText()
             prop = 'text'
@@ -690,10 +736,6 @@ class List(gtk.ScrolledWindow):
                 renderer.connect('edited', self._on_renderer_text__edited,
                                  self._model, column.attribute, column)
 
-        elif data_type is bool:
-            renderer = gtk.CellRendererToggle()
-            # TODO: radio, activatable
-            prop = 'active'
         else:
             raise ValueError("the type %s is not supported yet" % data_type)
 

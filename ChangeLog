@@ -1,5 +1,13 @@
 2005-09-05  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/list.py:
+	Add radio property to Column and set the radio property of
+	the CellRendererToggle if it's set to True. Add a new callback
+	for handling CellRendererToogle::toggled which updates the value
+	of the model.
+
+2005-09-05  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/ui/widgets/list.py (List._setup_columns): 
 	Add check for sortable, add a searchable check.
 	(Column): Add a searchable property.
