@@ -67,5 +67,26 @@ class DataTypesTest(unittest.TestCase):
 
         self.assertEqual(date_converter.as_string(birthdate), "12-02-1979")
 
+    def testFormatPricePtBR(self):
+        self.assertEqual(locale.setlocale(locale.LC_MONETARY, 'pt_BR'),
+                         'pt_BR',
+                         'pt_BR locale files is required to run this test')
+        self.assertEqual(datatypes.format_price(100), 'R$100')
+        self.assertEqual(datatypes.format_price(123.45), 'R$123,45')
+        self.assertEqual(datatypes.format_price(12345), 'R$12.345')
+        self.assertEqual(datatypes.format_price(-100), 'R$-100')
+
+    def testFormatPriceEnUS(self):
+        self.assertEqual(locale.setlocale(locale.LC_MONETARY, 'en_US'),
+                         'en_US',
+                         'en_US locale files is required to run this test')
+        self.assertEqual(datatypes.format_price(100), '$100')
+        self.assertEqual(datatypes.format_price(123.45), '$123.45')
+        self.assertEqual(datatypes.format_price(12345), '$12,345')
+        self.assertEqual(datatypes.format_price(-100), '$-100')
+        self.assertEqual(datatypes.format_price(1, True), '$1')
+        self.assertEqual(datatypes.format_price(1, False), '1')
+
+        
 if __name__ == "__main__":
     unittest.main()

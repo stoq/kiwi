@@ -208,3 +208,92 @@ class ObjectConverter:
     from_string = None
 converter.add(ObjectConverter)
 
+def format_price(value, symbol=True):
+    """
+    Formats a price according to the current locales monetary
+    settings
+    
+    @param value: number
+    @param symbol: whether to include the currency symbol
+    """
+    
+    opt = locale.localeconv()
+    mon_grouping = opt.get('mon_grouping', [])
+    mon_thousands_sep = opt.get('mon_thousands_sep', '.')
+    mon_decimal_point = opt.get('mon_decimal_point', '.')
+    p_cs_precedes = opt.get('p_cs_precedes', 1)
+    n_cs_precedes = opt.get('n_cs_precedes', p_cs_precedes)
+    currency_symbol = opt.get('currency_symbol', '')
+    frac_digits = opt.get('frac_digits', 2)
+    p_sep_by_space = opt.get('p_sep_by_space', 1)
+    n_sep_by_space = opt.get('n_sep_by_space', p_sep_by_space)
+    positive_sign = opt.get('positive_sign', '')
+    negative_sign = opt.get('negative_sign', '-')
+
+    # Patching glibc's output
+    # See http://sources.redhat.com/bugzilla/show_bug.cgi?id=1294
+    current_locale = locale.getlocale(locale.LC_MONETARY)
+    if current_locale[0] == 'pt_BR':
+        p_cs_precedes = n_cs_precedes = 1
+        p_sep_by_space = n_sep_by_space = 0
+
+    # Pythons string formatting can't handle %.127f
+    if frac_digits == 127:
+        frac_digits = 2
+
+    
+    if value > 0:
+        cs_precedes = p_cs_precedes
+        sep_by_space = p_sep_by_space
+        sign = positive_sign
+    else:
+        cs_precedes = n_cs_precedes
+        sep_by_space = n_sep_by_space
+        sign = negative_sign
+
+    # Grouping (eg thousand separator) of decimal part
+    groups = mon_grouping[:]
+    groups.reverse()
+    if groups:
+        group = groups.pop()
+    else:
+        group = 3
+
+    intparts = []
+    intpart = str(int(abs(value)))
+
+    while True:
+        if not intpart:
+            break
+        
+        s = intpart[-group:]
+        intparts.insert(0, s)
+        intpart = intpart[:-group]
+        
+        if not groups:
+            continue
+        
+        last = groups.pop()
+        # if 0 reuse last one
+        if last != 0:
+            group = last
+
+    retval = sign + mon_thousands_sep.join(intparts)
+        
+    # Only add decimal part if it has one, is this correct?
+    if value % 1 != 0:
+        format = '%%.%sf' % frac_digits
+        dec_part = (format % value)[-frac_digits:]
+        retval += mon_decimal_point + dec_part
+
+    if currency_symbol and symbol:
+        if sep_by_space:
+            space = ' '
+        else:
+            space = ''
+        if cs_precedes:
+            retval = currency_symbol + space + retval
+        else:
+            retval = retval + space + currency_symbol
+        
+    return retval
