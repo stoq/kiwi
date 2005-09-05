@@ -66,6 +66,7 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('tooltip', str)
     gproperty('format_func', object)
     gproperty('editable', bool, default=False)
+    gproperty('searchable', bool, default=False)
 
     # This can be set in subclasses, to be able to allow custom
     # cell_data_functions, used by SequentialColumn
@@ -112,6 +113,9 @@ class Column(PropertyObject, gobject.GObject):
             converting the value to a string.
           - editable: if true the field is editable and when you modify the
             contents of the cell the model will be updated.
+          - searchable: if true the attribute values of the column can
+            be searched using type ahead search. Only string attributes are
+            currently supported.
           TODO
           - title_pixmap: if set to a filename a pixmap will be used *instead*
             of the title set. The title string will still be used to
@@ -220,8 +224,12 @@ class SequentialColumn(Column):
             
         row[COL_MODEL]._kiwi_sequence_id = sequence_id
         
-        renderer.set_property(renderer_prop, sequence_id)
-    
+        try:
+            renderer.set_property(renderer_prop, sequence_id)
+        except TypeError:
+            raise TypeError("%r does not support parameter %s" %
+                            (renderer, renderer_prop))
+        
 class ContextMenu(gtk.Menu):
     """
     ContextMenu is a wrapper for the menu that's displayed when right
@@ -535,10 +543,22 @@ class List(gtk.ScrolledWindow):
         if self._columns_configured:
             return
 
-        if [column.sorted for column in self._columns].count(True) > 1:
-            raise ValueError("More than one column has the sorted "
-                             "attribute defined.")
-        
+        searchable = None
+        sorted = None
+        for column in self._columns:
+            if column.searchable:
+                if searchable:
+                    raise ValueError("Can't make column %s searchable, column"
+                                     " %s is already set as searchable" % (
+                        column.attribute, searchable.attribute))
+                searchable = column.searchable
+            elif column.sorted:
+                if sorted:
+                    raise ValueError("Can't make column %s sorted, column"
+                                     " % sis already set as sortable" % (
+                        column.attribute, sorted.attribute))
+                sorted = column.sorted
+
         for column in self._columns:
             self._setup_column(column)
 
@@ -604,6 +624,14 @@ class List(gtk.ScrolledWindow):
         if column.width:
             self._autosize = False
 
+        if column.searchable:
+            if not issubclass(column.data_type, basestring):
+                raise TypeError("Unsupported data type for "
+                                "searchable column: %s" % column.data_type)
+            self._treeview.set_search_column(index)
+            self._treeview.set_search_equal_func(self._search_equal_func,
+                                                 column)
+            
         # typelist here may be none. It's okay; justify_columns will try
         # and use the specified justifications and if not present will
         # not touch the column. When typelist is not set,
@@ -671,6 +699,13 @@ class List(gtk.ScrolledWindow):
 
         return renderer, prop
     
+    def _search_equal_func(self, model, tree_column, key, iter, column):
+        data = column.get_attribute(model[iter][COL_MODEL],
+                                    column.attribute, None)
+        if data.startswith(key):
+            return False
+        return True
+        
     def _cell_data_func(self, tree_column, renderer, model, iter,
                         (column, renderer_prop)):
         data = column.get_attribute(model[iter][COL_MODEL],

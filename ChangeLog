@@ -1,3 +1,12 @@
+2005-09-05  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/list.py (List._setup_columns): 
+	Add check for sortable, add a searchable check.
+	(Column): Add a searchable property.
+	(List._setup_column): Set up a search equal func
+	(List._search_equal_func): Define here, checks if 
+	the string starts with the value, seems to be the expected behavior.
+
 2005-09-01  Henrique Romano  <henrique@async.com.br>
 
 	* kiwi/ui/widgets/list.py (List._setup_columns): 
