@@ -217,42 +217,10 @@ def format_price(value, symbol=True):
     @param symbol: whether to include the currency symbol
     """
     
-    opt = locale.localeconv()
-    mon_grouping = opt.get('mon_grouping', [])
-    mon_thousands_sep = opt.get('mon_thousands_sep', '.')
-    mon_decimal_point = opt.get('mon_decimal_point', '.')
-    p_cs_precedes = opt.get('p_cs_precedes', 1)
-    n_cs_precedes = opt.get('n_cs_precedes', p_cs_precedes)
-    currency_symbol = opt.get('currency_symbol', '')
-    frac_digits = opt.get('frac_digits', 2)
-    p_sep_by_space = opt.get('p_sep_by_space', 1)
-    n_sep_by_space = opt.get('n_sep_by_space', p_sep_by_space)
-    positive_sign = opt.get('positive_sign', '')
-    negative_sign = opt.get('negative_sign', '-')
-
-    # Patching glibc's output
-    # See http://sources.redhat.com/bugzilla/show_bug.cgi?id=1294
-    current_locale = locale.getlocale(locale.LC_MONETARY)
-    if current_locale[0] == 'pt_BR':
-        p_cs_precedes = n_cs_precedes = 1
-        p_sep_by_space = n_sep_by_space = 0
-
-    # Pythons string formatting can't handle %.127f
-    if frac_digits == 127:
-        frac_digits = 2
-
-    
-    if value > 0:
-        cs_precedes = p_cs_precedes
-        sep_by_space = p_sep_by_space
-        sign = positive_sign
-    else:
-        cs_precedes = n_cs_precedes
-        sep_by_space = n_sep_by_space
-        sign = negative_sign
-
-    # Grouping (eg thousand separator) of decimal part
-    groups = mon_grouping[:]
+    conv = locale.localeconv()
+        
+    # Grouping (eg thousand separator) of integer part
+    groups = conv.get('mon_grouping', [])[:]
     groups.reverse()
     if groups:
         group = groups.pop()
@@ -260,6 +228,9 @@ def format_price(value, symbol=True):
         group = 3
 
     intparts = []
+    
+    # We're iterating over every character in the integer part
+    # make sure to remove the negative sign, it'll be added later
     intpart = str(int(abs(value)))
 
     while True:
@@ -269,24 +240,55 @@ def format_price(value, symbol=True):
         s = intpart[-group:]
         intparts.insert(0, s)
         intpart = intpart[:-group]
-        
         if not groups:
             continue
         
         last = groups.pop()
-        # if 0 reuse last one
+        # if 0 reuse last one, see struct lconv in locale.h
         if last != 0:
             group = last
 
+    # Add the sign, and the list of decmial parts, which
+    # now are grouped properly and can be joined by
+    # mon_thousand_sep
+    if value > 0:
+        sign = conv.get('positive_sign', '')
+    else:
+        sign = conv.get('negative_sign', '-')
+    mon_thousands_sep = conv.get('mon_thousands_sep', '.')
     retval = sign + mon_thousands_sep.join(intparts)
         
     # Only add decimal part if it has one, is this correct?
     if value % 1 != 0:
+        # Pythons string formatting can't handle %.127f
+        # 127 is the default value from glibc/python
+        frac_digits = conv.get('frac_digits', 2)
+        if frac_digits == 127:
+            frac_digits = 2
+
         format = '%%.%sf' % frac_digits
         dec_part = (format % value)[-frac_digits:]
+        
+        mon_decimal_point = conv.get('mon_decimal_point', '.')
         retval += mon_decimal_point + dec_part
 
+    # If requested include currency symbol 
+    currency_symbol = conv.get('currency_symbol', '')
     if currency_symbol and symbol:
+        if value > 0:
+            cs_precedes = conv.get('p_cs_precedes', 1)
+            sep_by_space = conv.get('p_sep_by_space', 1)
+        else:
+            cs_precedes = conv.get('n_cs_precedes', 1)
+            sep_by_space = conv.get('n_sep_by_space', 1)
+
+        # Patching glibc's output
+        # See http://sources.redhat.com/bugzilla/show_bug.cgi?id=1294
+        current_locale = locale.getlocale(locale.LC_MONETARY)
+        if current_locale[0] == 'pt_BR':
+            cs_precedes = 1
+            sep_by_space = 0
+
         if sep_by_space:
             space = ' '
         else:
