@@ -70,7 +70,7 @@ class DataTypesTest(unittest.TestCase):
     def testFormatPricePtBR(self):
         self.assertEqual(locale.setlocale(locale.LC_MONETARY, 'pt_BR'),
                          'pt_BR',
-                         'pt_BR locale files is required to run this test')
+                         'pt_BR locale is required to run this test')
         self.assertEqual(datatypes.format_price(100), 'R$100')
         self.assertEqual(datatypes.format_price(123.45), 'R$123,45')
         self.assertEqual(datatypes.format_price(12345), 'R$12.345')
@@ -79,7 +79,7 @@ class DataTypesTest(unittest.TestCase):
     def testFormatPriceEnUS(self):
         self.assertEqual(locale.setlocale(locale.LC_MONETARY, 'en_US'),
                          'en_US',
-                         'en_US locale files is required to run this test')
+                         'en_US locale is required to run this test')
         self.assertEqual(datatypes.format_price(100), '$100')
         self.assertEqual(datatypes.format_price(123.45), '$123.45')
         self.assertEqual(datatypes.format_price(12345), '$12,345')
