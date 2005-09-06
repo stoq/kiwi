@@ -161,10 +161,28 @@ class FloatConverter:
         # of the decimal point
         th_sep_count = value.count(thousands_sep)
         if th_sep_count and decimal_points:
-            if thousands_sep in value[value.index(decimal_point)+1:]:
+            decimal_point_pos = value.index(decimal_point)
+            if thousands_sep in value[decimal_point_pos+1:]:
                 raise ValidationError("You have a thousand separator to the "
                                       "right of the decimal point")
-                
+            check_value = value[:decimal_point_pos]
+        else:
+            check_value = value
+            
+        # Verify so the thousand separators are placed properly
+        # TODO: Use conv['grouping'] for locales where it's not 3
+        parts = check_value.split(thousands_sep)
+        
+        # First part is a special case, It can be 1, 2 or 3
+        if 3 > len(parts[0]) < 1:
+            raise ValidationError("Inproperly placed thousands separator") 
+
+        # Middle parts should have a length of 3
+        for part in parts[1:]:
+            if len(part) != 3:
+                raise ValidationError("Inproperly placed thousand "
+                                      "separators") 
+
         # Remove all thousand separators
         return value.replace(thousands_sep, '')
 
