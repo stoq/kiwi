@@ -102,6 +102,12 @@ class IntConverter:
 
     def from_string(self, value):
         "Convert a string to an integer"
+        conv = locale.localeconv()
+        thousands_sep = conv["thousands_sep"]
+        # Remove all thousand separators, so int won't barf at us
+        if thousands_sep and thousands_sep in value:
+            value = value.replace(thousands_sep, '')
+
         try:
             return int(value)
         except ValueError:
@@ -126,48 +132,50 @@ converter.add(BoolConverter)
 class FloatConverter:
     type = float
     
-    def __init__(self):
-        self._locale_dictionary = locale.localeconv()
+    def _filter_locale(self, value):
+        conv = locale.localeconv()
+
+        # Check so we only have one decimal point
+        decimal_point = conv["decimal_point"]
+        decimal_points = value.count(decimal_point)
+        if decimal_points > 1:
+            raise ValidationError(
+                'You have more than one decimal point ("%s") '
+                ' in your number "%s"' % (decimal_point, value))
+        elif decimal_points == 1:
+            # Replace the decimal point with a dot, which float() can handle
+            value = value.replace(decimal_point, '.')
+
+        thousands_sep = conv["thousands_sep"]
+        if not thousands_sep:
+            return value
         
+        # Check so we don't have any thousand separators to the right
+        # of the decimal point
+        th_sep_count = value.count(thousands_sep)
+        if th_sep_count and decimal_points:
+            if thousands_sep in value[value.index(decimal_point)+1:]:
+                raise ValidationError("You have a thousand separator to the "
+                                      "right of the decimal point")
+        # Remove all thousand separators
+        return value.replace(thousands_sep, '')
+
     def as_string(self, value, format='%f'):
         """Convert a float to a string"""
         return lformat(format, value)
 
     def from_string(self, value):
         """Convert a string to a float"""
-        th_sep = self._locale_dictionary["thousands_sep"]
-        dec_sep = self._locale_dictionary["decimal_point"]
-    
-        # XXX: HACK! did this because lang like pt_BR and es_ES are
-        #            considered to not have a thousand separator
-        if th_sep == "":  
-            th_sep = '.'
-
-        th_sep_count = value.count(th_sep)
-        dec_sep_count = value.count(dec_sep)
-        if th_sep_count > 0 or dec_sep_count > 0:
-            # we have separators
-            if dec_sep_count > 1:
-                raise ValidationError(
-                    'You have more than one decimal separator ("%s") '
-                    ' in your number "%s"' % (dec_sep, value))
-
-            if th_sep_count > 0 and dec_sep_count > 0:
-                # check if the dec separator is to right of every th separator
-                dec_pos = value.index(dec_sep)
-                th_pos = value.find(th_sep)
-                while th_pos != -1:
-                    if dec_pos < th_pos:
-                        raise ValidationError(
-                            "The decimal separator is to the left of "
-                            "the thousand separator")
-                    th_pos = value.find(th_sep, th_pos+1)
-        value = value.replace(th_sep, '')
-        value = value.replace(dec_sep, '.')
+        
+        value = self._filter_locale(value)
+        
         try:
-            return float(value)
+            retval = float(value)
         except ValueError:
             raise ValidationError("This field requires a number")
+
+        return retval
+    
 converter.add(FloatConverter)
 
 class DateConverter:
