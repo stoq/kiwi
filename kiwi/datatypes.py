@@ -104,7 +104,7 @@ class IntConverter:
         "Convert a string to an integer"
         conv = locale.localeconv()
         thousands_sep = conv["thousands_sep"]
-        # Remove all thousand separators, so int won't barf at us
+        # Remove all thousand separators, so int() won't barf at us
         if thousands_sep and thousands_sep in value:
             value = value.replace(thousands_sep, '')
 
@@ -133,18 +133,25 @@ class FloatConverter:
     type = float
     
     def _filter_locale(self, value):
+        """
+        Removes the locale specific data from the value string.
+        Currently we only remove the thousands separator and
+        convert the decimal point.
+        The returned value of this function can safely be passed to float()
+        """
+        
         conv = locale.localeconv()
 
         # Check so we only have one decimal point
         decimal_point = conv["decimal_point"]
         decimal_points = value.count(decimal_point)
-        if decimal_points > 1:
+        if decimal_points == 1:
+            # Replace the decimal point with a dot, which float() can handle
+            value = value.replace(decimal_point, '.')
+        elif decimal_points > 1:
             raise ValidationError(
                 'You have more than one decimal point ("%s") '
                 ' in your number "%s"' % (decimal_point, value))
-        elif decimal_points == 1:
-            # Replace the decimal point with a dot, which float() can handle
-            value = value.replace(decimal_point, '.')
 
         thousands_sep = conv["thousands_sep"]
         if not thousands_sep:
@@ -157,6 +164,7 @@ class FloatConverter:
             if thousands_sep in value[value.index(decimal_point)+1:]:
                 raise ValidationError("You have a thousand separator to the "
                                       "right of the decimal point")
+                
         # Remove all thousand separators
         return value.replace(thousands_sep, '')
 
@@ -166,9 +174,9 @@ class FloatConverter:
 
     def from_string(self, value):
         """Convert a string to a float"""
-        
+
         value = self._filter_locale(value)
-        
+
         try:
             retval = float(value)
         except ValueError:
