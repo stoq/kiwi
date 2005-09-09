@@ -129,21 +129,19 @@ class DataTypeAdaptor(PropertyCustomEditor):
         connection_id = combo.get_data('connection-id')
         if (connection_id != -1):
             combo.disconnect(connection_id)
-        connection_id = combo.connect('changed', self._editor_edit, kiwiwidget,
-                                      proxy, context)
-        combo.set_data('connection-id', connection_id)
         model = combo.get_model()
+        connection_id = combo.connect('changed', self._editor_edit,
+                                      proxy, model)
+        combo.set_data('connection-id', connection_id)
         value = kiwiwidget.get_property('data-type')
         for row in model:
             if row[1] == value:
                 combo.set_active_iter(row.iter)
                 break
             
-    def _editor_edit(self, combo, kiwilist, proxy, context):
-        model = combo.get_model()
+    def _editor_edit(self, combo, proxy, model):
         active_iter = combo.get_active_iter()
-        value = model.get_value(active_iter, 1)
-        proxy.set_value(value)
+        proxy.set_value(model[active_iter][1])
 
 class SpinBtnDataTypeAdaptor(DataTypeAdaptor):
     def get_data_types(self):
