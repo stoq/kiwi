@@ -124,7 +124,8 @@ class DataTypeAdaptor(PropertyCustomEditor):
         combo.set_data('connection-id', -1)
         return combo        
 
-    def update_editor(self, context, combo, kiwiwidget, proxy):
+    def update(self, context, kiwiwidget, proxy):
+        combo = self._input
         connection_id = combo.get_data('connection-id')
         if (connection_id != -1):
             combo.disconnect(connection_id)
