@@ -22,6 +22,7 @@
 #            Johan Dahlin <jdahlin@async.com.br>
 #
 
+import struct
 import sys
 
 import gobject
@@ -156,9 +157,12 @@ def gsignal(name, *args, **kwargs):
     
         dict[name] = (flags, retval, args)
 
-_MAX_INT = sys.maxint
-_MAX_FLOAT = 1e+308
-_MAX_LONG = 18446744073709551616L
+def _max(c):
+   return (1 << (8 * struct.calcsize(c)-1))-1
+
+_MAX_INT = int(_max('i'))
+_MAX_FLOAT = float(_max('f'))
+_MAX_LONG = long(_max('l'))
 
 def gproperty(name, type, *args, **kwargs):
     """
