@@ -1,3 +1,8 @@
+2005-09-15  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/gazpacholoader.py (DataTypeProperty.save): Add support for 
+	data-type in KiwiLabel, fixes #2141
+
 2005-09-13  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/utils.py: AMD64 fix ported from gazpachos copy.

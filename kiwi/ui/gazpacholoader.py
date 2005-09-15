@@ -186,6 +186,13 @@ class ComboBoxEntryDataTypeAdaptor(DataTypeAdaptor):
                 (_('Float'), float),
                 (_('Object'), object)]
 
+class LabelDataTypeAdaptor(DataTypeAdaptor):
+    def get_data_types(self):
+        return [(_('Boolean'), bool),
+                (_('String'), str),
+                (_('Integer'), int),
+                (_('Float'), float)]
+
 class DataTypeProperty(CustomProperty, StringType):
     translatable = False
     def save(self):
@@ -234,10 +241,9 @@ prop_registry.override_simple(
 class LabelAdapter(PythonWidgetAdapter):
     object_type = Label
 adapter_registry.register_adapter(LabelAdapter)
-# This is disabled until we can figure if we need it
 prop_registry.override_simple(
     'kiwi+ui+widgets+label+Label::data-type', DataTypeProperty,
-    editable=False)
+    editor=LabelDataTypeAdaptor)
 prop_registry.override_simple(
     'kiwi+ui+widgets+label+Label::model-attribute', ModelProperty)
 
