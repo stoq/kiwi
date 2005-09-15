@@ -242,7 +242,7 @@ class ObjectConverter:
     from_string = None
 converter.add(ObjectConverter)
 
-def format_price(value, symbol=True):
+def format_price(value, symbol=True, dec_separators=None):
     """
     Formats a price according to the current locales monetary
     settings
@@ -296,9 +296,12 @@ def format_price(value, symbol=True):
     if value % 1 != 0:
         # Pythons string formatting can't handle %.127f
         # 127 is the default value from glibc/python
-        frac_digits = conv.get('frac_digits', 2)
-        if frac_digits == 127:
-            frac_digits = 2
+        if dec_separators:
+            frac_digits = dec_separators
+        else:
+            frac_digits = conv.get('frac_digits', 2)
+            if frac_digits == 127:
+                frac_digits = 2
 
         format = '%%.%sf' % frac_digits
         dec_part = (format % value)[-frac_digits:]
