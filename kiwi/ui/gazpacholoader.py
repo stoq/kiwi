@@ -229,17 +229,20 @@ for gobj, editor in [(Entry, EntryDataType),
                      (SpinButton, SpinBtnDataType),
                      (RadioButton, RadioBtnDataType),
                      (TextView, TextViewDataType)]:
-    # ComboBox is registered above
-    if gobj != ComboBox:
-        klass = type('Kiwi%sAdapter', (PythonWidgetAdapter,),
-                     dict(object_type=gobj))
-        adapter_registry.register_adapter(klass)
-        
+    
+    # Property overrides, used in the editor
     type_name = gobject.type_name(gobj)
     prop_registry.override_simple(type_name + '::data-type', DataTypeProperty,
                                   editor=editor)
     prop_registry.override_simple(type_name + '::model-attribute',
                                   ModelProperty)
 
+    # Register custom adapters, since gobject.new is broken in 2.6
+    # Used by loader, eg in gazpacho and in applications
+    # ComboBox is registered above
+    if gobj == ComboBox:
+        continue
 
-    
+    klass = type('Kiwi%sAdapter', (PythonWidgetAdapter,),
+                 dict(object_type=gobj))
+    adapter_registry.register_adapter(klass)
