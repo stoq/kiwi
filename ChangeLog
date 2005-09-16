@@ -1,3 +1,8 @@
+2005-09-16  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/gazpacholoader.py:
+	Clean up /a bit/, fixes #2144 by inheriting from ComboBoxAdatper aswell.
+
 2005-09-15  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/gazpacholoader.py (DataTypeProperty.save): Add support for 
