@@ -8,23 +8,14 @@ from kiwi import datatypes
 from kiwi.ui.widgets.entry import Entry
 
 class EntryTest(unittest.TestCase):
-    def set_locale(self):
-        date_format = datatypes.date_format
+    def testModel(self):
+        entry = Entry()
+        entry.set_text('value')
+        self.assertEqual(entry.read(), 'value')
         
-        table = {'%y': '89', 
-                 '%Y': '1989',
-                 '%m': '08',
-                 '%d': '15'}
         
-        tmp = date_format
-        for code in table.keys():
-            tmp = tmp.replace(code, table[code])
-        
-        self.date_format = tmp
-        
+    # FIXME
     def _testValidDataType(self):
-        
-        self.set_locale()
         
         entry = Entry()
         entry.set_property("data-type", "date")
@@ -52,7 +43,6 @@ class EntryTest(unittest.TestCase):
             # wrong value
             entry.set_text("23.400.000,2")
             self.assertEqual(entry.read(), ValueUnset)
-        
         
 if __name__ == '__main__':
     unittest.main()

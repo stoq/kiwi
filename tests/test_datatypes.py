@@ -1,10 +1,10 @@
-import utils
-
+from datetime import date
 import unittest
 import locale
 
-from datetime import date
 from kiwi import datatypes
+
+import utils
 
 class DataTypesTest(unittest.TestCase):
 
@@ -87,6 +87,5 @@ class DataTypesTest(unittest.TestCase):
         self.assertEqual(datatypes.format_price(1, True), '$1')
         self.assertEqual(datatypes.format_price(1, False), '1')
 
-        
 if __name__ == "__main__":
     unittest.main()
