@@ -1,5 +1,10 @@
 2005-09-20  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/entry.py: Add support for objects mapped
+	to strings for entry completion. Also add a property, exact-completion
+	which decides if it should be case insensitive and match substrings.
+	Fixes bug #2150
+
 	* tests/test_List.py: Make it pass again
 
 	* kiwi/ui/widgets/list.py (List.get_columns): Return the columns here 

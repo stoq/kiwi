@@ -35,6 +35,12 @@ from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import gproperty, gsignal
 
+(COL_TEXT,
+ COL_OBJECT) = range(2)
+
+(ENTRY_MODE_TEXT,
+ ENTRY_MODE_DATA) = range(2)
+
 class Entry(gtk.Entry, WidgetMixinSupportValidation):
     """The Kiwi Entry widget has many special features that extend the basic
     gtk entry.
@@ -59,28 +65,55 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
     
     gproperty("completion", bool, False, 
               "Completion", gobject.PARAM_READWRITE)
-
+    gproperty('exact-completion', bool, True)
+    
     def __init__(self):
         gtk.Entry.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
         self._completion = False
+        self._current_object = None
+        self._entry_mode = ENTRY_MODE_TEXT
+        self._exact_completion = True
         
         if gtk.pygtk_version < (2,6):
             self.chain_expose = self.chain
         else:
             self.chain_expose = lambda e: gtk.Entry.do_expose_event(self, e)
         self.show()
-        
+
+    # Virtual methods
     def do_changed(self):
         """Called when the content of the entry changes.
 
         Sets an internal variable that stores the last time the user
         changed the entry
-        """        
+        """
+
         self._last_change_time = time.time()
         self.chain()
+
+        self._update_current_object(self.get_text())
+                
         self.emit('content-changed')
 
+    # Properties
+    
+    # exact-completion
+    def prop_set_exact_completion(self, value):
+        self._exact_completion = value
+        
+        if value:
+            match_func = self._completion_exact_match_func
+        else:
+            match_func = self._completion_normal_match_func
+        print 'using', match_func
+        completion = self._create_completion()
+        completion.set_match_func(match_func)
+                
+    def prop_get_exact_completion(self, value):
+        return self._exact_completion
+
+    # completion
     def prop_get_completion(self):
         return self._completion
     
@@ -88,53 +121,129 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         self._completion = value
 
         if not self.get_completion():
-            self.enable_completion()
+            self._enable_completion()
 
-    def enable_completion(self):
-        completion = gtk.EntryCompletion()
-        completion.set_model(gtk.ListStore(str))
-        completion.set_text_column(0)
-        completion.set_match_func(self._completion_match_func)
-        completion.connect("match-selected", self._on_completion__match_selected)
-        self.set_completion(completion)
-        return completion
-    
-    def set_completion_strings(self, strings):
+    # Public API
+    def set_exact_completion(self, value):
+        """
+        Enable exact entry completion.
+        Exact means it needs to start with the value typed
+        and the case needs to be correct.
+        
+        @param value: enable exact completion
+        @type value:  boolean
+        """
+        
+        self.prop_set_exact_completion(value)
+        self.notify('exact-completion')
+
+    # XXX: Decide if this API or the Combobox prefill API should be used
+    def set_completion_strings(self, strings=[], values=[]):
+        """
+        Set strings used for entry completion.
+        If values are provided, each string will have an additional
+        data type.
+        
+        @param strings:
+        @type  strings: list of strings
+        @param values:
+        @type  values: list of values
+        """
+
+        completion = self._create_completion()
+        model = completion.get_model()
+        model.clear()
+        
+        if values:
+            if len(strings) != len(values):
+                raise ValueError("values must have the same length as strings")
+                
+            for i, text in enumerate(strings):
+                model.append([text, values[i]])
+            self._entry_mode = ENTRY_MODE_DATA
+        elif not strings:
+            # This is considered disabling completion, PyGTK 2.8.1
+            #self.set_completion(None)
+            pass
+        else:
+            for s in strings:
+                model.append([s, None])
+            self._entry_mode = ENTRY_MODE_TEXT
+
+    def set_text(self, text):
+        self._update_current_object(text)
+                
+        gtk.Entry.set_text(self, text)
+        self.emit('content-changed')
+
+    # Private / Semi-Private
+    def _update_current_object(self, text):
+        if self._entry_mode != ENTRY_MODE_DATA:
+            return
+        
+        obj = None
+        for row in self.get_completion().get_model():
+            if row[COL_TEXT] == text:
+                self._current_object = row[COL_OBJECT]
+                break
+        else:
+            self._current_object = None
+        
+    def _create_completion(self):
         # Check so we have completion enabled, not this does not
         # depend on the property, the user can manually override it,
         # as long as there is a completion object set
         completion = self.get_completion()
-        if not completion:
-            completion = self.enable_completion()
-            
-        model = completion.get_model()
-        model.clear()
-        for s in strings:
-            if type(s) != unicode:
-                s = unicode(s)
-                
-            model.append([s])
-            
-    def _completion_match_func(self, completion, _, iter):
+        if completion:
+            return completion
+        
+        return self._enable_completion()
+        
+    def _enable_completion(self):
+        completion = gtk.EntryCompletion()
+        self.set_completion(completion)
+        completion.set_model(gtk.ListStore(str, object))
+        completion.set_text_column(0)
+        self.prop_set_exact_completion(False)
+        completion.connect("match-selected",
+                           self._on_completion__match_selected)
+        self._current_object = None
+        return completion
+    
+    def _completion_exact_match_func(self, completion, _, iter):
         model = completion.get_model()
         if not len(model):
             return
 
-        content = model[iter][0]
-        return content.startswith(self.get_text())
+        content = model[iter][COL_TEXT]
+        return self.get_text().startswith(content)
+
+    def _completion_normal_match_func(self, completion, _, iter):
+        model = completion.get_model()
+        if not len(model):
+            return
+
+        content = model[iter][COL_TEXT].lower()
+        return self.get_text().lower() in content
 
     def _on_completion__match_selected(self, completion, model, iter):
         if not len(model):
             return
 
-        self.set_text(model[iter][0])
+        text, data = model[iter]
+        self.set_text(text)
         self.set_position(-1)
-    
+        self._current_object = data
+        self.emit('content-changed')
+        
     def read(self):
-        """Called after each character is typed. If the input is wrong start 
-        complaining
-        """
-        return self.get_text()
+        mode = self._entry_mode
+        if mode == ENTRY_MODE_TEXT:
+            return self.get_text()
+        elif mode == ENTRY_MODE_DATA:
+            return self._current_object
+        else:
+            raise AssertionError
 
     def update(self, data):
         WidgetMixinSupportValidation.update(self, data)
@@ -145,10 +254,6 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         else:
             self.set_text(self.type2str(data))
 
-    def set_text(self, text):
-        gtk.Entry.set_text(self, text)
-        self.emit('content-changed')
-        
     def do_expose_event(self, event):
         """Expose-event signal are triggered when a redraw of the widget
         needs to be done.
