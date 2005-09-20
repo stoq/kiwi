@@ -467,7 +467,7 @@ class List(gtk.ScrolledWindow):
     # GObject property handling
     def do_get_property(self, pspec):
         if pspec.name == 'column-definitions':
-            return self.get_columns()
+            return self._columns_string
         elif pspec.name == 'selection-mode':
             return self.get_selection_mode()
         else:
@@ -956,7 +956,7 @@ class List(gtk.ScrolledWindow):
         return self._treeview
     
     def get_columns(self):
-        return self._columns_string
+        return self._columns
 
     def get_column_by_name(self, name):
         """Returns the name of a column"""

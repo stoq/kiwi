@@ -40,7 +40,7 @@ class ColumnTests(unittest.TestCase):
         self.win.show_all()
         refresh_gui()
 
-        self.assertEqual(1, len(mylist.treeview.get_columns()))
+        self.assertEqual(1, len(mylist.get_columns()))
         
 class DataTests(unittest.TestCase):
     """In all this tests we use the same configuration for a list"""
@@ -58,7 +58,7 @@ class DataTests(unittest.TestCase):
 
     def testAddingOneInstance(self):
         # we should have two columns now
-        self.assertEqual(2, len(self.list.treeview.get_columns()))
+        self.assertEqual(2, len(self.list.get_columns()))
                          
         person = Person('henrique', 21)
         self.list.add_instance(person)
@@ -67,12 +67,12 @@ class DataTests(unittest.TestCase):
 
         # usually you don't use the model directly, but tests are all about
         # breaking APIs, right?
-        self.assertEqual(self.list.model[0][0], person)
-        self.assertEqual(self.list.model[0][0].name, 'henrique')
-        self.assertEqual(self.list.model[0][0].age, 21)
+        self.assertEqual(self.list[0], person)
+        self.assertEqual(self.list[0].name, 'henrique')
+        self.assertEqual(self.list[0].age, 21)
 
         # we still have to columns, right?
-        self.assertEqual(2, len(self.list.treeview.get_columns()))
+        self.assertEqual(2, len(self.list.get_columns()))
 
     def testAddingAList(self):
         global persons

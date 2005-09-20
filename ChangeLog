@@ -1,3 +1,11 @@
+2005-09-20  Johan Dahlin  <jdahlin@async.com.br>
+
+	* tests/test_List.py: Make it pass again
+
+	* kiwi/ui/widgets/list.py (List.get_columns): Return the columns here 
+	instead of the column definition string.
+	(List.do_get_property): Access the column string directly here.
+
 2005-09-16  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/gazpacholoader.py:
