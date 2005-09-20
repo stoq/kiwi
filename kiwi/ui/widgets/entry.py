@@ -106,11 +106,10 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
             match_func = self._completion_exact_match_func
         else:
             match_func = self._completion_normal_match_func
-        print 'using', match_func
         completion = self._create_completion()
         completion.set_match_func(match_func)
                 
-    def prop_get_exact_completion(self, value):
+    def prop_get_exact_completion(self):
         return self._exact_completion
 
     # completion
