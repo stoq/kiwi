@@ -46,9 +46,6 @@ class FooController(BaseController):
         # This is subclassed
         self.view.label.set_text("Good click!")
 
-    def run(self):
-        self.view.show_all()
-
 class Bar(BaseView, BaseController):
     def __init__(self):
         self.win = gtk.Window()
@@ -58,9 +55,6 @@ class Bar(BaseView, BaseController):
         BaseController.__init__(self, view=self)
         set_foreground(self.label, "#CC99FF")
         set_background(self.win, "#001100")
-
-    def run(self, parent):
-        self.show_all(parent)
 
 # these classes are bad and should trigger exceptions
 
@@ -86,7 +80,6 @@ class BaseViewTest(unittest.TestCase):
 
     def setUp(self):
         self.foo = FooController(FooView())
-        self.foo.run()
         refresh_gui()
 
     def tearDown(self):
@@ -101,7 +94,6 @@ class BaseViewTest(unittest.TestCase):
         
     def testSubView(self):
         self.foo.view.button.clicked()
-        self.foo.bar.run(self.foo.view)
         refresh_gui()
         self.assertEqual(self.foo.bar, self.foo.bar.view)
         self.assertEqual(self.foo.bar.toplevel, self.foo.bar.win)
@@ -110,11 +102,14 @@ class BaseViewTest(unittest.TestCase):
     
     def testColors(self):
         self.foo.view.button.clicked()
-        self.foo.bar.run(self.foo.view)
         refresh_gui()
-        color = get_background(self.foo.bar.win)
+        win = self.foo.bar.win
+        win.realize()
+        color = get_background(win)
         self.assertEqual(color, "#001100")
-        color = get_foreground(self.foo.bar.label)
+        label = self.foo.bar.label
+        label.realize()
+        color = get_foreground(label)
         self.assertEqual(color, "#CC99FF")
 
 

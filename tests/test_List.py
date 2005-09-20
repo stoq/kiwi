@@ -28,7 +28,6 @@ class ColumnTests(unittest.TestCase):
     def testEmptyList(self):
         mylist = List()
         self.win.add(mylist)
-        self.win.show_all()
         refresh_gui()
 
     def testOneColumn(self):
@@ -37,7 +36,6 @@ class ColumnTests(unittest.TestCase):
         
         mylist = List(Column('test_column'))
         self.win.add(mylist)
-        self.win.show_all()
         refresh_gui()
 
         self.assertEqual(1, len(mylist.get_columns()))
@@ -49,7 +47,6 @@ class DataTests(unittest.TestCase):
         self.win.set_default_size(400, 400)
         self.list = List([Column('name'), Column('age')])
         self.win.add(self.list)
-        self.win.show_all()
         refresh_gui()
 
     def tearDown(self):

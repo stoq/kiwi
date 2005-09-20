@@ -76,7 +76,6 @@ class GladeClickCounter(Delegate):
 class DelegateTest(unittest.TestCase):
     def testButtons(self):
         f = Foo()
-        f.show_all()
         refresh_gui()
         f.foo.clicked()
         refresh_gui()
@@ -87,7 +86,6 @@ class DelegateTest(unittest.TestCase):
 
     def testClickCounter(self):
         clickcounter = ClickCounter()
-        clickcounter.show_all()
         refresh_gui()
         
         # one for the boys
@@ -100,7 +98,6 @@ class DelegateTest(unittest.TestCase):
 
     def testClickCounterGlade(self):
         clickcounter = GladeClickCounter()
-        clickcounter.show_all()
         refresh_gui()
         
         # one for the boys

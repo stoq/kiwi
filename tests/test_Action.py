@@ -18,7 +18,6 @@ class ActionDelegate(Delegate):
 class ActionTest(unittest.TestCase):
     def testButtons(self):
         action_delegate = ActionDelegate()
-        action_delegate.show_all()
         refresh_gui()
         action_delegate.New.activate()
         refresh_gui()
