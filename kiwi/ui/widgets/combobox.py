@@ -248,7 +248,7 @@ class ComboBox(gtk.ComboBox, ComboProxyMixin, WidgetMixin):
         WidgetMixin.__init__(self)
         gtk.ComboBox.__init__(self)
         ComboProxyMixin.__init__(self)
-        self.connect_object('changed', self._on__changed)
+        self.connect('changed', self._on__changed)
         
         renderer = gtk.CellRendererText()
         self.pack_start(renderer)
