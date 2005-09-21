@@ -211,7 +211,7 @@ class DateConverter:
         self.update_format()
 
     def update_format(self):
-        self._format = locale.nl_langinfo(locale.D_FMT)
+        self._format = '%x'
 
     def as_string(self, value, format=None):
         "Convert a date to a string"
