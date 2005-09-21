@@ -244,21 +244,19 @@ class ComboProxyMixin(object):
     
 class ComboBox(gtk.ComboBox, ComboProxyMixin, WidgetMixin):
     implementsIProxy()
-    gsignal('changed', 'override')
-    
     def __init__(self):
         WidgetMixin.__init__(self)
         gtk.ComboBox.__init__(self)
         ComboProxyMixin.__init__(self)
-
+        self.connect_object('changed', self._on_changed)
+        
         renderer = gtk.CellRendererText()
         self.pack_start(renderer)
         self.add_attribute(renderer, 'text', COL_COMBO_LABEL)
         self.show()
 
-    def do_changed(self):
+    def _on__changed(self, combo):
         self.emit('content-changed')
-        self.chain()
  
     def read(self):
         if self.mode == COMBO_MODE_STRING:

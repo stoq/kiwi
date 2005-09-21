@@ -1,3 +1,8 @@
+2005-09-21  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/combobox.py (ComboBox.__init__): Only emit changed
+	once.
+
 2005-09-20  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/entry.py: Add support for objects mapped
