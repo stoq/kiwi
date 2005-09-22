@@ -69,7 +69,8 @@ class GazpachoWidgetTree:
         self._widgets =  (widgets or view.widgets or [])[:]
         self.gladename = gladename or filename
         self._tree = Builder(self._gladefile, domain=domain)
-
+        if not self._widgets:
+            self._widgets = [w.get_name() for w in self._tree.get_widgets()]
         self._attach_widgets()
         
     def _attach_widgets(self):
