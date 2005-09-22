@@ -43,6 +43,8 @@ class LibgladeWidgetTree(XML):
         self._widgets =  (widgets or view.widgets or [])[:]
         self.gladename = gladename or filename
         XML.__init__(self, self._gladefile, domain)
+        if not self._widgets:
+            self._widgets = [w.get_name() for w in self.get_widget_prefix('')]
         self._attach_widgets()
         
     def _attach_widgets(self):
