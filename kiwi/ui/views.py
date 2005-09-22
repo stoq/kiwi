@@ -691,10 +691,14 @@ class SlaveView(gobject.GObject):
             if (widget is None or
                 not isinstance(widget, MixinSupportValidation)):
                 continue
-            
-            widget.connect_object('validation-changed',
-                                  self._on_child__validation_changed,
-                                  widget_name)
+
+            try:
+                widget.connect_object('validation-changed',
+                                      self._on_child__validation_changed,
+                                      widget_name)
+            except TypeError:
+                raise AssertionError("%r does not have a validation-changed "
+                                     "signal." % widget)
 
         proxy = Proxy(self, model, widgets)
         self.proxies.append(proxy)
