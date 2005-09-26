@@ -187,6 +187,14 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
                 break
         else:
             self._current_object = None
+
+    def _get_text_from_object(self, obj):
+        if self._entry_mode != ENTRY_MODE_DATA:
+            return
+        
+        for row in self.get_completion().get_model():
+            if row[COL_OBJECT] == obj:
+                return row[COL_TEXT]
         
     def _create_completion(self):
         # Check so we have completion enabled, not this does not
@@ -249,9 +257,18 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
 
         if data is ValueUnset or data is None:
             self.set_text("")
-            self.draw_mandatory_icon_if_needed()
-        else:
-            self.set_text(self.type2str(data))
+        
+        mode = self._entry_mode
+        if mode == ENTRY_MODE_DATA:
+            new = self._get_text_from_object(data)
+            if new is None:
+                raise TypeError("%r is not a data object" % data)
+            data = new
+        elif mode == ENTRY_MODE_TEXT:
+            data = self.type2str(data)
+
+        self.set_text(data)
+        self.draw_mandatory_icon_if_needed()
 
     def do_expose_event(self, event):
         """Expose-event signal are triggered when a redraw of the widget
