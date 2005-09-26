@@ -257,6 +257,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
 
         if data is ValueUnset or data is None:
             self.set_text("")
+            return
         
         mode = self._entry_mode
         if mode == ENTRY_MODE_DATA:
