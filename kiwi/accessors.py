@@ -147,6 +147,12 @@ class _AttrUnset:
     # indicates an unset value since None needs to be used
     pass
 
+class DefaultValue(Exception):
+    """
+    This can be raised in kgetattr accessors to indicate that the default
+    value should be used
+    """
+
 def kgetattr_guard(wref):
     try:
         key, data = _kgetattr_wref[id(wref)]
@@ -249,7 +255,7 @@ def kgetattr(model,
             if get_getter is not None:
                 try:
                     func = get_getter(obj, name, cache)
-                except AttributeError:
+                except DefaultValue:
                     if default == _AttrUnset:
                         raise
                     return default
@@ -327,7 +333,7 @@ def kgetattr(model,
                 raise AssertionError("Unknown tuple type in _kgetattr_cache")
 
         # 2.4. Value wasn't found, return default or raise ValueError
-        except AttributeError:
+        except DefaultValue:
             if default == _AttrUnset:
                 raise
             return default
