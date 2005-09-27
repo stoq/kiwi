@@ -25,9 +25,10 @@
 
 from datetime import date
 import locale
+import sys
 import time
 
-__all__ = ['ValidationError', 'lformat', 'converter']
+__all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
 
 class ValidationError(Exception):
     pass
@@ -211,7 +212,10 @@ class DateConverter:
         self.update_format()
 
     def update_format(self):
-        self._format = '%x'
+        if sys.platform == 'win32':
+            self._format = '%x'
+        else:
+            self._format = locale.nl_langinfo(locale.D_FMT)
 
     def as_string(self, value, format=None):
         "Convert a date to a string"
