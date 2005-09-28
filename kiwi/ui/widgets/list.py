@@ -131,7 +131,9 @@ class Column(PropertyObject, gobject.GObject):
             msg = ("The attribute can not contain spaces, otherwise I can"
                    " not find the value in the instances: %s" % attribute)
             raise AttributeError(msg)
-        
+        elif attribute == 'iter':
+            raise ValueError("iter is a reserved attribute name")
+
         self.attribute = attribute
 
         kwargs['title'] = title or attribute.capitalize()
@@ -497,7 +499,7 @@ class List(gtk.ScrolledWindow):
         if not len(model):
             # Append the first instance, so we can get a reference to
             # the iterator so we later can select it
-            instance_iter = self._model.append((instance,))
+            instance.iter = self._model.append((instance,))
             
             # Slice out the first, already inserted instance, the
             # rest of the list is inserted below
@@ -507,11 +509,11 @@ class List(gtk.ScrolledWindow):
             # items to be selectable
             selection = self._treeview.get_selection()
             if selection.get_mode() != gtk.SELECTION_NONE:
-                selection.select_iter(instance_iter)
+                selection.select_iter(instance.iter)
             
         for instance in instance_list:
-            model.append((instance,))
-            
+            instance.iter = model.append((instance,))
+
         # As soon as we have data for that list, we can autosize it, and
         # we don't want to autosize again, or we may cancel user
         # modifications.
@@ -1006,6 +1008,7 @@ class List(gtk.ScrolledWindow):
         self._treeview.freeze_notify()
 
         row_iter = self._model.append((instance,))
+        instance.iter = row_iter
         if self._autosize:
             self._treeview.columns_autosize()
 
@@ -1054,13 +1057,17 @@ class List(gtk.ScrolledWindow):
         if selection:
             selection.unselect_all()
 
-    def select_instance(self, instance):
-        selection = self._treeview.get_selection()
-        if selection:
-            treeiter = self.get_iter(instance)
-            if treeiter:
-                selection.select_iter(treeiter)
+    def select(self, instance, scroll=True):
+        if not hasattr(instance, 'iter'):
+            raise ValueError("instance %r is not in the list" % instance)
 
+        selection = self._treeview.get_selection()
+        selection.select_iter(instance.iter)
+
+        if scroll:
+            self._treeview.scroll_to_cell(self._model[instance.iter].path,
+                                          None, True, 0.5, 0)
+                                      
     def get_selected(self):
         """Returns the currently selected object
         If an object is not selected, None is returned
@@ -1128,7 +1135,48 @@ class List(gtk.ScrolledWindow):
         self._treeview.freeze_notify()
         self._model.clear()
         self._treeview.thaw_notify()
+
+    def get_next(self, instance):
+        """
+        Returns the item after instance in the list.
+        Note that the instance must be inserted before this can be called
+        If there are no instances after,  the first item will be returned.
         
+        @param instance: the instance
+        """
+        
+        if not hasattr(instance, 'iter'):
+            raise ValueError("instance %r is not in the list" % instance)
+
+        model = self._model
+        pos = model[instance.iter].path[0]
+        print pos, len(model)
+        if pos >= len(model) - 1:
+            pos = 0
+        else:
+            pos += 1
+        return model[pos][COL_MODEL]
+    
+    def get_previous(self, instance=False):
+        """
+        Returns the item before instance in the list.
+        Note that the instance must be inserted before this can be called
+        If there are no instances before,  the last item will be returned.
+         
+        @param instance: the instance
+        """
+        
+        if not hasattr(instance, 'iter'):
+            raise ValueError("instance %r is not in the list" % instance)
+
+        model = self._model
+        pos = model[instance.iter].path[0]
+        if pos == 0:
+            pos = len(model) - 1
+        else:
+            pos -= 1
+        return model[pos][COL_MODEL]
+
 gobject.type_register(List)
 
 if __name__ == '__main__':

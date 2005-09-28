@@ -1,3 +1,12 @@
+2005-09-27  Johan Dahlin  <johan@gnome.org>
+
+	* kiwi/ui/widgets/list.py (List.get_previous, List.get_next): New
+	methods.
+	(List.add_instance, List._load): Set instance.iter upon insertion.
+	(Column.__init__): Raise ValueError if iter is used, it's reserved
+	(List.select): Rename from select_instance, use iter from
+	instance, scroll to cell.	
+
 2005-09-27  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/accessors.py (CacheControl.invalidate): Use DefaultValue instead of
