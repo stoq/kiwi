@@ -6,7 +6,7 @@
 	(List.append, List.remove, List.update): Rename
 	(List.add_instance, List.remove_instance, List.update_instance)
 	(List.select_instance): Add backwards compat wrappers
-	(List._load): Iterator support, finally!
+	(List._load): Clean up, add iterator support.
 
 	* kiwi/utils.py (deprecated): New decorator
 

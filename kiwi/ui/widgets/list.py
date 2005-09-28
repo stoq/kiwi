@@ -521,30 +521,24 @@ class List(gtk.ScrolledWindow):
             raise AttributeError('Unknown property %s' % pspec.name)
 
     # Columns handling
-    def _load(self, instance_list, progress_handler=None):
+    def _load(self, instances, progress_handler=None):
         # do nothing if empty list or None provided
-        if not instance_list: 
+        if not instances: 
             return
 
-        instances = iter(instance_list)
-        instance = instances.next()
+        instances = iter(instances)
+        first = instances.next()
         if not self._has_enough_type_information():
-            self._guess_types(instance)
+            self._guess_types(first)
             self._setup_columns()
             
         model = self._model
+        first.iter = model.append((first,))
+        
         # In the case of an empty model, select the first instance
-        if not len(model):
-            # Append the first instance, so we can get a reference to
-            # the iterator so we later can select it
-            instance.iter = self._model.append((instance,))
-            
-            # Finally select the iterator, but only if we allow
-            # items to be selectable
-            selection = self._treeview.get_selection()
-            if selection.get_mode() != gtk.SELECTION_NONE:
-                selection.select_iter(instance.iter)
-            
+        if len(model) == 1:
+            self.select(first)
+
         for instance in instances:
             instance.iter = model.append((instance,))
 
@@ -1083,6 +1077,9 @@ class List(gtk.ScrolledWindow):
             raise ValueError("instance %r is not in the list" % instance)
 
         selection = self._treeview.get_selection()
+        if selection.get_mode() == gtk.SELECTION_NONE:
+            raise TypeError("Selection not allowed")
+        
         selection.select_iter(instance.iter)
 
         if scroll:
