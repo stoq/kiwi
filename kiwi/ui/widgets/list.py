@@ -131,9 +131,7 @@ class Column(PropertyObject, gobject.GObject):
             msg = ("The attribute can not contain spaces, otherwise I can"
                    " not find the value in the instances: %s" % attribute)
             raise AttributeError(msg)
-        elif attribute == 'iter':
-            raise ValueError("iter is a reserved attribute name")
-
+ 
         self.attribute = attribute
 
         kwargs['title'] = title or attribute.capitalize()
@@ -310,6 +308,8 @@ class ContextMenu(gtk.Menu):
 
 COL_MODEL = 0
 
+_marker = object()
+
 class List(gtk.ScrolledWindow):
     """An enhanced version of GtkTreeView, which provides pythonic wrappers
     for accessing rows, and optional facilities for column sorting (with
@@ -346,6 +346,8 @@ class List(gtk.ScrolledWindow):
         # menu
         self.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
 
+        # Mapping of instance id -> treeiter
+        self._iters = {}
         self._columns_configured = False
         self._autosize = True
 
@@ -474,6 +476,10 @@ class List(gtk.ScrolledWindow):
         
         if start or stop:
             raise NotImplementedError("start and stop")
+
+        iter = self._iters.get(id(item), _marker)
+        if iter is _marker:
+            raise ValueError("item %r is not in the list" % item)
         
         return self._model[item.iter].path[0]
 
@@ -533,15 +539,16 @@ class List(gtk.ScrolledWindow):
             self._setup_columns()
             
         model = self._model
-        first.iter = model.append((first,))
+        iters = self._iters
+        iters[id(first)] = model.append((first,))
         
         # In the case of an empty model, select the first instance
         if len(model) == 1:
             self.select(first)
 
         for instance in instances:
-            instance.iter = model.append((instance,))
-
+            iters[id(instance)] = model.append((instance,))
+            
         # As soon as we have data for that list, we can autosize it, and
         # we don't want to autosize again, or we may cancel user
         # modifications.
@@ -1017,7 +1024,8 @@ class List(gtk.ScrolledWindow):
         self._treeview.freeze_notify()
 
         row_iter = self._model.append((instance,))
-        instance.iter = row_iter
+        self._iters[id(instance)] = row_iter
+        
         if self._autosize:
             self._treeview.columns_autosize()
 
@@ -1034,11 +1042,12 @@ class List(gtk.ScrolledWindow):
             raise RuntimeError(("There is no columns neither data on the "
                                 "list yet so you can not remove any instance"))
 
-        if not hasattr(instance, 'iter'):
+        objid = id(instance)
+        if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
         
         # linear search for the instance to remove
-        treeiter = instance.iter
+        treeiter = self._iters.pop(objid)
         if treeiter:
             self._model.remove(treeiter)
             return True
@@ -1046,10 +1055,10 @@ class List(gtk.ScrolledWindow):
         return False
 
     def update(self, instance):
-        if not hasattr(instance, 'iter'):
+        objid = id(instance)
+        if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
-
-        treeiter = instance.iter
+        treeiter = self._iters[objid]
         self._model.row_changed(self._model[treeiter].path, treeiter)
         
     def set_column_visibility(self, column_index, visibility):
@@ -1071,19 +1080,21 @@ class List(gtk.ScrolledWindow):
         selection = self._treeview.get_selection()
         if selection:
             selection.unselect_all()
-
+            
     def select(self, instance, scroll=True):
-        if not hasattr(instance, 'iter'):
+        objid = id(instance)
+        if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
+        iter = self._iters[objid]
 
         selection = self._treeview.get_selection()
         if selection.get_mode() == gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed")
         
-        selection.select_iter(instance.iter)
+        selection.select_iter(iter)
 
         if scroll:
-            self._treeview.scroll_to_cell(self._model[instance.iter].path,
+            self._treeview.scroll_to_cell(self._model[iter].path,
                                           None, True, 0.5, 0)
                                       
     def get_selected(self):
@@ -1142,7 +1153,8 @@ class List(gtk.ScrolledWindow):
         if clear:
             self.unselect_all()
             self._model.clear()
-
+            self._iters = {}
+            
         ret = self._load(list, progress_handler)
             
         self._treeview.thaw_notify()
@@ -1152,6 +1164,7 @@ class List(gtk.ScrolledWindow):
         """Removes all the instances of the list"""
         self._treeview.freeze_notify()
         self._model.clear()
+        self._iters = {}
         self._treeview.thaw_notify()
 
     def get_next(self, instance):
@@ -1162,12 +1175,14 @@ class List(gtk.ScrolledWindow):
         
         @param instance: the instance
         """
-        
-        if not hasattr(instance, 'iter'):
-            raise ValueError("instance %r is not in the list" % instance)
 
+        objid = id(instance)
+        if not objid in self._iters:
+            raise ValueError("instance %r is not in the list" % instance)
+        iter = self._iters[objid]
+        
         model = self._model
-        pos = model[instance.iter].path[0]
+        pos = model[iter].path[0]
         if pos >= len(model) - 1:
             pos = 0
         else:
@@ -1183,11 +1198,13 @@ class List(gtk.ScrolledWindow):
         @param instance: the instance
         """
         
-        if not hasattr(instance, 'iter'):
+        objid = id(instance)
+        if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
-
+        iter = self._iters[objid]
+        
         model = self._model
-        pos = model[instance.iter].path[0]
+        pos = model[iter].path[0]
         if pos == 0:
             pos = len(model) - 1
         else:

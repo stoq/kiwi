@@ -1,5 +1,9 @@
 2005-09-28  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/list.py: 
+	(List): do not save iterator in instance, save the iterators
+	in a local table.
+	
 	* kiwi/ui/widgets/list.py:
 	(List.count, List.index, List.extend): Add
 	(List.insert, List.pop, List.reverse, List.sort): Add stubs
@@ -7,6 +11,7 @@
 	(List.add_instance, List.remove_instance, List.update_instance)
 	(List.select_instance): Add backwards compat wrappers
 	(List._load): Clean up, add iterator support.
+	(List.select): Check selection mode
 
 	* kiwi/utils.py (deprecated): New decorator
 
