@@ -346,6 +346,11 @@ class List(gtk.ScrolledWindow):
 
         self._columns_configured = False
         self._autosize = True
+
+        # by default we are unordered. This index points to the column
+        # definition of the column that dictates the order, in case there is
+        # any
+        self._sort_column_index = -1
         
         self._model = gtk.ListStore(object)
         self._model.set_sort_func(COL_MODEL, self._sort_function)
@@ -367,11 +372,6 @@ class List(gtk.ScrolledWindow):
 
         # when setting the column definition the columns are created
         self.set_columns(columns)
-
-        # by default we are unordered. This index points to the column
-        # definition of the column that dictates the order, in case there is
-        # any
-        self._sort_column_index = -1
 
         if instance_list:
             self._treeview.freeze_notify()
