@@ -558,8 +558,8 @@ class List(gtk.ScrolledWindow):
             elif column.sorted:
                 if sorted:
                     raise ValueError("Can't make column %s sorted, column"
-                                     " % sis already set as sortable" % (
-                        column.attribute, sorted.attribute))
+                                     " %s is already set as sortable" % (
+                        column.attribute, column.sorted))
                 sorted = column.sorted
 
         for column in self._columns:
