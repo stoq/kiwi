@@ -98,8 +98,13 @@ class PropertyObject(ClassInittableObject):
                          lambda self, v, n=prop_name: self.set_property(n, v))
             setattr(cls, prop_name, p)
 
+            # PyGTK 2.7.1-2.8.0 bugfix
+            if not hasattr(pspec, 'default_value'):
+                default_value = None
+            else:
+                default_value = pspec.default_value
+            
             # Resolve an integer to a real enum
-            default_value = pspec.default_value
             if gobject.type_is_a(pspec.value_type, gobject.GEnum):
                 pyenum = pytypes[prop_name]
                 default_value = pyenum.__enum_values__[default_value]
