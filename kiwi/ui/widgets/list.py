@@ -33,7 +33,7 @@ import gtk
 
 from kiwi import _warn, datatypes, ValueUnset
 from kiwi.accessors import kgetattr
-from kiwi.utils import PropertyObject, slicerange, gsignal, gproperty
+from kiwi.utils import PropertyObject, slicerange, gsignal, gproperty, deprecated
 
 # Minimum number of rows where we show busy cursor when sorting numeric columns
 MANY_ROWS = 1000
@@ -96,7 +96,7 @@ class Column(PropertyObject, gobject.GObject):
             insertion in the list.
           - width: the width in pixels of the column, if not set, uses the
             default to List. If no Column specifies a width,
-            columns_autosize() will be called on the List upon add_instance()
+            columns_autosize() will be called on the List upon append()
             or the first add_list().
           - sorted: whether or not the List is to be sorted by this column.
             If no Columns are sorted, the List will be created unsorted.
@@ -400,10 +400,6 @@ class List(gtk.ScrolledWindow):
     # like a normal python list
     #
     # TODO:
-    #   methods
-    #      append, count, extend, index, insert,
-    #      pop, remove, reverse, sort
-    #
     #   operators
     #      __add__, __eq__, __ge__, __gt__, __iadd__,
     #      __imul__,  __le__, __lt__, __mul__, __ne__,
@@ -465,7 +461,48 @@ class List(gtk.ScrolledWindow):
         else:
             raise TypeError("argument arg must be int or gtk.Treeiter,"
                             " not %s" % type(arg))
+
+    # append and remove are below
+
+    def extend(self, iteratable):
+        "L.extend(iterable) -- extend list by appending elements from the iterable"
+        
+        return self.add_list(iterable, clear=False)
+
+    def index(self, item, start=None, stop=None):
+        "L.index(item, [start, [stop]]) -> integer -- return first index of value"
+        
+        if start or stop:
+            raise NotImplementedError("start and stop")
+        
+        return self._model[item.iter].path[0]
+
+    def count(self, item):
+        "L.count(item) -> integer -- return number of occurrences of value"
+
+        count = 0
+        for row in self._model:
+            if row[COL_MODEL] == item:
+                count += 1
+        return count
+
+    def insert(self, index, item):
+        "L.insert(index, item) -- insert object before index"
+        raise NotImplementedError
     
+    def pop(self, index):
+        "L.pop([index]) -> item -- remove and return item at index (default last)"
+        raise NotImplementedError
+
+    def reverse(self, pos, item):
+        "L.reverse() -- reverse *IN PLACE*"
+        raise NotImplementedError
+
+    def sort(self, pos, item):
+        """L.sort(cmp=None, key=None, reverse=False) -- stable sort *IN PLACE*;
+        cmp(x, y) -> -1, 0, 1"""
+        raise NotImplementedError
+
     # GObject property handling
     def do_get_property(self, pspec):
         if pspec.name == 'column-definitions':
@@ -644,7 +681,7 @@ class List(gtk.ScrolledWindow):
         # typelist here may be none. It's okay; justify_columns will try
         # and use the specified justifications and if not present will
         # not touch the column. When typelist is not set,
-        # add_instance/add_list have a chance to fix up the remaining
+        # append/add_list have a chance to fix up the remaining
         # justification by looking at the first instance's data.
 #        self._justify_columns(columns, typelist)
 
@@ -975,7 +1012,7 @@ class List(gtk.ScrolledWindow):
         if self._has_enough_type_information():
             self._setup_columns()
         
-    def add_instance(self, instance, select=False):
+    def append(self, instance, select=False):
         """Adds an instance to the list.
         - instance: the instance to be added (according to the columns spec)
         - select: whether or not the new item should appear selected.
@@ -997,7 +1034,7 @@ class List(gtk.ScrolledWindow):
             self._select_and_focus_row(row_iter)
         self._treeview.thaw_notify()
 
-    def remove_instance(self, instance):
+    def remove(self, instance):
         """Remove an instance from the list.
         If the instance is not in the list it returns False. Otherwise it
         returns True.
@@ -1017,7 +1054,7 @@ class List(gtk.ScrolledWindow):
             
         return False
 
-    def update_instance(self, instance):
+    def update(self, instance):
         if not hasattr(instance, 'iter'):
             raise ValueError("instance %r is not in the list" % instance)
 
@@ -1163,6 +1200,23 @@ class List(gtk.ScrolledWindow):
             pos -= 1
         return model[pos][COL_MODEL]
 
+    # Backwards compat
+    def add_instance(self, *args, **kwargs):
+        return self.append(*args, **kwargs)
+    add_instance = deprecated('append')(add_instance)
+
+    def remove_instance(self, *args, **kwargs):
+        return self.remove(*args, **kwargs)
+    remove_instance = deprecated('remove')(remove_instance)
+
+    def update_instance(self, *args, **kwargs):
+        return self.update(*args, **kwargs)
+    update_instance = deprecated('update')(update_instance)
+    
+    def select_instance(self, *args, **kwargs):
+        return self.select(*args, **kwargs)
+    select_instance = deprecated('select')(select_instance)
+
 gobject.type_register(List)
 
 if __name__ == '__main__':
@@ -1194,10 +1248,10 @@ if __name__ == '__main__':
         )
 
     l = List(columns, data)
-
+    
     # add an extra person
-    l.add_instance(Person('Nando', 29, 'Santos', False))
-
+    l.append(Person('Nando', 29, 'Santos', False))
+        
     win.add(l)
     win.show_all()
     

@@ -42,7 +42,16 @@ def list_properties(gtype, parent=True):
     parent_pspecs = gobject.list_properties(parent)
     return [pspec for pspec in pspecs
                       if pspec not in parent_pspecs]
-            
+
+class deprecated(object):
+    def __init__(self, new):
+        self.new = new
+
+    def __call__(self, func):
+        def wrapper(*args, **kwargs):
+            _warn("%s is deprecated, use %s instead" % (func.__name__, self.new))
+            return func(*args, **kwargs)
+        return wrapper
 
 class PropertyObject(ClassInittableObject):
     """
