@@ -27,6 +27,7 @@ import sys
 
 import gobject
 
+from kiwi import _warn
 from kiwi.python import ClassInittableObject
 
 def list_properties(gtype, parent=True):
