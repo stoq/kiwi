@@ -1150,7 +1150,6 @@ class List(gtk.ScrolledWindow):
 
         model = self._model
         pos = model[instance.iter].path[0]
-        print pos, len(model)
         if pos >= len(model) - 1:
             pos = 0
         else:
