@@ -464,7 +464,7 @@ class List(gtk.ScrolledWindow):
 
     # append and remove are below
 
-    def extend(self, iteratable):
+    def extend(self, iterable):
         "L.extend(iterable) -- extend list by appending elements from the iterable"
         
         return self.add_list(iterable, clear=False)
@@ -526,7 +526,8 @@ class List(gtk.ScrolledWindow):
         if not instance_list: 
             return
 
-        instance = instance_list[0]
+        instances = iter(instance_list)
+        instance = instances.next()
         if not self._has_enough_type_information():
             self._guess_types(instance)
             self._setup_columns()
@@ -538,17 +539,13 @@ class List(gtk.ScrolledWindow):
             # the iterator so we later can select it
             instance.iter = self._model.append((instance,))
             
-            # Slice out the first, already inserted instance, the
-            # rest of the list is inserted below
-            instance_list = instance_list[1:]
-
             # Finally select the iterator, but only if we allow
             # items to be selectable
             selection = self._treeview.get_selection()
             if selection.get_mode() != gtk.SELECTION_NONE:
                 selection.select_iter(instance.iter)
             
-        for instance in instance_list:
+        for instance in instances:
             instance.iter = model.append((instance,))
 
         # As soon as we have data for that list, we can autosize it, and
