@@ -800,11 +800,6 @@ class List(gtk.ScrolledWindow):
         self._columns_configured = False
         
     # selection methods
-    def _find_iter_from_data(self, instance):
-        for row in self._model:
-            if instance == row[COL_MODEL]:
-                return row.iter
-
     def _select_and_focus_row(self, row_iter):
         self._treeview.set_cursor(self._model[row_iter].path)
                     
@@ -860,20 +855,6 @@ class List(gtk.ScrolledWindow):
         
     def _after_treeview__row_activated(self, treeview, path, view_column):
         self.emit('double-click', self._model[path][COL_MODEL])
-        
-    def _get_iter_from_instance(self, instance):
-        """Returns the treeiter where this instance is using a linear search.
-        If the instance is not in the list it returns None
-        """
-        for row in self._model:
-            if row[COL_MODEL] is instance:
-                return row.iter
-
-    def get_iter(self, instance):
-        treeiter = self._get_iter_from_instance(instance)
-        if not treeiter:
-            raise ValueError("The instance %s is not in the list." % instance)
-        return treeiter
         
     # hacks
     def _get_column_button(self, column):
@@ -1025,16 +1006,22 @@ class List(gtk.ScrolledWindow):
             raise RuntimeError(("There is no columns neither data on the "
                                 "list yet so you can not remove any instance"))
 
+        if not hasattr(instance, 'iter'):
+            raise ValueError("instance %r is not in the list" % instance)
+        
         # linear search for the instance to remove
-        treeiter = self._get_iter_from_instance(instance)
+        treeiter = instance.iter
         if treeiter:
             self._model.remove(treeiter)
             return True
             
         return False
 
-    def update_instance(self, new_instance):
-        treeiter = self.get_iter(new_instance)
+    def update_instance(self, instance):
+        if not hasattr(instance, 'iter'):
+            raise ValueError("instance %r is not in the list" % instance)
+
+        treeiter = instance.iter
         self._model.row_changed(self._model[treeiter].path, treeiter)
         
     def set_column_visibility(self, column_index, visibility):
