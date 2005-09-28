@@ -187,7 +187,7 @@ class SignalBroker(object):
             if widget is None:
                 raise AttributeError("couldn't find widget %s in %s"
                                      % (w_name, view))
-            if not isinstance(widget, (gtk.Widget, gtk.Action)):
+            if not isinstance(widget, gobject.GObject):
                 raise AttributeError("%s (%s) is not a widget or an action "
                                      "and can't be connected to"
                                      % (w_name, widget))
