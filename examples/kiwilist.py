@@ -46,14 +46,15 @@ data = (Person('Evandro', 23, 'Belo Horizonte', True),
         Person('Gustavo', 23, 'San Jose do Santos', False),
         Person('Johan', 23, 'Goteborg', True), 
         Person('Lorenzo', 26, 'Granada', False)
-    )
+       )
 
 win = gtk.Window()
 win.set_default_size(500, 150)
 win.connect('destroy', gtk.main_quit)
 
-l = List(columns, data)
-l.add_list([Person('Nando', 29+len(l), 'Santos', True)], False)
+l = List(columns)
+l.extend(data)
+l.append(Person('Nando', 29+len(l), 'Santos', True))
 
 # add an extra person
 
