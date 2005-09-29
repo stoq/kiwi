@@ -131,6 +131,12 @@ class PropertyObject(ClassInittableObject):
             value = func(value)
         self._attributes[name] = value
 
+    def _get(self, name):
+        func = getattr(self, 'prop_get_%s' % name, None)
+        if callable(func) and func:
+            return func()
+        return self._attributes[name]
+
     def get_attribute_names(self):
         return self._attributes.keys()
 
@@ -143,7 +149,7 @@ class PropertyObject(ClassInittableObject):
         
     def do_get_property(self, pspec):
         prop_name = pspec.name.replace('-', '_')
-        return self._attributes[prop_name]
+        return self._get(prop_name)
     
 def gsignal(name, *args, **kwargs):
     """
