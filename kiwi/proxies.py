@@ -63,6 +63,151 @@ class Proxy:
         self._setup_widgets(widgets)
         self._initialize_widgets()
 
+    def _initialize_widgets(self):
+        """Update the contents of the widgets.
+
+        This should be called after _setup_widgets.
+        """
+        for attribute, widget in self._attr_map.items():
+
+            if self.model is None:
+                # if we have no model, leave value unset so we pick up
+                # the widget default below.
+                value = ValueUnset
+            else:
+                # if we have a model, grab its value to update the widgets
+                self._register_proxy_in_model(attribute)
+                value = kgetattr(self.model, attribute, ValueUnset)
+                if value is ValueUnset:
+                    # get the default value from the widget if it has any
+                    defvalue = widget.get_property('default-value')
+                    if defvalue is not None:
+                        value = defvalue
+
+            tweak_function = getattr(self, "tweak_%s" % attribute, None)
+            if tweak_function:
+                tweak_function(attribute, value)
+            else:
+                self.update(attribute, value, block=True)
+
+            # The initial value of the model is set, at this point
+            # we'll do an initial validation check
+            if isinstance(widget, MixinSupportValidation):
+                value = widget.read()
+                widget.validate_data(value, force=True)
+
+    def _setup_widgets(self, widgets):
+        """
+        Connect to the 'content-changed' signal of all the Kiwi widgets
+        in the widgets list parameter.
+        @param widgets: the widget names
+        @type  widgets: list of strings
+        """
+        self._attr_map = {}
+        for widget_name in widgets:
+            widget = getattr(self.view, widget_name, None)
+            if widget is None:
+                raise AttributeError("The widget %s was not "
+                                     "found in the view %s" % (widget_name, self.view))
+            
+            if not isinstance(widget, Mixin):
+                continue
+
+            data_type = widget.get_property('data-type')
+            if data_type is None:
+                raise TypeError("The KiwiWidget %s should have a data type "
+                                "set up" % widget)
+            
+            attribute = widget.get_property('model-attribute')
+            if not attribute:
+                # we don't listen for changes in this widget because
+                # we don't know the model attribute
+                _warn("The widget %s (%s) is a KiwiWidget but does not have "
+                      "a model attribute set so it will not be eassociated "
+                      "with the model" % (widget, widget.name))
+                continue
+             
+            connection_id = widget.connect('content-changed',
+                                           self._on_widget__content_changed)
+            widget.set_data('content-changed-id', connection_id)
+
+            # save this widget in our map
+            self._attr_map[attribute] = widget
+            
+            # here we define the view that owns the widget
+            widget.owner = self.view
+
+    def _on_widget__content_changed(self, widget):
+        """This is called as soon as the content of one of the widget
+        changes, the widgets tries fairly hard to not emit when it's not
+        neccessary"""
+        
+        value = widget.read()
+
+        # Value has changed, start validation process
+        if isinstance(widget, MixinSupportValidation):
+            value = widget.validate_data(value)
+
+        # only update the model if the data is correct
+        if value is ValueUnset:
+            return
+        
+        # skip updates for model if there is none, right?
+        if self.model is None:
+            return
+
+        attr_name = widget.get_property('model-attribute')
+        if not attr_name:
+            raise AssertionError("The model-attribute is empty "
+                                 "for widgett %s" % widget.name)
+
+        # XXX: one day we might want to queue and unique updates?
+        self._block_proxy_in_model(True)
+        try:
+            ksetattr(self.model, attr_name, value)
+        except:
+            if self._setter_error_handler:
+                self._setter_error_handler(sys.exc_value, self.model, 
+                                           attr_name, value)
+            else:
+                raise
+
+        self._block_proxy_in_model(False)
+
+        # Call global update hook 
+        self.proxy_updated(widget, value)
+
+    def _block_proxy_in_model(self, state):
+        model = self.model
+        if not hasattr(model, "block_proxy"):
+            return
+        
+        if state:
+            model.block_proxy(self)
+        else:
+            model.unblock_proxy(self)
+
+    def _register_proxy_in_model(self, attribute):
+        model = self.model
+        if not hasattr(model, "register_proxy_for_attribute"):
+            return
+        try:
+            model.register_proxy_for_attribute(attribute, self)
+        except AttributeError:
+            msg = ("Failed to run register_proxy() on Model %s "
+                   "(that was supplied to  %s. \n"
+                   "(Hint: if this model also inherits from ZODB's "
+                   "Persistent class, this problem occurs if you haven't "
+                   "set __setstate__() up correctly.  __setstate__() "
+                   "should call Model.__init__() (and "
+                   "Persistent.__setstate__() of course) to reinitialize "
+                   "things properly.)")
+            raise TypeError(msg % (model, self))
+
+    def _unregister_proxy_in_model(self):
+        if self.model and hasattr(self.model, "unregister_proxy"):
+            self.model.unregister_proxy(self)
+
     # Public API
     def proxy_updated(self, widgetproxy, value):
         """ This is a hook that is called whenever the proxy updates the
@@ -199,152 +344,3 @@ class Proxy:
         self._initialize_widgets()
 #        self._avoid_clobber = False
     
-
-    # Below are the guts
-    
-    def _setup_widgets(self, widgets):
-        """
-        Connect to the 'content-changed' signal of all the Kiwi widgets
-        in the widgets list parameter.
-        @param widgets: the widget names
-        @type  widgets: list of strings
-        """
-        self._attr_map = {}
-        for widget_name in widgets:
-            widget = getattr(self.view, widget_name, None)
-            if widget is None:
-                raise AttributeError("The widget %s was not "
-                                     "found in the view %s" % (widget_name, self.view))
-            
-            if not isinstance(widget, Mixin):
-                continue
-
-            data_type = widget.get_property('data-type')
-            if data_type is None:
-                raise TypeError("The KiwiWidget %s should have a data type "
-                                "set up" % widget)
-            
-            attribute = widget.get_property('model-attribute')
-            if not attribute:
-                # we don't listen for changes in this widget because
-                # we don't know the model attribute
-                _warn("The widget %s (%s) is a KiwiWidget but does not have "
-                      "a model attribute set so it will not be eassociated "
-                      "with the model" % (widget, widget.name))
-                continue
-             
-            connection_id = widget.connect('content-changed',
-                                           self._on_widget__content_changed)
-            widget.set_data('content-changed-id', connection_id)
-
-            # save this widget in our map
-            self._attr_map[attribute] = widget
-            
-            # here we define the view that owns the widget
-            widget.owner = self.view
-
-    def _on_widget__content_changed(self, widget):
-        """This is called as soon as the content of one of the widget
-        changes, the widgets tries fairly hard to not emit when it's not
-        neccessary"""
-        
-        data = widget.read()
-
-        # Data has changed, start validation process
-        if isinstance(widget, MixinSupportValidation):
-            data = widget.validate_data(data)
-
-        # only update the model if the data is correct
-        if data is not ValueUnset:
-            self._update_model(widget, data)
-
-    def _update_model(self, widget, value):
-        if self.model is None:
-            # skip updates for model if there is none, right?
-            return
-
-        attr_name = widget.get_property('model-attribute')
-        if not attr_name:
-            raise AssertionError("The model-attribute is empty "
-                                 "for widgett %s" % widget.name)
-
-#        if widgetproxy.converted:
-#            value = widgetproxy.read_converted(value)
-
-        # XXX: one day we might want to queue and uniq updates?
-        self._block_proxy_in_model(True)
-        try:
-            ksetattr(self.model, attr_name, value)
-        except:
-            if self._setter_error_handler:
-                self._setter_error_handler(sys.exc_value, self.model, 
-                                           attr_name, value)
-            else:
-                raise
-
-        self._block_proxy_in_model(False)
-
-        # Call global update hook 
-        self.proxy_updated(widget, value)
-
-    def _block_proxy_in_model(self, state):
-        model = self.model
-        if hasattr(model, "block_proxy"):
-            if state:
-                model.block_proxy(self)
-            else:
-                model.unblock_proxy(self)
-
-    def _initialize_widgets(self):
-        """Update the contents of the widgets.
-
-        This should be called after _setup_widgets.
-        """
-        for attribute, widget in self._attr_map.items():
-
-            if self.model is None:
-                # if we have no model, leave value unset so we pick up
-                # the widget default below.
-                value = ValueUnset
-            else:
-                # if we have a model, grab its value to update the widgets
-                self._register_proxy_in_model(attribute)
-                value = kgetattr(self.model, attribute, ValueUnset)
-                if value is ValueUnset:
-                    # get the default value from the widget if it has any
-                    defvalue = widget.get_property('default-value')
-                    if defvalue is not None:
-                        value = defvalue
-
-            tweak_function = getattr(self, "tweak_%s" % attribute, None)
-            if tweak_function:
-                tweak_function(attribute, value)
-            else:
-                self.update(attribute, value, block=True)
-
-            # The initial value of the model is set, at this point
-            # we'll do an initial validation check
-            if isinstance(widget, MixinSupportValidation):
-                value = widget.read()
-                widget.validate_data(value, force=True)
-
-    def _register_proxy_in_model(self, attribute):
-        model = self.model
-        if not hasattr(model, "register_proxy_for_attribute"):
-            return
-        try:
-            model.register_proxy_for_attribute(attribute, self)
-        except AttributeError:
-            msg = ("Failed to run register_proxy() on Model %s "
-                   "(that was supplied to  %s. \n"
-                   "(Hint: if this model also inherits from ZODB's "
-                   "Persistent class, this problem occurs if you haven't "
-                   "set __setstate__() up correctly.  __setstate__() "
-                   "should call Model.__init__() (and "
-                   "Persistent.__setstate__() of course) to reinitialize "
-                   "things properly.)")
-            raise TypeError(msg % (model, self))
-
-    def _unregister_proxy_in_model(self):
-        if self.model and hasattr(self.model, "unregister_proxy"):
-            self.model.unregister_proxy(self)
