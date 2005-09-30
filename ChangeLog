@@ -1,5 +1,11 @@
 2005-09-30  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/comboboxentry.py (BaseComboBoxEntry): A 
+	reimplementation of GtkComboBoxEntry in python. The main difference
+	between this one and the gtk+ one is that we put our own
+	entry (a kiwi entry) instead of the standard one, which allows
+	us to do put an icon in the right part, used by the validation.
+	
 	* kiwi/ui/widgets/tooltips.py (Tooltip.__init__): Add a tooltips 
 	implementation, which is a bit more flexible than the one in Gtk+. 
 	Currently unused.
