@@ -28,6 +28,9 @@ makes it possible for us to tie it to a specific gtk.gdk.Window
 import gobject
 import gtk
 
+DEFAULT_DELAY = 500
+BORDER_WIDTH = 4
+
 class Tooltip(gtk.Window):
     def __init__(self, widget):
         gtk.Window.__init__(self, gtk.WINDOW_POPUP)
@@ -35,7 +38,7 @@ class Tooltip(gtk.Window):
         self.set_app_paintable(True)
         self.set_resizable(False)
         self.set_name("gtk-tooltips")
-        self.set_border_width(4)
+        self.set_border_width(BORDER_WIDTH)
         self.connect('expose-event', self._on__expose_event)
 
         self._label = gtk.Label()
@@ -55,7 +58,7 @@ class Tooltip(gtk.Window):
             y += widget.allocation.y
 
         x = screen.get_root_window().get_pointer()[0]
-        x -= (w / 2 + 4)
+        x -= (w / 2 + BORDER_WIDTH)
 
         pointer_screen, px, py, _ = screen.get_display().get_pointer()
         if pointer_screen != screen:
@@ -70,11 +73,11 @@ class Tooltip(gtk.Window):
         elif x < monitor.x:
             x = monitor.x
 
-        if ((y + h + widget.allocation.height + 4) >
+        if ((y + h + widget.allocation.height + BORDER_WIDTH) >
             monitor.y + monitor.height):
-            y = y - h - 4
+            y = y - h - BORDER_WIDTH
         else:
-            y = y + widget.allocation.height + 4
+            y = y + widget.allocation.height + BORDER_WIDTH
 
         return x, y
 
@@ -110,6 +113,6 @@ class Tooltip(gtk.Window):
         if self._show_timeout_id != -1:
             return
         
-        self._show_timeout_id = gobject.timeout_add(500,
+        self._show_timeout_id = gobject.timeout_add(DEFAULT_DELAY,
                                                     self._real_display,
                                                     widget)
