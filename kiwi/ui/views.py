@@ -42,8 +42,9 @@ from kiwi.proxies import Proxy
 from kiwi.utils import gsignal
 from kiwi.ui.gadgets import quit_if_last
 
+WidgetTree = None
 try:
-    from kiwi.ui.gazpacholoader import GazpachoWidgetTree as WidgetTree
+    from gazpacho.loader import loader
 except ImportError, e:
     if is_gazpacho_required():
         raise RuntimeError("Gazpacho is required, but could not be found: %s"
@@ -53,6 +54,8 @@ except ImportError, e:
             from kiwi.ui.libgladeloader import LibgladeWidgetTree as WidgetTree
         except ImportError:
             raise RuntimeError("Could not find a glade parser library")
+else:
+    from kiwi.ui.gazpacholoader import GazpachoWidgetTree as WidgetTree
         
 _non_interactive = [
     gtk.Label, 
@@ -739,7 +742,7 @@ class SlaveView(gobject.GObject):
             if (widget is None or
                 not isinstance(widget, MixinSupportValidation)):
                 continue
-
+            
             try:
                 widget.connect_object('validation-changed',
                                       self._on_child__validation_changed,
