@@ -1,5 +1,9 @@
 2005-09-30  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/tooltips.py (Tooltip.__init__): Add a tooltips 
+	implementation, which is a bit more flexible than the one in Gtk+. 
+	Currently unused.
+
 	* tests/test_argcheck.py (ArgTest.testUserDefined): Add some basic
 	tests.
 
