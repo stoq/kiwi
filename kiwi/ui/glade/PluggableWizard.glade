@@ -1,0 +1,121 @@
+<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+<!DOCTYPE glade-interface SYSTEM "http://gazpacho.sicem.biz/gazpacho-0.1.dtd">
+<glade-interface>
+    <widget class="GtkDialog" id="PluggableWizard">
+        <property name="default_height">260</property>
+        <property name="default_width">320</property>
+        <property name="type_hint">normal</property>
+        <child internal-child="vbox">
+            <widget class="GtkVBox" id="dialog1-vbox">
+                <property name="border_width">2</property>
+                <property name="visible">True</property>
+                <child>
+                    <widget class="GtkVBox" id="vbox1">
+                        <child>
+                            <widget class="kiwi+ui+widgets+label+Label" id="header_lbl">
+                                <property name="data_type">str</property>
+                            </widget>
+                            <packing>
+                                <property name="expand">False</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="GtkEventBox" id="slave_area">
+                                <child>
+                                    <placeholder/>
+                                </child>
+                            </widget>
+                            <packing>
+                                <property name="position">1</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="GtkHBox" id="hbox1">
+                                <property name="border_width">5</property>
+                                <property name="spacing">5</property>
+                                <child>
+                                    <widget class="GtkButton" id="cancel_btn">
+                                        <property name="label">gtk-cancel</property>
+                                        <property name="use_stock">True</property>
+                                        <property name="visible">True</property>
+                                        <property name="width_request">90</property>
+                                    </widget>
+                                    <packing>
+                                        <property name="expand">False</property>
+                                    </packing>
+                                </child>
+                                <child>
+                                    <widget class="GtkFixed" id="fixed1"/>
+                                    <packing>
+                                        <property name="position">1</property>
+                                    </packing>
+                                </child>
+                                <child>
+                                    <widget class="GtkButton" id="previous_btn">
+                                        <property name="label">gtk-go-back</property>
+                                        <property name="use_stock">True</property>
+                                        <property name="visible">True</property>
+                                        <property name="width_request">90</property>
+                                    </widget>
+                                    <packing>
+                                        <property name="expand">False</property>
+                                        <property name="position">2</property>
+                                    </packing>
+                                </child>
+                                <child>
+                                    <widget class="GtkButton" id="next_btn">
+                                        <property name="label">gtk-go-forward</property>
+                                        <property name="use_stock">True</property>
+                                        <property name="visible">True</property>
+                                        <property name="width_request">90</property>
+                                    </widget>
+                                    <packing>
+                                        <property name="expand">False</property>
+                                        <property name="position">3</property>
+                                    </packing>
+                                </child>
+                            </widget>
+                            <packing>
+                                <property name="expand">False</property>
+                                <property name="position">2</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="kiwi+ui+widgets+label+Label" id="notification_lbl">
+                                <property name="data_type">str</property>
+                            </widget>
+                            <packing>
+                                <property name="expand">False</property>
+                                <property name="position">3</property>
+                            </packing>
+                        </child>
+                    </widget>
+                    <packing>
+                        <property name="position">2</property>
+                    </packing>
+                </child>
+                <child internal-child="action_area">
+                    <widget class="GtkHButtonBox" id="dialog1-action_area">
+                        <property name="border_width">5</property>
+                        <property name="layout_style">end</property>
+                        <property name="spacing">10</property>
+                        <property name="visible">True</property>
+                        <child>
+                            <placeholder/>
+                        </child>
+                        <child>
+                            <placeholder/>
+                            <packing>
+                                <property name="position">1</property>
+                            </packing>
+                        </child>
+                    </widget>
+                    <packing>
+                        <property name="expand">False</property>
+                        <property name="pack_type">end</property>
+                    </packing>
+                </child>
+            </widget>
+        </child>
+    </widget>
+</glade-interface>

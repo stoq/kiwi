@@ -22,9 +22,17 @@
 #            Evandro Vale Miquelito <evandro@async.com.br>
 #            
 
+import os
+
 import gtk
 
 from kiwi.ui.delegates import Delegate
+from kiwi.environ import environ
+
+
+current_dir = os.path.dirname(__file__)
+environ.add_resource("glade", os.path.join(current_dir, "glade"))
+
 
 class WizardStep:
     """ This class must be inherited by the steps """
@@ -33,9 +41,11 @@ class WizardStep:
         self.header = header
 
     def post_init(self):
-        # This is a virtual method, which must be redefined on children 
-        # classes, if applicable.
-        pass
+        """A method called after the wizard step constructor and the main
+        wizard update_view method.
+        This is a virtual method, which must be redefined on children 
+        classes, if applicable.
+        """
     
     def next_step(self):
         # This is a virtual method, which must be redefined on children 
@@ -58,70 +68,32 @@ class WizardStep:
 
 class PluggableWizard(Delegate):
     """ Wizard controller and view class """
+    gladefile = 'PluggableWizard'
+    widgets = ('notification_lbl', 
+               'header_lbl', 
+               'next_btn', 
+               'previous_btn',
+               'cancel_btn')
+
     retval = None
     def __init__(self, title, first_step, size=None):
-        self._create_gui()
         Delegate.__init__(self, delete_handler=self.quit_if_last,
-                          toplevel=self.wizard)
+                          gladefile=self.gladefile, 
+                          widgets=self.widgets)
         self.set_title(title)
         self.first_step = first_step
         if size:
             self.get_toplevel().set_default_size(size[0], size[1])
         self.change_step(first_step)
-
-    def _create_gui(self):
-        self.next_btn = gtk.Button(stock=gtk.STOCK_GO_FORWARD)
-        self.next_btn.set_use_stock(True)
-        self.previous_btn = gtk.Button(stock=gtk.STOCK_GO_BACK)
-        self.previous_btn.set_use_stock(True)
-        self.cancel_btn = gtk.Button(stock=gtk.STOCK_CANCEL)
-        self.cancel_btn.set_use_stock(True)
+        self.get_toplevel().show_all()
         
-        self.message_lbl = gtk.Label("message")
-        self.header_lbl = gtk.Label("header")
-        
-        cancel_btn_hbox = gtk.HButtonBox()
-        cancel_btn_hbox.pack_start(self.cancel_btn)
-        cancel_btn_hbox.set_spacing(10)
-        cancel_btn_hbox.set_border_width(15)
-        cancel_btn_hbox.set_layout('start')
-        
-        prev_next_btns_hbox = gtk.HButtonBox()
-        prev_next_btns_hbox.pack_start(self.previous_btn)
-        prev_next_btns_hbox.pack_start(self.next_btn)
-        prev_next_btns_hbox.set_spacing(10)
-        prev_next_btns_hbox.set_border_width(15)
-        prev_next_btns_hbox.set_layout('end')
-        
-        self.wizard_slave_ev = gtk.EventBox()
-        btns_hbox = gtk.HBox()
-        btns_hbox.pack_start(cancel_btn_hbox)
-        btns_hbox.pack_start(prev_next_btns_hbox)
-        
-        vbox = gtk.VBox()
-        vbox.pack_start(self.header_lbl)
-        vbox.pack_start(self.wizard_slave_ev)
-        vbox.pack_start(btns_hbox)
-        vbox.pack_start(self.message_lbl)
-        vbox.set_child_packing(self.header_lbl, expand=False, fill=True, 
-                               padding=0, pack_type='start')
-        vbox.set_child_packing(self.message_lbl, expand=False, fill=True, 
-                               padding=0, pack_type='start')
-        vbox.set_child_packing(btns_hbox, expand=False, fill=True, 
-                               padding=0, pack_type='start')
-        
-        self.wizard = gtk.Window()
-        self.wizard.add(vbox)
-        
-    def change_step(self, step):
+    def change_step(self, step=None):
         if step is None:
-            # Sometimes for different reasons the wizard needs to be
-            # interrupted. In this case, next/previous_step should return
-            # None to get the wizard interrupted. self.cancel is called
-            # because it is the most secure action to do, since interrupt
-            # here does not mean success
-            return self.cancel()
-        self.attach_slave('wizard_slave_ev', step)
+            # This is the last step and we can finish the job here
+            self.finish()
+            return 
+        step.show()
+        self.attach_slave('slave_area', step)
         self.current = step
         if step.header:
             self.header_lbl.show()
@@ -138,19 +110,19 @@ class PluggableWizard(Delegate):
             self.enable_next()
             self.disable_back()
             self.disable_finish()
-            self.message_lbl.hide()
+            self.notification_lbl.hide()
         # Middle page
         elif self.current.has_next_step(): 
             self.enable_back()
             self.enable_next()
             self.disable_finish()
-            self.message_lbl.hide()
+            self.notification_lbl.hide()
         # Last page
         else:
             self.enable_back()
             self.disable_next()
             self.enable_finish()
-            self.message_lbl.show()
+            self.notification_lbl.show()
 
     def enable_next(self):
         self.next_btn.set_sensitive(True)
@@ -172,7 +144,10 @@ class PluggableWizard(Delegate):
         self.next_btn.set_label(gtk.STOCK_GO_FORWARD)
 
     def on_next_btn__clicked(self, *args):
-        assert self.current.has_next_step(), self.current
+        if not self.current.has_next_step():
+            # This is the last step
+            self.change_step()
+            return
         self.change_step(self.current.next_step())
             
     def on_previous_btn__clicked(self, *args):
@@ -182,7 +157,7 @@ class PluggableWizard(Delegate):
         self.cancel()
 
     def set_message(self, message):
-        self.message_lbl.set_text(message)
+        self.notification_lbl.set_text(message)
 
     def cancel(self, *args):
         # Redefine this method if you want something done when cancelling the
