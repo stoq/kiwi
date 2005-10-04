@@ -669,9 +669,8 @@ class SlaveView(gobject.GObject):
             win.add_accel_group(group)
 
     def get_slave(self, holder):
-        if self.slaves.has_key(holder):
-            return self.slaves[holder]
-        raise AttributeError, "Unknown slave for holder: %s" % holder
+        return self.slaves.get(holder)
+
 
 
     #
