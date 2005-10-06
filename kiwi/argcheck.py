@@ -24,20 +24,20 @@
 import inspect
 
 class CustomType(type):
-    @classmethod
     def value_check(cls, name, value):
         pass
-    
+    value_check = classmethod(value_check) 
+
 class number(CustomType):
     type = int, float
     
 class percent(CustomType):
     type = int, float
-    @classmethod
     def value_check(cls, name, value):
         if 0 > value < 100:
             raise ValueError("%s must be between 0 and 100" % name)
-    
+    value_check = classmethod(value_check) 
+       
 class argcheck(object):
     __enabled__ = True
     
@@ -47,19 +47,19 @@ class argcheck(object):
                 raise TypeError("must be a type instance")
         self.types = types
 
-    @classmethod
     def enable(cls):
         """
         Enable argcheck globally
         """
         cls.__enabled__ = True
-        
-    @classmethod
+    enable = classmethod(enable)
+    
     def disable(cls):
         """
         Disable argcheck globally
         """
         cls.__enabled__ = False
+    disable = classmethod(disable)
         
     def __call__(self, func):
         if not callable(func):
