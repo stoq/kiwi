@@ -1061,6 +1061,17 @@ class List(gtk.ScrolledWindow):
             raise ValueError("instance %r is not in the list" % instance)
         treeiter = self._iters[objid]
         self._model.row_changed(self._model[treeiter].path, treeiter)
+
+    def refresh(self):
+        """
+        Reloads the values from all objects.
+        """
+
+        # XXX: Optimize this to only reload items, no need to remove/readd
+        model = self._model
+        instances = [row[COL_MODEL] for row in model]
+        model.clear()
+        self.add_list(instances)
         
     def set_column_visibility(self, column_index, visibility):
         treeview_column = self._treeview.get_column(column_index)
