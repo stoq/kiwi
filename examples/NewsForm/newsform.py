@@ -4,11 +4,13 @@ import gtk
 from kiwi.ui.gadgets import quit_if_last
 from kiwi.ui.views import BaseView
 
-# Empty model; GladeProxy will use it to hold the attributes
 class NewsItem:
     """An instance representing an item of news. 
        Attributes: title, author, url, size"""
-    pass
+    title = ''
+    url = ''
+    author = ''
+    size = 0
 
 item = NewsItem()
 my_widgets = ["title", "author", "url", "size"]
