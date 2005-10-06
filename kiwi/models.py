@@ -163,7 +163,7 @@ class PickledModel(Model):
         """
         Saves the instance to a pickle file. If no file argument is
         provided, will try to use the internal _file attribute that is
-        set using set_pickle()"""
+        set using set_filename()"""
         file = file or getattr(self, "_file", None)
         if not file:
             msg = "No pickle specified, don't know where to save myself"
@@ -223,7 +223,7 @@ def unpickle_model(klass, file=None):
 
     if not os.path.exists(file):
         ret = klass()
-        ret.set_pickle(file)
+        ret.set_filename(file)
         return ret
 
     fh = open(file, "r")
@@ -244,7 +244,7 @@ def unpickle_model(klass, file=None):
               "new <%s> instance\n""" % (file, backup, klass.__name__))
         ret = klass()
     fh.close()
-    ret.set_pickle(file)
+    ret.set_filename(file)
     return ret
 
 # TODO: implement a Model that saves itself as CSV/XML?
