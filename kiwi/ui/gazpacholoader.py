@@ -164,14 +164,6 @@ class TextViewDataType(DataTypeAdaptor):
                 (_('Date'), date),
                 (_('String'), str)]
 
-class RadioBtnDataType(DataTypeAdaptor):
-    def get_data_types(self):
-        return [(_('Boolean'), bool)]
-
-class CheckBtnDataType(DataTypeAdaptor):
-    def get_data_types(self):
-        return [(_('Boolean'), bool)]
-
 class ComboBoxDataType(DataTypeAdaptor):
     def get_data_types(self):
         return [(_('Boolean'), bool),
@@ -192,7 +184,13 @@ class DataTypeProperty(CustomProperty, StringType):
     def save(self):
         value = self.get()
         return value.__name__
-    
+
+class BoolDataTypeProperty(CustomProperty, StringType):
+    translatable = False
+    editable = False
+    def save(self):
+        return 'bool'
+
 class ModelProperty(CustomProperty):
     translatable = False
 
@@ -223,18 +221,23 @@ class KiwiComboBoxAdapter(ComboBoxAdapter):
 adapter_registry.register_adapter(KiwiComboBoxAdapter)
 
 for gobj, editor in [(Entry, EntryDataType),
-                     (CheckButton, CheckBtnDataType),
+                     (CheckButton, None),
                      (Label, LabelDataType),
                      (ComboBox, ComboBoxDataType),
                      (ComboBoxEntry, ComboBoxDataType),
                      (SpinButton, SpinBtnDataType),
-                     (RadioButton, RadioBtnDataType),
+                     (RadioButton, None),
                      (TextView, TextViewDataType)]:
-    
     # Property overrides, used in the editor
     type_name = gobject.type_name(gobj)
-    prop_registry.override_simple(type_name + '::data-type', DataTypeProperty,
-                                  editor=editor)
+    data_name = type_name + '::data-type'
+    if editor:
+        prop_registry.override_simple(data_name, DataTypeProperty,
+                                      editor=editor)
+    else:
+        prop_registry.override_simple(data_name, BoolDataTypeProperty)
+
+        
     prop_registry.override_simple(type_name + '::model-attribute',
                                   ModelProperty)
 
