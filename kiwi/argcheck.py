@@ -64,21 +64,28 @@ class argcheck(object):
     def __call__(self, func):
         if not callable(func):
             raise TypeError("%r must be callable" % func)
-        
+
         spec = inspect.getargspec(func)
         arg_names, is_varargs, is_kwargs, default_values = spec
+        types = self.types
         if is_kwargs and not is_varargs and self.types:
             raise TypeError("argcheck cannot be used with only keywords")
-        
-        types = self.types
-        defs = len(default_values or ())
+        elif not is_varargs:
+            if len(types) != len(arg_names):
+                raise TypeError("%s has wrong number of arguments, "
+                                "%d specified in decorator, "
+                                "but function has %d" %
+                                (func.__name__,
+                                 len(types),
+                                 len(arg_names)))
 
+        defs = len(default_values or ())
         kwarg_types = {}
         for i, arg_name in enumerate(arg_names):
             kwarg_types[arg_name] = types[i]
             
             pos = defs - i
-            if defs and pos < defs:
+            if defs and 0 < pos < defs:
                 value = default_values[pos]
                 arg_type = types[pos]
                 try:
@@ -88,15 +95,6 @@ class argcheck(object):
                                     "and not %s" % (arg_name,
                                                     arg_type.__name__,
                                                     type(value).__name__))
-        if not is_varargs:
-            if len(types) != len(arg_names):
-                raise TypeError("%s has wrong number of arguments, "
-                                "%d specified in decorator, "
-                                "but function has %d" %
-                                (func.__name__,
-                                 len(types),
-                                 len(arg_names)))
-        
         def wrapper(*args, **kwargs):
             if self.__enabled__:
                 # Positional arguments

@@ -1,3 +1,4 @@
+import datetime
 import unittest
 
 from kiwi.argcheck import argcheck, number, percent
@@ -46,6 +47,26 @@ class ArgTest(unittest.TestCase):
         pay(Payment(), 'foo')
         self.assertRaises(TypeError, 'bar', 'bar')
         self.assertRaises(TypeError, Payment(), Payment())
+        
+    def testClass(self):
+        class Custom(object):
+            pass
+        
+        class Test:
+            @argcheck(object, int, int)
+            def method1(self, foo, bar):
+                return foo + bar
+            
+            @argcheck(object, Custom, int, datetime.datetime, int, int,
+                      float, float)
+            def method2(self, a, b, c, d, e, f, g=0.0):
+                return g
+
+        t = Test()
+        self.assertEqual(t.method1(1, 2), 3)
+        self.assertRaises(TypeError, t.method1, None, None)
+        self.assertEqual(t.method2(Custom(), 2, datetime.datetime.now(),
+                                   4, 5, 6.0), 0.0)
         
 if __name__ == '__main__':
     unittest.main()
