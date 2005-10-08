@@ -21,6 +21,10 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
+"""
+Argument checking decorator and support
+"""
+
 import inspect
 
 class CustomType(type):
@@ -29,9 +33,15 @@ class CustomType(type):
     value_check = classmethod(value_check) 
 
 class number(CustomType):
+    """
+    Custom type that verifies that the type is a number (eg float or int)
+    """
     type = int, float
     
 class percent(CustomType):
+    """
+    Custom type that verifies that the value is a percentage
+    """
     type = int, float
     def value_check(cls, name, value):
         if 0 > value < 100:
@@ -39,6 +49,25 @@ class percent(CustomType):
     value_check = classmethod(value_check) 
        
 class argcheck(object):
+    """
+    Decorator to check type and value of arguments.
+
+    Usage:
+
+    @argcheck(types...)
+    def function(args..)
+
+    or
+
+    class Class:
+        @argcheck(types..)
+        def method(self, args)
+        
+    You can customize the checks by subclassing your type from CustomType,
+    there are two builtin types: number which is a float/int combined check
+    and a percent which verifis that the value is a percentage
+    """
+    
     __enabled__ = True
     
     def __init__(self, *types):
@@ -67,6 +96,10 @@ class argcheck(object):
 
         spec = inspect.getargspec(func)
         arg_names, is_varargs, is_kwargs, default_values = spec
+        
+        # TODO: Is there another way of doing this?
+        #       Not trivial since func is not attached to the class at
+        #       this point. Nor is the class attached to the namespace.
         if arg_names and arg_names[0] in ('self', 'cls'):
             arg_names = arg_names[1:]
             is_method = True
@@ -137,3 +170,28 @@ class argcheck(object):
             argument_type.value_check(name, value)
 
 
+def test():
+    @argcheck(int)
+    def function(number):
+        pass
+
+    class Class:
+        @argcheck(percent)
+        def method(self, value):
+            pass
+        
+    function(1)
+    try:
+        function(None) # fails
+    except TypeError, e:
+        print e
+        
+    o = Class()
+    o.method(10.4) # works
+    try:
+        o.method(-1) # fails
+    except ValueError, e:
+        print e
+    
+if __name__ == '__main__':
+    test()
