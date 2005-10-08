@@ -53,11 +53,11 @@ class ArgTest(unittest.TestCase):
             pass
         
         class Test:
-            @argcheck(object, int, int)
+            @argcheck(int, int)
             def method1(self, foo, bar):
                 return foo + bar
             
-            @argcheck(object, Custom, int, datetime.datetime, int, int,
+            @argcheck(Custom, int, datetime.datetime, int, int,
                       float, float)
             def method2(self, a, b, c, d, e, f, g=0.0):
                 return g

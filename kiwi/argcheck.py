@@ -67,6 +67,12 @@ class argcheck(object):
 
         spec = inspect.getargspec(func)
         arg_names, is_varargs, is_kwargs, default_values = spec
+        if arg_names and arg_names[0] in ('self', 'cls'):
+            arg_names = arg_names[1:]
+            is_method = True
+        else:
+            is_method = False
+            
         types = self.types
         if is_kwargs and not is_varargs and self.types:
             raise TypeError("argcheck cannot be used with only keywords")
@@ -97,8 +103,12 @@ class argcheck(object):
                                                     type(value).__name__))
         def wrapper(*args, **kwargs):
             if self.__enabled__:
+                cargs = args
+                if is_method:
+                    cargs = cargs[1:]
+                
                 # Positional arguments
-                for arg, type, name in zip(args, types, arg_names):
+                for arg, type, name in zip(cargs, types, arg_names):
                     self._type_check(arg, type, name)
 
                 # Keyword arguments
