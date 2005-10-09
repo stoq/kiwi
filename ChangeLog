@@ -1,3 +1,12 @@
+2005-10-08  Johan Dahlin  <johan@gnome.org>
+
+	* kiwi/argcheck.py (argcheck.__call__): 
+	Check so the number of arguments are equal before checking 
+	default values, so the user can get a useful exception
+
+	* tests/test_argcheck.py (ArgTest.method2): Add a 
+	few more tests.
+
 2005-10-07  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/gazpacholoader.py (DataTypeProperty.save): 
