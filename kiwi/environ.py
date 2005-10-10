@@ -151,10 +151,10 @@ class Library(Environment):
         else:
             uninstalled = False
             if not hasattr(module, 'resources'):
-                raise ValueError("module %s.__installed must define a "
+                raise ValueError("module %s.__installed__ must define a "
                                  "resources attribute" % name)
             if not hasattr(module, 'global_resources'):
-                raise ValueError("module %s.__installed must define a "
+                raise ValueError("module %s.__installed__ must define a "
                                  "global_resources attribute" % name)
             self.add_resources(**module.resources)
             self.add_global_resources(**module.global_resources)
