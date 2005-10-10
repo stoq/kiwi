@@ -27,12 +27,6 @@ import os
 import gtk
 
 from kiwi.ui.delegates import Delegate
-from kiwi.environ import environ
-
-
-current_dir = os.path.dirname(__file__)
-environ.add_resource("glade", os.path.join(current_dir, "glade"))
-
 
 class WizardStep:
     """ This class must be inherited by the steps """
