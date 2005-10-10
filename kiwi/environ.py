@@ -106,7 +106,7 @@ class Environment:
             
     def find_resource(self, resource, name):
         """Locate a specific resource of called name of type resource"""
-        
+
         if not resource in self._resources:
             raise EnvironmentError("No resource called: %s" % resource)
 
@@ -115,6 +115,11 @@ class Environment:
             if os.path.exists(filename):
                 return filename
 
+        # Finally try to load the file from the current directory
+        filename = os.path.join(self._root, name)
+        if os.path.exists(filename):
+            return filename
+        
         raise EnvironmentError("Could not find %s resource: %s" % (
             resource, name))
 
