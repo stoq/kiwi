@@ -26,7 +26,6 @@ import gobject
 import gtk
 
 from kiwi.ui.widgets.entry import Entry
-from kiwi.utils import gproperty
 
 class BaseComboBoxEntry(gtk.ComboBox):
     def __init__(self, model=None, text_column=-1):
