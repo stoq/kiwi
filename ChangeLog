@@ -1,3 +1,16 @@
+2005-10-09  Johan Dahlin  <johan@gnome.org>
+
+	* kiwi/__init__.py:
+	* kiwi/dist.py:
+	* kiwi/environ.py:
+	* kiwi/ui/wizard.py:
+	* setup.py:
+
+	Add infrastructure for handling installed/uninstalled mode.
+	Introduces Library and Application instances in kiwi.environ.
+	Add distutils helpers. Use environ.Library in for kiwi itself (yay
+	dogfooding). Remove old hack in wizard.
+	
 2005-10-08  Johan Dahlin  <johan@gnome.org>
 
 	* kiwi/argcheck.py (argcheck.__call__): 

@@ -15,8 +15,12 @@ from distutils.core import setup
 import os
 import sys
 
-from kiwi.dist import listfiles
+from kiwi.dist import listfiles, TemplateInstallLib
 
+class InstallLib(TemplateInstallLib):
+    name = 'kiwi'
+    global_resources = dict(glade='$datadir/glade')
+    
 version = ''
 execfile("kiwi/__version__.py")
 assert version
@@ -29,7 +33,9 @@ setup(name="kiwi",
       author_email="kiko@async.com.br",
       url="http://www.async.com.br/projects/",
       license="GNU LGPL 2.1 (see COPYING)",
-      data_files=[('share/gazpacho/catalogs',
+      data_files=[('share/kiwi/glade',
+                   listfiles('glade', '*.glade')),
+                  ('share/gazpacho/catalogs',
                    listfiles('gazpacho-plugin', 'kiwiwidgets.xml')),
                   ('share/gazpacho/resources/kiwiwidgets',
                    listfiles('gazpacho-plugin', 'resources', '*.png')),
@@ -42,4 +48,5 @@ setup(name="kiwi",
                 'kiwi.i18n',
                 'kiwi.ui',
                 'kiwi.ui.widgets'],
+      cmdclass=dict(install_lib=InstallLib),
       )

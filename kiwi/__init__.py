@@ -40,8 +40,15 @@ Kiwi includes a Framework and a set of enhanced widgets
 import sys
 
 from kiwi.__version__ import version as kiwi_version
+from kiwi.environ import Library
 
-__all__ = ['ValueUnset', '_warn', 'kiwi_version']
+assert kiwi_version # pyflakes
+
+lib = Library('kiwi')
+if lib.uninstalled:
+    lib.add_global_resource('glade', 'glade')
+
+del Library, lib
 
 class ValueUnset:
     """To differentiate from places where None is a valid default. Used
@@ -50,3 +57,6 @@ class ValueUnset:
 
 def _warn(msg):
     sys.stderr.write("Kiwi warning: "+msg+"\n")
+
+__all__ = ['ValueUnset', '_warn', 'kiwi_version']
+

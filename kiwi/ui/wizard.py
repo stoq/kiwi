@@ -22,8 +22,6 @@
 #            Evandro Vale Miquelito <evandro@async.com.br>
 #            
 
-import os
-
 import gtk
 
 from kiwi.ui.delegates import Delegate
