@@ -34,13 +34,14 @@ Kiwi includes a Framework and a set of enhanced widgets, including CList, Option
 
 import sys
 
+from kiwi.__version__ import version as kiwi_version
+
+__all__ = ['ValueUnset', '_warn', 'kiwi_version']
+
 class ValueUnset:
     """To differentiate from places where None is a valid default. Used
     mainly in the Kiwi Proxy"""
     pass
-
-from kiwi.__version__ import version
-kiwi_version = version
 
 def _warn(msg):
     sys.stderr.write("Kiwi warning: "+msg+"\n")
