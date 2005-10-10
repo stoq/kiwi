@@ -137,8 +137,9 @@ class Library(Environment):
             # Figure out the absolute path to the caller
             caller = sys._getframe(1).f_locals['__file__']
             dirname = os.path.split(caller)[0]
-        root = os.path.abspath(os.path.join(dirname, root))
-
+            
+        dirname = os.path.realpath(os.path.abspath(dirname))
+        root = os.path.join(dirname, root)
         Environment.__init__(self, root=root)
         
         # Load installed
