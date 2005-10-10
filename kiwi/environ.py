@@ -90,10 +90,10 @@ class Environment:
             self.add_resource(resource, env)
             
     def add_resource(self, resource, path):
+        path = os.path.join(self._root, path)
         if not os.path.isdir(path):
             raise EnvironmentError("path %s must be a directory" % path)
 
-        path = os.path.join(self._root, path)
         resources = self._resources
         if not resource in resources:
             resources[resource] = [path]
