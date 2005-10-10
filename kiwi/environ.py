@@ -122,9 +122,10 @@ class Library(Environment):
                            charset='utf-8'):
         if not domain:
             domain = self.name
-            
-        self._resources.get(locale)
-        gettext.bindtextdomain(domain, locale)
+
+        # XXX: locale should not be a list
+        localedir = self._resources.get(locale)[0]
+        gettext.bindtextdomain(domain, localedir)
         gettext.bind_textdomain_codeset(domain, charset)
 
     def add_global_resource(self, resource, path):
