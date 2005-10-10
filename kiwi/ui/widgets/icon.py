@@ -60,9 +60,10 @@
 # |                                     |
 # +-------------------------------------+
 #
-# The cursor and text was not update when the text area was resized, so
-# we need to call a private function, gtk_entry_recompute.
-# To be able to do this we call set_visiblity() which calls recompute()
+# When resizing the text area the cursor and text is not moved into the
+# correct position, it'll still be off by the width of the icon window
+# To fix this we need to call a private function, gtk_entry_recompute,
+# a workaround is to call set_visiblity() which calls recompute()
 # internally.
 #
 
