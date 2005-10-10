@@ -23,9 +23,14 @@
 #            Johan Dahlin <jdahlin@async.com.br>
 #         
 
-"""Kiwi is a library designed to make developing graphical applications as easy as possible. It offers both a framework and a set of enhanced widgets, and is based on Python and GTK+. Kiwi borrows concepts from MVC, Java Swing and Microsoft MFC, but implements a set of unique classes that take advantage of the flexibility and simplicity of Python to make real-world application creation much easier.
+"""Kiwi is a library designed to make developing graphical applications as
+easy as possible. It offers both a framework and a set of enhanced widgets,
+and is based on Python and GTK+. Kiwi borrows concepts from MVC, Java Swing
+and Microsoft MFC, but implements a set of unique classes that take
+advantage of the flexibility and simplicity of Python to make real-world
+application creation much easier.
 
-Kiwi includes a Framework and a set of enhanced widgets, including CList, OptionMenu, Label, CTree, Entry and more.
+Kiwi includes a Framework and a set of enhanced widgets
 
     - Author: Christian Reis <kiko@async.com.br>
     - Website: U{http://www.async.com.br/projects/kiwi/}
