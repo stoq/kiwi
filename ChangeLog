@@ -1,3 +1,8 @@
+2005-10-10  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/list.py (ColoredColumn): New column.
+	(Column): Add two new hooks, renderer_func & on_attach_renderer
+
 2005-10-09  Johan Dahlin  <johan@gnome.org>
 
 	* kiwi/__init__.py:

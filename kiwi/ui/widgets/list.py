@@ -30,10 +30,12 @@ import datetime
 
 import gobject
 import gtk
+from gtk import gdk
 
 from kiwi import _warn, datatypes, ValueUnset
 from kiwi.accessors import kgetattr
-from kiwi.utils import PropertyObject, slicerange, gsignal, gproperty, deprecated
+from kiwi.utils import PropertyObject, slicerange, gsignal, gproperty, \
+     deprecated
 
 # Minimum number of rows where we show busy cursor when sorting numeric columns
 MANY_ROWS = 1000
@@ -72,6 +74,14 @@ class Column(PropertyObject, gobject.GObject):
     # This can be set in subclasses, to be able to allow custom
     # cell_data_functions, used by SequentialColumn
     cell_data_func = None
+
+    # This is called after the renderer property is set, to allow
+    # us to set custom rendering properties
+    renderer_func = None
+
+    # This is called when the renderer is created, so we can set/fetch
+    # initial properties
+    on_attach_renderer = None
     
     def __init__(self, attribute, title=None, data_type=None, **kwargs):
         """
@@ -213,7 +223,7 @@ class SequentialColumn(Column):
     right justify the sequences."""
     def __init__(self, title='#', justify=gtk.JUSTIFY_RIGHT, **kwargs):
         Column.__init__(self, '_kiwi_sequence_id',
-                        data_type=int, title=title, **kwargs)
+                        title=title, data_type=int, **kwargs)
 
     def cell_data_func(self, tree_column, renderer, model, iter,
                        (column, renderer_prop)):
@@ -232,7 +242,47 @@ class SequentialColumn(Column):
         except TypeError:
             raise TypeError("%r does not support parameter %s" %
                             (renderer, renderer_prop))
+
+class ColoredColumn(Column):
+    """
+    I am a column which can colorize the text of columns under
+    certain circumstances. I take a color and an extra function
+    which will be called for each row
+
+    Example, to colorize negative values to red:
+    
+    def colorize(value):
+        return value < 0
+
+    ColoredColumn('age', data_type=int, color='red', data_func=colorize),
+    """
+
+    def __init__(self, attribute, title=None, data_type=None,
+                 color=None, data_func=None, **kwargs):
+        if not issubclass(data_type, (int, float)):
+            raise TypeError("data type must be int or float")
+        if not callable(data_func):
+            raise TypeError("data func must be callable")
         
+        self._color = gdk.color_parse(color)
+        self._color_normal = None
+        
+        self._data_func = data_func
+        
+        Column.__init__(self, attribute, title, data_type, **kwargs)
+
+    def on_attach_renderer(self, renderer):
+        renderer.set_property('foreground-set', True)
+        self._color_normal = renderer.get_property('foreground-gdk')
+        
+    def renderer_func(self, renderer, data):
+        if self._data_func(data):
+            color = self._color
+        else:
+            color = self._color_normal
+            
+        renderer.set_property('foreground-gdk', color)
+            
 class ContextMenu(gtk.Menu):
     """
     ContextMenu is a wrapper for the menu that's displayed when right
@@ -615,7 +665,8 @@ class List(gtk.ScrolledWindow):
             treeview_column = self._create_column(column)  
             
         renderer, renderer_prop = self._guess_renderer_for_type(column)
-
+        if column.on_attach_renderer:
+            column.on_attach_renderer(renderer)
         justify = column.justify
         # If we don't specify a justification, right align it for int/float
         # and left align it for everything else. 
@@ -808,6 +859,9 @@ class List(gtk.ScrolledWindow):
             
         renderer.set_property(renderer_prop, text)
 
+        if column.renderer_func:
+            column.renderer_func(renderer, data)
+            
     def _on_header__button_release_event(self, button, event):
         if event.button == 3:
             self._popup.popup(event)
