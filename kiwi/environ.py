@@ -139,7 +139,7 @@ class Library(Environment):
             dirname = os.path.split(caller)[0]
             
         dirname = os.path.realpath(os.path.abspath(dirname))
-        root = os.path.join(dirname, root)
+        root = os.path.abspath(os.path.join(dirname, root))
         Environment.__init__(self, root=root)
         
         # Load installed
@@ -160,15 +160,16 @@ class Library(Environment):
             self.add_global_resources(**module.global_resources)
 
         self.uninstalled = uninstalled
-        
+
     def enable_translation(self, domain=None, locale='locale',
                            charset='utf-8'):
         if not domain:
             domain = self.name
 
         # XXX: locale should not be a list
-        localedir = self._resources.get(locale)[0]
-        gettext.bindtextdomain(domain, localedir)
+        localedir = self._resources.get(locale)
+        if localedir:
+            gettext.bindtextdomain(domain, localedir[0])
         gettext.bind_textdomain_codeset(domain, charset)
 
     def add_global_resource(self, resource, path):
