@@ -114,13 +114,12 @@ class IconEntry(object):
         @param pixbuf: a gdk.Pixbuf or None
         """
         entry = self._entry
-        if not entry.get_parent():
-            raise TypeError("You need to add %r to a "
-                            "widget before setting a pixbuf" % self)
-
-        if not entry.flags() & gtk.REALIZED:
+        if not isinstance(entry.get_toplevel(), gtk.Window):
+            # For widgets in SlaveViews, wait until they're attached
+            # to something visible, then set the pixbuf
+            entry.connect_object('realize', self.set_pixbuf, pixbuf)
             return
-
+        
         if pixbuf:
             if not isinstance(pixbuf, gdk.Pixbuf):
                 raise TypeError("pixbuf must be a GdkPixbuf")
@@ -129,8 +128,8 @@ class IconEntry(object):
             entry.modify_base(gtk.STATE_NORMAL, None)
             if not self._pixbuf:
                 return
-
         self._pixbuf = pixbuf
+        
         if pixbuf:
             self._pixw = pixbuf.get_width()
             self._pixh = pixbuf.get_height()
@@ -154,13 +153,19 @@ class IconEntry(object):
         entry.queue_draw()
     
     def construct(self):
+        if self._constructed:
+            return
+
         entry = self._entry
+        if not entry.flags() & gtk.REALIZED:
+            entry.realize()
+
         # Hack: Save a reference to the text area, now when its created
         self._text_area = entry.window.get_children()[0]
         
         # PyGTK should allow default values for most of the values here.
         win = gtk.gdk.Window(entry.window, 
-                             1, 1,
+                             self._pixw, self._pixh,
                              gtk.gdk.WINDOW_CHILD,
                              (gtk.gdk.ENTER_NOTIFY_MASK |
                               gtk.gdk.LEAVE_NOTIFY_MASK),
@@ -171,10 +176,11 @@ class IconEntry(object):
                              entry.get_colormap(),
                              gtk.gdk.Cursor(entry.get_display(), gdk.LEFT_PTR),
                              '', '', True)
+        self._icon_win = win
         win.set_user_data(entry)
         win.set_background(entry.style.base[gtk.STATE_NORMAL])
-        self._icon_win = win
-
+        self._constructed = True
+        
     def deconstruct(self):
         if self._icon_win:
             # This is broken on PyGTK 2.6.x
@@ -195,7 +201,7 @@ class IconEntry(object):
     def resize_windows(self):
         if not self._pixbuf:
             return
-
+        
         # Make space for the icon, both windows
         winw = self._entry.window.get_size()[0]
         textw, texth = self._text_area.get_size()
@@ -217,13 +223,15 @@ class IconEntry(object):
         if not self._pixbuf:
             return
 
+        win = self._icon_win
+        
         # Draw background first
         color = self._entry.style.base_gc[gtk.STATE_NORMAL]
-        self._icon_win.draw_rectangle(color, True,
-                                      0, 0, self._pixw, self._pixh)
+        win.draw_rectangle(color, True,
+                           0, 0, self._pixw, self._pixh)
         
         # Always draw the icon, regardless of the window emitting the
         # event since makes it a bit smoother on resize
-        self._icon_win.draw_pixbuf(None, self._pixbuf, 0, 0, 0, 0,
-                                   self._pixw, self._pixh)
+        win.draw_pixbuf(None, self._pixbuf, 0, 0, 0, 0,
+                        self._pixw, self._pixh)
         
