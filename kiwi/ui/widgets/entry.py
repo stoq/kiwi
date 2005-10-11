@@ -25,13 +25,12 @@
 
 """Defines an enhanced version of GtkEntry"""
 
-import time
-
 import gobject
 import gtk
 
 from kiwi import ValueUnset
 from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
+from kiwi.ui.widgets.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import gproperty, gsignal
 
@@ -61,12 +60,12 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
 
     gsignal('changed', 'override')
     # mandatory widgets need to have this signal connected
-    gsignal('expose-event', 'override')
+    gsignal('size-allocate', 'override')
     
     gproperty("completion", bool, False, 
               "Completion", gobject.PARAM_READWRITE)
     gproperty('exact-completion', bool, True)
-    
+        
     def __init__(self):
         gtk.Entry.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
@@ -74,11 +73,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         self._current_object = None
         self._entry_mode = ENTRY_MODE_TEXT
         self._exact_completion = True
-        
-        if gtk.pygtk_version < (2,6):
-            self.chain_expose = self.chain
-        else:
-            self.chain_expose = lambda e: gtk.Entry.do_expose_event(self, e)
+        self._icon = IconEntry(self)
         self.show()
 
     # Virtual methods
@@ -89,16 +84,16 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         changed the entry
         """
 
-        self._last_change_time = time.time()
         self.chain()
 
         self._update_current_object(self.get_text())
-                
         self.emit('content-changed')
 
     # Properties
     
-    # exact-completion
+    def prop_get_exact_completion(self):
+        return self._exact_completion
+
     def prop_set_exact_completion(self, value):
         self._exact_completion = value
         
@@ -109,10 +104,6 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         completion = self._create_completion()
         completion.set_match_func(match_func)
                 
-    def prop_get_exact_completion(self):
-        return self._exact_completion
-
-    # completion
     def prop_get_completion(self):
         return self._completion
     
@@ -121,7 +112,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
 
         if not self.get_completion():
             self._enable_completion()
-
+    
     # Public API
     def set_exact_completion(self, value):
         """
@@ -269,22 +260,37 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
             data = self.type2str(data)
 
         self.set_text(data)
-        self.draw_mandatory_icon_if_needed()
 
     def do_expose_event(self, event):
-        """Expose-event signal are triggered when a redraw of the widget
-        needs to be done.
+        gtk.Entry.do_expose_event(self, event)
+
+        if event.window == self.window:
+            self._icon.draw_pixbuf()
+
+    def do_size_allocate(self, allocation):
+        #gtk.Entry.do_size_allocate(self, allocation)
+        self.chain(allocation)
+	
+	if self.flags() & gtk.REALIZED:
+            self._icon.resize_windows()
+
+    def do_realize(self):
+        gtk.Entry.do_realize(self)
+        self._icon.construct()
         
-        Draws information and mandatory icons when necessary
-        """
-        result = self.chain_expose(event)
+    def do_unrealize(self):
+        self._icon.deconstruct()
         
-        # this attribute stores the info on where to draw icons and paint
-        # the background
-        # it's been defined here because it's when we have gdk window available
-        self._draw_icon(self.window)
-        
-        return result    
+    # IconEntry
     
+    def set_pixbuf(self, pixbuf):
+        self._icon.set_pixbuf(pixbuf)
+        
+    def update_background(self, color):
+        self._icon.update_background(color)
+        
+    def get_icon_window(self):
+        return self._icon.get_icon_window()
+
 gobject.type_register(Entry)
     

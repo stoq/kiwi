@@ -28,16 +28,15 @@
 
 """Defines enhanced versions of GtkComboBox and GtkComboBoxEntry"""
 
-import time
-
 import gobject
 import gtk
 from gtk import keysyms 
 
 from kiwi import ValueUnset
 from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
+from kiwi.ui.widgets.comboboxentry import BaseComboBoxEntry
 from kiwi.ui.widgets.proxy import WidgetMixin, WidgetMixinSupportValidation
-from kiwi.utils import gsignal, gproperty
+from kiwi.utils import PropertyObject, gproperty
 
 (COL_COMBO_LABEL,
  COL_COMBO_DATA) = range(2)
@@ -269,7 +268,6 @@ class ComboBox(gtk.ComboBox, ComboProxyMixin, WidgetMixin):
     def update(self, data):
         # We dont need validation because the user always
         # choose a valid value
-
         WidgetMixin.update(self, data)
         
         if data is ValueUnset or data is None:
@@ -293,7 +291,7 @@ class ComboBox(gtk.ComboBox, ComboProxyMixin, WidgetMixin):
     
 gobject.type_register(ComboBox)
 
-class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin, 
+class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
                     WidgetMixinSupportValidation):
     implementsIProxy()
     implementsIMandatoryProxy()
@@ -301,18 +299,21 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
     # it doesn't make sense to connect to this signal
     # because we want to monitor the entry of the combo
     # not the combo box itself.
-    #gsignal('expose-event', 'override')
     
-    gproperty("list-writable", bool, False, 
-              "List Writable", gobject.PARAM_READWRITE)
-    def __init__(self):
-        gtk.ComboBoxEntry.__init__(self)
-        WidgetMixinSupportValidation.__init__(self, widget=self.child)
+    gproperty("list-writable", bool, True, "List Writable")
+    
+    def __init__(self, **kwargs):
+        # Order is very important here:
+        # 1) Create GObject
+        BaseComboBoxEntry.__init__(self)
+        # 2) mode is set here
         ComboProxyMixin.__init__(self)
-
+        # 3) Properties are now being set, requires 1 & 2
+        PropertyObject.__init__(self, **kwargs)
+        WidgetMixinSupportValidation.__init__(self, widget=self.entry)
+        
         self.set_text_column(COL_COMBO_LABEL)
         # here we connect the expose-event signal directly to the entry
-        self.child.connect('expose-event', self._on_child_entry__expose_event)
         self.child.connect('changed', self._on_child_entry__changed)
         
         # HACK! we force a queue_draw because when the window is first
@@ -322,34 +323,29 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
         self.set_events(gtk.gdk.KEY_RELEASE_MASK)
         self.connect("key-release-event", self._on__key_release_event)
     
-        self._list_writable = True
         self.show()
-    
-    def prop_get_list_writable(self):
-        return self._list_writable
     
     def prop_set_list_writable(self, writable):
         if self.mode == COMBO_MODE_DATA:
             return
         
-        self.child.set_editable(writable)
-        self._list_writable = writable
+        self.entry.set_editable(writable)
 
     def _update_selection(self, text=None):
         if text is None:
-            text = self.child.get_text()
+            text = self.entry.get_text()
 
         self.select_item_by_label(text)
     
     def _add_text_to_combo_list(self):
-        text = self.child.get_text()
+        text = self.entry.get_text()
         if not text.strip():
             return
 
         if text in self.get_model_strings():
             return
         
-        self.child.set_text('')
+        self.entry.set_text('')
         self.append_item(text)
         self._update_selection(text)
         
@@ -357,32 +353,25 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
         """Checks for "Enter" key presses and add the entry text to 
         the combo list if the combo list is set as editable.
         """
-        if not self._list_writable:
+        if not self.list_writable:
             return
 
         if event.keyval in (keysyms.KP_Enter,
                             keysyms.Return):
             self._add_text_to_combo_list()
-        
-    def _on_child_entry__expose_event(self, widget, event):
-        # this attributes stores the info on were to draw icons and paint
-        # the background
-        # it's been defined here because it's when we have gdk window available
-        self._draw_icon(self.child.window)
 
     def _on_child_entry__changed(self, widget):
         """Called when something on the entry changes"""
         if not widget.get_text():
             return
 
-        self._last_change_time = time.time()
         self.emit('content-changed')
 
     def set_mode(self, mode):
         # If we're in the transition to go from
         # unknown->label set editable to False
         if (self.mode == COMBO_MODE_UNKNOWN and mode == COMBO_MODE_DATA):
-            self.child.set_editable(False)
+            self.entry.set_editable(False)
             
         ComboProxyMixin.set_mode(self, mode)
         
@@ -410,8 +399,7 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
         WidgetMixinSupportValidation.update(self, data)
         
         if data is ValueUnset or data is None:
-            self.child.set_text("")
-            self.draw_mandatory_icon_if_needed()
+            self.entry.set_text("")
         elif self.mode == COMBO_MODE_STRING:
             self.select_item_by_label(data)
         elif self.mode == COMBO_MODE_DATA:
@@ -422,21 +410,26 @@ class ComboBoxEntry(gtk.ComboBoxEntry, ComboProxyMixin,
     def prefill(self, itemdata, sort=False, clear_entry=False):
         ComboProxyMixin.prefill(self, itemdata, sort)
         if clear_entry:
-            self.child.set_text("")
+            self.entry.set_text("")
 
         # setup the autocompletion
         auto = gtk.EntryCompletion()
         auto.set_model(self.get_model())
         auto.set_text_column(COL_COMBO_LABEL)
-        self.child.set_completion(auto)
+        self.entry.set_completion(auto)
         
     def clear(self):
         """Removes all items from list and erases entry"""
         ComboProxyMixin.clear(self)
-        self.child.set_text("")
-        
+        self.entry.set_text("")
+
+    # IconEntry
     
-gobject.type_register(ComboBoxEntry)
+    def set_pixbuf(self, pixbuf):
+        self.entry.set_pixbuf(pixbuf)
 
+    def update_background(self, color):
+        self.entry.update_background(color)
 
-
+    def get_icon_window(self):
+        return self.entry.get_icon_window()

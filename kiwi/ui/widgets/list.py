@@ -34,8 +34,8 @@ from gtk import gdk
 
 from kiwi import _warn, datatypes, ValueUnset
 from kiwi.accessors import kgetattr
-from kiwi.utils import PropertyObject, slicerange, gsignal, gproperty, \
-     deprecated
+from kiwi.decorators import deprecated
+from kiwi.utils import PropertyObject, slicerange, gsignal, gproperty
 
 # Minimum number of rows where we show busy cursor when sorting numeric columns
 MANY_ROWS = 1000

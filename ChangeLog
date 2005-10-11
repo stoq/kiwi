@@ -1,3 +1,13 @@
+2005-10-11  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/combobox.py:
+	* kiwi/ui/widgets/entry.py:
+	* kiwi/ui/widgets/list.py:
+	* kiwi/ui/widgets/proxy.py:
+	* kiwi/ui/widgets/spinbutton.py:
+	* kiwi/ui/widgets/textview.py:
+	Redo validation. Fixes #2123
+
 2005-10-10  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/list.py (ColoredColumn): New column.

@@ -26,13 +26,12 @@
 
 """Defines an enhanced version of GtkSpinButton"""
 
-import time
-
 import gobject
 import gtk
 
 from kiwi import ValueUnset
 from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
+from kiwi.ui.widgets.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import gsignal
 
@@ -41,21 +40,14 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
     implementsIMandatoryProxy()
 
     gsignal('changed', 'override')
-    # mandatory widgets need to have this signal connected
-    gsignal('expose-event', 'override')
-    
+    gsignal('size-allocate', 'override')
+
     def __init__(self):
         # since the default data_type is str we need to set it to int 
         # or float for spinbuttons
         gtk.SpinButton.__init__(self)
         WidgetMixinSupportValidation.__init__(self, data_type=int)
-        
-        # due to changes on pygtk 2.6 we have to make some ajustments here
-        if gtk.pygtk_version < (2,6):
-            self.chain_expose = self.chain
-        else:
-            self.chain_expose = \
-                              lambda e: gtk.SpinButton.do_expose_event(self, e)
+        self._icon = IconEntry(self)
         self.show()
         
     def prop_set_data_type(self, data_type):
@@ -70,7 +62,6 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
             raise TypeError("SpinButtons only accept integer or float values")
         
     def do_changed(self):
-        self._last_change_time = time.time()
         self.emit('content-changed')
         self.chain()
 
@@ -82,23 +73,39 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
         
         if data is ValueUnset or data is None:
             self.set_text("")
-            self.draw_mandatory_icon_if_needed()
         else:
             self.set_value(data)
 
     def do_expose_event(self, event):
-        """Expose-event signal are triggered when a redraw of the widget
-        needs to be done.
-        
-        Draws information and mandatory icons when necessary
-        """        
-        result = self.chain_expose(event)
-        
-        # this attribute stores the info on where to draw icons and paint
-        # the background
-        # it's been defined here because it's when we have gdk window available
-        self._draw_icon(self.window)
-        
-        return result
+        # This gets called when any of our three windows needs to be redrawn
+        gtk.SpinButton.do_expose_event(self, event)
+
+        if event.window == self.window:
+            self._icon.draw_pixbuf()
+
+    def do_size_allocate(self, allocation):
+
+        self.chain(allocation)
     
+	if self.flags() & gtk.REALIZED:
+            self._icon.resize_windows()
+
+    def do_realize(self):
+        gtk.SpinButton.do_realize(self)
+        self._icon.construct()
+
+    def do_unrealize(self):
+        self._icon.deconstruct()
+        
+    # IconEntry
+    
+    def set_pixbuf(self, pixbuf):
+        self._icon.set_pixbuf(pixbuf)
+        
+    def update_background(self, color):
+        self._icon.update_background(color)
+
+    def get_icon_window(self):
+        return self._icon.get_icon_window()
+
 gobject.type_register(SpinButton)
