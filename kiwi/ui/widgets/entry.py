@@ -58,10 +58,6 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
     implementsIProxy()
     implementsIMandatoryProxy()
 
-    gsignal('changed', 'override')
-    # mandatory widgets need to have this signal connected
-    gsignal('size-allocate', 'override')
-    
     gproperty("completion", bool, False, 
               "Completion", gobject.PARAM_READWRITE)
     gproperty('exact-completion', bool, True)
@@ -77,6 +73,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         self.show()
 
     # Virtual methods
+    gsignal('changed', 'override')
     def do_changed(self):
         """Called when the content of the entry changes.
 
@@ -267,6 +264,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         if event.window == self.window:
             self._icon.draw_pixbuf()
 
+    gsignal('size-allocate', 'override')
     def do_size_allocate(self, allocation):
         #gtk.Entry.do_size_allocate(self, allocation)
         self.chain(allocation)

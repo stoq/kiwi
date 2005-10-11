@@ -36,7 +36,6 @@ from kiwi.utils import gsignal
 
 class CheckButton(gtk.CheckButton, WidgetMixin):
     implementsIProxy()
-    gsignal('toggled', 'override')
         
     def __init__(self):
         # changed default data_type because checkbuttons can only
@@ -52,6 +51,7 @@ class CheckButton(gtk.CheckButton, WidgetMixin):
         else:
             raise TypeError("CheckButtons only accept boolean values")
 
+    gsignal('toggled', 'override')
     def do_toggled(self):
         self.emit('content-changed')
         self.chain()

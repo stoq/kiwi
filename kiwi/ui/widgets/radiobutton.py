@@ -36,7 +36,6 @@ from kiwi.ui.widgets.proxy import WidgetMixin
 
 class RadioButton(gtk.RadioButton, WidgetMixin):
     implementsIProxy()
-    gsignal('toggled', 'override')
     gproperty('data-value', str, nick='Data Value')
 
     def __init__(self):
@@ -45,6 +44,7 @@ class RadioButton(gtk.RadioButton, WidgetMixin):
         self._data_value = None
         self.show()
     
+    gsignal('toggled', 'override')
     def do_toggled(self):
         self.emit('content-changed')
         self.chain()

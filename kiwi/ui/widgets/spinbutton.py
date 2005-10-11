@@ -39,8 +39,6 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
     implementsIProxy()
     implementsIMandatoryProxy()
 
-    gsignal('changed', 'override')
-    gsignal('size-allocate', 'override')
 
     def __init__(self):
         # since the default data_type is str we need to set it to int 
@@ -61,6 +59,7 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
             self._data_type = old_datatype
             raise TypeError("SpinButtons only accept integer or float values")
         
+    gsignal('changed', 'override')
     def do_changed(self):
         self.emit('content-changed')
         self.chain()
@@ -83,6 +82,7 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
         if event.window == self.window:
             self._icon.draw_pixbuf()
 
+    gsignal('size-allocate', 'override')
     def do_size_allocate(self, allocation):
 
         self.chain(allocation)
