@@ -203,7 +203,7 @@ class Application(Library):
         main = getattr(module, 'main', None)
         if not main or not callable(main):
             raise SystemExit("ERROR: Could not find item '%s' in module %s" %
-                             'main', path)
+                             'main', self._path)
         return main
 
     def enable_translation(self, domain=None, locale='locale',
