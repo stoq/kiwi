@@ -39,7 +39,6 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
     implementsIProxy()
     implementsIMandatoryProxy()
 
-
     def __init__(self):
         # since the default data_type is str we need to set it to int 
         # or float for spinbuttons
@@ -58,9 +57,11 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
         if self._data_type not in (int, float):
             self._data_type = old_datatype
             raise TypeError("SpinButtons only accept integer or float values")
-        
-    gsignal('changed', 'override')
-    def do_changed(self):
+
+    # GtkEditable.changed is called too often
+    # GtkSpinButton.value-changed is called only when the value changes
+    gsignal('value-changed', 'override')
+    def do_value_changed(self):
         self.emit('content-changed')
         self.chain()
 
@@ -69,7 +70,7 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
 
     def update(self, data):
         WidgetMixinSupportValidation.update(self, data)
-        
+
         if data is ValueUnset or data is None:
             self.set_text("")
         else:
