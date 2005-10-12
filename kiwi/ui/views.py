@@ -466,7 +466,7 @@ class SlaveView(gobject.GObject):
             - widgets: a list of widget names to be searched through
         """
         widget = self.get_topmost_widget(widgets, can_focus=True)
-        if widget is not None: 
+        if widget is not None:
             widget.grab_focus()
         # So it can be idle_added safely
         return False
@@ -500,7 +500,7 @@ class SlaveView(gobject.GObject):
                 if isinstance(widget.get_toplevel(), gtk.Window):
                     widget.realize()
                 else:
-                    _warn("get_topmost_widget: widget %s was unrealized"
+                    _warn("get_topmost_widget: widget %s was not realized"
                           % widget_name)
                     continue
             if can_focus:
