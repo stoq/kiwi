@@ -206,6 +206,11 @@ class FadeOut:
             self._widget.update_background(col)
             yield True
 
+        # When the fading animation is finished, set the error icon
+        # We don't need to check if the state is valid, since stop()
+        # (which removes this timeout) is called as soon as the user
+        # types valid data.
+        self._widget._draw_stock_icon(ERROR_ICON)
         yield False
 
     # FIXME: When we can depend on 2.4
@@ -221,6 +226,7 @@ class FadeOut:
                                   FadeOut.ERROR_COLOR).next
         self._background_timeout_id = (
             gobject.timeout_add(FadeOut.MERGE_COLORS_DELAY, func))
+        
     start = delayed(COMPLAIN_DELAY)(start)
     
     def stop(self):
@@ -352,7 +358,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     def _set_invalid(self, text):
         "Invalid state, when the input is invalid"
         self._fade.start()
-        self._draw_stock_icon(ERROR_ICON)
         self._tooltip.set_text(text)
         self._valid = False
         
@@ -365,7 +370,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         else:
             valid = True
         self._valid = valid
-        
+
     def _draw_stock_icon(self, stock_id):
         icon = self.render_icon(stock_id, gtk.ICON_SIZE_MENU)
         self.set_pixbuf(icon)
