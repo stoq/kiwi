@@ -28,7 +28,7 @@ from kiwi import _warn
 class deprecated(object):
     """
     I am a decorator which prints a deprecation warning each
-    time you try to call the decorated function
+    time you call the decorated (and deprecated) function
     """
     def __init__(self, new):
         """
@@ -48,7 +48,7 @@ class deprecated(object):
 class delayed(object):
     """
     I am a decorator which delays the function call using the gobject/gtk
-    mainloop for a number of.
+    mainloop for a number of ms.
     """
     def __init__(self, delay):
         """
