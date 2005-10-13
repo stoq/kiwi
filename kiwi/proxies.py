@@ -108,7 +108,8 @@ class Proxy:
             widget = getattr(self.view, widget_name, None)
             if widget is None:
                 raise AttributeError("The widget %s was not "
-                                     "found in the view %s" % (widget_name, self.view))
+                                     "found in the view %s" % (widget_name,
+                                                               self.view))
             
             if not isinstance(widget, Mixin):
                 continue
@@ -128,7 +129,8 @@ class Proxy:
                 continue
              
             connection_id = widget.connect('content-changed',
-                                           self._on_widget__content_changed)
+                                           self._on_widget__content_changed,
+                                           attribute)
             widget.set_data('content-changed-id', connection_id)
 
             # save this widget in our map
@@ -137,11 +139,11 @@ class Proxy:
             # here we define the view that owns the widget
             widget.owner = self.view
 
-    def _on_widget__content_changed(self, widget):
+    def _on_widget__content_changed(self, widget, attribute):
         """This is called as soon as the content of one of the widget
         changes, the widgets tries fairly hard to not emit when it's not
         neccessary"""
-        
+
         value = widget.read()
 
         # Value has changed, start validation process
@@ -156,19 +158,14 @@ class Proxy:
         if self.model is None:
             return
 
-        attr_name = widget.get_property('model-attribute')
-        if not attr_name:
-            raise AssertionError("The model-attribute is empty "
-                                 "for widgett %s" % widget.name)
-
         # XXX: one day we might want to queue and unique updates?
         self._block_proxy_in_model(True)
         try:
-            ksetattr(self.model, attr_name, value)
+            ksetattr(self.model, attribute, value)
         except:
             if self._setter_error_handler:
                 self._setter_error_handler(sys.exc_value, self.model, 
-                                           attr_name, value)
+                                           attribute, value)
             else:
                 raise
 
