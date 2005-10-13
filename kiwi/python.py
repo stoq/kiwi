@@ -59,3 +59,27 @@ class ClassInittableObject(object):
         @type  namespace: dict
         """
     __class_init__ = classmethod(__class_init__)
+
+
+def clamp(x, low, high):
+    """
+    Ensures that x is between the limits set by low and high.
+    For example,
+    * clamp(5, 10, 15) is 10.
+    * clamp(15, 5, 10) is 10.
+    * clamp(20, 15, 25) is 20. 
+
+    @param    x: the value to clamp.
+    @param  low: the minimum value allowed.
+    @param high: the maximum value allowed.
+    """
+    
+    return min(max(x, low), high)
+
+def slicerange(slice, limit):
+    """Takes a slice object and returns a range iterator
+
+    @param slice: slice object
+    @param limit: maximum value allowed"""
+    
+    return xrange(*slice.indices(limit))
