@@ -341,9 +341,5 @@ class Proxy:
 
         self.model = new_model
 
-#        # During the initialization, the OptionMenu needs to preserve
-#        # the original model value, which is why we use this ha^Wlock.
-#        self._avoid_clobber = True
         self._initialize_widgets()
-#        self._avoid_clobber = False
     
