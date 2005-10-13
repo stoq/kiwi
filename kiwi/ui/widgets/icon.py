@@ -188,6 +188,7 @@ class IconEntry(object):
                 self._icon_win.set_user_data(None)
             except:
                 pass
+            # Destroy not needed, called by the GC.
             self._icon_win = None
             
     def update_background(self, color):

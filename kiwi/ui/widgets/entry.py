@@ -278,6 +278,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         
     def do_unrealize(self):
         self._icon.deconstruct()
+        gtk.Entry.do_unrealize(self)
         
     # IconEntry
     

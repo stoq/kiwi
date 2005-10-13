@@ -1,3 +1,10 @@
+2005-10-13  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/entry.py (Entry.do_unrealize): 
+	* kiwi/ui/widgets/spinbutton.py (SpinButton.do_unrealize): 
+	Chain to parents realize so the parent gets a chance to
+	free the relevent resources.
+
 2005-10-11  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/combobox.py:

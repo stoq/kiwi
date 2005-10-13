@@ -97,6 +97,7 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
 
     def do_unrealize(self):
         self._icon.deconstruct()
+        gtk.SpinButton.do_unrealize(self)
         
     # IconEntry
     
