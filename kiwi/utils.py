@@ -143,11 +143,20 @@ class PropertyObject(ClassInittableObject):
 def gsignal(name, *args, **kwargs):
     """
     Add a GObject signal to the current object.
-    @param name:  name of the signal
-    @type name:   string
-
-    Valid arguments are: override
-    Valid keyword arguments are: flags, retval
+    @param name:     name of the signal
+    @type name:      string
+    @param args:     types for signal parameters,
+      if the first one is a string 'override', the signal will be
+      overridden and must therefor exists in the parent GObject.
+    @keyword flags: One of the following:
+      - gobject.SIGNAL_RUN_FIRST
+      - gobject.SIGNAL_RUN_LAST
+      - gobject.SIGNAL_RUN_CLEANUP
+      - gobject.SIGNAL_NO_RECURSE
+      - gobject.SIGNAL_DETAILED
+      - gobject.SIGNAL_ACTION
+      - gobject.SIGNAL_NO_HOOKS
+    @keyword retval: return value in signal callback
     """
 
     frame = sys._getframe(1)
@@ -183,14 +192,18 @@ def gproperty(name, type, *args, **kwargs):
     @type name:    string
     @param type:   type of property
     @type type:    type
-
-    Valid keyword arguments:
-      - default
-      - nick
-      - blurb
-      - minimum:  only for int, float, long
-      - maximum:  only for int, float, long
-      - flags:    a gobject.ParamFlag
+    @keyword default:  default value
+    @keyword nick:     short description
+    @keyword blurb:    long description
+    @keyword minimum:  minimum allowed value (only for int, float, long)
+    @keyword maximum:  maximum allowed value (only for int, float, long)
+    @keyword flags:    parameter flags, one of:
+      - PARAM_READABLE
+      - PARAM_READWRITE
+      - PARAM_WRITABLE
+      - PARAM_CONSTRUCT
+      - PARAM_CONSTRUCT_ONLY
+      - PARAM_LAX_VALIDATION
     """
 
     frame = sys._getframe(1)
