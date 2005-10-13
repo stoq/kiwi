@@ -274,15 +274,18 @@ class Proxy:
                                  % (attribute, self, self._attr_map.keys()))
 
         
-        data_type = widget.get_property('data-type')
-#         value_type = type(value)
-#         if not isinstance(value, data_type):
-#             raise TypeError(
-#                 "attribute %s of model %r requires a value of "
-#                 "type %s, not %s" % (
-#                 attribute, self.model,
-#                 data_type.__name__,
-#                 value_type.__name__))
+        # The type of value should match the data-type property. The two
+        # exceptions to this rule are ValueUnset and None
+        if not (value is ValueUnset or value is None):
+            data_type = widget.get_property('data-type')
+            value_type = type(value)
+            if not isinstance(value, data_type):
+                raise TypeError(
+                    "attribute %s of model %r requires a value of "
+                    "type %s, not %s" % (
+                    attribute, self.model,
+                    data_type.__name__,
+                    value_type.__name__))
         
         if block:
             block_widget(widget)

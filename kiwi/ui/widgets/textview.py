@@ -57,9 +57,6 @@ class TextView(gtk.TextView, WidgetMixinSupportValidation):
         return self.textbuffer.get_text(start, end)
                     
     def update(self, data):
-        # first, trigger some basic validation
-        WidgetMixinSupportValidation.update(self, data)
-
         if data is ValueUnset or data is None:
             self.textbuffer.set_text("")
             self.emit('content-changed')

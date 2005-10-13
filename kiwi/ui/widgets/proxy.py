@@ -56,22 +56,6 @@ class WidgetMixin(Mixin):
     def set_data_format(self, format):
         self._data_format = format
         
-    def update(self, data):
-        """Set the content of the widget with @data.
-
-        The type of @data should match the data-type property. The two
-        exceptions to this rule is ValueUnset and None. When the proxy
-        call ourselves with these values we just do nothing. This probably
-        means that the model is not initialized.
-        """
-        if data is ValueUnset or data is None:
-            return
-        elif not isinstance(data, self._data_type):
-            raise TypeError(
-                "attribute %s must be of type %s, but got %r of type %s" 
-                % (self.name, self._data_type.__name__,
-                   data, type(data).__name__))
-
     def read(self):
         """Get the content of the widget.
 

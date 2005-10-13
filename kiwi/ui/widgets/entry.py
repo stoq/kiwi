@@ -241,8 +241,6 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
             raise AssertionError
 
     def update(self, data):
-        WidgetMixinSupportValidation.update(self, data)
-
         if data is ValueUnset or data is None:
             self.set_text("")
             return

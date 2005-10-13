@@ -55,9 +55,6 @@ class Label(gtk.Label, WidgetMixin):
         return self.str2type(self.get_text())
 
     def update(self, data):
-        # first, trigger some basic validation
-        WidgetMixin.update(self, data)
-
         if data is not ValueUnset and data is not None:
             self.set_text(self.type2str(data))
     

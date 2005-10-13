@@ -60,8 +60,6 @@ class CheckButton(gtk.CheckButton, WidgetMixin):
         return self.get_active()
 
     def update(self, data):
-        # first, trigger some basic validation
-        WidgetMixin.update(self, data)
         if data is not ValueUnset and data is not None:
             self.set_active(data)
 

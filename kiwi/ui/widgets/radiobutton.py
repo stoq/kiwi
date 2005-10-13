@@ -55,8 +55,6 @@ class RadioButton(gtk.RadioButton, WidgetMixin):
                 return self.str2type(rb.get_property('data-value'))
 
     def update(self, data):
-        # first, trigger some basic validation
-        WidgetMixin.update(self, data)
         if data is None or data is ValueUnset:
             return
         data = self.type2str(data)
