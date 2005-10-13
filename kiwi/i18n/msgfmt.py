@@ -2,7 +2,7 @@
 # -*- coding: iso-8859-1 -*-
 # Written by Martin v. Löwis <loewis@informatik.hu-berlin.de>
 
-"""Generate binary message catalog from textual translation description.
+doc = """Generate binary message catalog from textual translation description.
 
 This program converts a textual Uniforum-style message catalog (.po file) into
 a binary GNU catalog (.mo file).  This is essentially the same function as the
@@ -38,7 +38,7 @@ MESSAGES = {}
 
 
 def usage(code, msg=''):
-    print >> sys.stderr, __doc__
+    print >> sys.stderr, doc
     if msg:
         print >> sys.stderr, msg
     sys.exit(code)

@@ -88,52 +88,51 @@ class Column(PropertyObject, gobject.GObject):
         Creates a new Column, which describes how a column in a
         List should be rendered.
 
-          - attribute: a string with the name of the instance attribute the
+        @param attribute: a string with the name of the instance attribute the
             column represents.
-          - title: the title of the column, defaulting to the capitalized form
-            of the attribute.
-          - data_type: the type of the attribute that will be inserted into the
-            column.
-            
-          Optional keyword arguments:
-          - visible: a boolean specifying if it is initially hidden or shown.
-          - justify: one of gtk.JUSTIFY_LEFT, gtk.JUSTIFY_RIGHT or
+        @param title: the title of the column, defaulting to the capitalized
+            form of the attribute.
+        @param data_type: the type of the attribute that will be inserted
+            into the column.
+
+        @keyword visible: a boolean specifying if it is initially hidden or
+            shown.
+        @keyword justify: one of gtk.JUSTIFY_LEFT, gtk.JUSTIFY_RIGHT or
             gtk.JUSTIFY_CENTER or None. If None, the justification will be
             determined by the type of the attribute value of the first
             instance to be inserted in the List (integers and floats
             will be right-aligned).
-          - format: a format string to be applied to the attribute value upon
-            insertion in the list.
-          - width: the width in pixels of the column, if not set, uses the
+        @keyword format: a format string to be applied to the attribute
+            value upon insertion in the list.
+        @keyword width: the width in pixels of the column, if not set, uses the
             default to List. If no Column specifies a width,
             columns_autosize() will be called on the List upon append()
             or the first add_list().
-          - sorted: whether or not the List is to be sorted by this column.
+        @keyword sorted: whether or not the List is to be sorted by this column.
             If no Columns are sorted, the List will be created unsorted.
-          - order: one of gtk.SORT_ASCENDING or gtk.SORT_DESCENDING or -1. The
-            value -1 is used internally when the column is not sorted.
-          - expand: if set column will expand. Note: this space is shared
+        @keyword order: one of gtk.SORT_ASCENDING or gtk.SORT_DESCENDING or
+            -1. The value -1 is used internally when the column is not sorted.
+        @keyword expand: if set column will expand. Note: this space is shared
             equally amongst all columns that have the expand set to True.
-          - tooltip: a string which will be used as a tooltip for the column
-            header
-          - format_func: a callable which will be used to format the output
-            of a column. The function will take one argument which is the
-            value to convert and is expected to return a string.
+        @keyword tooltip: a string which will be used as a tooltip for
+            the column header
+        @keyword format_func: a callable which will be used to format
+            the output of a column. The function will take one argument
+            which is the value to convert and is expected to return a string.
             Note that you cannot use format and format_func at the same time,
             if you provide a format function you'll be responsible for
             converting the value to a string.
-          - editable: if true the field is editable and when you modify the
+        @keyword editable: if true the field is editable and when you modify the
             contents of the cell the model will be updated.
-          - searchable: if true the attribute values of the column can
+        @keyword searchable: if true the attribute values of the column can
             be searched using type ahead search. Only string attributes are
             currently supported.
-          - radio: If true render the column as a radio instead of toggle.
+        @keyword radio: If true render the column as a radio instead of toggle.
             Only applicable for columns with boolean data types.
-          TODO
-          - title_pixmap: if set to a filename a pixmap will be used *instead*
-            of the title set. The title string will still be used to
-            identify the column in the column selection and in a tooltip,
-            if a tooltip is not set.
+        @keyword title_pixmap: (TODO) if set to a filename a pixmap will be
+            used *instead* of the title set. The title string will still be
+            used to identify the column in the column selection and in a
+            tooltip, if a tooltip is not set.
         """
         
         # XXX: filter function?
@@ -251,10 +250,11 @@ class ColoredColumn(Column):
 
     Example, to colorize negative values to red:
     
-    def colorize(value):
-        return value < 0
-
-    ColoredColumn('age', data_type=int, color='red', data_func=colorize),
+        >>> def colorize(value):
+        ...   return value < 0
+        ...
+        ... ColoredColumn('age', data_type=int, color='red',
+        ...               data_func=colorize),
     """
 
     def __init__(self, attribute, title=None, data_type=None,

@@ -91,14 +91,12 @@ class signal_block:
 
     For instance:
 
-    class MyView(SlaveView):
-    
-        @block('money.changed')
-        def update_money(self):
-            self.money.set_value(10)
-
-        def on_money__changed(self):
-            pass
+        >>> class MyView(SlaveView):
+        ...     @block('money.changed')
+        ...     def update_money(self):
+        ...         self.money.set_value(10)
+        ...     def on_money__changed(self):
+        ...         pass
 
 
     When calling update_money() the value of the spinbutton called money

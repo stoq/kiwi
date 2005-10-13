@@ -97,31 +97,31 @@ class WidgetMixin(Mixin):
     def prop_get_data_type(self):
         return self._data_type
 
-    def prop_set_data_type(self, obj):
+    def prop_set_data_type(self, data_type):
         """Set the data type for the widget
         
         data_type can be None, a type object or a string with the name of the
         type object, so None, "<type 'str'>" or 'str'
         """
 
-        if obj is None:
+        if data_type is None:
             self._data_type = None
             return
 
-        data_type = None
+        value = None
         for t in converter.get_list():
-            if t.type == obj or t.type.__name__ == obj:
-                data_type = t.type
+            if t.type == data_type or t.type.__name__ == data_type:
+                value = t.type
                 break
 
-        assert not isinstance(data_type, str), data_type
+        assert not isinstance(value, str), value
         
-        if not data_type:
+        if not value:
             type_names = converter.get_supported_types_names()
             raise TypeError("%s is not supported. Supported types are: %s"
-                            % (obj, ', '.join(type_names)))
+                            % (data_type, ', '.join(type_names)))
 
-        self._data_type = data_type
+        self._data_type = value
 
     def prop_get_model_attribute(self):
         return self._model_attribute

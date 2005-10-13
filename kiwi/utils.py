@@ -143,9 +143,11 @@ class PropertyObject(ClassInittableObject):
 def gsignal(name, *args, **kwargs):
     """
     Add a GObject signal to the current object.
+    @param name:  name of the signal
     @type name:   string
-    @type args:   types
-    @type kwargs: keyword argument 'flags' and/or 'retval'
+
+    Valid arguments are: override
+    Valid keyword arguments are: flags, retval
     """
 
     frame = sys._getframe(1)
@@ -177,11 +179,18 @@ _MAX_LONG = long(_max('l'))
 def gproperty(name, type, *args, **kwargs):
     """
     Add a GObject property to the current object.
-    @type type:    type
-    @type default: default value
+    @param name:   name of property
     @type name:    string
-    @type nick:    string
-    @type flags:   a gobject.ParamFlag
+    @param type:   type of property
+    @type type:    type
+
+    Valid keyword arguments:
+      - default
+      - nick
+      - blurb
+      - minimum:  only for int, float, long
+      - maximum:  only for int, float, long
+      - flags:    a gobject.ParamFlag
     """
 
     frame = sys._getframe(1)

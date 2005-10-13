@@ -56,4 +56,3 @@ class Delegate(BaseView, BaseController):
                           gladefile, gladename, toplevel_name, domain)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
-
