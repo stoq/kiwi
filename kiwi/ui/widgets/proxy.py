@@ -270,6 +270,8 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         
         self.emit('validation-changed', new_state)
 
+        return data
+    
     # Private
     
     def _set_valid(self):
@@ -281,7 +283,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     def _set_invalid(self, text):
         "Invalid state, when the input is invalid"
         self._fade.start()
-            
         self._tooltip.set_text(text)
         self._valid = False
         
