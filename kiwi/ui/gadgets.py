@@ -98,6 +98,7 @@ class FadeOut(gobject.GObject):
         gobject.GObject.__init__(self)
         self._widget = widget
         self._background_timeout_id = -1
+        self._stop = False
         
     def _merge_colors(self, src_color, dst_color, steps=10):
         """
@@ -127,6 +128,12 @@ class FadeOut(gobject.GObject):
     # FIXME: When we can depend on 2.4
     #@delayed(COMPLAIN_DELAY)
     def start(self):
+        # If we didn't use a decorator we could remove this state and
+        # remove the timeout
+        if self._stop:
+            self._stop = False
+            return
+        
         # If we changed during the delay
         if self._background_timeout_id != -1:
             return 
@@ -141,5 +148,6 @@ class FadeOut(gobject.GObject):
             gobject.source_remove(self._background_timeout_id)
             self._background_timeout_id = -1
         self._widget.update_background(gdk.color_parse(FadeOut.GOOD_COLOR))
+        self._stop = True
         
 gobject.type_register(FadeOut)
