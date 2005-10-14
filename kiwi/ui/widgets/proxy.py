@@ -217,7 +217,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     def hide_tooltip(self):
         self._tooltip.hide()
 
-    # Private 
     def validate_data(self, data, force=False):
         """Checks if the data is valid.
         
@@ -271,6 +270,8 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         
         self.emit('validation-changed', new_state)
 
+    # Private
+    
     def _set_valid(self):
         "Valid state, Remove icons"
         self._fade.stop()
@@ -299,6 +300,8 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         self.set_pixbuf(icon)
         self.queue_draw()
 
+    # Callbacks
+    
     # When the fading animation is finished, set the error icon
     # We don't need to check if the state is valid, since stop()
     # (which removes this timeout) is called as soon as the user
