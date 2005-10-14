@@ -27,14 +27,12 @@
 
 import gettext
 
-import gobject
 import gtk
-from gtk import gdk
 
 from kiwi import ValueUnset
 from kiwi.datatypes import ValidationError, converter
-from kiwi.decorators import delayed
 from kiwi.interfaces import Mixin, MixinSupportValidation
+from kiwi.ui.gadgets import FadeOut
 from kiwi.ui.tooltip import Tooltip
 
 _ = gettext.gettext
@@ -156,73 +154,6 @@ class WidgetMixin(Mixin):
 
         return converter.as_string(self._data_type, data, **kwargs)
 
-COMPLAIN_DELAY = 500
-
-class FadeOut:
-    """I am a helper class to draw the fading effect of the background
-    Call my methods start() and stop() to control the fading.
-    """
-    MERGE_COLORS_DELAY = 100
-
-    ERROR_COLOR = "#ffd5d5"
-    # XXX: Fetch the default value from the widget instead of hard coding it.
-    GOOD_COLOR = "white"
-
-    def __init__(self, widget):
-        self._widget = widget
-        self._background_timeout_id = -1
-        
-    def _merge_colors(self, src_color, dst_color, steps=10):
-        """
-        Change the background of widget from src_color to dst_color
-        in the number of steps specified
-        """
-        gdk_src = gdk.color_parse(src_color)
-        gdk_dst = gdk.color_parse(dst_color)
-        rs, gs, bs = gdk_src.red, gdk_src.green, gdk_src.blue
-        rd, gd, bd = gdk_dst.red, gdk_dst.green, gdk_dst.blue
-        rinc = (rd - rs) / float(steps)
-        ginc = (gd - gs) / float(steps)
-        binc = (bd - bs) / float(steps)
-        for dummy in xrange(steps):
-            rs += rinc
-            gs += ginc
-            bs += binc
-            col = gtk.gdk.color_parse("#%02X%02X%02X" % (int(rs) >> 8,
-                                                         int(gs) >> 8,
-                                                         int(bs) >> 8))
-            self._widget.update_background(col)
-            yield True
-
-        # When the fading animation is finished, set the error icon
-        # We don't need to check if the state is valid, since stop()
-        # (which removes this timeout) is called as soon as the user
-        # types valid data.
-        self._widget._draw_stock_icon(ERROR_ICON)
-        yield False
-
-    # FIXME: When we can depend on 2.4
-    #@delayed(COMPLAIN_DELAY)
-    def start(self):
-        # If we changed during the delay
-        if self._widget.is_valid():
-            self.stop()
-            return
-        if self._background_timeout_id != -1:
-            return 
-        func = self._merge_colors(FadeOut.GOOD_COLOR,
-                                  FadeOut.ERROR_COLOR).next
-        self._background_timeout_id = (
-            gobject.timeout_add(FadeOut.MERGE_COLORS_DELAY, func))
-        
-    start = delayed(COMPLAIN_DELAY)(start)
-    
-    def stop(self):
-        if self._background_timeout_id != -1:
-            gobject.source_remove(self._background_timeout_id)
-            self._background_timeout_id = -1
-        self._widget.update_background(gdk.color_parse(FadeOut.GOOD_COLOR))
-
 MANDATORY_ICON = gtk.STOCK_EDIT
 ERROR_ICON = gtk.STOCK_DIALOG_INFO
 
@@ -242,6 +173,8 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
 
         self._tooltip = Tooltip(self)
         self._fade = FadeOut(self)
+        self._fade.connect('done', self._on_fadeout__done)
+        self._fade.connect('color-changed', self._on_fadeout__color_changed)
         
         # state variables
         self._valid = True
@@ -343,10 +276,11 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         self._fade.stop()
         self.set_pixbuf(None)
         self._valid = True
-        
+
     def _set_invalid(self, text):
         "Invalid state, when the input is invalid"
         self._fade.start()
+            
         self._tooltip.set_text(text)
         self._valid = False
         
@@ -364,3 +298,14 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         icon = self.render_icon(stock_id, gtk.ICON_SIZE_MENU)
         self.set_pixbuf(icon)
         self.queue_draw()
+
+    # When the fading animation is finished, set the error icon
+    # We don't need to check if the state is valid, since stop()
+    # (which removes this timeout) is called as soon as the user
+    # types valid data.
+    def _on_fadeout__done(self, fadeout):
+        self._draw_stock_icon(ERROR_ICON)
+        
+    def _on_fadeout__color_changed(self, fadeout, color):
+        self.update_background(color)
+        

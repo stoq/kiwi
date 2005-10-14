@@ -1,5 +1,12 @@
 2005-10-14  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/gadgets.py:
+	* kiwi/ui/widgets/proxy.py:
+	Add two signals (color-changed and done) to FadeOut and move it out
+	to gadgets.
+
+2005-10-14  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/interfaces.py:
 	* kiwi/proxies.py:
 	* kiwi/ui/widgets/combobox.py:
