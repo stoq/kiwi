@@ -66,7 +66,8 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
         self.chain()
 
     def read(self):
-        return self.get_text()
+        value = self.get_text()
+        return self.validate_data(value)
 
     def update(self, data):
         if data is ValueUnset or data is None:

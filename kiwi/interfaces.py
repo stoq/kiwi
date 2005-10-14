@@ -27,10 +27,29 @@ import sys
 import gobject
 
 class Mixin(object):
-    pass
-
+    # gsignal('content-changed')
+    # gproperty('data-type')
+    # gproperty('model-attribute')
+    # gproperty('default-value')
+    # gproperty('validation-changed')
+    
+    def read():
+        pass
+    
+    def update(value):
+        pass
+    
 class MixinSupportValidation(object):
-    pass
+    # gproperty('mandatory')
+    def is_valid():
+        pass
+
+    # These two are mainly used by subclasses
+    def validate_data(data):
+        pass
+    
+    def before_validate(data):
+        pass
 
 class AbstractGladeAdaptor(object):
     """Abstract class that define the functionality an class that handle

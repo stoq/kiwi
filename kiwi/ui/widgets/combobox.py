@@ -376,11 +376,13 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
         
     def read(self):
         if self.mode == COMBO_MODE_STRING:
-            return self.get_selected_label()
+            value = self.get_selected_label()
         elif self.mode == COMBO_MODE_DATA:
-            return self.get_selected_data()
-        
-        return ValueUnset
+            value = self.get_selected_data()
+        else:
+            return ValueUnset
+
+        return self.validate_data(value)
 
     def before_validate(self, data):
         """ComboBoxEntry has a validate default handler that check if the
@@ -390,8 +392,6 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
         #items = self.get_model_items()
         #if data not in items.keys():
         #    raise ValidationError("Entered value not in list")
-        
-        return self.read()
 
     def update(self, data):
         if data is ValueUnset or data is None:

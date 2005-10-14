@@ -32,7 +32,7 @@ import sys
 
 from kiwi import _warn, ValueUnset
 from kiwi.accessors import kgetattr, ksetattr, clear_attr_cache
-from kiwi.interfaces import Mixin, MixinSupportValidation
+from kiwi.interfaces import Mixin
 
 def block_widget(widget):
     """Blocks the signal handler of the 'content-changed' signal on widget"""
@@ -91,10 +91,9 @@ class Proxy:
                 self.update(attribute, value, block=True)
 
             # The initial value of the model is set, at this point
-            # we'll do an initial validation check
-            if isinstance(widget, MixinSupportValidation):
-                value = widget.read()
-                widget.validate_data(value, force=True)
+            # do a read, it'll trigger a validation for widgets who
+            # supports it.
+            widget.read()
 
     def _setup_widgets(self, widgets):
         """
@@ -143,21 +142,17 @@ class Proxy:
         """This is called as soon as the content of one of the widget
         changes, the widgets tries fairly hard to not emit when it's not
         neccessary"""
-
-        value = widget.read()
-
-        # Value has changed, start validation process
-        if isinstance(widget, MixinSupportValidation):
-            value = widget.validate_data(value)
-
-        # only update the model if the data is correct
-        if value is ValueUnset:
-            return
         
         # skip updates for model if there is none, right?
         if self.model is None:
             return
 
+        value = widget.read()
+        
+        # only update the model if the data is correct
+        if value is ValueUnset:
+            return
+        
         # XXX: one day we might want to queue and unique updates?
         self._block_proxy_in_model(True)
         try:
@@ -227,7 +222,7 @@ class Proxy:
         self._setter_error_handler = handler
 
     def update(self, attribute, value=ValueUnset, block=False):
-        """ Generic frontend function to update the contents of a widget based
+        """ Generic frontend function to update the contentss of a widget based
         on its model attribute name using the internal update functions. 
 
             - attribute: the name of the attribute whose widget we wish to

@@ -63,7 +63,11 @@ class WidgetMixin(Mixin):
 
         This returns None if the user input a invalid value
         """
-        
+        raise NotImplementedError
+
+    def update(self, value):
+        raise NotImplementedError
+    
     def do_get_property(self, pspec):
         prop_name = pspec.name.replace("-", "_")
         func = getattr(self, "prop_get_%s" % prop_name, None)
@@ -279,7 +283,8 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
 
     def hide_tooltip(self):
         self._tooltip.hide()
-    
+
+    # Private 
     def validate_data(self, data, force=False):
         """Checks if the data is valid.
         
