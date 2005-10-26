@@ -88,6 +88,11 @@ class Environment:
             if not path:
                 continue
             self.add_resource(resource, env)
+
+    def get_resource_paths(self, resource):
+        if not resource in self._resources:
+            raise EnvironmentError("No resource called: %s" % resource)
+        return self._resources[resource]
             
     def add_resource(self, resource, path):
         path = os.path.join(self._root, path)
@@ -107,10 +112,8 @@ class Environment:
     def find_resource(self, resource, name):
         """Locate a specific resource of called name of type resource"""
 
-        if not resource in self._resources:
-            raise EnvironmentError("No resource called: %s" % resource)
-
-        for path in self._resources[resource]:
+        resource_paths = self.get_resource_paths(resource)
+        for path in resource_paths:
             filename = os.path.join(self._root, path, name)
             if os.path.exists(filename):
                 return filename
