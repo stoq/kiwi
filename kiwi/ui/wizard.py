@@ -85,7 +85,10 @@ class PluggableWizard(Delegate):
             self.finish()
             return 
         step.show()
-        self.attach_slave('slave_area', step)
+        holder_name = 'slave_area'
+        if self.get_slave(holder_name):
+            self.detach_slave(holder_name)
+        self.attach_slave(holder_name, step)
         self.current = step
         if step.header:
             self.header_lbl.show()
