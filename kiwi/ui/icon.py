@@ -225,6 +225,8 @@ class IconEntry(object):
             return
 
         win = self._icon_win
+        if not win:
+            return
         
         # Draw background first
         color = self._entry.style.base_gc[self._entry.state]
