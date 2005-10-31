@@ -143,10 +143,12 @@ class IconEntry(object):
 
         self.resize_windows()
 
-        if not pixbuf:
-            win.hide()
-        else:
-            win.show()
+        # XXX: Why?
+        if win:
+            if not pixbuf:
+                win.hide()
+            else:
+                win.show()
 
         # Hack: This triggers a .recompute() which is private
         entry.set_visibility(entry.get_visibility())
@@ -212,6 +214,9 @@ class IconEntry(object):
         iconx = 4 + textw 
         icony = 4
         icon_win = self._icon_win
+        # XXX: Why?
+        if not icon_win:
+            return
         
         # If the size of the window is large enough, resize and move it
         # Otherwise just move it to the right side of the entry
@@ -225,6 +230,7 @@ class IconEntry(object):
             return
 
         win = self._icon_win
+        # XXX: Why?
         if not win:
             return
         
