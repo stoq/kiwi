@@ -1,3 +1,9 @@
+2005-10-31  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/icon.py (IconEntry.update_background): Handle insensitive 
+	widgets aswell, always use the current state instead of hard coding
+	GTK_STATE_NORMAL.
+
 2005-10-14  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/gadgets.py:

@@ -178,7 +178,7 @@ class IconEntry(object):
                              '', '', True)
         self._icon_win = win
         win.set_user_data(entry)
-        win.set_background(entry.style.base[gtk.STATE_NORMAL])
+        win.set_background(entry.style.base[entry.state])
         self._constructed = True
         
     def deconstruct(self):
@@ -227,7 +227,7 @@ class IconEntry(object):
         win = self._icon_win
         
         # Draw background first
-        color = self._entry.style.base_gc[gtk.STATE_NORMAL]
+        color = self._entry.style.base_gc[self._entry.state]
         win.draw_rectangle(color, True,
                            0, 0, self._pixw, self._pixh)
         
