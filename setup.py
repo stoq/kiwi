@@ -15,7 +15,7 @@ from distutils.core import setup
 import os
 import sys
 
-from kiwi.dist import listfiles, TemplateInstallLib
+from kiwi.dist import listfiles, listpackages, TemplateInstallLib
 
 class InstallLib(TemplateInstallLib):
     name = 'kiwi'
@@ -44,9 +44,6 @@ setup(name="kiwi",
                    listfiles('gazpacho-plugin', 'kiwiwidgets.py')),
                   ],
       scripts=['bin/kiwi-i18n'],
-      packages=['kiwi',
-                'kiwi.i18n',
-                'kiwi.ui',
-                'kiwi.ui.widgets'],
+      packages=listpackages('kiwi'),
       cmdclass=dict(install_lib=InstallLib),
       )
