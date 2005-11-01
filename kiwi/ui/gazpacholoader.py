@@ -49,7 +49,7 @@ _ = gettext.gettext
 
 class Builder(ObjectBuilder):
     def find_resource(self, filename):
-        return environ.find_resource("pixmap", filename)
+        return environ.find_resource("pixmaps",  filename)
 
 class GazpachoWidgetTree:
     """Example class of GladeAdaptor that uses Gazpacho loader to load the
