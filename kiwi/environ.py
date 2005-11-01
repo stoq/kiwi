@@ -27,7 +27,7 @@ import gettext
 import os
 import sys
 
-__all__ = ['Application', 'Library', 'environ', 'require_gazpacho',
+__all__ = ['Application', 'Library', 'app', 'environ', 'require_gazpacho',
            'is_gazpacho_required']
 
 # copied from twisted/python/reflect.py
@@ -144,11 +144,20 @@ class Library(Environment):
         dirname = os.path.realpath(os.path.abspath(dirname))
         root = os.path.abspath(os.path.join(dirname, root))
         Environment.__init__(self, root=root)
+
+        sys.path.insert(0, os.path.join(root, 'lib', 'python%d.%d' % 
+                                        sys.version_info[:2], 'site-packages'))
+        g = globals()
+        l = locals()
+        try:
+            module = __import__(name, g, l, name)
+        except ImportError:
+            raise ImportError("Failed to import module %s" % name)
         
         # Load installed
         try:
             module = __import__(name + '.__installed__',
-                                globals(), locals(), name)
+                                g, l, name)
         except ImportError, e:
             uninstalled = True
         else:
@@ -192,10 +201,13 @@ class Application(Library):
     - path, a reference to the callable object to run, defaults to 'main'
     """
     def __init__(self, name, root='..', path='main'):
+        global app
+        app = self
+        
         dirname = os.path.abspath(os.path.dirname(sys.argv[0]))
         Library.__init__(self, name, root, dirname)
         self._path = path
-
+        
     def _get_main(self):
         try:
             module = namedAny(self._path)
@@ -235,5 +247,8 @@ def is_gazpacho_required():
     global _require_gazpacho_loader
     return _require_gazpacho_loader
 
-# Global instance, shared between apps and libraries
+# Global variables
 environ = Environment()
+
+app = None
+
