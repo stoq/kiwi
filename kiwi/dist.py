@@ -89,3 +89,20 @@ def compile_po_files(appname, dirname='locale'):
         data_files.append((dest, [mo]))
 
     return data_files
+
+def listpackages(root):
+    "Recursivly list all packages in directory root"
+    
+    packages = []
+    if not os.path.isdir(root):
+        raise ValueError("root must be a directory")
+
+    if os.path.exists(os.path.join(root, '__init__.py')):
+        packages.append(root.replace('/', '.'))
+
+    for filename in os.listdir(root):
+        full = os.path.join(root, filename)
+        if os.path.isdir(full):
+            packages.extend(listpackages(full))
+    return packages
+
