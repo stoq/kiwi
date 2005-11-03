@@ -72,7 +72,7 @@ def listfiles(*dirs):
 
 def compile_po_files(appname, dirname='locale'):
     if os.system('msgfmt 2> /dev/null') != 256:
-        warn('msgfmt is missing, not installing installations')
+        warn('msgfmt is missing, not installing translations')
         return []
         
     data_files = []
