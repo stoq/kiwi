@@ -23,7 +23,7 @@
 
 from distutils.command.install_lib import install_lib
 from distutils.dep_util import newer
-from distutils.log import info
+from distutils.log import info, warn
 from fnmatch import fnmatch
 import os
 
@@ -71,6 +71,10 @@ def listfiles(*dirs):
                 if filename[0] != '.' and fnmatch(filename, pattern)]
 
 def compile_po_files(appname, dirname='locale'):
+    if os.system('msgfmt 2> /dev/null') != 256:
+        warn('msgfmt is missing, not installing installations')
+        return []
+        
     data_files = []
     for po in listfiles('po', '*.po'):
         lang = os.path.basename(po[:-3])

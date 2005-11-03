@@ -1,3 +1,15 @@
+2005-11-03  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/dist.py (compile_po_files): Handle the case when msgfmt
+	is not found, print a warning and returning nothing, instead of
+	failing later on.
+
+2005-11-01  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/environ.py (app): Add global app reference
+	(Library.__init__): Add better error messages and insert
+	$prefix/lib/pythonX.Y/site-packages into sys.path
+
 2005-10-31  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/icon.py (IconEntry.update_background): Handle insensitive 
