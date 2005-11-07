@@ -145,7 +145,7 @@ class FadeOut(gobject.GObject):
             self._background_timeout_id = -1
         self._widget.update_background(gdk.color_parse(FadeOut.GOOD_COLOR))
 
-        # Stop the decorator
+        # Stop the delayed timeout
         self.start.stop()
         
 gobject.type_register(FadeOut)
