@@ -368,6 +368,7 @@ class List(gtk.ScrolledWindow):
     
     gsignal('selection-changed', object)
     gsignal('double-click', object)
+    gsignal('cell-edited', str, object)
 
     # this property is used to serialize the columns of a List. The format
     # is a big string with '^' as the column separator and '|' as the field
@@ -797,6 +798,7 @@ class List(gtk.ScrolledWindow):
         obj = model[path][COL_MODEL]
         value = datatypes.converter.from_string(column.data_type, text)
         setattr(obj, attribute, value)
+        self.emit('cell-edited', attribute, value)
         
     def _guess_renderer_for_type(self, column):
         """Gusses which CellRenderer we should use for a given type.
