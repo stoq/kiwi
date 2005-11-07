@@ -1,3 +1,15 @@
+2005-11-07  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/gadgets.py (FadeOut.stop): Simplify, use delayed.stop, avoids
+	extra state and makes it reliable. Add API documentation
+
+	* kiwi/decorators.py (delayed.stop): New function
+
+	* kiwi/ui/widgets/proxy.py (WidgetMixinSupportValidation.set_blank)
+	(WidgetMixinSupportValidation.set_invalid)
+	(WidgetMixinSupportValidation.set_valid): Make public and add
+	API documentation.
+
 2005-11-03  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/dist.py (compile_po_files): Handle the case when msgfmt

@@ -231,7 +231,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         # this need to be done before any data conversion because we
         # we don't want to end drawing two icons
         if data is None or data == '':
-            self._set_blank()
+            self.set_blank()
         else:
             try:
                 if isinstance(data, basestring):
@@ -257,10 +257,10 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
                         raise error
 
             except ValidationError, e:
-                self._set_invalid(str(e))
+                self.set_invalid(str(e))
                 data = ValueUnset
             else:
-                self._set_valid()
+                self.set_valid()
 
         # Step 3, if validation changed, emit a signal
         #         unless force is used, then we're always emitting
@@ -272,22 +272,28 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
 
         return data
     
-    # Private
-    
-    def _set_valid(self):
-        "Valid state, Remove icons"
+    def set_valid(self):
+        """Changes the validation state to valid, which will remove icons and
+        reset the background color"""
+        
         self._fade.stop()
         self.set_pixbuf(None)
         self._valid = True
 
-    def _set_invalid(self, text):
-        "Invalid state, when the input is invalid"
-        self._fade.start()
-        self._tooltip.set_text(text)
+    def set_invalid(self, text=None, fade=True):
+        """Changes the validation state to invalid.
+        @param text: text of tooltip of None
+        @param fade: if we should fade the background"""
+        
+        if fade:
+            self._fade.start()
+        if text:
+            self._tooltip.set_text(text)
         self._valid = False
         
-    def _set_blank(self):
-        "Blank state, for mandatory, draw an icon"
+    def set_blank(self):
+        """Changes the validation state to blank state, this only applies
+        for mandatory widgets, draw an icon and set a tooltip"""
         if self._mandatory:
             self._draw_stock_icon(MANDATORY_ICON)
             self._tooltip.set_text(_('This field is mandatory'))
