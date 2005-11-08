@@ -1,5 +1,8 @@
 2005-11-08  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/controllers.py (BaseController.__init__): Add support for automatic
+	keyboard accelerators of type key_name or key_modifier_name.
+
 	* kiwi/ui/widgets/proxy.py (WidgetMixinSupportValidation.set_invalid): 
 	Only connect to done here, that's the only place where we need to 
 	use it. When done, set text and icon. Also disconnect the signal

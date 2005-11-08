@@ -22,6 +22,8 @@
 #            Lorenzo Gil Sanchez <lgs@sicem.biz>
 #
 
+from gtk import gdk
+
 """XXX"""
 
 class BaseController:
@@ -57,26 +59,34 @@ class BaseController:
 
         # Copy just to be on the safe side, avoiding problems with
         # mutable class variables
-        self.__keyactions = keyactions or {}
-                
-        # Handle signals set in glade
+        self._keyactions = keyactions or {}
+
         self.view._attach_callbacks(self)
 
         # Call finalization hook
         self.view.on_startup()
 
-    #
-    # Hooks
-    #
-
-    def on_key_press(self, widget, event, *args):
+    def on_key_press(self, widget, event):
         """
         The keypress handler, which dispatches keypresses to the
         functions mapped to in self.keyactions"""
-        this_key = event.keyval
-        if self.__keyactions.has_key(this_key):
-            return self.__keyactions[this_key](widget, event, args)
-        return None
+        
+        # Order is important, we want control_shift_alt_XXX
+        method_name = 'key_'
+        if event.state & gdk.CONTROL_MASK:
+            method_name += 'control_'
+        if event.state & gdk.SHIFT_MASK:
+            method_name += 'shift_'
+        if event.state & gdk.MOD1_MASK:
+            method_name += 'alt_'
+        method_name += gdk.keyval_name(event.keyval)
+        func = getattr(self, method_name, None)
+        if func:
+            return func()
+        elif event.keyval in self._keyactions:
+            func = self._keyactions[event.keyval]
+            return func(widget, event)
+
 
     #
     # Accessors
@@ -106,13 +116,13 @@ class BaseController:
         """
         Sets the keyactions mapping. See the constructor
         documentation for a description of it."""
-        self.__keyactions = keyactions
+        self._keyactions = keyactions
 
     def update_keyactions(self, new_actions):
         """
         XXX
         """
-        self.__keyactions.update(new_actions)
+        self._keyactions.update(new_actions)
 
     #
     #
