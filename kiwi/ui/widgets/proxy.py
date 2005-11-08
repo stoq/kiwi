@@ -287,8 +287,11 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         
         if fade:
             self._fade.start()
-        if text:
-            self._tooltip.set_text(text)
+            if text:
+                def done(fadeout):
+                    self._tooltip.set_text(text)
+                self._fade.connect('done', done)
+            
         self._valid = False
         
     def set_blank(self):
