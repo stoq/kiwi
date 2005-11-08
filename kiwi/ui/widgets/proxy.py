@@ -173,7 +173,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
 
         self._tooltip = Tooltip(self)
         self._fade = FadeOut(self)
-        self._fade.connect('done', self._on_fadeout__done)
         self._fade.connect('color-changed', self._on_fadeout__color_changed)
         
         # state variables
@@ -285,18 +284,33 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         @param text: text of tooltip of None
         @param fade: if we should fade the background"""
         
-        if fade:
-            self._fade.start()
-            if text:
-                def done(fadeout):
-                    self._tooltip.set_text(text)
-                self._fade.connect('done', done)
-            
         self._valid = False
+
+        if not fade:
+            return
+        
+        self._fade.start()
+        
+        # When the fading animation is finished, set the error icon
+        # We don't need to check if the state is valid, since stop()
+        # (which removes this timeout) is called as soon as the user
+        # types valid data.
+        def done(fadeout, c):
+            if text:
+                self._tooltip.set_text(text)
+            self._draw_stock_icon(ERROR_ICON)
+            fadeout.disconnect(c.signal_id)
+            
+        class SignalContainer:
+            pass
+        c = SignalContainer()
+        c.signal_id = self._fade.connect('done', done, c)
         
     def set_blank(self):
         """Changes the validation state to blank state, this only applies
         for mandatory widgets, draw an icon and set a tooltip"""
+
+
         if self._mandatory:
             self._draw_stock_icon(MANDATORY_ICON)
             self._tooltip.set_text(_('This field is mandatory'))
@@ -312,13 +326,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
 
     # Callbacks
     
-    # When the fading animation is finished, set the error icon
-    # We don't need to check if the state is valid, since stop()
-    # (which removes this timeout) is called as soon as the user
-    # types valid data.
-    def _on_fadeout__done(self, fadeout):
-        self._draw_stock_icon(ERROR_ICON)
-        
     def _on_fadeout__color_changed(self, fadeout, color):
         self.update_background(color)
         

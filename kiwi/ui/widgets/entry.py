@@ -25,6 +25,8 @@
 
 """Defines an enhanced version of GtkEntry"""
 
+import gettext
+
 import gobject
 import gtk
 
@@ -33,6 +35,8 @@ from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import gproperty, gsignal
+
+_ = gettext.gettext
 
 (COL_TEXT,
  COL_OBJECT) = range(2)
@@ -174,6 +178,14 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
                 self._current_object = row[COL_OBJECT]
                 break
         else:
+            # Customized validation
+            if text:
+                self.set_invalid(_("'%s' is not a valid object" % text))
+            elif self._mandatory:
+                self._fade.stop()
+                self.set_blank()
+            else:
+                self.set_valid()
             self._current_object = None
 
     def _get_text_from_object(self, obj):
@@ -237,6 +249,10 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
             value = self.get_text()
         elif mode == ENTRY_MODE_DATA:
             value = self._current_object
+            # Skip validation if it's None, it's already done,
+            # see _update_current_object
+            if value is None:
+                return None
         else:
             raise AssertionError
 

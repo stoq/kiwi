@@ -1,5 +1,17 @@
 2005-11-08  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/proxy.py (WidgetMixinSupportValidation.set_invalid): 
+	Only connect to done here, that's the only place where we need to 
+	use it. When done, set text and icon. Also disconnect the signal
+	so it won't be called multiple times.
+
+	* kiwi/ui/widgets/entry.py (Entry._update_current_object): Add custom
+	validation, when using objects.
+	
+	* kiwi/ui/gadgets.py (FadeOut.start): Add additional state, so we know 
+	if we're done when start() is called multiple times. Always emit done, 
+	since we're depending on it in other places.
+
 	* kiwi/ui/widgets/proxy.py (WidgetMixinSupportValidation.don): Wait until 
 	the completion is done to set the text.
 
