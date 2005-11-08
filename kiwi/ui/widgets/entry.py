@@ -247,6 +247,8 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         mode = self._entry_mode
         if mode == ENTRY_MODE_TEXT:
             value = self.get_text()
+            if value == '':
+                return None
         elif mode == ENTRY_MODE_DATA:
             value = self._current_object
             # Skip validation if it's None, it's already done,
