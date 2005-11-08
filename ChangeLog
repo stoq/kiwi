@@ -1,7 +1,12 @@
+2005-11-08  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/gazpacholoader.py (EntryDataType.get_data_types): Add Object, 
+	useful when using entry completion.
+
 2005-11-07  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/gadgets.py (FadeOut.stop): Simplify, use delayed.stop, avoids
-	extra state and makes it reliable. Add API documentation
+	extra state and makes it reliable. Add API documentation.
 
 	* kiwi/decorators.py (delayed.stop): New function
 

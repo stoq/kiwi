@@ -155,7 +155,8 @@ class EntryDataType(DataTypeAdaptor):
         return [(_('Integer'), int),
                 (_('Float'), float),
                 (_('Date'), date),
-                (_('String'), str)]
+                (_('String'), str),
+                (_('Object'), object)]
 
 class TextViewDataType(DataTypeAdaptor):
     def get_data_types(self):
