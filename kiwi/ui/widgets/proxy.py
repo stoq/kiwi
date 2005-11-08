@@ -264,10 +264,8 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         # Step 3, if validation changed, emit a signal
         #         unless force is used, then we're always emitting
         new_state = self.is_valid()
-        if old_state == new_state and force == False:
-            return data
-        
-        self.emit('validation-changed', new_state)
+        if old_state != new_state or force:
+            self.emit('validation-changed', new_state)
 
         return data
     
@@ -309,7 +307,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     def set_blank(self):
         """Changes the validation state to blank state, this only applies
         for mandatory widgets, draw an icon and set a tooltip"""
-
 
         if self._mandatory:
             self._draw_stock_icon(MANDATORY_ICON)
