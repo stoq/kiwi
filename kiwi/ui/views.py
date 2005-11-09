@@ -39,7 +39,7 @@ from kiwi import _warn
 from kiwi.environ import is_gazpacho_required
 from kiwi.interfaces import MixinSupportValidation
 from kiwi.proxies import Proxy
-from kiwi.utils import gsignal
+from kiwi.utils import gsignal, type_register
 from kiwi.ui.gadgets import quit_if_last
 
 WidgetTree = None
@@ -785,7 +785,7 @@ class SlaveView(gobject.GObject):
     def force_validation(self):
         self.check_and_notify_validity(force=True)
         
-gobject.type_register(SlaveView)
+type_register(SlaveView)
 
 class BaseView(SlaveView):
     """A view with a toplevel window."""

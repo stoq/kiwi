@@ -36,7 +36,7 @@ from kiwi import ValueUnset
 from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
 from kiwi.ui.widgets.comboboxentry import BaseComboBoxEntry
 from kiwi.ui.widgets.proxy import WidgetMixin, WidgetMixinSupportValidation
-from kiwi.utils import PropertyObject, gproperty
+from kiwi.utils import PropertyObject, gproperty, type_register
 
 (COL_COMBO_LABEL,
  COL_COMBO_DATA) = range(2)
@@ -288,7 +288,7 @@ class ComboBox(gtk.ComboBox, ComboProxyMixin, WidgetMixin):
     def clear(self):
         ComboProxyMixin.clear(self) 
     
-gobject.type_register(ComboBox)
+type_register(ComboBox)
 
 class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
                     WidgetMixinSupportValidation):

@@ -83,7 +83,7 @@ class PropertyObject(ClassInittableObject):
 
         # Register the type, here so don't have to do it explicitly, it
         # can be removed in PyGTK 2.8, since it does this magic for us.
-        gobject.type_register(cls)
+        type_register(cls)
 
         # Create python properties for gobject properties, store all
         # the values in self._attributes, so do_set/get_property
@@ -251,3 +251,17 @@ def gproperty(name, type, *args, **kwargs):
         dict = locals['__gproperties__']
 
     dict[name] = tuple(args)
+
+def type_register(gtype):
+    """Register the type, but only if it's not already registered
+    @param gtype: the class to register
+    """
+
+    # copied from gobjectmodule.c:_wrap_type_register
+    if (getattr(gtype, '__gtype__', None) !=
+        getattr(gtype.__base__, '__gtype__', None)):
+        return False
+
+    gobject.type_register(gtype)
+
+    return True

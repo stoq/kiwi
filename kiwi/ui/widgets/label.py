@@ -31,6 +31,7 @@ from kiwi import ValueUnset
 from kiwi.interfaces import implementsIProxy
 from kiwi.ui.gadgets import set_foreground
 from kiwi.ui.widgets.proxy import WidgetMixin
+from kiwi.utils import type_register
 
 class Label(gtk.Label, WidgetMixin):
     implementsIProxy()
@@ -116,4 +117,4 @@ class Label(gtk.Label, WidgetMixin):
     def set_color(self, color):
        set_foreground(self, color) 
 
-gobject.type_register(Label)
+type_register(Label)

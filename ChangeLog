@@ -1,5 +1,21 @@
 2005-11-09  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/gadgets.py:
+	* kiwi/ui/views.py:
+	* kiwi/ui/widgets/checkbutton.py:
+	* kiwi/ui/widgets/combobox.py:
+	* kiwi/ui/widgets/entry.py:
+	* kiwi/ui/widgets/label.py:
+	* kiwi/ui/widgets/list.py:
+	* kiwi/ui/widgets/radiobutton.py:
+	* kiwi/ui/widgets/spinbutton.py:
+	* kiwi/ui/widgets/textview.py:
+	* kiwi/utils.py:
+
+	Add new method utils.type_register, use it everywhere.
+	
+2005-11-09  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/ui/widgets/proxy.py
 	(WidgetMixinSupportValidation.validate_data): Only set blank for
 	mandatory widgets and when data is empty. Always convert '' to None

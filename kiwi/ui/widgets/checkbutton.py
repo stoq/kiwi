@@ -32,7 +32,7 @@ import gtk
 from kiwi import ValueUnset
 from kiwi.interfaces import implementsIProxy
 from kiwi.ui.widgets.proxy import WidgetMixin
-from kiwi.utils import gsignal
+from kiwi.utils import gsignal, type_register
 
 class CheckButton(gtk.CheckButton, WidgetMixin):
     implementsIProxy()
@@ -63,4 +63,4 @@ class CheckButton(gtk.CheckButton, WidgetMixin):
         if data is not ValueUnset and data is not None:
             self.set_active(data)
 
-gobject.type_register(CheckButton)
+type_register(CheckButton)

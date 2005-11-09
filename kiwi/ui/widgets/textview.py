@@ -31,6 +31,7 @@ import gtk
 from kiwi import ValueUnset
 from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
+from kiwi.utils import type_register
 
 class TextView(gtk.TextView, WidgetMixinSupportValidation):
     implementsIProxy()
@@ -63,4 +64,4 @@ class TextView(gtk.TextView, WidgetMixinSupportValidation):
         else:
             self.textbuffer.set_text(self.type2str(data))
 
-gobject.type_register(TextView)
+type_register(TextView)

@@ -36,7 +36,7 @@ from kiwi import _warn, datatypes, ValueUnset
 from kiwi.accessors import kgetattr
 from kiwi.decorators import deprecated
 from kiwi.python import slicerange
-from kiwi.utils import PropertyObject, gsignal, gproperty
+from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 
 # Minimum number of rows where we show busy cursor when sorting numeric columns
 MANY_ROWS = 1000
@@ -1297,7 +1297,7 @@ class List(gtk.ScrolledWindow):
         return self.select(*args, **kwargs)
     select_instance = deprecated('select')(select_instance)
 
-gobject.type_register(List)
+type_register(List)
 
 if __name__ == '__main__':
     win = gtk.Window()

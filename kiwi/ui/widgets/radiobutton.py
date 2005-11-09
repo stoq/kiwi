@@ -31,7 +31,7 @@ import gtk
 
 from kiwi import ValueUnset
 from kiwi.interfaces import implementsIProxy
-from kiwi.utils import gsignal, gproperty
+from kiwi.utils import gsignal, gproperty, type_register
 from kiwi.ui.widgets.proxy import WidgetMixin
 
 class RadioButton(gtk.RadioButton, WidgetMixin):
@@ -68,4 +68,4 @@ class RadioButton(gtk.RadioButton, WidgetMixin):
     def prop_get_data_value(self):
         return self._data_value
 
-gobject.type_register(RadioButton)
+type_register(RadioButton)

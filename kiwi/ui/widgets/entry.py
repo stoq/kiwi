@@ -34,7 +34,7 @@ from kiwi import ValueUnset
 from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
-from kiwi.utils import gproperty, gsignal
+from kiwi.utils import gproperty, gsignal, type_register
 
 _ = gettext.gettext
 
@@ -303,5 +303,5 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
     def get_icon_window(self):
         return self._icon.get_icon_window()
 
-gobject.type_register(Entry)
+type_register(Entry)
     

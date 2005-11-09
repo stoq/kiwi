@@ -27,7 +27,7 @@ import gtk
 from gtk import gdk
 
 from kiwi.decorators import delayed
-from kiwi.utils import gsignal
+from kiwi.utils import gsignal, type_register
 
 def gdk_color_to_string(color):
     """Convert a color to a #AABBCC string"""
@@ -162,4 +162,4 @@ class FadeOut(gobject.GObject):
         # Stop the delayed timeout
         self.start.stop()
         
-gobject.type_register(FadeOut)
+type_register(FadeOut)
