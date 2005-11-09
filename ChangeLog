@@ -1,10 +1,19 @@
+2005-11-09  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/proxy.py
+	(WidgetMixinSupportValidation.validate_data): Only set blank for
+	mandatory widgets and when data is empty. Always convert '' to None
+	for non-string types.
+
+	* kiwi/ui/widgets/entry.py (Entry.read): Remove a couple of big hacks
+
 2005-11-08  Johan Dahlin  <jdahlin@async.com.br>
 
-	* kiwi/ui/widgets/entry.py (Entry.read): Add a hack to try to fix validation
-	for empty entries.
+	* kiwi/ui/widgets/entry.py (Entry.read): Add a hack to try to fix 
+	validation for empty entries.
 
-	* kiwi/controllers.py (BaseController.__init__): Add support for automatic
-	keyboard accelerators of type key_name or key_modifier_name.
+	* kiwi/controllers.py (BaseController.__init__): Add support for 
+	automatic keyboard accelerators of type key_name or key_modifier_name.
 
 	* kiwi/ui/widgets/proxy.py (WidgetMixinSupportValidation.set_invalid): 
 	Only connect to done here, that's the only place where we need to 
@@ -18,8 +27,8 @@
 	if we're done when start() is called multiple times. Always emit done, 
 	since we're depending on it in other places.
 
-	* kiwi/ui/widgets/proxy.py (WidgetMixinSupportValidation.don): Wait until 
-	the completion is done to set the text.
+	* kiwi/ui/widgets/proxy.py (WidgetMixinSupportValidation.don): Wait 
+	until the completion is done to set the text.
 
 	* kiwi/ui/gazpacholoader.py (EntryDataType.get_data_types): Add Object, 
 	useful when using entry completion.

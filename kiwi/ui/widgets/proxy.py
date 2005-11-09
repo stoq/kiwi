@@ -225,12 +225,18 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         """
 
         old_state = self.is_valid()
-        
+
+        # Can this be done in a better location?
+        if data == '' and  issubclass(self._data_type, basestring):
+            data = None
+                
         # check if we should draw the mandatory icon
         # this need to be done before any data conversion because we
         # we don't want to end drawing two icons
-        if data is None or data == '':
+        if self._mandatory and not data:
             self.set_blank()
+            # This will stop the proxy from updating the model
+            data = ValueUnset
         else:
             try:
                 if isinstance(data, basestring):
