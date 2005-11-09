@@ -233,7 +233,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         # check if we should draw the mandatory icon
         # this need to be done before any data conversion because we
         # we don't want to end drawing two icons
-        if self._mandatory and not data:
+        if self._mandatory and (data == '' or data is None):
             self.set_blank()
             # This will stop the proxy from updating the model
             data = ValueUnset
@@ -317,6 +317,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         if self._mandatory:
             self._draw_stock_icon(MANDATORY_ICON)
             self._tooltip.set_text(_('This field is mandatory'))
+            self._fade.reset()
             valid = False
         else:
             valid = True

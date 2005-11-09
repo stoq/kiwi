@@ -130,6 +130,10 @@ class FadeOut(gobject.GObject):
         self._done = True
         yield False
 
+    def reset(self):
+        self.stop()
+        self.emit('color-changed', gdk.color_parse(FadeOut.GOOD_COLOR))
+        
     # FIXME: When we can depend on 2.4
     #@delayed(COMPLAIN_DELAY)
     def start(self):
