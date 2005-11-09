@@ -98,6 +98,9 @@ class FadeOut(gobject.GObject):
         gobject.GObject.__init__(self)
         self._widget = widget
         self._background_timeout_id = -1
+        
+        # Done is set when animation is already finished.
+        # Then the background is normally in another color.
         self._done = False
         
     def _merge_colors(self, src_color, dst_color, steps=10):
