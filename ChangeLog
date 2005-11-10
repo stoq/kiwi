@@ -1,15 +1,11 @@
 2005-11-10  Johan Dahlin  <jdahlin@async.com.br>
 
-	reviewed by: <delete if not using a buddy>
-
-	* examples/PersonalInformation/personalinformation.glade:
-	* examples/PersonalInformation/personalinformation.py:
-	* examples/completion.py:
-	* examples/kiwilist.py:
 	* kiwi/proxies.py:
 	* kiwi/ui/widgets/combobox.py:
 	* kiwi/ui/widgets/proxy.py:
 	* kiwi/ui/widgets/spinbutton.py:
+	Move validate_data out of read, and do it manually afterwards,
+	there's only two call sites anyway.
 
 2005-11-09  Johan Dahlin  <jdahlin@async.com.br>
 
