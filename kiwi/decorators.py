@@ -59,12 +59,6 @@ class delayed(object):
         self._delay = delay
         self._timeout_id = -1
 
-    def stop(self):
-        """Stops the countdown immediatelly"""
-        if self._timeout_id != -1:
-            gobject.source_remove(self._timeout_id)
-            self._timeout_id = -1
-            
     def __call__(self, func):
         def real_call(args, kwargs):
             func(*args, **kwargs)
@@ -78,8 +72,6 @@ class delayed(object):
         
             self._timeout_id = gobject.timeout_add(self._delay,
                                                    real_call, args, kwargs)
-        # Monkey!
-        wrapper.stop = self.stop
         return wrapper
 
         
