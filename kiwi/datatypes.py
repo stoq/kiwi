@@ -48,15 +48,22 @@ class ConverterRegistry:
         c = converter_type()
         self._converters[c.type] = c
 
-    def get_supported_types(self):
-        return self._converters.values()
+    def check_supported(self, data_type):
+        value = None
+        for t in self._converters.values():
+            if t.type == data_type or t.type.__name__ == data_type:
+                value = t.type
+                break
 
-    def get_supported_type_names(self):
-        return [t.type.__name__ for t in self._converters.values()]
+        assert not isinstance(value, str), value
+        
+        if not value:
+            type_names = [t.type.__name__ for t in self._converters.values()]
+            raise TypeError("%s is not supported. Supported types are: %s"
+                            % (data_type, ', '.join(type_names)))
 
-    def get_list(self):
-        return self._converters.values()
-
+        return value
+    
     def as_string(self, converter_type, data, *args, **kwargs):
         c = self._converters[converter_type]
         if c.as_string is None:

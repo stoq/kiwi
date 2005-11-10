@@ -90,24 +90,11 @@ class WidgetMixin(Mixin):
         type object, so None, "<type 'str'>" or 'str'
         """
 
-        if data_type is None:
-            self._data_type = None
-            return
-
-        value = None
-        for t in converter.get_list():
-            if t.type == data_type or t.type.__name__ == data_type:
-                value = t.type
-                break
-
-        assert not isinstance(value, str), value
+        if data_type is not None:
+            # This may convert from string to type
+            data_type = converter.check_supported(data_type)
         
-        if not value:
-            type_names = converter.get_supported_types_names()
-            raise TypeError("%s is not supported. Supported types are: %s"
-                            % (data_type, ', '.join(type_names)))
-
-        self._data_type = value
+        self._data_type = data_type
 
     def prop_get_model_attribute(self):
         return self._model_attribute
