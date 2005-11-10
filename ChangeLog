@@ -1,3 +1,16 @@
+2005-11-10  Johan Dahlin  <jdahlin@async.com.br>
+
+	reviewed by: <delete if not using a buddy>
+
+	* examples/PersonalInformation/personalinformation.glade:
+	* examples/PersonalInformation/personalinformation.py:
+	* examples/completion.py:
+	* examples/kiwilist.py:
+	* kiwi/proxies.py:
+	* kiwi/ui/widgets/combobox.py:
+	* kiwi/ui/widgets/proxy.py:
+	* kiwi/ui/widgets/spinbutton.py:
+
 2005-11-09  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/gadgets.py:

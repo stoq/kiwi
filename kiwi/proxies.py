@@ -93,7 +93,9 @@ class Proxy:
             # The initial value of the model is set, at this point
             # do a read, it'll trigger a validation for widgets who
             # supports it.
-            widget.read()
+            data = widget.read()
+            if data is not ValueUnset:
+                widget.validate_data(data, force=True)
 
     def _setup_widgets(self, widgets):
         """
@@ -152,6 +154,8 @@ class Proxy:
         # only update the model if the data is correct
         if value is ValueUnset:
             return
+
+        value = widget.validate_data(value)
         
         # XXX: one day we might want to queue and unique updates?
         self._block_proxy_in_model(True)

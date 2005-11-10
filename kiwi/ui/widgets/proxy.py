@@ -235,8 +235,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
                 #         before_validate callback which is called before
                 #         user functions.
                 #         For example, check if the value is in the combo
-                if self.before_validate:
-                    self.before_validate(data)
+                self.before_validate(data)
 
                 # Step 2: The widgets themselves have now valid the data
                 #         Next step is to call the application specificed
@@ -253,7 +252,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
                 data = ValueUnset
             else:
                 self.set_valid()
-
+                
         # Step 3, if validation changed, emit a signal
         #         unless force is used, then we're always emitting
         new_state = self.is_valid()

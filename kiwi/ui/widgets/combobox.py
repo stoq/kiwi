@@ -375,14 +375,13 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
         ComboProxyMixin.set_mode(self, mode)
         
     def read(self):
-        if self.mode == COMBO_MODE_STRING:
-            value = self.get_selected_label()
-        elif self.mode == COMBO_MODE_DATA:
-            value = self.get_selected_data()
+        mode = self.mode
+        if mode == COMBO_MODE_STRING:
+            return self.get_selected_label()
+        elif mode == COMBO_MODE_DATA:
+            return self.get_selected_data()
         else:
             return ValueUnset
-
-        return self.validate_data(value)
 
     def before_validate(self, data):
         """ComboBoxEntry has a validate default handler that check if the
