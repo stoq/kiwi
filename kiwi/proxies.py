@@ -32,7 +32,7 @@ import sys
 
 from kiwi import _warn, ValueUnset
 from kiwi.accessors import kgetattr, ksetattr, clear_attr_cache
-from kiwi.interfaces import Mixin
+from kiwi.interfaces import Mixin, MixinSupportValidation
 
 def block_widget(widget):
     """Blocks the signal handler of the 'content-changed' signal on widget"""
@@ -93,6 +93,9 @@ class Proxy:
             # The initial value of the model is set, at this point
             # do a read, it'll trigger a validation for widgets who
             # supports it.
+            if not isinstance(widget, MixinSupportValidation):
+                continue
+            
             data = widget.read()
             if data is not ValueUnset:
                 widget.validate_data(data, force=True)
@@ -155,7 +158,8 @@ class Proxy:
         if value is ValueUnset:
             return
 
-        value = widget.validate_data(value)
+        if isinstance(widget, MixinSupportValidation):
+            value = widget.validate_data(value)
         
         # XXX: one day we might want to queue and unique updates?
         self._block_proxy_in_model(True)
