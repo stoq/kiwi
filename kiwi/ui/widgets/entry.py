@@ -246,13 +246,11 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
     def read(self):
         mode = self._entry_mode
         if mode == ENTRY_MODE_TEXT:
-            value = self.get_text()
+            return self.get_text()
         elif mode == ENTRY_MODE_DATA:
-            value = self._current_object
+            return self._current_object
         else:
             raise AssertionError
-
-        return self.validate_data(value)
     
     def update(self, data):
         if data is ValueUnset or data is None:
