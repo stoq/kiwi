@@ -27,6 +27,7 @@
 """Defines an enhanced version of GtkTreeView"""
 
 import datetime
+import gettext
 
 import gobject
 import gtk
@@ -38,8 +39,7 @@ from kiwi.decorators import deprecated
 from kiwi.python import slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 
-# Minimum number of rows where we show busy cursor when sorting numeric columns
-MANY_ROWS = 1000
+_ = gettext.gettext
 
 str2type = datatypes.converter.str_to_type
 
@@ -1041,6 +1041,20 @@ class List(gtk.ScrolledWindow):
                 return column
 
         raise LookupError("There is no column called %s" % name)
+
+    def get_treeview_column(self, column):
+        """
+        @param column: a @Column
+        """
+        if not isinstance(column, Column):
+            raise TypeError
+        
+        if not column in self._columns:
+            raise ValueError
+        
+        index = self._columns.index(column)
+        tree_columns = self._treeview.get_columns()
+        return tree_columns[index]
     
     def set_columns(self, value):
         """This function can be called in two different ways:
@@ -1299,40 +1313,131 @@ class List(gtk.ScrolledWindow):
 
 type_register(List)
 
-if __name__ == '__main__':
-    win = gtk.Window()
-    win.set_default_size(300, 150)
-    win.connect('destroy', gtk.main_quit)
-
-    class Person:
-        """The parameters need to be of the same name of the column headers"""
-        def __init__(self, name, age, city, single):
-            (self.name,
-             self.age,
-             self.city,
-             self.single) = name, age, city, single
-
-    columns = (
-        Column('name', sorted=True, tooltip='What about a stupid tooltip?'),
-        Column('age'),
-        Column('city', visible=True),
-        Column('single', title='Single?')
-        )
+class ListLabel(gtk.HBox):
+    """I am a subclass of a GtkHBox which you can use if you want
+    to vertically align a label with a column
+    @param klist:        list to follow
+    @type klist:         kiwi.ui.widget.list.List
+    @param column:       name of a column in a klist
+    @type column:        string
+    @param label:        label
+    @type label:         string
+    @param value_format: format string used to format value
+    @type value_format:  string
+    """
     
-    data = (Person('Evandro', 23, 'Belo Horizonte', False),
-            Person('Daniel', 22, 'Sao Carlos', False),
-            Person('Henrique', 21, 'Sao Carlos', True),
-            Person('Gustavo', 23, 'San Jose do Santos', True),
-            Person('Johan', 23, 'Goteborg', True), 
-            Person('Lorenzo', 26, 'Granada', True)
-        )
-
-    l = List(columns, data)
-    
-    # add an extra person
-    l.append(Person('Nando', 29, 'Santos', False))
+    def __init__(self, klist, column, label='', value_format='%s'):
+        self._label = label
+        self._label_width = -1
+        if not isinstance(klist, List):
+            raise TypeError("list must be a kiwi list and not %r" %
+                            type(klist).__name__)
+        self._klist = klist
+        if not isinstance(column, str):
+            raise TypeError("column must be a string and not %r" %
+                            type(column).__name__)
+        self._column = klist.get_column_by_name(column)
+        self._value_format = value_format
         
-    win.add(l)
-    win.show_all()
+        gtk.HBox.__init__(self)
+
+        self._create_ui()
+
+    # Public API
     
-    gtk.main()
+    def set_text(self, text):
+        """Sets the text of the value widget
+        Note that I will take value_format, set to my constructor
+        into account. I also supports using GMarkup syntax"""
+        self._value_widget.set_markup(self._value_format % text)
+
+    def get_value_widget(self):
+        return self._value_widget
+
+    def get_label_widget(self):
+        return self._label_widget
+    
+    # Private
+    
+    def _create_ui(self):
+
+        # When tracking the position/size of a column, we need to pay
+        # attention to the following two things:
+        # * treeview_column::width
+        # * size-allocate of treeview_columns header widget
+        #
+        tree_column = self._klist.get_treeview_column(self._column)
+        tree_column.connect('notify::width',
+                            self._on_treeview_column__notify_width)
+        header = tree_column.get_widget()
+        # XXX: Hacketihack
+        button = header.get_parent().get_parent().get_parent()
+        button.connect('size-allocate',
+                       self._on_treeview_column_header__size_allocate)
+        self._label_widget = gtk.Label()
+        self._label_widget.set_markup(self._label)
+        
+        layout = self._label_widget.get_layout()
+        self._label_width = layout.get_pixel_size()[0]
+        self._label_widget.set_alignment(1.0, 0.5)
+        self.pack_start(self._label_widget, False, False, padding=6)
+
+        self._value_widget = gtk.Label()
+        xalign = tree_column.get_property('alignment')
+        self._value_widget.set_alignment(xalign, 0.5)
+        self.pack_start(self._value_widget, False, False)
+
+    def _resize(self, position=-1, width=-1):
+        if position != -1:
+            if position != 0:
+                if self._label_width > position:
+                    self._label_widget.set_text('')
+                else:
+                    self._label_widget.set_markup(self._label)
+
+            if position >= 12:
+                self._label_widget.set_size_request(position - 12, -1)
+                
+        if width != -1:
+            self._value_widget.set_size_request(width, -1)
+
+    # Callbacks
+    
+    def _on_treeview_column_header__size_allocate(self, label, rect):
+        self._resize(position=rect[0])
+             
+    def _on_treeview_column__notify_width(self, treeview, pspec):
+        value = treeview.get_property(pspec.name)
+        self._resize(width=value)
+
+    def _on_list__size_allocate(self, list, rect):
+        self._resize(position=rect[0], width=rect[2])
+            
+        
+class SummaryLabel(ListLabel):
+    """I am a subclass of ListLabel which you can use if you want
+    to summarize all the values of a specific column.
+    Please note that I only know how to handle int and float column
+    data types and I will complain if you give me something else."""
+    
+    def __init__(self, klist, column, label=_('Total:'), value_format='%s'):
+        ListLabel.__init__(self, klist, column, label, value_format)
+        if not issubclass(self._column.data_type, (int, float)):
+            raise TypeError("data_type of column must be int or float, not %r",
+                            self._column.data_type)
+        klist.connect('cell-edited', self._on_klist__cell_edited)
+        self.update_total()
+
+    # Public API
+    
+    def update_total(self):
+        """Recalculate the total value of all columns"""
+        attr = self._column.attribute
+        value = sum([getattr(obj, attr) for obj in self._klist], 0.0)
+        self.set_text(str(value))
+
+    # Callbacks
+    
+    def _on_klist__cell_edited(self, klist, attribute, value):
+        self.update_total()
+

@@ -1,5 +1,12 @@
 2005-11-11  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/list.py (ListLabel):
+	Add a new label, (actually an hbox), which can be put under or on
+	top of a KiwiList to have a label vertically aligned with
+	a column.
+	(SummaryLabel): Subclass of ListLabel which summarizes the
+	values of a column.
+	
 	* kiwi/ui/widgets/checkbutton.py (CheckButton.prop_set_data_type): 
 	Accept string here.
 
