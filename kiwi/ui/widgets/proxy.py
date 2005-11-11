@@ -253,33 +253,26 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
             else:
                 self.set_valid()
                 
-        # Step 3, if validation changed, emit a signal
-        #         unless force is used, then we're always emitting
-        new_state = self.is_valid()
-        if old_state != new_state or force:
-            self.emit('validation-changed', new_state)
-
         return data
-    
+
     def set_valid(self):
         """Changes the validation state to valid, which will remove icons and
         reset the background color"""
+
+        self._set_valid_state(True)
         
         self._fade.stop()
         self.set_pixbuf(None)
-        self._valid = True
 
     def set_invalid(self, text=None, fade=True):
         """Changes the validation state to invalid.
         @param text: text of tooltip of None
         @param fade: if we should fade the background"""
         
-        self._valid = False
+        self._set_valid_state(False)
 
         if not fade:
             return
-        
-        self._fade.start()
         
         # When the fading animation is finished, set the error icon
         # We don't need to check if the state is valid, since stop()
@@ -296,6 +289,8 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         c = SignalContainer()
         c.signal_id = self._fade.connect('done', done, c)
         
+        self._fade.start()
+        
     def set_blank(self):
         """Changes the validation state to blank state, this only applies
         for mandatory widgets, draw an icon and set a tooltip"""
@@ -307,8 +302,20 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
             valid = False
         else:
             valid = True
-        self._valid = valid
+            
+        self._set_valid_state(valid)
 
+    # Private
+    
+    def _set_valid_state(self, state):
+        """Updates the validation state and emits a signal iff it changed"""
+        
+        if self._valid == state:
+            return
+        
+        self.emit('validation-changed', state)
+        self._valid = state
+            
     def _draw_stock_icon(self, stock_id):
         icon = self.render_icon(stock_id, gtk.ICON_SIZE_MENU)
         self.set_pixbuf(icon)

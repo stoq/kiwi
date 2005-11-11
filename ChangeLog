@@ -1,3 +1,10 @@
+2005-11-11  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/proxy.py (WidgetMixinSupportValidation): Refactor
+	emitting of validation-changed since we also need to emit it when
+	calling set_[valid|invalid|blank] and not only in validate_data.
+	Fixes validation of mandatory entry with completion enabled.
+
 2005-11-10  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/proxies.py:
