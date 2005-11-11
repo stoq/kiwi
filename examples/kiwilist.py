@@ -1,9 +1,11 @@
 from datetime import date, datetime, time
 import random
 
+import gobject
 import gtk
 
-from kiwi.ui.widgets.list import Column, List, SequentialColumn
+from kiwi.ui.widgets.list import (Column, List, SequentialColumn,
+                                  ColoredColumn, SummaryLabel)
 
 def random_date():
     max = datetime.today()
@@ -14,13 +16,14 @@ def random_date():
     
 class Person:
     """The parameters need to be of the same name of the column headers"""
-    def __init__(self, name, age, city, present):
+    def __init__(self, name, age, city):
         (self.name, self.age,
-         self.city, self.present) = name, age, city, present
+         self.city) = name, age, city
         self.date = self.datetime = self.time = random_date()
-
+        self.extra = -1
+        
     def __repr__(self):
-        return '<Person %s>' % self.name
+        return '<Person %s>' % self._name
 
 class MyColumn(Column):
     pass
@@ -30,36 +33,50 @@ def format_func(age):
         return float(age)
     return age
 
+def color(data):
+    return data % 2 == 0
+
 columns = [
     SequentialColumn(),
     MyColumn('name', tooltip='What about a stupid tooltip?', editable=True),
-    Column('age', format_func=format_func, editable=True),
+    Column('age', format_func=format_func, editable=True, width=40),
     Column('city', visible=True, sorted=True),
     Column('date', data_type=date),
     Column('time', data_type=time),
     Column('datetime', data_type=datetime),
+    ColoredColumn('age', data_type=int, color='red', data_func=color),
     ]
 
-data = (Person('Evandro', 23, 'Belo Horizonte', True),
-        Person('Daniel', 22, 'Sao Carlos', False),
-        Person('Henrique', 21, 'Sao Carlos', True),
-        Person('Gustavo', 23, 'San Jose do Santos', False),
-        Person('Johan', 23, 'Goteborg', True), 
-        Person('Lorenzo', 26, 'Granada', False)
+data = (Person('Evandro', 23, 'Belo Horizonte'),
+        Person('Daniel', 22, 'Sao Carlos'),
+        Person('Henrique', 21, 'Sao Carlos'),
+        Person('Gustavo', 23, 'San Jose do Santos'),
+        Person('Johan', 23, 'Goteborg'), 
+        Person('Lorenzo', 26, 'Granada')
        )
 
 win = gtk.Window()
-win.set_default_size(500, 150)
+win.set_size_request(650, 300)
 win.connect('destroy', gtk.main_quit)
+
+vbox = gtk.VBox()
+win.add(vbox)
 
 l = List(columns)
 l.extend(data)
-l.append(Person('Nando', 29+len(l), 'Santos', True))
+l.append(Person('Nando', 29+len(l), 'Santos'))
+
 
 # add an extra person
 
-win.add(l)
+vbox.pack_start(l)
+
+label = SummaryLabel(klist=l, column='age', label='<b>Total:</b>',
+                     value_format='<b>%s</b>')
+vbox.pack_start(label, expand=False, padding=6)
+
 win.show_all()
 
+gobject.timeout_add(2500, l.refresh)
 gtk.main()
 
