@@ -1381,11 +1381,13 @@ class ListLabel(gtk.HBox):
         self._label_width = layout.get_pixel_size()[0]
         self._label_widget.set_alignment(1.0, 0.5)
         self.pack_start(self._label_widget, False, False, padding=6)
+        self._label_widget.show()
 
         self._value_widget = gtk.Label()
         xalign = tree_column.get_property('alignment')
         self._value_widget.set_alignment(xalign, 0.5)
         self.pack_start(self._value_widget, False, False)
+        self._value_widget.show()
 
     def _resize(self, position=-1, width=-1):
         if position != -1:
@@ -1433,8 +1435,9 @@ class SummaryLabel(ListLabel):
     def update_total(self):
         """Recalculate the total value of all columns"""
         attr = self._column.attribute
-        value = sum([getattr(obj, attr) for obj in self._klist], 0.0)
+        value = sum([kgetattr(obj, attr) for obj in self._klist], 0.0)
         self.set_text(str(value))
+        self.show()
 
     # Callbacks
     
