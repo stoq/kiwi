@@ -115,6 +115,9 @@ class IntConverter:
         # Remove all thousand separators, so int() won't barf at us
         if thousands_sep and thousands_sep in value:
             value = value.replace(thousands_sep, '')
+        decimal_point = conv["decimal_point"]
+        if decimal_point and decimal_point in value:
+            value = value.replace(decimal_point, '')
 
         try:
             return int(value)
