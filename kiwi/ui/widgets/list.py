@@ -1349,7 +1349,10 @@ class ListLabel(gtk.HBox):
         """Sets the text of the value widget
         Note that I will take value_format, set to my constructor
         into account. I also supports using GMarkup syntax"""
-        self._value_widget.set_markup(self._value_format % text)
+        data_type = self._column.data_type
+        value = datatypes.converter.from_string(data_type, text)
+        formated_value = datatypes.lformat(self._value_format, value)
+        self._value_widget.set_markup(formated_value)
 
     def get_value_widget(self):
         return self._value_widget
