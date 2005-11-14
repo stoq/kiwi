@@ -1,0 +1,59 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-11-14 10:07-0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../kiwi/ui/gazpacholoader.py:150 ../kiwi/ui/gazpacholoader.py:155
+#: ../kiwi/ui/gazpacholoader.py:163 ../kiwi/ui/gazpacholoader.py:172
+#: ../kiwi/ui/gazpacholoader.py:180
+msgid "Integer"
+msgstr ""
+
+#: ../kiwi/ui/gazpacholoader.py:151 ../kiwi/ui/gazpacholoader.py:156
+#: ../kiwi/ui/gazpacholoader.py:164 ../kiwi/ui/gazpacholoader.py:173
+#: ../kiwi/ui/gazpacholoader.py:181
+msgid "Float"
+msgstr ""
+
+#: ../kiwi/ui/gazpacholoader.py:157 ../kiwi/ui/gazpacholoader.py:165
+msgid "Date"
+msgstr ""
+
+#: ../kiwi/ui/gazpacholoader.py:158 ../kiwi/ui/gazpacholoader.py:166
+#: ../kiwi/ui/gazpacholoader.py:171 ../kiwi/ui/gazpacholoader.py:179
+msgid "String"
+msgstr ""
+
+#: ../kiwi/ui/gazpacholoader.py:159 ../kiwi/ui/gazpacholoader.py:174
+msgid "Object"
+msgstr ""
+
+#: ../kiwi/ui/gazpacholoader.py:170 ../kiwi/ui/gazpacholoader.py:178
+msgid "Boolean"
+msgstr ""
+
+#: ../kiwi/ui/widgets/list.py:1425
+msgid "Total:"
+msgstr ""
+
+#: ../kiwi/ui/widgets/entry.py:183
+#, python-format
+msgid "'%s' is not a valid object"
+msgstr ""
+
+#: ../kiwi/ui/widgets/proxy.py:300
+msgid "This field is mandatory"
+msgstr ""
