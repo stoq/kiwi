@@ -389,8 +389,10 @@ class List(gtk.ScrolledWindow):
 
         if not isinstance(mode, gtk.SelectionMode):
             raise TypeError("mode must be an gtk.SelectionMode enum")
-        elif mode == gtk.SELECTION_EXTENDED:
-            raise TypeError("gtk.SELECTION_EXTENDED is deprecated")
+        # gtk.SELECTION_EXTENDED & gtk.SELECTION_MULTIPLE are both 3.
+        # so we can't do this check.
+        #elif mode == gtk.SELECTION_EXTENDED:
+        #    raise TypeError("gtk.SELECTION_EXTENDED is deprecated")
         
         gtk.ScrolledWindow.__init__(self)
         # we always want a vertical scrollbar. Otherwise the button on top
