@@ -1,3 +1,12 @@
+2005-11-14  Gustavo Sverzut Barbieri <barbieri@gmail.com>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/gazpacholoader.py:
+	Do not use get_name for getting the name of objects, since it's only
+	present for GtkWidgets, instead use get_data('gazpacho::object-id'),
+	which is set on all objects. Fixes #2231.
+
 2005-11-14  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/list.py (SummaryLabel.update_total): Remove
