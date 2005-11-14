@@ -1436,7 +1436,7 @@ class SummaryLabel(ListLabel):
         """Recalculate the total value of all columns"""
         attr = self._column.attribute
         value = sum([kgetattr(obj, attr) for obj in self._klist], 0.0)
-        self.set_text(str(value))
+        self.set_text(value)
 
     # Callbacks
     
