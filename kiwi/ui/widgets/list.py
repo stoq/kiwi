@@ -1437,7 +1437,6 @@ class SummaryLabel(ListLabel):
         attr = self._column.attribute
         value = sum([kgetattr(obj, attr) for obj in self._klist], 0.0)
         self.set_text(str(value))
-        self.show()
 
     # Callbacks
     

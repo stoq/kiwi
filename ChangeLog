@@ -1,3 +1,8 @@
+2005-11-14  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/list.py (SummaryLabel.update_total): Remove
+	erroneousness show.
+
 2005-11-11  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/list.py (ListLabel):
