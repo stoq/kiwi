@@ -1345,11 +1345,13 @@ class ListLabel(gtk.HBox):
 
     # Public API
     
-    def set_value(self, text):
-        """Sets the text of the value widget
-        Note that I will take value_format, set to my constructor
-        into account. I also supports using GMarkup syntax"""
-        self._value_widget.set_markup(self._value_format % text)
+    def set_value(self, value):
+        """Sets the value of the label.
+        Note that it needs to be of the same type as you specified in
+        value_format in the constructor.
+        I also support the GMarkup syntax, so you can use "<b>%d</b>" if
+        you want."""
+        self._value_widget.set_markup(self._value_format % value)
 
     def get_value_widget(self):
         return self._value_widget
@@ -1369,11 +1371,11 @@ class ListLabel(gtk.HBox):
         tree_column = self._klist.get_treeview_column(self._column)
         tree_column.connect('notify::width',
                             self._on_treeview_column__notify_width)
-        header = tree_column.get_widget()
-        # XXX: Hacketihack
-        button = header.get_parent().get_parent().get_parent()
+        
+        button = self.klist._get_column_button(tree_column)
         button.connect('size-allocate',
-                       self._on_treeview_column_header__size_allocate)
+                       self._on_treeview_column_button__size_allocate)
+        
         self._label_widget = gtk.Label()
         self._label_widget.set_markup(self._label)
         
@@ -1397,6 +1399,7 @@ class ListLabel(gtk.HBox):
                 else:
                     self._label_widget.set_markup(self._label)
 
+            # XXX: Replace 12 with a constant
             if position >= 12:
                 self._label_widget.set_size_request(position - 12, -1)
                 
@@ -1405,7 +1408,7 @@ class ListLabel(gtk.HBox):
 
     # Callbacks
     
-    def _on_treeview_column_header__size_allocate(self, label, rect):
+    def _on_treeview_column_button__size_allocate(self, label, rect):
         self._resize(position=rect[0])
              
     def _on_treeview_column__notify_width(self, treeview, pspec):
