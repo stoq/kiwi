@@ -2,6 +2,7 @@
 
 	* kiwi/ui/widgets/list.py (SummaryLabel.update_total): Remove
 	erroneousness show.
+	(ListLabel.set_value): Rename from set_text
 
 2005-11-11  Johan Dahlin  <jdahlin@async.com.br>
 

@@ -1345,7 +1345,7 @@ class ListLabel(gtk.HBox):
 
     # Public API
     
-    def set_text(self, text):
+    def set_value(self, text):
         """Sets the text of the value widget
         Note that I will take value_format, set to my constructor
         into account. I also supports using GMarkup syntax"""
@@ -1436,7 +1436,7 @@ class SummaryLabel(ListLabel):
         """Recalculate the total value of all columns"""
         attr = self._column.attribute
         value = sum([kgetattr(obj, attr) for obj in self._klist], 0.0)
-        self.set_text(value)
+        self.set_value(value)
 
     # Callbacks
     
