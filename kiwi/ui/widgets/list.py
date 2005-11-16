@@ -71,6 +71,7 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('editable', bool, default=False)
     gproperty('searchable', bool, default=False)
     gproperty('radio', bool, default=False)
+    gproperty('cache', bool, default=False)
     
     # This can be set in subclasses, to be able to allow custom
     # cell_data_functions, used by SequentialColumn
@@ -130,6 +131,8 @@ class Column(PropertyObject, gobject.GObject):
             currently supported.
         @keyword radio: If true render the column as a radio instead of toggle.
             Only applicable for columns with boolean data types.
+        @keyword cache: If true, the value will only be fetched once,
+            and the same value will be reused for futher access.
         @keyword title_pixmap: (TODO) if set to a filename a pixmap will be
             used *instead* of the title set. The title string will still be
             used to identify the column in the column selection and in a
@@ -402,6 +405,7 @@ class List(gtk.ScrolledWindow):
 
         # Mapping of instance id -> treeiter
         self._iters = {}
+        self._cell_data_caches = {}
         self._columns_configured = False
         self._autosize = True
 
@@ -700,6 +704,9 @@ class List(gtk.ScrolledWindow):
         cell_data_func = self._cell_data_func
         if column.cell_data_func:
             cell_data_func = column.cell_data_func
+        elif column.cache:
+            self._cell_data_caches[column.attribute] = {}
+            
         treeview_column.pack_start(renderer)
         treeview_column.set_cell_data_func(renderer, cell_data_func,
                                            (column, renderer_prop))
@@ -849,8 +856,21 @@ class List(gtk.ScrolledWindow):
         
     def _cell_data_func(self, tree_column, renderer, model, iter,
                         (column, renderer_prop)):
-        data = column.get_attribute(model[iter][COL_MODEL],
-                                    column.attribute, None)
+
+        row = model[iter]
+        if column.cache:
+            cache = self._cell_data_caches[column.attribute]
+            path = row.path[0]
+            if path in cache:
+                data = cache[path]
+            else:
+                data = column.get_attribute(row[COL_MODEL],
+                                            column.attribute, None)
+                cache[path] = data
+        else:
+            data = column.get_attribute(row[COL_MODEL],
+                                        column.attribute, None)
+            
         if column.format:
             text = datatypes.lformat(column.format, data)
         elif column.format_func:
@@ -1073,7 +1093,7 @@ class List(gtk.ScrolledWindow):
         
         if isinstance(value, basestring):
             self._columns_string = value
-            self._columns = []            
+            self._columns = []
             for col in value.split('^'):
                 if not col:
                     continue
@@ -1129,6 +1149,13 @@ class List(gtk.ScrolledWindow):
         treeiter = self._iters.pop(objid)
         if treeiter:
             self._model.remove(treeiter)
+            path = self._model[treeiter].path[0]
+            
+            # Remove any references to this path
+            for cache in self._cell_data_caches.values():
+                if path in cache:
+                    del cache[path]
+                
             return True
             
         return False
@@ -1242,8 +1269,7 @@ class List(gtk.ScrolledWindow):
 
         if clear:
             self.unselect_all()
-            self._model.clear()
-            self._iters = {}
+            self.clear()
             
         ret = self._load(list, progress_handler)
             
@@ -1252,11 +1278,14 @@ class List(gtk.ScrolledWindow):
 
     def clear(self):
         """Removes all the instances of the list"""
-        self._treeview.freeze_notify()
         self._model.clear()
         self._iters = {}
-        self._treeview.thaw_notify()
-
+        
+        # Don't clear the whole cache, just the
+        # individual column caches
+        for key in self._cell_data_caches:
+            self._cell_data_caches[key] = {}
+        
     def get_next(self, instance):
         """
         Returns the item after instance in the list.

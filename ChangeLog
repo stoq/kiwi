@@ -1,3 +1,13 @@
+2005-11-16  Johan Dahlin  <jdahlin@async.com.br>
+
+	reviewed by: <delete if not using a buddy>
+
+	* examples/PersonalInformation/personalinformation.glade:
+	* examples/PersonalInformation/personalinformation.py:
+	* examples/completion.py:
+	* examples/kiwilist.py:
+	* kiwi/ui/widgets/list.py:
+
 2005-11-15  Johan Dahlin  <johan@gnome.org>
 
 	* kiwi/ui/widgets/list.py (List._load): Catch StopIteration, in case
