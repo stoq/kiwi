@@ -154,13 +154,13 @@ class Proxy:
 
         value = widget.read()
         
+        if isinstance(widget, MixinSupportValidation):
+            value = widget.validate_data(value)
+        
         # only update the model if the data is correct
         if value is ValueUnset:
             return
 
-        if isinstance(widget, MixinSupportValidation):
-            value = widget.validate_data(value)
-        
         # XXX: one day we might want to queue and unique updates?
         self._block_proxy_in_model(True)
         try:
