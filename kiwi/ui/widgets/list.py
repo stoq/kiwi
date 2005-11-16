@@ -1379,7 +1379,7 @@ class ListLabel(gtk.HBox):
         tree_column.connect('notify::width',
                             self._on_treeview_column__notify_width)
         
-        button = self.klist._get_column_button(tree_column)
+        button = self._klist._get_column_button(tree_column)
         button.connect('size-allocate',
                        self._on_treeview_column_button__size_allocate)
         
