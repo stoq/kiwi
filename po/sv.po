@@ -1,0 +1,59 @@
+# Swedish translation for Kiwi
+# Copyright (C) 2005 Johan Dahlin
+# This file is distributed under the same license as the kiwi package.
+# Johan Dahlin <jdahlin@async.com.br>, 2005
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: kiwi 1.9.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-11-14 10:07-0200\n"
+"PO-Revision-Date: 2005-11-14 10:07-0200\n"
+"Last-Translator: Johan Dahlin <jdahlin@async.com.br>\n"
+"Language-Team: Swedish <sv@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../kiwi/ui/gazpacholoader.py:150 ../kiwi/ui/gazpacholoader.py:155
+#: ../kiwi/ui/gazpacholoader.py:163 ../kiwi/ui/gazpacholoader.py:172
+#: ../kiwi/ui/gazpacholoader.py:180
+msgid "Integer"
+msgstr "Heltal"
+
+#: ../kiwi/ui/gazpacholoader.py:151 ../kiwi/ui/gazpacholoader.py:156
+#: ../kiwi/ui/gazpacholoader.py:164 ../kiwi/ui/gazpacholoader.py:173
+#: ../kiwi/ui/gazpacholoader.py:181
+msgid "Float"
+msgstr "Flyttal"
+
+#: ../kiwi/ui/gazpacholoader.py:157 ../kiwi/ui/gazpacholoader.py:165
+msgid "Date"
+msgstr "Datum"
+
+#: ../kiwi/ui/gazpacholoader.py:158 ../kiwi/ui/gazpacholoader.py:166
+#: ../kiwi/ui/gazpacholoader.py:171 ../kiwi/ui/gazpacholoader.py:179
+msgid "String"
+msgstr "Sträng"
+
+#: ../kiwi/ui/gazpacholoader.py:159 ../kiwi/ui/gazpacholoader.py:174
+msgid "Object"
+msgstr "Objekt"
+
+#: ../kiwi/ui/gazpacholoader.py:170 ../kiwi/ui/gazpacholoader.py:178
+msgid "Boolean"
+msgstr "Boolean"
+
+#: ../kiwi/ui/widgets/list.py:1425
+msgid "Total:"
+msgstr "Total:"
+
+#: ../kiwi/ui/widgets/entry.py:183
+#, python-format
+msgid "'%s' is not a valid object"
+msgstr "'%s' är inte ett giltligt objekt"
+
+#: ../kiwi/ui/widgets/proxy.py:300
+msgid "This field is mandatory"
+msgstr "Detta fältet är obligatoriskt"
