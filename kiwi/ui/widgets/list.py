@@ -587,7 +587,12 @@ class List(gtk.ScrolledWindow):
             return
 
         instances = iter(instances)
-        first = instances.next()
+        try:
+            first = instances.next()
+        except StopIteration:
+            # Empty list, just give up
+            return
+        
         if not self._has_enough_type_information():
             self._guess_types(first)
             self._setup_columns()
