@@ -50,7 +50,8 @@ class CheckButton(gtk.CheckButton, WidgetMixin):
         if (data_type != bool or
             data_type != 'bool' or
             data_type is not None):
-            raise TypeError("CheckButtons only accept boolean values")
+            raise TypeError("CheckButtons only accept boolean values and not %r" %
+                            data_type)
 
         WidgetMixin.prop_set_data_type(self, data_type)
 
