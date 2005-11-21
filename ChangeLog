@@ -1,5 +1,13 @@
 2005-11-21  Johan Dahlin  <jdahlin@async.com.br>
 
+	* examples/tasklet/simple.py:
+	* examples/tasklet/test-tasklet.py:
+	* examples/tasklet/test-tasklet2.py:
+	* kiwi/tasklet.py:
+	Add gtasklet from Gustavo Carneiro.
+
+2005-11-21  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/controllers.py:
 	* kiwi/datatypes.py:
 	* kiwi/decorators.py:
