@@ -45,6 +45,7 @@ class deprecated(object):
             _warn("%s is deprecated, use %s instead" % (func.__name__,
                                                         self._new))
             return func(*args, **kwargs)
+        wrapper.__name__ = func.__name__
         return wrapper
 
 class delayed(object):
@@ -74,6 +75,7 @@ class delayed(object):
         
             self._timeout_id = gobject.timeout_add(self._delay,
                                                    real_call, args, kwargs)
+        wrapper.__name__ = func.__name__
         return wrapper
 
         
