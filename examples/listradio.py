@@ -21,7 +21,7 @@ for name, value in [('First', False),
                     ('Third', True),
                     ('Fourth', False),
                     ('Fifth', False)]:
-    list.add_instance(Object(name, value))
+    list.append(Object(name, value))
 win.show_all()
 
 gtk.main()
