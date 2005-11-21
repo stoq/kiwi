@@ -26,6 +26,8 @@ class TestComboBox(unittest.TestCase):
         self.assertEqual(tuple(model[0]), ('foo', 42))
         self.assertEqual(tuple(model[1]), ('bar', 138))
         self.combo.prefill([])
+        self.assertEqual(len(self.combo.get_model()), 0)
+        self.assertEqual(len(model), 0)
         self.assertEqual(len(self.combo), 0)
 
     def testSelectItemByPosition(self):
