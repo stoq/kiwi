@@ -43,6 +43,20 @@ def list_properties(gtype, parent=True):
     return [pspec for pspec in pspecs
                       if pspec not in parent_pspecs]
 
+def type_register(gtype):
+    """Register the type, but only if it's not already registered
+    @param gtype: the class to register
+    """
+
+    # copied from gobjectmodule.c:_wrap_type_register
+    if (getattr(gtype, '__gtype__', None) !=
+        getattr(gtype.__base__, '__gtype__', None)):
+        return False
+
+    gobject.type_register(gtype)
+
+    return True
+
 class PropertyObject(ClassInittableObject):
     """
     I am an object which maps GObject properties to attributes
@@ -90,6 +104,7 @@ class PropertyObject(ClassInittableObject):
         # can access them. Using set property for attribute assignments
         # allows us to add hooks (notify::attribute) when they change.
         default_values = {}
+
         for pspec in list_properties(cls, parent=False):
             prop_name = pspec.name.replace('-', '_')
 
@@ -252,16 +267,3 @@ def gproperty(name, type, *args, **kwargs):
 
     dict[name] = tuple(args)
 
-def type_register(gtype):
-    """Register the type, but only if it's not already registered
-    @param gtype: the class to register
-    """
-
-    # copied from gobjectmodule.c:_wrap_type_register
-    if (getattr(gtype, '__gtype__', None) !=
-        getattr(gtype.__base__, '__gtype__', None)):
-        return False
-
-    gobject.type_register(gtype)
-
-    return True
