@@ -27,7 +27,6 @@
 The L{Label} is also extended to support some basic markup like
 L{Label.set_bold}"""
 
-import gobject
 import gtk
 
 from kiwi import ValueUnset

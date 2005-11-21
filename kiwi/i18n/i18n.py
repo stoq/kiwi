@@ -23,7 +23,6 @@
 
 from distutils.dep_util import newer
 from distutils.filelist import FileList
-from fnmatch import fnmatch
 from optparse import OptionParser
 import os
 from shutil import copyfile

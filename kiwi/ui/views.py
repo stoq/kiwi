@@ -45,6 +45,7 @@ from kiwi.ui.gadgets import quit_if_last
 WidgetTree = None
 try:
     from gazpacho.loader import loader
+    loader # pyflakes
 except ImportError, e:
     if is_gazpacho_required():
         raise RuntimeError("Gazpacho is required, but could not be found: %s"
@@ -52,6 +53,7 @@ except ImportError, e:
     else:
         try:
             from kiwi.ui.libgladeloader import LibgladeWidgetTree as WidgetTree
+            WidgetTree # pyflakes
         except ImportError:
             raise RuntimeError("Could not find a glade parser library")
 else:

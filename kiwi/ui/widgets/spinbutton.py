@@ -30,7 +30,6 @@ L{SpinButton} is also enhanced to display an icon using
 L{kiwi.ui.icon.IconEntry}
 """
 
-import gobject
 import gtk
 
 from kiwi import ValueUnset

@@ -26,7 +26,6 @@
 
 """GtkRadioButton support for the Kiwi Framework"""
 
-import gobject
 import gtk
 
 from kiwi import ValueUnset

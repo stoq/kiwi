@@ -119,6 +119,7 @@ def make(filename, outfile):
 
     # Parse the catalog
     lno = 0
+    msgid = msgstr = ''
     for l in lines:
         lno += 1
         # If we get a comment line after a msgstr, this is a new entry
