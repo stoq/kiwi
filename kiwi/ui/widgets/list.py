@@ -24,7 +24,7 @@
 #            Johan Dahlin <jdahlin@async.com.br>
 #
 
-"""Defines an enhanced version of GtkTreeView"""
+"""High level wrapper for GtkTreeView"""
 
 import datetime
 import gettext
@@ -1352,17 +1352,19 @@ type_register(List)
 class ListLabel(gtk.HBox):
     """I am a subclass of a GtkHBox which you can use if you want
     to vertically align a label with a column
-    @param klist:        list to follow
-    @type klist:         kiwi.ui.widget.list.List
-    @param column:       name of a column in a klist
-    @type column:        string
-    @param label:        label
-    @type label:         string
-    @param value_format: format string used to format value
-    @type value_format:  string
     """
     
     def __init__(self, klist, column, label='', value_format='%s'):
+        """
+        @param klist:        list to follow
+        @type klist:         kiwi.ui.widget.list.List
+        @param column:       name of a column in a klist
+        @type column:        string
+        @param label:        label
+        @type label:         string
+        @param value_format: format string used to format value
+        @type value_format:  string
+        """
         self._label = label
         self._label_width = -1
         if not isinstance(klist, List):
