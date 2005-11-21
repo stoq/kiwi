@@ -67,7 +67,12 @@
 # internally.
 #
 
-"""Provides a helper class for displaying icons in entries """
+"""Provides a helper classes for displaying icons in widgets.
+
+Currently only a L{kiwi.ui.widgets.entry.Entry} and widgets
+which embed them, L{kiwi.ui.widgets.spinbutton.SpinButton} and
+L{kiwi.ui.widgets.comboboxentry.BaseComboBoxEntry}.
+"""
 
 import gtk
 from gtk import gdk
