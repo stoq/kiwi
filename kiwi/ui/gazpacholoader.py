@@ -232,6 +232,11 @@ for gobj, editor in [(Entry, EntryDataType),
                      (TextView, TextViewDataType)]:
     # Property overrides, used in the editor
     type_name = gobject.type_name(gobj)
+    
+    # This is a hack for epydoc
+    if type_name is None:
+        continue
+    
     data_name = type_name + '::data-type'
     if editor:
         prop_registry.override_simple(data_name, DataTypeProperty,
