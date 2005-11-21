@@ -77,6 +77,5 @@ vbox.pack_start(label, expand=False, padding=6)
 
 win.show_all()
 
-gobject.timeout_add(2500, l.refresh)
 gtk.main()
 
