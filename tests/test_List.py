@@ -58,7 +58,7 @@ class DataTests(unittest.TestCase):
         self.assertEqual(2, len(self.list.get_columns()))
                          
         person = Person('henrique', 21)
-        self.list.add_instance(person)
+        self.list.append(person)
 
         refresh_gui()
 
@@ -83,7 +83,7 @@ class DataTests(unittest.TestCase):
         global persons
 
         for person in persons:
-            self.list.add_instance(person)
+            self.list.append(person)
             refresh_gui()
 
         self.assertEqual(len(self.list), len(persons))
@@ -97,18 +97,18 @@ class DataTests(unittest.TestCase):
         # we are going to remove Kiko
         person = persons[2]
 
-        self.list.remove_instance(person)
+        self.list.remove(person)
 
         self.assertEqual(len(self.list), len(persons) - 1)
 
         # now let's remove something that is not on the list
         #new_person = Person('Evandro', 24)
-        #self.assertRaises(ValueError, self.list.remove_instance, new_person)
+        #self.assertRaises(ValueError, self.list.remove, new_person)
 
         # note that even a new person with the same values as a person
         # in the list is not considered to be in the list
         #existing_person = Person('Gustavo', 25)
-        #self.assertRaises(ValueError, self.list.remove_instance,
+        #self.assertRaises(ValueError, self.list.remove,
         #                  existing_person)
 
     def testClearList(self):
@@ -129,7 +129,7 @@ class DataTests(unittest.TestCase):
         refresh_gui()
 
         persons[0].age = 29
-        self.list.update_instance(persons[0])
+        self.list.update(persons[0])
 
         refresh_gui()
         
@@ -141,7 +141,7 @@ class DataTests(unittest.TestCase):
 
         # let's be evil
         new_person = Person('Nando', 32)
-        self.assertRaises(ValueError, self.list.update_instance, new_person)
+        self.assertRaises(ValueError, self.list.update, new_person)
 
 
     def testContains(self):
