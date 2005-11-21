@@ -27,6 +27,14 @@ def myimport(*args):
             setattr(sys.modules[args[0][:i]], args[0][i+1:], mod)
         return mod
 
+import kiwi
+
+class GObject(object):
+    "I am not a real type, just a helper type for epydoc"
+    
+GObject.__module__ = 'kiwi'
+kiwi.GObject = GObject
+
 class FakeModule(object):
 
     def __init__(self, name, level, *ignore):
@@ -53,7 +61,7 @@ class FakeModule(object):
                 return lambda x: []
 
         if (self.__name__, attr) in skipped_types:
-            return type
+            return GObject
             
         return FakeModule(self.__name__+'.'+attr, self.__level-1)
 
@@ -337,5 +345,3 @@ if not document_all:
     os.path.walk(tmp_dir, moveFilesOut, None)
     #clean up
     shutil.rmtree(tmp_dir)
-
-print 'Done!'
