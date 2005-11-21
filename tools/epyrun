@@ -27,9 +27,6 @@ def myimport(*args):
             setattr(sys.modules[args[0][:i]], args[0][i+1:], mod)
         return mod
 
-class FakeGType(type):
-    pass
-
 class FakeModule(object):
 
     def __init__(self, name, level, *ignore):
@@ -49,15 +46,14 @@ class FakeModule(object):
     def __getattr__(self, attr):
         if self.__level == 0:
             raise AttributeError
-        if attr == 'GObject':
-            return object
-        elif attr == 'list_properties':
-            return lambda x: []
-        global objs
+        if self.__name__ == 'gobject':
+            if attr == 'GObject':
+                return object
+            elif attr == 'list_properties':
+                return lambda x: []
 
-        for m, a in objs:
-            if m == self.__name__ and a == attr:
-                return FakeGType
+        if (self.__name__, attr) in skipped_types:
+            return type
             
         return FakeModule(self.__name__+'.'+attr, self.__level-1)
 
@@ -82,7 +78,7 @@ from twisted.python import reflect, util
 from twisted.internet import reactor
 
 import gobject
-objs = []
+skipped_types = {}
 for name in ('gobject', 'pango', 'atk', 'gtk', 'gtk.gdk', 'gtk.glade'):
     mod = reflect.namedAny(name)
     for attr in dir(mod):
@@ -90,7 +86,7 @@ for name in ('gobject', 'pango', 'atk', 'gtk', 'gtk.gdk', 'gtk.glade'):
         if not issubclass(type(value), gobject.GObjectMeta):
             continue
         if issubclass(value, gobject.GObject):
-            objs.append((name, attr))
+            skipped_types[(name , attr)] = None
 gobject.type_is_a = lambda *x: False
 fakeOut("gobject")
 fakeOut("pango")
@@ -98,7 +94,6 @@ fakeOut("atk")
 fakeOut("gtk")
 fakeOut("gtk.gdk")
 fakeOut("gtk.glade")
-
 
 # epydoc
 import epydoc
