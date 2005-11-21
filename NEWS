@@ -1,0 +1,13 @@
+kiwi-1.9.2:  21-november-2005
+        - Added tasklet (Gustavo Carneiro)
+	- Wizard improvements (Evandro)
+        - Added icon for entries
+	- Documentation
+	- Decorators
+	- Bug fixes
+	- Currency
+	- Validation/Proxy refactoring
+	- List labels
+	- Colored column
+	- Distutils/distribution helpers
+	- Portuguese and Swedish translation
