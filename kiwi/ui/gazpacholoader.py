@@ -237,6 +237,8 @@ for gobj, editor in [(Entry, EntryDataType),
     
     # This is a hack for epydoc
     if type_name is None:
+        import sys
+        assert sys.argv == ['IGNORE']
         continue
     
     data_name = type_name + '::data-type'
