@@ -85,47 +85,11 @@ def get_default_setter(model, attr_name, cache):
 # 3: data2(data1)            bound methods (no weakref)
 # 4: getattr(data1, data2)   using straight getattr (no weakref)
 
-try:
-    import weakref
-    _kgetattr_cache = {}
-    _kgetattr_wref = {}
-    _ksetattr_cache = {}
-    _ksetattr_wref = {}
-except ImportError:
-
-    class WeakRef:
-        """This is a dummy implementation for Python 2.0 and earlier that
-        do not have weakref.
-        it implements a Dummy Dictionary that do not store anything.
-        it implements some methods like ref that are used in the code.
-
-        I've choosen this strategy to support pre-2.1 Python because the
-        current versions are my target, and I do not want to have version
-        specific code in the kgetattr/ksetattr functions."""
-
-        ref = None
-        # calling None raises a TypeError
-        # that is the signal that a non-weakrefable type is used.
-        
-        def __setitem__(self, k, v):
-            pass
-
-        def __getitem__(self, k):
-            raise KeyError("DummyObject")
-
-        def __delitem__(self, k):
-            raise KeyError("DummyObject")
-
-        def get(self, *args):
-            raise KeyError("DummyObject")
-    
-    weakref=WeakRef()
-    _kgetattr_cache = weakref
-    _ksetattr_cache = weakref
-    # should not matter, because our primitive weakref emulation
-    # raises always TypeError ;)
-    _kgetattr_wref = weakref
-    _ksetattr_wref = weakref
+import weakref
+_kgetattr_cache = {}
+_kgetattr_wref = {}
+_ksetattr_cache = {}
+_ksetattr_wref = {}
 
 class CacheControl(object):
     __slots__ = ['key', 'cacheable']
