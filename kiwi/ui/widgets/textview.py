@@ -23,7 +23,7 @@
 #            Evandro Vale Miquelito <evandro@async.com.br>
 #            Johan Dahlin <jdahlin@async.com.br>
 
-"""Defines an enhanced version of GtkTextView"""
+"""GtkTextView support for the Kiwi Framework"""
 
 import gobject
 import gtk

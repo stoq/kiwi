@@ -23,7 +23,11 @@
 #            Gustavo Rahal <gustavo@async.com.br>
 #
 
-"""Defines an enhanced version of GtkEntry"""
+"""GtkEntry support for the Kiwi Framework
+
+The L{Entry} is also extended to provide an easy way to add entry completion
+support and display an icon using L{kiwi.ui.icon.IconEntry}.
+"""
 
 import gettext
 

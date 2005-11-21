@@ -24,7 +24,7 @@
 #            Gustavo Rahal <gustavo@async.com.br>
 #
 
-"""Defines an enhanced version of GtkRadioButton"""
+"""GtkRadioButton support for the Kiwi Framework"""
 
 import gobject
 import gtk

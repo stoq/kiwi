@@ -22,7 +22,10 @@
 #            Gustavo Rahal <gustavo@async.com.br>
 #
 
-"""Defines an enhanced version of GtkLabel"""
+"""GtkLabel support for the Kiwi Framework
+
+The L{Label} is also extended to support some basic markup like
+L{Label.set_bold}"""
 
 import gobject
 import gtk
@@ -40,8 +43,13 @@ class Label(gtk.Label, WidgetMixin):
         gtk.Label.__init__(self)
         WidgetMixin.__init__(self)
         self.set_use_markup(True)
-        self._attr_dic = {"style":None, "weight":None, "size":None}
-        self._size_list = ('xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large')
+        self._attr_dic = { "style": None,
+                           "weight": None,
+                           "size": None}
+        self._size_list = ('xx-small', 'x-small',
+                           'small', 'medium',
+                           'large', 'x-large',
+                           'xx-large')
         
         self.connect("notify::label", self._on_label_changed)
         self.show()
@@ -62,7 +70,8 @@ class Label(gtk.Label, WidgetMixin):
     def _apply_attributes(self):
         # join the attributes
         attr_str = ''
-        # sorting is been done so we can be sure of the order of the attributes. Helps writing tests cases
+        # sorting is been done so we can be sure of the order of the
+        # attributes. Helps writing tests cases
         keys = self._attr_dic.keys()
         keys.sort()
         for key in keys:
@@ -84,7 +93,12 @@ class Label(gtk.Label, WidgetMixin):
                 self._apply_attributes()
 
     def set_italic(self, value):
-        """ If True set the text to italic. False sets the text to normal """
+        """
+        Enable or disable italic text
+        @param value: Allowed values:
+          - True set the text to italic
+          - False sets the text to normal
+        """
         if value:
             if self._attr_dic["style"] is None:
                 self._attr_dic["style"] = "italic"
@@ -95,22 +109,34 @@ class Label(gtk.Label, WidgetMixin):
                 self._apply_attributes()
     
     def set_size(self, size=None):
-        """ Set the size of the label. If size is empty the label will be set to the default size.
-        Accepted values are: xx-small, x-small, small, medium, large, x-large, xx-large
+        """ Set the size of the label. If size is empty the label will be
+        set to the default size.
+        @param size: Allowed values:
+          - xx-small
+          - x-small
+          - small
+          - medium,
+          - large
+          - x-large
+          - xx-large
+        @type size: string
         """
-        # sets to default size
-        if size is None:
-            self._attr_dic["size"] = None
-            return
 
-        if size not in self._size_list:
-            raise ValueError('Size of "%s" label is not valid' %self.get_text())
-        else:
-            self._attr_dic["size"] = size
-            self._apply_attributes()
+        if (size is not None and
+            size not in self._size_list):
+            raise ValueError('Size of "%s" label is not valid' %
+                             self.get_text())
+
+        self._attr_dic["size"] = size
+        self._apply_attributes()
     
     def set_text(self, text):
-        """ Overrides gtk.Label set_text method. Sets the new text of the label but keeps the formating """
+        """ Overrides gtk.Label set_text method. Sets the new text of
+        the label but keeps the formating
+        @param text: label
+        @type text: string
+        """
+        
         gtk.Label.set_text(self, text)
         self._apply_attributes()
 

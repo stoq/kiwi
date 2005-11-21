@@ -383,7 +383,11 @@ class List(gtk.ScrolledWindow):
     def __init__(self, columns=[],
                  instance_list=None,
                  mode=gtk.SELECTION_BROWSE):
-        
+        """
+        @param columns:       a list of L{Column}s
+        @param instance_list: a list of objects to be inserted or None
+        @param mode:          selection mode
+        """
         # allow to specify only one column
         if isinstance(columns, Column):
             columns = [columns]

@@ -25,6 +25,8 @@
 #            Daniel Saran R. da Cunha <daniel@async.com.br>
 #
 
+"""Basic classes for widget support for the Kiwi Framework"""
+
 import gettext
 
 import gtk
@@ -46,6 +48,12 @@ class WidgetMixin(Mixin):
 
     def __init__(self, data_type=str, model_attribute=None,
                  default_value=None):
+        """
+        @param data_type:
+        @param model_attribute:
+        @param default_value:
+        """
+        
         self._default_value = default_value
         self._data_type = data_type
         self._model_attribute = model_attribute
@@ -56,14 +64,16 @@ class WidgetMixin(Mixin):
         
     def read(self):
         """Get the content of the widget.
-
-        The type of the return value matches the data-type property.
-
-        This returns None if the user input a invalid value
+        The type of the return value 
+        @returns: None if the user input a invalid value
+        @rtype: Must matche the data-type property. 
         """
         raise NotImplementedError
 
     def update(self, value):
+        """
+        @param value: 
+        """
         raise NotImplementedError
     
     def do_get_property(self, pspec):
@@ -86,8 +96,9 @@ class WidgetMixin(Mixin):
     def prop_set_data_type(self, data_type):
         """Set the data type for the widget
         
-        data_type can be None, a type object or a string with the name of the
-        type object, so None, "<type 'str'>" or 'str'
+        @param data_type: can be None, a type object or a string with the
+                          name of the type object, so None, "<type 'str'>"
+                          or 'str'
         """
 
         if data_type is not None:
@@ -113,8 +124,8 @@ class WidgetMixin(Mixin):
     
     def str2type(self, data):
         """Convert a string to our data type.
-
         This may raise exceptions if we can't do the conversion
+        @param data:
         """
         if self._data_type is None:
             msg = "You must set the data type before converting a string"
@@ -128,7 +139,9 @@ class WidgetMixin(Mixin):
         return converter.from_string(self._data_type, data)
 
     def type2str(self, data):
-        """Convert a value to a string"""
+        """Convert a value to a string
+        @param data:
+        """
         if self._data_type is None:
             msg = "You must set the data type before converting a type"
             raise TypeError(msg)
@@ -195,9 +208,15 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     # Public API
 
     def is_valid(self):
+        """
+        @returns: True if the widget is in validated state
+        """
         return self._valid
     
     def show_tooltip(self, widget):
+        """
+        @param widget:
+        """
         self._tooltip.display(widget)
 
     def hide_tooltip(self):
@@ -205,10 +224,11 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
 
     def validate_data(self, data, force=False):
         """Checks if the data is valid.
-        
         Validates data-type and custom validation.
-        data - the data to validate
-        returns the widget data-type
+        
+        @param data:  data to validate
+        @param force: if True, force validation
+        @returns:     validated data or ValueUnset if it failed
         """
 
         old_state = self.is_valid()
@@ -257,7 +277,8 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
 
     def set_valid(self):
         """Changes the validation state to valid, which will remove icons and
-        reset the background color"""
+        reset the background color
+        """
 
         self._set_valid_state(True)
         
@@ -267,7 +288,8 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     def set_invalid(self, text=None, fade=True):
         """Changes the validation state to invalid.
         @param text: text of tooltip of None
-        @param fade: if we should fade the background"""
+        @param fade: if we should fade the background
+        """
         
         self._set_valid_state(False)
 

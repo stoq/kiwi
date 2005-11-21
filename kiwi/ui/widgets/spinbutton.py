@@ -24,7 +24,11 @@
 #            Evandro Vale Miquelito <evandro@async.com.br>
 #
 
-"""Defines an enhanced version of GtkSpinButton"""
+"""GtkSpinButton support for the Kiwi Framework
+
+L{SpinButton} is also enhanced to display an icon using
+L{kiwi.ui.icon.IconEntry}
+"""
 
 import gobject
 import gtk

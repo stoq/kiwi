@@ -26,7 +26,11 @@
 #            Evandro Vale Miquelito <evandro@async.com.br>
 #
 
-"""Defines enhanced versions of GtkComboBox and GtkComboBoxEntry"""
+"""GtkComboBox and GtkComboBoxEntry support for the Kiwi Framework.
+
+The GtkComboBox and GtkComboBoxEntry classes here are also slightly extended
+they contain methods to easily insert and retrieve data from combos.
+"""
 
 import gobject
 import gtk
