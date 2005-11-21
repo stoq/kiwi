@@ -258,9 +258,15 @@ class ComboBox(gtk.ComboBox, ComboProxyMixin, WidgetMixin):
         self.add_attribute(renderer, 'text', COL_COMBO_LABEL)
         self.show()
 
+    # GtkComboBox is a GtkContainer subclass which implementing __len__
+    # PyGTK in 2.8 and higher. Therefor we need to provide our own
+    # implementation to be backwards compatible
+    def __len__(self):
+        return len(self.get_model())
+    
     def _on__changed(self, combo):
         self.emit('content-changed')
- 
+    
     def read(self):
         if self.mode == COMBO_MODE_STRING:
             return self.get_selected_label()
