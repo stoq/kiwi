@@ -22,6 +22,8 @@
 #            Johan Dahlin <jdahlin@async.com.br>
 #
 
+"""Gazpacho integration: loader and extensions"""
+
 import gettext
 import os
 from datetime import date

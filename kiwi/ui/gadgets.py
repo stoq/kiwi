@@ -22,6 +22,8 @@
 #            Johan Dahlin <jdahlin@async.com.br>
 #
 
+"""Graphical utilities: color management and eyecandy"""
+
 import gobject
 import gtk
 from gtk import gdk

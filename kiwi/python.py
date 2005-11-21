@@ -21,6 +21,8 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #         
 
+"""Generic python addons"""
+
 import os
 import sys
 

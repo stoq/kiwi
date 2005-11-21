@@ -22,6 +22,8 @@
 #            Johan Dahlin <jdahlin@async.com.br>
 #
 
+"""GObject utilities and addons"""
+
 import struct
 import sys
 

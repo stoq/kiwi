@@ -21,6 +21,8 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #         
 
+"""Distutils extensions and utilities"""
+
 from distutils.command.install_lib import install_lib
 from distutils.dep_util import newer
 from distutils.log import info, warn

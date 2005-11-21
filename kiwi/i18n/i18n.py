@@ -19,6 +19,8 @@
 # USA
 # 
 
+"""Internationalization utilities. Requires intltool and gettext"""
+
 from distutils.dep_util import newer
 from distutils.filelist import FileList
 from fnmatch import fnmatch
@@ -26,17 +28,13 @@ from optparse import OptionParser
 import os
 from shutil import copyfile
 
+from kiwi.dist import listfiles
+
 # This is a template, used to generate a list of translatable file
 # which intltool can understand.
 # It reuses the syntax from distutils MANIFEST files, a POTFILES.in
 # will be generate from it, see update_po()
 POTFILES = 'POTFILES.list'
-
-def listfiles(*dirs):
-    dir, pattern = os.path.split(os.path.join(*dirs))
-    return [os.path.join(dir, filename)
-            for filename in os.listdir(os.path.abspath(dir))
-                if filename[0] != '.' and fnmatch(filename, pattern)]
 
 def check_directory(root):
     po_dir = os.path.join(root, 'po')

@@ -23,6 +23,8 @@
 #            Johan Dahlin <jdahlin@async.com.br>
 #         
 
+"""Environment helpers: path mangling and resource management"""
+
 import gettext
 import os
 import sys
@@ -171,6 +173,8 @@ class Application(Library):
     """
     def __init__(self, name, root='..', path='main'):
         global app
+        if app is not None:
+            raise TypeError("Application is already set to %r" % app)
         app = self
         
         dirname = os.path.abspath(os.path.dirname(sys.argv[0]))

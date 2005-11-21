@@ -24,7 +24,7 @@
 
 from gtk import gdk
 
-"""XXX"""
+"""Holds the base controller class for the Kiwi Framework"""
 
 class BaseController:
     """

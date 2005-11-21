@@ -21,6 +21,8 @@
 # Author(s): Christian Reis <kiko@async.com.br>
 #
 
+"""Holds the models part of the Kiwi Framework"""
+
 import os
 import pickle
 
@@ -156,8 +158,6 @@ class PickledModel(Model):
     exceptions. You can prefix variables with an underscore to make them
     non-persistent (and you can restore them accordingly by overriding
     __setstate__, but don't forget to call PickledModel.__setstate__)"""
-    def __init__(self):
-        Model.__init__(self)
 
     def save(self, file=None):
         """

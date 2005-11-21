@@ -22,6 +22,8 @@
 #            Johan Dahlin <jdahlin@async.com.br>
 #
 
+"""Interface specifications and utilities"""
+
 import sys
 
 import gobject

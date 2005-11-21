@@ -21,6 +21,8 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
+"""Function and method decorators used in kiwi"""
+
 import gobject
 
 from kiwi import _warn

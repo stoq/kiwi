@@ -23,22 +23,21 @@
 #            Johan Dahlin <jdahlin@async.com.br>
 #
 
+"""Data type converters with locale and currency support"""
+
 from datetime import date
 import locale
 import sys
 import time
 
-__all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
-
-class ValidationError(Exception):
-    pass
-
 # by default locale uses the C locale but our date conversions use the user
 # locale so we need to set the locale to that one
 locale.setlocale(locale.LC_ALL, '') # this set the user locale ( $LANG )
 
-def lformat(format, value):
-    return locale.format(format, value, 1)
+__all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
+
+class ValidationError(Exception):
+    pass
 
 class ConverterRegistry:
     def __init__(self):
@@ -252,6 +251,10 @@ class ObjectConverter:
     as_string = None
     from_string = None
 converter.add(ObjectConverter)
+
+def lformat(format, value):
+    """Like locale.format but with grouping enabled"""
+    return locale.format(format, value, 1)
 
 def format_price(value, symbol=True, precision=None):
     """

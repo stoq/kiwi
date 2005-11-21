@@ -1,3 +1,25 @@
+2005-11-21  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/controllers.py:
+	* kiwi/datatypes.py:
+	* kiwi/decorators.py:
+	* kiwi/dist.py:
+	* kiwi/environ.py:
+	* kiwi/i18n/__init__.py:
+	* kiwi/i18n/i18n.py:
+	* kiwi/interfaces.py:
+	* kiwi/models.py:
+	* kiwi/python.py:
+	* kiwi/ui/__init__.py:
+	* kiwi/ui/gadgets.py:
+	* kiwi/ui/gazpacholoader.py:
+	* kiwi/utils.py:
+
+	Add docstrings
+	
+	* tools/epyrun:
+	Helper for running epydoc
+
 2005-11-16  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/list.py:
