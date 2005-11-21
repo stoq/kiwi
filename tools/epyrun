@@ -29,11 +29,10 @@ def myimport(*args):
 
 import kiwi
 
-class GObject(object):
+class _GObject(object):
     "I am not a real type, just a helper type for epydoc"
-    
-GObject.__module__ = 'kiwi'
-kiwi.GObject = GObject
+    __module__ = 'kiwi'
+kiwi._GObject = _GObject
 
 class FakeModule(object):
 
@@ -61,7 +60,7 @@ class FakeModule(object):
                 return lambda x: []
 
         if (self.__name__, attr) in skipped_types:
-            return GObject
+            return _GObject
             
         return FakeModule(self.__name__+'.'+attr, self.__level-1)
 
@@ -114,9 +113,12 @@ import epydoc.html
 # HACK: Force everything to be public.
 
 def is_private(self):
+    if self._name.split('.')[-1].startswith('_'):
+        return True
     return False
+
 def is_public(self):
-    return True
+    return not self.is_private() #True
 
 uid.UID.is_private = is_private
 uid.UID.is_public = is_public
