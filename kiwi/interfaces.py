@@ -32,7 +32,6 @@ class Mixin(object):
     # gsignal('content-changed')
     # gproperty('data-type')
     # gproperty('model-attribute')
-    # gproperty('default-value')
     # gproperty('validation-changed')
     
     def read(self):
@@ -76,7 +75,7 @@ class AbstractGladeAdaptor(object):
         """
 
 def implementsIProxy():
-    """Add a content-changed signal and a data-type, default-value, 
+    """Add a content-changed signal and a data-type, 
     model-attribute properties to the class where this 
     functions is called.
     """
@@ -110,8 +109,6 @@ def implementsIProxy():
                         gobject.PARAM_READWRITE)
     dic['model-attribute'] = (str, 'model-attribute', 'Model Attribute', '',
                               gobject.PARAM_READWRITE)
-    dic['default-value'] = (object, 'default-value', 'Default Value',
-                            gobject.PARAM_READABLE)
 
 def implementsIMandatoryProxy():
     frame = sys._getframe(1)

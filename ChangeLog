@@ -1,5 +1,12 @@
 2005-11-22  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/interfaces.py:
+	* kiwi/proxies.py:
+	* kiwi/ui/widgets/proxy.py:
+	Kill default-value property
+
+2005-11-22  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/datatypes.py: Handle format == None, for all converters.
 
 	* setup.py (version): 

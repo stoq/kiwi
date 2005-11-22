@@ -49,7 +49,6 @@ class WidgetMixin(Mixin):
     def __init__(self):
         self._data_type = str
         self._data_format = None
-        self._default_value = None
 
     def set_data_format(self, format):
         self._data_format = format
@@ -104,15 +103,6 @@ class WidgetMixin(Mixin):
 
     def prop_set_model_attribute(self, attribute):
         self._model_attribute = attribute
-
-    def prop_get_default_value(self):
-        return self._default_value
-
-    def prop_set_default_value(self, value):
-        if isinstance(value, basestring):
-            value = self.str2type(value)
-            
-        self._default_value = value
     
     def str2type(self, data):
         """Convert a string to our data type.
@@ -125,11 +115,8 @@ class WidgetMixin(Mixin):
         if data is None:
             return
         assert isinstance(data, basestring)
-        # if the user clear the widget we should not raise a conversion error
-        if data == '':
-            return self._default_value
         return converter.from_string(self._data_type, data)
-
+     
     def type2str(self, data):
         """Convert a value to a string
         @param data:
@@ -137,7 +124,7 @@ class WidgetMixin(Mixin):
         if self._data_type is None:
             msg = "You must set the data type before converting a type"
             raise TypeError(msg)
-
+        
         assert isinstance(data, self._data_type)
 
         kwargs = {}

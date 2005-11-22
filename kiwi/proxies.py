@@ -78,12 +78,7 @@ class Proxy:
                 # if we have a model, grab its value to update the widgets
                 self._register_proxy_in_model(attribute)
                 value = kgetattr(self.model, attribute, ValueUnset)
-                if value is ValueUnset:
-                    # get the default value from the widget if it has any
-                    defvalue = widget.get_property('default-value')
-                    if defvalue is not None:
-                        value = defvalue
-
+                    
             tweak_function = getattr(self, "tweak_%s" % attribute, None)
             if tweak_function:
                 tweak_function(attribute, value)
@@ -163,6 +158,7 @@ class Proxy:
 
         # XXX: one day we might want to queue and unique updates?
         self._block_proxy_in_model(True)
+
         try:
             ksetattr(self.model, attribute, value)
         except:
