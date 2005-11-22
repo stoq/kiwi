@@ -51,12 +51,12 @@ class RadioButton(gtk.RadioButton, WidgetMixin):
     def read(self):
         for rb in self.get_group():
             if rb.get_active():
-                return self.str2type(rb.get_property('data-value'))
+                return self._as_string(rb.get_property('data-value'))
 
     def update(self, data):
         if data is None or data is ValueUnset:
             return
-        data = self.type2str(data)
+        data = self._from_string(data)
         for rb in self.get_group():
             if rb.get_property('data-value') == data:
                 rb.set_active(True)

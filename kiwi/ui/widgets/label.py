@@ -60,11 +60,11 @@ class Label(gtk.Label, WidgetMixin):
             self.emit('content-changed')
 
     def read(self):
-        return self.str2type(self.get_text())
+        return self._as_string(self.get_text())
 
     def update(self, data):
         if data is not ValueUnset and data is not None:
-            self.set_text(self.type2str(data))
+            self.set_text(self._from_string(data))
     
     def _apply_attributes(self):
         # join the attributes

@@ -61,6 +61,6 @@ class TextView(gtk.TextView, WidgetMixinSupportValidation):
             self.textbuffer.set_text("")
             self.emit('content-changed')
         else:
-            self.textbuffer.set_text(self.type2str(data))
+            self.textbuffer.set_text(self._from_string(data))
 
 type_register(TextView)

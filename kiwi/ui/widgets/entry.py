@@ -267,7 +267,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
                 raise TypeError("%r is not a data object" % data)
             data = new
         elif mode == ENTRY_MODE_TEXT:
-            data = self.type2str(data)
+            data = self._from_string(data)
 
         self.set_text(data)
 

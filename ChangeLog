@@ -1,5 +1,14 @@
 2005-11-22  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/entry.py:
+	* kiwi/ui/widgets/label.py:
+	* kiwi/ui/widgets/proxy.py:
+	* kiwi/ui/widgets/radiobutton.py:
+	* kiwi/ui/widgets/textview.py:
+	Simplify, rename and privatize string converters.
+
+2005-11-22  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/interfaces.py:
 	* kiwi/proxies.py:
 	* kiwi/ui/widgets/proxy.py:

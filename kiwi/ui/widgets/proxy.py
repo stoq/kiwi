@@ -104,34 +104,19 @@ class WidgetMixin(Mixin):
     def prop_set_model_attribute(self, attribute):
         self._model_attribute = attribute
     
-    def str2type(self, data):
-        """Convert a string to our data type.
-        This may raise exceptions if we can't do the conversion
-        @param data:
+    def _as_string(self, data):
+        """Convert a string to the data type of the widget
+        This may raise a L{kiwi.ValidationError} if conversion failed
+        @param data: data to convert
         """
-        if self._data_type is None:
-            msg = "You must set the data type before converting a string"
-            raise TypeError(msg)
-        if data is None:
-            return
-        assert isinstance(data, basestring)
         return converter.from_string(self._data_type, data)
      
-    def type2str(self, data):
+    def _from_string(self, data):
         """Convert a value to a string
-        @param data:
+        @param data: data to convert
         """
-        if self._data_type is None:
-            msg = "You must set the data type before converting a type"
-            raise TypeError(msg)
-        
-        assert isinstance(data, self._data_type)
-
-        kwargs = {}
-        if self._data_format:
-            kwargs['format'] = self._data_format
-
-        return converter.as_string(self._data_type, data, **kwargs)
+        return converter.as_string(self._data_type, data,
+                                   format=self._data_format)
 
 MANDATORY_ICON = gtk.STOCK_EDIT
 ERROR_ICON = gtk.STOCK_DIALOG_INFO
@@ -225,7 +210,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         else:
             try:
                 if isinstance(data, basestring):
-                    data = self.str2type(data)
+                    data = self._as_string(data)
 
                 # Callbacks, this is a rather complex process
 
