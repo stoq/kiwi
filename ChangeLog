@@ -1,5 +1,7 @@
 2005-11-22  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/datatypes.py: Handle format == None, for all converters.
+
 	* setup.py (version): 
 	* MANIFEST.in: 
 	Install & include AUTHORS NEWS README in the tarball
