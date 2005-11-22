@@ -45,8 +45,6 @@ from kiwi.utils import PropertyObject, gproperty, type_register
 (COL_COMBO_LABEL,
  COL_COMBO_DATA) = range(2)
 
-__pychecker__ = 'no-classattr'
-
 # 1) strings (DONE)
 # 2) strings with data attached (DONE)
 # 3) searchable strings (partly done)
@@ -309,7 +307,7 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
     # because we want to monitor the entry of the combo
     # not the combo box itself.
     
-    gproperty("list-writable", bool, True, "List Writable")
+    gproperty("list-editable", bool, True, "Editable")
     
     def __init__(self, **kwargs):
         # Order is very important here:
@@ -334,7 +332,7 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
     
         self.show()
     
-    def prop_set_list_writable(self, writable):
+    def prop_set_list_editable(self, writable):
         if self.mode == COMBO_MODE_DATA:
             return
         
@@ -362,7 +360,7 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
         """Checks for "Enter" key presses and add the entry text to 
         the combo list if the combo list is set as editable.
         """
-        if not self.list_writable:
+        if not self.list_editable:
             return
 
         if event.keyval in (keysyms.KP_Enter,

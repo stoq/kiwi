@@ -39,7 +39,8 @@ class CheckButton(gtk.CheckButton, WidgetMixin):
     def __init__(self):
         # changed default data_type because checkbuttons can only
         # accept bool values
-        WidgetMixin.__init__(self, data_type=bool)
+        WidgetMixin.__init__(self)
+        self._data_type = bool
         gtk.CheckButton.__init__(self)
         self.set_property("data-type", bool)
         self.show()

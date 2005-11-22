@@ -46,18 +46,10 @@ class WidgetMixin(Mixin):
     need a validation framework.
     """
 
-    def __init__(self, data_type=str, model_attribute=None,
-                 default_value=None):
-        """
-        @param data_type:
-        @param model_attribute:
-        @param default_value:
-        """
-        
-        self._default_value = default_value
-        self._data_type = data_type
-        self._model_attribute = model_attribute
+    def __init__(self):
+        self._data_type = str
         self._data_format = None
+        self._default_value = None
 
     def set_data_format(self, format):
         self._data_format = format
@@ -167,10 +159,9 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     display information about what is wrong.
     """
 
-    def __init__(self, data_type=str, model_attribute=None,
-                 default_value=None, widget=None):
-        WidgetMixin.__init__(self, data_type, model_attribute, default_value)
-
+    def __init__(self, widget=None):
+        WidgetMixin.__init__(self)
+        
         self._tooltip = Tooltip(self)
         self._fade = FadeOut(self)
         self._fade.connect('color-changed', self._on_fadeout__color_changed)

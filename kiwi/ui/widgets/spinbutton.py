@@ -41,12 +41,13 @@ from kiwi.utils import gsignal, type_register
 class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
     implementsIProxy()
     implementsIMandatoryProxy()
-
+    
     def __init__(self):
         # since the default data_type is str we need to set it to int 
         # or float for spinbuttons
         gtk.SpinButton.__init__(self)
-        WidgetMixinSupportValidation.__init__(self, data_type=int)
+        WidgetMixinSupportValidation.__init__(self)
+        self._data_type = int
         self._icon = IconEntry(self)
         self.show()
         
