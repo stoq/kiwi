@@ -95,7 +95,9 @@ class StringConverter:
     def from_string(self, value):
         return str(value)
     
-    def as_string(self, value, format='%s'):
+    def as_string(self, value, format=None):
+        if format is None:
+            format = '%s'
         return format % value
 
 converter.add(StringConverter)
@@ -103,8 +105,10 @@ converter.add(StringConverter)
 class IntConverter:
     type = int
 
-    def as_string(self, value, format='%d'):
+    def as_string(self, value, format=None):
         """Convert a float to a string"""
+        if format is None:
+            format = '%d'
         return lformat(format, value)
 
     def from_string(self, value):
@@ -126,14 +130,13 @@ class BoolConverter:
     
     as_string = lambda s, value, format=None: str
 
-    def from_string(self, value, default_value=True):
+    def from_string(self, value):
         "Convert a string to a boolean"
         if value.upper() in ('TRUE', '1'):
             return True
         elif value.upper() in ('FALSE', '0'):
             return False
-        else:
-            return default_value
+
 converter.add(BoolConverter)
 
 class FloatConverter:
@@ -193,8 +196,10 @@ class FloatConverter:
         # Remove all thousand separators
         return value.replace(thousands_sep, '')
 
-    def as_string(self, value, format='%f'):
+    def as_string(self, value, format=None):
         """Convert a float to a string"""
+        if format is None:
+            format = '%f'
         return lformat(format, value)
 
     def from_string(self, value):
