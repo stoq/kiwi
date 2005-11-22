@@ -62,7 +62,23 @@ def type_register(gtype):
 class PropertyObject(ClassInittableObject):
     """
     I am an object which maps GObject properties to attributes
-    To be able to use me, you must also subclass a gobject.
+    To be able to use me, you must also inherit from a
+    gobject.GObject subclass.
+
+    Example:
+    from kiwi.utils import PropertyObject, gproperty
+    
+    >>> class Person(PropertyObject, gobject.GObject):
+    >>>     gproperty('name', str)
+    >>>     gproperty('age', int)
+    >>>     gproperty('married', bool, default=False)
+
+    >>> test = Test()
+    >>> test.age = 20
+    >>> test.age
+    20
+    >>> test.married
+    False
     """
     _default_values = {}
     def __init__(self, **kwargs):
