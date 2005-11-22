@@ -176,7 +176,6 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         if self._entry_mode != ENTRY_MODE_DATA:
             return
         
-        obj = None
         for row in self.get_completion().get_model():
             if row[COL_TEXT] == text:
                 self._current_object = row[COL_OBJECT]
