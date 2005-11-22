@@ -3,7 +3,8 @@
 	* setup.py (version): 
 	* MANIFEST.in: 
 	Install & include AUTHORS NEWS README in the tarball
-
+	Do not include .pyc files in the tarball
+	
 === kiwi 1.9.2 ===
 2005-11-21  Johan Dahlin  <jdahlin@async.com.br>
 

@@ -1,4 +1,4 @@
-recursive-include tests *
+recursive-include tests  *.glade *.py
 recursive-include doc *
 recursive-include examples *
 recursive-include gazpacho-plugin *.py *.png *.xml AUTHORS COPYING
