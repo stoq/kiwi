@@ -234,7 +234,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         old_state = self.is_valid()
 
         # Can this be done in a better location?
-        if data == '' and  issubclass(self._data_type, basestring):
+        if data == '' and issubclass(self._data_type, basestring):
             data = None
                 
         # check if we should draw the mandatory icon
