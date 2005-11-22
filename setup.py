@@ -2,7 +2,7 @@
 
 # Setup file for Kiwi 
 # Code by Async Open Source <http://www.async.com.br>
-# setup.py writen by Christian Reis <kiko@async.com.br>
+# setup.py written by Christian Reis <kiko@async.com.br>
 
 """
 kiwi offers a set of enhanced widgets for
@@ -42,6 +42,8 @@ setup(name="kiwi",
                   ('lib/python%d.%d/site-packages/gazpacho/widgets' %
                    sys.version_info[:2],
                    listfiles('gazpacho-plugin', 'kiwiwidgets.py')),
+                  ('share/doc/kiwi',
+                   ('AUTHORS', 'ChangeLog', 'NEWS', 'README')),
                   ],
       scripts=['bin/kiwi-i18n'],
       packages=listpackages('kiwi'),

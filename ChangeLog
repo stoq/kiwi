@@ -1,3 +1,9 @@
+2005-11-22  Johan Dahlin  <jdahlin@async.com.br>
+
+	* setup.py (version): 
+	* MANIFEST.in: 
+	Install & include AUTHORS NEWS README in the tarball
+
 === kiwi 1.9.2 ===
 2005-11-21  Johan Dahlin  <jdahlin@async.com.br>
 
