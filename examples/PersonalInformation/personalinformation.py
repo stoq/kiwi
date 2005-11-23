@@ -18,9 +18,6 @@ class Form(Delegate):
     def __init__(self):
         Delegate.__init__(self, 
                           gladefile="personalinformation",
-                          widgets=['name', 'age', 'birthdate',
-                                   'height', 'weight', 'about', 
-                                   'sex', 'nationality', 'ok_btn'],
                           delete_handler=self.quit_if_last)
     
         self.nationality.prefill(['Brazilian',

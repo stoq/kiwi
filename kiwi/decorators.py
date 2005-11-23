@@ -79,3 +79,49 @@ class delayed(object):
         return wrapper
 
         
+class signal_block(object):
+    """
+    A decorator to be used on L{kiwi.ui.view.SlaveView} methods.
+    It takes a list of arguments which is the name of the widget and
+    the signal name separated by a dot.
+
+    For instance:
+
+        >>> class MyView(SlaveView):
+        ...     @signal_block('money.changed')
+        ...     def update_money(self):
+        ...         self.money.set_value(10)
+        ...     def on_money__changed(self):
+        ...         pass
+
+
+    When calling update_money() the value of the spinbutton called money
+    will be updated, but on_money__changed will not be called.
+    """
+    
+    def __init__(self, *signals):
+        self.signals = []
+        for signal in signals:
+            if not isinstance(signal, str):
+                raise TypeError("signals must be a list of strings")
+            if signal.count('.') != 1:
+                raise TypeError("signal must have exactly one dot")
+            self.signals.append(signal.split('.'))
+
+    def __call__(self, func):
+        def wrapper(view, *args, **kwargs):
+            for name, signal in self.signals:
+                widget = getattr(view, name, None)
+                if widget is None:
+                    raise TypeError("Unknown widget %s in view " % name)
+                view.handler_block(widget, signal)
+                
+            retval = func(view, *args, **kwargs)
+            
+            for name, signal in self.signals:
+                widget = getattr(view, name, None)
+                view.handler_unblock(widget, signal)
+                
+            return retval
+            
+        return wrapper

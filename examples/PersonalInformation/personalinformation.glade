@@ -199,7 +199,7 @@
                                 <property name="events"></property>
                                 <property name="data_type">str</property>
                                 <property name="visible">True</property>
-                                <property name="list-writable">True</property>
+                                <property name="list-editable">True</property>
                             </widget>
                             <packing>
                                 <property name="left_attach">1</property>
