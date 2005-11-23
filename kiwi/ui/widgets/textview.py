@@ -28,16 +28,13 @@
 import gtk
 
 from kiwi import ValueUnset
-from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
-from kiwi.utils import type_register
+from kiwi.utils import PropertyObject
 
-class TextView(gtk.TextView, WidgetMixinSupportValidation):
-    implementsIProxy()
-    implementsIMandatoryProxy()
-
+class TextView(PropertyObject, gtk.TextView, WidgetMixinSupportValidation):
     def __init__(self):
         gtk.TextView.__init__(self)
+        PropertyObject.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
         
         self.textbuffer = gtk.TextBuffer()
@@ -62,5 +59,3 @@ class TextView(gtk.TextView, WidgetMixinSupportValidation):
             self.emit('content-changed')
         else:
             self.textbuffer.set_text(self._from_string(data))
-
-type_register(TextView)

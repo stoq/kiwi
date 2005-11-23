@@ -33,35 +33,22 @@ L{kiwi.ui.icon.IconEntry}
 import gtk
 
 from kiwi import ValueUnset
-from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
-from kiwi.utils import gsignal, type_register
+from kiwi.utils import PropertyObject, gsignal
 
-class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
-    implementsIProxy()
-    implementsIMandatoryProxy()
+class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
+    allowed_data_types = int, float
     
     def __init__(self):
         # since the default data_type is str we need to set it to int 
         # or float for spinbuttons
         gtk.SpinButton.__init__(self)
+        PropertyObject.__init__(self, data_type=int)
         WidgetMixinSupportValidation.__init__(self)
-        self._data_type = int
         self._icon = IconEntry(self)
         self.show()
         
-    def prop_set_data_type(self, data_type):
-        """Overriden from super class. Since spinbuttons should
-        only accept float or int numbers we need to make a special
-        treatment.
-        """
-        old_datatype = self._data_type
-        WidgetMixinSupportValidation.prop_set_data_type(self, data_type)
-        if self._data_type not in (int, float):
-            self._data_type = old_datatype
-            raise TypeError("SpinButtons only accept integer or float values")
-
     # GtkEditable.changed is called too often
     # GtkSpinButton.value-changed is called only when the value changes
     gsignal('value-changed', 'override')
@@ -111,5 +98,3 @@ class SpinButton(gtk.SpinButton, WidgetMixinSupportValidation):
 
     def get_icon_window(self):
         return self._icon.get_icon_window()
-
-type_register(SpinButton)

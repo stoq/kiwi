@@ -29,7 +29,7 @@ import sys
 
 import gobject
 
-from kiwi.python import ClassInittableObject
+from kiwi.python import ClassInittableMetaType
 
 def list_properties(gtype, parent=True):
     """
@@ -59,7 +59,38 @@ def type_register(gtype):
 
     return True
 
-class PropertyObject(ClassInittableObject):
+class PropertyMeta(ClassInittableMetaType):
+    def __new__(meta, name, bases, namespace):
+        def _update_bases(bases, props, signals):
+            for base in bases:
+                props.update(getattr(base, '__gproperties__', {}))
+                signals.update(getattr(base, '__gsignals__', {}))
+                _update_bases(base.__bases__, props, signals)
+
+        def _merge(bases):
+            # This will be fun.
+            # Merge in properties and signals from all bases, this
+            # is not the default behavior of PyGTK, but we need it
+            if not '__gproperties__' in namespace:
+                props = namespace['__gproperties__'] = {}
+            else:
+                props = namespace['__gproperties__']
+
+            if not '__gsignals__' in namespace:
+                signals = namespace['__gsignals__'] = {}
+            else:
+                signals = namespace['__gsignals__']
+
+            _update_bases(bases, props, signals)
+        
+        for base in bases:
+            if issubclass(base, gobject.GObject):
+                _merge(bases)
+                break
+            
+        return ClassInittableMetaType.__new__(meta, name, bases, namespace)
+
+class PropertyObject(object):
     """
     I am an object which maps GObject properties to attributes
     To be able to use me, you must also inherit from a
@@ -80,6 +111,9 @@ class PropertyObject(ClassInittableObject):
     >>> test.married
     False
     """
+    
+    __metaclass__ = PropertyMeta
+    
     _default_values = {}
     def __init__(self, **kwargs):
         self._attributes = {}
@@ -101,7 +135,7 @@ class PropertyObject(ClassInittableObject):
         # So it is safe to ignore here.
         if not issubclass(cls, gobject.GObject):
             return
-
+        
         # The default value for enum GParamSpecs (returned by list_properties)
         # lacks the enum wrapper so save a reference to the value, it needs to
         # be done here because when we register the GType pygtk removes the
@@ -206,8 +240,17 @@ def gsignal(name, *args, **kwargs):
     if args and args[0] == 'override':
         dict[name] = 'override'
     else:
-        flags = kwargs.get('flags', gobject.SIGNAL_RUN_FIRST)
         retval = kwargs.get('retval', None)
+        if retval is None:
+            default_flags = gobject.SIGNAL_RUN_FIRST
+        else:
+            default_flags = gobject.SIGNAL_RUN_LAST
+            
+        flags = kwargs.get('flags', default_flags)
+        if retval is not None and flags != gobject.SIGNAL_RUN_LAST:
+            raise TypeError(
+                "You cannot use a return value without setting flags to "
+                "gobject.SIGNAL_RUN_LAST")
     
         dict[name] = (flags, retval, args)
 

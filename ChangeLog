@@ -1,3 +1,23 @@
+2005-11-23  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/datatypes.py:
+	* kiwi/interfaces.py:
+	* kiwi/python.py:
+	* kiwi/ui/widgets/checkbutton.py:
+	* kiwi/ui/widgets/combobox.py:
+	* kiwi/ui/widgets/entry.py:
+	* kiwi/ui/widgets/label.py:
+	* kiwi/ui/widgets/proxy.py:
+	* kiwi/ui/widgets/radiobutton.py:
+	* kiwi/ui/widgets/spinbutton.py:
+	* kiwi/ui/widgets/textview.py:
+	* kiwi/utils.py:
+	Use PropertyObject for all widgets. Simplifies property
+	handling. Merge in properties, even for non gobjects for
+	all bases when using PropertyObject, so we can put properties
+	and signals in the WidgetMixins.
+	Add allowed_data_types, useful for SpinButton and RadioButton.
+	
 2005-11-22  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/entry.py:

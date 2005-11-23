@@ -37,10 +37,9 @@ import gtk
 from gtk import keysyms 
 
 from kiwi import ValueUnset
-from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
 from kiwi.ui.widgets.comboboxentry import BaseComboBoxEntry
 from kiwi.ui.widgets.proxy import WidgetMixin, WidgetMixinSupportValidation
-from kiwi.utils import PropertyObject, gproperty, type_register
+from kiwi.utils import PropertyObject, gproperty
 
 (COL_COMBO_LABEL,
  COL_COMBO_DATA) = range(2)
@@ -243,12 +242,12 @@ class ComboProxyMixin(object):
         model = self.get_model()
         return model.get_value(iter, COL_COMBO_DATA)
     
-class ComboBox(gtk.ComboBox, ComboProxyMixin, WidgetMixin):
-    implementsIProxy()
+class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
     def __init__(self):
-        WidgetMixin.__init__(self)
         gtk.ComboBox.__init__(self)
         ComboProxyMixin.__init__(self)
+        WidgetMixin.__init__(self)
+        PropertyObject.__init__(self)
         self.connect('changed', self._on__changed)
         
         renderer = gtk.CellRendererText()
@@ -295,13 +294,9 @@ class ComboBox(gtk.ComboBox, ComboProxyMixin, WidgetMixin):
 
     def clear(self):
         ComboProxyMixin.clear(self) 
-    
-type_register(ComboBox)
 
 class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
                     WidgetMixinSupportValidation):
-    implementsIProxy()
-    implementsIMandatoryProxy()
     
     # it doesn't make sense to connect to this signal
     # because we want to monitor the entry of the combo
@@ -310,14 +305,10 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
     gproperty("list-editable", bool, True, "Editable")
     
     def __init__(self, **kwargs):
-        # Order is very important here:
-        # 1) Create GObject
         BaseComboBoxEntry.__init__(self)
-        # 2) mode is set here
         ComboProxyMixin.__init__(self)
-        # 3) Properties are now being set, requires 1 & 2
-        PropertyObject.__init__(self, **kwargs)
         WidgetMixinSupportValidation.__init__(self, widget=self.entry)
+        PropertyObject.__init__(self, **kwargs)
         
         self.set_text_column(COL_COMBO_LABEL)
         # here we connect the expose-event signal directly to the entry
@@ -332,12 +323,14 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
     
         self.show()
     
-    def prop_set_list_editable(self, writable):
+    def prop_set_list_editable(self, value):
         if self.mode == COMBO_MODE_DATA:
             return
         
-        self.entry.set_editable(writable)
-
+        self.entry.set_editable(value)
+        
+        return value
+    
     def _update_selection(self, text=None):
         if text is None:
             text = self.entry.get_text()

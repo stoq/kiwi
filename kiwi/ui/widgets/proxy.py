@@ -36,6 +36,7 @@ from kiwi.datatypes import ValidationError, converter
 from kiwi.interfaces import Mixin, MixinSupportValidation
 from kiwi.ui.gadgets import FadeOut
 from kiwi.ui.tooltip import Tooltip
+from kiwi.utils import gsignal, gproperty
 
 _ = gettext.gettext
 
@@ -44,15 +45,52 @@ class WidgetMixin(Mixin):
 
     Usually the Proxy class need to set and get data from the widgets. It also
     need a validation framework.
+    
+    @cvar allowed_data_types: A list of types which we are allowed to use
+      in this class. 
     """
 
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
+    
+    gproperty('data-type', object, default=str, blurb='Data Type')
+    gproperty('model-attribute', object, blurb='Model attribute')
+    
+    allowed_data_types = object, 
+    
     def __init__(self):
-        self._data_type = str
         self._data_format = None
 
+    # Properties
+    
+    def prop_set_data_type(self, data_type):
+        """Set the data type for the widget
+        
+        @param data_type: can be None, a type object or a string with the
+                          name of the type object, so None, "<type 'str'>"
+                          or 'str'
+        """
+
+        if data_type is None:
+            return data_type
+        
+        # This may convert from string to type
+        data_type = converter.check_supported(data_type)
+        
+        if not issubclass(data_type, self.allowed_data_types):
+            typenames = [t.__name__ for t in self.allowed_data_types]
+            raise TypeError(
+                "%s only accept %s types, not %r"
+                % (self, ' or '.join(typenames), data_type))
+
+        return data_type
+
+
+    # Public API
     def set_data_format(self, format):
         self._data_format = format
-        
+
     def read(self):
         """Get the content of the widget.
         The type of the return value 
@@ -67,55 +105,20 @@ class WidgetMixin(Mixin):
         """
         raise NotImplementedError
     
-    def do_get_property(self, pspec):
-        prop_name = pspec.name.replace("-", "_")
-        func = getattr(self, "prop_get_%s" % prop_name, None)
-        if not func:
-            raise AttributeError("Invalid property name: %s" % pspec.name)
-        return func()
-
-    def do_set_property(self, pspec, value):
-        prop_name = pspec.name.replace("-", "_")
-        func = getattr(self, "prop_set_%s" % prop_name)
-        if not func:
-            raise AttributeError("Invalid property name: %s" % pspec.name)
-        return func(value)
-    
-    def prop_get_data_type(self):
-        return self._data_type
-
-    def prop_set_data_type(self, data_type):
-        """Set the data type for the widget
-        
-        @param data_type: can be None, a type object or a string with the
-                          name of the type object, so None, "<type 'str'>"
-                          or 'str'
-        """
-
-        if data_type is not None:
-            # This may convert from string to type
-            data_type = converter.check_supported(data_type)
-        
-        self._data_type = data_type
-
-    def prop_get_model_attribute(self):
-        return self._model_attribute
-
-    def prop_set_model_attribute(self, attribute):
-        self._model_attribute = attribute
+    # Private
     
     def _as_string(self, data):
         """Convert a string to the data type of the widget
         This may raise a L{kiwi.ValidationError} if conversion failed
         @param data: data to convert
         """
-        return converter.from_string(self._data_type, data)
+        return converter.from_string(self.data_type, data)
      
     def _from_string(self, data):
         """Convert a value to a string
         @param data: data to convert
         """
-        return converter.as_string(self._data_type, data,
+        return converter.as_string(self.data_type, data,
                                    format=self._data_format)
 
 MANDATORY_ICON = gtk.STOCK_EDIT
@@ -131,29 +134,16 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     display information about what is wrong.
     """
 
+    gproperty('mandatory', bool, default=False)
+    
     def __init__(self, widget=None):
         WidgetMixin.__init__(self)
         
+        self._valid = True
         self._tooltip = Tooltip(self)
         self._fade = FadeOut(self)
         self._fade.connect('color-changed', self._on_fadeout__color_changed)
         
-        # state variables
-        self._valid = True
-        self._mandatory = False
-        
-    # Properties
-    
-    def prop_get_mandatory(self):
-        """Checks if the Kiwi Widget is set to mandatory"""
-        return self._mandatory
-    
-    def prop_set_mandatory(self, mandatory):
-        """Sets the Kiwi Widget as mandatory, in other words, 
-        the user needs to provide data to the widget 
-        """
-        self._mandatory = mandatory
-
     # Override in subclass
     
     def update_background(self, color):
@@ -194,16 +184,14 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         @returns:     validated data or ValueUnset if it failed
         """
 
-        old_state = self.is_valid()
-
         # Can this be done in a better location?
-        if data == '' and issubclass(self._data_type, basestring):
+        if data == '' and issubclass(self.data_type, basestring):
             data = None
                 
         # check if we should draw the mandatory icon
         # this need to be done before any data conversion because we
         # we don't want to end drawing two icons
-        if self._mandatory and (data == '' or data is None):
+        if self.mandatory and (data == '' or data is None):
             self.set_blank()
             # This will stop the proxy from updating the model
             data = ValueUnset
@@ -280,7 +268,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         """Changes the validation state to blank state, this only applies
         for mandatory widgets, draw an icon and set a tooltip"""
 
-        if self._mandatory:
+        if self.mandatory:
             self._draw_stock_icon(MANDATORY_ICON)
             self._tooltip.set_text(_('This field is mandatory'))
             self._fade.reset()

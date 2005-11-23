@@ -30,16 +30,14 @@ L{Label.set_bold}"""
 import gtk
 
 from kiwi import ValueUnset
-from kiwi.interfaces import implementsIProxy
 from kiwi.ui.gadgets import set_foreground
 from kiwi.ui.widgets.proxy import WidgetMixin
-from kiwi.utils import type_register
+from kiwi.utils import PropertyObject
 
-class Label(gtk.Label, WidgetMixin):
-    implementsIProxy()
-    
+class Label(PropertyObject, gtk.Label, WidgetMixin):
     def __init__(self):
         gtk.Label.__init__(self)
+        PropertyObject.__init__(self)
         WidgetMixin.__init__(self)
         self.set_use_markup(True)
         self._attr_dic = { "style": None,
@@ -56,7 +54,7 @@ class Label(gtk.Label, WidgetMixin):
     def _on_label_changed(self, label, param):
         # Since most of the time labels do not have a model attached to it
         # we should just emit a signal if a model is defined
-        if self._model_attribute:
+        if self.model_attribute:
             self.emit('content-changed')
 
     def read(self):
@@ -141,5 +139,3 @@ class Label(gtk.Label, WidgetMixin):
 
     def set_color(self, color):
        set_foreground(self, color) 
-
-type_register(Label)

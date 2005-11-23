@@ -68,8 +68,9 @@ class ConverterRegistry:
         if c.as_string is None:
             return data
 
-        assert isinstance(data, c.type), ('data "%s" must be of %r not %r' % (
-            data, c.type, type(data)))
+        if not isinstance(data, c.type):
+            raise TypeError('data: %s must be of %r not %r' % (
+                data, c.type, type(data)))
         
         return c.as_string(data, *args, **kwargs)
             

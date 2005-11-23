@@ -24,10 +24,6 @@
 
 """Interface specifications and utilities"""
 
-import sys
-
-import gobject
-
 class Mixin(object):
     # gsignal('content-changed')
     # gproperty('data-type')
@@ -73,50 +69,3 @@ class AbstractGladeAdaptor(object):
         """Connect the signals in the keys of dict with the objects in the
         values of dic
         """
-
-def implementsIProxy():
-    """Add a content-changed signal and a data-type, 
-    model-attribute properties to the class where this 
-    functions is called.
-    """
-    frame = sys._getframe(1)
-    try:
-        local_namespace = frame.f_locals
-    finally:
-        del frame
-
-    if not '__gsignals__' in local_namespace:
-        dic = local_namespace['__gsignals__'] = {}
-    else:
-        dic = local_namespace['__gsignals__']
-
-    dic['content-changed'] = (gobject.SIGNAL_RUN_LAST, None, ())
-    dic['validation-changed'] = (gobject.SIGNAL_RUN_LAST, None, (bool,))
-    
-    # the line below is used for triggering custom validation.
-    # if you want a custom validation on a widget make a method on the
-    # view class for each widget that you want to validate.
-    # the method signature is:
-    # def on_widgetname__validate(self, widget, data)
-    dic['validate'] = (gobject.SIGNAL_RUN_LAST, object, (object,))
-
-    if not '__gproperties__' in local_namespace:
-        dic = local_namespace['__gproperties__'] = {}
-    else:
-        dic = local_namespace['__gproperties__']
-
-    dic['data-type'] = (object, 'data-type', 'Data Type',
-                        gobject.PARAM_READWRITE)
-    dic['model-attribute'] = (str, 'model-attribute', 'Model Attribute', '',
-                              gobject.PARAM_READWRITE)
-
-def implementsIMandatoryProxy():
-    frame = sys._getframe(1)
-    try:
-        local_namespace = frame.f_locals
-    finally:
-        del frame
-
-    dic = local_namespace['__gproperties__']
-    dic['mandatory'] = (bool, 'mandatory', 'Mandatory', False,
-                        gobject.PARAM_READWRITE)

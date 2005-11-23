@@ -38,13 +38,14 @@ if (gobject.pygtk_version >= (2, 7, 0) and
 else:
     metabase = type
 
-__all__ = ['ClassInittableObject']
+__all__ = ['ClassInittableMetaType', 'ClassInittableObject']
 
-class _ClassInittableMetaType(metabase):
-    def __init__(cls, name, bases, namespace):
-       super(_ClassInittableMetaType, cls).__init__(name, bases, namespace)
-       cls.__class_init__(namespace)
-
+class ClassInittableMetaType(metabase):
+    def __new__(meta, name, bases, namespace):
+        cls = metabase.__new__(meta, name, bases, namespace)
+        cls.__class_init__(namespace)
+        return cls
+    
 class ClassInittableObject(object):
     """
     I am an object which will call a classmethod called
@@ -56,7 +57,7 @@ class ClassInittableObject(object):
     It's called after the class is created, but before it is put
     in the namespace of the module where it is defined.
     """
-    __metaclass__ = _ClassInittableMetaType
+    __metaclass__ = ClassInittableMetaType
 
     def __class_init__(cls, namespace):
         """

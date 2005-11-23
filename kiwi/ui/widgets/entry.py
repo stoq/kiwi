@@ -35,7 +35,6 @@ import gobject
 import gtk
 
 from kiwi import ValueUnset
-from kiwi.interfaces import implementsIProxy, implementsIMandatoryProxy
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import gproperty, gsignal, type_register
@@ -48,7 +47,9 @@ _ = gettext.gettext
 (ENTRY_MODE_TEXT,
  ENTRY_MODE_DATA) = range(2)
 
-class Entry(gtk.Entry, WidgetMixinSupportValidation):
+from kiwi.utils import PropertyObject
+
+class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
     """The Kiwi Entry widget has many special features that extend the basic
     gtk entry.
     
@@ -63,8 +64,6 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
     entry. When dealing with date and float data-type the information on
     how to fill these entries is displayed according to the current locale.
     """
-    implementsIProxy()
-    implementsIMandatoryProxy()
 
     gproperty("completion", bool, False, 
               "Completion", gobject.PARAM_READWRITE)
@@ -73,10 +72,9 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
     def __init__(self):
         gtk.Entry.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
-        self._completion = False
+        PropertyObject.__init__(self)
         self._current_object = None
         self._entry_mode = ENTRY_MODE_TEXT
-        self._exact_completion = True
         self._icon = IconEntry(self)
         self.show()
 
@@ -95,28 +93,20 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         self.emit('content-changed')
 
     # Properties
-    
-    def prop_get_exact_completion(self):
-        return self._exact_completion
-
     def prop_set_exact_completion(self, value):
-        self._exact_completion = value
-        
         if value:
             match_func = self._completion_exact_match_func
         else:
             match_func = self._completion_normal_match_func
         completion = self._create_completion()
         completion.set_match_func(match_func)
-                
-    def prop_get_completion(self):
-        return self._completion
+
+        return value
     
     def prop_set_completion(self, value):
-        self._completion = value
-
         if not self.get_completion():
             self._enable_completion()
+        return value
     
     # Public API
     def set_exact_completion(self, value):
@@ -129,8 +119,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         @type value:  boolean
         """
         
-        self.prop_set_exact_completion(value)
-        self.notify('exact-completion')
+        self.exact_completion = value
 
     # XXX: Decide if this API or the Combobox prefill API should be used
     def set_completion_strings(self, strings=[], values=[]):
@@ -184,7 +173,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
             # Customized validation
             if text:
                 self.set_invalid(_("'%s' is not a valid object" % text))
-            elif self._mandatory:
+            elif self.mandatory:
                 self._fade.stop()
                 self.set_blank()
             else:
@@ -214,7 +203,7 @@ class Entry(gtk.Entry, WidgetMixinSupportValidation):
         self.set_completion(completion)
         completion.set_model(gtk.ListStore(str, object))
         completion.set_text_column(0)
-        self.prop_set_exact_completion(False)
+        self.exact_completion = False
         completion.connect("match-selected",
                            self._on_completion__match_selected)
         self._current_object = None
