@@ -46,10 +46,22 @@ class RadioButton(PropertyObject, gtk.RadioButton, WidgetMixin):
         self.emit('content-changed')
         self.chain()
 
+    def get_selected(self):
+        """
+        Get the currently selected radiobutton.
+        
+        @returns: The selected L{RadioButton} or None if there are no
+          selected radiobuttons.
+        """
+        
+        for button in self.get_group():
+            if button.get_active():
+                return button
+
     def read(self):
-        for rb in self.get_group():
-            if rb.get_active():
-                return self._as_string(rb.data_value)
+        button = self.get_selected()
+        if button is not None:
+            return self._as_string(rb.data_value)
 
     def update(self, data):
         if data is None or data is ValueUnset:
