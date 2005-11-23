@@ -30,6 +30,7 @@ Defines the View classes that are included in the Kiwi Framework, which
 are the base of Delegates and Proxies.
 """
 
+import re
 import string
 
 import gobject
@@ -59,7 +60,7 @@ except ImportError, e:
 else:
     from kiwi.ui.gazpacholoader import GazpachoWidgetTree as WidgetTree
         
-_non_interactive = [
+_non_interactive = (
     gtk.Label, 
     gtk.Alignment,
     gtk.AccelLabel,
@@ -81,19 +82,19 @@ _non_interactive = [
     gtk.VPaned,
     gtk.VSeparator,
     gtk.Window, 
-]
-
-_non_interactive = tuple(_non_interactive)
+)
 
 #
 # Signal brokers
 #
 
+method_regex = re.compile(r'^(on|after)_(\w+)__(\w+)$')
+
 class SignalBroker(object):
     def __init__(self, view, controller):
         methods = controller._get_all_methods()
         self._do_connections(view, methods)
-
+        
     def _do_connections(self, view, methods):
         """This method allows subclasses to add more connection mechanism"""
         self._autoconnect_by_method_name(view, methods)
@@ -112,34 +113,16 @@ class SignalBroker(object):
         signal name.
         """
         self._autoconnected = {}
+        
         for fname in methods.keys():
             # `on_x__y' has 7 chars and is the smallest possible handler
             # (though illegal, of course, since the signal name x is bogus)
             if len(fname) < 7:
                 continue
-            if fname[:3] == "on_":
-                after = 0
-            elif fname[:6] == "after_":
-                after = 1
-            else:
+            match = method_regex.match(fname)
+            if match is None:
                 continue
-            # cut out `on_' or `after'
-            f = string.split(fname, "_", 1)
-            if len(f) < 2:
-                continue
-            f = f[1]
-            # separate widget from signal; for instance: 
-            # "on_foo_bar__widget__clicked()" -> "foo_bar", "widget", "clicked"
-            f = string.split(f, "__")
-            if len(f) < 2:
-                continue
-            # signal is the last element
-            signal = f[-1]
-            # widget name is everything up to the last __
-            # "foo_bar", "widget" -> "foo_bar__widget"
-            w_name = string.join(f[:-1], "__")
-            if not w_name:
-                continue
+            after, w_name, signal = match.groups()
             widget = getattr(view, w_name, None)
             if widget is None:
                 raise AttributeError("couldn't find widget %s in %s"
@@ -187,9 +170,6 @@ class SignalBroker(object):
                 widget.disconnect(signal_id)
         
 class GladeSignalBroker(SignalBroker):
-    def __init__(self, view, controller):
-        SignalBroker.__init__(self, view, controller)
-
     def _do_connections(self, view, methods):
         super(GladeSignalBroker, self)._do_connections(view, methods)
         self._connect_glade_signals(view, methods)
@@ -290,7 +270,7 @@ class SlaveView(gobject.GObject):
                             "toplevel widget in it")
 
 
-        self.proxies = []
+        self._proxies = []
         
         # grab the accel groups
         self._accel_groups = gtk.accel_groups_from_object(self.toplevel)
@@ -678,18 +658,18 @@ class SlaveView(gobject.GObject):
         the view changes. Arguments:
           
           - model. the object we are proxing. It can be None if we don't have
-          a model yet and we want to display the interface and set it up with
-          future models.
+            a model yet and we want to display the interface and set it up with
+            future models.
           - widgets. the list of widgets that contains model attributes to be
-          proxied. If it is None (or not specified) it will be the whole list
-          of widgets this View has.
+            proxied. If it is None (or not specified) it will be the whole list
+            of widgets this View has.
 
         This method return a Proxy object that you may want to use to force
         updates or setting new models. Keep a reference to it since there is
         no way to get that proxy later on. You have been warned (tm)
         """
         widgets = widgets or self.widgets
-
+        
         for widget_name in widgets:
             widget = getattr(self, widget_name, None)
             if (widget is None or
@@ -703,9 +683,9 @@ class SlaveView(gobject.GObject):
             except TypeError:
                 raise AssertionError("%r does not have a validation-changed "
                                      "signal." % widget)
-
+            
         proxy = Proxy(self, model, widgets)
-        self.proxies.append(proxy)
+        self._proxies.append(proxy)
 
         return proxy
 
@@ -714,8 +694,9 @@ class SlaveView(gobject.GObject):
     #
     
     def _on_child__validation_changed(self, name, value):
-        # Children of the view, eg slaves or widgets are connected to this signal
-        # When validation changes of a validatable child this callback is called
+        # Children of the view, eg slaves or widgets are connected to
+        # this signal. When validation changes of a validatable child
+        # this callback is called
         self._validation[name] = value
 
         self.check_and_notify_validity()
