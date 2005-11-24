@@ -64,8 +64,6 @@ class WidgetMixin(Mixin):
     
     def __init__(self):
         self._data_format = None
-        # FIXME: Find out why default in gproperty is not working
-        self.data_type = self.data_type or str 
         
     # Properties
     

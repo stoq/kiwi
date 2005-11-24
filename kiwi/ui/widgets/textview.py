@@ -33,7 +33,7 @@ from kiwi.utils import PropertyObject
 class TextView(PropertyObject, gtk.TextView, WidgetMixinSupportValidation):
     def __init__(self):
         gtk.TextView.__init__(self)
-        PropertyObject.__init__(self)
+        PropertyObject.__init__(self, data_type=str)
         WidgetMixinSupportValidation.__init__(self)
         
         self._textbuffer = gtk.TextBuffer()
