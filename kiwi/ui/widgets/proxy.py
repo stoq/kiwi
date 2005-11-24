@@ -57,13 +57,15 @@ class WidgetMixin(Mixin):
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
     
-    gproperty('data-type', object, default=str, blurb='Data Type')
+    gproperty('data-type', object, blurb='Data Type')
     gproperty('model-attribute', object, blurb='Model attribute')
     
     allowed_data_types = object, 
     
     def __init__(self):
         self._data_format = None
+        # FIXME: Find out why default in gproperty is not working
+        self.data_type = self.data_type or str 
         
     # Properties
     
