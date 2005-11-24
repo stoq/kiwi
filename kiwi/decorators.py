@@ -81,7 +81,7 @@ class delayed(object):
         
 class signal_block(object):
     """
-    A decorator to be used on L{kiwi.ui.view.SlaveView} methods.
+    A decorator to be used on L{kiwi.ui.views.SlaveView} methods.
     It takes a list of arguments which is the name of the widget and
     the signal name separated by a dot.
 
@@ -123,5 +123,5 @@ class signal_block(object):
                 view.handler_unblock(widget, signal)
                 
             return retval
-            
+        wrapper.__name__ = func.__name__
         return wrapper
