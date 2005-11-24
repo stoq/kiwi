@@ -58,7 +58,9 @@ class FakeModule(object):
                 return object
             elif attr == 'list_properties':
                 return lambda x: []
-
+            elif attr == 'pygtk_version':
+                return gobject.pygtk_version
+            
         if (self.__name__, attr) in skipped_types:
             return _GObject
             
