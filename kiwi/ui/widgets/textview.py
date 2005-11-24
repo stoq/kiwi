@@ -27,7 +27,6 @@
 
 import gtk
 
-from kiwi import ValueUnset
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import PropertyObject
 
@@ -37,10 +36,10 @@ class TextView(PropertyObject, gtk.TextView, WidgetMixinSupportValidation):
         PropertyObject.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
         
-        self.textbuffer = gtk.TextBuffer()
-        self.textbuffer.connect('changed',
-                                self._on_textbuffer__changed)
-        self.set_buffer(self.textbuffer)
+        self._textbuffer = gtk.TextBuffer()
+        self._textbuffer.connect('changed',
+                                 self._on_textbuffer__changed)
+        self.set_buffer(self._textbuffer)
         
         self.show()
     
@@ -49,13 +48,15 @@ class TextView(PropertyObject, gtk.TextView, WidgetMixinSupportValidation):
         self.read()
 
     def read(self):
-        start = self.textbuffer.get_start_iter()
-        end = self.textbuffer.get_end_iter()
-        return self.textbuffer.get_text(start, end)
+        textbuffer = self._textbuffer
+        data = textbuffer.get_text(textbuffer.get_start_iter(),
+                                   textbuffer.get_end_iter())
+        return self._from_string(data)
                     
     def update(self, data):
-        if data is ValueUnset or data is None:
-            self.textbuffer.set_text("")
-            self.emit('content-changed')
+        if data is None:
+            text = ""
         else:
-            self.textbuffer.set_text(self._from_string(data))
+            text = self._as_string(data)
+            
+        self._textbuffer.set_text(text)

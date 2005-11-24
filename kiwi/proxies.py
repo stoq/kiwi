@@ -33,6 +33,9 @@ import sys
 from kiwi import _warn, ValueUnset
 from kiwi.accessors import kgetattr, ksetattr, clear_attr_cache
 from kiwi.interfaces import Mixin, MixinSupportValidation
+from kiwi.log import Logger
+
+log = Logger(category='proxy')
 
 def block_widget(widget):
     """Blocks the signal handler of the 'content-changed' signal on widget"""
@@ -90,11 +93,9 @@ class Proxy:
             # supports it.
             if not isinstance(widget, MixinSupportValidation):
                 continue
-            
-            data = widget.read()
-            if data is not ValueUnset:
-                widget.validate_data(data, force=True)
 
+            widget.validate(force=True)
+            
     def _setup_widgets(self, widgets):
         """
         Connect to the 'content-changed' signal of all the Kiwi widgets
@@ -142,15 +143,18 @@ class Proxy:
         """This is called as soon as the content of one of the widget
         changes, the widgets tries fairly hard to not emit when it's not
         neccessary"""
-        
+
         # skip updates for model if there is none, right?
         if self.model is None:
             return
 
-        value = widget.read()
-        
         if isinstance(widget, MixinSupportValidation):
-            value = widget.validate_data(value)
+            value = widget.validate()
+        else:
+            value = widget.read()
+        
+        log('%s.%s = %r' % (self.model.__class__.__name__,
+                            attribute, value)) 
         
         # only update the model if the data is correct
         if value is ValueUnset:
@@ -158,7 +162,6 @@ class Proxy:
 
         # XXX: one day we might want to queue and unique updates?
         self._block_proxy_in_model(True)
-
         try:
             ksetattr(self.model, attribute, value)
         except:

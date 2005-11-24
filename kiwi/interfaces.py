@@ -42,7 +42,7 @@ class MixinSupportValidation(object):
         pass
 
     # These two are mainly used by subclasses
-    def validate_data(self, data):
+    def validate(self, force=False):
         pass
     
     def before_validate(self, data):

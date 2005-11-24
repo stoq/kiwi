@@ -32,7 +32,6 @@ L{kiwi.ui.icon.IconEntry}
 
 import gtk
 
-from kiwi import ValueUnset
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import PropertyObject, gsignal
@@ -57,12 +56,14 @@ class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
         self.chain()
 
     def read(self):
-        return self.get_text()
+        return self._from_string(self.get_text())
     
     def update(self, data):
-        if data is ValueUnset or data is None:
+        if data is None:
             self.set_text("")
         else:
+            # set_value accepts a float or int, no as_string conversion needed,
+            # and since we accept only int and float just send it in.
             self.set_value(data)
 
     def do_expose_event(self, event):

@@ -37,6 +37,9 @@ from kiwi.interfaces import Mixin, MixinSupportValidation
 from kiwi.ui.gadgets import FadeOut
 from kiwi.ui.tooltip import Tooltip
 from kiwi.utils import gsignal, gproperty
+from kiwi.log import Log
+
+log = Log(category='widget proxy')
 
 _ = gettext.gettext
 
@@ -61,7 +64,7 @@ class WidgetMixin(Mixin):
     
     def __init__(self):
         self._data_format = None
-
+        
     # Properties
     
     def prop_set_data_type(self, data_type):
@@ -108,18 +111,19 @@ class WidgetMixin(Mixin):
     # Private
     
     def _as_string(self, data):
-        """Convert a string to the data type of the widget
-        This may raise a L{kiwi.ValidationError} if conversion failed
-        @param data: data to convert
-        """
-        return converter.from_string(self.data_type, data)
-     
-    def _from_string(self, data):
         """Convert a value to a string
         @param data: data to convert
         """
         return converter.as_string(self.data_type, data,
                                    format=self._data_format)
+     
+    def _from_string(self, data):
+        """Convert a string to the data type of the widget
+        This may raise a L{kiwi.datatypes.ValidationError} if conversion
+        failed
+        @param data: data to convert
+        """
+        return converter.from_string(self.data_type, data)
 
 MANDATORY_ICON = gtk.STOCK_EDIT
 ERROR_ICON = gtk.STOCK_DIALOG_INFO
@@ -175,32 +179,27 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     def hide_tooltip(self):
         self._tooltip.hide()
 
-    def validate_data(self, data, force=False):
+    def validate(self, force=False):
         """Checks if the data is valid.
         Validates data-type and custom validation.
         
-        @param data:  data to validate
         @param force: if True, force validation
         @returns:     validated data or ValueUnset if it failed
         """
 
-        # Can this be done in a better location?
-        if data == '' and issubclass(self.data_type, basestring):
-            data = None
-                
-        # check if we should draw the mandatory icon
-        # this need to be done before any data conversion because we
-        # we don't want to end drawing two icons
-        if self.mandatory and (data == '' or data is None):
-            self.set_blank()
-            # This will stop the proxy from updating the model
-            data = ValueUnset
-        else:
-            try:
-                if isinstance(data, basestring):
-                    data = self._as_string(data)
-
-                # Callbacks, this is a rather complex process
+        try:
+            data = self.read()
+            log.debug('Read %r for %s' %  (data, self.model_attribute))
+                    
+            # check if we should draw the mandatory icon
+            # this need to be done before any data conversion because we
+            # we don't want to end drawing two icons
+            if self.mandatory and (data == None or
+                                   data == '' or
+                                   data == ValueUnset):
+                self.set_blank()
+                return ValueUnset
+            else:
 
                 # Step 1: A WidgetProxy subclass can implement a
                 #         before_validate callback which is called before
@@ -217,20 +216,19 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
                     error = self.emit("validate", data)
                     if error:
                         raise error
-
-            except ValidationError, e:
-                self.set_invalid(str(e))
-                data = ValueUnset
-            else:
-                self.set_valid()
-                
-        return data
+                    
+            self.set_valid()
+            return data
+        except ValidationError, e:
+            self.set_invalid(str(e))
+            return ValueUnset
 
     def set_valid(self):
         """Changes the validation state to valid, which will remove icons and
         reset the background color
         """
 
+        log.debug('Setting state for %s to VALID' % self.model_attribute)
         self._set_valid_state(True)
         
         self._fade.stop()
@@ -241,6 +239,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         @param text: text of tooltip of None
         @param fade: if we should fade the background
         """
+        log.debug('Setting state for %s to INVALID' % self.model_attribute)
         
         self._set_valid_state(False)
 
@@ -262,16 +261,19 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         c = SignalContainer()
         c.signal_id = self._fade.connect('done', done, c)
         
-        self._fade.start()
+        if self._fade.start():
+            self.set_pixbuf(None)
         
     def set_blank(self):
         """Changes the validation state to blank state, this only applies
         for mandatory widgets, draw an icon and set a tooltip"""
 
+        log.debug('Setting state for %s to BLANK' % self.model_attribute)
+        
         if self.mandatory:
             self._draw_stock_icon(MANDATORY_ICON)
             self._tooltip.set_text(_('This field is mandatory'))
-            self._fade.reset()
+            self._fade.stop()
             valid = False
         else:
             valid = True

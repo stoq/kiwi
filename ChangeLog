@@ -1,3 +1,29 @@
+2005-11-24  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/datatypes.py:
+	* kiwi/interfaces.py:
+	* kiwi/log.py:
+	* kiwi/proxies.py:
+	* kiwi/ui/gadgets.py:
+	* kiwi/ui/views.py:
+	* kiwi/ui/widgets/checkbutton.py:
+	* kiwi/ui/widgets/combobox.py:
+	* kiwi/ui/widgets/entry.py:
+	* kiwi/ui/widgets/label.py:
+	* kiwi/ui/widgets/proxy.py:
+	* kiwi/ui/widgets/radiobutton.py:
+	* kiwi/ui/widgets/spinbutton.py:
+	* kiwi/ui/widgets/textview.py:
+	Validation progress:
+	- Empty date fields are now working
+	- ValueUnset are not checked everywhere in the widgets
+	- Fadeout works reliably
+	- validate calls read() instead, since it can now raise
+	  exceptions
+	- _as_string/_from_string were inverted.
+	Logging improvements:
+	- Add logging to proxy/view/fade
+
 2005-11-23  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/datatypes.py:

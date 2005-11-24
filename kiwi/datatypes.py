@@ -25,10 +25,12 @@
 
 """Data type converters with locale and currency support"""
 
-from datetime import date
+import datetime
 import locale
 import sys
 import time
+
+from kiwi import ValueUnset
 
 # by default locale uses the C locale but our date conversions use the user
 # locale so we need to set the locale to that one
@@ -47,6 +49,9 @@ class ConverterRegistry:
         c = converter_type()
         self._converters[c.type] = c
 
+    def _get_converter(self, converter_type):
+        return self._converters[converter_type]
+        
     def check_supported(self, data_type):
         value = None
         for t in self._converters.values():
@@ -62,9 +67,9 @@ class ConverterRegistry:
                             % (data_type, ', '.join(type_names)))
 
         return value
-    
+
     def as_string(self, converter_type, data, *args, **kwargs):
-        c = self._converters[converter_type]
+        c = self._get_converter(converter_type)
         if c.as_string is None:
             return data
 
@@ -75,7 +80,7 @@ class ConverterRegistry:
         return c.as_string(data, *args, **kwargs)
             
     def from_string(self, converter_type, data, *args, **kwargs):
-        c = self._converters[converter_type]
+        c = self._get_converter(converter_type)
         if c.from_string is None:
             return data
 
@@ -92,15 +97,15 @@ converter = ConverterRegistry()
 
 class StringConverter:
     type = str
-
-    def from_string(self, value):
-        return str(value)
     
     def as_string(self, value, format=None):
         if format is None:
             format = '%s'
         return format % value
 
+    def from_string(self, value):
+        return str(value)
+    
 converter.add(StringConverter)
 
 class IntConverter:
@@ -114,6 +119,9 @@ class IntConverter:
 
     def from_string(self, value):
         "Convert a string to an integer"
+        if value == '':
+            return ValueUnset
+        
         conv = locale.localeconv()
         thousands_sep = conv["thousands_sep"]
         # Remove all thousand separators, so int() won't barf at us
@@ -123,7 +131,9 @@ class IntConverter:
         try:
             return int(value)
         except ValueError:
-            raise ValidationError("This field requires an integer number")
+            raise ValidationError(
+                "%s could not be converted to an integer" % value)
+        
 converter.add(IntConverter)
     
 class BoolConverter:
@@ -206,6 +216,9 @@ class FloatConverter:
     def from_string(self, value):
         """Convert a string to a float"""
 
+        if value == '':
+            return ValueUnset
+        
         value = self._filter_locale(value)
 
         try:
@@ -218,7 +231,7 @@ class FloatConverter:
 converter.add(FloatConverter)
 
 class DateConverter:
-    type = date
+    type = datetime.date
     
     def __init__(self):
         self.update_format()
@@ -238,6 +251,9 @@ class DateConverter:
     
     def from_string(self, value):
         "Convert a string to a date"
+
+        if value == "":
+            return None
         
         # We're only supporting strptime values for now,
         # perhaps we should add macros, to be able to write
@@ -245,10 +261,11 @@ class DateConverter:
         
         try:
             dateinfo = time.strptime(value, self._format)
-            return date(*dateinfo[:3]) # year, month, day
+            return datetime.date(*dateinfo[:3]) # year, month, day
         except ValueError:
             raise ValidationError('This field requires a date of '
-                                  'the format "%s"' % self._format)
+                                  'the format "%s" and not "%s"' % (
+                self._format, value))
 converter.add(DateConverter)
 
 class ObjectConverter:

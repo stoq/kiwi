@@ -28,7 +28,6 @@
 
 import gtk
 
-from kiwi import ValueUnset
 from kiwi.ui.widgets.proxy import WidgetMixin
 from kiwi.utils import PropertyObject, gsignal
 
@@ -52,5 +51,8 @@ class CheckButton(PropertyObject, gtk.CheckButton, WidgetMixin):
         return self.get_active()
 
     def update(self, data):
-        if data is not ValueUnset and data is not None:
-            self.set_active(data)
+        if data is None:
+            return
+
+        # No conversion to string needed, we only accept bool
+        self.set_active(data)

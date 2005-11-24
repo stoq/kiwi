@@ -42,6 +42,7 @@ from kiwi.interfaces import MixinSupportValidation
 from kiwi.proxies import Proxy
 from kiwi.utils import gsignal, type_register
 from kiwi.ui.gadgets import quit_if_last
+from kiwi.log import Logger
 
 WidgetTree = None
 try:
@@ -59,7 +60,9 @@ except ImportError, e:
             raise RuntimeError("Could not find a glade parser library")
 else:
     from kiwi.ui.gazpacholoader import GazpachoWidgetTree as WidgetTree
-        
+
+log = Logger(category='view')
+
 _non_interactive = (
     gtk.Label, 
     gtk.Alignment,
@@ -499,6 +502,10 @@ class SlaveView(gobject.GObject):
         instead of the eventbox) is still supported for compatibility
         reasons but will print a warning.
         """
+        log('%s: Attaching slave %s of type %s' % (self.__class__.__name__,
+                                                   name,
+                                                   slave.__class__.__name__))
+            
         if name in self.slaves:
             # XXX: TypeError
             _warn("A slave with name %s is already attached to %r"  % (
@@ -668,6 +675,10 @@ class SlaveView(gobject.GObject):
         updates or setting new models. Keep a reference to it since there is
         no way to get that proxy later on. You have been warned (tm)
         """
+        log('%s: adding proxy for %s' % (
+            self.__class__.__name__, 
+            model and model.__class__.__name__))
+        
         widgets = widgets or self.widgets
         
         for widget_name in widgets:
@@ -686,7 +697,6 @@ class SlaveView(gobject.GObject):
             
         proxy = Proxy(self, model, widgets)
         self._proxies.append(proxy)
-
         return proxy
 
     #

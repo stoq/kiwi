@@ -29,7 +29,6 @@ L{Label.set_bold}"""
 
 import gtk
 
-from kiwi import ValueUnset
 from kiwi.ui.gadgets import set_foreground
 from kiwi.ui.widgets.proxy import WidgetMixin
 from kiwi.utils import PropertyObject
@@ -58,11 +57,14 @@ class Label(PropertyObject, gtk.Label, WidgetMixin):
             self.emit('content-changed')
 
     def read(self):
-        return self._as_string(self.get_text())
+        return self._from_string(self.get_text())
 
     def update(self, data):
-        if data is not ValueUnset and data is not None:
-            self.set_text(self._from_string(data))
+        if data is None:
+            text = ""
+        else:
+            text = self._as_string(data)
+        self.set_text(text)
     
     def _apply_attributes(self):
         # join the attributes

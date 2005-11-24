@@ -54,6 +54,7 @@ class Log(logging.Logger):
         """
         global _log_level
         logging.Logger.__init__(self, category, _log_level)
+        self._category = category
         
         # Tries to open the given file. If IOerror occour, send log to stdout
         file_obj = None
@@ -100,20 +101,21 @@ class Log(logging.Logger):
 class Logger(object):
     log_domain = 'default'
     def __init__(self, category=None):
-        self._log = Log(category=(category or self.log_domain))
+        category = (category or self.log_domain)
+        self._log = Log(category=category)
+        self._category = category
 
     def __call__(self, message):
         self.info(message)
         
     def log(self, level, message):
         global _log_level
-        if _log_level < level:
-            return
-        
-        frame = sys._getframe(2)
-        filename = os.path.basename(frame.f_code.co_filename)
-        message = '%s:%d %s' % (filename, frame.f_lineno, message)
-        self._log.log(level=level, message=message)
+        if _log_level <= level:
+            frame = sys._getframe(2)
+            filename = os.path.basename(frame.f_code.co_filename)
+            message = '%s %s:%d %s' % (self._category, filename,
+                                       frame.f_lineno, message)
+            self._log.log(level=level, message=message)
         
     def debug(self, message):
         self.log(DEBUG, message)

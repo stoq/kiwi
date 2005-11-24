@@ -28,7 +28,7 @@ import gobject
 import gtk
 from gtk import gdk
 
-from kiwi.decorators import delayed
+from kiwi.log import Logger
 from kiwi.utils import gsignal, type_register
 
 def gdk_color_to_string(color):
@@ -100,9 +100,8 @@ class FadeOut(gobject.GObject):
         gobject.GObject.__init__(self)
         self._widget = widget
         self._background_timeout_id = -1
-        
-        # Done is set when animation is already finished.
-        # Then the background is normally in another color.
+        self._countdown_timeout_id = -1
+        self._log = Logger('fade')
         self._done = False
         
     def _merge_colors(self, src_color, dst_color, steps=10):
@@ -110,6 +109,8 @@ class FadeOut(gobject.GObject):
         Change the background of widget from src_color to dst_color
         in the number of steps specified
         """
+        self._log.debug('_merge_colors: %s -> %s' % (src_color, dst_color))
+        
         gdk_src = gdk.color_parse(src_color)
         gdk_dst = gdk.color_parse(dst_color)
         rs, gs, bs = gdk_src.red, gdk_src.green, gdk_src.blue
@@ -132,32 +133,49 @@ class FadeOut(gobject.GObject):
         self._done = True
         yield False
 
-    def reset(self):
-        self.stop()
-        self.emit('color-changed', gdk.color_parse(FadeOut.GOOD_COLOR))
-        
-    # FIXME: When we can depend on 2.4
-    #@delayed(COMPLAIN_DELAY)
-    def start(self):
+    def _start_merging(self):
         # If we changed during the delay
         if self._background_timeout_id != -1:
+            self._log.debug('_start_merging: Already running')
             return
-        elif self._done:
-            self.emit('done')
-            return
-        
-        self._done = False
+
+        self._log.debug('_start_merging: Starting')
         func = self._merge_colors(FadeOut.GOOD_COLOR,
                                   FadeOut.ERROR_COLOR).next
         self._background_timeout_id = (
             gobject.timeout_add(FadeOut.MERGE_COLORS_DELAY, func))
-    start = delayed(COMPLAIN_DELAY)(start)
+        self._countdown_timeout_id = -1
+        
+    def start(self):
+        """Schedules a start of the countdown.
+        @returns: True if we could start, False if was already in progress
+        """
+        if self._background_timeout_id != -1:
+            self._log.debug('start: Background change already running')
+            return False
+        if self._countdown_timeout_id != -1:
+            self._log.debug('start: Countdown already running')
+            return False
+        if self._done:
+            self._log.debug('start: Not running, already set')
+            return False
+            
+        self._log.debug('start: Scheduling')
+        self._countdown_timeout_id = gobject.timeout_add(
+            FadeOut.COMPLAIN_DELAY, self._start_merging)
+
+        return True
     
     def stop(self):
         """Stops the fadeout and restores the background color"""
+        self._log.debug('Stopping')
         if self._background_timeout_id != -1:
             gobject.source_remove(self._background_timeout_id)
             self._background_timeout_id = -1
+        if self._countdown_timeout_id != -1:
+            gobject.source_remove(self._countdown_timeout_id)
+            self._countdown_timeout_id = -1
+            
         self._widget.update_background(gdk.color_parse(FadeOut.GOOD_COLOR))
         self._done = False
 

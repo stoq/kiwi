@@ -34,7 +34,6 @@ import gettext
 import gobject
 import gtk
 
-from kiwi import ValueUnset
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import gproperty, gsignal, type_register
@@ -164,7 +163,7 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
     def _update_current_object(self, text):
         if self._entry_mode != ENTRY_MODE_DATA:
             return
-        
+
         for row in self.get_completion().get_model():
             if row[COL_TEXT] == text:
                 self._current_object = row[COL_OBJECT]
@@ -238,27 +237,26 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
     def read(self):
         mode = self._entry_mode
         if mode == ENTRY_MODE_TEXT:
-            return self.get_text()
+            return self._from_string(self.get_text())
         elif mode == ENTRY_MODE_DATA:
             return self._current_object
         else:
             raise AssertionError
     
     def update(self, data):
-        if data is ValueUnset or data is None:
-            self.set_text("")
-            return
-        
-        mode = self._entry_mode
-        if mode == ENTRY_MODE_DATA:
-            new = self._get_text_from_object(data)
-            if new is None:
-                raise TypeError("%r is not a data object" % data)
-            data = new
-        elif mode == ENTRY_MODE_TEXT:
-            data = self._from_string(data)
+        if data is None:
+            text = ""
+        else:
+            mode = self._entry_mode
+            if mode == ENTRY_MODE_DATA:
+                new = self._get_text_from_object(data)
+                if new is None:
+                    raise TypeError("%r is not a data object" % data)
+                text = new
+            elif mode == ENTRY_MODE_TEXT:
+                text = self._as_string(data)
 
-        self.set_text(data)
+        self.set_text(text)
 
     def do_expose_event(self, event):
         gtk.Entry.do_expose_event(self, event)

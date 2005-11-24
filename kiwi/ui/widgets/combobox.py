@@ -266,7 +266,7 @@ class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
     
     def read(self):
         if self.mode == COMBO_MODE_STRING:
-            return self.get_selected_label()
+            return self._from_string(self.get_selected_label())
         elif self.mode == COMBO_MODE_DATA:
             return self.get_selected_data()
         
@@ -276,10 +276,10 @@ class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
         # We dont need validation because the user always
         # choose a valid value
         
-        if data is ValueUnset or data is None:
+        if data is None:
             return
         elif self.mode == COMBO_MODE_STRING:
-            self.select_item_by_label(data)
+            self.select_item_by_label(self._as_string(data))
         elif self.mode == COMBO_MODE_DATA:
             self.select_item_by_data(data)
         else:
