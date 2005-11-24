@@ -51,6 +51,9 @@ class Environment:
 
     def get_root(self):
         return self._root
+
+    def get_log_level(self):
+        return os.environ.get('KIWI_LOG')
     
     def _add_resource_variable(self, resource, variable):
         """Add resources from an environment variable"""
