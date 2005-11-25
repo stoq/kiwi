@@ -97,12 +97,13 @@ class PropertyObject(object):
     gobject.GObject subclass.
 
     Example:
-    from kiwi.utils import PropertyObject, gproperty
+
+    >>> from kiwi.utils import PropertyObject, gproperty
     
     >>> class Person(PropertyObject, gobject.GObject):
     >>>     gproperty('name', str)
     >>>     gproperty('age', int)
-    >>>     gproperty('married', bool, default=False)
+    >>>     gproperty('married', bool, False)
 
     >>> test = Test()
     >>> test.age = 20
@@ -210,6 +211,8 @@ class PropertyObject(object):
 def gsignal(name, *args, **kwargs):
     """
     Add a GObject signal to the current object.
+    It current supports the following types:
+      str, int, float, long, object, enum
     @param name:     name of the signal
     @type name:      string
     @param args:     types for signal parameters,
@@ -257,22 +260,22 @@ def gsignal(name, *args, **kwargs):
 def _max(c):
    return (1 << (8 * struct.calcsize(c)-1))-1
 
-_MAX_INT = int(_max('i'))
-_MAX_FLOAT = float(_max('f'))
-_MAX_LONG = long(_max('l'))
-
-def gproperty(name, type, *args, **kwargs):
+_MAX_VALUES = {int : _max('i'),
+               float : _max('f'),
+               long : _max('l') }
+_DEFAULT_VALUES = {str : '', float : 0.0, int : 0, long : 0L}
+                   
+def gproperty(name, ptype, default=None, nick='', blurb='',
+              flags=gobject.PARAM_READWRITE, **kwargs):
     """
     Add a GObject property to the current object.
     @param name:   name of property
     @type name:    string
-    @param type:   type of property
-    @type type:    type
+    @param ptype:   type of property
+    @type ptype:    type
     @keyword default:  default value
     @keyword nick:     short description
     @keyword blurb:    long description
-    @keyword minimum:  minimum allowed value (only for int, float, long)
-    @keyword maximum:  maximum allowed value (only for int, float, long)
     @keyword flags:    parameter flags, one of:
       - PARAM_READABLE
       - PARAM_READWRITE
@@ -280,51 +283,66 @@ def gproperty(name, type, *args, **kwargs):
       - PARAM_CONSTRUCT
       - PARAM_CONSTRUCT_ONLY
       - PARAM_LAX_VALIDATION
+    Optional, only for int, float, long types:
+    @keyword minimum:  minimum allowed value 
+    @keyword maximum:  maximum allowed value
     """
+
+    # General type checking
+    if default is None:
+        default = _DEFAULT_VALUES.get(ptype)
+    if not isinstance(default, ptype):
+        raise TypeError("default must be of type %s, not %r" % (
+            ptype, default))
+    if not isinstance(nick, str):
+        raise TypeError('nick for property %s must be a string, not %r' % (
+            name, nick))
+    nick = nick or name
+    if not isinstance(blurb, str):
+        raise TypeError('blurb for property %s must be a string, not %r' % (
+            name, blurb))
+
+    # Specific type checking
+    if ptype == int or ptype == float or ptype == long:
+        default = (kwargs.get('minimum', ptype(0)),
+                   kwargs.get('maximum', _MAX_VALUES[ptype]),
+                   default)
+    elif ptype == bool:
+        if (default is not True and
+            default is not False):
+            raise TypeError("default must be True or False, not %r" % (
+                default))
+        default = default,
+    elif gobject.type_is_a(ptype, gobject.GEnum):
+        if default is None:
+            raise TypeError("enum properties needs a default value")
+        elif not isinstance(default, ptype):
+            raise TypeError("enum value %s must be an instance of %r" %
+                            (default, ptype))
+        default = default,
+    elif ptype == str:
+        default = default,
+    elif ptype == object:
+        if default is not None:
+            raise TypeError("object types does not have default values")
+        default = ()
+    else:
+        raise NotImplementedError("type %r" % ptype)
+    
+    if flags not in (gobject.PARAM_READABLE, gobject.PARAM_READWRITE,
+                     gobject.PARAM_WRITABLE, gobject.PARAM_CONSTRUCT,
+                     gobject.PARAM_CONSTRUCT_ONLY,
+                     gobject.PARAM_LAX_VALIDATION):
+        raise TypeError("invalid flag value: %r" % flags)
 
     frame = sys._getframe(1)
     try:
         locals = frame.f_locals
+        if not '__gproperties__' in locals:
+            dict = locals['__gproperties__'] = {}
+        else:
+            dict = locals['__gproperties__']
     finally:
         del frame
-        
-    nick = kwargs.get('nick', name)
-    blurb = kwargs.get('blurb', '')
-    args = [type, nick, blurb]
 
-    if type == str:
-        args.append(kwargs.get('default', ''))
-    elif type == int:
-        args.append(kwargs.get('minimum', 0))
-        args.append(kwargs.get('maximum', _MAX_INT))
-        args.append(kwargs.get('default', 0))
-    elif type == float:
-        args.append(kwargs.get('minimum', 0.0))
-        args.append(kwargs.get('maximum', _MAX_FLOAT))
-        args.append(kwargs.get('default', 0.0))
-    elif type == long:
-        args.append(kwargs.get('minimum', 0L))
-        args.append(kwargs.get('maximum', _MAX_LONG))
-        args.append(kwargs.get('default', 0L))
-    elif type == bool:
-        args.append(kwargs.get('default', True))
-    elif gobject.type_is_a(type, gobject.GEnum):
-        default = kwargs.get('default')
-        if default is None:
-            raise TypeError("enum properties needs a default value")
-        elif not isinstance(default, type):
-            raise TypeError("enum value %s must be an instance of %r" %
-                            (default, type))
-        args.append(default)
-    elif type == object:
-        pass
-
-    args.append(kwargs.get('flags', gobject.PARAM_READWRITE))
-
-    if not '__gproperties__' in locals:
-        dict = locals['__gproperties__'] = {}
-    else:
-        dict = locals['__gproperties__']
-
-    dict[name] = tuple(args)
-
+    dict[name] = (ptype, nick, blurb) + default + (flags,)
