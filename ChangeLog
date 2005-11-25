@@ -1,3 +1,12 @@
+2005-11-24  Henrique Romano  <henrique@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/argcheck.py:
+	Allowing a "extra_check" function be called to validate
+	data after type_check is executed over all the 
+	parameters.
+
 2005-11-24  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/datatypes.py:

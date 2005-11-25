@@ -89,7 +89,7 @@ class argcheck(object):
         """
         cls.__enabled__ = False
     disable = classmethod(disable)
-        
+
     def __call__(self, func):
         if not callable(func):
             raise TypeError("%r must be callable" % func)
@@ -147,10 +147,14 @@ class argcheck(object):
                 # Keyword arguments
                 for name, arg in kwargs.items():
                     self._type_check(arg, kwarg_types[name], name)
-                
+
+                self.extra_check(arg_names, types, args, kwargs)
             return func(*args, **kwargs)
         wrapper.__name__ = func.__name__
         return wrapper
+
+    def extra_check(self, names, types, args, kwargs):
+        pass
 
     def _type_check(self, value, argument_type, name):
         if issubclass(argument_type, CustomType):
