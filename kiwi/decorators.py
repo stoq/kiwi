@@ -48,37 +48,6 @@ class deprecated(object):
         wrapper.__name__ = func.__name__
         return wrapper
 
-class delayed(object):
-    """
-    I am a decorator which delays the function call using the gobject/gtk
-    mainloop for a number of ms.
-    """
-    def __init__(self, delay):
-        """
-        @param delay: delay in ms
-        @type delay:  integer
-        """
-        
-        self._delay = delay
-        self._timeout_id = -1
-
-    def __call__(self, func):
-        def real_call(args, kwargs):
-            func(*args, **kwargs)
-            self._timeout_id = -1
-            return False
-        
-        def wrapper(*args, **kwargs):
-            # Only one call at a time
-            if self._timeout_id != -1:
-                return
-        
-            self._timeout_id = gobject.timeout_add(self._delay,
-                                                   real_call, args, kwargs)
-        wrapper.__name__ = func.__name__
-        return wrapper
-
-        
 class signal_block(object):
     """
     A decorator to be used on L{kiwi.ui.views.SlaveView} methods.
