@@ -36,7 +36,7 @@ import gtk
 
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
-from kiwi.utils import gproperty, gsignal, type_register
+from kiwi.utils import PropertyObject, gproperty, gsignal, type_register
 
 _ = gettext.gettext
 
@@ -45,8 +45,6 @@ _ = gettext.gettext
 
 (ENTRY_MODE_TEXT,
  ENTRY_MODE_DATA) = range(2)
-
-from kiwi.utils import PropertyObject
 
 class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
     """The Kiwi Entry widget has many special features that extend the basic
@@ -64,9 +62,8 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
     how to fill these entries is displayed according to the current locale.
     """
 
-    gproperty("completion", bool, False, 
-              "Completion", gobject.PARAM_READWRITE)
-    gproperty('exact-completion', bool, True)
+    gproperty("completion", bool, False)
+    gproperty('exact-completion', bool, default=False)
         
     def __init__(self):
         gtk.Entry.__init__(self)
@@ -173,7 +170,6 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
             if text:
                 self.set_invalid(_("'%s' is not a valid object" % text))
             elif self.mandatory:
-                self._fade.stop()
                 self.set_blank()
             else:
                 self.set_valid()
