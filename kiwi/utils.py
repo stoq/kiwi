@@ -258,7 +258,8 @@ def gsignal(name, *args, **kwargs):
         dict[name] = (flags, retval, args)
 
 def _max(c):
-   return (1 << (8 * struct.calcsize(c)-1))-1
+    # Python 2.3 does not like bitshifting here
+    return 2 ** ((8 * struct.calcsize(c)) - 1) - 1
 
 _MAX_VALUES = {int : _max('i'),
                float : _max('f'),
@@ -291,7 +292,7 @@ def gproperty(name, ptype, default=None, nick='', blurb='',
     # General type checking
     if default is None:
         default = _DEFAULT_VALUES.get(ptype)
-    if not isinstance(default, ptype):
+    elif not isinstance(default, ptype):
         raise TypeError("default must be of type %s, not %r" % (
             ptype, default))
     if not isinstance(nick, str):
