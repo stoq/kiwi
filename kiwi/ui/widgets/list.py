@@ -1152,13 +1152,14 @@ class List(gtk.ScrolledWindow):
         # linear search for the instance to remove
         treeiter = self._iters.pop(objid)
         if treeiter:
-            self._model.remove(treeiter)
-            path = self._model[treeiter].path[0]
-            
             # Remove any references to this path
+            path = self._model[treeiter].path[0]
             for cache in self._cell_data_caches.values():
                 if path in cache:
                     del cache[path]
+
+            # All references to the iter gone, now it can be removed
+            self._model.remove(treeiter)
                 
             return True
             
