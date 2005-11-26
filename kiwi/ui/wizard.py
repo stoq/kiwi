@@ -61,23 +61,21 @@ class WizardStep:
 class PluggableWizard(Delegate):
     """ Wizard controller and view class """
     gladefile = 'PluggableWizard'
-    widgets = ('notification_lbl', 
-               'header_lbl', 
-               'next_btn', 
-               'previous_btn',
-               'cancel_btn')
-
     retval = None
-    def __init__(self, title, first_step, size=None):
+
+    def __init__(self, title, first_step, size=None, edit_mode=False):
         Delegate.__init__(self, delete_handler=self.quit_if_last,
                           gladefile=self.gladefile, 
                           widgets=self.widgets)
         self.set_title(title)
         self.first_step = first_step
+        self.edit_mode = edit_mode
         if size:
             self.get_toplevel().set_default_size(size[0], size[1])
         self.change_step(first_step)
         self.get_toplevel().show_all()
+        if not self.edit_mode:
+            self.ok_button.hide()
         
     def change_step(self, step=None):
         if step is None:
@@ -101,6 +99,8 @@ class PluggableWizard(Delegate):
 
     def update_view(self): 
         # First page
+        if self.edit_mode:
+            self.ok_button.set_sensitive(True)
         if not self.current.has_previous_step():
             self.enable_next()
             self.disable_back()
@@ -115,40 +115,59 @@ class PluggableWizard(Delegate):
         # Last page
         else:
             self.enable_back()
-            self.disable_next()
-            self.enable_finish()
             self.notification_lbl.show()
+            if self.edit_mode:
+                self.disable_next()
+            else:
+                self.enable_next()
+            self.enable_finish()
 
     def enable_next(self):
-        self.next_btn.set_sensitive(True)
+        self.next_button.set_sensitive(True)
 
     def enable_back(self):
-        self.previous_btn.set_sensitive(True)
+        self.previous_button.set_sensitive(True)
 
     def enable_finish(self):
-        self.next_btn.set_label(gtk.STOCK_APPLY)
+        if self.edit_mode:
+            widget = self.ok_button
+        else:
+            widget = self.next_button
+        widget.set_label(gtk.STOCK_APPLY)
         self.wizard_finished = True
     
     def disable_next(self):
-        self.next_btn.set_sensitive(False)
+        self.next_button.set_sensitive(False)
 
     def disable_back(self):
-        self.previous_btn.set_sensitive(False)
-        
-    def disable_finish(self):
-        self.next_btn.set_label(gtk.STOCK_GO_FORWARD)
+        self.previous_button.set_sensitive(False)
 
-    def on_next_btn__clicked(self, *args):
+    def disable_finish(self):
+        if self.edit_mode:
+            self.ok_button.set_label(gtk.STOCK_OK)
+        else:
+            self.next_button.set_label(gtk.STOCK_GO_FORWARD)
+
+    def _call_step(self):
+        """Call the next step performing first a small check in the 
+        current one.
+        """
         if not self.current.has_next_step():
             # This is the last step
             self.change_step()
             return
         self.change_step(self.current.next_step())
+
+    def on_next_button__clicked(self, button):
+        self._call_step()
+
+    def on_ok_button__clicked(self, button):
+        self._call_step()
             
-    def on_previous_btn__clicked(self, *args):
+    def on_previous_button__clicked(self, button):
         self.change_step(self.current.previous_step())
 
-    def on_cancel_btn__clicked(self, *args):
+    def on_cancel_button__clicked(self, button):
         self.cancel()
 
     def set_message(self, message):
