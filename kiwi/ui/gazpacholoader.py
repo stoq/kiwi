@@ -187,7 +187,8 @@ class DataTypeProperty(CustomProperty, StringType):
     translatable = False
     def save(self):
         value = self.get()
-        return value.__name__
+        if value is not None:
+            return value.__name__
 
 class BoolDataTypeProperty(CustomProperty, StringType):
     translatable = False

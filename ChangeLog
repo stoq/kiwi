@@ -1,3 +1,8 @@
+2005-11-28  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/gazpacholoader.py (DataTypeProperty.save): Handle None,
+	since it's now an allowed type
+
 2005-11-26  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/list.py (List.remove): Remove the iter from the
