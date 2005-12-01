@@ -71,23 +71,35 @@ class ConverterRegistry:
 
         return value
 
-    def as_string(self, converter_type, data, value, format=None):
+    def as_string(self, converter_type, value, format=None):
+        """
+        Convert to a string
+        @param converter_type:
+        @param value:
+        @param format:
+        """
         c = self.get_converter(converter_type)
         if c.as_string is None:
-            return data
+            return value
 
-        if not isinstance(data, c.type):
+        if not isinstance(value, c.type):
             raise TypeError('data: %s must be of %r not %r' % (
-                data, c.type, type(data)))
+                value, c.type, type(value)))
         
-        return c.as_string(data, value, format=format)
+        return c.as_string(value, format=format)
             
-    def from_string(self, converter_type, data, value):
+    def from_string(self, converter_type, value):
+        """
+        Convert from a string
+        @param converter_type:
+        @param value:
+        @param format:
+        """
         c = self.get_converter(converter_type)
         if c.from_string is None:
-            return data
+            return value
 
-        return c.from_string(data, value)
+        return c.from_string(value)
 
     def str_to_type(self, value):
         for c in self._converters.values():
