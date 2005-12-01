@@ -11,6 +11,7 @@ class EntryTest(unittest.TestCase):
     def testModel(self):
         entry = Entry()
         entry.set_text('value')
+        entry.set_property("data-type", "str")
         self.assertEqual(entry.read(), 'value')
         
         
