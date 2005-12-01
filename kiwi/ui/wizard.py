@@ -73,7 +73,8 @@ class PluggableWizard(Delegate):
         if size:
             self.get_toplevel().set_default_size(size[0], size[1])
         self.change_step(first_step)
-        self.get_toplevel().show_all()
+        toplevel = self.get_toplevel()
+        toplevel.show_all()
         if not self.edit_mode:
             self.ok_button.hide()
         
