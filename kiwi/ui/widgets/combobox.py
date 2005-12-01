@@ -283,7 +283,9 @@ class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
         elif self.mode == COMBO_MODE_DATA:
             self.select_item_by_data(data)
         else:
-            raise TypeError("unknown ComboBox mode")
+            # XXX: When setting the datatype to non string, automatically go to
+            #      data mode
+            raise TypeError("unknown ComboBox mode. Did you call prefill?")
         
     def prefill(self, itemdata, sort=False):
         ComboProxyMixin.prefill(self, itemdata, sort)
