@@ -49,8 +49,11 @@ class ConverterRegistry:
         c = converter_type()
         self._converters[c.type] = c
 
-    def _get_converter(self, converter_type):
-        return self._converters[converter_type]
+    def get_converter(self, converter_type):
+        try:
+            return self._converters[converter_type]
+        except KeyError:
+            raise KeyError(converter_type)
         
     def check_supported(self, data_type):
         value = None
@@ -68,8 +71,8 @@ class ConverterRegistry:
 
         return value
 
-    def as_string(self, converter_type, data, *args, **kwargs):
-        c = self._get_converter(converter_type)
+    def as_string(self, converter_type, data, value, format=None):
+        c = self.get_converter(converter_type)
         if c.as_string is None:
             return data
 
@@ -77,14 +80,14 @@ class ConverterRegistry:
             raise TypeError('data: %s must be of %r not %r' % (
                 data, c.type, type(data)))
         
-        return c.as_string(data, *args, **kwargs)
+        return c.as_string(data, value, format=format)
             
-    def from_string(self, converter_type, data, *args, **kwargs):
-        c = self._get_converter(converter_type)
+    def from_string(self, converter_type, data, value):
+        c = self.get_converter(converter_type)
         if c.from_string is None:
             return data
 
-        return c.from_string(data, *args, **kwargs)
+        return c.from_string(data, value)
 
     def str_to_type(self, value):
         for c in self._converters.values():
