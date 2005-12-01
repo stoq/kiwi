@@ -60,9 +60,16 @@ class WidgetMixin(Mixin):
     gproperty('data-type', object, blurb='Data Type')
     gproperty('model-attribute', object, blurb='Model attribute')
     
-    allowed_data_types = object, 
+    allowed_data_types = object,
+    
+    # To be able to call the as/from_string without setting the data_type
+    # property and still receiving a good warning.
+    _converter = None
     
     def __init__(self):
+        if not type(self.allowed_data_types) == tuple:
+            raise TypeError("%s.allowed_data_types must be a tuple" % (
+                self.allowed_data_types))
         self._data_format = None
         
     # Properties
@@ -74,21 +81,22 @@ class WidgetMixin(Mixin):
                           name of the type object, so None, "<type 'str'>"
                           or 'str'
         """
-
         if data_type is None:
             return data_type
         
-        # This may convert from string to type
+        # This may convert from string to type,
+        # A type object will always be returned
         data_type = converter.check_supported(data_type)
         
         if not issubclass(data_type, self.allowed_data_types):
-            typenames = [t.__name__ for t in self.allowed_data_types]
             raise TypeError(
                 "%s only accept %s types, not %r"
-                % (self, ' or '.join(typenames), data_type))
-
+                % (self,
+                   ' or '.join([t.__name__ for t in self.allowed_data_types]),
+                   data_type))
+        
+        self._converter = converter.get_converter(data_type)
         return data_type
-
 
     # Public API
     def set_data_format(self, format):
@@ -114,8 +122,12 @@ class WidgetMixin(Mixin):
         """Convert a value to a string
         @param data: data to convert
         """
-        return converter.as_string(self.data_type, data,
-                                   format=self._data_format)
+        conv = self._converter
+        if conv is None:
+            raise AssertionError(
+                "You need to set a data type before calling _as_string")
+        
+        return conv.as_string(data, format=self._data_format)
      
     def _from_string(self, data):
         """Convert a string to the data type of the widget
@@ -123,7 +135,12 @@ class WidgetMixin(Mixin):
         failed
         @param data: data to convert
         """
-        return converter.from_string(self.data_type, data)
+        conv = self._converter
+        if conv is None:
+            raise AssertionError(
+                "You need to set a data type before calling _from_string")
+        
+        return conv.from_string(data)
 
 MANDATORY_ICON = gtk.STOCK_EDIT
 ERROR_ICON = gtk.STOCK_DIALOG_INFO
