@@ -58,8 +58,8 @@ class WidgetMixin(Mixin):
     gsignal('validate', object, retval=object)
     
     gproperty('data-type', object, blurb='Data Type')
-    gproperty('model-attribute', object, blurb='Model attribute')
-    
+    gproperty('model-attribute', str, blurb='Model attribute')
+
     allowed_data_types = object,
     
     # To be able to call the as/from_string without setting the data_type
