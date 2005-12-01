@@ -20,12 +20,6 @@ class DataTypesTest(unittest.TestCase):
         self.assertEqual(bool_converter.from_string('FalSE'), False)
         self.assertEqual(bool_converter.from_string('0'), False)
 
-        # testing with default values
-        self.assertEqual(bool_converter.from_string('something', False), False)
-        self.assertEqual(bool_converter.from_string('something', True), True)
-        self.assertEqual(bool_converter.from_string('', True), True)
-        self.assertEqual(bool_converter.from_string('', False), False)
-
         # you are not supposed to pass something that is not a string
         self.assertRaises(AttributeError, bool_converter.from_string, None)
 
