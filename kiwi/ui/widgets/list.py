@@ -49,10 +49,9 @@ def str2enum(value_name, enum_class):
         if value_name in (enum.value_name, enum.value_nick):
             return enum
 
-def str2bool(value, default_value=False,
-             from_string=datatypes.converter.from_string):
+def str2bool(value, from_string=datatypes.converter.from_string):
     "converts a boolean to a enum"
-    return from_string(bool, value, default_value)
+    return from_string(bool, value)
 
 class Column(PropertyObject, gobject.GObject):
     """Specifies a column in a List"""
@@ -197,7 +196,7 @@ class Column(PropertyObject, gobject.GObject):
         column = cls(fields[0])
         column.title = fields[1] or ''
         column.data_type = str2type(fields[2])
-        column.visible = str2bool(fields[3], default_value=True)
+        column.visible = str2bool(fields[3])
         column.justify = str2enum(fields[4], gtk.JUSTIFY_LEFT)
         column.tooltip = fields[5]
         column.format = fields[6]
@@ -207,9 +206,10 @@ class Column(PropertyObject, gobject.GObject):
         except ValueError:
             pass
         
-        column.sorted = str2bool(fields[8], default_value=False)
+        column.sorted = str2bool(fields[8])
         column.order = str2enum(fields[9], gtk.SORT_ASCENDING) \
                      or gtk.SORT_ASCENDING
+        
         # XXX: expand, remember to sync with __str__
         
         return column
