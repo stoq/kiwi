@@ -83,7 +83,9 @@ def get_site_packages_dir(*dirs):
     @param dirs: directory names to be appended
     """
 
-    return os.path.join(get_python_lib(prefix=''), *dirs)
+    libdir = get_python_lib(plat_specific=False,
+                            standard_lib=True, prefix='')
+    return os.path.join(libdir, 'site-packages', *dirs)
                    
 def listfiles(*dirs):
     dir, pattern = os.path.split(os.path.join(*dirs))
