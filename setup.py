@@ -15,7 +15,8 @@ from distutils.core import setup
 import os
 import sys
 
-from kiwi.dist import listfiles, listpackages, TemplateInstallLib
+from kiwi.dist import listfiles, listpackages, TemplateInstallLib, \
+     get_site_packages_dir
 
 class InstallLib(TemplateInstallLib):
     name = 'kiwi'
@@ -39,8 +40,7 @@ setup(name="kiwi",
                    listfiles('gazpacho-plugin', 'kiwiwidgets.xml')),
                   ('share/gazpacho/resources/kiwiwidgets',
                    listfiles('gazpacho-plugin', 'resources', '*.png')),
-                  ('lib/python%d.%d/site-packages/gazpacho/widgets' %
-                   sys.version_info[:2],
+                  (get_site_packages_dir('gazpacho', 'widgets'),
                    listfiles('gazpacho-plugin', 'kiwiwidgets.py')),
                   ('share/doc/kiwi',
                    ('AUTHORS', 'ChangeLog', 'NEWS', 'README')),

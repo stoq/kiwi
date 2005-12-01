@@ -26,6 +26,7 @@
 from distutils.command.install_lib import install_lib
 from distutils.dep_util import newer
 from distutils.log import info, warn
+from distutils.sysconfig import get_python_lib
 from fnmatch import fnmatch
 import os
 
@@ -66,6 +67,24 @@ class TemplateInstallLib(install_lib):
                                           self.global_resources)
         return install_lib.install(self) + [template]
 
+def get_site_packages_dir(*dirs):
+    """
+    Gets the relative path of the site-packages directory
+
+    This is mainly useful for setup.py usage:
+
+    >>> setup(...
+              data_files=[(get_site_packages_dir('foo'),
+                           files..)])
+
+    where files is a list of files to be installed in
+    a directory called foo created in your site-packages directory
+    
+    @param dirs: directory names to be appended
+    """
+
+    return os.path.join(get_python_lib(prefix=''), *dirs)
+                   
 def listfiles(*dirs):
     dir, pattern = os.path.split(os.path.join(*dirs))
     return [os.path.join(dir, filename)

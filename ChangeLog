@@ -1,3 +1,12 @@
+2005-12-01  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/dist.py (get_site_packages_dir): 
+	New function, to handle installation of modules in the site-packages
+	directory in a platform independent way.
+
+	* setup.py (version): Use it here.
+	Fixes bug #2326 (Carlos Augusto Marcicano)
+
 2005-11-28  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/gazpacholoader.py (DataTypeProperty.save): Handle None,
