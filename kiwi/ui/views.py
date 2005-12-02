@@ -145,10 +145,9 @@ class SignalBroker(object):
                 _warn("Widget %s doesn't provide a signal %s"
                      % (widget.__class__, signal))
                 continue
-            if not self._autoconnected.has_key(widget):
-                self._autoconnected[widget] = []
-            self._autoconnected[widget].append((signal, signal_id))
-
+            self._autoconnected.setdefault(widget, []).append((
+                signal, signal_id))
+            
     def handler_block(self, widget, signal_name):
         signals = self._autoconnected
         if not widget in signals:
@@ -266,13 +265,11 @@ class SlaveView(gobject.GObject):
 
         if self.toplevel_name is not None and self.toplevel is None:
             self.toplevel = getattr(self, self.toplevel_name, None)
-        
+
         if not self.toplevel:
             raise TypeError("A View requires an instance variable "
                             "called toplevel that specifies the "
                             "toplevel widget in it")
-
-
         self._proxies = []
         
         # grab the accel groups
@@ -316,8 +313,8 @@ class SlaveView(gobject.GObject):
             raise TypeError(msg % (container_name, type(shell)))
 
         if shell.get_property('visible'):
-            _warn('Toplevel window %s in %s should not be visible' % (container_name,
-                                                                      self.gladefile))
+            _warn('Toplevel window %s in %s should not be visible' % (
+                container_name, self.gladefile))
         # XXX grab the accel groups
         
         self.toplevel = shell.get_child()
@@ -419,7 +416,8 @@ class SlaveView(gobject.GObject):
               self.widgets is None, looks through all widgets attached
               to the view.
 
-            - can_focus: boolean, if set only searches through widget that can focus
+            - can_focus: boolean, if set only searches through widget
+              that can be focused
         """
         # XXX: recurse through containers from toplevel widget, better
         # idea and will work.
@@ -513,7 +511,8 @@ class SlaveView(gobject.GObject):
         self.slaves[name] = slave
 
         if not isinstance(slave, SlaveView):
-            raise TypeError("slave must be a SlaveView, not a %s" % type(slave))
+            raise TypeError("slave must be a SlaveView, not a %s" %
+                            type(slave))
 
         shell = slave.get_toplevel()
 
@@ -538,7 +537,8 @@ class SlaveView(gobject.GObject):
         if slave._accel_groups:
             # take care of accelerator groups; attach to parent window if we
             # have one; if embedding a slave into another slave, store its
-            # accel groups; otherwise complain if we're dropping the accelerators
+            # accel groups; otherwise complain if we're dropping the
+            # accelerators
             win = parent.get_toplevel()
             if isinstance(win, gtk.Window):
                 # use idle_add to be sure we attach the groups as late
@@ -625,7 +625,8 @@ class SlaveView(gobject.GObject):
             - widgets: a list of GtkWidgets
             - signal: a string specifying the signals
             - handler: a callback method
-            - after: a boolean; if TRUE, we use connect_after(), otherwise, connect()
+            - after: a boolean; if TRUE, we use connect_after(), otherwise,
+            connect()
         """
         if not isinstance(widgets, (list, tuple)):
             raise TypeError("widgets must be a list, found %s" % widgets)
@@ -757,6 +758,8 @@ class BaseView(SlaveView):
                             "(or inherit from it),\nfound `%s' %s" 
                             % (toplevel, self.toplevel))
 
+        self.toplevel.set_name(self.__class__.__name__)
+        
         if delete_handler:
             id = self.toplevel.connect("delete_event", delete_handler)
             if not id:
