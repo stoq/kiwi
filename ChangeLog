@@ -1,3 +1,15 @@
+2005-12-02  Johan Dahlin  <jdahlin@async.com.br>
+
+	* bin/kiwi-ui-test:
+	* kiwi/ui/test/__init__.py:
+	* kiwi/ui/test/common.py:
+	* kiwi/ui/test/listener.py:
+	* kiwi/ui/test/main.py:
+	* kiwi/ui/test/player.py:
+	Check-in initial gui testing framework.
+	A recorder, which generates code which uses a simple
+	player object.
+
 2005-12-01  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/dist.py (get_site_packages_dir): 
