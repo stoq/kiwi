@@ -18,6 +18,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
 # 
+# Author(s): Johan Dahlin <jdahlin@async.com.br
+#
 
 import sys
 import threading
@@ -33,7 +35,7 @@ from kiwi.ui.test.common import Base
 
 class TimeOutError(Exception):
     pass
-    
+
 class ThreadSafeFunction:
     """
     A function which is safe thread in the mainloop context
@@ -70,7 +72,27 @@ class ThreadSafeObject:
             return ThreadSafeFunction(attr)
         return attr
             
+class DictWrapper(object):
+    def __init__(self, dict, name):
+        self._dict = dict
+        self._name = name
+
+    def __getattr__(self, attr):
+        if not attr in self._dict:
+            raise KeyError("no %s called %s" % (self._name, attr))
+        
+        return ThreadSafeObject(self._dict[attr])
+
+class App(DictWrapper):
+    def __getattr__(self, attr):
+        return DictWrapper(self._dict[attr], 'widget')
+    
 class ApplicationThread(threading.Thread):
+    """
+    A separate thread in which the application will be executed in.
+    It's necessary to use threads since we want to allow applications
+    to run gtk.main and dialog.run without needing any modifications
+    """
     def __init__(self, args):
         threading.Thread.__init__(self)
         self._args = args
@@ -91,22 +113,21 @@ class Player(Base):
 
         self._appthread = ApplicationThread(args)
         self._appthread.start()
+
+        self._app = App(self._objects, name='window')
         
-    def get_object(self, window_name, widget_name):
+    def get_app(self):
         """
-        @param window_name: name of the toplevel window
-        @param name:        name of the widget
-        @returns: a threadsafe wrapper around the widget
+        Returns a virtual application object, which is a special object
+        where you can access the windows as attributes and widget in the
+        windows as attributes on the window, examples:
+
+        >>> app = player.get_app()
+        >>> app.WindowName.WidgetName.method()
+        
+        @returns: virtual application object
         """
-        
-        if not window_name in self._objects:
-            raise KeyError(window_name)
-        window_widgets = self._objects[window_name]
-        if not widget_name in window_widgets:
-            raise KeyError("No widget called %s in window %s" % (widget_name,
-                                                                 window_name))
-        
-        return ThreadSafeObject(window_widgets[widget_name])
+        return self._app
     
     def wait_for_window(self, name, timeout=10):
         """
@@ -134,8 +155,8 @@ class Player(Base):
             raise KeyError(window_name)
         
         window = self._windows[window_name]
+        # If the window is already removed, skip
         if window.window is None:
-            print 'Fixme %s is missing a GdkWindow', window_name
             return
         
         event = gdk.Event(gdk.DELETE)

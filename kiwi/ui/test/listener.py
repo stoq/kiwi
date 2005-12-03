@@ -39,7 +39,6 @@ def get_event_types():
 
 class Event:
     object_type = None
-    allow_subclass = True
     def __init__(self, object):
         self.object = object
         self.name = object.get_name()
@@ -49,9 +48,6 @@ class Event:
     def get_toplevel(self, widget):
         return widget.get_toplevel()
         
-    def variables(self):
-        return [self.name]
-
     def serialize(self):
         pass
 
@@ -60,20 +56,17 @@ class SignalEvent(Event):
 
 class WindowAddedEvent(Event):
     object_type = gtk.Window
-    def variables(self):
-        return ['player']
 
     def serialize(self):
-        return 'player.wait_for_window("%s")' % self.name
+        return 'wait_for_window("%s")' % self.name
 register_event_type(WindowAddedEvent)
     
 class WindowDeleteEvent(SignalEvent):
     signal_name = 'delete-event'
     object_type = gtk.Window
-    def variables(self):
-        return ['player']
+
     def serialize(self):
-        return 'player.delete_window("%s")' % self.name
+        return 'delete_window("%s")' % self.name
     
 register_event_type(WindowDeleteEvent)
 
@@ -85,7 +78,7 @@ class MenuItemActivateEvent(SignalEvent):
     """
     signal_name = 'activate'
     object_type = gtk.MenuItem
-    allow_subclass = False
+
     def serialize(self):
         return '%s.activate()' % self.name
 register_event_type(MenuItemActivateEvent)
@@ -114,6 +107,7 @@ class EntrySetTextEvent(SignalEvent):
     """
     signal_name = 'notify::text'
     object_type = gtk.Entry
+
     def __init__(self, object):
         SignalEvent.__init__(self, object)
         self.text = self.object.get_text()
@@ -125,6 +119,7 @@ register_event_type(EntrySetTextEvent)
 class EntryActivateEvent(SignalEvent):
     signal_name = 'activate'
     object_type = gtk.Entry
+
     def serialize(self):
         return '%s.activate()' % (self.name)
 register_event_type(EntryActivateEvent)
@@ -132,6 +127,7 @@ register_event_type(EntryActivateEvent)
 class ButtonClickedEvent(SignalEvent):
     signal_name = 'clicked'
     object_type = gtk.Button
+
     def serialize(self):
         return '%s.clicked()' % self.name
 register_event_type(ButtonClickedEvent)
@@ -214,21 +210,20 @@ class Listener(Base):
     def save(self):
         template = ("from kiwi.ui.test.player import Player\n"
                     "\n"
-                    "player = Player(%s)\n")
+                    "player = Player(%s)\n"
+                    "app = player.get_app()\n")
 
         fd = file(self._filename, 'w')
         fd.write(template % self._args)
         
-        namespace = dict(player=True)
-
         for event in self._events:
-            for variable in event.variables():
-                if not variable in namespace:
-                    fd.write('%s = player.get_object("%s", "%s")\n' % (
-                        variable, event.toplevel_name, variable))
-                    namespace[variable] = True
-                    
-            fd.write("%s\n" % event.serialize())
+            if isinstance(event, (WindowAddedEvent,
+                                  WindowDeleteEvent)):
+                fd.write("\n"
+                         "player.%s\n" % (event.serialize()))
+            else:
+                fd.write("app.%s.%s\n" % (event.toplevel_name,
+                                          event.serialize()))
 
         fd.write('player.finish()\n')
         fd.close()
