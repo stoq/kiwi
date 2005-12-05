@@ -22,10 +22,12 @@
 #
 
 import atexit
+import time
 
 import gtk
 
 from kiwi.ui.test.common import Base
+from kiwi.ui.widgets.list import List
 
 _events = []
 
@@ -37,11 +39,13 @@ def register_event_type(event_type):
 def get_event_types():
     return _events
 
-class Event:
+class Event(object):
     object_type = None
-    def __init__(self, object):
+    def __init__(self, object, name=None):
         self.object = object
-        self.name = object.get_name()
+        if name is None:
+            name = object.get_name()
+        self.name = name
         self.toplevel_name = self.get_toplevel(object).get_name()
         
     # Override in subclass
@@ -50,16 +54,20 @@ class Event:
         
     def serialize(self):
         pass
-
+    
 class SignalEvent(Event):
     signal_name = None
 
-class WindowAddedEvent(Event):
-    object_type = gtk.Window
+    def connect(cls, object, signal_name, cb):
+        object.connect(signal_name, cb, cls, object)
+    connect = classmethod(connect)
 
-    def serialize(self):
-        return 'wait_for_window("%s")' % self.name
-register_event_type(WindowAddedEvent)
+# class WindowAddedEvent(Event):
+#     object_type = gtk.Window
+
+#     def serialize(self):
+#         return 'wait_for_window("%s")' % self.name
+# register_event_type(WindowAddedEvent)
     
 class WindowDeleteEvent(SignalEvent):
     signal_name = 'delete-event'
@@ -132,6 +140,37 @@ class ButtonClickedEvent(SignalEvent):
         return '%s.clicked()' % self.name
 register_event_type(ButtonClickedEvent)
 
+class TreeViewSelectionChanged(SignalEvent):
+    object_type = List
+    signal_name = 'changed'
+    def __init__(self, klist):
+        self._klist = klist
+        super(SignalEvent, self).__init__(object=klist,
+                                          name=klist.get_name())
+        selection = klist.get_treeview().get_selection()
+        mode = selection.get_mode()
+        iters = []
+        if mode == gtk.SELECTION_MULTIPLE:
+            model, iters = selection.get_selected_rows()
+        else:
+            model, iter = selection.get_selected()
+            if iter is not None:
+                iters = [iter]
+
+        self.rows = [model.get_string_from_iter(iter) for iter in iters]
+
+    def connect(cls, orig, signal_name, cb):
+        object = orig.get_treeview().get_selection()
+        object.connect(signal_name, cb, cls, orig)
+    connect = classmethod(connect)
+    
+    def get_toplevel(self, widget):
+        return self._klist.get_toplevel()
+    
+    def serialize(self):
+        return '%s.select_paths(%s)' % (self.name, self.rows)
+register_event_type(TreeViewSelectionChanged)
+
 class Listener(Base):
     def __init__(self, filename, args):
         """
@@ -173,15 +212,13 @@ class Listener(Base):
         # able to connect it to any kind of signal, regardless of
         # the number of parameters the signal has
         def on_signal(object, *args):
-            event_type = args[-1]
+            event_type = args[-2]
+            orig = args[-1]
             #print 'Creating event', event_type, object.get_name()
-            self._add_event(event_type(object))
+            self._add_event(event_type(orig))
         #print '%s %s->%s' % (object.__class__.__name__,
         #                     object.get_name(), event_type.signal_name)
-        object.connect(event_type.signal_name, on_signal, event_type)
-
-    def window_added(self, window):
-        self._add_event(WindowAddedEvent(window))
+        event_type.connect(object, event_type.signal_name, on_signal)
 
     def window_removed(self, window):
         self._add_event(WindowDeleteEvent(window))
@@ -206,7 +243,7 @@ class Listener(Base):
                         continue
                 if issubclass(event_type, SignalEvent):
                     self._listen_event(gobj, event_type)
-            
+                    
     def save(self):
         template = ("from kiwi.ui.test.player import Player\n"
                     "\n"
@@ -215,14 +252,24 @@ class Listener(Base):
 
         fd = file(self._filename, 'w')
         fd.write(template % self._args)
+
+        windows = {}
         
         for event in self._events:
-            if isinstance(event, (WindowAddedEvent,
-                                  WindowDeleteEvent)):
-                fd.write("\n"
-                         "player.%s\n" % (event.serialize()))
+            toplevel = event.toplevel_name
+            if not toplevel in windows:
+                fd.write('\n'
+                         'player.wait_for_window("%s")\n' % toplevel)
+                windows[toplevel] = True
+
+            if isinstance(event, WindowDeleteEvent):
+                fd.write("player.%s\n\n" % (event.serialize()))
+                if not event.name in windows:
+                    # Actually a bug
+                    continue
+                del windows[event.name]
             else:
-                fd.write("app.%s.%s\n" % (event.toplevel_name,
+                fd.write("app.%s.%s\n" % (toplevel,
                                           event.serialize()))
 
         fd.write('player.finish()\n')
