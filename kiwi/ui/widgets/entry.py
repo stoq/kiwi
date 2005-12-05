@@ -227,7 +227,8 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         # this updates current_object and triggers content-changed
         self.set_text(model[iter][COL_TEXT]) 
         self.set_position(-1)
-        self.activate()
+        # FIXME: Enable this at some point
+        #self.activate()
         
     def read(self):
         mode = self._entry_mode
