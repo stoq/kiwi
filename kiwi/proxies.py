@@ -61,7 +61,6 @@ class Proxy:
     attached to the model by looking if it is a KiwiWidget and if it
     has the model-attribute set.
     """
-    _setter_error_handler = None
     
     def __init__(self, view, model=None, widgets=[]):
         self.view = view
@@ -177,15 +176,7 @@ class Proxy:
 
         # XXX: one day we might want to queue and unique updates?
         self._block_proxy_in_model(True)
-        try:
-            ksetattr(self.model, attribute, value)
-        except:
-            if self._setter_error_handler:
-                self._setter_error_handler(sys.exc_value, self.model, 
-                                           attribute, value)
-            else:
-                raise
-
+        ksetattr(self.model, attribute, value)
         self._block_proxy_in_model(False)
 
         # Call global update hook 
@@ -230,18 +221,6 @@ class Proxy:
         This hook by default does nothing.
         """
         pass
-
-    def set_setter_error_handler(self, handler):
-        """ Sets a method that will be called if an update to a model
-        attribute raises an exception. The handler will receive the
-        following arguments, in order:
-
-            - Exception object
-            - model
-            - attribute name
-            - value attempted
-        """
-        self._setter_error_handler = handler
 
     def update(self, attribute, value=ValueUnset, block=False):
         """ Generic frontend function to update the contentss of a widget based

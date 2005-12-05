@@ -7,6 +7,9 @@
 	Add a new check to ensure that there are no unsupported
 	widgets added.
 	Change a warning into an exception
+	(Proxy._initialize_widgets): Remove error handler,
+	unused and a hack, unique clashes will be handled
+	in other ways.
 
 2005-12-03  Johan Dahlin  <jdahlin@async.com.br>
 
