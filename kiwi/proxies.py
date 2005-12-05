@@ -129,11 +129,14 @@ class Proxy:
                 "not have a model attribute set so it will not be "
                 "associated with the model" % (
                 widget_name, widget, self._view.__class__.__name__))
-            continue
 
-        connection_id = widget.connect('content-changed',
-                                       self._on_widget__content_changed,
-                                       attribute)
+        # Do a isinstance here instead of in the callback,
+        # as an optimization, it'll never change in runtime anyway
+        connection_id = widget.connect(
+            'content-changed',
+            self._on_widget__content_changed,
+            attribute,
+            isinstance(widget, MixinSupportValidation))
         widget.set_data('content-changed-id', connection_id)
 
         model_attributes = self._model_attributes
@@ -150,7 +153,7 @@ class Proxy:
         # here we define the view that owns the widget
         widget.owner = self._view
 
-    def _on_widget__content_changed(self, widget, attribute):
+    def _on_widget__content_changed(self, widget, attribute, validate):
         """This is called as soon as the content of one of the widget
         changes, the widgets tries fairly hard to not emit when it's not
         neccessary"""
@@ -159,7 +162,7 @@ class Proxy:
         if self.model is None:
             return
 
-        if isinstance(widget, MixinSupportValidation):
+        if validate:
             value = widget.validate()
         else:
             value = widget.read()
@@ -171,23 +174,17 @@ class Proxy:
         if value is ValueUnset:
             return
 
-        # XXX: one day we might want to queue and unique updates?
-        self._block_proxy_in_model(True)
-        ksetattr(self.model, attribute, value)
-        self._block_proxy_in_model(False)
-
-        # Call global update hook 
-        self.proxy_updated(widget, value)
-
-    def _block_proxy_in_model(self, state):
         model = self.model
-        if not hasattr(model, "block_proxy"):
-            return
-        
-        if state:
+        # XXX: one day we might want to queue and unique updates?
+        if hasattr(model, "block_proxy"):
             model.block_proxy(self)
-        else:
+            ksetattr(model, attribute, value)
             model.unblock_proxy(self)
+        else:
+            ksetattr(model, attribute, value)
+            
+        # Call global update hook 
+        self.proxy_updated(widget, attribute, value)
 
     def _register_proxy_in_model(self, attribute):
         model = self.model
@@ -211,34 +208,35 @@ class Proxy:
             self.model.unregister_proxy(self)
 
     # Public API
-    def proxy_updated(self, widgetproxy, value):
+    def proxy_updated(self, widget, attribute, value):
         """ This is a hook that is called whenever the proxy updates the
         model. Implement it in the inherited class to perform actions that
         should be done each time the user changes something in the interface.
         This hook by default does nothing.
+        @param widget:
+        @param attribute:
+        @param value:
         """
-        pass
 
     def update(self, attribute, value=ValueUnset, block=False):
         """ Generic frontend function to update the contentss of a widget based
         on its model attribute name using the internal update functions. 
 
-            - attribute: the name of the attribute whose widget we wish to
-              updated.  If accessing a radiobutton, specify its group
-              name. 
-            - value specifies the value to set in the widget. If
-              unspecified, it defaults to the current model's value
-              (through an accessor, if it exists, or getattr). 
-            - block defines if we are to block cascading proxy updates
-              triggered by this update. You should use block if you are
-              calling update on *the same attribute that is currently
-              being updated*.
-
-              This means if you have hooked to a signal of the widget
-              associated to that attribute, and you call update() for
-              the *same attribute*, use block=True. And pray. 8). If
-              block is set to False, the normal update mechanism will
-              occur (the model being updated in the end, hopefully).
+        @param attribute: the name of the attribute whose widget we wish to
+          updated.  If accessing a radiobutton, specify its group
+          name. 
+        @param value: specifies the value to set in the widget. If
+          unspecified, it defaults to the current model's value
+          (through an accessor, if it exists, or getattr). 
+        @param block: defines if we are to block cascading proxy updates
+          triggered by this update. You should use block if you are
+          calling update on *the same attribute that is currently
+          being updated*.
+          This means if you have hooked to a signal of the widget
+          associated to that attribute, and you call update() for
+          the *same attribute*, use block=True. And pray. 8). If
+          block is set to False, the normal update mechanism will
+          occur (the model being updated in the end, hopefully).
         """
 
         if value is ValueUnset:
@@ -292,23 +290,26 @@ class Proxy:
         """ Reuses the same proxy with another instance as model. Allows a
         proxy interface to change model without the need to destroy and
         recreate the UI (which would cause flashing, at least)
+        @param new_model:
+        @param relax_type:
         """
-        # unregister previous proxy
-        self._unregister_proxy_in_model()
         
+        if self.model is not None:
+            if (not relax_type and
+                type(new_model) != type(self.model) and
+                not isinstance(new_model, self.model.__class__)):
+                raise TypeError("New model has wrong type %s, expected %s"
+                                % (type(new_model), type(self.model)))
+
         # the following isn't strictly necessary, but it currently works
         # around a bug with reused ids in the attribute cache and also
         # makes a lot of sense for most applications (don't want a huge
         # eternal cache pointing to models that you're not using anyway)
         clear_attr_cache()
 
-        if self.model is not None:
-            assert self.model.__class__
-            if not relax_type and type(new_model) != type(self.model) and \
-                not isinstance(new_model, self.model.__class__):
-                raise TypeError("New model has wrong type %s, expected %s"
-                                % (type(new_model), type(self.model)))
-
+        # unregister previous proxy
+        self._unregister_proxy_in_model()
+        
         self.model = new_model
 
         self._initialize_widgets()
