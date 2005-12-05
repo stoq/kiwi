@@ -63,10 +63,27 @@ class Proxy:
     """
     
     def __init__(self, view, model=None, widgets=[]):
+        """
+        @param view:    view attched to the slave
+        @type  view:    a L{kiwi.ui.views.BaseView} subclass
+        @param model:   model attached to proxy
+        @param widgets: the widget names
+        @type  widgets: list of strings
+        """
         self._view = view
         self.model = model
         self._model_attributes = {}
-        self._setup_widgets(widgets)
+
+        model_attributes = self._model_attributes
+        for widget_name in widgets:
+            widget = getattr(self._view, widget_name, None)
+            if widget is None:
+                raise AttributeError("The widget %s was not found in the "
+                                     "view %s" % (
+                    widget_name, self._view.__class__.__name__))
+            
+            self._setup_widget(widget_name, widget)
+            
         self._initialize_widgets()
 
     def _initialize_widgets(self):
@@ -99,59 +116,45 @@ class Proxy:
 
             widget.validate(force=True)
             
-    def _setup_widgets(self, widgets):
-        """
-        Connect to the 'content-changed' signal of all the Kiwi widgets
-        in the widgets list parameter.
-        @param widgets: the widget names
-        @type  widgets: list of strings
-        """
-        model_attributes = self._model_attributes
-        for widget_name in widgets:
-            widget = getattr(self._view, widget_name, None)
-            if widget is None:
-                raise AttributeError("The widget %s was not found in the "
-                                     "view %s" % (
-                    widget_name, self._view.__class__.__name__))
-            
-            if not isinstance(widget, Mixin):
-                raise ProxyError("The widget %s (%r), in view %s is not "
-                                 "a kiwi widget and cannot be added to a proxy"
-                                 % (widget_name, widget,
-                                    self._view.__class__.__name__))
+    def _setup_widget(self, widget_name, widget):
+        if not isinstance(widget, Mixin):
+            raise ProxyError("The widget %s (%r), in view %s is not "
+                             "a kiwi widget and cannot be added to a proxy"
+                             % (widget_name, widget,
+                                self._view.__class__.__name__))
 
-            data_type = widget.get_property('data-type')
-            if data_type is None:
-                raise ProxyError("The kiwi widget %s (%r) in view %s should "
-                                 "have a data type set" % (
-                    widget_name, widget, self._view.__class__.__name__))
-            
-            attribute = widget.get_property('model-attribute')
-            if not attribute:
-                raise ProxyError(
-                    "The widget %s (%s) in view %s is a kiwi widget but does "
-                    "not have a model attribute set so it will not be "
-                    "associated with the model" % (
-                    widget_name, widget, self._view.__class__.__name__))
-                continue
-             
-            connection_id = widget.connect('content-changed',
-                                           self._on_widget__content_changed,
-                                           attribute)
-            widget.set_data('content-changed-id', connection_id)
+        data_type = widget.get_property('data-type')
+        if data_type is None:
+            raise ProxyError("The kiwi widget %s (%r) in view %s should "
+                             "have a data type set" % (
+                widget_name, widget, self._view.__class__.__name__))
 
-            # save this widget in our map
-            if attribute in model_attributes:
-                old_widget = model_attributes[attribute]
-                raise KeyError("The widget %s (%r) in view %s is already in "
-                               "the proxy, defined by widget %s (%r)" % (
-                    widget_name, widget, self._view.__class__.__name__,
-                    old_widget.name, old_widget))
-            
-            model_attributes[attribute] = widget
-            
-            # here we define the view that owns the widget
-            widget.owner = self._view
+        attribute = widget.get_property('model-attribute')
+        if not attribute:
+            raise ProxyError(
+                "The widget %s (%s) in view %s is a kiwi widget but does "
+                "not have a model attribute set so it will not be "
+                "associated with the model" % (
+                widget_name, widget, self._view.__class__.__name__))
+            continue
+
+        connection_id = widget.connect('content-changed',
+                                       self._on_widget__content_changed,
+                                       attribute)
+        widget.set_data('content-changed-id', connection_id)
+
+        # save this widget in our map
+        if attribute in model_attributes:
+            old_widget = model_attributes[attribute]
+            raise KeyError("The widget %s (%r) in view %s is already in "
+                           "the proxy, defined by widget %s (%r)" % (
+                widget_name, widget, self._view.__class__.__name__,
+                old_widget.name, old_widget))
+
+        model_attributes[attribute] = widget
+
+        # here we define the view that owns the widget
+        widget.owner = self._view
 
     def _on_widget__content_changed(self, widget, attribute):
         """This is called as soon as the content of one of the widget
