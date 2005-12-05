@@ -3,36 +3,31 @@
 # ### Twisted Preamble
 # # This makes sure that users don't have to set up their environment
 # # specially in order to run these programs from bin/.
-import sys, os, string, shutil
-# if string.find(os.path.abspath(sys.argv[0]), os.sep+'kiwi') != -1:
-#     sys.path.insert(0, os.path.normpath(os.path.join(os.path.abspath(sys.argv[0]
-# ), os.pardir, os.pardir)))
-# sys.path.insert(0, os.curdir)
-# ### end of preamble
+import new
+import os
+import shutil
+import sys
 
-import os, sys
-tmp_dir = '_epyrun_tmp' #only used for partial builds
-
-real_imp = __builtins__.__import__
-# HACK: Don't import stuff that we don't like
-# this is why we have to convert 
-def myimport(*args):
-    try: 
-        return im(*args)
-    except:
-        raise
-        mod = FakeModule(args[0], 4)
-        i = args[0].rfind('.')
-        if i != -1:
-            setattr(sys.modules[args[0][:i]], args[0][i+1:], mod)
-        return mod
-
+import gobject
 import kiwi
+import kiwi.utils
+from kiwi.__version__ import version
+
+from twisted.python import reflect
 
 class _GObject(object):
     "I am not a real type, just a helper type for epydoc"
     __module__ = 'kiwi'
 kiwi._GObject = _GObject
+
+def fakeFunction(func):
+    code = func.func_code
+    newcode = new.code(code.co_argcount, code.co_nlocals, code.co_stacksize,
+                       code.co_flags, 'd\x01\x00S', code.co_consts,
+                       code.co_names, code.co_varnames, code.co_filename,
+                       code.co_name, 1, code.co_lnotab)
+    return new.function(newcode, func.func_globals, func.__name__,
+                        func.func_defaults, func.func_closure)
 
 class FakeModule(object):
 
@@ -56,8 +51,8 @@ class FakeModule(object):
         if self.__name__ == 'gobject':
             if attr == 'GObject':
                 return object
-            elif attr == 'list_properties':
-                return lambda x: []
+            #elif attr == 'list_properties':
+            #    return lambda x: []
             elif attr == 'pygtk_version':
                 return gobject.pygtk_version
             
@@ -82,11 +77,11 @@ def fakeOut(modname):
         sys.modules[mp] = nm
         prevmod = nm
         
-# initial twisted
-from twisted.python import reflect, util
-from twisted.internet import reactor
+kiwi.utils.gproperty = fakeFunction(kiwi.utils.gproperty)
+kiwi.utils.type_register = fakeFunction(kiwi.utils.type_register)
+gobject.type_is_a = lambda x: None
+gobject.list_properties = lambda x: []
 
-import gobject
 skipped_types = {}
 for name in ('gobject', 'pango', 'atk', 'gtk', 'gtk.gdk', 'gtk.glade'):
     mod = reflect.namedAny(name)
@@ -96,7 +91,6 @@ for name in ('gobject', 'pango', 'atk', 'gtk', 'gtk.gdk', 'gtk.glade'):
             continue
         if issubclass(value, gobject.GObject):
             skipped_types[(name , attr)] = None
-gobject.type_is_a = lambda *x: False
 fakeOut("gobject")
 fakeOut("pango")
 fakeOut("atk")
@@ -236,9 +230,6 @@ def find_modules(dirname):
 
 imports.find_modules = find_modules
 
-import kiwi
-import kiwi.__version__
-
 # Now, set up the list of modules for epydoc to document
 modnames = []
 def addMod(arg, path, files):
@@ -263,6 +254,7 @@ def addMod(arg, path, files):
 
 document_all = True # are we doing a full build?
 names = ['kiwi/'] #default, may be overriden below
+tmp_dir = '_epyrun_tmp' #only used for partial builds
 
 #get list of modules/pkgs on cmd-line
 try:
@@ -302,6 +294,20 @@ else:
 osrv = sys.argv
 sys.argv=["IGNORE"]
 im = __import__
+
+real_imp = __builtins__.__import__
+# HACK: Don't import stuff that we don't like
+# this is why we have to convert 
+def myimport(*args):
+    try: 
+        return im(*args)
+    except:
+        raise
+        mod = FakeModule(args[0], 4)
+        i = args[0].rfind('.')
+        if i != -1:
+            setattr(sys.modules[args[0][:i]], args[0][i+1:], mod)
+        return mod
 __builtins__.__import__ = myimport
 
 for name in names:
@@ -324,8 +330,6 @@ __builtins__.__import__ = im
 sys.argv = osrv
 
 sys.argv.extend(modnames)
-
-from kiwi.__version__ import version
 
 sys.argv[1:1] = ['-n', 'Kiwi %s' % '.'.join(map(str, version)),
                  '-u', 'http://www.async.com.br/projects/kiwi/',
