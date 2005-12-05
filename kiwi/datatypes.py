@@ -46,6 +46,9 @@ class ConverterRegistry:
         self._converters = {}
 
     def add(self, converter_type):
+        if not issubclass(converter_type, BaseConverter):
+            raise TypeError("converter_type must be a BaseConverter subclass")
+
         c = converter_type()
         self._converters[c.type] = c
 
@@ -108,8 +111,33 @@ class ConverterRegistry:
 # Global converter, can be accessed from outside
 converter = ConverterRegistry()
 
-
-class StringConverter:
+class BaseConverter(object):
+    """
+    Abstract converter used by all datatypes
+    @cvar type:
+    """
+    type = None
+    
+    def get_compare_function(self):
+        """
+        @returns:
+        """
+        return cmp
+    
+    def as_string(self, value, format):
+        """
+        @param value:
+        @param format:
+        @returns:
+        """
+        
+    def from_string(self, value):
+        """
+        @param value:
+        @returns:
+        """
+        
+class StringConverter(BaseConverter):
     type = str
     
     def as_string(self, value, format=None):
@@ -122,7 +150,7 @@ class StringConverter:
     
 converter.add(StringConverter)
 
-class IntConverter:
+class IntConverter(BaseConverter):
     type = int
 
     def as_string(self, value, format=None):
@@ -150,7 +178,7 @@ class IntConverter:
         
 converter.add(IntConverter)
     
-class BoolConverter:
+class BoolConverter(BaseConverter):
     type = bool
     
     as_string = lambda s, value, format=None: str
@@ -164,7 +192,7 @@ class BoolConverter:
 
 converter.add(BoolConverter)
 
-class FloatConverter:
+class FloatConverter(BaseConverter):
     type = float
     
     def _filter_locale(self, value):
@@ -244,23 +272,49 @@ class FloatConverter:
     
 converter.add(FloatConverter)
 
-class DateConverter:
-    type = datetime.date
+class BaseDateTimeConverter(BaseConverter):
+    """
+    Abstract class for converting datatime objects to and from strings
+    @cvar date_format:
+    @cvar lang_constant:
+    """
+    date_format = None
+    lang_constant = None
     
     def __init__(self):
         self.update_format()
 
+    def from_datainfo(self, dateinfo):
+        raise NotImplementedError
+    
+    def get_compare_function(self):
+        # Provide a special comparison function that allows None to be
+        # used, which the __cmp__/__eq__ methods for datatime objects doesn't
+        def _datecmp(a, b):
+            if a is None:
+                if b is None:
+                    return 0
+                return 1
+            elif b is None:
+                return -1
+            else:
+                return cmp(a, b)
+        return _datecmp
+
     def update_format(self):
         if sys.platform == 'win32':
-            self._format = '%x'
+            self._format = self.date_format
         else:
-            self._format = locale.nl_langinfo(locale.D_FMT)
-
+            self._format = locale.nl_langinfo(self.lang_constant)
+    
     def as_string(self, value, format=None):
         "Convert a date to a string"
         if format is None:
             format = self._format
             
+        if value is None:
+            return ''
+        
         return value.strftime(format)
     
     def from_string(self, value):
@@ -275,14 +329,34 @@ class DateConverter:
         
         try:
             dateinfo = time.strptime(value, self._format)
-            return datetime.date(*dateinfo[:3]) # year, month, day
+            return self.from_dateinfo(dateinfo)
         except ValueError:
-            raise ValidationError('This field requires a date of '
-                                  'the format "%s" and not "%s"' % (
-                self._format, value))
+            raise ValidationError(
+                'This field requires a date of the format "%s" and '
+                'not "%s"' % (self._format, value))
+
+class TimeConverter(BaseDateTimeConverter):
+    type = datetime.time
+    date_format = '%X'
+    lang_constant = locale.T_FMT
+converter.add(TimeConverter)
+
+class DateTimeConverter(BaseDateTimeConverter):
+    type = datetime.datetime
+    date_format = '%c'
+    lang_constant = locale.D_T_FMT
+converter.add(DateTimeConverter)
+
+class DateConverter(BaseDateTimeConverter):
+    type = datetime.date
+    date_format = '%x'
+    lang_constant = locale.D_FMT
+
+    def from_dateinfo(self, dateinfo):
+        return datetime.date(*dateinfo[:3]) # year, month, day
 converter.add(DateConverter)
 
-class ObjectConverter:
+class ObjectConverter(BaseConverter):
     type = object
     
     as_string = None

@@ -33,15 +33,16 @@ import gobject
 import gtk
 from gtk import gdk
 
-from kiwi import _warn, datatypes, ValueUnset
+from kiwi import _warn, ValueUnset
 from kiwi.accessors import kgetattr
+from kiwi.datatypes import converter, lformat
 from kiwi.decorators import deprecated
 from kiwi.python import slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 
 _ = gettext.gettext
 
-str2type = datatypes.converter.str_to_type
+str2type = converter.str_to_type
 
 def str2enum(value_name, enum_class):
     "converts a string to a enum"
@@ -49,7 +50,7 @@ def str2enum(value_name, enum_class):
         if value_name in (enum.value_name, enum.value_nick):
             return enum
 
-def str2bool(value, from_string=datatypes.converter.from_string):
+def str2bool(value, from_string=converter.from_string):
     "converts a boolean to a enum"
     return from_string(bool, value)
 
@@ -164,7 +165,15 @@ class Column(PropertyObject, gobject.GObject):
     # This is meant to be subclassable, we're using kgetattr, as
     # a staticmethod as an optimization, so we can avoid a function call.
     get_attribute = staticmethod(kgetattr)
-                                             
+
+    def prop_set_data_type(self, data):
+        if data is not None:
+            conv = converter.get_converter(data)
+            self.compare = conv.get_compare_function()
+            self.as_string = conv.as_string
+            self.from_string = conv.from_string
+        return data
+    
     def __repr__(self):
         ns = self.__dict__.copy()
         attr = ns['attribute']
@@ -229,7 +238,7 @@ class SequentialColumn(Column):
                         title=title, data_type=int, **kwargs)
 
     def cell_data_func(self, tree_column, renderer, model, iter,
-                       (column, renderer_prop)):
+                       (column, renderer_prop, as_string)):
         reversed = tree_column.get_sort_order() == gtk.SORT_DESCENDING
 
         row = model[iter]
@@ -713,7 +722,8 @@ class List(gtk.ScrolledWindow):
             
         treeview_column.pack_start(renderer)
         treeview_column.set_cell_data_func(renderer, cell_data_func,
-                                           (column, renderer_prop))
+                                           (column, renderer_prop,
+                                            column.as_string))
         treeview_column.set_visible(column.visible)
 
         treeview_column.connect("clicked", self._on_column__clicked, column)
@@ -812,9 +822,9 @@ class List(gtk.ScrolledWindow):
         renderer.set_data('kiwilist::radio-active', new)
         
     def _on_renderer_text__edited(self, renderer, path, text,
-                                  model, attribute, column):
+                                  model, attribute, column, as_string):
         obj = model[path][COL_MODEL]
-        value = datatypes.converter.from_string(column.data_type, text)
+        value = as_string(text)
         setattr(obj, attribute, value)
         self.emit('cell-edited', attribute, value)
         
@@ -844,7 +854,8 @@ class List(gtk.ScrolledWindow):
             if column.editable:
                 renderer.set_property('editable', True)
                 renderer.connect('edited', self._on_renderer_text__edited,
-                                 self._model, column.attribute, column)
+                                 self._model, column.attribute, column,
+                                 column.from_string)
 
         else:
             raise ValueError("the type %s is not supported yet" % data_type)
@@ -859,7 +870,7 @@ class List(gtk.ScrolledWindow):
         return True
         
     def _cell_data_func(self, tree_column, renderer, model, iter,
-                        (column, renderer_prop)):
+                        (column, renderer_prop, as_string)):
 
         row = model[iter]
         if column.cache:
@@ -874,22 +885,13 @@ class List(gtk.ScrolledWindow):
         else:
             data = column.get_attribute(row[COL_MODEL],
                                         column.attribute, None)
-            
+
         if column.format:
-            text = datatypes.lformat(column.format, data)
+            text = lformat(column.format, data)
         elif column.format_func:
             text = column.format_func(data)
-        elif column.data_type == datetime.date:
-            # date according to current locale
-            text = data.strftime('%x') 
-        elif column.data_type == datetime.time:
-            # time according to current locale
-            text = data.strftime('%X')
-        elif column.data_type == datetime.datetime:
-            # date and time according to current locale
-            text = data.strftime('%c')
         else:
-            text = data
+            text = as_string(data)
             
         renderer.set_property(renderer_prop, text)
 
@@ -930,8 +932,9 @@ class List(gtk.ScrolledWindow):
     def _sort_function(self, model, iter1, iter2):
         column = self._columns[self._sort_column_index]
         attr = column.attribute
-        return cmp(column.get_attribute(model[iter1][COL_MODEL], attr),
-                   column.get_attribute(model[iter2][COL_MODEL], attr))
+        return column.compare(
+            column.get_attribute(model[iter1][COL_MODEL], attr),
+            column.get_attribute(model[iter2][COL_MODEL], attr))
 
     def _on_column__clicked(self, treeview_column, column):
         if self._sort_column_index == -1:
