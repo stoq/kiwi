@@ -1202,7 +1202,21 @@ class List(gtk.ScrolledWindow):
         selection = self._treeview.get_selection()
         if selection:
             selection.unselect_all()
-            
+
+    def select_paths(self, paths):
+        """
+        Selects a number of rows corresponding to paths
+        @param paths:
+        """
+
+        selection = self._treeview.get_selection()
+        if selection.get_mode() == gtk.SELECTION_NONE:
+            raise TypeError("Selection not allowed")
+
+        model = self._model
+        for path in paths:
+            selection.select_path(path)
+
     def select(self, instance, scroll=True):
         objid = id(instance)
         if not objid in self._iters:
@@ -1218,7 +1232,7 @@ class List(gtk.ScrolledWindow):
         if scroll:
             self._treeview.scroll_to_cell(self._model[iter].path,
                                           None, True, 0.5, 0)
-                                      
+
     def get_selected(self):
         """Returns the currently selected object
         If an object is not selected, None is returned

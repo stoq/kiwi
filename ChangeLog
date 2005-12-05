@@ -1,5 +1,8 @@
 2005-12-05  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/list.py (List.select_paths): New method, selects
+	a list of paths.
+
 	* kiwi/proxies.py (Proxy._setup_widgets): 
 	Cleanups:
 	Use consistent exception messages
