@@ -277,20 +277,6 @@ class SlaveView(gobject.GObject):
 
         self.slaves = {}
 
-    def register_validate_function(self, function):
-        """The signature of the validate function is:
-
-        def function(is_valid):
-
-        or, if it is a method:
-
-        def function(self, is_valid):
-
-        where the 'is_valid' parameter is True if all the widgets have
-        valid data or False otherwise.
-        """
-        self._validate_function = function
-
     def _init_glade_adaptor(self):
         """Special init code that subclasses may want to override."""
         self.glade_adaptor = WidgetTree(self, self.gladefile,
@@ -733,6 +719,20 @@ class SlaveView(gobject.GObject):
     def force_validation(self):
         self.check_and_notify_validity(force=True)
         
+    def register_validate_function(self, function):
+        """The signature of the validate function is:
+
+        def function(is_valid):
+
+        or, if it is a method:
+
+        def function(self, is_valid):
+
+        where the 'is_valid' parameter is True if all the widgets have
+        valid data or False otherwise.
+        """
+        self._validate_function = function
+
 type_register(SlaveView)
 
 class BaseView(SlaveView):
