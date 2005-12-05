@@ -26,7 +26,8 @@
 import os
 import pickle
 
-from kiwi import _warn
+from kiwi import _warn, ValueUnset
+
 #
 # A model that implements half of an observer pattern; when its
 # attributes are changed, it notifies any proxies of the change.
@@ -67,7 +68,7 @@ class Model:
         if not hasattr(self, "_v_proxies"): self.ensure_init()
         for proxy in self._v_proxies.get(attr, []):
             if proxy not in self._v_blocked_proxies:
-                proxy.notify(attr)
+                proxy.notify(attr, ValueUnset, block=True)
 
     def register_proxy_for_attribute(self, attr, proxy):
         """

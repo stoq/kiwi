@@ -28,9 +28,7 @@
 to keep the state of a model object synchronized with a View.
 """
 
-import sys
-
-from kiwi import _warn, ValueUnset
+from kiwi import ValueUnset
 from kiwi.accessors import kgetattr, ksetattr, clear_attr_cache
 from kiwi.interfaces import Mixin, MixinSupportValidation
 from kiwi.log import Logger
@@ -74,7 +72,6 @@ class Proxy:
         self.model = model
         self._model_attributes = {}
 
-        model_attributes = self._model_attributes
         for widget_name in widgets:
             widget = getattr(self._view, widget_name, None)
             if widget is None:
@@ -102,11 +99,7 @@ class Proxy:
                 self._register_proxy_in_model(attribute)
                 value = kgetattr(self.model, attribute, ValueUnset)
                     
-            tweak_function = getattr(self, "tweak_%s" % attribute, None)
-            if tweak_function:
-                tweak_function(attribute, value)
-            else:
-                self.update(attribute, value, block=True)
+            self.update(attribute, value, block=True)
 
             # The initial value of the model is set, at this point
             # do a read, it'll trigger a validation for widgets who
@@ -143,6 +136,7 @@ class Proxy:
                                        attribute)
         widget.set_data('content-changed-id', connection_id)
 
+        model_attributes = self._model_attributes
         # save this widget in our map
         if attribute in model_attributes:
             old_widget = model_attributes[attribute]
@@ -293,27 +287,6 @@ class Proxy:
         else:
             widget.update(value)
         return True
-
-
-    def notify(self, attribute, value=ValueUnset):
-        """  Notifies the proxy that the named attribute has changed. Calls
-        tweak_foo by default if the attribute provided is "foo" and update_foo
-        exists. This should *only* be called by the FrameWork Model, not by an
-        end-user callback.
-
-            - name: the name of the attribute being changed
-            - value: what it was set to
-        """
-        func = getattr(self, "tweak_%s" % attribute, None)
-        if func:
-            # If value is unset, send in model value to tweak_%s
-            if value is ValueUnset:
-                value = kgetattr(self.model, attribute, ValueUnset)
-                if value is ValueUnset:
-                    raise ValueError("model value for %s was unset" % attribute)
-            func(attribute, value)
-        else:
-            self.update(attribute, value, block=True)
 
     def new_model(self, new_model, relax_type=False):
         """ Reuses the same proxy with another instance as model. Allows a
