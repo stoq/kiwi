@@ -34,12 +34,12 @@ import gtk
 from kiwi import ValueUnset
 from kiwi.datatypes import ValidationError, converter
 from kiwi.interfaces import Mixin, MixinSupportValidation
+from kiwi.log import Logger
 from kiwi.ui.gadgets import FadeOut
 from kiwi.ui.tooltip import Tooltip
 from kiwi.utils import gsignal, gproperty
-from kiwi.log import Log
 
-log = Log(category='widget proxy')
+log = Logger('widget proxy')
 
 _ = gettext.gettext
 

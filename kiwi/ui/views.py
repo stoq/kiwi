@@ -61,7 +61,7 @@ except ImportError, e:
 else:
     from kiwi.ui.gazpacholoader import GazpachoWidgetTree as WidgetTree
 
-log = Logger(category='view')
+log = Logger('view')
 
 _non_interactive = (
     gtk.Label, 

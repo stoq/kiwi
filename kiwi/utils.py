@@ -212,7 +212,7 @@ def gsignal(name, *args, **kwargs):
     """
     Add a GObject signal to the current object.
     It current supports the following types:
-      str, int, float, long, object, enum
+      - str, int, float, long, object, enum
     @param name:     name of the signal
     @type name:      string
     @param args:     types for signal parameters,
@@ -274,10 +274,10 @@ def gproperty(name, ptype, default=None, nick='', blurb='',
     @type name:    string
     @param ptype:   type of property
     @type ptype:    type
-    @keyword default:  default value
-    @keyword nick:     short description
-    @keyword blurb:    long description
-    @keyword flags:    parameter flags, one of:
+    @param default:  default value
+    @param nick:     short description
+    @param blurb:    long description
+    @param flags:    parameter flags, one of:
       - PARAM_READABLE
       - PARAM_READWRITE
       - PARAM_WRITABLE

@@ -93,7 +93,6 @@ class ConverterRegistry:
         Convert from a string
         @param converter_type:
         @param value:
-        @param format:
         """
         c = self.get_converter(converter_type)
         if c.from_string is None:

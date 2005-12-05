@@ -22,22 +22,24 @@
 #            Johan Dahlin     <jdahlin@async.com.br>
 ##
 
-import gettext
 import logging
-from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
 import os
 import sys
 
 from kiwi.environ import environ
 
-_ = gettext.gettext
+_log_level = None
 
-
-_log_level = INFO
-
-class Log(logging.Logger):
-    def __init__(self, file=sys.stdout, level=INFO,
-                 category='fiscal_printer'):
+class Formatter(logging.Formatter):
+    def format(self, record):
+        frame = sys._getframe(8)
+        filename = os.path.basename(frame.f_code.co_filename)
+        record.msg = '%s:%d %s' % (filename, frame.f_lineno, record.msg)
+        return logging.Formatter.format(self, record)
+    
+class Logger(logging.Logger):
+    log_domain = 'default'
+    def __init__(self, name=None, level=logging.NOTSET):
         """Initializes Log module, creating log handler and defining log
         level. level attribute is not mandatory. It defines from which level
         messages should be logged. Logs with lower level are ignored.
@@ -53,31 +55,9 @@ class Log(logging.Logger):
           - logging.CRITICAL 
         """
         global _log_level
-        logging.Logger.__init__(self, category, _log_level)
-        self._category = category
+        logging.Logger.__init__(self, name or Logger.log_name, _log_level)
         
-        # Tries to open the given file. If IOerror occour, send log to stdout
-        file_obj = None
-        
-        if type(file) == type(sys.stdout):
-            # If file is already a file object, just set it to file_obj var
-            if 'w' in file.mode or 'a' in file.mode or '+' in file.mode:
-                file_obj = file
-            else:
-                # Without write permission to the given file object,
-                # write to stdout
-                print _(">>> Given file object in read-only mode! Using "
-                        "standard output to write logs!")
-                file_obj = sys.stdout
-        else:
-            try:
-                file_obj = open(file, 'a')
-            except:
-                print _(">>> Couldn't access specified file! Using standard "
-                        "output to write logs!")
-                file_obj = sys.stdout
-                
-        stream_handler = logging.StreamHandler(file_obj)
+        stream_handler = logging.StreamHandler(sys.stdout)
             
         # Formater class define a format for the log messages been
         # logged with this handler
@@ -86,51 +66,12 @@ class Log(logging.Logger):
         # in a log message like this:
         #   2005-09-07 18:15:12,636 (WARNING) - (message!)
         format_string = ("%(asctime)s %(message)s")
-        stream_handler.setFormatter(logging.Formatter(format_string,
-                                                      datefmt='%T'))
+        stream_handler.setFormatter(Formatter(format_string,
+                                              datefmt='%T'))
         self.addHandler(stream_handler)
 
-    def log(self, message, level=INFO):
-        """This method logs messages with default log_level.
-        
-        If it's desired another level, user is able to define it using
-        the level argument.        
-        """        
-        logging.Logger.log(self, level, message)
-
-class Logger(object):
-    log_domain = 'default'
-    def __init__(self, category=None):
-        category = (category or self.log_domain)
-        self._log = Log(category=category)
-        self._category = category
-
-    def __call__(self, message):
-        self.info(message)
-        
-    def log(self, level, message):
-        global _log_level
-        if _log_level <= level:
-            frame = sys._getframe(2)
-            filename = os.path.basename(frame.f_code.co_filename)
-            message = '%s %s:%d %s' % (self._category, filename,
-                                       frame.f_lineno, message)
-            self._log.log(level=level, message=message)
-        
-    def debug(self, message):
-        self.log(DEBUG, message)
-
-    def info(self, message):
-        self.log(INFO, message)
-
-    def warning(self, message):
-        self.log(WARNING, message)
-
-    def error(self, message):
-        self.log(ERROR, message)
-
-    def critical(self, message):
-        self.log(CRITICAL, message)
+    def __call__(self, message, *args, **kwargs):
+        self.info(message, *args, **kwargs)
 
 def set_log_level(level):
     global _log_level
@@ -139,7 +80,7 @@ def set_log_level(level):
 log_level = environ.get_log_level()
 if log_level is None:
     # Default is to show only warnings and higher
-    log_level = WARNING
+    log_level = logging.WARNING
 else:
     log_level = int(log_level)
 set_log_level(log_level)

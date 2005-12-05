@@ -36,7 +36,7 @@ from kiwi.log import Logger
 class ProxyError(Exception):
     pass
 
-log = Logger(category='proxy')
+log = Logger('proxy')
 
 def block_widget(widget):
     """Blocks the signal handler of the 'content-changed' signal on widget"""
