@@ -35,6 +35,9 @@ from kiwi.accessors import kgetattr, ksetattr, clear_attr_cache
 from kiwi.interfaces import Mixin, MixinSupportValidation
 from kiwi.log import Logger
 
+class ProxyError(Exception):
+    pass
+
 log = Logger(category='proxy')
 
 def block_widget(widget):
@@ -63,6 +66,7 @@ class Proxy:
     def __init__(self, view, model=None, widgets=[]):
         self.view = view
         self.model = model
+        self._model_attributes = {}
         self._setup_widgets(widgets)
         self._initialize_widgets()
 
@@ -71,7 +75,7 @@ class Proxy:
 
         This should be called after _setup_widgets.
         """
-        for attribute, widget in self._attr_map.items():
+        for attribute, widget in self._model_attributes.items():
 
             if self.model is None:
                 # if we have no model, leave value unset so we pick up
@@ -103,29 +107,33 @@ class Proxy:
         @param widgets: the widget names
         @type  widgets: list of strings
         """
-        self._attr_map = {}
+        model_attributes = self._model_attributes
         for widget_name in widgets:
             widget = getattr(self.view, widget_name, None)
             if widget is None:
-                raise AttributeError("The widget %s was not "
-                                     "found in the view %s" % (widget_name,
-                                                               self.view))
+                raise AttributeError("The widget %s was not found in the "
+                                     "view %s" % (
+                    widget_name, self.view.__class__.__name__))
             
             if not isinstance(widget, Mixin):
-                continue
+                raise ProxyError("The widget %s (%r), in view %s is not "
+                                 "a kiwi widget and cannot be added to a proxy"
+                                 % (widget_name, widget,
+                                    self.view.__class__.__name__))
 
             data_type = widget.get_property('data-type')
             if data_type is None:
-                raise TypeError("The KiwiWidget %s should have a data type "
-                                "set up" % widget)
+                raise ProxyError("The kiwi widget %s (%r) in view %s should "
+                                 "have a data type set" % (
+                    widget_name, widget, self.view.__class__.__name__))
             
             attribute = widget.get_property('model-attribute')
             if not attribute:
-                # we don't listen for changes in this widget because
-                # we don't know the model attribute
-                _warn("The widget %s (%s) is a KiwiWidget but does not have "
-                      "a model attribute set so it will not be eassociated "
-                      "with the model" % (widget, widget.name))
+                raise ProxyError(
+                    "The widget %s (%s) in view %s is a kiwi widget but does "
+                    "not have a model attribute set so it will not be "
+                    "associated with the model" % (
+                    widget_name, widget, self.view.__class__.__name__))
                 continue
              
             connection_id = widget.connect('content-changed',
@@ -134,7 +142,14 @@ class Proxy:
             widget.set_data('content-changed-id', connection_id)
 
             # save this widget in our map
-            self._attr_map[attribute] = widget
+            if attribute in model_attributes:
+                old_widget = model_attributes[attribute]
+                raise KeyError("The widget %s (%r) in view %s is already in "
+                               "the proxy, defined by widget %s (%r)" % (
+                    widget_name, widget, self.view.__class__.__name__,
+                    old_widget.name, old_widget))
+            
+            model_attributes[attribute] = widget
             
             # here we define the view that owns the widget
             widget.owner = self.view
@@ -262,7 +277,7 @@ class Proxy:
                 return
             value = kgetattr(self.model, attribute, ValueUnset)
 
-        widget = self._attr_map.get(attribute, None)
+        widget = self._model_attributes.get(attribute, None)
 
         if widget is None:
             raise AttributeError("Called update for `%s', which isn't "
@@ -270,7 +285,8 @@ class Proxy:
                                  "attributes are: %s (you may have "
                                  "forgetten to add `:' to the name in "
                                  "the widgets list)" 
-                                 % (attribute, self, self._attr_map.keys()))
+                                 % (attribute, self,
+                                    self._model_attributes.keys()))
 
         
         # The type of value should match the data-type property. The two

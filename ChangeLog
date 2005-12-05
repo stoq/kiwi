@@ -1,3 +1,13 @@
+2005-12-05  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/proxies.py (Proxy._setup_widgets): 
+	Cleanups:
+	Use consistent exception messages
+	Add and use ProxyError instead of TypeError
+	Add a new check to ensure that there are no unsupported
+	widgets added.
+	Change a warning into an exception
+
 2005-12-03  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/test/listener.py:
