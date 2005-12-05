@@ -224,11 +224,10 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         if not len(model):
             return
 
-        text, data = model[iter]
-        self.set_text(text)
+        # this updates current_object and triggers content-changed
+        self.set_text(model[iter][COL_TEXT]) 
         self.set_position(-1)
-        self._current_object = data
-        self.emit('content-changed')
+        self.activate()
         
     def read(self):
         mode = self._entry_mode
