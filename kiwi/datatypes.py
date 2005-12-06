@@ -181,7 +181,7 @@ converter.add(IntConverter)
 class BoolConverter(BaseConverter):
     type = bool
     
-    as_string = lambda s, value, format=None: str
+    as_string = lambda s, value, format=None: str(value)
 
     def from_string(self, value):
         "Convert a string to a boolean"
@@ -189,6 +189,9 @@ class BoolConverter(BaseConverter):
             return True
         elif value.upper() in ('FALSE', '0'):
             return False
+
+        # Default value is always False
+        return False
 
 converter.add(BoolConverter)
 
