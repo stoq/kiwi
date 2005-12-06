@@ -12,6 +12,7 @@
 	 
 	* tools/epyrun:
 	Do not ignore directories called test.
+	
 2005-12-06  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/datatypes.py (BoolConverter.from_string): Do not 
