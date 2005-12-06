@@ -21,7 +21,10 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br
 #
 
-"""XXX"""
+"""
+Common routines used by L{kiwi.ui.test.listener.Listener} and
+L{kiwi.ui.test.player.Player}
+"""
 
 import sets
 
@@ -39,6 +42,7 @@ class Base(object):
     
     def parse_one(self, toplevel, gobj):
         """
+        @param toplevel:
         @param gobj:
         """
         
@@ -133,10 +137,19 @@ class Base(object):
     GtkSeparatorMenuItem = GtkTearoffMenuItem = ignore
 
     def GtkWidget(self, toplevel, widget):
+        """
+        Called when a GtkWidget is about to be traversed
+        """
         toplevel_widgets = self._objects.setdefault(toplevel.get_name(), {})
         toplevel_widgets[widget.get_name()] = widget
 
     def GtkContainer(self, toplevel, container):
+        """
+        Called when a GtkContainer is about to be traversed
+
+        Parsers all the children and listens for new children, which
+        may be added at a later point.
+        """
         for child in container.get_children():
             self.parse_one(toplevel, child)
             
@@ -145,10 +158,21 @@ class Base(object):
         container.connect('add', _on_container_add)
         
     def GtkDialog(self, toplevel, dialog):
+        """
+        Called when a GtkDialog is about to be traversed
+
+        Just parses the widgets embedded in the dialogs.
+        """
         self.parse_one(toplevel, dialog.action_area)
         self.parse_one(toplevel, dialog.vbox)
 
     def GtkMenuItem(self, toplevel, item):
+        """
+        Called when a GtkMenuItem is about to be traversed
+
+        It does some magic to tie a stronger connection between toplevel
+        menuitems and submenus, which later will be used. 
+        """
         submenu = item.get_submenu()
         if submenu:
             submenu.set_data('parent-menu', item)

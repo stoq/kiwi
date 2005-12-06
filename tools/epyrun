@@ -5,6 +5,7 @@
 # # specially in order to run these programs from bin/.
 import new
 import os
+import re
 import shutil
 import sys
 
@@ -195,8 +196,6 @@ epydoc.html.HTMLFormatter = TwistedHTMLFormatter
 from epydoc import imports
 orig_find_modules = imports.find_modules
 
-import re
-
 def find_modules(dirname):
     if not os.path.isdir(dirname): return []
     found_init = 0
@@ -233,8 +232,6 @@ imports.find_modules = find_modules
 # Now, set up the list of modules for epydoc to document
 modnames = []
 def addMod(arg, path, files):
-    if 'test' in files:
-        files.remove('test')
     if 'topfiles' in files:
         files.remove('topfiles')
     for fn in files:
