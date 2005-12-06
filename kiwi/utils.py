@@ -60,6 +60,12 @@ def type_register(gtype):
     return True
 
 class PropertyMeta(ClassInittableMetaType):
+    """
+    Metaclass that takes into account properties and signals
+    of baseclasses, even if they're not GObject subclasses.
+    Which allows you to put signals and properties in mixin
+    classes.
+    """
     def __new__(meta, name, bases, namespace):
         def _update_bases(bases, props, signals):
             for base in bases:

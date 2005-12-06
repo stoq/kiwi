@@ -37,6 +37,12 @@ from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import PropertyObject, gsignal
 
 class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
+    """
+    A SpinButton subclass which adds supports for the Kiwi Framework.
+    This widget supports validation
+    The only allowed types for spinbutton are int and float.
+
+    """
     allowed_data_types = int, float
     
     def __init__(self):
