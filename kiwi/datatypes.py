@@ -415,7 +415,7 @@ def format_price(value, symbol=True, precision=None):
     # mon_thousand_sep
     if value > 0:
         sign = conv.get('positive_sign', '')
-    else:
+    elif value < 0:
         sign = conv.get('negative_sign', '-')
     mon_thousands_sep = conv.get('mon_thousands_sep', '.')
     retval = sign + mon_thousands_sep.join(intparts)
