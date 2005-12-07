@@ -410,15 +410,15 @@ def format_price(value, symbol=True, precision=None):
         if last != 0:
             group = last
 
-    # Add the sign, and the list of decmial parts, which
-    # now are grouped properly and can be joined by
-    # mon_thousand_sep
+    # Add the sign, and the list of decmial parts, which now are grouped
+    # properly and can be joined by mon_thousand_sep
     if value > 0:
         sign = conv.get('positive_sign', '')
     elif value < 0:
         sign = conv.get('negative_sign', '-')
-    mon_thousands_sep = conv.get('mon_thousands_sep', '.')
-    retval = sign + mon_thousands_sep.join(intparts)
+    else:
+        sign = ''
+    currency = sign + conv.get('mon_thousands_sep', '.').join(intparts)
         
     # Only add decimal part if it has one, is this correct?
     if value % 1 != 0:
@@ -435,7 +435,7 @@ def format_price(value, symbol=True, precision=None):
         dec_part = (format % value)[-frac_digits:]
         
         mon_decimal_point = conv.get('mon_decimal_point', '.')
-        retval += mon_decimal_point + dec_part
+        currency += mon_decimal_point + dec_part
 
     # If requested include currency symbol 
     currency_symbol = conv.get('currency_symbol', '')
@@ -459,8 +459,8 @@ def format_price(value, symbol=True, precision=None):
         else:
             space = ''
         if cs_precedes:
-            retval = currency_symbol + space + retval
+            currency = currency_symbol + space + currency
         else:
-            retval = retval + space + currency_symbol
+            currency = currency + space + currency_symbol
         
-    return retval
+    return currency
