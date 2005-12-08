@@ -69,11 +69,14 @@ class ClassInittableObject(object):
         """
     __class_init__ = classmethod(__class_init__)
 
-
 # copied from twisted/python/reflect.py
 def namedAny(name):
     """Get a fully named package, module, module-global object, or attribute.
+    
+    @param: name
+    @returns: object, module or attribute
     """
+    
     names = name.split('.')
     topLevelPackage = None
     moduleNames = names[:]
@@ -103,6 +106,12 @@ def namedAny(name):
         
     return obj
 
+def qual(klass):
+    """
+    @returns: fully qualified module and class name
+    """
+    return klass.__module__ + '.' + klass.__name__
+
 def clamp(x, low, high):
     """
     Ensures that x is between the limits set by low and high.
@@ -114,6 +123,7 @@ def clamp(x, low, high):
     @param    x: the value to clamp.
     @param  low: the minimum value allowed.
     @param high: the maximum value allowed.
+    @returns: the clamped value
     """
     
     return min(max(x, low), high)
@@ -122,6 +132,8 @@ def slicerange(slice, limit):
     """Takes a slice object and returns a range iterator
 
     @param slice: slice object
-    @param limit: maximum value allowed"""
+    @param limit: maximum value allowed
+    @returns: iterator
+    """
     
     return xrange(*slice.indices(limit))
