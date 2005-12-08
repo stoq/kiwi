@@ -185,13 +185,15 @@ class BoolConverter(BaseConverter):
 
     def from_string(self, value):
         "Convert a string to a boolean"
+        if value == '':
+            return ValueUnset
+        
         if value.upper() in ('TRUE', '1'):
             return True
         elif value.upper() in ('FALSE', '0'):
             return False
 
-        # Default value is always False
-        return False
+        return ValidationError("'%s' can not be converted to a boolean" % value)
 
 converter.add(BoolConverter)
 
