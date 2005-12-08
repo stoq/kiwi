@@ -242,7 +242,7 @@ class KiwiListSelectionChanged(SignalEvent):
         
         if selection.get_mode() == gtk.SELECTION_MULTIPLE:
             # get_selected_rows() returns a list of paths
-            _, iters = selection.get_selected_rows()[1]
+            iters = selection.get_selected_rows()[1]
             if iters:
                 return iters
         else:
