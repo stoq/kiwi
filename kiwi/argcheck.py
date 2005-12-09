@@ -36,7 +36,7 @@ class number(CustomType):
     """
     Custom type that verifies that the type is a number (eg float or int)
     """
-    type = int, float
+    type = int, float, long
     
 class percent(CustomType):
     """
@@ -185,7 +185,7 @@ def test():
         @argcheck(percent)
         def method(self, value):
             pass
-        
+
     function(1)
     try:
         function(None) # fails
