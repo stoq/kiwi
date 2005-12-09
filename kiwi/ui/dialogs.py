@@ -116,7 +116,7 @@ def info(short, long=None, parent=None, buttons=gtk.BUTTONS_OK, default=-1):
     return _simple(gtk.MESSAGE_INFO, short, long, parent=parent,
                    buttons=buttons, default=default)
 
-def warn(short, long=None, parent=None, buttons=gtk.BUTTONS_OK, default=-1):
+def warning(short, long=None, parent=None, buttons=gtk.BUTTONS_OK, default=-1):
     return _simple(gtk.MESSAGE_WARNING, short, long, parent=parent,
                    buttons=buttons, default=default)
 
