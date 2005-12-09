@@ -146,6 +146,9 @@ class Column(PropertyObject, gobject.GObject):
             raise AttributeError(msg)
  
         self.attribute = attribute
+        self.compare = None
+        self.as_string = None
+        self.from_string = None
 
         kwargs['title'] = title or attribute.capitalize()
         if data_type:
@@ -175,10 +178,10 @@ class Column(PropertyObject, gobject.GObject):
         return data
     
     def __repr__(self):
-        ns = self.__dict__.copy()
-        attr = ns['attribute']
-        del ns['attribute']
-        return "<%s %s: %s>" % (self.__class__.__name__, attr, ns)
+        namespace = self.__dict__.copy()
+        attr = namespace['attribute']
+        del namespace['attribute']
+        return "<%s %s: %s>" % (self.__class__.__name__, attr, namespace)
 
     # XXX: Replace these two with a gazpacho loader adapter
     def __str__(self):
@@ -235,13 +238,13 @@ class SequentialColumn(Column):
     right justify the sequences."""
     def __init__(self, title='#', justify=gtk.JUSTIFY_RIGHT, **kwargs):
         Column.__init__(self, '_kiwi_sequence_id',
-                        title=title, data_type=int, **kwargs)
+                        title=title, justify=justify, data_type=int, **kwargs)
 
-    def cell_data_func(self, tree_column, renderer, model, iter,
+    def cell_data_func(self, tree_column, renderer, model, treeiter,
                        (column, renderer_prop, as_string)):
         reversed = tree_column.get_sort_order() == gtk.SORT_DESCENDING
 
-        row = model[iter]
+        row = model[treeiter]
         if reversed:
             sequence_id = len(model) - row.path[0]
         else:
@@ -421,7 +424,8 @@ class List(gtk.ScrolledWindow):
         self._cell_data_caches = {}
         self._columns_configured = False
         self._autosize = True
-
+        self._vscrollbar = None
+        
         # by default we are unordered. This index points to the column
         # definition of the column that dictates the order, in case there is
         # any
@@ -538,18 +542,28 @@ class List(gtk.ScrolledWindow):
     # append and remove are below
 
     def extend(self, iterable):
-        "L.extend(iterable) -- extend list by appending elements from the iterable"
+        """
+        Extend list by appending elements from the iterable
+        
+        @param iteratable:
+        """
         
         return self.add_list(iterable, clear=False)
 
     def index(self, item, start=None, stop=None):
-        "L.index(item, [start, [stop]]) -> integer -- return first index of value"
+        """
+        Return first index of value
+        
+        @param item:
+        @param start:
+        @param stop
+        """
         
         if start or stop:
             raise NotImplementedError("start and stop")
 
-        iter = self._iters.get(id(item), _marker)
-        if iter is _marker:
+        treeiter = self._iters.get(id(item), _marker)
+        if treeiter is _marker:
             raise ValueError("item %r is not in the list" % item)
         
         return self._model[item.iter].path[0]
@@ -568,7 +582,10 @@ class List(gtk.ScrolledWindow):
         raise NotImplementedError
     
     def pop(self, index):
-        "L.pop([index]) -> item -- remove and return item at index (default last)"
+        """
+        Remove and return item at index (default last)
+        @param index:
+        """
         raise NotImplementedError
 
     def reverse(self, pos, item):
@@ -648,12 +665,12 @@ class List(gtk.ScrolledWindow):
             raise TypeError("Failed to get attribute '%s' for %s" %
                             (column.attribute, instance))
             
-        tp = type(value)
-        if tp is type(None):
+        value_type = type(value)
+        if value_type is type(None):
             raise TypeError("Detected invalid type None for column `%s'; "
                             "please specify type in Column constructor.""" %
                             column.attribute)
-        return tp
+        return value_type
     
     def _setup_columns(self):
         if self._columns_configured:
@@ -862,17 +879,17 @@ class List(gtk.ScrolledWindow):
 
         return renderer, prop
     
-    def _search_equal_func(self, model, tree_column, key, iter, column):
-        data = column.get_attribute(model[iter][COL_MODEL],
+    def _search_equal_func(self, model, tree_column, key, treeiter, column):
+        data = column.get_attribute(model[treeiter][COL_MODEL],
                                     column.attribute, None)
         if data.startswith(key):
             return False
         return True
         
-    def _cell_data_func(self, tree_column, renderer, model, iter,
+    def _cell_data_func(self, tree_column, renderer, model, treeiter,
                         (column, renderer_prop, as_string)):
 
-        row = model[iter]
+        row = model[treeiter]
         if column.cache:
             cache = self._cell_data_caches[column.attribute]
             path = row.path[0]
@@ -890,8 +907,12 @@ class List(gtk.ScrolledWindow):
             text = lformat(column.format, data)
         elif column.format_func:
             text = column.format_func(data)
-        else:
+        elif (column.data_type == datetime.date or
+              column.data_type == datetime.datetime or
+              column.data_type == datetime.time):
             text = as_string(data)
+        else:
+            text = data
             
         renderer.set_property(renderer_prop, text)
 
@@ -1049,8 +1070,9 @@ class List(gtk.ScrolledWindow):
         # put the popup_window in its position
         gdk_window = self.window
         if gdk_window:
-            x, y = gdk_window.get_origin()
-            self._popup_window.move(x + old_alloc.x, y + old_alloc.y)
+            winx, winy = gdk_window.get_origin()
+            self._popup_window.move(winx + old_alloc.x,
+                                    winy + old_alloc.y)
         
     # end of the popup button hack
 
@@ -1104,8 +1126,7 @@ class List(gtk.ScrolledWindow):
             for col in value.split('^'):
                 if not col:
                     continue
-                c = Column.from_string(col)
-                self._columns.append(c)
+                self._columns.append(Column.from_string(col))
         elif isinstance(value, (list, tuple)):
             self._columns = value
             self._columns_string = '^'.join([str(col) for col in value])
@@ -1216,7 +1237,6 @@ class List(gtk.ScrolledWindow):
         if selection.get_mode() == gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed")
 
-        model = self._model
         for path in paths:
             selection.select_path(path)
 
@@ -1224,16 +1244,17 @@ class List(gtk.ScrolledWindow):
         objid = id(instance)
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
-        iter = self._iters[objid]
 
         selection = self._treeview.get_selection()
         if selection.get_mode() == gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed")
+
+        treeiter = self._iters[objid]
         
-        selection.select_iter(iter)
+        selection.select_iter(treeiter)
 
         if scroll:
-            self._treeview.scroll_to_cell(self._model[iter].path,
+            self._treeview.scroll_to_cell(self._model[treeiter].path,
                                           None, True, 0.5, 0)
 
     def get_selected(self):
@@ -1251,9 +1272,9 @@ class List(gtk.ScrolledWindow):
         elif mode not in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
             _warn('get_selected() called when multiple rows can be selected')
 
-        model, iter = selection.get_selected()
-        if iter:
-            return model[iter][COL_MODEL]
+        model, treeiter = selection.get_selected()
+        if treeiter:
+            return model[treeiter][COL_MODEL]
 
     def get_selected_rows(self):
         """Returns a list of currently selected objects
@@ -1276,15 +1297,16 @@ class List(gtk.ScrolledWindow):
             return [model[path][COL_MODEL] for (path,) in paths]
         return []
     
-    def add_list(self, list, clear=True, progress_handler=None):
+    def add_list(self, instances, clear=True, progress_handler=None):
         """
         Allows a list to be loaded, by default clearing it first.
         freeze() and thaw() are called internally to avoid flashing.
         
-          - list: a list to be added
-          - clear: a boolean that specifies whether or not to clear the list
-          - progress_handler: a callback function to be called while the list
-            is being filled
+        @param instances: a list to be added
+        @param clear: a boolean that specifies whether or not to
+          clear the list
+        @param progress_handler: a callback function to be called
+            while the list is being filled
         """
 
         self._treeview.freeze_notify()
@@ -1293,7 +1315,7 @@ class List(gtk.ScrolledWindow):
             self.unselect_all()
             self.clear()
             
-        ret = self._load(list, progress_handler)
+        ret = self._load(instances, progress_handler)
             
         self._treeview.thaw_notify()
         return ret
@@ -1320,10 +1342,11 @@ class List(gtk.ScrolledWindow):
         objid = id(instance)
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
-        iter = self._iters[objid]
+
+        treeiter = self._iters[objid]
         
         model = self._model
-        pos = model[iter].path[0]
+        pos = model[treeiter].path[0]
         if pos >= len(model) - 1:
             pos = 0
         else:
@@ -1342,10 +1365,10 @@ class List(gtk.ScrolledWindow):
         objid = id(instance)
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
-        iter = self._iters[objid]
+        treeiter = self._iters[objid]
         
         model = self._model
-        pos = model[iter].path[0]
+        pos = model[treeiter].path[0]
         if pos == 0:
             pos = len(model) - 1
         else:
