@@ -24,8 +24,7 @@ import gettext
 
 import gtk
 
-__all__ = ['error', 'info', 'messagedialog', 'open', 'save', 'warning',
-           'yesno']
+__all__ = ['error', 'info', 'messagedialog', 'warning', 'yesno']
 
 _ = gettext.gettext
 
@@ -126,7 +125,7 @@ def yesno(text, parent=None, default=gtk.RESPONSE_YES):
                          buttons=gtk.BUTTONS_YES_NO,
                          default=default)
   
-def test():
+def _test():
     yesno('Kill?', default=gtk.RESPONSE_NO)
     
     info('Do it', buttons=((gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL),
@@ -141,4 +140,4 @@ def test():
           'lbalbalbl alabl l blablalb lalba bla bla bla bla lbal\n')
     
 if __name__ == '__main__':
-    test()
+    _test()
