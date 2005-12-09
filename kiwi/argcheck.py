@@ -126,6 +126,8 @@ class argcheck(object):
             pos = defs - i
             if defs and 0 < pos < defs:
                 value = default_values[pos]
+                if value is None:
+                    continue
                 arg_type = types[pos]
                 try:
                     self._type_check(value, arg_type, arg_name)
