@@ -227,7 +227,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
                 # Step 2: The widgets themselves have now valid the data
                 #         Next step is to call the application specificed
                 #         checks, which are found in the view.
-                if data is not None:
+                if data is not None and data is not ValueUnset:
                     # this signal calls the on_widgetname__validate method
                     # of the view class and gets the exception (if any).
                     error = self.emit("validate", data)
