@@ -56,17 +56,16 @@ def messagedialog(dialog_type, short, long=None, parent=None,
     if buttons in (gtk.BUTTONS_NONE, gtk.BUTTONS_OK, gtk.BUTTONS_CLOSE,
                    gtk.BUTTONS_CANCEL, gtk.BUTTONS_YES_NO,
                    gtk.BUTTONS_OK_CANCEL):
-        dialog_buttons = buttons
         buttons = []
+        dialog_buttons = buttons
     else:
-        if not type(buttons) == tuple:
-            raise TypeError("buttons must be a GtkButtonsTypes constant or "
-                            "a tuple")
-        
+        if type(buttons) != tuple:
+            raise TypeError(
+                "buttons must be a GtkButtonsTypes constant or a tuple")
         dialog_buttons = gtk.BUTTONS_NONE
         
     if parent and not isinstance(parent, gtk.Window):
-        raise TypeError("parent must be a window subclass")
+        raise TypeError("parent must be a gtk.Window subclass")
     
     d = gtk.MessageDialog(parent=parent, flags=gtk.DIALOG_MODAL,
                           type=dialog_type, buttons=dialog_buttons)
