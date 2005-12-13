@@ -157,7 +157,7 @@ class Column(PropertyObject, gobject.GObject):
         # If we don't specify a justification, right align it for int/float
         # and left align it for everything else. 
         if "justify" not in kwargs:
-            if issubclass(data_type, (int, float, long, currency)):
+            if data_type and issubclass(data_type, (int, float, long, currency)):
                 kwargs['justify'] = gtk.JUSTIFY_RIGHT
                 
         format_func = kwargs.get('format_func')
@@ -808,7 +808,13 @@ class List(gtk.ScrolledWindow):
                        self._on_header__button_release_event)
         return treeview_column
     
-    def _on_renderer_toggle__toggled(self, renderer, path, model, attribute):
+    def _on_renderer_toggle_check__toggled(self, renderer, path, model, attribute):
+        obj = model[path][COL_MODEL]
+        value = not getattr(obj, attribute, None)
+        setattr(obj, attribute, value)
+        self.emit('cell-edited', attribute, value)
+
+    def _on_renderer_toggle_radio__toggled(self, renderer, path, model, attribute):
         # Deactive old one
         old = renderer.get_data('kiwilist::radio-active')
         
@@ -835,6 +841,7 @@ class List(gtk.ScrolledWindow):
         new = model[path][COL_MODEL]
         setattr(new, attribute, True)
         renderer.set_data('kiwilist::radio-active', new)
+        self.emit('cell-edited', attribute, new)
         
     def _on_renderer_text__edited(self, renderer, path, text,
                                   model, attribute, column, as_string):
@@ -853,13 +860,15 @@ class List(gtk.ScrolledWindow):
         data_type = column.data_type
         if data_type is bool:
             renderer = gtk.CellRendererToggle()
-            if column.radio:
-                renderer.set_radio(True)
-
             if column.editable:
                 renderer.set_property('activatable', True)
-                renderer.connect('toggled', self._on_renderer_toggle__toggled,
-                                 self._model, column.attribute)
+
+            if column.radio:
+                renderer.set_radio(True)
+                cb = self._on_renderer_toggle_radio__toggled
+            else:
+                cb = self._on_renderer_toggle_check__toggled
+            renderer.connect('toggled', cb, self._model, column.attribute)
                 
             prop = 'active'
         elif issubclass(data_type, (datetime.date, datetime.time,

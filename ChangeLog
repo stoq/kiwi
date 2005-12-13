@@ -1,9 +1,13 @@
 2005-12-13  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/list.py: Add support for check buttons
+	in kiwi lists. Also emit cell-edited when changing a radio
+	button.
+
 	* kiwi/datatypes.py (currency): 
 	(CurrencyConverter): 
 	Add support for currency.
-	(format_p): Use currency.format
+	(format_price): Use currency.format
 
 	* kiwi/ui/widgets/list.py (List._cell_data_func): Add support for 
 	currency here.
