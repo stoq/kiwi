@@ -375,7 +375,7 @@ class currency(float):
     """
     _converter = converter.get_converter(float)
     
-    def __init__(self, value):
+    def __new__(cls, value):
         """
         @param value: value to convert
         @type value: string or number
@@ -389,7 +389,7 @@ class currency(float):
             raise TypeError(
                 "cannot convert %r of type %s to a currency" % (
                 value, type(value)))
-        float.__init__(self, value)
+        return float.__new__(cls, value)
 
     def format(self, symbol=True, precision=None):
         value = float(self)
