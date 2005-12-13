@@ -487,9 +487,12 @@ class CurrencyConverter(BaseConverter):
     type = currency
 
     def as_string(self, value, format=None):
+        # XXX: format support
         return currency(value).format()
-    
+
     def from_string(self, value):
+        if value == '':
+            return ValueUnset
         try:
             return currency(value)
         except ValueError:
