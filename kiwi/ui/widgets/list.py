@@ -386,10 +386,15 @@ class List(gtk.ScrolledWindow):
     """An enhanced version of GtkTreeView, which provides pythonic wrappers
     for accessing rows, and optional facilities for column sorting (with
     types) and column selection."""
-    
+
+    # selection, list or object
     gsignal('selection-changed', object)
+    
+    # row clicked
     gsignal('double-click', object)
-    gsignal('cell-edited', str, object)
+    
+    # edited object, attribute name
+    gsignal('cell-edited', object, str)
 
     # this property is used to serialize the columns of a List. The format
     # is a big string with '^' as the column separator and '|' as the field
@@ -812,7 +817,7 @@ class List(gtk.ScrolledWindow):
         obj = model[path][COL_MODEL]
         value = not getattr(obj, attribute, None)
         setattr(obj, attribute, value)
-        self.emit('cell-edited', attribute, value)
+        self.emit('cell-edited', obj, attribute)
 
     def _on_renderer_toggle_radio__toggled(self, renderer, path, model, attribute):
         # Deactive old one
@@ -841,14 +846,14 @@ class List(gtk.ScrolledWindow):
         new = model[path][COL_MODEL]
         setattr(new, attribute, True)
         renderer.set_data('kiwilist::radio-active', new)
-        self.emit('cell-edited', attribute, new)
+        self.emit('cell-edited', new, attribute)
         
     def _on_renderer_text__edited(self, renderer, path, text,
                                   model, attribute, column, as_string):
         obj = model[path][COL_MODEL]
         value = as_string(text)
         setattr(obj, attribute, value)
-        self.emit('cell-edited', attribute, value)
+        self.emit('cell-edited', obj, attribute)
         
     def _guess_renderer_for_type(self, column):
         """Gusses which CellRenderer we should use for a given type.
@@ -1534,6 +1539,6 @@ class SummaryLabel(ListLabel):
 
     # Callbacks
     
-    def _on_klist__cell_edited(self, klist, attribute, value):
+    def _on_klist__cell_edited(self, klist, object, attribute):
         self.update_total()
 
