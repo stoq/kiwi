@@ -863,7 +863,7 @@ class List(gtk.ScrolledWindow):
                 
             prop = 'active'
         elif issubclass(data_type, (datetime.date, datetime.time,
-                                  basestring, int, float)):
+                                    basestring, int, float)):
             renderer = gtk.CellRendererText()
             prop = 'text'
             if column.editable:
