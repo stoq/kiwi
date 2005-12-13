@@ -154,6 +154,12 @@ class Column(PropertyObject, gobject.GObject):
         if data_type:
             kwargs['data_type'] = data_type
 
+        # If we don't specify a justification, right align it for int/float
+        # and left align it for everything else. 
+        if "justify" not in kwargs:
+            if issubclass(data_type, (int, float, long, currency)):
+                kwargs['justify'] = gtk.JUSTIFY_RIGHT
+                
         format_func = kwargs.get('format_func')
         if format_func:
             if not callable(format_func):
@@ -711,14 +717,6 @@ class List(gtk.ScrolledWindow):
         if column.on_attach_renderer:
             column.on_attach_renderer(renderer)
         justify = column.justify
-        # If we don't specify a justification, right align it for int/float
-        # and left align it for everything else. 
-        if justify is None:
-            if issubclass(column.data_type, (int, float)):
-                justify = gtk.JUSTIFY_RIGHT
-            else:
-                justify = gtk.JUSTIFY_LEFT
-                
         if justify == gtk.JUSTIFY_RIGHT:
             xalign = 1.0
         elif justify == gtk.JUSTIFY_CENTER:
