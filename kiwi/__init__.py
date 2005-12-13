@@ -32,7 +32,9 @@ application creation much easier.
 
 Kiwi includes a Framework and a set of enhanced widgets
 
-    - Author: Christian Reis <kiko@async.com.br>
+    - Authors:
+      - Christian Reis <kiko@async.com.br>
+      - Johan Dahlin <jdahlin@async.com.br>
     - Website: U{http://www.async.com.br/projects/kiwi/}
     - Organization: Async Open Source
 """            
