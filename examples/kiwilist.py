@@ -4,6 +4,7 @@ import random
 import gobject
 import gtk
 
+from kiwi.datatypes import currency
 from kiwi.ui.widgets.list import (Column, List, SequentialColumn,
                                   ColoredColumn, SummaryLabel)
 
@@ -12,6 +13,8 @@ def random_date():
     min = max.replace(year=max.year-5)
     timestamp = random.randint(int(min.strftime('%s')),
                                int(max.strftime('%s')))
+    if timestamp % 2 == 0:
+        return 
     return datetime.fromtimestamp(timestamp)
     
 class Person:
@@ -21,6 +24,7 @@ class Person:
          self.city) = name, age, city
         self.date = self.datetime = self.time = random_date()
         self.extra = -1
+        self.worth = random.randint(0, 10000) / 100.0
         
     def __repr__(self):
         return '<Person %s>' % self._name
@@ -40,6 +44,7 @@ columns = [
     SequentialColumn(),
     MyColumn('name', tooltip='What about a stupid tooltip?', editable=True),
     Column('age', format_func=format_func, editable=True, width=40),
+    Column('worth', data_type=currency, editable=True),
     Column('city', visible=True, sorted=True),
     Column('date', data_type=date),
     Column('time', data_type=time),

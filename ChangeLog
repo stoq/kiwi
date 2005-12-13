@@ -1,3 +1,13 @@
+2005-12-13  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/datatypes.py (currency): 
+	(CurrencyConverter): 
+	Add support for currency.
+	(format_p): Use currency.format
+
+	* kiwi/ui/widgets/list.py (List._cell_data_func): Add support for 
+	currency here.
+
 2005-12-09  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/dialogs.py: Add dialogs, stolen and extended from gazpacho.

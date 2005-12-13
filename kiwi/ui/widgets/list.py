@@ -35,7 +35,7 @@ from gtk import gdk
 
 from kiwi import _warn, ValueUnset
 from kiwi.accessors import kgetattr
-from kiwi.datatypes import converter, lformat
+from kiwi.datatypes import converter, currency, lformat
 from kiwi.decorators import deprecated
 from kiwi.python import slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
@@ -909,7 +909,8 @@ class List(gtk.ScrolledWindow):
             text = column.format_func(data)
         elif (column.data_type == datetime.date or
               column.data_type == datetime.datetime or
-              column.data_type == datetime.time):
+              column.data_type == datetime.time or
+              column.data_type == currency):
             text = as_string(data)
         else:
             text = data

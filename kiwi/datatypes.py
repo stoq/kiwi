@@ -368,6 +368,135 @@ class ObjectConverter(BaseConverter):
     from_string = None
 converter.add(ObjectConverter)
 
+class currency(float):
+    """
+    A datatype representing currency, used together with the list and
+    the framework
+    """
+    _converter = converter.get_converter(float)
+    
+    def __init__(self, value):
+        """
+        @param value: value to convert
+        @type value: string or number
+        """
+        if isinstance(value, str):
+            conv = locale.localeconv()
+            currency_symbol = conv.get('currency_symbol')
+            text = value.strip(currency_symbol)
+            value = currency._converter.from_string(text)
+        elif not isinstance(value, (int, float, long)):
+            raise TypeError(
+                "cannot convert %r of type %s to a currency" % (
+                value, type(value)))
+        float.__init__(self, value)
+
+    def format(self, symbol=True, precision=None):
+        value = float(self)
+        
+        conv = locale.localeconv()
+
+        # Grouping (eg thousand separator) of integer part
+        groups = conv.get('mon_grouping', [])[:]
+        groups.reverse()
+        if groups:
+            group = groups.pop()
+        else:
+            group = 3
+
+        intparts = []
+
+        # We're iterating over every character in the integer part
+        # make sure to remove the negative sign, it'll be added later
+        intpart = str(int(abs(value)))
+
+        while True:
+            if not intpart:
+                break
+
+            s = intpart[-group:]
+            intparts.insert(0, s)
+            intpart = intpart[:-group]
+            if not groups:
+                continue
+
+            last = groups.pop()
+            # if 0 reuse last one, see struct lconv in locale.h
+            if last != 0:
+                group = last
+
+        # Add the sign, and the list of decmial parts, which now are grouped
+        # properly and can be joined by mon_thousand_sep
+        if value > 0:
+            sign = conv.get('positive_sign', '')
+        elif value < 0:
+            sign = conv.get('negative_sign', '-')
+        else:
+            sign = ''
+        currency = sign + conv.get('mon_thousands_sep', '.').join(intparts)
+
+        # Only add decimal part if it has one, is this correct?
+        if precision is not None or value % 1 != 0:
+            # Pythons string formatting can't handle %.127f
+            # 127 is the default value from glibc/python
+            if precision:
+                frac_digits = precision
+            else:
+                frac_digits = conv.get('frac_digits', 2)
+                if frac_digits == 127:
+                    frac_digits = 2
+
+            format = '%%.%sf' % frac_digits
+            dec_part = (format % value)[-frac_digits:]
+
+            mon_decimal_point = conv.get('mon_decimal_point', '.')
+            currency += mon_decimal_point + dec_part
+
+        # If requested include currency symbol 
+        currency_symbol = conv.get('currency_symbol', '')
+        if currency_symbol and symbol:
+            if value > 0:
+                cs_precedes = conv.get('p_cs_precedes', 1)
+                sep_by_space = conv.get('p_sep_by_space', 1)
+            else:
+                cs_precedes = conv.get('n_cs_precedes', 1)
+                sep_by_space = conv.get('n_sep_by_space', 1)
+
+            # Patching glibc's output
+            # See http://sources.redhat.com/bugzilla/show_bug.cgi?id=1294
+            current_locale = locale.getlocale(locale.LC_MONETARY)
+            if current_locale[0] == 'pt_BR':
+                cs_precedes = 1
+                sep_by_space = 0
+
+            if sep_by_space:
+                space = ' '
+            else:
+                space = ''
+            if cs_precedes:
+                currency = currency_symbol + space + currency
+            else:
+                currency = currency + space + currency_symbol
+
+        return currency
+
+    def __repr__(self):
+        return '<currency %s> ' % self.format()
+    
+class CurrencyConverter(BaseConverter):
+    type = currency
+
+    def as_string(self, value, format=None):
+        return currency(value).format()
+    
+    def from_string(self, value):
+        try:
+            return currency(value)
+        except ValueError:
+            raise ValidationError("%s can not be converted to a currency" % value)
+        
+converter.add(CurrencyConverter)
+
 def lformat(format, value):
     """Like locale.format but with grouping enabled"""
     return locale.format(format, value, 1)
@@ -381,88 +510,8 @@ def format_price(value, symbol=True, precision=None):
     @param symbol: whether to include the currency symbol
     """
     
-    conv = locale.localeconv()
-        
-    # Grouping (eg thousand separator) of integer part
-    groups = conv.get('mon_grouping', [])[:]
-    groups.reverse()
-    if groups:
-        group = groups.pop()
-    else:
-        group = 3
+    return currency(value).format(symbol, precision)
 
-    intparts = []
-    
-    # We're iterating over every character in the integer part
-    # make sure to remove the negative sign, it'll be added later
-    intpart = str(int(abs(value)))
-
-    while True:
-        if not intpart:
-            break
-        
-        s = intpart[-group:]
-        intparts.insert(0, s)
-        intpart = intpart[:-group]
-        if not groups:
-            continue
-        
-        last = groups.pop()
-        # if 0 reuse last one, see struct lconv in locale.h
-        if last != 0:
-            group = last
-
-    # Add the sign, and the list of decmial parts, which now are grouped
-    # properly and can be joined by mon_thousand_sep
-    if value > 0:
-        sign = conv.get('positive_sign', '')
-    elif value < 0:
-        sign = conv.get('negative_sign', '-')
-    else:
-        sign = ''
-    currency = sign + conv.get('mon_thousands_sep', '.').join(intparts)
-        
-    # Only add decimal part if it has one, is this correct?
-    if value % 1 != 0:
-        # Pythons string formatting can't handle %.127f
-        # 127 is the default value from glibc/python
-        if precision:
-            frac_digits = precision
-        else:
-            frac_digits = conv.get('frac_digits', 2)
-            if frac_digits == 127:
-                frac_digits = 2
-
-        format = '%%.%sf' % frac_digits
-        dec_part = (format % value)[-frac_digits:]
-        
-        mon_decimal_point = conv.get('mon_decimal_point', '.')
-        currency += mon_decimal_point + dec_part
-
-    # If requested include currency symbol 
-    currency_symbol = conv.get('currency_symbol', '')
-    if currency_symbol and symbol:
-        if value > 0:
-            cs_precedes = conv.get('p_cs_precedes', 1)
-            sep_by_space = conv.get('p_sep_by_space', 1)
-        else:
-            cs_precedes = conv.get('n_cs_precedes', 1)
-            sep_by_space = conv.get('n_sep_by_space', 1)
-
-        # Patching glibc's output
-        # See http://sources.redhat.com/bugzilla/show_bug.cgi?id=1294
-        current_locale = locale.getlocale(locale.LC_MONETARY)
-        if current_locale[0] == 'pt_BR':
-            cs_precedes = 1
-            sep_by_space = 0
-
-        if sep_by_space:
-            space = ' '
-        else:
-            space = ''
-        if cs_precedes:
-            currency = currency_symbol + space + currency
-        else:
-            currency = currency + space + currency_symbol
-        
-    return currency
+if __name__ == '__main__':
+    print currency(10.0)
+    print currency(10.3)
