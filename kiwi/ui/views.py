@@ -35,6 +35,7 @@ import string
 
 import gobject
 import gtk
+from gtk import gdk
 
 from kiwi import _warn
 from kiwi.environ import is_gazpacho_required
@@ -86,6 +87,9 @@ _non_interactive = (
     gtk.VSeparator,
     gtk.Window, 
 )
+
+color_red = gdk.color_parse('red')
+color_black = gdk.color_parse('black')
 
 #
 # Signal brokers
@@ -259,6 +263,15 @@ class SlaveView(gobject.GObject):
         
         # grab the accel groups
         self._accel_groups = gtk.accel_groups_from_object(self.toplevel)
+
+        # XXX: support normal widgets
+        # notebook page label widget ->
+        #   dict (slave name -> validation status)
+        self._notebook_validation = {}
+        self._notebooks = [widget
+                           for widget in self._glade_adaptor.get_widgets()
+                               if isinstance(widget, gtk.Notebook)]
+
 
     def _check_reserved(self):
         for reserved in ["widgets", "toplevel", "gladefile",
@@ -570,6 +583,18 @@ class SlaveView(gobject.GObject):
         slave.connect_object('validation-changed',
                              self._on_child__validation_changed,
                              name)
+
+        for notebook in self._notebooks:
+            for child in notebook.get_children():
+                if not shell.is_ancestor(child):
+                    continue
+                
+                label = notebook.get_tab_label(child)
+                slave.connect('validation-changed',
+                              self._on_notebook_slave__validation_changed,
+                              name, label)
+                self._notebook_validation[label] = {}
+
         # Fire of an initial notification
         slave.check_and_notify_validity(force=True)
         
@@ -706,6 +731,25 @@ class SlaveView(gobject.GObject):
         self._validation[name] = value
 
         self.check_and_notify_validity()
+        
+    def _on_notebook_slave__validation_changed(self, slave, value, name,
+                                               label):
+        validation = self._notebook_validation[label]
+        validation[name] = value
+
+        is_valid = True
+        if False in validation.values():
+            is_valid = False
+            
+        if is_valid:
+            color = color_black
+        else:
+            color = color_red
+
+        # Only modify active state, since that's the (somewhat badly named)
+        # state used for the pages which are not selected.
+        label.modify_fg(gtk.STATE_ACTIVE, color)
+        label.modify_fg(gtk.STATE_NORMAL, color)
         
     def check_and_notify_validity(self, force=False):
         # Current view is only valid if we have no invalid children

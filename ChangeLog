@@ -1,3 +1,10 @@
+2005-12-14  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/views.py (SlaveView): Add simple notebook 
+	validation support. It'll mark the text of the labels
+	red if there are any widgets inside which are mandatory
+	or invalid.
+
 2005-12-14  Ali Afshar <aafshar@gmail.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
