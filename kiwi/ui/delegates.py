@@ -36,9 +36,9 @@ class SlaveDelegate(SlaveView, BaseController):
     def __init__(self, toplevel=None, widgets=[], gladefile=None,
                  gladename=None, toplevel_name=None, domain=None,
                  keyactions=None):
-        """Create new SlaveDelegate. toplevel is the toplevel widget,
-        defaults to the value of the class' toplevel attribute, and if not
-        present, raises AttributeError.
+        """
+        The keyactions parameter is sent to L{kiwi.controllers.BaseController},
+        the rest are sent to L{kiwi.ui.views.SlaveView}
         """
         SlaveView.__init__(self, toplevel, widgets, gladefile, gladename,
                            toplevel_name, domain)
@@ -48,11 +48,16 @@ class Delegate(BaseView, BaseController):
     """A class that combines view and controller functionality into a
     single package. The Delegate class possesses a top-level window.
     """
-    def __init__(self, toplevel=None, delete_handler=None, widgets=[],
-                 gladefile=None, gladename=None, toplevel_name=None,
-                 domain=None, keyactions=None):
-        """Creates a new Delegate. For parameters , see BaseView.__init__"""
-        BaseView.__init__(self, toplevel, delete_handler, widgets,
-                          gladefile, gladename, toplevel_name, domain)
+    def __init__(self, toplevel=None, widgets=[], gladefile=None,
+                 gladename=None, toplevel_name=None, domain=None,
+                 delete_handler=None, keyactions=None):
+        """Creates a new Delegate.
+        The keyactions parameter is sent to L{kiwi.controllers.BaseController},
+        the rest are sent to L{kiwi.ui.views.BaseView}
+        """
+        
+        BaseView.__init__(self, toplevel, widgets, gladefile,
+                          gladename, toplevel_name, domain,
+                          delete_handler)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 

@@ -190,7 +190,7 @@ class GladeSignalBroker(SignalBroker):
         for name, method in methods.items():
             if callable(method):
                 dict[name] = method
-        view.glade_adaptor.signal_autoconnect(dict)
+        view._glade_adaptor.signal_autoconnect(dict)
         
 
 class SlaveView(gobject.GObject):
@@ -228,6 +228,18 @@ class SlaveView(gobject.GObject):
         """
         gobject.GObject.__init__(self)
 
+        self._broker = None
+        self.slaves = {}
+        self._proxies = []
+        self._valid = True
+
+        # slave/widget name -> validation status
+        self._validation = {}
+        
+        # stores the function that will be called when widgets 
+        # validity is checked
+        self._validate_function = None
+
         # setup the initial state with the value of the arguments or the
         # class variables
         klass = type(self)
@@ -235,78 +247,75 @@ class SlaveView(gobject.GObject):
         self.widgets = widgets or klass.widgets
         self.gladefile = gladefile or klass.gladefile
         self.gladename = gladename or klass.gladename
-        self.toplevel_name = toplevel_name or klass.toplevel_name
+        self.toplevel_name = (toplevel_name or
+                              klass.toplevel_name or
+                              self.gladefile or
+                              self.gladename)
         self.domain = domain or klass.domain
 
-        self.__broker = None
-        
-        for reserved in ["widgets", "toplevel", "gladefile",
-                         "gladename", "tree", "model", "controller"]:
-            # XXX: take into account widget constructor?
-            if reserved in self.widgets:
-                raise AttributeError("The widgets list for %s contains "
-                                     "a widget named `%s', which is "
-                                     "a reserved. name""" % (self, reserved))
-
-
-        self.glade_adaptor = None
-        if self.gladefile is not None:
-            self._init_glade_adaptor()
-
-        # Validation status
-        self._valid = True
-
-        # Dictionary slave/widget name -> validation status
-        self._validation = {}
-        
-        # stores the function that will be called when widgets 
-        # validity is checked
-        self._validate_function = None
-
-        if self.toplevel_name is not None and self.toplevel is None:
-            self.toplevel = getattr(self, self.toplevel_name, None)
-
-        if not self.toplevel:
-            raise TypeError("A View requires an instance variable "
-                            "called toplevel that specifies the "
-                            "toplevel widget in it")
-        self._proxies = []
+        self._check_reserved()
+        self._glade_adaptor = self.get_glade_adaptor()
+        self.toplevel = self._get_toplevel()
         
         # grab the accel groups
         self._accel_groups = gtk.accel_groups_from_object(self.toplevel)
 
-        self.slaves = {}
-
-    def _init_glade_adaptor(self):
-        """Special init code that subclasses may want to override."""
-        self.glade_adaptor = WidgetTree(self, self.gladefile,
-                                        self.widgets, self.gladename,
-                                        self.domain)
-
-        container_name = self.toplevel_name or self.gladename or self.gladefile
+    def _check_reserved(self):
+        for reserved in ["widgets", "toplevel", "gladefile",
+                         "gladename", "tree", "model", "controller"]:
+            # XXX: take into account widget constructor?
+            if reserved in self.widgets:
+                raise AttributeError(
+                    "The widgets list for %s contains a widget named `%s', "
+                    "which is a reserved. name""" % (self, reserved))
+        
+    def _get_toplevel(self):
+        toplevel = self.toplevel
+        if not toplevel and self.toplevel_name:
+            toplevel = self._glade_adaptor.get_widget(self.toplevel_name)
             
-        if container_name is None:
-            msg = ("You provided a gladefile %s to grab the widgets from "
-                   "but you didn't give me a toplevel/container name!")
-            raise ValueError(msg % self.gladefile)
+        if not toplevel:
+            raise TypeError("A View requires an instance variable "
+                            "called toplevel that specifies the "
+                            "toplevel widget in it")
+
+        if isinstance(toplevel, gtk.Window):
+            if toplevel.flags() & gtk.VISIBLE:
+                _warn("Toplevel widget %s (%s) is visible; that's probably "
+                      "wrong" % (toplevel, toplevel.get_name()))
+
+        return toplevel
+    
+    def get_glade_adaptor(self):
+        """Special init code that subclasses may want to override."""
+        if not self.gladefile:
+            return
+            
+        glade_adaptor = WidgetTree(self, self.gladefile,
+                                   self.widgets, self.gladename,
+                                   self.domain)
+
+        container_name = self.toplevel_name
+        if not container_name:
+            raise ValueError(
+                "You provided a gladefile %s to grab the widgets from "
+                "but you didn't give me a toplevel/container name!" %
+                self.gladefile)
 
         # a SlaveView inside a glade file needs to come inside a toplevel
         # window, so we pull our slave out from it, grab its groups and
         # muerder it later
-        shell = self.glade_adaptor.get_widget(container_name)
+        shell = glade_adaptor.get_widget(container_name)
         if not isinstance(shell, gtk.Window):
-            msg = "Container %s should be a Window, found %s"
-            raise TypeError(msg % (container_name, type(shell)))
+            raise TypeError("Container %s should be a Window, found %s" % (
+                container_name, type(shell)))
 
-        if shell.get_property('visible'):
-            _warn('Toplevel window %s in %s should not be visible' % (
-                container_name, self.gladefile))
-        # XXX grab the accel groups
-        
         self.toplevel = shell.get_child()
         shell.remove(self.toplevel)
         shell.destroy()
 
+        return glade_adaptor
+    
     #
     # Hooks
     #
@@ -365,7 +374,7 @@ class SlaveView(gobject.GObject):
 
     def show_all(self, *args):
         """Shows all widgets attached to the toplevel widget"""
-        if self.glade_adaptor is not None:
+        if self._glade_adaptor is not None:
             raise AssertionError("You don't want to call show_all on a "
                                  "SlaveView. Use show() instead.")
         self.toplevel.show_all()
@@ -449,12 +458,12 @@ class SlaveView(gobject.GObject):
     #
 
     def _attach_callbacks(self, controller):
-        if self.glade_adaptor is None:
+        if self._glade_adaptor is None:
             brokerclass = SignalBroker
         else:
             brokerclass = GladeSignalBroker
             
-        self.__broker = brokerclass(self, controller)
+        self._broker = brokerclass(self, controller)
 
 #    def _setup_keypress_handler(self, keypress_handler):
 #        # Only useful in BaseView and derived classes
@@ -510,8 +519,8 @@ class SlaveView(gobject.GObject):
 
         # if our widgets are in a glade file get the placeholder from them
         # or take it from the view itself otherwise
-        if self.glade_adaptor:
-            placeholder = self.glade_adaptor.get_widget(name)
+        if self._glade_adaptor:
+            placeholder = self._glade_adaptor.get_widget(name)
         else:
             placeholder = getattr(self, name, None)
             
@@ -629,18 +638,18 @@ class SlaveView(gobject.GObject):
         """
         Disconnect handlers previously connected with 
         autoconnect_signals()"""
-        self.__broker.disconnect_autoconnected()
+        self._broker.disconnect_autoconnected()
         
     def handler_block(self, widget, signal_name=None):
         # XXX: Warning, or bail out?
-        if not self.__broker:
+        if not self._broker:
             return
-        self.__broker.handler_block(widget, signal_name)
+        self._broker.handler_block(widget, signal_name)
 
     def handler_unblock(self, widget, signal_name=None):
-        if not self.__broker:
+        if not self._broker:
             return
-        self.__broker.handler_unblock(widget, signal_name)
+        self._broker.handler_unblock(widget, signal_name)
         
     #
     # Proxies
@@ -738,44 +747,30 @@ type_register(SlaveView)
 class BaseView(SlaveView):
     """A view with a toplevel window."""
     
-    def __init__(self, toplevel=None, delete_handler=None, widgets=None,
-                 gladefile=None, gladename=None, toplevel_name=None,
-                 domain=None):
-        """ toplevel is the widget to be set as `toplevel' (and which will
-        be aliased as `win'); delete_handler allows setting a function
-        to be called when this view's window is deleted."""
-        try:
-            SlaveView.__init__(self, toplevel, widgets, gladefile, gladename,
-                               toplevel_name, domain)
-        except KeyError:
-            raise KeyError("Some widgets were defined in self.widgets "
-                           "but not found in the glade tree (see previous "
-                           "messages to see which ones).")
-            
+    def __init__(self, toplevel=None, widgets=None, gladefile=None,
+                 gladename=None, toplevel_name=None, domain=None,
+                 delete_handler=None):
+        SlaveView.__init__(self, toplevel, widgets, gladefile, gladename,
+                           toplevel_name, domain)
 
         if not isinstance(self.toplevel, gtk.Window):
             raise TypeError("toplevel widget must be a Window "
                             "(or inherit from it),\nfound `%s' %s" 
                             % (toplevel, self.toplevel))
-
         self.toplevel.set_name(self.__class__.__name__)
         
         if delete_handler:
-            id = self.toplevel.connect("delete_event", delete_handler)
+            id = self.toplevel.connect("delete-event", delete_handler)
             if not id:
                 raise ValueError(
                     "Invalid delete handler provided: %s" % delete_handler)
 
-    def _init_glade_adaptor(self):
-        self.glade_adaptor = WidgetTree(self, self.gladefile,
-                                        self.widgets, self.gladename)
-        name = self.toplevel_name or self.glade_adaptor.gladename
-        self.toplevel = self.glade_adaptor.get_widget(name)
-
-        if self.toplevel.flags() & gtk.VISIBLE:
-            _warn("Toplevel widget %s (%s) is visible; that's probably "
-                  "wrong" % (self.toplevel, name))
-            
+    def get_glade_adaptor(self):
+        if not self.gladefile:
+            return
+        
+        return WidgetTree(self, self.gladefile, self.widgets,
+                          self.gladename)
     
     #
     # Hook for keypress handling
