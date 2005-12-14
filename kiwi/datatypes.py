@@ -137,7 +137,7 @@ class BaseConverter(object):
         @returns:
         """
         
-class StringConverter(BaseConverter):
+class _StringConverter(BaseConverter):
     type = str
     
     def as_string(self, value, format=None):
@@ -148,9 +148,9 @@ class StringConverter(BaseConverter):
     def from_string(self, value):
         return str(value)
     
-converter.add(StringConverter)
+converter.add(_StringConverter)
 
-class IntConverter(BaseConverter):
+class _IntConverter(BaseConverter):
     type = int
 
     def as_string(self, value, format=None):
@@ -176,9 +176,9 @@ class IntConverter(BaseConverter):
             raise ValidationError(
                 "%s could not be converted to an integer" % value)
         
-converter.add(IntConverter)
+converter.add(_IntConverter)
     
-class BoolConverter(BaseConverter):
+class _BoolConverter(BaseConverter):
     type = bool
     
     as_string = lambda s, value, format=None: str(value)
@@ -195,9 +195,9 @@ class BoolConverter(BaseConverter):
 
         return ValidationError("'%s' can not be converted to a boolean" % value)
 
-converter.add(BoolConverter)
+converter.add(_BoolConverter)
 
-class FloatConverter(BaseConverter):
+class _FloatConverter(BaseConverter):
     type = float
     
     def _filter_locale(self, value):
@@ -275,9 +275,9 @@ class FloatConverter(BaseConverter):
 
         return retval
     
-converter.add(FloatConverter)
+converter.add(_FloatConverter)
 
-class BaseDateTimeConverter(BaseConverter):
+class _BaseDateTimeConverter(BaseConverter):
     """
     Abstract class for converting datatime objects to and from strings
     @cvar date_format:
@@ -340,33 +340,33 @@ class BaseDateTimeConverter(BaseConverter):
                 'This field requires a date of the format "%s" and '
                 'not "%s"' % (self._format, value))
 
-class TimeConverter(BaseDateTimeConverter):
+class _TimeConverter(_BaseDateTimeConverter):
     type = datetime.time
     date_format = '%X'
     lang_constant = locale.T_FMT
-converter.add(TimeConverter)
+converter.add(_TimeConverter)
 
-class DateTimeConverter(BaseDateTimeConverter):
+class _DateTimeConverter(_BaseDateTimeConverter):
     type = datetime.datetime
     date_format = '%c'
     lang_constant = locale.D_T_FMT
-converter.add(DateTimeConverter)
+converter.add(_DateTimeConverter)
 
-class DateConverter(BaseDateTimeConverter):
+class _DateConverter(_BaseDateTimeConverter):
     type = datetime.date
     date_format = '%x'
     lang_constant = locale.D_FMT
 
     def from_dateinfo(self, dateinfo):
         return datetime.date(*dateinfo[:3]) # year, month, day
-converter.add(DateConverter)
+converter.add(_DateConverter)
 
-class ObjectConverter(BaseConverter):
+class _ObjectConverter(BaseConverter):
     type = object
     
     as_string = None
     from_string = None
-converter.add(ObjectConverter)
+converter.add(_ObjectConverter)
 
 class currency(float):
     """
@@ -483,7 +483,7 @@ class currency(float):
     def __repr__(self):
         return '<currency %s> ' % self.format()
     
-class CurrencyConverter(BaseConverter):
+class _CurrencyConverter(BaseConverter):
     type = currency
 
     def __init__(self):
@@ -512,7 +512,7 @@ class CurrencyConverter(BaseConverter):
             raise ValidationError(
                 "%s can not be converted to a currency" % value)
         
-converter.add(CurrencyConverter)
+converter.add(_CurrencyConverter)
 
 def lformat(format, value):
     """Like locale.format but with grouping enabled"""
