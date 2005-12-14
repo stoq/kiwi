@@ -46,18 +46,12 @@ from kiwi.utils import PropertyObject, gproperty
 
 # 1) strings (DONE)
 # 2) strings with data attached (DONE)
-# 3) searchable strings (partly done)
+# 3) searchable strings (DONE)
 # 4) searchable strings with data
 # 5) editable strings
-# 6) strings with autocompletion
 #
-# Implementation details
-# 1,2   ComboxBox
-# 3,4,5 ComboxEntry
-# 6     AutoCombo
-#
-# 5 Does not allow data to be attacheds
-# 3-6 supports validation
+# 5 Does not allow data to be attached
+# 3-4 supports validation
 
 (COMBO_MODE_UNKNOWN,
  COMBO_MODE_STRING,

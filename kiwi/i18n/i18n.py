@@ -81,6 +81,9 @@ def update_po(root, package):
     old = os.getcwd()
     os.chdir(os.path.join(root, 'po'))
 
+    if os.system('intltool-update 2> /dev/null') != 0:
+        raise SystemExit('ERROR: intltool-update could not be found')
+    
     # POT file first
     os.system('intltool-update --pot --gettext-package=%s' % package)
     
@@ -95,18 +98,20 @@ def update_po(root, package):
     os.unlink(potfiles_in)
         
 def compile_po_files(root, package):
-    from kiwi.i18n.msgfmt import make
+    if os.system('msgfmt 2> /dev/null') != 256:
+        print 'msgfmt could not be found, disabling translations'
+        return
+    
     mo_file = package + '.mo'
     for po_file in listfiles(root, 'po', '*.po'):
         lang = os.path.basename(po_file[:-3])
-        mo = os.path.join(root, 'locale', lang,
-                          'LC_MESSAGES', mo_file)
+        mo = os.path.join(root, 'locale', lang, 'LC_MESSAGES', mo_file)
         
         if not os.path.exists(mo) or newer(po_file, mo):
             directory = os.path.dirname(mo)
             if not os.path.exists(directory):
                 os.makedirs(directory)
-            make(po_file, mo)
+            os.system('msgfmt %s -o %s' % (po_file, mo))
     
 def main(args):
     parser = OptionParser()

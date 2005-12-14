@@ -33,8 +33,12 @@ from kiwi.ui.widgets.entry import Entry
 class BaseComboBoxEntry(gtk.ComboBox):
     def __init__(self, model=None, text_column=-1):
         gtk.ComboBox.__init__(self)
-
+        def cb(*args):
+            print args
+        
         self.entry = Entry()
+        self.entry.add_events(gtk.gdk.KEY_PRESS_MASK)
+        self.entry.connect('key-press-event', cb)
         # HACK: We need to set a private variable, this seems to
         #       be the only way of doing so
         self.entry.start_editing(gtk.gdk.Event(gtk.gdk.BUTTON_PRESS))

@@ -70,11 +70,12 @@ person.height = 183.0
 person.weight = 86.0
 person.nationality = 'Yankee'
 person.about = 'Kinda fat'
+person.status = True
 
 form = Form()
 proxy = form.add_proxy(person, ['name', 'age', 'birthdate',
                                 'height', 'weight', 'about',
-                                'nationality'])
+                                'nationality', 'status'])
 form.show_all()
 
 def on_ok_btn_clicked(widget):
@@ -85,6 +86,7 @@ def on_ok_btn_clicked(widget):
     print "Weight:", person.weight
     print "Nationality:", person.nationality
     print "About Your self:", person.about
+    print "Status:", person.status
     
     gtk.main_quit()
 

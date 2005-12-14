@@ -27,7 +27,7 @@
                         <property name="row_spacing">6</property>
                         <property name="column_spacing">6</property>
                         <property name="events"></property>
-                        <property name="n_rows">7</property>
+                        <property name="n_rows">8</property>
                         <property name="n_columns">2</property>
                         <property name="visible">True</property>
                         <child>
@@ -218,6 +218,35 @@
                             <packing>
                                 <property name="bottom_attach">6</property>
                                 <property name="top_attach">5</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="kiwi+ui+widgets+radiobutton+RadioButton" id="status">
+                                <property name="model_attribute">status</property>
+                                <property name="data_value">False</property>
+                                <property name="data_type">bool</property>
+                                <property name="visible">True</property>
+                                <property name="label" context="True" translatable="True">Married</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">8</property>
+                                <property name="top_attach">7</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="kiwi+ui+widgets+radiobutton+RadioButton" id="status_single">
+                                <property name="model_attribute">status</property>
+                                <property name="data_value">True</property>
+                                <property name="data_type">bool</property>
+                                <property name="visible">True</property>
+                                <property name="label" context="True" translatable="True">Single</property>
+                                <property name="group">status</property>
+                            </widget>
+                            <packing>
+                                <property name="left_attach">1</property>
+                                <property name="bottom_attach">8</property>
+                                <property name="top_attach">7</property>
+                                <property name="right_attach">2</property>
                             </packing>
                         </child>
                     </widget>

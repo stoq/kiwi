@@ -486,9 +486,22 @@ class currency(float):
 class CurrencyConverter(BaseConverter):
     type = currency
 
+    def __init__(self):
+        self.symbol = True
+        self.precision = 2
+    
     def as_string(self, value, format=None):
-        # XXX: format support
-        return currency(value).format()
+        if format:
+            raise TypeError("format is not supported for currency")
+        
+        if not isinstance(value, currency):
+            try:
+                value = currency(value)
+            except ValueError:
+                raise ValidationError(
+                    "%s can not be converted to a currency" % value)
+
+        return value.format(self.symbol, self.precision)
 
     def from_string(self, value):
         if value == '':
@@ -496,7 +509,8 @@ class CurrencyConverter(BaseConverter):
         try:
             return currency(value)
         except ValueError:
-            raise ValidationError("%s can not be converted to a currency" % value)
+            raise ValidationError(
+                "%s can not be converted to a currency" % value)
         
 converter.add(CurrencyConverter)
 
