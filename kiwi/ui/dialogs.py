@@ -56,8 +56,8 @@ def messagedialog(dialog_type, short, long=None, parent=None,
     if buttons in (gtk.BUTTONS_NONE, gtk.BUTTONS_OK, gtk.BUTTONS_CLOSE,
                    gtk.BUTTONS_CANCEL, gtk.BUTTONS_YES_NO,
                    gtk.BUTTONS_OK_CANCEL):
-        buttons = []
         dialog_buttons = buttons
+        buttons = []
     else:
         if type(buttons) != tuple:
             raise TypeError(
