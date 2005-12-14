@@ -124,7 +124,7 @@ class HyperLink(PropertyObject, gtk.EventBox):
         """
         return self._menu is not None
 
-    def popup(self, menu=None, button=3, etime=0):
+    def popup(self, menu=None, button=3, etime=0L):
         """
         Popup the menu and emit the popup signal.
 
@@ -132,13 +132,11 @@ class HyperLink(PropertyObject, gtk.EventBox):
             used instead of the internally set menu. If this parameter is not
             passed or None, the internal menu will be used.
         @type menu: gtk.Menu
-
         @param button: An integer representing the button number pressed to
             cause the popup action.
         @type button: int
-
-        @param time: The time that the popup event was initiated.
-        @type time: long
+        @param etime: The time that the popup event was initiated.
+        @type etime: long
         """
         if menu is None:
             menu = self._menu
