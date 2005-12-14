@@ -37,6 +37,7 @@ from gazpacho.loader.custom import Adapter, ComboBoxAdapter, \
 from gazpacho.properties import prop_registry, CustomProperty, StringType
 
 from kiwi import _warn
+from kiwi.datatypes import currency
 from kiwi.environ import environ
 from kiwi.ui.widgets.checkbutton import CheckButton
 from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
@@ -151,7 +152,8 @@ class DataTypeAdaptor(PropertyCustomEditor):
 class SpinBtnDataType(DataTypeAdaptor):
     def get_data_types(self):
         return [(_('Integer'), int),
-                (_('Float'), float)]
+                (_('Float'), float),
+                (_('Currency'), currency)]
 
 class EntryDataType(DataTypeAdaptor):
     def get_data_types(self):
@@ -159,6 +161,7 @@ class EntryDataType(DataTypeAdaptor):
                 (_('Float'), float),
                 (_('Date'), date),
                 (_('String'), str),
+                (_('Currency'), currency),
                 (_('Object'), object)]
 
 class TextViewDataType(DataTypeAdaptor):
@@ -181,7 +184,8 @@ class LabelDataType(DataTypeAdaptor):
         return [(_('Boolean'), bool),
                 (_('String'), str),
                 (_('Integer'), int),
-                (_('Float'), float)]
+                (_('Float'), float),
+                (_('Currency'), currency)]
 
 class DataTypeProperty(CustomProperty, StringType):
     translatable = False
