@@ -30,7 +30,7 @@ _ = gettext.gettext
 
 def messagedialog(dialog_type, short, long=None, parent=None,
                   buttons=gtk.BUTTONS_OK, default=-1):
-    """ Create and show a MessageDialog.
+    """Create and show a MessageDialog.
 
     @param dialog_type: one of constants
       - gtk.MESSAGE_INFO
@@ -40,15 +40,15 @@ def messagedialog(dialog_type, short, long=None, parent=None,
     @param short:       A header text to be inserted in the dialog.
     @param long:        A long description of message.
     @param parent:      The parent widget of this dialog
-    @type:              a gtk.Window subclass
+    @type parent:       a gtk.Window subclass
     @param buttons:     The button type that the dialog will be display,
       one of the constants:
-      - gtk.BUTTONS_NONE
-      - gtk.BUTTONS_OK
-      - gtk.BUTTONS_CLOSE
-      - gtk.BUTTONS_CANCEL
-      - gtk.BUTTONS_YES_NO
-      - gtk.BUTTONS_OK_CANCEL
+       - gtk.BUTTONS_NONE
+       - gtk.BUTTONS_OK
+       - gtk.BUTTONS_CLOSE
+       - gtk.BUTTONS_CANCEL
+       - gtk.BUTTONS_YES_NO
+       - gtk.BUTTONS_OK_CANCEL
       or a tuple or 2-sized tuples representing label and response. If label
       is a stock-id a stock icon will be displayed.
     @param default: optional default response id

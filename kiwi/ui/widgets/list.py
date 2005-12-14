@@ -556,7 +556,7 @@ class List(gtk.ScrolledWindow):
         """
         Extend list by appending elements from the iterable
         
-        @param iteratable:
+        @param iterable:
         """
         
         return self.add_list(iterable, clear=False)

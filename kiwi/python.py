@@ -73,7 +73,7 @@ class ClassInittableObject(object):
 def namedAny(name):
     """Get a fully named package, module, module-global object, or attribute.
     
-    @param: name
+    @param name:
     @returns: object, module or attribute
     """
     
