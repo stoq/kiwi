@@ -387,7 +387,7 @@ class List(gtk.ScrolledWindow):
     for accessing rows, and optional facilities for column sorting (with
     types) and column selection."""
 
-    # selection, list or object
+    # selected row(s)
     gsignal('selection-changed', object)
     
     # row clicked
