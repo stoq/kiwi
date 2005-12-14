@@ -203,7 +203,8 @@ class HyperLink(PropertyObject, gtk.EventBox):
             self._is_active = True
             self._update_look()
         elif event.button == 3:
-            self.popup(button=event.button, etime=event.time)
+            if event.type == gtk.gdk.BUTTON_PRESS:
+                self.popup(button=event.button, etime=event.time)
 
     def _on_button_release_event(self, eventbox, event):
         """
