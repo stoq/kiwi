@@ -34,7 +34,6 @@ back by simply executing the script through a standard python interpreter.
 """
 
 import atexit
-import time
 
 import gtk
 

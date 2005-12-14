@@ -31,7 +31,6 @@ support and display an icon using L{kiwi.ui.icon.IconEntry}.
 
 import gettext
 
-import gobject
 import gtk
 
 from kiwi.ui.icon import IconEntry
