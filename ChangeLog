@@ -1,9 +1,12 @@
 2005-12-14  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/list.py (SummaryLabel.update_total): Use get_attribute 
+	and always convert to float.
+
 	* kiwi/ui/views.py (SlaveView): Add simple notebook 
 	validation support. It'll mark the text of the labels
 	red if there are any widgets inside which are mandatory
-	or invalid.
+	or invalid. Fixes bug 2286.
 
 2005-12-14  Ali Afshar <aafshar@gmail.com>
 
