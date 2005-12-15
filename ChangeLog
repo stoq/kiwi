@@ -1,7 +1,11 @@
+2005-12-15  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/list.py: Subclass propertyobject.
+
 2005-12-14  Johan Dahlin  <jdahlin@async.com.br>
 
-	* kiwi/ui/widgets/list.py (SummaryLabel.update_total): Use get_attribute 
-	and always convert to float.
+	* kiwi/ui/widgets/list.py (SummaryLabel.update_total): Use 
+	get_attribute and always convert to float.
 
 	* kiwi/ui/views.py (SlaveView): Add simple notebook 
 	validation support. It'll mark the text of the labels

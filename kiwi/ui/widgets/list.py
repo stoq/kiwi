@@ -382,7 +382,7 @@ COL_MODEL = 0
 
 _marker = object()
 
-class List(gtk.ScrolledWindow):
+class List(PropertyObject, gtk.ScrolledWindow):
     """An enhanced version of GtkTreeView, which provides pythonic wrappers
     for accessing rows, and optional facilities for column sorting (with
     types) and column selection."""
@@ -423,12 +423,6 @@ class List(gtk.ScrolledWindow):
         # so we can't do this check.
         #elif mode == gtk.SELECTION_EXTENDED:
         #    raise TypeError("gtk.SELECTION_EXTENDED is deprecated")
-        
-        gtk.ScrolledWindow.__init__(self)
-        # we always want a vertical scrollbar. Otherwise the button on top
-        # of it doesn't make sense. This button is used to display the popup
-        # menu
-        self.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
 
         # Mapping of instance id -> treeiter
         self._iters = {}
@@ -436,11 +430,17 @@ class List(gtk.ScrolledWindow):
         self._columns_configured = False
         self._autosize = True
         self._vscrollbar = None
-        
         # by default we are unordered. This index points to the column
         # definition of the column that dictates the order, in case there is
         # any
         self._sort_column_index = -1
+
+        gtk.ScrolledWindow.__init__(self)
+                                
+        # we always want a vertical scrollbar. Otherwise the button on top
+        # of it doesn't make sense. This button is used to display the popup
+        # menu
+        self.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
         
         self._model = gtk.ListStore(object)
         self._model.set_sort_func(COL_MODEL, self._sort_function)
@@ -480,7 +480,10 @@ class List(gtk.ScrolledWindow):
         # Select the first item if no items are selected
         if mode != gtk.SELECTION_NONE and instance_list:
             selection.select_iter(self._model[COL_MODEL].iter)
-            
+
+        # Depends on treeview and selection being set up
+        PropertyObject.__init__(self)
+                    
         self.show()
 
     # Python list object implementation
@@ -608,23 +611,18 @@ class List(gtk.ScrolledWindow):
         cmp(x, y) -> -1, 0, 1"""
         raise NotImplementedError
 
-    # GObject property handling
-    def do_get_property(self, pspec):
-        if pspec.name == 'column-definitions':
-            return self._columns_string
-        elif pspec.name == 'selection-mode':
-            return self.get_selection_mode()
-        else:
-            raise AttributeError('Unknown property %s' % pspec.name)
+    # Properties
+    
+    def prop_set_column_definition(self, value):
+        self.set_columns(value)
+        return value
+    
+    def prop_set_selection_mode(self, mode):
+        self.set_selection_mode(mode)
 
-    def do_set_property(self, pspec, value):
-        if pspec.name == 'column-definitions':
-            self.set_columns(value)
-        elif pspec.name == 'selection-mode':
-            self.set_selection_mode(value)
-        else:
-            raise AttributeError('Unknown property %s' % pspec.name)
-
+    def prop_get_selection_mode(self):
+        return self.get_selection_mode()
+    
     # Columns handling
     def _load(self, instances, progress_handler=None):
         # do nothing if empty list or None provided
