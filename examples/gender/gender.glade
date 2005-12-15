@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<glade-interface>
+    <widget class="GtkWindow" id="gender">
+        <property name="title" context="True" translatable="True">Gender Selection</property>
+        <child>
+            <widget class="GtkVBox" id="vbox1">
+                <property name="visible">True</property>
+                <child>
+                    <widget class="GtkLabel" id="label1">
+                        <property name="label" context="True" translatable="True">Choose your gender:</property>
+                        <property name="visible">True</property>
+                    </widget>
+                    <packing>
+                        <property name="expand">False</property>
+                    </packing>
+                </child>
+                <child>
+                    <widget class="GtkHBox" id="hbox1">
+                        <property name="visible">True</property>
+                        <child>
+                            <widget class="kiwi+ui+widgets+radiobutton+RadioButton" id="male">
+                                <property name="active">True</property>
+                                <property name="data_value">Male</property>
+                                <property name="label" context="True" translatable="True">Male</property>
+                                <property name="data_type">str</property>
+                                <property name="visible">True</property>
+                                <property name="model_attribute">gender</property>
+                            </widget>
+                            <packing/>
+                        </child>
+                        <child>
+                            <widget class="kiwi+ui+widgets+radiobutton+RadioButton" id="female">
+                                <property name="active">False</property>
+                                <property name="data_value">Female</property>
+                                <property name="group">male</property>
+                                <property name="label" context="True" translatable="True">Female</property>
+                                <property name="data_type">str</property>
+                                <property name="visible">True</property>
+                                <property name="model_attribute">gender</property>
+                            </widget>
+                            <packing>
+                                <property name="position">1</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="kiwi+ui+widgets+radiobutton+RadioButton" id="other">
+                                <property name="active">False</property>
+                                <property name="data_value">Other</property>
+                                <property name="label" context="True" translatable="True">Other</property>
+                                <property name="group">male</property>
+                                <property name="data_type">str</property>
+                                <property name="draw_indicator">True</property>
+                                <property name="visible">True</property>
+                                <property name="model_attribute">gender</property>
+                            </widget>
+                            <packing>
+                                <property name="position">2</property>
+                            </packing>
+                        </child>
+                    </widget>
+                    <packing>
+                        <property name="position">1</property>
+                    </packing>
+                </child>
+            </widget>
+        </child>
+    </widget>
+</glade-interface>
