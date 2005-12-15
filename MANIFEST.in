@@ -3,6 +3,7 @@ recursive-include doc *
 recursive-include examples *
 recursive-include gazpacho-plugin *.py *.png *.xml AUTHORS COPYING
 recursive-include glade *.glade
+recursive-include pixmaps *.png
 include AUTHORS
 include ChangeLog
 include COPYING

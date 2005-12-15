@@ -20,7 +20,8 @@ from kiwi.dist import listfiles, listpackages, TemplateInstallLib, \
 
 class InstallLib(TemplateInstallLib):
     name = 'kiwi'
-    global_resources = dict(glade='$datadir/glade')
+    global_resources = dict(glade='$datadir/glade',
+                            pixmap='$datadir/pixmaps')
     
 version = ''
 execfile("kiwi/__version__.py")
@@ -36,6 +37,8 @@ setup(name="kiwi",
       license="GNU LGPL 2.1 (see COPYING)",
       data_files=[('share/kiwi/glade',
                    listfiles('glade', '*.glade')),
+                  ('share/kiwi/pixmaps',
+                   listfiles('pixmaps', '*.png')),
                   ('share/gazpacho/catalogs',
                    listfiles('gazpacho-plugin', 'kiwiwidgets.xml')),
                   ('share/gazpacho/resources/kiwiwidgets',

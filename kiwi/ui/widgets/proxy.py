@@ -30,9 +30,11 @@
 import gettext
 
 import gtk
+from gtk import gdk
 
 from kiwi import ValueUnset
 from kiwi.datatypes import ValidationError, converter
+from kiwi.environ import environ
 from kiwi.interfaces import Mixin, MixinSupportValidation
 from kiwi.log import Logger
 from kiwi.ui.gadgets import FadeOut
@@ -143,7 +145,8 @@ class WidgetMixin(Mixin):
         return conv.from_string(data)
 
 MANDATORY_ICON = gtk.STOCK_EDIT
-ERROR_ICON = gtk.STOCK_DIALOG_INFO
+ERROR_ICON = gdk.pixbuf_new_from_file(
+    environ.find_resource('pixmap', 'validation-error-16.png'))
 
 class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     """Class used by some Kiwi Widgets that need to support mandatory 
@@ -270,7 +273,8 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         def done(fadeout, c):
             if text:
                 self._tooltip.set_text(text)
-            self._draw_stock_icon(ERROR_ICON)
+                self.set_pixbuf(ERROR_ICON)
+                self.queue_draw()
             fadeout.disconnect(c.signal_id)
             
         class SignalContainer:
