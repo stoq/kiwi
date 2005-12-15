@@ -289,7 +289,10 @@ class SlaveView(gobject.GObject):
     def _get_toplevel(self):
         toplevel = self.toplevel
         if not toplevel and self.toplevel_name:
-            toplevel = self._glade_adaptor.get_widget(self.toplevel_name)
+            if self._glade_adaptor:
+                toplevel = self._glade_adaptor.get_widget(self.toplevel_name)
+            else:
+                toplevel = getattr(self, self.toplevel_name, None)
             
         if not toplevel:
             raise TypeError("A View requires an instance variable "
