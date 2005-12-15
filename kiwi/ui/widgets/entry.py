@@ -71,7 +71,6 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         self._current_object = None
         self._entry_mode = ENTRY_MODE_TEXT
         self._icon = IconEntry(self)
-        self.show()
 
     # Virtual methods
     gsignal('changed', 'override')

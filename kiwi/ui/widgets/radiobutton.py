@@ -39,7 +39,6 @@ class RadioButton(PropertyObject, gtk.RadioButton, WidgetMixin):
         gtk.RadioButton.__init__(self)
         WidgetMixin.__init__(self)
         PropertyObject.__init__(self)
-        self.show()
     
     gsignal('toggled', 'override')
     def do_toggled(self):

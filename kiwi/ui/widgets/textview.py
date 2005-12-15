@@ -40,8 +40,6 @@ class TextView(PropertyObject, gtk.TextView, WidgetMixinSupportValidation):
         self._textbuffer.connect('changed',
                                  self._on_textbuffer__changed)
         self.set_buffer(self._textbuffer)
-        
-        self.show()
     
     def _on_textbuffer__changed(self, textbuffer):
         self.emit('content-changed')

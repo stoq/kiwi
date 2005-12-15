@@ -40,7 +40,6 @@ class CheckButton(PropertyObject, gtk.CheckButton, WidgetMixin):
         WidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=bool)
         gtk.CheckButton.__init__(self)
-        self.show()
     
     gsignal('toggled', 'override')
     def do_toggled(self):

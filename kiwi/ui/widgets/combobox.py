@@ -247,7 +247,6 @@ class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
         renderer = gtk.CellRendererText()
         self.pack_start(renderer)
         self.add_attribute(renderer, 'text', COL_COMBO_LABEL)
-        self.show()
 
     # GtkComboBox is a GtkContainer subclass which implements __len__ in
     # PyGTK in 2.8 and higher. Therefor we need to provide our own
@@ -317,8 +316,6 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
 
         self.set_events(gtk.gdk.KEY_RELEASE_MASK)
         self.connect("key-release-event", self._on__key_release_event)
-    
-        self.show()
     
     def prop_set_list_editable(self, value):
         if self.mode == COMBO_MODE_DATA:

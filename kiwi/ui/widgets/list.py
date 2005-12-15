@@ -484,8 +484,6 @@ class List(PropertyObject, gtk.ScrolledWindow):
         # Depends on treeview and selection being set up
         PropertyObject.__init__(self)
                     
-        self.show()
-
     # Python list object implementation
     # These methods makes the kiwi list behave more or less
     # like a normal python list
