@@ -268,11 +268,15 @@ class SlaveView(gobject.GObject):
         # notebook page label widget ->
         #   dict (slave name -> validation status)
         self._notebook_validation = {}
-        self._notebooks = [widget
-                           for widget in self._glade_adaptor.get_widgets()
-                               if isinstance(widget, gtk.Notebook)]
+        self._notebooks = self._get_notebooks()
 
-
+    def _get_notebooks(self):
+        if not self._glade_adaptor:
+            return []
+        
+        return [widget for widget in self._glade_adaptor.get_widgets()
+                           if isinstance(widget, gtk.Notebook)]
+            
     def _check_reserved(self):
         for reserved in ["widgets", "toplevel", "gladefile",
                          "gladename", "tree", "model", "controller"]:
