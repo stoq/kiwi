@@ -1,4 +1,3 @@
-import gobject
 import gtk
 from kiwi.ui.widgets.list import Column, List
 

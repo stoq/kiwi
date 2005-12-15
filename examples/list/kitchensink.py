@@ -1,7 +1,6 @@
 from datetime import date, datetime, time
 import random
 
-import gobject
 import gtk
 
 from kiwi.datatypes import currency
