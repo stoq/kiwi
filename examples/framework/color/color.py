@@ -19,7 +19,7 @@ def load_colors():
         return ['red', 'blue', 'yellow', 'green']
 
 class Color:
-    pass
+    color = 'black'
 
 class FavouriteColor(BaseView):
     def __init__(self):
@@ -30,7 +30,9 @@ class FavouriteColor(BaseView):
         box = gtk.VBox(spacing=6)
         box.pack_start(label, False)
         self.combo = ComboBox()
-        self.combo.set_property('model-attribute', 'color')
+        self.combo.data_type = str
+        self.combo.model_attribute = 'color'
+        self.combo.prefill(load_colors(), sort=True)
         box.pack_start(self.combo, False)
         win.add(box)
         BaseView.__init__(self, toplevel=win, 
@@ -41,7 +43,6 @@ the_color = Color()
 app = FavouriteColor()
 app.add_proxy(the_color, ['combo'])
 # we need to call prefill after adding the proxy or we won't get the changes
-app.combo.prefill(load_colors(), sort=True)
 app.show_all()
 gtk.main()
 print the_color.color

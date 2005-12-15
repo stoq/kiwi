@@ -30,7 +30,8 @@ class FavouriteColor(BaseView):
         box = gtk.VBox(spacing=6)
         box.pack_start(label, False)
         self.combo = ComboBoxEntry()
-        self.combo.set_property('model-attribute', 'color')
+        self.combo.data_type = str
+        self.combo.model_attribute = 'color'
         self.combo.prefill(load_colors(), sort=True)
         box.pack_start(self.combo, False)
         win.add(box)
