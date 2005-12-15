@@ -28,6 +28,8 @@
 to keep the state of a model object synchronized with a View.
 """
 
+import gobject
+
 from kiwi import ValueUnset
 from kiwi.accessors import kgetattr, ksetattr, clear_attr_cache
 from kiwi.interfaces import Mixin, MixinSupportValidation
@@ -141,7 +143,9 @@ class Proxy:
 
         model_attributes = self._model_attributes
         # save this widget in our map
-        if attribute in model_attributes:
+        if (attribute in model_attributes and
+            # RadioButtons are allowed several times
+            not gobject.type_is_a(widget, 'GtkRadioButton')):
             old_widget = model_attributes[attribute]
             raise KeyError("The widget %s (%r) in view %s is already in "
                            "the proxy, defined by widget %s (%r)" % (
