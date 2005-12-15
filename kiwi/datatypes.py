@@ -286,9 +286,6 @@ class _BaseDateTimeConverter(BaseConverter):
     date_format = None
     lang_constant = None
     
-    def __init__(self):
-        self.update_format()
-
     def from_datainfo(self, dateinfo):
         raise NotImplementedError
     
@@ -306,16 +303,16 @@ class _BaseDateTimeConverter(BaseConverter):
                 return cmp(a, b)
         return _datecmp
 
-    def update_format(self):
+    def _get_format(self):
         if sys.platform == 'win32':
-            self._format = self.date_format
-        else:
-            self._format = locale.nl_langinfo(self.lang_constant)
+            return self.date_format
+
+        return locale.nl_langinfo(self.lang_constant)
     
     def as_string(self, value, format=None):
         "Convert a date to a string"
         if format is None:
-            format = self._format
+            format = self._get_format()
             
         if value is None:
             return ''
@@ -332,13 +329,14 @@ class _BaseDateTimeConverter(BaseConverter):
         # perhaps we should add macros, to be able to write
         # yyyy instead of %Y
         
+        format = self._get_format()
         try:
-            dateinfo = time.strptime(value, self._format)
+            dateinfo = time.strptime(value, format)
             return self.from_dateinfo(dateinfo)
         except ValueError:
             raise ValidationError(
                 'This field requires a date of the format "%s" and '
-                'not "%s"' % (self._format, value))
+                'not "%s"' % (format, value))
 
 class _TimeConverter(_BaseDateTimeConverter):
     type = datetime.time
