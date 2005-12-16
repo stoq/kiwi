@@ -172,10 +172,7 @@ class PropertyObject(object):
             setattr(cls, prop_name, p)
 
             # PyGTK 2.7.1-2.8.0 bugfix
-            if not hasattr(pspec, 'default_value'):
-                default_value = None
-            else:
-                default_value = pspec.default_value
+            default_value = getattr(pspec, 'default_value', None)
             
             # Resolve an integer to a real enum
             if gobject.type_is_a(pspec.value_type, gobject.GEnum):
