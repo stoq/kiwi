@@ -73,25 +73,15 @@ class PropertyMeta(ClassInittableMetaType):
                 signals.update(getattr(base, '__gsignals__', {}))
                 _update_bases(base.__bases__, props, signals)
 
-        def _merge(bases):
-            # This will be fun.
-            # Merge in properties and signals from all bases, this
-            # is not the default behavior of PyGTK, but we need it
-            if not '__gproperties__' in namespace:
-                props = namespace['__gproperties__'] = {}
-            else:
-                props = namespace['__gproperties__']
-
-            if not '__gsignals__' in namespace:
-                signals = namespace['__gsignals__'] = {}
-            else:
-                signals = namespace['__gsignals__']
-
-            _update_bases(bases, props, signals)
-        
         for base in bases:
             if issubclass(base, gobject.GObject):
-                _merge(bases)
+                # This will be fun.
+                # Merge in properties and signals from all bases, this
+                # is not the default behavior of PyGTK, but we need it
+                props = namespace.setdefault('__gproperties__', {})
+                signals = namespace.setdefault('__gsignals__', {})
+                
+                _update_bases(bases, props, signals)
                 break
             
         return ClassInittableMetaType.__new__(meta, name, bases, namespace)
@@ -237,11 +227,8 @@ def gsignal(name, *args, **kwargs):
         locals = frame.f_locals
     finally:
         del frame
-        
-    if not '__gsignals__' in locals:
-        dict = locals['__gsignals__'] = {}
-    else:
-        dict = locals['__gsignals__']
+
+    dict = locals.setdefault('__gsignals__', {})
 
     if args and args[0] == 'override':
         dict[name] = 'override'
@@ -342,10 +329,7 @@ def gproperty(name, ptype, default=None, nick='', blurb='',
     frame = sys._getframe(1)
     try:
         locals = frame.f_locals
-        if not '__gproperties__' in locals:
-            dict = locals['__gproperties__'] = {}
-        else:
-            dict = locals['__gproperties__']
+        dict = locals.setdefault('__gproperties__', {})
     finally:
         del frame
 
