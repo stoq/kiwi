@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2003-2005 Async Open Source
+# Copyright (C) 2005 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -18,9 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
 # 
-# Author(s): Christian Reis <kiko@async.com.br>
-#            Lorenzo Gil Sanchez <lgs@sicem.biz>
-#            Johan Dahlin <jdahlin@async.com.br>
+# Author(s): Johan Dahlin <jdahlin@async.com.br>
 #         
 
 """Environment helpers: path mangling and resource management"""
@@ -107,8 +105,55 @@ class Library(Environment):
     
     It provides a way to manage local resources, which should only be seen
     in the current context.
+
+    Libraries are usually instantiated in __init__.py in the topmost package
+    in your library, an example usage is kiwi itself which does:
+    
+    >>> from kiwi.environ import Library
+    >>> lib = Library('kiwi')
+    >>> if lib.uninstalled:
+    >>>     lib.add_global_resource('glade', 'glade')
+    >>>     lib.add_global_resource('pixmap', 'pixmaps')
+
+    which is combined with the following class in setup.py:
+
+    >>> from kiwi.dist import InstallLib
+    >>> class InstallLib(TemplateInstallLib):
+    >>>    name = 'kiwi'
+    >>>    global_resources = dict(glade='$datadir/glade',
+    >>>                            pixmap='$datadir/pixmaps')
+    >>>
+    >>> setup(...,
+    >>>       data_files=[('share/kiwi/glade',
+    >>>                   listfiles('glade', '*.glade')),
+    >>>                   ('share/kiwi/pixmaps',
+    >>>                   listfiles('pixmaps', '*.png')),
+    >>>       cmdclass=dict(install_lib=InstallLib))
+
+    It may seems like a bit of work, but this is everything that's needed
+    for kiwi to figure out how to load resources when installed and when
+    running in an uninstalled mode, eg directly from the source tree.
+    To locate a pixmap called kiwi.png the following is enough:
+
+    >>> from kiwi.environ import environ
+    >>> environ.find_resource('pixmap', 'kiwi.png')
+    '/usr/share/kiwi/pixmaps/kiwi.png' # installed mode
+    
+    Which will lookup the resource kiwi.png in the domain pixmap, which
+    points to $datadir/pixmaps (eg $prefix/share/kiwi/pixmaps) when running
+    in installed mode and from $builddir/pixmaps otherwise.
+    
     """
     def __init__(self, name, root='..', dirname=None):
+        """
+        Creates a new library, this is usually called in __init__.py in a
+        toplevel package. All resources will be relative to the I{root}
+        directory.
+        
+        @param name: name of the library
+        @param root: root directory
+        @param dirname:
+        """
         self.name = name
         if dirname == None:
             # Figure out the absolute path to the caller
