@@ -284,7 +284,11 @@ class _BaseDateTimeConverter(BaseConverter):
     @cvar lang_constant:
     """
     date_format = None
-    lang_constant = None
+
+    def get_lang_constant(self):
+        # This is a method and not a class variable since it does not
+        # exist on all supported platforms, eg win32
+        raise NotImplementedError
     
     def from_datainfo(self, dateinfo):
         raise NotImplementedError
@@ -306,7 +310,7 @@ class _BaseDateTimeConverter(BaseConverter):
     def _get_format(self):
         if sys.platform == 'win32':
             return self.date_format
-
+        
         return locale.nl_langinfo(self.lang_constant)
     
     def as_string(self, value, format=None):
@@ -341,19 +345,22 @@ class _BaseDateTimeConverter(BaseConverter):
 class _TimeConverter(_BaseDateTimeConverter):
     type = datetime.time
     date_format = '%X'
-    lang_constant = locale.T_FMT
+    def get_lang_constant(self):
+        return locale.T_FMT
 converter.add(_TimeConverter)
 
 class _DateTimeConverter(_BaseDateTimeConverter):
     type = datetime.datetime
     date_format = '%c'
-    lang_constant = locale.D_T_FMT
+    def get_lang_constant(self):
+        return locale.D_T_FMT
 converter.add(_DateTimeConverter)
 
 class _DateConverter(_BaseDateTimeConverter):
     type = datetime.date
     date_format = '%x'
-    lang_constant = locale.D_FMT
+    def get_lang_constant(self):
+        return locale.D_FMT
 
     def from_dateinfo(self, dateinfo):
         return datetime.date(*dateinfo[:3]) # year, month, day

@@ -1,3 +1,9 @@
+2006-01-03  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/datatypes.py (_BaseDateTimeConverter.get_lang_constant): 
+	Move lang_constant from being a class variable to an accessor
+	since its undefined on win32. Fixes #2358
+
 2005-12-16  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/environ.py (Library, Library.__init__): improve doc string
