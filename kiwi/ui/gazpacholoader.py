@@ -24,9 +24,9 @@
 
 """Gazpacho integration: loader and extensions"""
 
+import datetime
 import gettext
 import os
-from datetime import date
 
 import gobject
 import gtk
@@ -159,16 +159,18 @@ class EntryDataType(DataTypeAdaptor):
     def get_data_types(self):
         return [(_('Integer'), int),
                 (_('Float'), float),
-                (_('Date'), date),
                 (_('String'), str),
                 (_('Currency'), currency),
+                (_('Date'), datetime.date),
+                (_('Datetime'), datetime.datetime),
+                (_('Time'), datetime.time),
                 (_('Object'), object)]
 
 class TextViewDataType(DataTypeAdaptor):
     def get_data_types(self):
         return [(_('Integer'), int),
                 (_('Float'), float),
-                (_('Date'), date),
+                (_('Date'), datetime.date),
                 (_('String'), str)]
 
 class ComboBoxDataType(DataTypeAdaptor):
@@ -185,6 +187,9 @@ class LabelDataType(DataTypeAdaptor):
                 (_('String'), str),
                 (_('Integer'), int),
                 (_('Float'), float),
+                (_('Date'), datetime.date),
+                (_('Datetime'), datetime.datetime),
+                (_('Time'), datetime.time),
                 (_('Currency'), currency)]
 
 class DataTypeProperty(CustomProperty, StringType):

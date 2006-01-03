@@ -34,9 +34,13 @@ from kiwi.ui.widgets.proxy import WidgetMixin
 from kiwi.utils import PropertyObject
 
 class Label(PropertyObject, gtk.Label, WidgetMixin):
-    def __init__(self, text=''):
-        gtk.Label.__init__(self, text)
-        PropertyObject.__init__(self)
+    def __init__(self, label='', data_type=None):
+        """
+        @param label: initial text
+        @param data_type: data type of label
+        """
+        gtk.Label.__init__(self, label)
+        PropertyObject.__init__(self, data_type=data_type)
         WidgetMixin.__init__(self)
         self.set_use_markup(True)
         self._attr_dic = { "style": None,

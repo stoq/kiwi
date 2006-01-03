@@ -171,13 +171,17 @@ class _IntConverter(BaseConverter):
             value = value.replace(thousands_sep, '')
 
         try:
-            return int(value)
+            return self.type(value)
         except ValueError:
             raise ValidationError(
                 "%s could not be converted to an integer" % value)
         
 converter.add(_IntConverter)
-    
+
+class _LongConverter(_IntConverter):
+    type = long
+converter.add(_LongConverter)
+
 class _BoolConverter(BaseConverter):
     type = bool
     
