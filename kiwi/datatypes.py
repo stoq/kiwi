@@ -311,7 +311,7 @@ class _BaseDateTimeConverter(BaseConverter):
         if sys.platform == 'win32':
             return self.date_format
         
-        return locale.nl_langinfo(self.lang_constant)
+        return locale.nl_langinfo(self.get_lang_constant())
     
     def as_string(self, value, format=None):
         "Convert a date to a string"
