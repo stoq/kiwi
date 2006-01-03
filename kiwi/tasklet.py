@@ -200,7 +200,7 @@ class task(object):
         self.__doc__ = func.__doc__
         
     def __call__(self, *args, **kwargs):
-        return tasklet.Tasklet(self._func(*args, **kwargs))
+        return Tasklet(self._func(*args, **kwargs))
 
 def get_event():
     """

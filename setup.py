@@ -12,8 +12,6 @@ simpler.
 """
 
 from distutils.core import setup
-import os
-import sys
 
 from kiwi.dist import listfiles, listpackages, TemplateInstallLib, \
      get_site_packages_dir
