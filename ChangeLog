@@ -1,5 +1,10 @@
 2006-01-03  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/tasklet.py: Add a decorator, patch by Gustavo.
+	Fixes 2368
+	
+2006-01-03  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/datatypes.py (_BaseDateTimeConverter.get_lang_constant): 
 	Move lang_constant from being a class variable to an accessor
 	since its undefined on win32. Fixes #2358

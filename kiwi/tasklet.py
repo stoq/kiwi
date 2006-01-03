@@ -109,6 +109,17 @@ Launching a tasklet
     from kiwi import tasklet
     tasklet.run(my_task(x=0))
 
+  Yet another approach is to use the @tasklet.task decorator::
+    from kiwi import tasklet
+
+    @tasklet.task
+    def my_task(x):
+        [...]
+        raise StopIteration("return value")
+
+    yield my_task(x=0)
+    retval = tasklet.get_event().retval
+
 Examples
 ========
 
@@ -140,6 +151,7 @@ Examples
 
       mainloop = gobject.MainLoop()
 
+      @tasklet.task
       def printer():
           msgwait = tasklet.WaitForMessages(accept=("quit", "print"))
           while True:
@@ -150,6 +162,7 @@ Examples
               assert msg.name == 'print'
               print ">>> ", msg.value
 
+      @tasklet.task
       def simple_counter(numbers, task):
           timeout = tasklet.WaitForTimeout(1000)
           for x in xrange(numbers):
@@ -159,8 +172,8 @@ Examples
           yield tasklet.Message('quit', dest=task)
           mainloop.quit()
 
-      task = tasklet.run(printer())
-      tasklet.run(simple_counter(10, task))
+      task = printer()
+      simple_counter(10, task)
       mainloop.run()
 
 """
@@ -176,6 +189,18 @@ if gobject.pygtk_version <= (2, 8):
     raise RuntimeError("PyGTK 2.8 or later is required for kiwi.tasklet")
 
 _event = None
+
+class task(object):
+    """A decorator that modifies a tasklet function to avoid the need
+    to call C{tasklet.run(func())} or C{tasklet.Tasklet(func())}.
+    """
+    def __init__(self, func):
+        self._func = func
+        self.__name__ = func.__name__
+        self.__doc__ = func.__doc__
+        
+    def __call__(self, *args, **kwargs):
+        return tasklet.Tasklet(self._func(*args, **kwargs))
 
 def get_event():
     """
