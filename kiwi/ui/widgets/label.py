@@ -34,8 +34,8 @@ from kiwi.ui.widgets.proxy import WidgetMixin
 from kiwi.utils import PropertyObject
 
 class Label(PropertyObject, gtk.Label, WidgetMixin):
-    def __init__(self):
-        gtk.Label.__init__(self)
+    def __init__(self, text=''):
+        gtk.Label.__init__(self, text)
         PropertyObject.__init__(self)
         WidgetMixin.__init__(self)
         self.set_use_markup(True)
@@ -66,18 +66,16 @@ class Label(PropertyObject, gtk.Label, WidgetMixin):
         self.set_text(text)
     
     def _apply_attributes(self):
-        # join the attributes
-        attr_str = ''
         # sorting is been done so we can be sure of the order of the
         # attributes. Helps writing tests cases
-        keys = self._attr_dic.keys()
+        attrs = self._attr_dic
+        keys = attrs.keys()
         keys.sort()
-        for key in keys:
-            if self._attr_dic[key] is not None:
-                attr_str +=  '%s="%s" '%(key, self._attr_dic[key])
-        label_str = '<span %s>%s</span>'%(attr_str, self.get_text())
         
-        self.set_markup(label_str)
+        attr_pairs = ['%s="%s"' % (key, attrs[key]) for key in keys
+                                                        if attrs[key]]
+        self.set_markup('<span %s>%s</span>' % (' '.join(attr_pairs),
+                                                self.get_text()))
         
     def set_bold(self, value):
         """ If True set the text to bold. False sets the text to normal """
