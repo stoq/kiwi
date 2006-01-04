@@ -294,7 +294,7 @@ class _BaseDateTimeConverter(BaseConverter):
         # exist on all supported platforms, eg win32
         raise NotImplementedError
     
-    def from_datainfo(self, dateinfo):
+    def from_dateinfo(self, dateinfo):
         raise NotImplementedError
     
     def get_compare_function(self):
@@ -314,8 +314,8 @@ class _BaseDateTimeConverter(BaseConverter):
     def _get_format(self):
         if sys.platform == 'win32':
             return self.date_format
-        
-        return locale.nl_langinfo(self.get_lang_constant())
+        else:
+            return locale.nl_langinfo(self.get_lang_constant())
     
     def as_string(self, value, format=None):
         "Convert a date to a string"
@@ -339,6 +339,9 @@ class _BaseDateTimeConverter(BaseConverter):
         
         format = self._get_format()
         try:
+            # time.strptime (python 2.4) does not support %r
+            # pending SF bug #1396946
+            format = format.replace('%r', '%I:%M:%S %p')
             dateinfo = time.strptime(value, format)
             return self.from_dateinfo(dateinfo)
         except ValueError:
@@ -351,6 +354,10 @@ class _TimeConverter(_BaseDateTimeConverter):
     date_format = '%X'
     def get_lang_constant(self):
         return locale.T_FMT
+
+    def from_dateinfo(self, dateinfo):
+        # hour, minute, second
+        return datetime.time(*dateinfo[3:6])
 converter.add(_TimeConverter)
 
 class _DateTimeConverter(_BaseDateTimeConverter):
@@ -358,6 +365,10 @@ class _DateTimeConverter(_BaseDateTimeConverter):
     date_format = '%c'
     def get_lang_constant(self):
         return locale.D_T_FMT
+    
+    def from_dateinfo(self, dateinfo):
+        # year, month, day, hour, minute, second
+        return datetime.datetime(*dateinfo[:6])
 converter.add(_DateTimeConverter)
 
 class _DateConverter(_BaseDateTimeConverter):
@@ -367,7 +378,8 @@ class _DateConverter(_BaseDateTimeConverter):
         return locale.D_FMT
 
     def from_dateinfo(self, dateinfo):
-        return datetime.date(*dateinfo[:3]) # year, month, day
+        # year, month, day
+        return datetime.date(*dateinfo[:3]) 
 converter.add(_DateConverter)
 
 class _ObjectConverter(BaseConverter):
