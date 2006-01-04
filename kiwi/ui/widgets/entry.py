@@ -64,10 +64,10 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
     gproperty("completion", bool, False)
     gproperty('exact-completion', bool, default=False)
         
-    def __init__(self):
+    def __init__(self, data_type=None):
         gtk.Entry.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
-        PropertyObject.__init__(self)
+        PropertyObject.__init__(self, data_type=data_type)
         self._current_object = None
         self._entry_mode = ENTRY_MODE_TEXT
         self._icon = IconEntry(self)
