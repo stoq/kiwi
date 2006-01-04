@@ -2,6 +2,7 @@ import datetime
 import gtk
 
 from kiwi.datatypes import currency
+from kiwi.ui.widgets.entry import Entry
 from kiwi.ui.widgets.label import Label
 
 window = gtk.Window()
@@ -34,6 +35,11 @@ for data, data_type in data_types:
     label = Label(data_type=data_type)
     label.update(data)
     hbox.pack_start(label, False, False, 6)
+
+    entry = Entry(data_type=data_type)
+    entry.update(data)
+    entry.validate()
+    hbox.pack_start(entry, False, False, 6)
 
 window.show_all()
 
