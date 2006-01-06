@@ -1250,13 +1250,13 @@ class List(PropertyObject, gtk.ScrolledWindow):
             selection.select_path(path)
 
     def select(self, instance, scroll=True):
-        objid = id(instance)
-        if not objid in self._iters:
-            raise ValueError("instance %r is not in the list" % instance)
-
         selection = self._treeview.get_selection()
         if selection.get_mode() == gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed")
+
+        objid = id(instance)
+        if not objid in self._iters:
+            raise ValueError("instance %r is not in the list" % instance)
 
         treeiter = self._iters[objid]
         
