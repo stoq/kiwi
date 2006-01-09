@@ -24,18 +24,28 @@ class DataTypesTest(unittest.TestCase):
         # you are not supposed to pass something that is not a string
         self.assertRaises(AttributeError, bool_converter.from_string, None)
 
-    def teststr2date(self):
+    def teststr2date_esES(self):
         # set the date format to the spanish one
-        locale.setlocale(locale.LC_TIME, 'es_ES')
-
+        try:
+            locale.setlocale(locale.LC_TIME, 'es_ES')
+            print 'skipping es_ES, locale not available'
+        except locale.Error:
+            return
+        
         birthdate = date(1979, 2, 12)
         # in the spanish locale the format of a date is %d/%m/%y
         self.assertEqual(date_converter.from_string("12/2/79"), birthdate)
         self.assertEqual(date_converter.from_string("12/02/79"), birthdate)
 
+    def teststr2date_ptBR(self):
         # let's try with the portuguese locale
-        locale.setlocale(locale.LC_TIME, 'pt_BR')
+        try:
+            locale.setlocale(locale.LC_TIME, 'pt_BR')
+            print 'skipping pt_BR, locale not available'
+        except locale.Error:
+            return
 
+        birthdate = date(1979, 2, 12)
         # portuguese format is "%d-%m-%Y"
         self.assertEqual(date_converter.from_string("12-2-1979"), birthdate)
         self.assertEqual(date_converter.from_string("12-02-1979"), birthdate)
@@ -47,30 +57,44 @@ class DataTypesTest(unittest.TestCase):
         self.assertRaises(ValidationError,
                           date_converter.from_string, "30-02-2005")
         
-    def testdate2str(self):
-        locale.setlocale(locale.LC_TIME, 'es_ES')
+    def testdate2str_esES(self):
+        try:
+            locale.setlocale(locale.LC_TIME, 'es_ES')
+        except locale.Error:
+            print 'skipping es_ES, locale not available'
+            return
+        
+        self.assertEqual(date_converter.as_string(date(1979, 2, 12)),
+                         "12/02/79")
 
-        birthdate = date(1979, 2, 12)
+    def testdate2str_ptBR(self):
+        try:
+            locale.setlocale(locale.LC_TIME, 'pt_BR')
+            print 'skipping pt_BR, locale not available'
+        except locale.Error:
+            return
 
-        self.assertEqual(date_converter.as_string(birthdate), "12/02/79")
-
-        locale.setlocale(locale.LC_TIME, 'pt_BR')
-
-        self.assertEqual(date_converter.as_string(birthdate), "12-02-1979")
+        self.assertEqual(date_converter.as_string(date(1979, 2, 12)),
+                         "12-02-1979")
 
     def testFormatPricePtBR(self):
-        self.assertEqual(locale.setlocale(locale.LC_MONETARY, 'pt_BR'),
-                         'pt_BR',
-                         'pt_BR locale is required to run this test')
+        try:
+            locale.setlocale(locale.LC_TIME, 'pt_BR')
+        except locale.Error:
+            print 'skipping pt_BR, locale not available'
+            return
+        
         self.assertEqual(currency(100).format(), 'R$100')
         self.assertEqual(currency(123.45).format(), 'R$123,45')
         self.assertEqual(currency(12345).format(), 'R$12.345')
         self.assertEqual(currency(-100).format(), 'R$-100')
 
     def testFormatPriceEnUS(self):
-        self.assertEqual(locale.setlocale(locale.LC_MONETARY, 'en_US'),
-                         'en_US',
-                         'en_US locale is required to run this test')
+        try:
+            locale.setlocale(locale.LC_TIME, 'en_US')
+        except locale.Error:
+            print 'skipping en_US, locale not available'
+            return
         self.assertEqual(currency(100).format(), '$100')
         self.assertEqual(currency(123.45).format(), '$123.45')
         self.assertEqual(currency(12345).format(), '$12,345')
