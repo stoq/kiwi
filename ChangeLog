@@ -1,3 +1,13 @@
+2006-01-10  Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/list/searchbar.py: New example
+
+	* kiwi/ui/widgets/list.py (List.add_list): 
+	Be a bit smarter when cleaning the list, instead of removing
+	all items, check if they're inserted first.
+	Refactor remove and remove type sniffing.
+	(Column.__init__): Set data_type to string as default.
+
 2006-01-09  Johan Dahlin  <jdahlin@async.com.br>
 
 	* tests/test_datatypes.py: Check if the locale is present before

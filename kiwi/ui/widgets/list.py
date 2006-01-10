@@ -33,7 +33,7 @@ import gobject
 import gtk
 from gtk import gdk
 
-from kiwi import _warn, ValueUnset
+from kiwi import _warn
 from kiwi.accessors import kgetattr
 from kiwi.datatypes import converter, currency, lformat
 from kiwi.decorators import deprecated
@@ -151,13 +151,15 @@ class Column(PropertyObject, gobject.GObject):
         self.from_string = None
 
         kwargs['title'] = title or attribute.capitalize()
-        if data_type:
-            kwargs['data_type'] = data_type
+        if not data_type:
+            data_type = str
+        kwargs['data_type'] = data_type
 
         # If we don't specify a justification, right align it for int/float
         # and left align it for everything else. 
         if "justify" not in kwargs:
-            if data_type and issubclass(data_type, (int, float, long, currency)):
+            if data_type and issubclass(data_type, (int, float,
+                                                    long, currency)):
                 kwargs['justify'] = gtk.JUSTIFY_RIGHT
                 
         format_func = kwargs.get('format_func')
@@ -622,33 +624,68 @@ class List(PropertyObject, gtk.ScrolledWindow):
         return self.get_selection_mode()
     
     # Columns handling
-    def _load(self, instances, progress_handler=None):
+    def _load(self, instances, clear):
         # do nothing if empty list or None provided
-        if not instances: 
-            return
-
-        instances = iter(instances)
-        try:
-            first = instances.next()
-        except StopIteration:
-            # Empty list, just give up
-            return
-        
-        if not self._has_enough_type_information():
-            self._guess_types(first)
-            self._setup_columns()
+        model = self._model
+        if clear:
+            if not instances:
+                self.unselect_all()
+                self.clear()
+                return
             
         model = self._model
         iters = self._iters
-        iters[id(first)] = model.append((first,))
         
-        # In the case of an empty model, select the first instance
-        if len(model) == 1:
-            self.select(first)
+        old_instances = [row[COL_MODEL] for row in model]
+        
+        # Save selection
+        selected_instances = []
+        if old_instances:
+            selection = self._treeview.get_selection()
+            _, paths = selection.get_selected_rows()
+            if paths:
+                selected_instances = [model[path][COL_MODEL]
+                                          for (path,) in paths]
 
-        for instance in instances:
-            iters[id(instance)] = model.append((instance,))
-            
+        iters = self._iters
+        prev = None
+        # Do not always just clear the list, check if we have the same
+        # instances in the list we want to insert and merge in the new
+        # items
+        if clear:
+            for instance in iter(instances):
+                objid = id(instance)
+                # If the instance is not in the list insert it after
+                # the previous inserted object
+                if not objid in iters:
+                    if prev is None:
+                        prev = model.append((instance,))
+                    else:
+                        prev = model.insert_after(prev, (instance,))
+                    iters[objid] = prev
+                else:
+                    prev = iters[objid]
+
+            # Optimization when we were empty, we wont need to remove anything
+            # nor restore selection
+            if old_instances:
+                # Remove
+                objids = [id(instance) for instance in instances]
+                for instance in old_instances:
+                    objid = id(instance)
+                    if objid in objids:
+                        continue
+                    self._remove(objid)
+        else:
+            for instance in iter(instances):
+                iters[id(instance)] = model.append((instance,))
+                
+        # Restore selection
+        for instance in selected_instances:
+            objid = id(instance)
+            if objid in iters:
+                selection.select_iter(iters[objid])
+                
         # As soon as we have data for that list, we can autosize it, and
         # we don't want to autosize again, or we may cancel user
         # modifications.
@@ -656,29 +693,6 @@ class List(PropertyObject, gtk.ScrolledWindow):
             self._treeview.columns_autosize()
             self._autosize = False
         
-    def _guess_types(self, instance):
-        """Iterates through columns, using the type attribute when found or
-        the type of the associated attribute from the sample instance provided.
-        """
-        for column in self._columns:
-            if column.data_type is None:
-                column.data_type = self._guess_type(column, instance)
-
-    def _guess_type(self, column, instance):
-        
-        # steal attribute from sample instance and use its type
-        value = column.get_attribute(instance, column.attribute, ValueUnset)
-        if value is ValueUnset:
-            raise TypeError("Failed to get attribute '%s' for %s" %
-                            (column.attribute, instance))
-            
-        value_type = type(value)
-        if value_type is type(None):
-            raise TypeError("Detected invalid type None for column `%s'; "
-                            "please specify type in Column constructor.""" %
-                            column.attribute)
-        return value_type
-    
     def _setup_columns(self):
         if self._columns_configured:
             return
@@ -781,15 +795,6 @@ class List(PropertyObject, gtk.ScrolledWindow):
         # justification by looking at the first instance's data.
 #        self._justify_columns(columns, typelist)
 
-    def _has_enough_type_information(self):
-        """True if all the columns has a type set.
-        This is used to know if we can create the treeview columns.
-        """
-        for column in self._columns:
-            if column.data_type is None:
-                return False
-        return True
-        
     def _create_column(self, column):
         treeview_column = gtk.TreeViewColumn()
         # we need to set our own widget because otherwise
@@ -1143,18 +1148,13 @@ class List(PropertyObject, gtk.ScrolledWindow):
             raise ValueError("value should be a string of a list of columns")
 
         self._clear_columns()
-        if self._has_enough_type_information():
-            self._setup_columns()
+        self._setup_columns()
         
     def append(self, instance, select=False):
         """Adds an instance to the list.
         - instance: the instance to be added (according to the columns spec)
         - select: whether or not the new item should appear selected.
         """
-
-        if not self._has_enough_type_information():
-            self._guess_types(instance)
-            self._setup_columns()
 
         # Freeze and save original selection mode to avoid blinking
         self._treeview.freeze_notify()
@@ -1169,34 +1169,34 @@ class List(PropertyObject, gtk.ScrolledWindow):
             self._select_and_focus_row(row_iter)
         self._treeview.thaw_notify()
 
+    def _remove(self, objid):
+        # linear search for the instance to remove
+        treeiter = self._iters.pop(objid)
+        if not treeiter:
+            return False
+        
+        # Remove any references to this path
+        path = self._model[treeiter].path[0]
+        for cache in self._cell_data_caches.values():
+            if path in cache:
+                del cache[path]
+
+        # All references to the iter gone, now it can be removed
+        self._model.remove(treeiter)
+
+        return True
+        
     def remove(self, instance):
         """Remove an instance from the list.
         If the instance is not in the list it returns False. Otherwise it
         returns True.
         """
-        if not self._has_enough_type_information():
-            raise RuntimeError(("There is no columns neither data on the "
-                                "list yet so you can not remove any instance"))
 
         objid = id(instance)
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
-        
-        # linear search for the instance to remove
-        treeiter = self._iters.pop(objid)
-        if treeiter:
-            # Remove any references to this path
-            path = self._model[treeiter].path[0]
-            for cache in self._cell_data_caches.values():
-                if path in cache:
-                    del cache[path]
 
-            # All references to the iter gone, now it can be removed
-            self._model.remove(treeiter)
-                
-            return True
-            
-        return False
+        return self._remove(objid)
 
     def update(self, instance):
         objid = id(instance)
@@ -1209,13 +1209,12 @@ class List(PropertyObject, gtk.ScrolledWindow):
         """
         Reloads the values from all objects.
         """
-
         # XXX: Optimize this to only reload items, no need to remove/readd
         model = self._model
         instances = [row[COL_MODEL] for row in model]
         model.clear()
         self.add_list(instances)
-        
+
     def set_column_visibility(self, column_index, visibility):
         treeview_column = self._treeview.get_column(column_index)
         treeview_column.set_visible(visibility)
@@ -1306,7 +1305,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
             return [model[path][COL_MODEL] for (path,) in paths]
         return []
     
-    def add_list(self, instances, clear=True, progress_handler=None):
+    def add_list(self, instances, clear=True):
         """
         Allows a list to be loaded, by default clearing it first.
         freeze() and thaw() are called internally to avoid flashing.
@@ -1314,19 +1313,14 @@ class List(PropertyObject, gtk.ScrolledWindow):
         @param instances: a list to be added
         @param clear: a boolean that specifies whether or not to
           clear the list
-        @param progress_handler: a callback function to be called
-            while the list is being filled
         """
 
         self._treeview.freeze_notify()
 
-        if clear:
-            self.unselect_all()
-            self.clear()
-            
-        ret = self._load(instances, progress_handler)
-            
+        ret = self._load(instances, clear)
+        
         self._treeview.thaw_notify()
+        
         return ret
 
     def clear(self):
