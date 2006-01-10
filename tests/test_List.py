@@ -152,6 +152,15 @@ class DataTests(unittest.TestCase):
 
         new_person = Person('Nando', 32)
         self.assertEqual(new_person in self.list, False)
+
+    def testSelect(self):
+        first = persons[0]
+        self.list.add_list(persons)
+        self.list.select(first)
+        self.assertEqual(self.list.get_selected(), first)
+
+        self.list.remove(first)
+        self.assertRaises(ValueError, self.list.select, first)
         
 if __name__ == '__main__':
     unittest.main()
