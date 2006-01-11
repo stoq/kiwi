@@ -132,7 +132,8 @@ class Base(object):
             self._window_list = new_windows
         return True
 
-    def ignore(self, toplevel, gobj): pass
+    def ignore(self, toplevel, gobj):
+        pass
     
     GtkSeparatorMenuItem = GtkTearoffMenuItem = ignore
 

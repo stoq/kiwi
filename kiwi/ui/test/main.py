@@ -28,7 +28,7 @@ from optparse import OptionParser
 def _record(filename, args):
     from kiwi.ui.test.listener import Listener
     
-    l = Listener(filename, args[1:])
+    Listener(filename, args[1:])
     
     sys.argv = args[1:]
     execfile(sys.argv[0])
