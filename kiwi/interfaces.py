@@ -24,6 +24,8 @@
 
 """Interface specifications and utilities"""
 
+Nothing = object()
+
 class Mixin(object):
     # gsignal('content-changed')
     # gproperty('data-type')
@@ -42,7 +44,7 @@ class MixinSupportValidation(object):
         pass
 
     # These two are mainly used by subclasses
-    def validate(self, force=False):
+    def validate(self, data=Nothing, force=False):
         pass
     
     def before_validate(self, data):

@@ -46,7 +46,7 @@ class TemplateInstallLib(install_lib):
         self._write_dictionary(fp, 'global_resources', global_resources)
         fp.close()
 
-	return filename
+        return filename
     
     def _write_dictionary(self, fp, name, dictionary):
         fp.write('%s = {}\n' % name)

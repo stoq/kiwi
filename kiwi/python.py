@@ -41,10 +41,11 @@ else:
 __all__ = ['ClassInittableMetaType', 'ClassInittableObject']
 
 class ClassInittableMetaType(metabase):
-    def __new__(meta, name, bases, namespace):
-        cls = metabase.__new__(meta, name, bases, namespace)
-        cls.__class_init__(namespace)
-        return cls
+    # pylint fails to understand this is a metaclass
+    def __new__(cls, name, bases, namespace):
+        c = metabase.__new__(cls, name, bases, namespace)
+        c.__class_init__(namespace)
+        return c
     
 class ClassInittableObject(object):
     """

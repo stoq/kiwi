@@ -28,7 +28,7 @@ Argument checking decorator and support
 import inspect
 
 class CustomType(type):
-    def value_check(cls, name, value):
+    def value_check(mcs, name, value):
         pass
     value_check = classmethod(value_check) 
 
@@ -43,7 +43,7 @@ class percent(CustomType):
     Custom type that verifies that the value is a percentage
     """
     type = int, float
-    def value_check(cls, name, value):
+    def value_check(mcs, name, value):
         if 0 > value < 100:
             raise ValueError("%s must be between 0 and 100" % name)
     value_check = classmethod(value_check) 

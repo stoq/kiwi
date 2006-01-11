@@ -119,7 +119,7 @@ class DefaultValue(Exception):
 
 def kgetattr_guard(wref):
     try:
-        key, data = _kgetattr_wref[id(wref)]
+        key = _kgetattr_wref[id(wref)][0]
         del _kgetattr_wref[id(wref)]
         del _kgetattr_cache[key]
     except KeyError:
@@ -128,10 +128,10 @@ def kgetattr_guard(wref):
     
 def ksetattr_guard(wref):
     try:
-        key, data = _ksetattr_wref[id(wref)]
+        key = _ksetattr_wref[id(wref)][0]
         del _ksetattr_wref[id(wref)]
         del _ksetattr_cache[key]
-    except:
+    except KeyError:
         # This path is used only when the program terminates.
         pass
 
@@ -176,7 +176,7 @@ def kgetattr(model,
 
     # 1. Break up attr_name into parts
     if flat or "." not in attr_name:
-        names = [attr_name,]
+        names = [attr_name, ]
     else:
         try:
             names = attr_name.split(".")
@@ -359,7 +359,8 @@ def ksetattr(model,
         # 2. Try and get accessor tuple from cache
         objref, icode, data1, data2 = _ksetattr_cache[key]
     except KeyError:
-        # 3. If not there, generate accessor tuple and store it        cache = CacheControl(key)
+        # 3. If not there, generate accessor tuple and store it
+        #    cache = CacheControl(key)
         try:
             get_setter = model.__class__.get_setter
             cache = CacheControl(key)

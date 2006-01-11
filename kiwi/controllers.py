@@ -131,7 +131,7 @@ class BaseController:
     def _get_all_methods(self, klass=None):
         klass = klass or self.__class__
         # Very poor simulation of inheritance, but WFM(tm)
-        classes=[ klass ] 
+        classes = [klass] 
         # Collect bases for class, using a pretty evil recursion
         for klass in classes:
             map(classes.append, klass.__bases__)

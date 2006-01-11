@@ -66,7 +66,8 @@ class PropertyMeta(ClassInittableMetaType):
     Which allows you to put signals and properties in mixin
     classes.
     """
-    def __new__(meta, name, bases, namespace):
+    # pylint fails to understand this is a metaclass
+    def __new__(cls, name, bases, namespace):
         def _update_bases(bases, props, signals):
             for base in bases:
                 props.update(getattr(base, '__gproperties__', {}))
@@ -84,7 +85,7 @@ class PropertyMeta(ClassInittableMetaType):
                 _update_bases(bases, props, signals)
                 break
             
-        return ClassInittableMetaType.__new__(meta, name, bases, namespace)
+        return ClassInittableMetaType.__new__(cls, name, bases, namespace)
 
 class PropertyObject(object):
     """

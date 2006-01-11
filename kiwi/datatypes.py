@@ -184,8 +184,9 @@ converter.add(_LongConverter)
 
 class _BoolConverter(BaseConverter):
     type = bool
-    
-    as_string = lambda s, value, format=None: str(value)
+
+    def as_string(self, value, format=None):
+        return str(value)
 
     def from_string(self, value):
         "Convert a string to a boolean"

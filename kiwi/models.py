@@ -60,12 +60,14 @@ class Model:
         disable automatic notification to proxies based on __setattr__.
         All changes to the model must be followed by a call to
         notify_proxies() to allow the proxies to notice the change."""
-        if not hasattr(self, "_v_proxies"): self.ensure_init()
+        if not hasattr(self, "_v_proxies"):
+            self.ensure_init()
         self._v_autonotify = 0
 
     def notify_proxies(self, attr):
         """Notify proxies that an attribute value has changed."""
-        if not hasattr(self, "_v_proxies"): self.ensure_init()
+        if not hasattr(self, "_v_proxies"):
+            self.ensure_init()
         for proxy in self._v_proxies.get(attr, []):
             if proxy not in self._v_blocked_proxies:
                 proxy.notify(attr, ValueUnset, block=True)
@@ -75,11 +77,13 @@ class Model:
         Attach a proxy to an attribute. The proxy will be notified of
         changes to that particular attribute (my means of
         Proxy.notify())."""
-        if not hasattr(self, "_v_proxies"): self.ensure_init()
-        proxies = self._v_proxies
+        if not hasattr(self, "_v_proxies"):
+            self.ensure_init()
+        
         # XXX: should use weakref if possible, and if not, warn of leaks
+        proxies = self._v_proxies
         if not proxies.has_key(attr):
-            proxies[attr]=[proxy]
+            proxies[attr] = [proxy]
         else:
             if proxy in proxies[attr]:
                 raise AssertionError, ("Tried to attach proxy %s "
@@ -89,7 +93,8 @@ class Model:
 
     def unregister_proxy_for_attribute(self, attr, proxy):
         """Detach a proxy from an attribute."""
-        if not hasattr(self, "_v_proxies"): self.ensure_init()
+        if not hasattr(self, "_v_proxies"):
+            self.ensure_init()
         proxies = self._v_proxies
         if proxies.has_key(attr) and proxy in proxies[attr]:
             # Only one listener per attribute per proxy, so remove()
@@ -98,7 +103,8 @@ class Model:
 
     def unregister_proxy(self, proxy):
         """Deattach a proxy completely from the model"""
-        if not hasattr(self, "_v_proxies"): self.ensure_init()
+        if not hasattr(self, "_v_proxies"):
+            self.ensure_init()
         proxies = self._v_proxies
         for attribute in proxies.keys():
             if proxy in proxies[attribute]:
@@ -115,14 +121,16 @@ class Model:
         """
         Temporarily block a proxy from receiving any notification. See
         unblock_proxy()"""
-        if not hasattr(self, "_v_proxies"): self.ensure_init()
+        if not hasattr(self, "_v_proxies"):
+            self.ensure_init()
         blocked_proxies = self._v_blocked_proxies
         if proxy not in blocked_proxies:
             blocked_proxies.append(proxy)
     
     def unblock_proxy(self, proxy):
         """Re-enable notifications to a proxy"""
-        if not hasattr(self, "_v_proxies"): self.ensure_init()
+        if not hasattr(self, "_v_proxies"):
+            self.ensure_init()
         blocked_proxies = self._v_blocked_proxies
         if proxy in blocked_proxies:
             blocked_proxies.remove(proxy)
@@ -142,7 +150,8 @@ class Model:
         # may raise an exception. Or do we ignore this fact?
         self.__dict__[attr] = value
 
-        if not hasattr(self, "_v_proxies"): self.ensure_init()
+        if not hasattr(self, "_v_proxies"):
+            self.ensure_init()
 
         if self._v_autonotify and self._v_proxies.has_key(attr):
             self.notify_proxies(attr)
@@ -197,7 +206,7 @@ class PickledModel(Model):
                 del odict[key]
         return odict
 
-    def __setstate__(self,dict):
+    def __setstate__(self, dict):
         """Sets the state to the instance when being unpickled"""
         Model.__dict__["__init__"](self)
         self.__dict__.update(dict)
