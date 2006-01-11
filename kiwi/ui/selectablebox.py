@@ -72,7 +72,7 @@ class SelectableBox(object):
                                  event_mask=(self.get_events() |
                                              gdk.EXPOSURE_MASK |
                                              gdk.BUTTON_PRESS_MASK))
-	self.window.set_user_data(self)
+        self.window.set_user_data(self)
         self.style.attach(self.window)
         self.style.set_background(self.window, gtk.STATE_NORMAL)
 

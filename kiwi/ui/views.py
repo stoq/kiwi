@@ -142,9 +142,9 @@ class SignalBroker(object):
             # being called unbound and lacking, thus, "self".
             try:
                 if after:
-                   signal_id = widget.connect_after(signal, methods[fname])
+                    signal_id = widget.connect_after(signal, methods[fname])
                 else:
-                   signal_id = widget.connect(signal, methods[fname])
+                    signal_id = widget.connect(signal, methods[fname])
             except TypeError:
                 _warn("Widget %s doesn't provide a signal %s"
                      % (widget.__class__, signal))
@@ -172,8 +172,8 @@ class SignalBroker(object):
 
     def disconnect_autoconnected(self):
         for widget, signals in self._autoconnected.items():
-            for unused, signal_id in signals:
-                widget.disconnect(signal_id)
+            for signal in signals:
+                widget.disconnect(signal[1])
         
 class GladeSignalBroker(SignalBroker):
     def _do_connections(self, view, methods):
@@ -364,7 +364,7 @@ class SlaveView(gobject.GObject):
 
     def get_widget(self, name):
         """Retrieves the named widget from the View"""
-        name = string.replace(name,'.','_')
+        name = string.replace(name, '.', '_')
         widget = getattr(self, name, None)
         if widget is None:
             raise AttributeError("Widget %s not found in view %s"
