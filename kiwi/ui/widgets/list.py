@@ -814,13 +814,13 @@ class List(PropertyObject, gtk.ScrolledWindow):
                        self._on_header__button_release_event)
         return treeview_column
     
-    def _on_renderer_toggle_check__toggled(self, renderer, path, model, attribute):
+    def _on_renderer_toggle_check__toggled(self, renderer, path, model, attr):
         obj = model[path][COL_MODEL]
-        value = not getattr(obj, attribute, None)
-        setattr(obj, attribute, value)
-        self.emit('cell-edited', obj, attribute)
+        value = not getattr(obj, attr, None)
+        setattr(obj, attr, value)
+        self.emit('cell-edited', obj, attr)
 
-    def _on_renderer_toggle_radio__toggled(self, renderer, path, model, attribute):
+    def _on_renderer_toggle_radio__toggled(self, renderer, path, model, attr):
         # Deactive old one
         old = renderer.get_data('kiwilist::radio-active')
         
@@ -832,7 +832,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
             #      algorithm just takes the first one it finds
             for row in self._model:
                 obj = row[COL_MODEL]
-                value = getattr(obj, attribute)
+                value = getattr(obj, attr)
                 if value == True:
                     old = obj
                     break
@@ -840,21 +840,21 @@ class List(PropertyObject, gtk.ScrolledWindow):
                 raise TypeError("You need an initial attribute value set "
                                 "to true when using radio")
 
-        setattr(old, attribute, False)
+        setattr(old, attr, False)
 
         # Active new and save a reference to the object of the
         # previously selected row
         new = model[path][COL_MODEL]
-        setattr(new, attribute, True)
+        setattr(new, attr, True)
         renderer.set_data('kiwilist::radio-active', new)
-        self.emit('cell-edited', new, attribute)
+        self.emit('cell-edited', new, attr)
         
     def _on_renderer_text__edited(self, renderer, path, text,
-                                  model, attribute, column, as_string):
+                                  model, attr, column, as_string):
         obj = model[path][COL_MODEL]
         value = as_string(text)
-        setattr(obj, attribute, value)
-        self.emit('cell-edited', obj, attribute)
+        setattr(obj, attr, value)
+        self.emit('cell-edited', obj, attr)
         
     def _guess_renderer_for_type(self, column):
         """Gusses which CellRenderer we should use for a given type.
