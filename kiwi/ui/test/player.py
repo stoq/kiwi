@@ -39,7 +39,11 @@ from kiwi.ui.test.common import Base
 WINDOW_TIMEOUT = 10
 WINDOW_WAIT = 0.5
 WIDGET_TIMEOUT = 2
-CALL_WAIT = 0.1
+
+# This is pretty important, it gives the application 2 seconds
+# to finish closing the dialog, eg write stuff to the database and
+# yada yada
+DELETE_WINDOW_WAIT = 2
 
 class TimeOutError(Exception):
     """
@@ -57,17 +61,10 @@ class ThreadSafeFunction:
     
     def __init__(self, func):
         self._func = func
-        self._called = False
-        
-    def _dispatch(self, *args, **kwargs):
-        self._func(*args, **kwargs)
-        self._called = True
-        
+
     def __call__(self, *args, **kwargs):
-        gobject.idle_add(self._dispatch, *args, **kwargs)
-        while not self._called:
-            time.sleep(CALL_WAIT)
-            
+        gobject.idle_add(self._func, *args, **kwargs)
+        
         # dialog.run locks us out
         #gdk.threads_enter()
         #rv = self._func(*args, **kwargs)
@@ -196,6 +193,8 @@ class Player(Base):
         event = gdk.Event(gdk.DELETE)
         event.window = window.window
         event.put()
+
+        time.sleep(DELETE_WINDOW_WAIT)
         
     def finish(self):
         gobject.idle_add(gtk.main_quit)
