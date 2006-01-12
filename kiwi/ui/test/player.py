@@ -39,6 +39,7 @@ from kiwi.ui.test.common import Base
 WINDOW_TIMEOUT = 10
 WINDOW_WAIT = 0.5
 WIDGET_TIMEOUT = 2
+CALL_WAIT = 0.1
 
 class TimeOutError(Exception):
     """
@@ -56,9 +57,17 @@ class ThreadSafeFunction:
     
     def __init__(self, func):
         self._func = func
+        self._called = False
+        
+    def _dispatch(self, *args, **kwargs):
+        self._func(*args, **kwargs)
+        self._called = True
         
     def __call__(self, *args, **kwargs):
-        gobject.idle_add(self._func, *args, **kwargs)
+        gobject.idle_add(self._dispatch, *args, **kwargs)
+        while not self._called:
+            time.sleep(CALL_WAIT)
+            
         # dialog.run locks us out
         #gdk.threads_enter()
         #rv = self._func(*args, **kwargs)
