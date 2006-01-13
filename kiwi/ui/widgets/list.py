@@ -1378,6 +1378,28 @@ class List(PropertyObject, gtk.ScrolledWindow):
             pos -= 1
         return model[pos][COL_MODEL]
 
+    def get_selected_row_number(self):
+        """
+        @returns: the selected row number or None if no rows were selected
+        """
+        selection = self._treeview.get_selection()
+        if selection.get_mode() == gtk.SELECTION_MULTIPLE:
+            model, paths = selection.get_selected_rows()
+            if paths:
+                return paths[0][0]
+        else:
+            model, iter = selection.get_selected()
+            if iter:
+                return model[iter].path[0]
+
+    def double_click(self, rowno):
+        """
+        Same as double clicking on the row rowno
+        
+        @param rowno: integer
+        """
+        self._treeview.row_activated(rowno, self._treeview.get_columns()[0])
+        
     # Backwards compat
     def add_instance(self, *args, **kwargs):
         return self.append(*args, **kwargs)

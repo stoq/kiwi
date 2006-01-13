@@ -1,5 +1,16 @@
 2006-01-13  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/test/listener.py:
+	* kiwi/ui/widgets/list.py:
+	Add get_selected_row_number() and double_click() methods to the
+	klist.
+
+	Add support for List::double-click signal in the ui test.
+
+	Fixes #2385
+
+2006-01-13  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/ui/test/common.py: Add support for GtkToolButtons
 
 	* kiwi/ui/test/player.py:

@@ -265,6 +265,22 @@ class KiwiListSelectionChanged(SignalEvent):
         return '%s.select_paths(%s)' % (self.name, self.rows)
 register_event_type(KiwiListSelectionChanged)
 
+# Also works for Toggle, Radio and Check
+class KiwiListDoubleClick(SignalEvent):
+    """
+    This event represents a double click on a row in klist
+    """
+    signal_name = 'double-click'
+    object_type = List
+
+    def __init__(self, klist):
+        SignalEvent.__init__(self, klist)
+        self.row = klist.get_selected_row_number()
+            
+    def serialize(self):
+        return '%s.double_click(%s)' % (self.name, self.row)
+register_event_type(KiwiListDoubleClick)
+
 class KiwiComboBoxChangedEvent(SignalEvent):
     """
     This event represents a a selection of an item
