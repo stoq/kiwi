@@ -112,6 +112,7 @@ class argcheck(object):
         #       this point. Nor is the class attached to the namespace.
         if arg_names and arg_names[0] in ('self', 'cls'):
             arg_names = arg_names[1:]
+            default_values = default_values[1:]
             is_method = True
         else:
             is_method = False

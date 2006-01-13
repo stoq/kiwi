@@ -62,11 +62,27 @@ class ArgTest(unittest.TestCase):
             def method2(self, a, b, c, d, e, f, g=0.0):
                 return g
 
+            @argcheck(str, datetime.datetime, datetime.datetime)
+            def method3(self, s, date=None, date2=None):
+                return
+
         t = Test()
         self.assertEqual(t.method1(1, 2), 3)
         self.assertRaises(TypeError, t.method1, None, None)
         self.assertEqual(t.method2(Custom(), 2, datetime.datetime.now(),
                                    4, 5, 6.0), 0.0)
+
+        t.method3('foo')
+        t.method3('bar', None)
+        t.method3('baz', None, None)
+        t.method3(s='foo')
+        t.method3(s='bar', date=None)
+        t.method3(s='baz', date=None, date2=None)
+        self.assertRaises(TypeError, t.method3, 'noggie', True)
+        self.assertRaises(TypeError, t.method3, 'boogie', None, True)
+        self.assertRaises(TypeError, t.method3, s='noggie', date2=True)
+        self.assertRaises(TypeError, t.method3, s='boogie',
+                          date=None, date2=True)
 
     def testNone(self):
         @argcheck(datetime.datetime)
@@ -92,6 +108,7 @@ class ArgTest(unittest.TestCase):
         self.assertRaises(TypeError, func_none2, s='noggie', date2=True)
         self.assertRaises(TypeError, func_none2, s='boogie',
                           date=None, date2=True)
+
         
 if __name__ == '__main__':
     unittest.main()
