@@ -26,6 +26,7 @@ Argument checking decorator and support
 """
 
 import inspect
+from types import ClassType
 
 class CustomType(type):
     def value_check(mcs, name, value):
@@ -74,8 +75,8 @@ class argcheck(object):
     
     def __init__(self, *types):
         for argtype in types:
-            if not isinstance(argtype, type):
-                raise TypeError("must be a type instance")
+            if not isinstance(argtype, (type, ClassType)):
+                raise TypeError("must be a type or class instance")
         self.types = types
 
     def enable(cls):
