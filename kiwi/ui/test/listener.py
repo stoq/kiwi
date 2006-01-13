@@ -347,8 +347,7 @@ class Listener(Base):
 
         # mark the object as "listened" to ensure we'll always
         # receive unique objects
-        listened = gobj in self._listened_objects
-        if listened:
+        if gobj in self._listened_objects:
             return
         self._listened_objects.append(gobj)
             
