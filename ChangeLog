@@ -1,3 +1,10 @@
+2006-01-13  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/argcheck.py (argcheck._type_check): Add support for sending
+	in the default value, even if the type is diffent
+
+	* tests/test_argcheck.py (ArgTest.func_none): Add test for this
+
 2006-01-10  Johan Dahlin  <jdahlin@async.com.br>
 
 	* examples/list/searchbar.py: New example

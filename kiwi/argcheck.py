@@ -47,7 +47,9 @@ class percent(CustomType):
         if 0 > value < 100:
             raise ValueError("%s must be between 0 and 100" % name)
     value_check = classmethod(value_check) 
-       
+
+_NoValue = object()
+
 class argcheck(object):
     """
     Decorator to check type and value of arguments.
@@ -96,7 +98,11 @@ class argcheck(object):
 
         spec = inspect.getargspec(func)
         arg_names, is_varargs, is_kwargs, default_values = spec
-        
+        if not default_values:
+            default_values = []
+        else:
+            default_values = list(default_values)
+            
         # TODO: Is there another way of doing this?
         #       Not trivial since func is not attached to the class at
         #       this point. Nor is the class attached to the namespace.
@@ -118,8 +124,9 @@ class argcheck(object):
                                  len(types),
                                  len(arg_names)))
 
-        defs = len(default_values or ())
+        defs = len(default_values)
         kwarg_types = {}
+        kwarg_defaults = {}
         for i, arg_name in enumerate(arg_names):
             kwarg_types[arg_name] = types[i]
             
@@ -136,19 +143,26 @@ class argcheck(object):
                                     "and not %s" % (arg_name,
                                                     arg_type.__name__,
                                                     type(value).__name__))
+            else:
+                value = _NoValue
+                default_values.append(value)
+            kwarg_defaults[arg_name] = value
+            
         def wrapper(*args, **kwargs):
             if self.__enabled__:
                 cargs = args
                 if is_method:
                     cargs = cargs[1:]
-                
-                # Positional arguments
-                for arg, type, name in zip(cargs, types, arg_names):
-                    self._type_check(arg, type, name)
 
+                # Positional arguments
+                for arg, type, name, default in zip(cargs, types, arg_names,
+                                                    default_values):
+                    self._type_check(arg, type, name, default)
+                    
                 # Keyword arguments
                 for name, arg in kwargs.items():
-                    self._type_check(arg, kwarg_types[name], name)
+                    self._type_check(arg, kwarg_types[name], name,
+                                     kwarg_defaults[name])
 
                 self.extra_check(arg_names, types, args, kwargs)
             return func(*args, **kwargs)
@@ -158,7 +172,10 @@ class argcheck(object):
     def extra_check(self, names, types, args, kwargs):
         pass
 
-    def _type_check(self, value, argument_type, name):
+    def _type_check(self, value, argument_type, name, default=_NoValue):
+        if value == default:
+            return
+        
         if issubclass(argument_type, CustomType):
             custom = True
             check_type = argument_type.type

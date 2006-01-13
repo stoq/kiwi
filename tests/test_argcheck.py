@@ -67,6 +67,14 @@ class ArgTest(unittest.TestCase):
         self.assertRaises(TypeError, t.method1, None, None)
         self.assertEqual(t.method2(Custom(), 2, datetime.datetime.now(),
                                    4, 5, 6.0), 0.0)
+
+    def testNone(self):
+        @argcheck(datetime.datetime)
+        def func_none(date=None):
+            return date
+        func_none()
+        func_none(None)
+        self.assertRaises(TypeError, func_none, True)
         
 if __name__ == '__main__':
     unittest.main()
