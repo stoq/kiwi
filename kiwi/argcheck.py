@@ -97,6 +97,10 @@ class argcheck(object):
         if not callable(func):
             raise TypeError("%r must be callable" % func)
 
+        # Useful for optimized runs
+        if not self.__enabled__:
+            return func
+        
         spec = inspect.getargspec(func)
         arg_names, is_varargs, is_kwargs, default_values = spec
         if not default_values:
