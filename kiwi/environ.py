@@ -24,6 +24,7 @@
 """Environment helpers: path mangling and resource management"""
 
 import gettext
+import imp
 import os
 import sys
 
@@ -31,6 +32,13 @@ from kiwi.python import namedAny
 
 __all__ = ['Application', 'Library', 'app', 'environ', 'require_gazpacho',
            'is_gazpacho_required']
+
+# From http://tinyurl.com/77ukj
+def _is_frozen():
+    "Helper function to check if we're frozen in a py2exe'd file"
+    return (hasattr(sys, "frozen") or # new py2exe
+            hasattr(sys, "importers") # old py2exe
+            or imp.is_frozen("__main__")) # tools/freeze
 
 class Environment:
     """Environment control
@@ -151,13 +159,20 @@ class Library(Environment):
         @param dirname:
         """
         self.name = name
-        if dirname == None:
-            # Figure out the absolute path to the caller
-            caller = sys._getframe(1).f_locals['__file__']
-            dirname = os.path.split(caller)[0]
-            
-        dirname = os.path.realpath(os.path.abspath(dirname))
-        root = os.path.abspath(os.path.join(dirname, root))
+
+        # py2exe
+        if _is_frozen():
+            executable = os.path.realpath(os.path.abspath(sys.executable))
+            root = os.path.dirname(executable)
+        # normal
+        else:
+            if dirname == None:
+                # Figure out the absolute path to the caller
+                caller = sys._getframe(1).f_locals['__file__']
+                dirname = os.path.split(caller)[0]
+
+            dirname = os.path.realpath(os.path.abspath(dirname))
+            root = os.path.abspath(os.path.join(dirname, root))
         Environment.__init__(self, root=root)
 
         sys.path.insert(0, os.path.join(root, 'lib', 'python%d.%d' % 

@@ -1,5 +1,8 @@
 2006-01-13  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/environ.py: Add support for py2exe, based on
+	patch by Carlos Augusto Marcicano
+
 	* kiwi/argcheck.py (argcheck._type_check): Add support for sending
 	in the default value, even if the type is diffent
 
