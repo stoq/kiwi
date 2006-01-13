@@ -1,6 +1,7 @@
 2006-01-13  Johan Dahlin  <jdahlin@async.com.br>
 
-	* kiwi/ui/test/common.py:
+	* kiwi/ui/test/common.py: Add support for GtkToolButtons
+
 	* kiwi/ui/test/player.py:
 	Update UI tests, to be able to run several times in the same
 	process as done in stoqs ui test framework.
