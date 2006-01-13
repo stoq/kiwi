@@ -111,8 +111,10 @@ class Base(object):
                 # specially, only parse the contained widgets, do not
                 # add it or listen to name changes, we don't care about them
                 if window.type == gtk.WINDOW_POPUP:
-                    toplevel = self._windows[name]
-                    self.parse_one(toplevel, window)
+                    # XXX: This is trigged by stoq.test.gui.salewizard
+                    if name in self._windows:
+                        toplevel = self._windows[name]
+                        self.parse_one(toplevel, window)
                 else:
                     self.parse_one(window, window)
                     

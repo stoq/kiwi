@@ -1,5 +1,12 @@
 2006-01-13  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/test/common.py:
+	* kiwi/ui/test/player.py:
+	Update UI tests, to be able to run several times in the same
+	process as done in stoqs ui test framework.
+	
+2006-01-13  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/environ.py: Add support for py2exe, based on
 	patch by Carlos Augusto Marcicano
 

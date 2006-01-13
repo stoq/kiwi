@@ -119,10 +119,32 @@ class ApplicationThread(threading.Thread):
     def __init__(self, args):
         threading.Thread.__init__(self)
         self._args = args
-
+        
     def run(self):
+        self._running = True
+        gobject.timeout_add(50, self._check_alive)
+        
         sys.argv = self._args[:]
         execfile(sys.argv[0])
+
+        # Run all pending events, such as idle adds
+        while gtk.events_pending():
+            gtk.main_iteration()
+
+    def _check_alive(self):
+        if not self._running:
+            # Hide all windows, since gtk+ is shared among
+            # multiple threads it won't do it for us
+            for window in gtk.window_list_toplevels():
+                window.hide()
+
+            return False
+        
+        return True
+
+    def stop(self):
+        self._running = False
+        self.join()
 
 class Player(Base):
     """
@@ -197,6 +219,8 @@ class Player(Base):
         time.sleep(DELETE_WINDOW_WAIT)
         
     def finish(self):
-        gobject.idle_add(gtk.main_quit)
-        self._appthread.join()
-        raise SystemExit
+        self._appthread.stop()
+
+        while self._appthread.isAlive():
+            time.sleep(0.1)
+
