@@ -1,5 +1,8 @@
 2006-01-13  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/combobox.py (ComboBox.clear): Emit content-changed 
+	here so the model is updated.
+
 	* kiwi/ui/test/listener.py:
 	* kiwi/ui/widgets/list.py:
 	Add get_selected_row_number() and double_click() methods to the

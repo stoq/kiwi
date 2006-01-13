@@ -290,7 +290,8 @@ class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
 
     def clear(self):
         ComboProxyMixin.clear(self) 
-
+        self.emit('content-changed')
+        
 class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
                     WidgetMixinSupportValidation):
     
