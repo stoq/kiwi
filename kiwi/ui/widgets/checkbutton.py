@@ -50,8 +50,7 @@ class CheckButton(PropertyObject, gtk.CheckButton, WidgetMixin):
         return self.get_active()
 
     def update(self, data):
-        if data is None:
-            return
-
         # No conversion to string needed, we only accept bool
-        self.set_active(data)
+        if data is not None:
+            self.set_active(data)
+        super(CheckButton, self).update(self)

@@ -58,3 +58,4 @@ class TextView(PropertyObject, gtk.TextView, WidgetMixinSupportValidation):
             text = self._as_string(data)
             
         self._textbuffer.set_text(text)
+        super(TextView, self).update(data)

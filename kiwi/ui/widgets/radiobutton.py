@@ -65,10 +65,12 @@ class RadioButton(PropertyObject, gtk.RadioButton, WidgetMixin):
         return self._from_string(button.data_value)
     
     def update(self, data):
-        if data is None:
-            return
-        
-        data = self._as_string(data)
-        for rb in self.get_group():
-            if rb.get_property('data-value') == data:
-                rb.set_active(True)
+        if data is not None:
+            selected = self._as_string(data)
+            for rb in self.get_group():
+                if rb.get_property('data-value') == selected:
+                    rb.set_active(True)
+
+        super(RadioButton, self).update(data)
+
+    

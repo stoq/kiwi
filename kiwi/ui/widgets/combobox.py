@@ -98,7 +98,7 @@ class ComboProxyMixin(object):
         """
         if not isinstance(itemdata, (list, tuple)):
             raise TypeError("'data' parameter must be a list or tuple of item "
-                            "descriptions, found %s") % type(itemdata)
+                            "descriptions, found %s" % type(itemdata))
 
         if len(itemdata) == 0:
             self.clear()
@@ -271,7 +271,7 @@ class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
         # choose a valid value
         
         if data is None:
-            return
+            pass
         elif self.mode == COMBO_MODE_STRING:
             self.select_item_by_label(self._as_string(data))
         elif self.mode == COMBO_MODE_DATA:
@@ -280,6 +280,7 @@ class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
             # XXX: When setting the datatype to non string, automatically go to
             #      data mode
             raise TypeError("unknown ComboBox mode. Did you call prefill?")
+        super(ComboBox, self).update(data)
         
     def prefill(self, itemdata, sort=False):
         ComboProxyMixin.prefill(self, itemdata, sort)
@@ -396,6 +397,8 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
             self.select_item_by_data(data)
         else:
             raise AssertionError
+        
+        super(ComboBoxEntry, self).update(data)
 
     def prefill(self, itemdata, sort=False, clear_entry=False):
         ComboProxyMixin.prefill(self, itemdata, sort)

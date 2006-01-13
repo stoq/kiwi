@@ -70,7 +70,8 @@ class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
             # set_value accepts a float or int, no as_string conversion needed,
             # and since we accept only int and float just send it in.
             self.set_value(data)
-
+        WidgetMixinSupportValidation.update(self, data)
+        
     def do_expose_event(self, event):
         # This gets called when any of our three windows needs to be redrawn
         gtk.SpinButton.do_expose_event(self, event)
@@ -83,7 +84,7 @@ class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
 
         self.chain(allocation)
     
-	if self.flags() & gtk.REALIZED:
+        if self.flags() & gtk.REALIZED:
             self._icon.resize_windows()
 
     def do_realize(self):

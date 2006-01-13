@@ -251,6 +251,7 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
                 text = self._as_string(data)
 
         self.set_text(text)
+        super(Entry, self).update(data)
 
     def do_expose_event(self, event):
         gtk.Entry.do_expose_event(self, event)
@@ -262,8 +263,8 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
     def do_size_allocate(self, allocation):
         #gtk.Entry.do_size_allocate(self, allocation)
         self.chain(allocation)
-	
-	if self.flags() & gtk.REALIZED:
+        
+        if self.flags() & gtk.REALIZED:
             self._icon.resize_windows()
 
     def do_realize(self):

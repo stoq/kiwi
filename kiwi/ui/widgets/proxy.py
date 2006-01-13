@@ -35,7 +35,7 @@ from gtk import gdk
 from kiwi import ValueUnset
 from kiwi.datatypes import ValidationError, converter
 from kiwi.environ import environ
-from kiwi.interfaces import Mixin, MixinSupportValidation
+from kiwi.interfaces import Nothing, Mixin, MixinSupportValidation
 from kiwi.log import Logger
 from kiwi.ui.gadgets import FadeOut
 from kiwi.ui.tooltip import Tooltip
@@ -112,11 +112,11 @@ class WidgetMixin(Mixin):
         """
         raise NotImplementedError
 
-    def update(self, value):
+    def update(self, data):
         """
-        @param value: 
+        @param data: 
         """
-        raise NotImplementedError
+        pass
     
     # Private
     
@@ -168,6 +168,13 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         self._fade = FadeOut(self)
         self._fade.connect('color-changed', self._on_fadeout__color_changed)
         
+    # WidgetMixin
+    def update(self, data):
+        """
+        @param data: 
+        """
+        self.validate(data)
+
     # Override in subclass
     
     def update_background(self, color):
@@ -199,7 +206,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     def hide_tooltip(self):
         self._tooltip.hide()
 
-    def validate(self, force=False):
+    def validate(self, data=Nothing, force=False):
         """Checks if the data is valid.
         Validates data-type and custom validation.
         
@@ -207,8 +214,10 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
         @returns:     validated data or ValueUnset if it failed
         """
 
-        try:
+        if data is Nothing:
             data = self.read()
+            
+        try:
             log.debug('Read %r for %s' %  (data, self.model_attribute))
                     
             # check if we should draw the mandatory icon

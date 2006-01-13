@@ -139,12 +139,16 @@ class Base(object):
     
     GtkSeparatorMenuItem = GtkTearoffMenuItem = ignore
 
+    def _add_widget(self, toplevel, widget, name):
+        toplevel_widgets = self._objects.setdefault(toplevel.get_name(), {})
+        if not name in toplevel_widgets:
+            toplevel_widgets[name] = widget
+            
     def GtkWidget(self, toplevel, widget):
         """
         Called when a GtkWidget is about to be traversed
         """
-        toplevel_widgets = self._objects.setdefault(toplevel.get_name(), {})
-        toplevel_widgets[widget.get_name()] = widget
+        self._add_widget(toplevel, widget, widget.get_name())
 
     def GtkContainer(self, toplevel, container):
         """
@@ -183,3 +187,5 @@ class Base(object):
                 child_item.set_data('parent-menu', item)
             self.parse_one(toplevel, submenu)
 
+    def GtkToolButton(self, toplevel, item):
+        item.child.set_name(item.get_name())
