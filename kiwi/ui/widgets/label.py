@@ -68,8 +68,7 @@ class Label(PropertyObject, gtk.Label, WidgetMixin):
         else:
             text = self._as_string(data)
         self.set_text(text)
-        super(Label, self).update(data)
-        
+    
     def _apply_attributes(self):
         # sorting is been done so we can be sure of the order of the
         # attributes. Helps writing tests cases
@@ -142,4 +141,4 @@ class Label(PropertyObject, gtk.Label, WidgetMixin):
         self._apply_attributes()
 
     def set_color(self, color):
-        set_foreground(self, color) 
+       set_foreground(self, color) 
