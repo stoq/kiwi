@@ -75,6 +75,23 @@ class ArgTest(unittest.TestCase):
         func_none()
         func_none(None)
         self.assertRaises(TypeError, func_none, True)
+        self.assertRaises(TypeError, func_none, date=True)
+
+        @argcheck(str, datetime.datetime, datetime.datetime)
+        def func_none2(s, date=None, date2=None):
+            return date
+
+        func_none2('foo')
+        func_none2('bar', None)
+        func_none2('baz', None, None)
+        func_none2(s='foo')
+        func_none2(s='bar', date=None)
+        func_none2(s='baz', date=None, date2=None)
+        self.assertRaises(TypeError, func_none2, 'noggie', True)
+        self.assertRaises(TypeError, func_none2, 'boogie', None, True)
+        self.assertRaises(TypeError, func_none2, s='noggie', date2=True)
+        self.assertRaises(TypeError, func_none2, s='boogie',
+                          date=None, date2=True)
         
 if __name__ == '__main__':
     unittest.main()

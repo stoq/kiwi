@@ -102,7 +102,11 @@ class argcheck(object):
             default_values = []
         else:
             default_values = list(default_values)
-            
+
+        # Set all the remaining default values to _NoValue
+        default_values = ([_NoValue] * (len(arg_names) - len(default_values)) +
+                          default_values)
+
         # TODO: Is there another way of doing this?
         #       Not trivial since func is not attached to the class at
         #       this point. Nor is the class attached to the namespace.
@@ -127,25 +131,21 @@ class argcheck(object):
         defs = len(default_values)
         kwarg_types = {}
         kwarg_defaults = {}
+
         for i, arg_name in enumerate(arg_names):
             kwarg_types[arg_name] = types[i]
-            
-            pos = defs - i
-            if defs and 0 < pos < defs:
-                value = default_values[pos]
-                if value is None:
-                    continue
-                arg_type = types[pos]
-                try:
-                    self._type_check(value, arg_type, arg_name)
-                except TypeError:
-                    raise TypeError("default value for %s must be of type %s "
-                                    "and not %s" % (arg_name,
-                                                    arg_type.__name__,
-                                                    type(value).__name__))
-            else:
-                value = _NoValue
-                default_values.append(value)
+            value = default_values[i]
+            kwarg_defaults[arg_name] = value
+            if value is None or value is _NoValue:
+                continue
+            arg_type = types[i]
+            try:
+                self._type_check(value, arg_type, arg_name)
+            except TypeError:
+                raise TypeError("default value for %s must be of type %s "
+                                "and not %s" % (arg_name,
+                                                arg_type.__name__,
+                                                type(value).__name__))
             kwarg_defaults[arg_name] = value
             
         def wrapper(*args, **kwargs):
@@ -173,7 +173,7 @@ class argcheck(object):
         pass
 
     def _type_check(self, value, argument_type, name, default=_NoValue):
-        if value == default:
+        if default is not _NoValue and value == default:
             return
         
         if issubclass(argument_type, CustomType):
