@@ -134,7 +134,6 @@ class argcheck(object):
                                  len(types),
                                  len(arg_names)))
 
-        defs = len(default_values)
         kwarg_types = {}
         kwarg_defaults = {}
 
