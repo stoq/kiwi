@@ -1,5 +1,9 @@
 2006-01-16  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/test/listener.py: Pass signals to event types.
+	Add a SkipEvent exception to be able to filter inside the
+	event. Fix DoubleClick event on the list to be caught earlier.
+	
 	* kiwi/ui/test/player.py (ThreadSafeFunction._invoke): 
 	Refactor to always return False after the call.
 

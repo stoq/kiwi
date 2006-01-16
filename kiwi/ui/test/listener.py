@@ -35,6 +35,7 @@ back by simply executing the script through a standard python interpreter.
 
 import atexit
 
+from gtk import gdk
 import gtk
 
 from kiwi.ui.test.common import Base
@@ -59,6 +60,9 @@ def get_event_types():
     @returns: the event types.
     """
     return _events
+
+class SkipEvent(Exception):
+    pass
 
 class Event(object):
     """
@@ -114,7 +118,15 @@ class SignalEvent(Event):
     @cvar signal_name: signal to listen to
     """
     signal_name = None
-
+    def __init__(self, object, name, args):
+        """
+        @param object:
+        @param name:
+        @param args:
+        """
+        Event.__init__(self, object, name)
+        self.args = args
+        
     def connect(cls, object, signal_name, cb):
         """
         Calls connect on I{object} for signal I{signal_name}.
@@ -147,7 +159,7 @@ class MenuItemActivateEvent(SignalEvent):
     """
     signal_name = 'activate'
     object_type = gtk.MenuItem
-
+        
     def serialize(self):
         return '%s.activate()' % self.name
 register_event_type(MenuItemActivateEvent)
@@ -198,8 +210,8 @@ class EntrySetTextEvent(SignalEvent):
     signal_name = 'notify::text'
     object_type = gtk.Entry
 
-    def __init__(self, object):
-        SignalEvent.__init__(self, object)
+    def __init__(self, object, name, args):
+        SignalEvent.__init__(self, object, name, args)
         self.text = self.object.get_text()
 
     def serialize(self):
@@ -242,10 +254,10 @@ class KiwiListSelectionChanged(SignalEvent):
     """
     object_type = List
     signal_name = 'changed'
-    def __init__(self, klist):
+    def __init__(self, klist, name, args):
         self._klist = klist
-        super(SignalEvent, self).__init__(object=klist,
-                                          name=klist.get_name())
+        SignalEvent.__init__(self, klist, name=klist.get_name(),
+                             args=args)
         self.rows = self._get_rows()
         
     def _get_rows(self):
@@ -277,18 +289,26 @@ class KiwiListSelectionChanged(SignalEvent):
         return '%s.select_paths(%s)' % (self.name, self.rows)
 register_event_type(KiwiListSelectionChanged)
 
-# Also works for Toggle, Radio and Check
 class KiwiListDoubleClick(SignalEvent):
     """
     This event represents a double click on a row in klist
     """
-    signal_name = 'double-click'
+    signal_name = 'button-press-event'
     object_type = List
 
-    def __init__(self, klist):
-        SignalEvent.__init__(self, klist)
+    def __init__(self, klist, name, args):
+        event, = args
+        if event.type != gdk._2BUTTON_PRESS:
+            raise SkipEvent
+
+        SignalEvent.__init__(self, klist, name, args)
         self.row = klist.get_selected_row_number()
-            
+
+    def connect(cls, orig, signal_name, cb):
+        object = orig.get_treeview()
+        object.connect(signal_name, cb, cls, orig)
+    connect = classmethod(connect)
+    
     def serialize(self):
         return '%s.double_click(%s)' % (self.name, self.row)
 register_event_type(KiwiListDoubleClick)
@@ -301,8 +321,8 @@ class KiwiComboBoxChangedEvent(SignalEvent):
     """
     signal_name = 'changed'
     object_type = ComboProxyMixin
-    def __init__(self, combo):
-        SignalEvent.__init__(self, combo)
+    def __init__(self, combo, name, args):
+        SignalEvent.__init__(self, combo. name, args)
         self.label = combo.get_selected_label()
         
     def serialize(self):
@@ -344,7 +364,6 @@ class Listener(Base):
         return event_types
     
     def _add_event(self, event):
-        #print 'SAVE', event.toplevel_name, event.serialize()
         self._events.append(event)
 
     def _listen_event(self, object, event_type):
@@ -360,16 +379,15 @@ class Listener(Base):
         # able to connect it to any kind of signal, regardless of
         # the number of parameters the signal has
         def on_signal(object, *args):
-            event_type = args[-2]
-            orig = args[-1]
-            #print 'Creating event', event_type, object.get_name()
-            self._add_event(event_type(orig))
-        #print '%s %s->%s' % (object.__class__.__name__,
-        #                     object.get_name(), event_type.signal_name)
+            event_type, orig = args[-2:]
+            try:
+                self._add_event(event_type(orig, None, args[:-2]))
+            except SkipEvent:
+                pass
         event_type.connect(object, event_type.signal_name, on_signal)
 
     def window_removed(self, window):
-        self._add_event(WindowDeleteEvent(window))
+        self._add_event(WindowDeleteEvent(window, None, []))
 
     def parse_one(self, toplevel, gobj):
         Base.parse_one(self, toplevel, gobj)
