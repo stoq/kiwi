@@ -1,25 +1,25 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2005 Async Open Source
+# Copyright (C) 2005,2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
-#         
+#
 
 """Generic python addons"""
 
@@ -46,13 +46,13 @@ class ClassInittableMetaType(metabase):
         c = metabase.__new__(cls, name, bases, namespace)
         c.__class_init__(namespace)
         return c
-    
+
 class ClassInittableObject(object):
     """
     I am an object which will call a classmethod called
     __class_init__ when I am created.
     Subclasses of me will also have __class_init__ called.
-    
+
     Note that __class_init__ is called when the class is created,
     eg when the file is imported at the first time.
     It's called after the class is created, but before it is put
@@ -73,11 +73,11 @@ class ClassInittableObject(object):
 # copied from twisted/python/reflect.py
 def namedAny(name):
     """Get a fully named package, module, module-global object, or attribute.
-    
+
     @param name:
     @returns: object, module or attribute
     """
-    
+
     names = name.split('.')
     topLevelPackage = None
     moduleNames = names[:]
@@ -100,12 +100,29 @@ def namedAny(name):
                     pass
                 raise exc_info[0], exc_info[1], exc_info[2]
             moduleNames.pop()
-    
+
     obj = topLevelPackage
     for n in names[1:]:
         obj = getattr(obj, n)
-        
+
     return obj
+
+class Settable:
+    """
+    A mixin class for syntactic sugar.  Lets you assign attributes by
+    calling with keyword arguments; for example, C{x(a=b,c=d,y=z)} is the
+    same as C{x.a=b;x.c=d;x.y=z}.  The most useful place for this is
+    where you don't want to name a variable, but you do want to set
+    some attributes; for example, C{X()(y=z,a=b)}.
+    """
+    def __init__(self, **kw):
+        self._attrs = kw.keys()
+        self._attrs.sort()
+        self.__dict__.update(**kw)
+
+    def __repr__(self):
+        return '<Settable %s>' % ', '.join(
+            ['%s=%r' % (attr, getattr(self, attr)) for attr in self._attrs])
 
 def qual(klass):
     """
@@ -119,14 +136,14 @@ def clamp(x, low, high):
     For example,
     * clamp(5, 10, 15) is 10.
     * clamp(15, 5, 10) is 10.
-    * clamp(20, 15, 25) is 20. 
+    * clamp(20, 15, 25) is 20.
 
     @param    x: the value to clamp.
     @param  low: the minimum value allowed.
     @param high: the maximum value allowed.
     @returns: the clamped value
     """
-    
+
     return min(max(x, low), high)
 
 def slicerange(slice, limit):
@@ -136,5 +153,5 @@ def slicerange(slice, limit):
     @param limit: maximum value allowed
     @returns: iterator
     """
-    
+
     return xrange(*slice.indices(limit))

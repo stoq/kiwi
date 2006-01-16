@@ -1,5 +1,8 @@
 2006-01-16  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/python.py (Settable): Another idea from twisted imported,
+	and improved.
+
 	* kiwi/ui/test/listener.py: Pass signals to event types.
 	Add a SkipEvent exception to be able to filter inside the
 	event. Fix DoubleClick event on the list to be caught earlier.
