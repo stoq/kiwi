@@ -72,9 +72,9 @@ class PluggableWizard(Delegate):
         self.edit_mode = edit_mode
         if size:
             self.get_toplevel().set_default_size(size[0], size[1])
-        self.change_step(first_step)
         toplevel = self.get_toplevel()
         toplevel.show_all()
+        self.change_step(first_step)
         if not self.edit_mode:
             self.ok_button.hide()
         
@@ -149,21 +149,15 @@ class PluggableWizard(Delegate):
         else:
             self.next_button.set_label(gtk.STOCK_GO_FORWARD)
 
-    def _call_step(self):
-        """Call the next step performing first a small check in the 
-        current one.
-        """
+    def on_next_button__clicked(self, button):
         if not self.current.has_next_step():
             # This is the last step
             self.change_step()
             return
         self.change_step(self.current.next_step())
 
-    def on_next_button__clicked(self, button):
-        self._call_step()
-
     def on_ok_button__clicked(self, button):
-        self._call_step()
+        self.change_step()
             
     def on_previous_button__clicked(self, button):
         self.change_step(self.current.previous_step())
