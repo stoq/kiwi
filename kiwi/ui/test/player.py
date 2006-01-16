@@ -62,14 +62,16 @@ class ThreadSafeFunction:
     def __init__(self, func):
         self._func = func
 
-    def __call__(self, *args, **kwargs):
-        gobject.idle_add(self._func, *args, **kwargs)
-        
-        # dialog.run locks us out
+    def _invoke(self, *args, **kwargs):
         #gdk.threads_enter()
-        #rv = self._func(*args, **kwargs)
+        self._func(*args, **kwargs)
         #gdk.threads_leave()
-        #return rv
+        return False
+
+    def __call__(self, *args, **kwargs):
+        # dialog.run locks us out
+        #rv = self._func(*args, **kwargs)
+        gobject.idle_add(self._invoke, *args, **kwargs)
         
 class ThreadSafeObject:
     """
@@ -87,6 +89,7 @@ class ThreadSafeObject:
         if attr is None:
             raise KeyError(name)
         if callable(attr):
+            #print '->', self._gobj.get_name(), attr.__name__
             return ThreadSafeFunction(attr)
         return attr
             
@@ -187,6 +190,7 @@ class Player(Base):
         @param timeout: number of seconds to wait after the window appeared.
         """
 
+        #print 'WAITING FOR', name
         start_time = time.time()
         # XXX: No polling!
         #print 'waiting for', name

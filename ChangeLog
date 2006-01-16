@@ -1,3 +1,10 @@
+2006-01-16  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/test/player.py (ThreadSafeFunction._invoke): 
+	Refactor to always return False after the call.
+
+	* kiwi/ui/test/listener.py: Add a new event for toolbutton clicks.
+
 2006-01-13  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/combobox.py (ComboBox.clear): Emit content-changed 

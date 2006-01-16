@@ -50,7 +50,7 @@ def register_event_type(event_type):
     @param event_type: a L{Event} subclass
     """
     if event_type in _events:
-        raise AssertionError
+        raise AssertionError("event %s already registered" % event_type)
     _events.append(event_type)
 
 def get_event_types():
@@ -176,6 +176,18 @@ class ImageMenuItemButtonReleaseEvent(SignalEvent):
     def serialize(self):
         return '%s.activate()' % self.name
 register_event_type(ImageMenuItemButtonReleaseEvent)
+
+class ToolButtonReleaseEvent(SignalEvent):
+    """
+    This event represents a click on a normal toolbar button
+    Hackish, see L{ImageMenuItemButtonReleaseEvent} for more details.
+    """
+    signal_name = 'button-release-event'
+    object_type = gtk.Button
+    
+    def serialize(self):
+        return '%s.activate()' % self.name
+register_event_type(ToolButtonReleaseEvent)
 
 class EntrySetTextEvent(SignalEvent):
     """
@@ -332,6 +344,7 @@ class Listener(Base):
         return event_types
     
     def _add_event(self, event):
+        #print 'SAVE', event.toplevel_name, event.serialize()
         self._events.append(event)
 
     def _listen_event(self, object, event_type):
@@ -372,12 +385,20 @@ class Listener(Base):
                 continue
 
             for event_type in event_types:
+                # These 3 hacks should move into the event class itself
                 if event_type == MenuItemActivateEvent:
                     if not isinstance(gobj.get_parent(), gtk.MenuBar):
                         continue
+                elif event_type == ToolButtonReleaseEvent:
+                    if not isinstance(gobj.get_parent(), gtk.ToolButton):
+                        continue
+                elif event_type == ButtonClickedEvent:
+                    if isinstance(gobj.get_parent(), gtk.ToolButton):
+                        continue
+                    
                 if issubclass(event_type, SignalEvent):
                     self._listen_event(gobj, event_type)
-                    
+
     def save(self):
         """
         Collect events and serialize them into a script and save
