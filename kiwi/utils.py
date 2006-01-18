@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Lorenzo Gil Sanchez <lgs@sicem.biz>
 #            Johan Dahlin <jdahlin@async.com.br>
 #
@@ -39,7 +39,7 @@ def list_properties(gtype, parent=True):
     pspecs = gobject.list_properties(gtype)
     if parent:
         return pspecs
-    
+
     parent = gobject.type_parent(gtype)
     parent_pspecs = gobject.list_properties(parent)
     return [pspec for pspec in pspecs
@@ -81,10 +81,10 @@ class PropertyMeta(ClassInittableMetaType):
                 # is not the default behavior of PyGTK, but we need it
                 props = namespace.setdefault('__gproperties__', {})
                 signals = namespace.setdefault('__gsignals__', {})
-                
+
                 _update_bases(bases, props, signals)
                 break
-            
+
         return ClassInittableMetaType.__new__(cls, name, bases, namespace)
 
 class PropertyObject(object):
@@ -96,7 +96,7 @@ class PropertyObject(object):
     Example:
 
     >>> from kiwi.utils import PropertyObject, gproperty
-    
+
     >>> class Person(PropertyObject, gobject.GObject):
     >>>     gproperty('name', str)
     >>>     gproperty('age', int)
@@ -109,9 +109,9 @@ class PropertyObject(object):
     >>> test.married
     False
     """
-    
+
     __metaclass__ = PropertyMeta
-    
+
     _default_values = {}
     def __init__(self, **kwargs):
         self._attributes = {}
@@ -133,7 +133,7 @@ class PropertyObject(object):
         # So it is safe to ignore here.
         if not issubclass(cls, gobject.GObject):
             return
-        
+
         # The default value for enum GParamSpecs (returned by list_properties)
         # lacks the enum wrapper so save a reference to the value, it needs to
         # be done here because when we register the GType pygtk removes the
@@ -164,18 +164,18 @@ class PropertyObject(object):
 
             # PyGTK 2.7.1-2.8.0 bugfix
             default_value = getattr(pspec, 'default_value', None)
-            
+
             # Resolve an integer to a real enum
             if gobject.type_is_a(pspec.value_type, gobject.GEnum):
                 pyenum = pytypes[prop_name]
                 default_value = pyenum.__enum_values__[default_value]
-                
+
             default_values[prop_name] = default_value
 
         cls._default_values.update(default_values)
-        
+
     __class_init__ = classmethod(__class_init__)
-        
+
     def _set(self, name, value):
         func = getattr(self, 'prop_set_%s' % name, None)
         if callable(func) and func:
@@ -193,15 +193,15 @@ class PropertyObject(object):
 
     def is_default_value(self, attr, value):
         return self._default_values[attr] == value
-    
+
     def do_set_property(self, pspec, value):
         prop_name = pspec.name.replace('-', '_')
         self._set(prop_name, value)
-        
+
     def do_get_property(self, pspec):
         prop_name = pspec.name.replace('-', '_')
         return self._get(prop_name)
-    
+
 def gsignal(name, *args, **kwargs):
     """
     Add a GObject signal to the current object.
@@ -239,13 +239,13 @@ def gsignal(name, *args, **kwargs):
             default_flags = gobject.SIGNAL_RUN_FIRST
         else:
             default_flags = gobject.SIGNAL_RUN_LAST
-            
+
         flags = kwargs.get('flags', default_flags)
         if retval is not None and flags != gobject.SIGNAL_RUN_LAST:
             raise TypeError(
                 "You cannot use a return value without setting flags to "
                 "gobject.SIGNAL_RUN_LAST")
-    
+
         dict[name] = (flags, retval, args)
 
 def _max(c):
@@ -256,7 +256,7 @@ _MAX_VALUES = {int : _max('i'),
                float : _max('f'),
                long : _max('l') }
 _DEFAULT_VALUES = {str : '', float : 0.0, int : 0, long : 0L}
-                   
+
 def gproperty(name, ptype, default=None, nick='', blurb='',
               flags=gobject.PARAM_READWRITE, **kwargs):
     """
@@ -276,7 +276,7 @@ def gproperty(name, ptype, default=None, nick='', blurb='',
       - PARAM_CONSTRUCT_ONLY
       - PARAM_LAX_VALIDATION
     Optional, only for int, float, long types:
-    @keyword minimum:  minimum allowed value 
+    @keyword minimum:  minimum allowed value
     @keyword maximum:  maximum allowed value
     """
 
@@ -320,7 +320,7 @@ def gproperty(name, ptype, default=None, nick='', blurb='',
         default = ()
     else:
         raise NotImplementedError("type %r" % ptype)
-    
+
     if flags not in (gobject.PARAM_READABLE, gobject.PARAM_READWRITE,
                      gobject.PARAM_WRITABLE, gobject.PARAM_CONSTRUCT,
                      gobject.PARAM_CONSTRUCT_ONLY,
