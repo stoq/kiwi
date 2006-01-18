@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 
 """Reimplementation of GtkComboBoxEntry in Python.
@@ -55,7 +55,7 @@ class BaseComboBoxEntry(gtk.ComboBox):
             text_column = 0
         self.set_model(model)
         self.set_text_column(text_column)
-        
+
     # Virtual methods
     def do_mnemnoic_activate(self, group_cycling):
         self.entry.grab_focus()
@@ -69,7 +69,7 @@ class BaseComboBoxEntry(gtk.ComboBox):
         iter = combobox.get_active_iter()
         if not iter:
             return
-        
+
         self.entry.handler_block(self.entry_changed_id)
         model = self.get_model()
         self.entry.set_text(model[iter][self._text_column])
@@ -89,7 +89,7 @@ class BaseComboBoxEntry(gtk.ComboBox):
         self._text_column = text_column
         if text_column != -1:
             self.set_attributes(self._text_renderer, text=text_column)
-    
+
     def get_text_column(self):
         return self._text_column
 
@@ -109,6 +109,6 @@ def test():
     e.set_model(m)
     win.show_all()
     gtk.main()
-    
+
 if __name__ == '__main__':
     test()
