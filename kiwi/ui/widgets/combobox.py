@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Christian Reis <kiko@async.com.br>
 #            Lorenzo Gil Sanchez <lgs@sicem.biz>
 #            Johan Dahlin <jdahlin@async.com.br>
@@ -34,7 +34,7 @@ they contain methods to easily insert and retrieve data from combos.
 
 import gobject
 import gtk
-from gtk import keysyms 
+from gtk import keysyms
 
 from kiwi import ValueUnset
 from kiwi.ui.widgets.comboboxentry import BaseComboBoxEntry
@@ -56,7 +56,7 @@ from kiwi.utils import PropertyObject, gproperty
 (COMBO_MODE_UNKNOWN,
  COMBO_MODE_STRING,
  COMBO_MODE_DATA) = range(3)
- 
+
 class ComboProxyMixin(object):
     """Our combos always have one model with two columns, one for the string
     that is displayed and one for the object it cames from.
@@ -74,20 +74,20 @@ class ComboProxyMixin(object):
 
     def __nonzero__(self):
         return True
-    
+
     def __len__(self):
         return len(self.get_model())
-    
+
     def prefill(self, itemdata, sort=False):
         """Fills the Combo with listitems corresponding to the itemdata
         provided.
-        
+
         Parameters:
           - itemdata is a list of strings or tuples, each item corresponding
             to a listitem. The simple list format is as follows::
 
             >>> [ label0, label1, label2 ]
-    
+
             If you require a data item to be specified for each item, use a
             2-item tuple for each element. The format is as follows::
 
@@ -113,7 +113,7 @@ class ComboProxyMixin(object):
             else:
                 raise TypeError("Could not determine type, items must "
                                 "be strings or tuple/list")
-                
+
         mode = self.mode
         model = self.get_model()
 
@@ -121,19 +121,19 @@ class ComboProxyMixin(object):
         if mode == COMBO_MODE_STRING:
             if sort:
                 itemdata.sort()
-                
+
             for item in itemdata:
                 if item in values:
                     raise KeyError("Tried to insert duplicate value "
                                    "%s into Combo!" % item)
                 else:
                     values[item] = None
-                    
+
                 model.append((item, None))
         elif mode == COMBO_MODE_DATA:
             if sort:
                 itemdata.sort(lambda x, y: cmp(x[0], y[0]))
-                
+
             for item in itemdata:
                 text, data = item
                 if text in values:
@@ -193,14 +193,14 @@ class ComboProxyMixin(object):
     def select_item_by_data(self, data):
         if self.mode != COMBO_MODE_DATA:
             raise TypeError("select_item_by_data can only be used in data mode")
-        
+
         model = self.get_model()
         for row in model:
             if row[COL_COMBO_DATA] == data:
                 self.set_active_iter(row.iter)
                 break
         else:
-            raise KeyError("No item correspond to data %r in the combo %s" 
+            raise KeyError("No item correspond to data %r in the combo %s"
                            % (data, self.name))
 
     def get_model_strings(self):
@@ -209,19 +209,19 @@ class ComboProxyMixin(object):
     def get_model_items(self):
         if self.mode != COMBO_MODE_DATA:
             raise TypeError("get_model_items can only be used in data mode")
-        
+
         model = self.get_model()
         items = {}
         for row in model:
             items[row[COL_COMBO_LABEL]] = row[COL_COMBO_DATA]
-        
+
         return items
 
     def get_selected_label(self):
         iter = self.get_active_iter()
         if not iter:
             return
-        
+
         model = self.get_model()
         return model.get_value(iter, COL_COMBO_LABEL)
 
@@ -232,10 +232,10 @@ class ComboProxyMixin(object):
         iter = self.get_active_iter()
         if not iter:
             return
-        
+
         model = self.get_model()
         return model.get_value(iter, COL_COMBO_DATA)
-    
+
 class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
     def __init__(self):
         gtk.ComboBox.__init__(self)
@@ -243,7 +243,7 @@ class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
         WidgetMixin.__init__(self)
         PropertyObject.__init__(self)
         self.connect('changed', self._on__changed)
-        
+
         renderer = gtk.CellRendererText()
         self.pack_start(renderer)
         self.add_attribute(renderer, 'text', COL_COMBO_LABEL)
@@ -254,22 +254,22 @@ class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
     # behavior in 2.8
     def __len__(self):
         return len(self.get_model())
-    
+
     def _on__changed(self, combo):
         self.emit('content-changed')
-    
+
     def read(self):
         if self.mode == COMBO_MODE_STRING:
             return self._from_string(self.get_selected_label())
         elif self.mode == COMBO_MODE_DATA:
             return self.get_selected_data()
-        
+
         return ValueUnset
-    
+
     def update(self, data):
         # We dont need validation because the user always
         # choose a valid value
-        
+
         if data is None:
             return
         elif self.mode == COMBO_MODE_STRING:
@@ -280,58 +280,58 @@ class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
             # XXX: When setting the datatype to non string, automatically go to
             #      data mode
             raise TypeError("unknown ComboBox mode. Did you call prefill?")
-        
+
     def prefill(self, itemdata, sort=False):
         ComboProxyMixin.prefill(self, itemdata, sort)
-    
+
         # we always have something selected, by default the first item
         self.set_active(0)
         self.emit('content-changed')
 
     def clear(self):
-        ComboProxyMixin.clear(self) 
+        ComboProxyMixin.clear(self)
         self.emit('content-changed')
-        
+
 class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
                     WidgetMixinSupportValidation):
-    
+
     # it doesn't make sense to connect to this signal
     # because we want to monitor the entry of the combo
     # not the combo box itself.
-    
+
     gproperty("list-editable", bool, True, "Editable")
-    
+
     def __init__(self, **kwargs):
         BaseComboBoxEntry.__init__(self)
         ComboProxyMixin.__init__(self)
         WidgetMixinSupportValidation.__init__(self, widget=self.entry)
         PropertyObject.__init__(self, **kwargs)
-        
+
         self.set_text_column(COL_COMBO_LABEL)
         # here we connect the expose-event signal directly to the entry
         self.child.connect('changed', self._on_child_entry__changed)
-        
+
         # HACK! we force a queue_draw because when the window is first
         # displayed the icon is not drawn.
         gobject.idle_add(self.queue_draw)
 
         self.set_events(gtk.gdk.KEY_RELEASE_MASK)
         self.connect("key-release-event", self._on__key_release_event)
-    
+
     def prop_set_list_editable(self, value):
         if self.mode == COMBO_MODE_DATA:
             return
-        
+
         self.entry.set_editable(value)
-        
+
         return value
-    
+
     def _update_selection(self, text=None):
         if text is None:
             text = self.entry.get_text()
 
         self.select_item_by_label(text)
-    
+
     def _add_text_to_combo_list(self):
         text = self.entry.get_text()
         if not text.strip():
@@ -339,13 +339,13 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
 
         if text in self.get_model_strings():
             return
-        
+
         self.entry.set_text('')
         self.append_item(text)
         self._update_selection(text)
-        
+
     def _on__key_release_event(self, widget, event):
-        """Checks for "Enter" key presses and add the entry text to 
+        """Checks for "Enter" key presses and add the entry text to
         the combo list if the combo list is set as editable.
         """
         if not self.list_editable:
@@ -367,9 +367,9 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
         # unknown->label set editable to False
         if (self.mode == COMBO_MODE_UNKNOWN and mode == COMBO_MODE_DATA):
             self.entry.set_editable(False)
-            
+
         ComboProxyMixin.set_mode(self, mode)
-        
+
     def read(self):
         mode = self.mode
         if mode == COMBO_MODE_STRING:
@@ -382,7 +382,7 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
     def before_validate(self, data):
         """ComboBoxEntry has a validate default handler that check if the
         text of the entry is an item of the list"""
-        
+
         # XXX: Check so data is in list
         #items = self.get_model_items()
         #if data not in items.keys():
@@ -408,14 +408,14 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
         auto.set_model(self.get_model())
         auto.set_text_column(COL_COMBO_LABEL)
         self.entry.set_completion(auto)
-        
+
     def clear(self):
         """Removes all items from list and erases entry"""
         ComboProxyMixin.clear(self)
         self.entry.set_text("")
 
     # IconEntry
-    
+
     def set_pixbuf(self, pixbuf):
         self.entry.set_pixbuf(pixbuf)
 
