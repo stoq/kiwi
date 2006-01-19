@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Christian Reis <kiko@async.com.br>
 #            Lorenzo Gil Sanchez <lgs@sicem.biz>
 #            Gustavo Rahal <gustavo@async.com.br>
@@ -72,7 +72,7 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('searchable', bool, default=False)
     gproperty('radio', bool, default=False)
     gproperty('cache', bool, default=False)
-    
+
     # This can be set in subclasses, to be able to allow custom
     # cell_data_functions, used by SequentialColumn
     cell_data_func = None
@@ -84,7 +84,7 @@ class Column(PropertyObject, gobject.GObject):
     # This is called when the renderer is created, so we can set/fetch
     # initial properties
     on_attach_renderer = None
-    
+
     def __init__(self, attribute, title=None, data_type=None, **kwargs):
         """
         Creates a new Column, which describes how a column in a
@@ -138,13 +138,13 @@ class Column(PropertyObject, gobject.GObject):
             used to identify the column in the column selection and in a
             tooltip, if a tooltip is not set.
         """
-        
+
         # XXX: filter function?
         if ' ' in attribute:
             msg = ("The attribute can not contain spaces, otherwise I can"
                    " not find the value in the instances: %s" % attribute)
             raise AttributeError(msg)
- 
+
         self.attribute = attribute
         self.compare = None
         self.as_string = None
@@ -156,12 +156,12 @@ class Column(PropertyObject, gobject.GObject):
         kwargs['data_type'] = data_type
 
         # If we don't specify a justification, right align it for int/float
-        # and left align it for everything else. 
+        # and left align it for everything else.
         if "justify" not in kwargs:
             if data_type and issubclass(data_type, (int, float,
                                                     long, currency)):
                 kwargs['justify'] = gtk.JUSTIFY_RIGHT
-                
+
         format_func = kwargs.get('format_func')
         if format_func:
             if not callable(format_func):
@@ -169,7 +169,7 @@ class Column(PropertyObject, gobject.GObject):
             if 'format' in kwargs:
                 raise TypeError(
                     "format and format_func can not be used at the same time")
-        
+
         PropertyObject.__init__(self, **kwargs)
         gobject.GObject.__init__(self)
 
@@ -184,7 +184,7 @@ class Column(PropertyObject, gobject.GObject):
             self.as_string = conv.as_string
             self.from_string = conv.from_string
         return data
-    
+
     def __repr__(self):
         namespace = self.__dict__.copy()
         attr = namespace['attribute']
@@ -202,7 +202,7 @@ class Column(PropertyObject, gobject.GObject):
                (self.attribute, self.title, data_type, self.visible,
                 self.justify, self.tooltip, self.format, self.width,
                 self.sorted, self.order)
-    
+
     def from_string(cls, data_string):
         fields = data_string.split('|')
         if len(fields) != 10:
@@ -212,7 +212,7 @@ class Column(PropertyObject, gobject.GObject):
         # the attribute is mandatory
         if not fields[0]:
             raise TypeError
-        
+
         column = cls(fields[0])
         column.title = fields[1] or ''
         column.data_type = str2type(fields[2])
@@ -225,13 +225,13 @@ class Column(PropertyObject, gobject.GObject):
             column.width = int(fields[7])
         except ValueError:
             pass
-        
+
         column.sorted = str2bool(fields[8])
         column.order = str2enum(fields[9], gtk.SORT_ASCENDING) \
                      or gtk.SORT_ASCENDING
-        
+
         # XXX: expand, remember to sync with __str__
-        
+
         return column
     from_string = classmethod(from_string)
 
@@ -257,9 +257,9 @@ class SequentialColumn(Column):
             sequence_id = len(model) - row.path[0]
         else:
             sequence_id = row.path[0] + 1
-            
+
         row[COL_MODEL]._kiwi_sequence_id = sequence_id
-        
+
         try:
             renderer.set_property(renderer_prop, sequence_id)
         except TypeError:
@@ -273,7 +273,7 @@ class ColoredColumn(Column):
     which will be called for each row
 
     Example, to colorize negative values to red:
-    
+
         >>> def colorize(value):
         ...   return value < 0
         ...
@@ -287,47 +287,47 @@ class ColoredColumn(Column):
             raise TypeError("data type must be int or float")
         if not callable(data_func):
             raise TypeError("data func must be callable")
-        
+
         self._color = gdk.color_parse(color)
         self._color_normal = None
-        
+
         self._data_func = data_func
-        
+
         Column.__init__(self, attribute, title, data_type, **kwargs)
 
     def on_attach_renderer(self, renderer):
         renderer.set_property('foreground-set', True)
         self._color_normal = renderer.get_property('foreground-gdk')
-        
+
     def renderer_func(self, renderer, data):
         if self._data_func(data):
             color = self._color
         else:
             color = self._color_normal
-            
+
         renderer.set_property('foreground-gdk', color)
-            
+
 class ContextMenu(gtk.Menu):
     """
     ContextMenu is a wrapper for the menu that's displayed when right
     clicking on a column header. It monitors the treeview and rebuilds
     when columns are added, removed or moved.
     """
-    
+
     def __init__(self, treeview):
         gtk.Menu.__init__(self)
-        
+
         self._dirty = True
         self._signal_ids = []
         self._treeview = treeview
         self._treeview.connect('columns-changed',
                               self._on_treeview__columns_changed)
         self._create()
-        
+
     def clean(self):
         for child in self.get_children():
             self.remove(child)
-            
+
         for menuitem, signal_id in self._signal_ids:
             menuitem.disconnect(signal_id)
         self._signal_ids = []
@@ -336,17 +336,17 @@ class ContextMenu(gtk.Menu):
         self._create()
         gtk.Menu.popup(self, None, None, None,
                        event.button, event.time)
-        
+
     def _create(self):
         if not self._dirty:
             return
-        
+
         self.clean()
-        
+
         for column in self._treeview.get_columns():
             header_widget = column.get_widget()
             title = header_widget.get_text()
-                
+
             menuitem = gtk.CheckMenuItem(title)
             menuitem.set_active(column.get_visible())
             signal_id = menuitem.connect("activate",
@@ -355,12 +355,12 @@ class ContextMenu(gtk.Menu):
             self._signal_ids.append((menuitem, signal_id))
             menuitem.show()
             self.append(menuitem)
-            
+
         self._dirty = False
 
     def _on_treeview__columns_changed(self, treeview):
         self._dirty = True
-        
+
     def _on_menuitem__activate(self, menuitem, column):
         active = menuitem.get_active()
         column.set_visible(active)
@@ -391,10 +391,10 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
     # selected row(s)
     gsignal('selection-changed', object)
-    
+
     # row clicked
     gsignal('double-click', object)
-    
+
     # edited object, attribute name
     gsignal('cell-edited', object, str)
 
@@ -404,7 +404,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
     gproperty('column-definitions', str, nick="ColumnDefinitions")
     gproperty('selection-mode', gtk.SelectionMode,
               default=gtk.SELECTION_BROWSE, nick="SelectionMode")
-    
+
     def __init__(self, columns=[],
                  instance_list=None,
                  mode=gtk.SELECTION_BROWSE):
@@ -438,12 +438,12 @@ class List(PropertyObject, gtk.ScrolledWindow):
         self._sort_column_index = -1
 
         gtk.ScrolledWindow.__init__(self)
-                                
+
         # we always want a vertical scrollbar. Otherwise the button on top
         # of it doesn't make sense. This button is used to display the popup
         # menu
         self.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
-        
+
         self._model = gtk.ListStore(object)
         self._model.set_sort_func(COL_MODEL, self._sort_function)
         self._treeview = gtk.TreeView(self._model)
@@ -485,7 +485,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
         # Depends on treeview and selection being set up
         PropertyObject.__init__(self)
-                    
+
     # Python list object implementation
     # These methods makes the kiwi list behave more or less
     # like a normal python list
@@ -520,16 +520,16 @@ class List(PropertyObject, gtk.ScrolledWindow):
         class ModelIterator:
             def __init__(self):
                 self._index = -1
-                
+
             def next(self, model=self._model):
                 try:
                     self._index += 1
                     return model[self._index][COL_MODEL]
                 except IndexError:
                     raise StopIteration
-                
+
         return ModelIterator()
-    
+
     def __getitem__(self, arg):
         "list[n]"
         if isinstance(arg, (int, gtk.TreeIter, str)):
@@ -558,28 +558,28 @@ class List(PropertyObject, gtk.ScrolledWindow):
     def extend(self, iterable):
         """
         Extend list by appending elements from the iterable
-        
+
         @param iterable:
         """
-        
+
         return self.add_list(iterable, clear=False)
 
     def index(self, item, start=None, stop=None):
         """
         Return first index of value
-        
+
         @param item:
         @param start:
         @param stop
         """
-        
+
         if start or stop:
             raise NotImplementedError("start and stop")
 
         treeiter = self._iters.get(id(item), _marker)
         if treeiter is _marker:
             raise ValueError("item %r is not in the list" % item)
-        
+
         return self._model[item.iter].path[0]
 
     def count(self, item):
@@ -594,7 +594,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
     def insert(self, index, item):
         "L.insert(index, item) -- insert object before index"
         raise NotImplementedError
-    
+
     def pop(self, index):
         """
         Remove and return item at index (default last)
@@ -612,17 +612,17 @@ class List(PropertyObject, gtk.ScrolledWindow):
         raise NotImplementedError
 
     # Properties
-    
+
     def prop_set_column_definition(self, value):
         self.set_columns(value)
         return value
-    
+
     def prop_set_selection_mode(self, mode):
         self.set_selection_mode(mode)
 
     def prop_get_selection_mode(self):
         return self.get_selection_mode()
-    
+
     # Columns handling
     def _load(self, instances, clear):
         # do nothing if empty list or None provided
@@ -632,12 +632,12 @@ class List(PropertyObject, gtk.ScrolledWindow):
                 self.unselect_all()
                 self.clear()
                 return
-            
+
         model = self._model
         iters = self._iters
-        
+
         old_instances = [row[COL_MODEL] for row in model]
-        
+
         # Save selection
         selected_instances = []
         if old_instances:
@@ -679,20 +679,20 @@ class List(PropertyObject, gtk.ScrolledWindow):
         else:
             for instance in iter(instances):
                 iters[id(instance)] = model.append((instance,))
-                
+
         # Restore selection
         for instance in selected_instances:
             objid = id(instance)
             if objid in iters:
                 selection.select_iter(iters[objid])
-                
+
         # As soon as we have data for that list, we can autosize it, and
         # we don't want to autosize again, or we may cancel user
         # modifications.
         if self._autosize:
             self._treeview.columns_autosize()
             self._autosize = False
-        
+
     def _setup_columns(self):
         if self._columns_configured:
             return
@@ -721,13 +721,13 @@ class List(PropertyObject, gtk.ScrolledWindow):
     def _setup_column(self, column):
         # You can't subclass bool, so this is okay
         if (column.data_type is bool and column.format):
-            raise TypeError("format is not supported for boolean columns") 
+            raise TypeError("format is not supported for boolean columns")
 
         index = self._columns.index(column)
         treeview_column = self._treeview.get_column(index)
         if treeview_column is None:
-            treeview_column = self._create_column(column)  
-            
+            treeview_column = self._create_column(column)
+
         renderer, renderer_prop = self._guess_renderer_for_type(column)
         if column.on_attach_renderer:
             column.on_attach_renderer(renderer)
@@ -736,7 +736,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
             xalign = 1.0
         elif justify == gtk.JUSTIFY_CENTER:
             xalign = 0.5
-        elif justify in (gtk.JUSTIFY_LEFT, 
+        elif justify in (gtk.JUSTIFY_LEFT,
                          gtk.JUSTIFY_FILL):
             xalign = 0.0
         else:
@@ -749,7 +749,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
             cell_data_func = column.cell_data_func
         elif column.cache:
             self._cell_data_caches[column.attribute] = {}
-            
+
         treeview_column.pack_start(renderer)
         treeview_column.set_cell_data_func(renderer, cell_data_func,
                                            (column, renderer_prop,
@@ -772,7 +772,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
         if column.sorted:
             self._sort_column_index = index
             treeview_column.set_sort_indicator(True)
-            
+
         if column.width:
             self._autosize = False
 
@@ -787,7 +787,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
         if column.radio:
             if not issubclass(column.data_type, bool):
                 raise TypeError("You can only use radio for boolean columns")
-            
+
         # typelist here may be none. It's okay; justify_columns will try
         # and use the specified justifications and if not present will
         # not touch the column. When typelist is not set,
@@ -813,7 +813,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
         button.connect('button-release-event',
                        self._on_header__button_release_event)
         return treeview_column
-    
+
     def _on_renderer_toggle_check__toggled(self, renderer, path, model, attr):
         obj = model[path][COL_MODEL]
         value = not getattr(obj, attr, None)
@@ -823,7 +823,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
     def _on_renderer_toggle_radio__toggled(self, renderer, path, model, attr):
         # Deactive old one
         old = renderer.get_data('kiwilist::radio-active')
-        
+
         # If we don't have the radio-active set it means we're doing
         # This for the first time, so scan and see which one is currently
         # active, so we can deselect it
@@ -848,20 +848,20 @@ class List(PropertyObject, gtk.ScrolledWindow):
         setattr(new, attr, True)
         renderer.set_data('kiwilist::radio-active', new)
         self.emit('cell-edited', new, attr)
-        
+
     def _on_renderer_text__edited(self, renderer, path, text,
                                   model, attr, column, as_string):
         obj = model[path][COL_MODEL]
         value = as_string(text)
         setattr(obj, attr, value)
         self.emit('cell-edited', obj, attr)
-        
+
     def _guess_renderer_for_type(self, column):
         """Gusses which CellRenderer we should use for a given type.
         It also set the property of the renderer that depends on the model,
         in the renderer.
         """
-        
+
         # TODO: Move to column
         data_type = column.data_type
         if data_type is bool:
@@ -875,7 +875,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
             else:
                 cb = self._on_renderer_toggle_check__toggled
             renderer.connect('toggled', cb, self._model, column.attribute)
-                
+
             prop = 'active'
         elif issubclass(data_type, (datetime.date, datetime.time,
                                     basestring, int, float)):
@@ -891,14 +891,14 @@ class List(PropertyObject, gtk.ScrolledWindow):
             raise ValueError("the type %s is not supported yet" % data_type)
 
         return renderer, prop
-    
+
     def _search_equal_func(self, model, tree_column, key, treeiter, column):
         data = column.get_attribute(model[treeiter][COL_MODEL],
                                     column.attribute, None)
         if data.startswith(key):
             return False
         return True
-        
+
     def _cell_data_func(self, tree_column, renderer, model, treeiter,
                         (column, renderer_prop, as_string)):
 
@@ -927,12 +927,12 @@ class List(PropertyObject, gtk.ScrolledWindow):
             text = as_string(data)
         else:
             text = data
-            
+
         renderer.set_property(renderer_prop, text)
 
         if column.renderer_func:
             column.renderer_func(renderer, data)
-            
+
     def _on_header__button_release_event(self, button, event):
         if event.button == 3:
             self._popup.popup(event)
@@ -944,10 +944,10 @@ class List(PropertyObject, gtk.ScrolledWindow):
         data_type = column.data_type
         if data_type in (int, float):
             value = data_type(value)
-            
+
         # XXX convert new_text to the proper data type
         setattr(self._model[path][COL_MODEL], column.attribute, value)
-        
+
     def _on_renderer__toggled(self, renderer, path, column):
         setattr(self._model[path][COL_MODEL], column.attribute,
                 not renderer.get_active())
@@ -959,11 +959,11 @@ class List(PropertyObject, gtk.ScrolledWindow):
         self._popup.clean()
 
         self._columns_configured = False
-        
+
     # selection methods
     def _select_and_focus_row(self, row_iter):
         self._treeview.set_cursor(self._model[row_iter].path)
-                    
+
     def _sort_function(self, model, iter1, iter2):
         column = self._columns[self._sort_column_index]
         attr = column.attribute
@@ -979,7 +979,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
         old_treeview_column = self._treeview.get_column(
             self._sort_column_index)
         old_treeview_column.set_sort_indicator(False)
-        
+
         # reverse the old order or start with SORT_DESCENDING if there was no
         # previous order
         column_index = self._columns.index(column)
@@ -1014,10 +1014,10 @@ class List(PropertyObject, gtk.ScrolledWindow):
         else:
             raise AssertionError
         self.emit('selection-changed', item)
-        
+
     def _after_treeview__row_activated(self, treeview, path, view_column):
         self.emit('double-click', self._model[path][COL_MODEL])
-        
+
     # hacks
     def _get_column_button(self, column):
         """Return the button widget of a particular TreeViewColumn.
@@ -1027,11 +1027,11 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
         Use this function at your own risk
         """
-        
+
         button = column.get_widget()
         assert button is not None, ("You must call column.set_widget() "
                                     "before calling _get_column_button")
-        
+
         while not isinstance(button, gtk.Button):
             button = button.get_parent()
 
@@ -1047,7 +1047,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
         self._popup_button = gtk.Button('*')
         self._popup_window.add(self._popup_button)
         self._popup_window.show_all()
-        
+
         self.forall(self._find_vertical_scrollbar)
         self.connect('size-allocate', self._on_scrolled_window__size_allocate)
         self.connect('realize', self._on_scrolled_window__realize)
@@ -1070,7 +1070,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
         toplevel = widget.get_toplevel()
         self._popup_window.set_transient_for(toplevel)
         self._popup_window.set_destroy_with_parent(True)
-        
+
     def _on_scrolled_window__size_allocate(self, widget, allocation):
         """Resize the Vertical Scrollbar to make it smaller and let space
         for the popup button. Also put that button there.
@@ -1087,7 +1087,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
             winx, winy = gdk_window.get_origin()
             self._popup_window.move(winx + old_alloc.x,
                                     winy + old_alloc.y)
-        
+
     # end of the popup button hack
 
     #
@@ -1100,7 +1100,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
     def get_treeview(self):
         "Return treeview of the current list"
         return self._treeview
-    
+
     def get_columns(self):
         return self._columns
 
@@ -1118,14 +1118,14 @@ class List(PropertyObject, gtk.ScrolledWindow):
         """
         if not isinstance(column, Column):
             raise TypeError
-        
+
         if not column in self._columns:
             raise ValueError
-        
+
         index = self._columns.index(column)
         tree_columns = self._treeview.get_columns()
         return tree_columns[index]
-    
+
     def set_columns(self, value):
         """This function can be called in two different ways:
          - value is a string with the column definitions in a special format
@@ -1133,7 +1133,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
          - value is a list/tuple of Column objects
         """
-        
+
         if isinstance(value, basestring):
             self._columns_string = value
             self._columns = []
@@ -1149,7 +1149,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
         self._clear_columns()
         self._setup_columns()
-        
+
     def append(self, instance, select=False):
         """Adds an instance to the list.
         - instance: the instance to be added (according to the columns spec)
@@ -1161,7 +1161,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
         row_iter = self._model.append((instance,))
         self._iters[id(instance)] = row_iter
-        
+
         if self._autosize:
             self._treeview.columns_autosize()
 
@@ -1174,7 +1174,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
         treeiter = self._iters.pop(objid)
         if not treeiter:
             return False
-        
+
         # Remove any references to this path
         path = self._model[treeiter].path[0]
         for cache in self._cell_data_caches.values():
@@ -1185,7 +1185,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
         self._model.remove(treeiter)
 
         return True
-        
+
     def remove(self, instance):
         """Remove an instance from the list.
         If the instance is not in the list it returns False. Otherwise it
@@ -1223,7 +1223,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
         selection = self._treeview.get_selection()
         if selection:
             return selection.get_mode()
-    
+
     def set_selection_mode(self, mode):
         selection = self._treeview.get_selection()
         if selection:
@@ -1258,7 +1258,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
             raise ValueError("instance %r is not in the list" % instance)
 
         treeiter = self._iters[objid]
-        
+
         selection.select_iter(treeiter)
 
         if scroll:
@@ -1292,7 +1292,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
         if not selection:
             # AssertionError ?
             return
-        
+
         mode = selection.get_mode()
         if mode == gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed in %r mode" % mode)
@@ -1304,12 +1304,12 @@ class List(PropertyObject, gtk.ScrolledWindow):
         if paths:
             return [model[path][COL_MODEL] for (path,) in paths]
         return []
-    
+
     def add_list(self, instances, clear=True):
         """
         Allows a list to be loaded, by default clearing it first.
         freeze() and thaw() are called internally to avoid flashing.
-        
+
         @param instances: a list to be added
         @param clear: a boolean that specifies whether or not to
           clear the list
@@ -1318,27 +1318,27 @@ class List(PropertyObject, gtk.ScrolledWindow):
         self._treeview.freeze_notify()
 
         ret = self._load(instances, clear)
-        
+
         self._treeview.thaw_notify()
-        
+
         return ret
 
     def clear(self):
         """Removes all the instances of the list"""
         self._model.clear()
         self._iters = {}
-        
+
         # Don't clear the whole cache, just the
         # individual column caches
         for key in self._cell_data_caches:
             self._cell_data_caches[key] = {}
-        
+
     def get_next(self, instance):
         """
         Returns the item after instance in the list.
         Note that the instance must be inserted before this can be called
         If there are no instances after,  the first item will be returned.
-        
+
         @param instance: the instance
         """
 
@@ -1347,7 +1347,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
             raise ValueError("instance %r is not in the list" % instance)
 
         treeiter = self._iters[objid]
-        
+
         model = self._model
         pos = model[treeiter].path[0]
         if pos >= len(model) - 1:
@@ -1355,21 +1355,21 @@ class List(PropertyObject, gtk.ScrolledWindow):
         else:
             pos += 1
         return model[pos][COL_MODEL]
-    
+
     def get_previous(self, instance=False):
         """
         Returns the item before instance in the list.
         Note that the instance must be inserted before this can be called
         If there are no instances before,  the last item will be returned.
-         
+
         @param instance: the instance
         """
-        
+
         objid = id(instance)
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
         treeiter = self._iters[objid]
-        
+
         model = self._model
         pos = model[treeiter].path[0]
         if pos == 0:
@@ -1395,11 +1395,11 @@ class List(PropertyObject, gtk.ScrolledWindow):
     def double_click(self, rowno):
         """
         Same as double clicking on the row rowno
-        
+
         @param rowno: integer
         """
         self._treeview.row_activated(rowno, self._treeview.get_columns()[0])
-        
+
     # Backwards compat
     def add_instance(self, *args, **kwargs):
         return self.append(*args, **kwargs)
@@ -1412,7 +1412,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
     def update_instance(self, *args, **kwargs):
         return self.update(*args, **kwargs)
     update_instance = deprecated('update')(update_instance)
-    
+
     def select_instance(self, *args, **kwargs):
         return self.select(*args, **kwargs)
     select_instance = deprecated('select')(select_instance)
@@ -1423,7 +1423,7 @@ class ListLabel(gtk.HBox):
     """I am a subclass of a GtkHBox which you can use if you want
     to vertically align a label with a column
     """
-    
+
     def __init__(self, klist, column, label='', value_format='%s'):
         """
         @param klist:        list to follow
@@ -1446,13 +1446,13 @@ class ListLabel(gtk.HBox):
                             type(column).__name__)
         self._column = klist.get_column_by_name(column)
         self._value_format = value_format
-        
+
         gtk.HBox.__init__(self)
 
         self._create_ui()
 
     # Public API
-    
+
     def set_value(self, value):
         """Sets the value of the label.
         Note that it needs to be of the same type as you specified in
@@ -1466,9 +1466,9 @@ class ListLabel(gtk.HBox):
 
     def get_label_widget(self):
         return self._label_widget
-    
+
     # Private
-    
+
     def _create_ui(self):
 
         # When tracking the position/size of a column, we need to pay
@@ -1479,14 +1479,14 @@ class ListLabel(gtk.HBox):
         tree_column = self._klist.get_treeview_column(self._column)
         tree_column.connect('notify::width',
                             self._on_treeview_column__notify_width)
-        
+
         button = self._klist._get_column_button(tree_column)
         button.connect('size-allocate',
                        self._on_treeview_column_button__size_allocate)
-        
+
         self._label_widget = gtk.Label()
         self._label_widget.set_markup(self._label)
-        
+
         layout = self._label_widget.get_layout()
         self._label_width = layout.get_pixel_size()[0]
         self._label_widget.set_alignment(1.0, 0.5)
@@ -1510,29 +1510,29 @@ class ListLabel(gtk.HBox):
             # XXX: Replace 12 with a constant
             if position >= 12:
                 self._label_widget.set_size_request(position - 12, -1)
-                
+
         if width != -1:
             self._value_widget.set_size_request(width, -1)
 
     # Callbacks
-    
+
     def _on_treeview_column_button__size_allocate(self, label, rect):
         self._resize(position=rect[0])
-             
+
     def _on_treeview_column__notify_width(self, treeview, pspec):
         value = treeview.get_property(pspec.name)
         self._resize(width=value)
 
     def _on_list__size_allocate(self, list, rect):
         self._resize(position=rect[0], width=rect[2])
-            
-        
+
+
 class SummaryLabel(ListLabel):
     """I am a subclass of ListLabel which you can use if you want
     to summarize all the values of a specific column.
     Please note that I only know how to handle int and float column
     data types and I will complain if you give me something else."""
-    
+
     def __init__(self, klist, column, label=_('Total:'), value_format='%s'):
         ListLabel.__init__(self, klist, column, label, value_format)
         if not issubclass(self._column.data_type, (int, float)):
@@ -1542,7 +1542,7 @@ class SummaryLabel(ListLabel):
         self.update_total()
 
     # Public API
-    
+
     def update_total(self):
         """Recalculate the total value of all columns"""
         attr = self._column.attribute
@@ -1552,7 +1552,7 @@ class SummaryLabel(ListLabel):
         self.set_value(value)
 
     # Callbacks
-    
+
     def _on_klist__cell_edited(self, klist, object, attribute):
         self.update_total()
 
