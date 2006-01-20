@@ -444,6 +444,8 @@ class List(PropertyObject, gtk.ScrolledWindow):
         # menu
         self.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
 
+        self.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+
         self._model = gtk.ListStore(object)
         self._model.set_sort_func(COL_MODEL, self._sort_function)
         self._treeview = gtk.TreeView(self._model)
