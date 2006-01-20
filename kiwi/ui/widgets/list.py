@@ -467,7 +467,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
         if instance_list:
             self._treeview.freeze_notify()
-            self._load(instance_list)
+            self._load(instance_list, clear=True)
             self._treeview.thaw_notify()
 
         if self._sort_column_index != -1:
