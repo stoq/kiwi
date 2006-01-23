@@ -1,3 +1,9 @@
+2006-01-23  Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/list/stockicon.py: New example to demonstrate this feature.
+
+	* kiwi/ui/widgets/list.py: Add Column:use_stock and Column:icon-size.
+	
 2006-01-16  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/python.py (Settable): Another idea from twisted imported,

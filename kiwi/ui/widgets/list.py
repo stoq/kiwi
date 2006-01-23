@@ -72,6 +72,8 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('searchable', bool, default=False)
     gproperty('radio', bool, default=False)
     gproperty('cache', bool, default=False)
+    gproperty('use-stock', bool, default=False)
+    gproperty('icon-size', gtk.IconSize, default=gtk.ICON_SIZE_MENU)
 
     # This can be set in subclasses, to be able to allow custom
     # cell_data_functions, used by SequentialColumn
@@ -133,6 +135,10 @@ class Column(PropertyObject, gobject.GObject):
             Only applicable for columns with boolean data types.
         @keyword cache: If true, the value will only be fetched once,
             and the same value will be reused for futher access.
+        @keyword use_stock: If true, this will be rendered as pixbuf from the
+            value which should be a stock id.
+        @keyword icon_size: a gtk.IconSize constant, gtk.ICON_SIZE_MENU if not
+            specified.
         @keyword title_pixmap: (TODO) if set to a filename a pixmap will be
             used *instead* of the title set. The title string will still be
             used to identify the column in the column selection and in a
@@ -746,7 +752,11 @@ class List(PropertyObject, gtk.ScrolledWindow):
         renderer.set_property("xalign", xalign)
         treeview_column.set_property("alignment", xalign)
 
-        cell_data_func = self._cell_data_func
+        if column.use_stock:
+            cell_data_func = self._cell_data_pixbuf_func
+        else:
+            cell_data_func = self._cell_data_text_func
+
         if column.cell_data_func:
             cell_data_func = column.cell_data_func
         elif column.cache:
@@ -879,6 +889,11 @@ class List(PropertyObject, gtk.ScrolledWindow):
             renderer.connect('toggled', cb, self._model, column.attribute)
 
             prop = 'active'
+        elif column.use_stock:
+            renderer = gtk.CellRendererPixbuf()
+            prop = 'pixbuf'
+            if column.editable:
+                raise TypeError("use-stock columns cannot be editable")
         elif issubclass(data_type, (datetime.date, datetime.time,
                                     basestring, int, float)):
             renderer = gtk.CellRendererText()
@@ -901,8 +916,8 @@ class List(PropertyObject, gtk.ScrolledWindow):
             return False
         return True
 
-    def _cell_data_func(self, tree_column, renderer, model, treeiter,
-                        (column, renderer_prop, as_string)):
+    def _cell_data_text_func(self, tree_column, renderer, model, treeiter,
+                             (column, renderer_prop, as_string)):
 
         row = model[treeiter]
         if column.cache:
@@ -934,6 +949,14 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
         if column.renderer_func:
             column.renderer_func(renderer, data)
+
+    def _cell_data_pixbuf_func(self, tree_column, renderer, model, treeiter,
+                               (column, renderer_prop, as_string)):
+        row = model[treeiter]
+        data = column.get_attribute(row[COL_MODEL],
+                                    column.attribute, None)
+        pixbuf = self.render_icon(data, column.icon_size)
+        renderer.set_property(renderer_prop, pixbuf)
 
     def _on_header__button_release_event(self, button, event):
         if event.button == 3:
