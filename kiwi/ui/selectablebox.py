@@ -7,19 +7,19 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
-#            
+#
 
 """
 A box which you can select and will have a border around it when
@@ -40,22 +40,22 @@ class SelectableBox(object):
         self.set_border_width(width)
 
     # Public API
-    
+
     def get_selected(self):
         """
         @returns: the currently selected widget
         """
-        
+
         return self._selected
 
     def set_selected(self, widget):
         """
         @param widget: widget to select, must be a children of self
         """
-        
+
         if not widget in self.get_children():
             raise ValueError("widget must be a child of %r" % self)
-        
+
         old_selected = self._selected
         self._selected = widget
         if old_selected != widget:
@@ -80,7 +80,7 @@ class SelectableBox(object):
                                line_width=self._selection_width,
                                line_style=gdk.SOLID,
                                foreground=self.style.bg[gtk.STATE_SELECTED])
-        
+
     def get_child_at_pos(self, x, y):
         """
         @param x: x coordinate
@@ -93,13 +93,13 @@ class SelectableBox(object):
             coords = toplevel.translate_coordinates(child, x, y)
             if not coords:
                 continue
-            
+
             child_x, child_y = coords
             if (0 <= child_x < child.allocation.width and
                 0 <= child_y < child.allocation.height and
                 child.flags() & (gtk.MAPPED | gtk.VISIBLE)):
                 return child
-        
+
     def update_selection(self):
         selected = self._selected
         if not selected:
@@ -123,7 +123,7 @@ class SelectableBox(object):
         super(SelectableBox, self).pack_start(child, expand=expand,
                                               fill=fill, padding=padding)
         self.child_added(child)
-        
+
     def pack_end(self, child, expand=True, fill=True, padding=0):
         super(SelectableBox, self).pack_end(child, expand=expand,
                                             fill=fill, padding=padding)
@@ -135,10 +135,10 @@ class SelectableBox(object):
 
     def _on_child_button_press_event(self, child, event):
         self.set_selected(child)
-        
+
     def child_added(self, child):
         child.connect('button-press-event', self._on_child_button_press_event)
-        
+
 class SelectableHBox(SelectableBox, gtk.HBox):
     __gtype_name__ = 'SelectableHBox'
 
@@ -148,7 +148,7 @@ class SelectableHBox(SelectableBox, gtk.HBox):
 
     do_realize = SelectableBox.do_realize
     do_button_press_event = SelectableBox.do_button_press_event
-    
+
     def do_size_allocate(self, allocation):
         gtk.HBox.do_size_allocate(self, allocation)
         if self.flags() & gtk.REALIZED:
@@ -164,10 +164,10 @@ class SelectableVBox(SelectableBox, gtk.VBox):
     def __init__(self, width=4):
         gtk.VBox.__init__(self)
         SelectableBox.__init__(self, width=width)
-    
+
     do_realize = SelectableBox.do_realize
     do_button_press_event = SelectableBox.do_button_press_event
-        
+
     def do_size_allocate(self, allocation):
         gtk.VBox.do_size_allocate(self, allocation)
         if self.flags() & gtk.REALIZED:
