@@ -32,8 +32,9 @@ import gobject
 gobject.threads_init()
 import gtk
 from gtk import gdk
-#gdk.threads_init()
+gdk.threads_init()
 
+from kiwi.log import Logger
 from kiwi.ui.test.common import Base
 
 WINDOW_TIMEOUT = 10
@@ -43,7 +44,7 @@ WIDGET_TIMEOUT = 2
 # This is pretty important, it gives the application 2 seconds
 # to finish closing the dialog, eg write stuff to the database and
 # yada yada
-DELETE_WINDOW_WAIT = 2
+DELETE_WINDOW_WAIT = 4
 
 class TimeOutError(Exception):
     """
@@ -53,19 +54,24 @@ class TimeOutError(Exception):
     """
     pass
 
+log = Logger('test')
+
 class ThreadSafeFunction:
     """
     A function which is safe thread in the mainloop context
     All widgets and object functions will be wrapped by this.
     """
 
-    def __init__(self, func):
+    def __init__(self, func, obj_name):
         self._func = func
+        self._obj_name = obj_name
 
     def _invoke(self, *args, **kwargs):
-        #gdk.threads_enter()
+        gdk.threads_enter()
+        log('Calling %s.%s(%r)' % (self._obj_name,
+                                   self._func.__name__, args))
         self._func(*args, **kwargs)
-        #gdk.threads_leave()
+        gdk.threads_leave()
         return False
 
     def __call__(self, *args, **kwargs):
@@ -89,8 +95,7 @@ class ThreadSafeObject:
         if attr is None:
             raise KeyError(name)
         if callable(attr):
-            #print '->', self._gobj.get_name(), attr.__name__
-            return ThreadSafeFunction(attr)
+            return ThreadSafeFunction(attr, self._gobj.get_name())
         return attr
 
 class DictWrapper(object):
@@ -190,10 +195,10 @@ class Player(Base):
         @param timeout: number of seconds to wait after the window appeared.
         """
 
-        #print 'WAITING FOR', name
-        start_time = time.time()
+        log('waiting for %s (%d)' % (name, timeout))
+
         # XXX: No polling!
-        #print 'waiting for', name
+        start_time = time.time()
         while True:
             if name in self._objects:
                 window = self._objects[name]
@@ -208,19 +213,24 @@ class Player(Base):
         """
         Deletes a window, creates a delete-event and sends it to the window
         """
-        window = self._windows.get(window_name)
 
-        # If the window is already removed, skip
-        if (not window_name in self._windows or
-            window is None or
-            window.window is None):
-            return
+        log('deleting window %s' % window_name)
 
-        event = gdk.Event(gdk.DELETE)
-        event.window = window.window
-        event.put()
+        start_time = time.time()
+        while True:
+            window = self._windows.get(window_name)
+            # If the window is already removed, skip
+            if (not window_name in self._windows or
+                window is None or
+                window.window is None):
+                return False
 
-        time.sleep(DELETE_WINDOW_WAIT)
+            if time.time() - start_time > DELETE_WINDOW_WAIT:
+                event = gdk.Event(gdk.DELETE)
+                event.window = window.window
+                event.put()
+                return True
+            time.sleep(0.1)
 
     def finish(self):
         self._appthread.stop()
