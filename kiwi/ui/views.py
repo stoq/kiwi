@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Christian Reis <kiko@async.com.br>
 #            Jon Nelson <jnelson@securepipe.com>
 #            Lorenzo Gil Sanchez <lgs@sicem.biz>
@@ -65,7 +65,7 @@ else:
 log = Logger('view')
 
 _non_interactive = (
-    gtk.Label, 
+    gtk.Label,
     gtk.Alignment,
     gtk.AccelLabel,
     gtk.Arrow,
@@ -85,7 +85,7 @@ _non_interactive = (
     gtk.VButtonBox,
     gtk.VPaned,
     gtk.VSeparator,
-    gtk.Window, 
+    gtk.Window,
 )
 
 color_red = gdk.color_parse('red')
@@ -101,11 +101,11 @@ class SignalBroker(object):
     def __init__(self, view, controller):
         methods = controller._get_all_methods()
         self._do_connections(view, methods)
-        
+
     def _do_connections(self, view, methods):
         """This method allows subclasses to add more connection mechanism"""
         self._autoconnect_by_method_name(view, methods)
-        
+
     def _autoconnect_by_method_name(self, view, methods):
         """
         Offers autoconnection of widget signals based on function names.
@@ -120,7 +120,7 @@ class SignalBroker(object):
         signal name.
         """
         self._autoconnected = {}
-        
+
         for fname in methods.keys():
             # `on_x__y' has 7 chars and is the smallest possible handler
             # (though illegal, of course, since the signal name x is bogus)
@@ -151,12 +151,12 @@ class SignalBroker(object):
                 continue
             self._autoconnected.setdefault(widget, []).append((
                 signal, signal_id))
-            
+
     def handler_block(self, widget, signal_name):
         signals = self._autoconnected
         if not widget in signals:
             return
-            
+
         for signal, signal_id in signals[widget]:
             if signal_name is None or signal == signal_name:
                 widget.handler_block(signal_id)
@@ -165,7 +165,7 @@ class SignalBroker(object):
         signals = self._autoconnected
         if not widget in signals:
             return
-        
+
         for signal, signal_id in signals[widget]:
             if signal_name is None or signal == signal_name:
                 widget.handler_unblock(signal_id)
@@ -174,12 +174,12 @@ class SignalBroker(object):
         for widget, signals in self._autoconnected.items():
             for signal in signals:
                 widget.disconnect(signal[1])
-        
+
 class GladeSignalBroker(SignalBroker):
     def _do_connections(self, view, methods):
         super(GladeSignalBroker, self)._do_connections(view, methods)
         self._connect_glade_signals(view, methods)
-        
+
     def _connect_glade_signals(self, view, methods):
         # mainly because the two classes cannot have a common base
         # class. studying the class layout carefully or using
@@ -195,7 +195,7 @@ class GladeSignalBroker(SignalBroker):
             if callable(method):
                 dict[name] = method
         view._glade_adaptor.signal_autoconnect(dict)
-        
+
 
 class SlaveView(gobject.GObject):
     """
@@ -217,14 +217,14 @@ class SlaveView(gobject.GObject):
     gladefile = None
     gladename = None
     domain = None
-    
+
     # This signal is emited when the view wants to return a result value
     gsignal("result", object)
-    
+
     # This is emitted when validation changed for a view
     # Used by parents views to know when child slaves changes
     gsignal('validation-changed', bool)
-    
+
     def __init__(self, toplevel=None, widgets=None, gladefile=None,
                  gladename=None, toplevel_name=None, domain=None):
         """ Creates a new SlaveView. Sets up self.toplevel and self.widgets
@@ -239,8 +239,8 @@ class SlaveView(gobject.GObject):
 
         # slave/widget name -> validation status
         self._validation = {}
-        
-        # stores the function that will be called when widgets 
+
+        # stores the function that will be called when widgets
         # validity is checked
         self._validate_function = None
 
@@ -260,7 +260,7 @@ class SlaveView(gobject.GObject):
         self._check_reserved()
         self._glade_adaptor = self.get_glade_adaptor()
         self.toplevel = self._get_toplevel()
-        
+
         # grab the accel groups
         self._accel_groups = gtk.accel_groups_from_object(self.toplevel)
 
@@ -273,10 +273,10 @@ class SlaveView(gobject.GObject):
     def _get_notebooks(self):
         if not self._glade_adaptor:
             return []
-        
+
         return [widget for widget in self._glade_adaptor.get_widgets()
                            if isinstance(widget, gtk.Notebook)]
-            
+
     def _check_reserved(self):
         for reserved in ["widgets", "toplevel", "gladefile",
                          "gladename", "tree", "model", "controller"]:
@@ -285,7 +285,7 @@ class SlaveView(gobject.GObject):
                 raise AttributeError(
                     "The widgets list for %s contains a widget named `%s', "
                     "which is a reserved. name""" % (self, reserved))
-        
+
     def _get_toplevel(self):
         toplevel = self.toplevel
         if not toplevel and self.toplevel_name:
@@ -293,7 +293,7 @@ class SlaveView(gobject.GObject):
                 toplevel = self._glade_adaptor.get_widget(self.toplevel_name)
             else:
                 toplevel = getattr(self, self.toplevel_name, None)
-            
+
         if not toplevel:
             raise TypeError("A View requires an instance variable "
                             "called toplevel that specifies the "
@@ -305,12 +305,12 @@ class SlaveView(gobject.GObject):
                       "wrong" % (toplevel, toplevel.get_name()))
 
         return toplevel
-    
+
     def get_glade_adaptor(self):
         """Special init code that subclasses may want to override."""
         if not self.gladefile:
             return
-            
+
         glade_adaptor = WidgetTree(self, self.gladefile,
                                    self.widgets, self.gladename,
                                    self.domain)
@@ -335,7 +335,7 @@ class SlaveView(gobject.GObject):
         shell.destroy()
 
         return glade_adaptor
-    
+
     #
     # Hooks
     #
@@ -423,7 +423,7 @@ class SlaveView(gobject.GObject):
     def get_topmost_widget(self, widgets=None, can_focus=False):
         """
         A real hack; returns the widget that is most to the left and
-        top of the window. 
+        top of the window.
 
             - widgets: a list of widget names.  If widgets is supplied,
               it only checks in the widgets in the list; otherwise, it
@@ -461,7 +461,7 @@ class SlaveView(gobject.GObject):
                     isinstance(widget, (gtk.Label, gtk.HSeparator,
                                         gtk.VSeparator, gtk.Window)):
                     continue
-                
+
             if top_widget:
                 allocation = widget.allocation
                 top_allocation = getattr(top_widget, 'allocation',  None)
@@ -482,7 +482,7 @@ class SlaveView(gobject.GObject):
             brokerclass = SignalBroker
         else:
             brokerclass = GladeSignalBroker
-            
+
         self._broker = brokerclass(self, controller)
 
 #    def _setup_keypress_handler(self, keypress_handler):
@@ -494,7 +494,7 @@ class SlaveView(gobject.GObject):
     #
     # Slave handling
     #
-    
+
     def attach_slave(self, name, slave):
         """Attaches a slaveview to the current view, substituting the
         widget specified by name.  the widget specified *must* be a
@@ -502,10 +502,10 @@ class SlaveView(gobject.GObject):
         the specified slaveview's toplevel widget::
 
          .-----------------------. the widget that is indicated in the diagram
-         |window/view (self.view)| as placeholder will be substituted for the 
+         |window/view (self.view)| as placeholder will be substituted for the
          |  .----------------.   | slaveview's toplevel.
          |  | eventbox (name)|   |  .-----------------.
-         |  |.--------------.|      |slaveview (slave)| 
+         |  |.--------------.|      |slaveview (slave)|
          |  || placeholder  <----.  |.---------------.|
          |  |'--------------'|    \___ toplevel      ||
          |  '----------------'   |  ''---------------'|
@@ -518,7 +518,7 @@ class SlaveView(gobject.GObject):
         log('%s: Attaching slave %s of type %s' % (self.__class__.__name__,
                                                    name,
                                                    slave.__class__.__name__))
-            
+
         if name in self.slaves:
             # XXX: TypeError
             _warn("A slave with name %s is already attached to %r"  % (
@@ -543,7 +543,7 @@ class SlaveView(gobject.GObject):
             placeholder = self._glade_adaptor.get_widget(name)
         else:
             placeholder = getattr(self, name, None)
-            
+
         if not placeholder:
             raise AttributeError(
                   "slave container widget `%s' not found" % name)
@@ -586,7 +586,7 @@ class SlaveView(gobject.GObject):
         parent.show()
         # call slave's callback
         slave.on_attach(self)
-        
+
         slave.connect_object('validation-changed',
                              self._on_child__validation_changed,
                              name)
@@ -595,7 +595,7 @@ class SlaveView(gobject.GObject):
             for child in notebook.get_children():
                 if not shell.is_ancestor(child):
                     continue
-                
+
                 label = notebook.get_tab_label(child)
                 slave.connect('validation-changed',
                               self._on_notebook_slave__validation_changed,
@@ -604,7 +604,7 @@ class SlaveView(gobject.GObject):
 
         # Fire of an initial notification
         slave.check_and_notify_validity(force=True)
-        
+
         # return placeholder we just removed
         return placeholder
 
@@ -616,7 +616,7 @@ class SlaveView(gobject.GObject):
             raise LookupError("There is no slaved called %s attached to %r" %
                               (name, self))
         del self.slaves[name]
-        
+
     def _attach_groups(self, win, accel_groups):
         # get groups currently attached to the window; we use them
         # to avoid reattaching an accelerator to the same window, which
@@ -668,10 +668,10 @@ class SlaveView(gobject.GObject):
 
     def disconnect_autoconnected(self):
         """
-        Disconnect handlers previously connected with 
+        Disconnect handlers previously connected with
         autoconnect_signals()"""
         self._broker.disconnect_autoconnected()
-        
+
     def handler_block(self, widget, signal_name=None):
         # XXX: Warning, or bail out?
         if not self._broker:
@@ -682,7 +682,7 @@ class SlaveView(gobject.GObject):
         if not self._broker:
             return
         self._broker.handler_unblock(widget, signal_name)
-        
+
     #
     # Proxies
     #
@@ -691,7 +691,7 @@ class SlaveView(gobject.GObject):
         """
         Add a proxy to this view that automatically update a model when
         the view changes. Arguments:
-          
+
           - model. the object we are proxing. It can be None if we don't have
             a model yet and we want to display the interface and set it up with
             future models.
@@ -704,17 +704,17 @@ class SlaveView(gobject.GObject):
         no way to get that proxy later on. You have been warned (tm)
         """
         log('%s: adding proxy for %s' % (
-            self.__class__.__name__, 
+            self.__class__.__name__,
             model and model.__class__.__name__))
-        
+
         widgets = widgets or self.widgets
-        
+
         for widget_name in widgets:
             widget = getattr(self, widget_name, None)
             if (widget is None or
                 not isinstance(widget, MixinSupportValidation)):
                 continue
-            
+
             try:
                 widget.connect_object('validation-changed',
                                       self._on_child__validation_changed,
@@ -722,7 +722,7 @@ class SlaveView(gobject.GObject):
             except TypeError:
                 raise AssertionError("%r does not have a validation-changed "
                                      "signal." % widget)
-            
+
         proxy = Proxy(self, model, widgets)
         self._proxies.append(proxy)
         return proxy
@@ -730,7 +730,7 @@ class SlaveView(gobject.GObject):
     #
     # Validation
     #
-    
+
     def _on_child__validation_changed(self, name, value):
         # Children of the view, eg slaves or widgets are connected to
         # this signal. When validation changes of a validatable child
@@ -738,7 +738,7 @@ class SlaveView(gobject.GObject):
         self._validation[name] = value
 
         self.check_and_notify_validity()
-        
+
     def _on_notebook_slave__validation_changed(self, slave, value, name,
                                                label):
         validation = self._notebook_validation[label]
@@ -747,7 +747,7 @@ class SlaveView(gobject.GObject):
         is_valid = True
         if False in validation.values():
             is_valid = False
-            
+
         if is_valid:
             color = color_black
         else:
@@ -757,7 +757,7 @@ class SlaveView(gobject.GObject):
         # state used for the pages which are not selected.
         label.modify_fg(gtk.STATE_ACTIVE, color)
         label.modify_fg(gtk.STATE_NORMAL, color)
-        
+
     def check_and_notify_validity(self, force=False):
         # Current view is only valid if we have no invalid children
         # their status are stored as values in the dictionary
@@ -778,7 +778,7 @@ class SlaveView(gobject.GObject):
 
     def force_validation(self):
         self.check_and_notify_validity(force=True)
-        
+
     def register_validate_function(self, function):
         """The signature of the validate function is:
 
@@ -797,7 +797,7 @@ type_register(SlaveView)
 
 class BaseView(SlaveView):
     """A view with a toplevel window."""
-    
+
     def __init__(self, toplevel=None, widgets=None, gladefile=None,
                  gladename=None, toplevel_name=None, domain=None,
                  delete_handler=None):
@@ -806,10 +806,10 @@ class BaseView(SlaveView):
 
         if not isinstance(self.toplevel, gtk.Window):
             raise TypeError("toplevel widget must be a Window "
-                            "(or inherit from it),\nfound `%s' %s" 
+                            "(or inherit from it),\nfound `%s' %s"
                             % (toplevel, self.toplevel))
         self.toplevel.set_name(self.__class__.__name__)
-        
+
         if delete_handler:
             id = self.toplevel.connect("delete-event", delete_handler)
             if not id:
@@ -819,10 +819,10 @@ class BaseView(SlaveView):
     def get_glade_adaptor(self):
         if not self.gladefile:
             return
-        
+
         return WidgetTree(self, self.gladefile, self.widgets,
                           self.gladename)
-    
+
     #
     # Hook for keypress handling
     #
@@ -830,7 +830,7 @@ class BaseView(SlaveView):
     def _attach_callbacks(self, controller):
         super(BaseView, self)._attach_callbacks(controller)
         self._setup_keypress_handler(controller.on_key_press)
-        
+
     def _setup_keypress_handler(self, keypress_handler):
         self.toplevel.connect_after("key_press_event", keypress_handler)
 
@@ -910,7 +910,7 @@ class BaseView(SlaveView):
 
     def quit_if_last(self, *args):
         quit_if_last(*args)
-        
+
     def hide_and_quit(self, *args):
         """Hides the current window and breaks the GTK+ event loop if this
         is the last window.
