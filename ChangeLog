@@ -1,5 +1,9 @@
 2006-01-25  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/proxies.py (Proxy.remove_widget, Proxy.add_widget): Add, to
+	be able to add and remove widgets dynamically. Based on patch
+	by Henrique Romano
+
 	* kiwi/ui/test/common.py (Base.get_object): New function, to avoid
 	accessing private members from subclasses.
 

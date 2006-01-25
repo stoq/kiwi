@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Christian Reis <kiko@async.com.br>
 #            Lorenzo Gil Sanchez <lgs@sicem.biz>
 #            Gustavo Rahal <gustavo@async.com.br>
@@ -29,6 +29,7 @@ to keep the state of a model object synchronized with a View.
 """
 
 import gobject
+import gtk
 
 from kiwi import ValueUnset
 from kiwi.accessors import kgetattr, ksetattr, clear_attr_cache
@@ -51,7 +52,7 @@ def unblock_widget(widget):
     connection_id = widget.get_data('content-changed-id')
     if connection_id:
         widget.handler_unblock(connection_id)
-    
+
 class Proxy:
     """ A Proxy is a class that 'attaches' an instance to an interface's
     widgets, and transparently manipulates that instance's attributes as
@@ -61,7 +62,7 @@ class Proxy:
     attached to the model by looking if it is a KiwiWidget and if it
     has the model-attribute set.
     """
-    
+
     def __init__(self, view, model=None, widgets=[]):
         """
         @param view:    view attched to the slave
@@ -80,37 +81,29 @@ class Proxy:
                 raise AttributeError("The widget %s was not found in the "
                                      "view %s" % (
                     widget_name, self._view.__class__.__name__))
-            
+
             self._setup_widget(widget_name, widget)
-            
-        self._initialize_widgets()
 
-    def _initialize_widgets(self):
-        """Update the contents of the widgets.
+    def _reset_widget(self, attribute, widget):
+        if self.model is None:
+            # if we have no model, leave value unset so we pick up
+            # the widget default below.
+            value = ValueUnset
+        else:
+            # if we have a model, grab its value to update the widgets
+            self._register_proxy_in_model(attribute)
+            value = kgetattr(self.model, attribute, ValueUnset)
 
-        This should be called after _setup_widgets.
-        """
-        for attribute, widget in self._model_attributes.items():
+        self.update(attribute, value, block=True)
 
-            if self.model is None:
-                # if we have no model, leave value unset so we pick up
-                # the widget default below.
-                value = ValueUnset
-            else:
-                # if we have a model, grab its value to update the widgets
-                self._register_proxy_in_model(attribute)
-                value = kgetattr(self.model, attribute, ValueUnset)
-                    
-            self.update(attribute, value, block=True)
+        # The initial value of the model is set, at this point
+        # do a read, it'll trigger a validation for widgets who
+        # supports it.
+        if not isinstance(widget, MixinSupportValidation):
+            return
 
-            # The initial value of the model is set, at this point
-            # do a read, it'll trigger a validation for widgets who
-            # supports it.
-            if not isinstance(widget, MixinSupportValidation):
-                continue
+        widget.validate(force=True)
 
-            widget.validate(force=True)
-            
     def _setup_widget(self, widget_name, widget):
         if not isinstance(widget, Mixin):
             raise ProxyError("The widget %s (%r), in view %s is not "
@@ -153,9 +146,7 @@ class Proxy:
                 old_widget.name, old_widget))
 
         model_attributes[attribute] = widget
-
-        # here we define the view that owns the widget
-        widget.owner = self._view
+        self._reset_widget(attribute, widget)
 
     def _on_widget__content_changed(self, widget, attribute, validate):
         """This is called as soon as the content of one of the widget
@@ -170,10 +161,10 @@ class Proxy:
             value = widget.validate()
         else:
             value = widget.read()
-        
+
         log('%s.%s = %r' % (self.model.__class__.__name__,
-                            attribute, value)) 
-        
+                            attribute, value))
+
         # only update the model if the data is correct
         if value is ValueUnset:
             return
@@ -186,8 +177,8 @@ class Proxy:
             model.unblock_proxy(self)
         else:
             ksetattr(model, attribute, value)
-            
-        # Call global update hook 
+
+        # Call global update hook
         self.proxy_updated(widget, attribute, value)
 
     def _register_proxy_in_model(self, attribute):
@@ -203,7 +194,7 @@ class Proxy:
                    "Persistent class, this problem occurs if you haven't "
                    "set __setstate__() up correctly.  __setstate__() "
                    "should call Model.__init__() (and "
-                   "Persistent.__setstate__() of course) to reinitialize "
+                   "Persistent.__setstate__() of course) to rereset "
                    "things properly.)")
             raise TypeError(msg % (model, self))
 
@@ -224,14 +215,14 @@ class Proxy:
 
     def update(self, attribute, value=ValueUnset, block=False):
         """ Generic frontend function to update the contentss of a widget based
-        on its model attribute name using the internal update functions. 
+        on its model attribute name using the internal update functions.
 
         @param attribute: the name of the attribute whose widget we wish to
           updated.  If accessing a radiobutton, specify its group
-          name. 
+          name.
         @param value: specifies the value to set in the widget. If
           unspecified, it defaults to the current model's value
-          (through an accessor, if it exists, or getattr). 
+          (through an accessor, if it exists, or getattr).
         @param block: defines if we are to block cascading proxy updates
           triggered by this update. You should use block if you are
           calling update on *the same attribute that is currently
@@ -262,11 +253,11 @@ class Proxy:
                                  "attached to the proxy %s. Valid "
                                  "attributes are: %s (you may have "
                                  "forgetten to add `:' to the name in "
-                                 "the widgets list)" 
+                                 "the widgets list)"
                                  % (attribute, self,
                                     self._model_attributes.keys()))
 
-        
+
         # The type of value should match the data-type property. The two
         # exceptions to this rule are ValueUnset and None
         if not (value is ValueUnset or value is None):
@@ -279,7 +270,7 @@ class Proxy:
                     attribute, self.model,
                     data_type.__name__,
                     value_type.__name__))
-        
+
         if block:
             block_widget(widget)
             self._view.handler_block(widget)
@@ -297,7 +288,7 @@ class Proxy:
         @param new_model:
         @param relax_type:
         """
-        
+
         if self.model is not None:
             if (not relax_type and
                 type(new_model) != type(self.model) and
@@ -313,8 +304,37 @@ class Proxy:
 
         # unregister previous proxy
         self._unregister_proxy_in_model()
-        
+
         self.model = new_model
 
-        self._initialize_widgets()
-    
+        for attribute, widget in self._model_attributes.items():
+            self._reset_widget(attribute, widget)
+
+    def add_widget(self, name, widget):
+        """
+        Adds a new widget to the proxy
+
+        @param name: name of the widget
+        @param widget: widget, must be a gtk.Widget subclass
+        """
+        if name in self._model_attributes:
+            raise TypeError("there is already a widget called %s" % name)
+
+        if not isinstance(widget, gtk.Widget):
+            raise TypeError("%r must be a gtk.Widget subclass" % widget)
+
+        self._setup_widget(name, widget)
+
+    def remove_widget(self, name):
+        """
+        Removes a widget from the proxy
+
+        @param name: the name of the widget to remove
+        """
+        if not name in self._model_attributes:
+            raise TypeError("there is no widget called %s" % name)
+
+        widget = self._model_attributes.pop(name)
+        if isinstance(widget, MixinSupportValidation):
+            connection_id = widget.get_data('content-changed-id')
+            widget.disconnect(connection_id)
