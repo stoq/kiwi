@@ -322,7 +322,7 @@ class KiwiComboBoxChangedEvent(SignalEvent):
     signal_name = 'changed'
     object_type = ComboProxyMixin
     def __init__(self, combo, name, args):
-        SignalEvent.__init__(self, combo. name, args)
+        SignalEvent.__init__(self, combo, name, args)
         self.label = combo.get_selected_label()
 
     def serialize(self):
