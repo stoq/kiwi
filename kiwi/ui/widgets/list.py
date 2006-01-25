@@ -1201,7 +1201,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
             return False
 
         # Remove any references to this path
-        self._clear_cache_for_iter(iter)
+        self._clear_cache_for_iter(treeiter)
 
         # All references to the iter gone, now it can be removed
         self._model.remove(treeiter)
