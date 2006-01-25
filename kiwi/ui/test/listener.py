@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Johan Dahlin <jdahlin@async.com.br
 #
 
@@ -47,7 +47,7 @@ _events = []
 def register_event_type(event_type):
     """
     Add an event type to a list of event types.
-    
+
     @param event_type: a L{Event} subclass
     """
     if event_type in _events:
@@ -83,18 +83,18 @@ class Event(object):
             name = object.get_name()
         self.name = name
         self.toplevel_name = self.get_toplevel(object).get_name()
-        
+
     # Override in subclass
     def get_toplevel(self, widget):
         """
         This fetches the toplevel widget for a specific object,
         by default it assumes it's a wiget subclass and calls
         get_toplevel() for the widget
-        
+
         Override this in a subclass.
         """
         return widget.get_toplevel()
-        
+
     def serialize(self):
         """
         Serialize the widget, write the code here which is
@@ -108,13 +108,13 @@ class Event(object):
         Override this in a subclass.
         """
         pass
-    
+
 class SignalEvent(Event):
     """
     A SignalEvent is an L{Event} which is tied to a GObject signal,
     L{Listener} uses this to automatically attach itself to a signal
     at which point this object will be instantiated.
-    
+
     @cvar signal_name: signal to listen to
     """
     signal_name = None
@@ -126,7 +126,7 @@ class SignalEvent(Event):
         """
         Event.__init__(self, object, name)
         self.args = args
-        
+
     def connect(cls, object, signal_name, cb):
         """
         Calls connect on I{object} for signal I{signal_name}.
@@ -143,13 +143,13 @@ class WindowDeleteEvent(SignalEvent):
     This event represents a user click on the close button in the
     window manager.
     """
-    
+
     signal_name = 'delete-event'
     object_type = gtk.Window
 
     def serialize(self):
         return 'delete_window("%s")' % self.name
-    
+
 register_event_type(WindowDeleteEvent)
 
 class MenuItemActivateEvent(SignalEvent):
@@ -159,7 +159,7 @@ class MenuItemActivateEvent(SignalEvent):
     """
     signal_name = 'activate'
     object_type = gtk.MenuItem
-        
+
     def serialize(self):
         return '%s.activate()' % self.name
 register_event_type(MenuItemActivateEvent)
@@ -174,7 +174,7 @@ class ImageMenuItemButtonReleaseEvent(SignalEvent):
     """
     signal_name = 'button-release-event'
     object_type = gtk.ImageMenuItem
-    
+
     def get_toplevel(self, widget):
         parent = widget
         while True:
@@ -184,7 +184,7 @@ class ImageMenuItemButtonReleaseEvent(SignalEvent):
             parent = widget
         toplevel = parent.get_toplevel()
         return toplevel
-    
+
     def serialize(self):
         return '%s.activate()' % self.name
 register_event_type(ImageMenuItemButtonReleaseEvent)
@@ -196,7 +196,7 @@ class ToolButtonReleaseEvent(SignalEvent):
     """
     signal_name = 'button-release-event'
     object_type = gtk.Button
-    
+
     def serialize(self):
         return '%s.activate()' % self.name
 register_event_type(ToolButtonReleaseEvent)
@@ -223,7 +223,7 @@ class EntryActivateEvent(SignalEvent):
     This event represents an activate event for a GtkEntry, eg when
     the user presses enter in a GtkEntry.
     """
-    
+
     signal_name = 'activate'
     object_type = gtk.Entry
 
@@ -244,7 +244,7 @@ class ButtonClickedEvent(SignalEvent):
     def serialize(self):
         return '%s.clicked()' % self.name
 register_event_type(ButtonClickedEvent)
-    
+
 # Kiwi widget support
 class KiwiListSelectionChanged(SignalEvent):
     """
@@ -259,10 +259,10 @@ class KiwiListSelectionChanged(SignalEvent):
         SignalEvent.__init__(self, klist, name=klist.get_name(),
                              args=args)
         self.rows = self._get_rows()
-        
+
     def _get_rows(self):
         selection = self._klist.get_treeview().get_selection()
-        
+
         if selection.get_mode() == gtk.SELECTION_MULTIPLE:
             # get_selected_rows() returns a list of paths
             iters = selection.get_selected_rows()[1]
@@ -276,15 +276,15 @@ class KiwiListSelectionChanged(SignalEvent):
                 return [model.get_string_from_iter(iter)]
 
         return []
-                
+
     def connect(cls, orig, signal_name, cb):
         object = orig.get_treeview().get_selection()
         object.connect(signal_name, cb, cls, orig)
     connect = classmethod(connect)
-    
+
     def get_toplevel(self, widget):
         return self._klist.get_toplevel()
-    
+
     def serialize(self):
         return '%s.select_paths(%s)' % (self.name, self.rows)
 register_event_type(KiwiListSelectionChanged)
@@ -308,7 +308,7 @@ class KiwiListDoubleClick(SignalEvent):
         object = orig.get_treeview()
         object.connect(signal_name, cb, cls, orig)
     connect = classmethod(connect)
-    
+
     def serialize(self):
         return '%s.double_click(%s)' % (self.name, self.row)
 register_event_type(KiwiListDoubleClick)
@@ -324,7 +324,7 @@ class KiwiComboBoxChangedEvent(SignalEvent):
     def __init__(self, combo, name, args):
         SignalEvent.__init__(self, combo. name, args)
         self.label = combo.get_selected_label()
-        
+
     def serialize(self):
         return '%s.select_item_by_label("%s")' % (self.name, self.label)
 
@@ -338,7 +338,7 @@ class Listener(Base):
     a script which can be played back with help of
     L{kiwi.ui.test.player.Player}.
     """
-    
+
     def __init__(self, filename, args):
         """
         @param filename: name of the script
@@ -350,7 +350,7 @@ class Listener(Base):
         self._events = []
         self._listened_objects = []
         self._event_types = self._configure_event_types()
-        
+
         atexit.register(self.save)
 
     def _configure_event_types(self):
@@ -360,9 +360,9 @@ class Listener(Base):
                 raise AssertionError
             elist = event_types.setdefault(event_type.object_type, [])
             elist.append(event_type)
-            
+
         return event_types
-    
+
     def _add_event(self, event):
         self._events.append(event)
 
@@ -397,7 +397,7 @@ class Listener(Base):
         if gobj in self._listened_objects:
             return
         self._listened_objects.append(gobj)
-            
+
         for object_type, event_types in self._event_types.items():
             if not isinstance(gobj, object_type):
                 continue
@@ -413,7 +413,7 @@ class Listener(Base):
                 elif event_type == ButtonClickedEvent:
                     if isinstance(gobj.get_parent(), gtk.ToolButton):
                         continue
-                    
+
                 if issubclass(event_type, SignalEvent):
                     self._listen_event(gobj, event_type)
 
@@ -424,7 +424,7 @@ class Listener(Base):
         This should be called when the tracked program has
         finished executing.
         """
-        
+
         try:
             fd = open(self._filename, 'w')
         except IOError:
@@ -433,9 +433,9 @@ class Listener(Base):
                  "\n"
                  "player = Player(%s)\n"
                  "app = player.get_app()\n" % repr(self._args))
-        
+
         windows = {}
-        
+
         for event in self._events:
             toplevel = event.toplevel_name
             if not toplevel in windows:
