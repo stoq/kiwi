@@ -1201,15 +1201,19 @@ class List(PropertyObject, gtk.ScrolledWindow):
             return False
 
         # Remove any references to this path
-        path = self._model[treeiter].path[0]
-        for cache in self._cell_data_caches.values():
-            if path in cache:
-                del cache[path]
+        self._clear_cache_for_iter(iter)
 
         # All references to the iter gone, now it can be removed
         self._model.remove(treeiter)
 
         return True
+
+    def _clear_cache_for_iter(self, treeiter):
+        # Not as inefficent as it looks
+        path = self._model[treeiter].path[0]
+        for cache in self._cell_data_caches.values():
+            if path in cache:
+                del cache[path]
 
     def remove(self, instance):
         """Remove an instance from the list.
@@ -1228,6 +1232,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
         treeiter = self._iters[objid]
+        self._clear_cache_for_iter(treeiter)
         self._model.row_changed(self._model[treeiter].path, treeiter)
 
     def refresh(self):
@@ -1423,7 +1428,12 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
         @param rowno: integer
         """
-        self._treeview.row_activated(rowno, self._treeview.get_columns()[0])
+        columns = self._treeview.get_columns()
+        if not columns:
+            raise AssertionError(
+                "%s has no columns" % self.get_name())
+
+        self._treeview.row_activated(rowno, columns[0])
 
     # Backwards compat
     def add_instance(self, *args, **kwargs):
