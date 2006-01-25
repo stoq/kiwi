@@ -7,19 +7,19 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
-#         
+#
 
 """Distutils extensions and utilities"""
 
@@ -35,7 +35,7 @@ class TemplateInstallLib(install_lib):
     resources = {}
     global_resources = {}
     name = None
-    
+
     def generate_template(self, resources, global_resources):
         filename = os.path.join(self.install_dir, self.name,
                                 '__installed__.py')
@@ -47,7 +47,7 @@ class TemplateInstallLib(install_lib):
         fp.close()
 
         return filename
-    
+
     def _write_dictionary(self, fp, name, dictionary):
         fp.write('%s = {}\n' % name)
         for key, value in dictionary.items():
@@ -58,7 +58,7 @@ class TemplateInstallLib(install_lib):
     def install(self):
         if not self.name:
             raise TypeError("%r is missing name" % self)
-        
+
         install = self.distribution.get_command_obj('install')
         self._prefix = install.prefix
         self._datadir = os.path.join(self._prefix, 'share', self.name)
@@ -79,14 +79,14 @@ def get_site_packages_dir(*dirs):
 
     where files is a list of files to be installed in
     a directory called foo created in your site-packages directory
-    
+
     @param dirs: directory names to be appended
     """
 
     libdir = get_python_lib(plat_specific=False,
                             standard_lib=True, prefix='')
     return os.path.join(libdir, 'site-packages', *dirs)
-                   
+
 def listfiles(*dirs):
     dir, pattern = os.path.split(os.path.join(*dirs))
     return [os.path.join(dir, filename)
@@ -97,7 +97,7 @@ def compile_po_files(appname, dirname='locale'):
     if os.system('msgfmt 2> /dev/null') != 256:
         warn('msgfmt is missing, not installing translations')
         return []
-        
+
     data_files = []
     for po in listfiles('po', '*.po'):
         lang = os.path.basename(po[:-3])
@@ -119,7 +119,7 @@ def compile_po_files(appname, dirname='locale'):
 
 def listpackages(root):
     "Recursivly list all packages in directory root"
-    
+
     packages = []
     if not os.path.isdir(root):
         raise ValueError("root must be a directory")
