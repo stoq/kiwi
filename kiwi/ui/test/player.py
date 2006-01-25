@@ -115,8 +115,11 @@ class DictWrapper(object):
             time.sleep(0.1)
 
 class App(DictWrapper):
+    def __init__(self, app):
+        self._app = app
+
     def __getattr__(self, attr):
-        return DictWrapper(self._dict[attr], 'widget')
+        return DictWrapper(self._app.get_object(attr), 'widget')
 
 class ApplicationThread(threading.Thread):
     """
@@ -172,7 +175,7 @@ class Player(Base):
         self._appthread = ApplicationThread(args)
         self._appthread.start()
 
-        self._app = App(self._objects, name='window')
+        self._app = App(self)
 
     def get_app(self):
         """
@@ -201,7 +204,7 @@ class Player(Base):
         start_time = time.time()
         while True:
             if name in self._objects:
-                window = self._objects[name]
+                window = self.get_object(name)
                 time.sleep(WINDOW_WAIT)
                 return window
 
@@ -215,6 +218,9 @@ class Player(Base):
         """
 
         log('deleting window %s' % window_name)
+
+        if window_name in self._objects:
+            del self._objects[window_name]
 
         start_time = time.time()
         while True:

@@ -61,6 +61,13 @@ class Base(object):
 
             gtype = gobject.type_parent(gtype)
 
+    def get_object(self, attr):
+        """
+        @param attr: name of toplevel object to get
+        @returns: toplevel object
+        """
+        return self._objects[attr]
+
     # Override in subclass
 
     def window_added(self, window):
