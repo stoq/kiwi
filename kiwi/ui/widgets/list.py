@@ -1268,13 +1268,15 @@ class List(PropertyObject, gtk.ScrolledWindow):
     def select_paths(self, paths):
         """
         Selects a number of rows corresponding to paths
-        @param paths:
+
+        @param paths: rows to be selected
         """
 
         selection = self._treeview.get_selection()
         if selection.get_mode() == gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed")
 
+        selection.unselect_all()
         for path in paths:
             selection.select_path(path)
 
