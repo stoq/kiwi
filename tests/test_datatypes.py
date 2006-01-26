@@ -31,7 +31,7 @@ class DataTypesTest(unittest.TestCase):
             print 'skipping es_ES, locale not available'
         except locale.Error:
             return
-        
+
         birthdate = date(1979, 2, 12)
         # in the spanish locale the format of a date is %d/%m/%y
         self.assertEqual(date_converter.from_string("12/2/79"), birthdate)
@@ -56,14 +56,14 @@ class DataTypesTest(unittest.TestCase):
         # february only have 28 days
         self.assertRaises(ValidationError,
                           date_converter.from_string, "30-02-2005")
-        
+
     def testdate2str_esES(self):
         try:
             locale.setlocale(locale.LC_TIME, 'es_ES')
         except locale.Error:
             print 'skipping es_ES, locale not available'
             return
-        
+
         self.assertEqual(date_converter.as_string(date(1979, 2, 12)),
                          "12/02/79")
 
@@ -83,7 +83,7 @@ class DataTypesTest(unittest.TestCase):
         except locale.Error:
             print 'skipping pt_BR, locale not available'
             return
-        
+
         self.assertEqual(currency(100).format(), 'R$100')
         self.assertEqual(currency(123.45).format(), 'R$123,45')
         self.assertEqual(currency(12345).format(), 'R$12.345')
@@ -101,6 +101,7 @@ class DataTypesTest(unittest.TestCase):
         self.assertEqual(currency(-100).format(), '$-100')
         self.assertEqual(currency(1).format(True), '$1')
         self.assertEqual(currency(1).format(False), '1')
+        self.assertEqual(currency(0).format(True), '$0')
 
 if __name__ == "__main__":
     unittest.main()
