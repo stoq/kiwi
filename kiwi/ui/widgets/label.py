@@ -102,7 +102,7 @@ class Label(PropertyObject, gtk.Label, WidgetMixin):
           - True: enable Italic attribute
           - False: disable Italic attribute
         """
-        self._set_text_attribute("weight", "italic", value)
+        self._set_text_attribute("style", "italic", value)
 
     def set_underline(self, value):
         """ Enable or disable underlined text
