@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Lorenzo Gil Sanchez <lgs@sicem.biz>
 #            Gustavo Rahal <gustavo@async.com.br>
 #            Johan Dahlin <jdahlin@async.com.br>
@@ -57,7 +57,7 @@ class ConverterRegistry:
             return self._converters[converter_type]
         except KeyError:
             raise KeyError(converter_type)
-        
+
     def check_supported(self, data_type):
         value = None
         for t in self._converters.values():
@@ -66,7 +66,7 @@ class ConverterRegistry:
                 break
 
         assert not isinstance(value, str), value
-        
+
         if not value:
             type_names = [t.type.__name__ for t in self._converters.values()]
             raise TypeError("%s is not supported. Supported types are: %s"
@@ -88,9 +88,9 @@ class ConverterRegistry:
         if not isinstance(value, c.type):
             raise TypeError('data: %s must be of %r not %r' % (
                 value, c.type, type(value)))
-        
+
         return c.as_string(value, format=format)
-            
+
     def from_string(self, converter_type, value):
         """
         Convert from a string
@@ -117,29 +117,29 @@ class BaseConverter(object):
     @cvar type:
     """
     type = None
-    
+
     def get_compare_function(self):
         """
         @returns:
         """
         return cmp
-    
+
     def as_string(self, value, format):
         """
         @param value:
         @param format:
         @returns:
         """
-        
+
     def from_string(self, value):
         """
         @param value:
         @returns:
         """
-        
+
 class _StringConverter(BaseConverter):
     type = str
-    
+
     def as_string(self, value, format=None):
         if format is None:
             format = '%s'
@@ -147,7 +147,7 @@ class _StringConverter(BaseConverter):
 
     def from_string(self, value):
         return str(value)
-    
+
 converter.add(_StringConverter)
 
 class _IntConverter(BaseConverter):
@@ -163,7 +163,7 @@ class _IntConverter(BaseConverter):
         "Convert a string to an integer"
         if value == '':
             return ValueUnset
-        
+
         conv = locale.localeconv()
         thousands_sep = conv["thousands_sep"]
         # Remove all thousand separators, so int() won't barf at us
@@ -175,7 +175,7 @@ class _IntConverter(BaseConverter):
         except ValueError:
             raise ValidationError(
                 "%s could not be converted to an integer" % value)
-        
+
 converter.add(_IntConverter)
 
 class _LongConverter(_IntConverter):
@@ -192,7 +192,7 @@ class _BoolConverter(BaseConverter):
         "Convert a string to a boolean"
         if value == '':
             return ValueUnset
-        
+
         if value.upper() in ('TRUE', '1'):
             return True
         elif value.upper() in ('FALSE', '0'):
@@ -204,7 +204,7 @@ converter.add(_BoolConverter)
 
 class _FloatConverter(BaseConverter):
     type = float
-    
+
     def _filter_locale(self, value):
         """
         Removes the locale specific data from the value string.
@@ -212,7 +212,7 @@ class _FloatConverter(BaseConverter):
         convert the decimal point.
         The returned value of this function can safely be passed to float()
         """
-        
+
         conv = locale.localeconv()
 
         # Check so we only have one decimal point
@@ -229,7 +229,7 @@ class _FloatConverter(BaseConverter):
         thousands_sep = conv["thousands_sep"]
         if not thousands_sep:
             return value
-        
+
         # Check so we don't have any thousand separators to the right
         # of the decimal point
         th_sep_count = value.count(thousands_sep)
@@ -241,20 +241,20 @@ class _FloatConverter(BaseConverter):
             check_value = value[:decimal_point_pos]
         else:
             check_value = value
-            
+
         # Verify so the thousand separators are placed properly
         # TODO: Use conv['grouping'] for locales where it's not 3
         parts = check_value.split(thousands_sep)
-        
+
         # First part is a special case, It can be 1, 2 or 3
         if 3 > len(parts[0]) < 1:
-            raise ValidationError("Inproperly placed thousands separator") 
+            raise ValidationError("Inproperly placed thousands separator")
 
         # Middle parts should have a length of 3
         for part in parts[1:]:
             if len(part) != 3:
                 raise ValidationError("Inproperly placed thousand "
-                                      "separators") 
+                                      "separators")
 
         # Remove all thousand separators
         return value.replace(thousands_sep, '')
@@ -270,7 +270,7 @@ class _FloatConverter(BaseConverter):
 
         if value == '':
             return ValueUnset
-        
+
         value = self._filter_locale(value)
 
         try:
@@ -279,7 +279,7 @@ class _FloatConverter(BaseConverter):
             raise ValidationError("This field requires a number")
 
         return retval
-    
+
 converter.add(_FloatConverter)
 
 class _BaseDateTimeConverter(BaseConverter):
@@ -294,10 +294,10 @@ class _BaseDateTimeConverter(BaseConverter):
         # This is a method and not a class variable since it does not
         # exist on all supported platforms, eg win32
         raise NotImplementedError
-    
+
     def from_dateinfo(self, dateinfo):
         raise NotImplementedError
-    
+
     def get_compare_function(self):
         # Provide a special comparison function that allows None to be
         # used, which the __cmp__/__eq__ methods for datatime objects doesn't
@@ -317,27 +317,27 @@ class _BaseDateTimeConverter(BaseConverter):
             return self.date_format
         else:
             return locale.nl_langinfo(self.get_lang_constant())
-    
+
     def as_string(self, value, format=None):
         "Convert a date to a string"
         if format is None:
             format = self._get_format()
-            
+
         if value is None:
             return ''
-        
+
         return value.strftime(format)
-    
+
     def from_string(self, value):
         "Convert a string to a date"
 
         if value == "":
             return None
-        
+
         # We're only supporting strptime values for now,
         # perhaps we should add macros, to be able to write
         # yyyy instead of %Y
-        
+
         format = self._get_format()
         try:
             # time.strptime (python 2.4) does not support %r
@@ -366,7 +366,7 @@ class _DateTimeConverter(_BaseDateTimeConverter):
     date_format = '%c'
     def get_lang_constant(self):
         return locale.D_T_FMT
-    
+
     def from_dateinfo(self, dateinfo):
         # year, month, day, hour, minute, second
         return datetime.datetime(*dateinfo[:6])
@@ -380,12 +380,12 @@ class _DateConverter(_BaseDateTimeConverter):
 
     def from_dateinfo(self, dateinfo):
         # year, month, day
-        return datetime.date(*dateinfo[:3]) 
+        return datetime.date(*dateinfo[:3])
 converter.add(_DateConverter)
 
 class _ObjectConverter(BaseConverter):
     type = object
-    
+
     as_string = None
     from_string = None
 converter.add(_ObjectConverter)
@@ -396,7 +396,7 @@ class currency(float):
     the framework
     """
     _converter = converter.get_converter(float)
-    
+
     def __new__(cls, value):
         """
         @param value: value to convert
@@ -415,7 +415,7 @@ class currency(float):
 
     def format(self, symbol=True, precision=None):
         value = float(self)
-        
+
         conv = locale.localeconv()
 
         # Grouping (eg thousand separator) of integer part
@@ -474,7 +474,7 @@ class currency(float):
             mon_decimal_point = conv.get('mon_decimal_point', '.')
             currency += mon_decimal_point + dec_part
 
-        # If requested include currency symbol 
+        # If requested include currency symbol
         currency_symbol = conv.get('currency_symbol', '')
         if currency_symbol and symbol:
             if value > 0:
@@ -504,18 +504,18 @@ class currency(float):
 
     def __repr__(self):
         return '<currency %s> ' % self.format()
-    
+
 class _CurrencyConverter(BaseConverter):
     type = currency
 
     def __init__(self):
         self.symbol = True
         self.precision = 2
-    
+
     def as_string(self, value, format=None):
         if format:
             raise TypeError("format is not supported for currency")
-        
+
         if not isinstance(value, currency):
             try:
                 value = currency(value)
@@ -533,7 +533,7 @@ class _CurrencyConverter(BaseConverter):
         except ValueError:
             raise ValidationError(
                 "%s can not be converted to a currency" % value)
-        
+
 converter.add(_CurrencyConverter)
 
 def lformat(format, value):
@@ -544,11 +544,11 @@ def format_price(value, symbol=True, precision=None):
     """
     Formats a price according to the current locales monetary
     settings
-    
+
     @param value: number
     @param symbol: whether to include the currency symbol
     """
-    
+
     return currency(value).format(symbol, precision)
 
 if __name__ == '__main__':
