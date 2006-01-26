@@ -513,9 +513,6 @@ class _CurrencyConverter(BaseConverter):
         self.precision = 2
 
     def as_string(self, value, format=None):
-        if format:
-            raise TypeError("format is not supported for currency")
-
         if not isinstance(value, currency):
             try:
                 value = currency(value)
