@@ -76,6 +76,7 @@ class Environment:
 
     def add_resource(self, resource, path):
         path = os.path.join(self._root, path)
+
         if not os.path.isdir(path):
             raise EnvironmentError("path %s must be a directory" % path)
 
@@ -101,6 +102,15 @@ class Environment:
 
         raise EnvironmentError("Could not find %s resource: %s" % (
             resource, name))
+
+    def _get_epydoc(self):
+        if sys.argv == ['IGNORE']:
+            return True
+        elif os.path.basename(sys.argv[0]) == 'epyrun':
+            return True
+        return False
+
+    epydoc = property(_get_epydoc)
 
 class Library(Environment):
     """A Library is a local environment object, it's a subclass of the
@@ -225,10 +235,26 @@ class Library(Environment):
             self.add_global_resource(resource, path)
 
 class Application(Library):
-    """An Application extends a library. The additions are:
-    - a run() method, used to run the application
-    - path, a reference to the callable object to run, defaults to 'main'
+    """Application extends a L{library}. It's meant to be used
+    by applications
+
+    Libraries are usually instantiated in __init__.py in the topmost package
+    in your library, an example usage is kiwi itself which does:
+
+    >>> from kiwi.environ import Application
+    >>> app = Application('gnomovision')
+    >>> if app.uninstalled:
+    >>>     app.add_global_resource('glade', 'glade')
+    >>>     app.add_global_resource('pixmap', 'pixmaps')
+
+    If you want to do translations, you also need to do the following:
+
+    >>> app.enable_translation()
+
+    @see: L{Library} for more information on how to integrate it with
+      the standard distutils configuration.
     """
+
     def __init__(self, name, root='..', path='main'):
         global app
         if app is not None:
