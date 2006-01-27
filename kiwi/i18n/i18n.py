@@ -90,8 +90,11 @@ def update_po(root, package):
     for lang in list_languages(root):
         new = lang + '.new.po'
         cmd = ('intltool-update --dist --gettext-package=%s '
-               '-o %s %s > /dev/null 2>&1' % (package, new, lang))
+               '-o %s %s > /dev/null' % (package, new, lang))
         os.system(cmd)
+        if not os.path.exists(new):
+            raise SystemExit("ERROR: intltool failed, see above")
+
         os.rename(new, lang + '.po')
 
     os.chdir(old)
