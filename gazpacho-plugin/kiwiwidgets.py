@@ -26,7 +26,7 @@ widget_prefix = 'Kiwi'
 
 # pyflakes
 assert kiwi
-                  
+
 class ColumnDefinitionsAdaptor(object):
     def __init__(self):
         self._editor = ListColumnDefinitionsEditor()
@@ -156,12 +156,12 @@ class ListColumnDefinitionsEditor(object):
         cd = self.gwidget.get_glade_property('column-definitions').value
         if not cd:
             return
-        
+
         for col in cd.split('^'):
             (attr, title, data_type,
              visible, justify, tooltip,
              format, width, sorted, order) = col.split('|')
-            
+
             visible = get_bool_from_string_with_default(visible, True)
             width = int(width)
             sorted = get_bool_from_string_with_default(sorted, False)
@@ -186,12 +186,12 @@ class ListColumnDefinitionsEditor(object):
         model, selected_iter = self.treeview.get_selection().get_selected()
         if not selected_iter:
             return
-        
+
         path = self.model.get_path(selected_iter)
         prev_iter = self.model.get_iter(((path[0] - 1)))
         if not prev_iter:
             return
-        
+
         model.swap(prev_iter, selected_iter)
         self._update_proxy()
         self._update_buttons()
@@ -200,11 +200,11 @@ class ListColumnDefinitionsEditor(object):
         model, selected_iter = self.treeview.get_selection().get_selected()
         if not selected_iter:
             return
-        
+
         next_iter = model.iter_next(selected_iter)
         if not next_iter:
             return
-        
+
         model.swap(selected_iter, next_iter)
         self._update_proxy()
         self._update_buttons()
@@ -241,7 +241,7 @@ class ListColumnDefinitionsEditor(object):
             self.down.set_sensitive(False)
             self.up.set_sensitive(False)
             return
-        
+
         self.remove.set_sensitive(True)
         path = model.get_path(selected_iter)[0]
         size = len(model)
@@ -249,12 +249,12 @@ class ListColumnDefinitionsEditor(object):
             self.up.set_sensitive(False)
             if size > 1:
                 self.down.set_sensitive(True)
-                
+
         if path == size - 1:
             self.down.set_sensitive(False)
             if size > 1:
                 self.up.set_sensitive(True)
-                
+
         if path > 0 and path < (size - 1):
             self.up.set_sensitive(True)
             self.down.set_sensitive(True)
