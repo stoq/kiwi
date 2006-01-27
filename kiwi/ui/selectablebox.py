@@ -61,7 +61,43 @@ class SelectableBox(object):
         if old_selected != widget:
             self.queue_draw()
 
-    def create_window(self):
+    def pack_start(self, child, expand=True, fill=True, padding=0):
+        """
+        Identical to gtk.Box.pack_start
+        """
+        super(SelectableBox, self).pack_start(child, expand=expand,
+                                              fill=fill, padding=padding)
+        self._child_added(child)
+
+    def pack_end(self, child, expand=True, fill=True, padding=0):
+        """
+        Identical to gtk.Box.pack_end
+        """
+        super(SelectableBox, self).pack_end(child, expand=expand,
+                                            fill=fill, padding=padding)
+        self._child_added(child)
+
+    def add(self, child):
+        """
+        Identical to gtk.Container.add
+        """
+        super(SelectableBox, self).add(child)
+        self._child_added(child)
+
+    def update_selection(self):
+        selected = self._selected
+        if not selected:
+            return
+
+        border = self._selection_width
+        x, y, w, h = selected.allocation
+        self.window.draw_rectangle(self._draw_gc, False,
+                                   x - (border / 2), y - (border / 2),
+                                   w + border, h + border)
+
+    # GtkWidget
+
+    def do_realize(self):
         assert not (self.flags() & gtk.NO_WINDOW)
         self.set_flags(self.flags() | gtk.REALIZED)
         self.window = gdk.Window(self.get_parent_window(),
@@ -81,7 +117,14 @@ class SelectableBox(object):
                                line_style=gdk.SOLID,
                                foreground=self.style.bg[gtk.STATE_SELECTED])
 
-    def get_child_at_pos(self, x, y):
+    def do_button_press_event(self, event):
+        selected = self._get_child_at_pos(int(event.x), int(event.y))
+        if selected:
+            self.set_selected(selected)
+
+    # Private
+
+    def _get_child_at_pos(self, x, y):
         """
         @param x: x coordinate
         @type x: integer
@@ -100,44 +143,9 @@ class SelectableBox(object):
                 child.flags() & (gtk.MAPPED | gtk.VISIBLE)):
                 return child
 
-    def update_selection(self):
-        selected = self._selected
-        if not selected:
-            return
-
-        border = self._selection_width
-        x, y, w, h = selected.allocation
-        self.window.draw_rectangle(self._draw_gc, False,
-                                   x - (border / 2), y - (border / 2),
-                                   w + border, h + border)
-
-    def do_realize(self):
-        self.create_window()
-
-    def do_button_press_event(self, event):
-        selected = self.get_child_at_pos(int(event.x), int(event.y))
-        if selected:
-            self.set_selected(selected)
-
-    def pack_start(self, child, expand=True, fill=True, padding=0):
-        super(SelectableBox, self).pack_start(child, expand=expand,
-                                              fill=fill, padding=padding)
-        self.child_added(child)
-
-    def pack_end(self, child, expand=True, fill=True, padding=0):
-        super(SelectableBox, self).pack_end(child, expand=expand,
-                                            fill=fill, padding=padding)
-        self.child_added(child)
-
-    def add(self, child):
-        super(SelectableBox, self).add(child)
-        self.child_added(child)
-
-    def _on_child_button_press_event(self, child, event):
-        self.set_selected(child)
-
-    def child_added(self, child):
-        child.connect('button-press-event', self._on_child_button_press_event)
+    def _child_added(self, child):
+        child.connect('button-press-event',
+                      lambda child, e: self.set_selected(child))
 
 class SelectableHBox(SelectableBox, gtk.HBox):
     __gtype_name__ = 'SelectableHBox'
