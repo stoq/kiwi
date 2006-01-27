@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Adriano Monteiro <adriano@globalret.com.br>
 #            Johan Dahlin     <jdahlin@async.com.br>
 ##
@@ -36,29 +36,29 @@ class Formatter(logging.Formatter):
         filename = os.path.basename(frame.f_code.co_filename)
         record.msg = '%s:%d %s' % (filename, frame.f_lineno, record.msg)
         return logging.Formatter.format(self, record)
-    
+
 class Logger(logging.Logger):
     log_domain = 'default'
     def __init__(self, name=None, level=logging.NOTSET):
         """Initializes Log module, creating log handler and defining log
         level. level attribute is not mandatory. It defines from which level
         messages should be logged. Logs with lower level are ignored.
-        
+
         logging default levels table:
-        
-        Level            
-          - logging.NOTSET   
-          - logging.DEBUG    
-          - logging.INFO     
-          - logging.WARNING  
-          - logging.ERROR    
-          - logging.CRITICAL 
+
+        Level
+          - logging.NOTSET
+          - logging.DEBUG
+          - logging.INFO
+          - logging.WARNING
+          - logging.ERROR
+          - logging.CRITICAL
         """
         global _log_level
         logging.Logger.__init__(self, name or Logger.log_name, _log_level)
-        
+
         stream_handler = logging.StreamHandler(sys.stdout)
-            
+
         # Formater class define a format for the log messages been
         # logged with this handler
         # The following format string
