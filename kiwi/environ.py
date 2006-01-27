@@ -196,7 +196,7 @@ class Library(Environment):
 
         # Load installed
         try:
-            module = __import__(name + '.__installed__', g, l)
+            module = __import__(name + '.__installed__', g, l, [name])
         except ImportError:
             uninstalled = True
         else:
