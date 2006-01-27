@@ -485,7 +485,6 @@ class List(PropertyObject, gtk.ScrolledWindow):
         # Set selection mode last to avoid spurious events
         selection = self._treeview.get_selection()
         selection.connect("changed", self._on_selection__changed)
-        selection.set_mode(mode)
 
         # Select the first item if no items are selected
         if mode != gtk.SELECTION_NONE and instance_list:
@@ -493,6 +492,8 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
         # Depends on treeview and selection being set up
         PropertyObject.__init__(self)
+
+        self.set_selection_mode(mode)
 
     # Python list object implementation
     # These methods makes the kiwi list behave more or less

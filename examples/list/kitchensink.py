@@ -69,7 +69,7 @@ win.connect('destroy', gtk.main_quit)
 vbox = gtk.VBox()
 win.add(vbox)
 
-l = List(columns)
+l = List(columns, mode=gtk.SELECTION_MULTIPLE)
 l.extend(data)
 l.append(Person('Nando', 29+len(l), 'Santos'))
 
