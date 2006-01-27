@@ -213,6 +213,18 @@ class Proxy:
         @param value:
         """
 
+    def update_many(self, attributes, value=ValueUnset, block=False):
+        """
+        Like L{update} but takes a sequence of attributes
+
+        @param: attribute: sequence of attributes to update
+        @param: see L{update}
+        @param: see L{update}
+        """
+
+        for attribute in attributes:
+            self.update(attribute, value, block)
+
     def update(self, attribute, value=ValueUnset, block=False):
         """ Generic frontend function to update the contentss of a widget based
         on its model attribute name using the internal update functions.
