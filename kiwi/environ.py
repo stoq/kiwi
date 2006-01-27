@@ -7,19 +7,19 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
-#         
+#
 
 """Environment helpers: path mangling and resource management"""
 
@@ -51,7 +51,7 @@ class Environment:
     def __init__(self, root='.'):
         self._resources = {}
         self._root = root
-        
+
         self._add_resource_variable("glade", "KIWI_GLADE_PATH")
         self._add_resource_variable("image", "KIWI_IMAGE_PATH")
 
@@ -60,7 +60,7 @@ class Environment:
 
     def get_log_level(self):
         return os.environ.get('KIWI_LOG')
-    
+
     def _add_resource_variable(self, resource, variable):
         """Add resources from an environment variable"""
         env = os.environ.get(variable, '')
@@ -73,7 +73,7 @@ class Environment:
         if not resource in self._resources:
             raise EnvironmentError("No resource called: %s" % resource)
         return self._resources[resource]
-            
+
     def add_resource(self, resource, path):
         path = os.path.join(self._root, path)
         if not os.path.isdir(path):
@@ -84,7 +84,7 @@ class Environment:
     def add_resources(self, **kwargs):
         for resource, path in kwargs.items():
             self.add_resource(resource, path)
-            
+
     def find_resource(self, resource, name):
         """Locate a specific resource of called name of type resource"""
 
@@ -98,7 +98,7 @@ class Environment:
         filename = os.path.join(self._root, name)
         if os.path.exists(filename):
             return filename
-        
+
         raise EnvironmentError("Could not find %s resource: %s" % (
             resource, name))
 
@@ -106,13 +106,13 @@ class Library(Environment):
     """A Library is a local environment object, it's a subclass of the
     Environment class.
     It's used by libraries and applications (through the Application class)
-    
+
     It provides a way to manage local resources, which should only be seen
     in the current context.
 
     Libraries are usually instantiated in __init__.py in the topmost package
     in your library, an example usage is kiwi itself which does:
-    
+
     >>> from kiwi.environ import Library
     >>> lib = Library('kiwi')
     >>> if lib.uninstalled:
@@ -142,18 +142,18 @@ class Library(Environment):
     >>> from kiwi.environ import environ
     >>> environ.find_resource('pixmap', 'kiwi.png')
     '/usr/share/kiwi/pixmaps/kiwi.png' # installed mode
-    
+
     Which will lookup the resource kiwi.png in the domain pixmap, which
     points to $datadir/pixmaps (eg $prefix/share/kiwi/pixmaps) when running
     in installed mode and from $builddir/pixmaps otherwise.
-    
+
     """
     def __init__(self, name, root='..', dirname=None):
         """
         Creates a new library, this is usually called in __init__.py in a
         toplevel package. All resources will be relative to the I{root}
         directory.
-        
+
         @param name: name of the library
         @param root: root directory
         @param dirname:
@@ -175,7 +175,7 @@ class Library(Environment):
             root = os.path.abspath(os.path.join(dirname, root))
         Environment.__init__(self, root=root)
 
-        sys.path.insert(0, os.path.join(root, 'lib', 'python%d.%d' % 
+        sys.path.insert(0, os.path.join(root, 'lib', 'python%d.%d' %
                                         sys.version_info[:2], 'site-packages'))
         g = globals()
         l = locals()
@@ -183,7 +183,7 @@ class Library(Environment):
             module = __import__(name, g, l, name)
         except ImportError:
             raise ImportError("Failed to import module %s" % name)
-        
+
         # Load installed
         try:
             module = __import__(name + '.__installed__',
@@ -235,18 +235,18 @@ class Application(Library):
         if app is not None:
             raise TypeError("Application is already set to %r" % app)
         app = self
-        
+
         dirname = os.path.abspath(os.path.dirname(sys.argv[0]))
         Library.__init__(self, name, root, dirname)
         self._path = path
-        
+
     def _get_main(self):
         try:
             module = namedAny(self._path)
         except (ValueError, AttributeError, ImportError), e:
             raise SystemExit("ERROR: Could not find item '%s', %s" %
                              (self._path, e))
-            
+
         main = getattr(module, 'main', None)
         if not main or not callable(main):
             raise SystemExit("ERROR: Could not find item '%s' in module %s" %
@@ -257,13 +257,13 @@ class Application(Library):
                            charset='utf-8'):
         if not domain:
             domain = self.name
-            
+
         Library.enable_translation(self, domain, locale, charset)
         gettext.textdomain(domain)
-        
+
     def run(self):
         main = self._get_main()
-        
+
         try:
             sys.exit(main(sys.argv))
         except KeyboardInterrupt:
