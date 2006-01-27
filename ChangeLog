@@ -1,4 +1,7 @@
+=== 1.9.4 ===
 2006-01-27  Johan Dahlin  <jdahlin@async.com.br>
+
+	* NEWS: Update
 
 	* kiwi/proxies.py (Proxy.update_many): New method, like update but
 	takes a sequence instead

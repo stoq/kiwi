@@ -1,3 +1,10 @@
+kiwi-1.9.4: 27-january-2006
+    - Tasklet decorator (Gustavo)
+    - List.add_list optimizations
+    - py2exe support (Carlos Augusto Marcicano)
+    - UI test fixes, support lists and toolbars
+    - Plenty of bug fixes
+
 kiwi-1.9.3: 15-december-2005
     - UI Test framework
     - Add a hyperlink widget (Ali Afshar)
