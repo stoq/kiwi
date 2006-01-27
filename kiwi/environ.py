@@ -180,14 +180,13 @@ class Library(Environment):
         g = globals()
         l = locals()
         try:
-            module = __import__(name, g, l, name)
+            module = __import__(name, g, l)
         except ImportError:
             raise ImportError("Failed to import module %s" % name)
 
         # Load installed
         try:
-            module = __import__(name + '.__installed__',
-                                g, l, name)
+            module = __import__(name + '.__installed__', g, l)
         except ImportError:
             uninstalled = True
         else:
