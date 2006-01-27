@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Lorenzo Gil Sanchez <lgs@sicem.biz>
 #            Johan Dahlin <jdahlin@async.com.br>
 #
@@ -66,7 +66,7 @@ class GazpachoWidgetTree:
             raise TypeError(
                   "gladefile should be a string, found %s" % type(gladefile))
         filename = os.path.splitext(os.path.basename(gladefile))[0]
-        
+
         self._view = view
         self._gladefile = environ.find_resource("glade", filename + ".glade")
         self._widgets =  (widgets or view.widgets or [])[:]
@@ -76,7 +76,7 @@ class GazpachoWidgetTree:
             self._widgets = [w.get_data("gazpacho::object-id")
                              for w in self._tree.get_widgets()]
         self._attach_widgets()
-        
+
     def _attach_widgets(self):
         # Attach widgets in the widgetlist to the view specified, so
         # widgets = [label1, button1] -> view.label1, view.button1
@@ -86,7 +86,7 @@ class GazpachoWidgetTree:
                 setattr(self._view, w, widget)
             else:
                 _warn("Widget %s was not found in glade widget tree." % w)
-        
+
     def get_widget(self, name):
         """Retrieves the named widget from the View (or glade tree)"""
         name = name.replace('.', '_')
@@ -100,16 +100,16 @@ class GazpachoWidgetTree:
         return self._tree.get_widgets()
 
     def signal_autoconnect(self, dic):
-        self._tree.signal_autoconnect(dic)        
+        self._tree.signal_autoconnect(dic)
 
 class DataTypeAdaptor(PropertyCustomEditor):
     def __init__(self):
         super(DataTypeAdaptor, self).__init__()
         self._input = self.create_editor()
-        
+
     def get_editor_widget(self):
         return self._input
-    
+
     def get_data_types(self):
         """
         Subclasses should override this.
@@ -117,7 +117,7 @@ class DataTypeAdaptor(PropertyCustomEditor):
         name of type and type, to be used in a combo box.
         """
         raise NotImplementedError
-    
+
     def create_editor(self):
         model = gtk.ListStore(str, object)
         for datatype in self.get_data_types():
@@ -128,7 +128,7 @@ class DataTypeAdaptor(PropertyCustomEditor):
         combo.add_attribute(renderer, 'text', 0)
         combo.set_active(0)
         combo.set_data('connection-id', -1)
-        return combo        
+        return combo
 
     def update(self, context, kiwiwidget, proxy):
         combo = self._input
@@ -144,7 +144,7 @@ class DataTypeAdaptor(PropertyCustomEditor):
             if row[1] == value:
                 combo.set_active_iter(row.iter)
                 break
-            
+
     def _editor_edit(self, combo, proxy, model):
         active_iter = combo.get_active_iter()
         proxy.set_value(model[active_iter][1])
@@ -217,7 +217,7 @@ adapter_registry.register_adapter(KiwiColumnAdapter)
 class ListAdapter(PythonWidgetAdapter):
     object_type = List
 adapter_registry.register_adapter(ListAdapter)
-   
+
 # Register widgets which have data-type and model-attributes
 # ComboBox is a special case, it needs to inherit from another
 # adapter and need to support two types.
@@ -228,7 +228,7 @@ class KiwiComboBoxAdapter(ComboBoxAdapter):
             object_type = ComboBox
         elif gtype == ComboBoxEntry.__gtype__:
             object_type = ComboBoxEntry
-        
+
         obj = object_type()
         obj.set_name(name)
         return obj
@@ -244,13 +244,13 @@ for gobj, editor in [(Entry, EntryDataType),
                      (TextView, TextViewDataType)]:
     # Property overrides, used in the editor
     type_name = gobject.type_name(gobj)
-    
+
     # This is a hack for epydoc
     if type_name is None:
         import sys
         assert sys.argv == ['IGNORE']
         continue
-    
+
     data_name = type_name + '::data-type'
     if editor:
         prop_registry.override_simple(data_name, DataTypeProperty,
@@ -258,7 +258,7 @@ for gobj, editor in [(Entry, EntryDataType),
     else:
         prop_registry.override_simple(data_name, BoolDataTypeProperty)
 
-        
+
     prop_registry.override_simple(type_name + '::model-attribute',
                                   ModelProperty)
 
