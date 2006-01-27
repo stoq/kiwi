@@ -890,7 +890,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
             renderer.connect('toggled', cb, self._model, column.attribute)
 
             prop = 'active'
-        elif column.use_stock:
+        elif column.use_stock or data_type == gdk.Pixbuf:
             renderer = gtk.CellRendererPixbuf()
             prop = 'pixbuf'
             if column.editable:
