@@ -1,7 +1,7 @@
 2006-01-27  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/proxies.py (Proxy.update_many): New method, like update but
-	takes a sqeuence instead
+	takes a sequence instead
 
 2006-01-25  Johan Dahlin  <jdahlin@async.com.br>
 
