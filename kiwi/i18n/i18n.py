@@ -81,7 +81,7 @@ def update_po(root, package):
     old = os.getcwd()
     os.chdir(os.path.join(root, 'po'))
 
-    if os.system('intltool-update 2> /dev/null') != 0:
+    if os.system('intltool-update 2> /dev/null > /dev/null') != 0:
         raise SystemExit('ERROR: intltool-update could not be found')
 
     # POT file first
@@ -89,8 +89,9 @@ def update_po(root, package):
 
     for lang in list_languages(root):
         new = lang + '.new.po'
-        os.system('intltool-update --dist --gettext-package=%s '
-                  '-o %s %s > /dev/null 2>&1' % (package, new, lang))
+        cmd = ('intltool-update --dist --gettext-package=%s '
+               '-o %s %s > /dev/null 2>&1' % (package, new, lang))
+        os.system(cmd)
         os.rename(new, lang + '.po')
 
     os.chdir(old)
