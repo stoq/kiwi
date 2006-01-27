@@ -1438,6 +1438,12 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
         self._treeview.row_activated(rowno, columns[0])
 
+    def set_headers_visible(self, value):
+        """
+        @param value: if true, shows the headers, if false hide then
+        """
+        self._treeview.set_headers_visible(value)
+
     # Backwards compat
     def add_instance(self, *args, **kwargs):
         return self.append(*args, **kwargs)
