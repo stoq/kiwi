@@ -1,3 +1,11 @@
+=== 1.9.5 ===
+2006-01-30  Johan Dahlin  <jdahlin@async.com.br>
+
+	* NEWS: Update
+
+	* kiwi/environ.py (Library.__init__): Do not use an empty from list,
+	it'll fail otherwise
+
 === 1.9.4 ===
 2006-01-27  Johan Dahlin  <jdahlin@async.com.br>
 
