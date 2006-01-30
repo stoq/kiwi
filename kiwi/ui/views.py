@@ -45,23 +45,6 @@ from kiwi.utils import gsignal, type_register
 from kiwi.ui.gadgets import quit_if_last
 from kiwi.log import Logger
 
-WidgetTree = None
-try:
-    from gazpacho.loader import loader
-    loader # pyflakes
-except ImportError, e:
-    if is_gazpacho_required():
-        raise RuntimeError("Gazpacho is required, but could not be found: %s"
-                           % e)
-    else:
-        try:
-            from kiwi.ui.libgladeloader import LibgladeWidgetTree as WidgetTree
-            WidgetTree # pyflakes
-        except ImportError:
-            raise RuntimeError("Could not find a glade parser library")
-else:
-    from kiwi.ui.gazpacholoader import GazpachoWidgetTree as WidgetTree
-
 log = Logger('view')
 
 _non_interactive = (
@@ -311,9 +294,9 @@ class SlaveView(gobject.GObject):
         if not self.gladefile:
             return
 
-        glade_adaptor = WidgetTree(self, self.gladefile,
-                                   self.widgets, self.gladename,
-                                   self.domain)
+        glade_adaptor = _open_glade(self, self.gladefile,
+                                    self.widgets, self.gladename,
+                                    self.domain)
 
         container_name = self.toplevel_name
         if not container_name:
@@ -820,8 +803,8 @@ class BaseView(SlaveView):
         if not self.gladefile:
             return
 
-        return WidgetTree(self, self.gladefile, self.widgets,
-                          self.gladename)
+        return _open_glade(self, self.gladefile, self.widgets,
+                           self.gladename, self.domain)
 
     #
     # Hook for keypress handling
@@ -918,3 +901,27 @@ class BaseView(SlaveView):
         """
         self.toplevel.hide()
         self.quit_if_last()
+
+WidgetTree = None
+
+def _open_glade(view, gladefile, widgets, name, domain):
+    global WidgetTree
+    if not WidgetTree:
+        try:
+            from gazpacho.loader import loader
+            loader # pyflakes
+        except ImportError, e:
+            if is_gazpacho_required():
+                raise RuntimeError(
+                    "Gazpacho is required, but could not be found: %s" % e)
+        else:
+            try:
+                from kiwi.ui.libgladeloader import LibgladeWidgetTree as WT
+                WidgetTree = WT
+            except ImportError:
+                raise RuntimeError("Could not find a glade parser library")
+    else:
+        from kiwi.ui.gazpacholoader import GazpachoWidgetTree as WT
+        WidgetTree = WT
+
+    return WidgetTree(view, gladefile, widgets, name, domain)
