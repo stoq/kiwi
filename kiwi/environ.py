@@ -255,13 +255,14 @@ class Application(Library):
       the standard distutils configuration.
     """
 
-    def __init__(self, name, root='..', path='main'):
+    def __init__(self, name, root='..', path='main', dirname=None):
         global app
         if app is not None:
             raise TypeError("Application is already set to %r" % app)
         app = self
 
-        dirname = os.path.abspath(os.path.dirname(sys.argv[0]))
+        if not dirname:
+            dirname = os.path.abspath(os.path.dirname(sys.argv[0]))
         Library.__init__(self, name, root, dirname)
         self._path = path
 
