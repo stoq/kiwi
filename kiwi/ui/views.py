@@ -914,14 +914,14 @@ def _open_glade(view, gladefile, widgets, name, domain):
             if is_gazpacho_required():
                 raise RuntimeError(
                     "Gazpacho is required, but could not be found: %s" % e)
+            else:
+                try:
+                    from kiwi.ui.libgladeloader import LibgladeWidgetTree as WT
+                    WidgetTree = WT
+                except ImportError:
+                    raise RuntimeError("Could not find a glade parser library")
         else:
-            try:
-                from kiwi.ui.libgladeloader import LibgladeWidgetTree as WT
-                WidgetTree = WT
-            except ImportError:
-                raise RuntimeError("Could not find a glade parser library")
-    else:
-        from kiwi.ui.gazpacholoader import GazpachoWidgetTree as WT
-        WidgetTree = WT
+            from kiwi.ui.gazpacholoader import GazpachoWidgetTree as WT
+            WidgetTree = WT
 
     return WidgetTree(view, gladefile, widgets, name, domain)
