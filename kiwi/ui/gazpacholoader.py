@@ -90,6 +90,7 @@ class GazpachoWidgetTree:
     def get_widget(self, name):
         """Retrieves the named widget from the View (or glade tree)"""
         name = name.replace('.', '_')
+        name = name.replace('-', '_')
         widget = self._tree.get_widget(name)
         if widget is None:
             raise AttributeError(
