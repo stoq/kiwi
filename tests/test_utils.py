@@ -20,6 +20,6 @@ class GPropertyTest(unittest.TestCase):
             self.assertEqual(pspec.default_value, 'Default',
                              pspec.default_value)
             self.assertEqual(pspec.blurb, 'Blurb', pspec.blurb)
-        
+
 if __name__ == '__main__':
     unittest.main()
