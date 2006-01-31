@@ -134,6 +134,12 @@ class PropertyObject(object):
         if not issubclass(cls, gobject.GObject):
             return
 
+        # Sort of a hack, remove signals already present
+        signals = namespace.get('__gsignals__')
+        for signal in gobject.signal_list_names(cls):
+            if signal in signals:
+                del signals[signal]
+
         # The default value for enum GParamSpecs (returned by list_properties)
         # lacks the enum wrapper so save a reference to the value, it needs to
         # be done here because when we register the GType pygtk removes the
@@ -148,6 +154,7 @@ class PropertyObject(object):
         # Register the type, here so don't have to do it explicitly, it
         # can be removed in PyGTK 2.8, since it does this magic for us.
         type_register(cls)
+        del namespace['__gsignals__']
 
         # Create python properties for gobject properties, store all
         # the values in self._attributes, so do_set/get_property
