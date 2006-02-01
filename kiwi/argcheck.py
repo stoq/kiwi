@@ -45,7 +45,7 @@ class percent(CustomType):
     """
     type = int, float
     def value_check(mcs, name, value):
-        if 0 > value < 100:
+        if (value < 0) or (value > 100):
             raise ValueError("%s must be between 0 and 100" % name)
     value_check = classmethod(value_check)
 

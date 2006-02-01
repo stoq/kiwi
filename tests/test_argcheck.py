@@ -66,6 +66,10 @@ class ArgTest(unittest.TestCase):
             def method3(self, s, date=None, date2=None):
                 return
 
+            @argcheck(percent)
+            def method4(self, n):
+                return n
+
         t = Test()
         self.assertEqual(t.method1(1, 2), 3)
         self.assertRaises(TypeError, t.method1, None, None)
@@ -78,11 +82,16 @@ class ArgTest(unittest.TestCase):
         t.method3(s='foo')
         t.method3(s='bar', date=None)
         t.method3(s='baz', date=None, date2=None)
+        t.method4(n=0)
+        t.method4(n=50)
+        t.method4(n=100)
         self.assertRaises(TypeError, t.method3, 'noggie', True)
         self.assertRaises(TypeError, t.method3, 'boogie', None, True)
         self.assertRaises(TypeError, t.method3, s='noggie', date2=True)
         self.assertRaises(TypeError, t.method3, s='boogie',
                           date=None, date2=True)
+        self.assertRaises(ValueError, t.method4, -1)
+        self.assertRaises(ValueError, t.method4, 101)
 
     def testNone(self):
         @argcheck(datetime.datetime)
