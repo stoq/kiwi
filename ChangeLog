@@ -5,7 +5,8 @@
 	* kiwi/argcheck.py:
 	* tests/test_argcheck.py:
 
-	Add parenthesis in percent checker, add unit tests.
+	Add parenthesis in percent checker, so it actually works and
+	does not allow values above 100. Add unit tests.
 
 === 1.9.5 ===
 2006-01-30  Johan Dahlin  <jdahlin@async.com.br>
