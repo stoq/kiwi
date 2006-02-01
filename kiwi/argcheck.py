@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
@@ -31,14 +31,14 @@ from types import ClassType
 class CustomType(type):
     def value_check(mcs, name, value):
         pass
-    value_check = classmethod(value_check) 
+    value_check = classmethod(value_check)
 
 class number(CustomType):
     """
     Custom type that verifies that the type is a number (eg float or int)
     """
     type = int, float, long
-    
+
 class percent(CustomType):
     """
     Custom type that verifies that the value is a percentage
@@ -47,7 +47,7 @@ class percent(CustomType):
     def value_check(mcs, name, value):
         if 0 > value < 100:
             raise ValueError("%s must be between 0 and 100" % name)
-    value_check = classmethod(value_check) 
+    value_check = classmethod(value_check)
 
 _NoValue = object()
 
@@ -65,14 +65,14 @@ class argcheck(object):
         >>> class Class:
         ...     @argcheck(types..)
         ...     def method(self, args)
-        
+
     You can customize the checks by subclassing your type from CustomType,
     there are two builtin types: number which is a float/int combined check
     and a percent which verifis that the value is a percentage
     """
-    
+
     __enabled__ = True
-    
+
     def __init__(self, *types):
         for argtype in types:
             if not isinstance(argtype, (type, ClassType)):
@@ -85,7 +85,7 @@ class argcheck(object):
         """
         cls.__enabled__ = True
     enable = classmethod(enable)
-    
+
     def disable(cls):
         """
         Disable argcheck globally
@@ -100,7 +100,7 @@ class argcheck(object):
         # Useful for optimized runs
         if not self.__enabled__:
             return func
-        
+
         spec = inspect.getargspec(func)
         arg_names, is_varargs, is_kwargs, default_values = spec
         if not default_values:
