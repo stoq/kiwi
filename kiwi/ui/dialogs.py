@@ -72,7 +72,7 @@ def messagedialog(dialog_type, short, long=None, parent=None,
     for text, response in buttons:
         d.add_buttons(text, response)
 
-    d.set_markup("<span size=\"larger\"><b>%s</b></span>" % short)
+    d.set_markup("<span weight=\"bold\" size=\"larger\">%s</span>" % short)
 
     if long:
         if isinstance(long, gtk.Widget):
