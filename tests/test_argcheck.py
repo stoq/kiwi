@@ -9,7 +9,7 @@ class ArgTest(unittest.TestCase):
         f('str')
         self.assertRaises(TypeError, f, None)
         self.assertRaises(TypeError, f, 1)
-        
+
     def testTwoArgs(self):
         f = argcheck(str, int)(lambda s, i: None)
         f('str', 1)
@@ -33,30 +33,30 @@ class ArgTest(unittest.TestCase):
 
         f2 = lambda a, b='str': None
         self.assertRaises(TypeError, argcheck, f2)
-        
+
     def testKwargs(self):
         self.assertRaises(TypeError, argcheck, lambda **kw: None)
 
     def testUserDefined(self):
         class Payment(object):
             pass
-    
+
         @argcheck(Payment, str)
         def pay(payment, description):
             pass
         pay(Payment(), 'foo')
         self.assertRaises(TypeError, 'bar', 'bar')
         self.assertRaises(TypeError, Payment(), Payment())
-        
+
     def testClass(self):
         class Custom(object):
             pass
-        
+
         class Test:
             @argcheck(int, int)
             def method1(self, foo, bar):
                 return foo + bar
-            
+
             @argcheck(Custom, int, datetime.datetime, int, int,
                       float, float)
             def method2(self, a, b, c, d, e, f, g=0.0):
@@ -109,6 +109,6 @@ class ArgTest(unittest.TestCase):
         self.assertRaises(TypeError, func_none2, s='boogie',
                           date=None, date2=True)
 
-        
+
 if __name__ == '__main__':
     unittest.main()
