@@ -36,13 +36,12 @@ class FavouriteColor(BaseView):
         self.combo.prefill(load_colors(), sort=True)
         box.pack_start(self.combo, False)
         win.add(box)
-        BaseView.__init__(self, toplevel=win, 
+        BaseView.__init__(self, toplevel=win,
                           delete_handler=self.quit_if_last)
 
 the_color = Color()
 app = FavouriteColor()
 app.add_proxy(the_color, ['combo'])
-# we need to call prefill after adding the proxy or we won't get the changes
 app.show_all()
 gtk.main()
-print the_color.color
+print 'Your favourite color is', the_color.color
