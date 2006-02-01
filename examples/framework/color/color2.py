@@ -10,16 +10,17 @@ def load_colors():
     filename = "/usr/X11R6/etc/X11/rgb.txt"
     try:
         lines = file(filename).readlines()
-        # the first line we don't want
-        lines = lines[1:]
-        s = Set([c.strip().split('\t')[2] for c in lines])
-        if '' in s: s.remove('')
-        return list(s)
     except IOError:
         return ['red', 'blue', 'yellow', 'green']
 
+    # the first line we don't want
+    lines = lines[1:]
+    s = Set([c.strip().split('\t')[2] for c in lines])
+    if '' in s: s.remove('')
+    return list(s)
+
 class Color:
-    color = 'AliceBlue'
+    color = 'blue'
 
 class FavouriteColor(BaseView):
     def __init__(self):
@@ -35,7 +36,7 @@ class FavouriteColor(BaseView):
         self.combo.prefill(load_colors(), sort=True)
         box.pack_start(self.combo, False)
         win.add(box)
-        BaseView.__init__(self, toplevel=win, 
+        BaseView.__init__(self, toplevel=win,
                           delete_handler=self.quit_if_last)
 
 the_color = Color()
