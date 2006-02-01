@@ -555,6 +555,7 @@ class SlaveView(gobject.GObject):
             child = placeholder.get_child()
             if child is not None:
                 placeholder.remove(child)
+	    placeholder.set_visible_window(False)
             placeholder.add(new_widget)
         elif isinstance(parent, gtk.EventBox):
             # backwards compatibility
