@@ -1,3 +1,8 @@
+2006-02-01  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/dialogs.py: Really make it follow the HIG.
+	Copied some code from eel-alert-dialog.c
+
 2006-02-01  Patrick K O'Brien <pobrien@orbtech.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
