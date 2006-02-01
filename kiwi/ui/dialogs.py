@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# 
+#
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
@@ -63,17 +63,17 @@ def messagedialog(dialog_type, short, long=None, parent=None,
             raise TypeError(
                 "buttons must be a GtkButtonsTypes constant or a tuple")
         dialog_buttons = gtk.BUTTONS_NONE
-        
+
     if parent and not isinstance(parent, gtk.Window):
         raise TypeError("parent must be a gtk.Window subclass")
-    
+
     d = gtk.MessageDialog(parent=parent, flags=gtk.DIALOG_MODAL,
                           type=dialog_type, buttons=dialog_buttons)
     for text, response in buttons:
         d.add_buttons(text, response)
 
     d.set_markup("<span size=\"larger\"><b>%s</b></span>" % short)
-    
+
     if long:
         if isinstance(long, gtk.Widget):
             widget = long
@@ -82,7 +82,7 @@ def messagedialog(dialog_type, short, long=None, parent=None,
             widget.set_markup(long)
         else:
             raise TypeError("long must be a gtk.Widget or a string")
-        
+
         expander = gtk.Expander(_("Click here for details"))
         expander.set_border_width(6)
         expander.add(widget)
@@ -93,7 +93,7 @@ def messagedialog(dialog_type, short, long=None, parent=None,
 
     if default != -1:
         d.set_default_response(default)
-        
+
     d.show_all()
     response = d.run()
     d.destroy()
@@ -123,10 +123,10 @@ def yesno(text, parent=None, default=gtk.RESPONSE_YES):
     return messagedialog(gtk.MESSAGE_WARNING, text, None, parent,
                          buttons=gtk.BUTTONS_YES_NO,
                          default=default)
-  
+
 def _test():
     yesno('Kill?', default=gtk.RESPONSE_NO)
-    
+
     info('Do it', buttons=((gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL),
                            ('Resume', gtk.RESPONSE_OK)),
          default=gtk.RESPONSE_OK,
@@ -137,6 +137,6 @@ def _test():
           'Long description bla bla bla bla bla bla bla bla bla\n'
           'bla bla bla bla bla lblabl lablab bla bla bla bla bla\n'
           'lbalbalbl alabl l blablalb lalba bla bla bla bla lbal\n')
-    
+
 if __name__ == '__main__':
     _test()
