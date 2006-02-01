@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2005 Async Open Source
+# Copyright (C) 2005,2006 Async Open Source
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License
@@ -20,12 +20,14 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
+import os
 import gettext
 
 import atk
 import gtk
 
-__all__ = ['error', 'info', 'messagedialog', 'warning', 'yesno']
+__all__ = ['error', 'info', 'messagedialog', 'warning', 'yesno', 'save', 'open',
+           'HIGAlertDialog', 'BaseDialog']
 
 _ = gettext.gettext
 
@@ -47,7 +49,7 @@ _BUTTON_TYPES = {
                             gtk.STOCK_OK, gtk.RESPONSE_OK)
     }
 
-class HIGDialog(gtk.Dialog):
+class HIGAlertDialog(gtk.Dialog):
     def __init__(self, parent, flags,
                  type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_NONE):
         if not type in _IMAGE_TYPES:
@@ -101,6 +103,9 @@ class HIGDialog(gtk.Dialog):
     def set_primary(self, text):
         self._primary_label.set_markup("<span weight=\"bold\" size=\"larger\">%s</span>" % text)
 
+    def set_secondary(self, text):
+        self._secondary_label.set_markup(text)
+
     def set_details(self, text):
         self._details_label.set_text(text)
         self._expander.show()
@@ -110,6 +115,18 @@ class HIGDialog(gtk.Dialog):
         self._expander.add(widget)
         widget.show()
         self._expander.show()
+
+class BaseDialog(gtk.Dialog):
+    def __init__(self, parent=None, title='', flags=0, buttons=()):
+        if parent and not isinstance(parent, gtk.Window):
+            raise TypeError("parent needs to be None or a gtk.Window subclass")
+
+        if not flags and parent:
+            flags &= (gtk.DIALOG_MODAL |
+                      gtk.DIALOG_DESTROY_WITH_PARENT)
+
+        gtk.Dialog.__init__(self, title=title, parent=parent,
+                            flags=flags, buttons=buttons)
 
 def messagedialog(dialog_type, short, long=None, parent=None,
                   buttons=gtk.BUTTONS_OK, default=-1):
@@ -150,8 +167,8 @@ def messagedialog(dialog_type, short, long=None, parent=None,
     if parent and not isinstance(parent, gtk.Window):
         raise TypeError("parent must be a gtk.Window subclass")
 
-    d = HIGDialog(parent=parent, flags=gtk.DIALOG_MODAL,
-                  type=dialog_type, buttons=dialog_buttons)
+    d = HIGAlertDialog(parent=parent, flags=gtk.DIALOG_MODAL,
+                       type=dialog_type, buttons=dialog_buttons)
     for text, response in buttons:
         d.add_buttons(text, response)
 
@@ -201,6 +218,86 @@ def yesno(text, parent=None, default=gtk.RESPONSE_YES):
                          buttons=gtk.BUTTONS_YES_NO,
                          default=default)
 
+def open(title='', parent=None, patterns=[], folder=None):
+    """Displays an open dialog."""
+    filechooser = gtk.FileChooserDialog(title or _('Open'),
+                                        parent,
+                                        gtk.FILE_CHOOSER_ACTION_OPEN,
+                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                         gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+
+    if patterns:
+        file_filter = gtk.FileFilter()
+        for pattern in patterns:
+            file_filter.add_pattern(pattern)
+        filechooser.set_filter(file_filter)
+    filechooser.set_default_response(gtk.RESPONSE_OK)
+
+    if folder:
+        filechooser.set_current_folder(folder)
+
+    response = filechooser.run()
+    if response != gtk.RESPONSE_OK:
+        filechooser.destroy()
+        return
+
+    path = filechooser.get_filename()
+    if path and os.access(path, os.R_OK):
+        filechooser.destroy()
+        return path
+
+    abspath = os.path.abspath(path)
+
+    error(_('Could not open file "%s"') % abspath,
+          _('The file "%s" could not be opened. '
+            'Permission denied.') %  abspath)
+
+    filechooser.destroy()
+    return path
+
+def save(title='', parent=None, current_name='', folder=None):
+    """Displays a save dialog."""
+    filechooser = gtk.FileChooserDialog(title or _('Save'),
+                                        parent,
+                                        gtk.FILE_CHOOSER_ACTION_SAVE,
+                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                         gtk.STOCK_SAVE, gtk.RESPONSE_OK))
+    if current_name:
+        filechooser.set_current_name(current_name)
+    filechooser.set_default_response(gtk.RESPONSE_OK)
+
+    if folder:
+        filechooser.set_current_folder(folder)
+
+    path = None
+    while True:
+        response = filechooser.run()
+        if response != gtk.RESPONSE_OK:
+            path = None
+            break
+
+        path = filechooser.get_filename()
+        if not os.path.exists(path):
+            break
+
+        submsg1 = _('A file named "%s" already exists') % os.path.abspath(path)
+        submsg2 = _('Do you wish to replace it with the current project?')
+        text = '<span weight="bold" size="larger">%s</span>\n\n%s\n' % \
+              (submsg1, submsg2)
+        result = messagedialog(gtk.MESSAGE_ERROR,
+                               text,
+                               parent=parent,
+                               buttons=(gtk.STOCK_CANCEL,
+                                        gtk.RESPONSE_CANCEL,
+                                        _("Replace"),
+                                        gtk.RESPONSE_YES))
+        # the user want to overwrite the file
+        if result == gtk.RESPONSE_YES:
+            break
+
+    filechooser.destroy()
+    return path
+
 def _test():
      yesno('Kill?', default=gtk.RESPONSE_NO)
 
@@ -215,6 +312,8 @@ def _test():
      error('An error occurred', gtk.Button('Woho'))
      error('Unable to mount the selected volume.',
            'mount: can\'t find /media/cdrom0 in /etc/fstab or /etc/mtab')
+     print open(title='Open a file', patterns=['*.py'])
+     print save(title='Save a file', current_name='foobar.py')
 
 if __name__ == '__main__':
     _test()
