@@ -121,7 +121,7 @@ class argcheck(object):
             is_method = True
         else:
             is_method = False
-            
+
         types = self.types
         if is_kwargs and not is_varargs and self.types:
             raise TypeError("argcheck cannot be used with only keywords")
@@ -152,7 +152,7 @@ class argcheck(object):
                                                 arg_type.__name__,
                                                 type(value).__name__))
             kwarg_defaults[arg_name] = value
-            
+
         def wrapper(*args, **kwargs):
             if self.__enabled__:
                 cargs = args
@@ -163,7 +163,7 @@ class argcheck(object):
                 for arg, type, name, default in zip(cargs, types, arg_names,
                                                     default_values):
                     self._type_check(arg, type, name, default)
-                    
+
                 # Keyword arguments
                 for name, arg in kwargs.items():
                     self._type_check(arg, kwarg_types[name], name,
@@ -180,14 +180,14 @@ class argcheck(object):
     def _type_check(self, value, argument_type, name, default=_NoValue):
         if default is not _NoValue and value == default:
             return
-        
+
         if issubclass(argument_type, CustomType):
             custom = True
             check_type = argument_type.type
         else:
             custom = False
             check_type = argument_type
-            
+
         type_name = argument_type.__name__
 
         if not isinstance(value, check_type):
@@ -213,13 +213,13 @@ def test():
         function(None) # fails
     except TypeError, e:
         print e
-        
+
     o = Class()
     o.method(10.4) # works
     try:
         o.method(-1) # fails
     except ValueError, e:
         print e
-    
+
 if __name__ == '__main__':
     test()
