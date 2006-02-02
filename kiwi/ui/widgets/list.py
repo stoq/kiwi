@@ -715,7 +715,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
                                      " %s is already set as searchable" % (
                         column.attribute, searchable.attribute))
                 searchable = column.searchable
-            elif column.sorted:
+            if column.sorted:
                 if sorted:
                     raise ValueError("Can't make column %s sorted, column"
                                      " %s is already set as sortable" % (
