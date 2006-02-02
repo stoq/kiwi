@@ -998,26 +998,24 @@ class List(PropertyObject, gtk.ScrolledWindow):
             column.get_attribute(model[iter2][COL_MODEL], attr))
 
     def _on_column__clicked(self, treeview_column, column):
+        # this mean we are not sorting at all
         if self._sort_column_index == -1:
-            # this mean we are not sorting at all
             return
 
         old_treeview_column = self._treeview.get_column(
             self._sort_column_index)
         old_treeview_column.set_sort_indicator(False)
 
-        # reverse the old order or start with SORT_DESCENDING if there was no
-        # previous order
-        column_index = self._columns.index(column)
-        self._sort_column_index = column_index
-
         # reverse the order
-        old_order = column.order
-        if old_order == gtk.SORT_ASCENDING:
+        if column.order == gtk.SORT_ASCENDING:
             new_order = gtk.SORT_DESCENDING
-        else:
+        elif column.order == gtk.SORT_DESCENDING:
             new_order = gtk.SORT_ASCENDING
+        else:
+            raise AssertionError
         column.order = new_order
+
+        self._sort_column_index = self._columns.index(column)
 
         # cosmetic changes
         treeview_column.set_sort_indicator(True)
