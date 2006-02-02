@@ -1011,10 +1011,6 @@ class List(PropertyObject, gtk.ScrolledWindow):
         column_index = self._columns.index(column)
         self._sort_column_index = column_index
 
-        # maybe it's the first time this column is ordered
-        if column.order is None:
-            column.order = gtk.SORT_DESCENDING
-
         # reverse the order
         old_order = column.order
         if old_order == gtk.SORT_ASCENDING:
