@@ -719,7 +719,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
                 if sorted:
                     raise ValueError("Can't make column %s sorted, column"
                                      " %s is already set as sortable" % (
-                        column.attribute, column.sorted))
+                        column.attribute, sorted.attribute))
                 sorted = column.sorted
 
         for column in self._columns:
