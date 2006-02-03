@@ -255,6 +255,18 @@ def open(title='', parent=None, patterns=[], folder=None):
     filechooser.destroy()
     return path
 
+def ask_overwrite(filename, parent=None):
+    submsg1 = _('A file named "%s" already exists') % os.path.abspath(filename)
+    submsg2 = _('Do you wish to replace it with the current one?')
+    text = ('<span weight="bold" size="larger">%s</span>\n\n%s\n'
+            % (submsg1, submsg2))
+    result = messagedialog(gtk.MESSAGE_ERROR, text, parent=parent,
+                           buttons=((gtk.STOCK_CANCEL,
+                                     gtk.RESPONSE_CANCEL),
+                                    (_("Replace"),
+                                     gtk.RESPONSE_YES)))
+    return result == gtk.RESPONSE_YES
+
 def save(title='', parent=None, current_name='', folder=None):
     """Displays a save dialog."""
     filechooser = gtk.FileChooserDialog(title or _('Save'),
@@ -280,21 +292,8 @@ def save(title='', parent=None, current_name='', folder=None):
         if not os.path.exists(path):
             break
 
-        submsg1 = _('A file named "%s" already exists') % os.path.abspath(path)
-        submsg2 = _('Do you wish to replace it with the current project?')
-        text = '<span weight="bold" size="larger">%s</span>\n\n%s\n' % \
-              (submsg1, submsg2)
-        result = messagedialog(gtk.MESSAGE_ERROR,
-                               text,
-                               parent=parent,
-                               buttons=((gtk.STOCK_CANCEL,
-                                        gtk.RESPONSE_CANCEL),
-                                        (_("Replace"),
-                                         gtk.RESPONSE_YES)))
-        # the user want to overwrite the file
-        if result == gtk.RESPONSE_YES:
+        if ask_overwrite(path, parent):
             break
-
     filechooser.destroy()
     return path
 
