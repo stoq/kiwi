@@ -453,7 +453,6 @@ class List(PropertyObject, gtk.ScrolledWindow):
         self.set_shadow_type(gtk.SHADOW_ETCHED_IN)
 
         self._model = gtk.ListStore(object)
-        self._model.set_sort_func(COL_MODEL, self._sort_function)
         self._treeview = gtk.TreeView(self._model)
         self._treeview.show()
         self.add(self._treeview)
@@ -480,7 +479,8 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
         if self._sort_column_index != -1:
             column = self._columns[self._sort_column_index]
-            self._model.set_sort_column_id(COL_MODEL, column.order)
+            self._model.set_sort_column_id(self._sort_column_index,
+                                           column.order)
 
         # Set selection mode last to avoid spurious events
         selection = self._treeview.get_selection()
@@ -733,6 +733,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
             raise TypeError("format is not supported for boolean columns")
 
         index = self._columns.index(column)
+        self._model.set_sort_func(index, self._sort_function)
         treeview_column = self._treeview.get_column(index)
         if treeview_column is None:
             treeview_column = self._create_column(column)
@@ -998,31 +999,34 @@ class List(PropertyObject, gtk.ScrolledWindow):
             column.get_attribute(model[iter2][COL_MODEL], attr))
 
     def _on_column__clicked(self, treeview_column, column):
-        # this mean we are not sorting at all
+        # this means we are not sorting at all
         if self._sort_column_index == -1:
             return
 
         old_treeview_column = self._treeview.get_column(
             self._sort_column_index)
-        old_treeview_column.set_sort_indicator(False)
 
-        # reverse the order
-        if column.order == gtk.SORT_ASCENDING:
-            new_order = gtk.SORT_DESCENDING
-        elif column.order == gtk.SORT_DESCENDING:
-            new_order = gtk.SORT_ASCENDING
+        if treeview_column is old_treeview_column:
+            # same column, so reverse the order
+            if column.order == gtk.SORT_ASCENDING:
+                new_order = gtk.SORT_DESCENDING
+            elif column.order == gtk.SORT_DESCENDING:
+                new_order = gtk.SORT_ASCENDING
+            else:
+                raise AssertionError
         else:
-            raise AssertionError
+            # new column, sort ascending
+            new_order = gtk.SORT_ASCENDING
+            self._sort_column_index = self._columns.index(column)
+            # cosmetic changes
+            old_treeview_column.set_sort_indicator(False)
+            treeview_column.set_sort_indicator(True)
+
         column.order = new_order
-
-        self._sort_column_index = self._columns.index(column)
-
-        # cosmetic changes
-        treeview_column.set_sort_indicator(True)
         treeview_column.set_sort_order(new_order)
 
         # This performs the actual ordering
-        self._model.set_sort_column_id(COL_MODEL, new_order)
+        self._model.set_sort_column_id(self._sort_column_index, new_order)
 
     # handlers
     def _on_selection__changed(self, selection):
