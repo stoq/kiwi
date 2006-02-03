@@ -162,11 +162,13 @@ class Column(PropertyObject, gobject.GObject):
         kwargs['data_type'] = data_type
 
         # If we don't specify a justification, right align it for int/float
-        # and left align it for everything else.
+        # center for bools and left align it for everything else.
         if "justify" not in kwargs:
-            if data_type and issubclass(data_type, (int, float,
-                                                    long, currency)):
-                kwargs['justify'] = gtk.JUSTIFY_RIGHT
+            if data_type:
+                if issubclass(data_type, bool):
+                    kwargs['justify'] = gtk.JUSTIFY_CENTER
+                elif issubclass(data_type, (int, float, long, currency)):
+                    kwargs['justify'] = gtk.JUSTIFY_RIGHT
 
         format_func = kwargs.get('format_func')
         if format_func:
