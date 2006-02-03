@@ -64,7 +64,7 @@ class Environment:
     def _add_resource_variable(self, resource, variable):
         """Add resources from an environment variable"""
         env = os.environ.get(variable, '')
-        for path in env.split(':'):
+        for path in env.split(os.pathsep):
             if not path:
                 continue
             self.add_resource(resource, env)
