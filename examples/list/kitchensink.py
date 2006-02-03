@@ -65,7 +65,7 @@ data = (Person('Evandro', 23, 'Belo Horizonte'),
        )
 
 win = gtk.Window()
-win.set_size_request(650, 300)
+win.set_size_request(850, 300)
 win.connect('destroy', gtk.main_quit)
 
 vbox = gtk.VBox()
