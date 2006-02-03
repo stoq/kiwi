@@ -244,8 +244,9 @@ class IconEntry(object):
         win.draw_rectangle(color, True,
                            0, 0, self._pixw, self._pixh)
 
-        # Always draw the icon, regardless of the window emitting the
+        # If sensitive draw the icon, regardless of the window emitting the
         # event since makes it a bit smoother on resize
-        win.draw_pixbuf(None, self._pixbuf, 0, 0, 0, 0,
-                        self._pixw, self._pixh)
+        if self._entry.flags() & gtk.SENSITIVE:
+            win.draw_pixbuf(None, self._pixbuf, 0, 0, 0, 0,
+                            self._pixw, self._pixh)
 
