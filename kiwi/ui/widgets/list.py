@@ -708,6 +708,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
         searchable = None
         sorted = None
+        expand = False
         for column in self._columns:
             if column.searchable:
                 if searchable:
@@ -721,9 +722,15 @@ class List(PropertyObject, gtk.ScrolledWindow):
                                      " %s is already set as sortable" % (
                         column.attribute, sorted.attribute))
                 sorted = column.sorted
+            if column.expand:
+                expand = True
 
         for column in self._columns:
             self._setup_column(column)
+
+        if not expand:
+            column = gtk.TreeViewColumn()
+            self._treeview.append_column(column)
 
         self._columns_configured = True
 
