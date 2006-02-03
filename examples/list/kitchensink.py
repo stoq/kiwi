@@ -1,3 +1,4 @@
+# encoding: utf-8
 import datetime
 import random
 import time
@@ -24,7 +25,7 @@ class Person:
          self.city) = name, age, city
         self.date = self.datetime = self.time = random_date()
         self.extra = -1
-        self.worth = random.randint(0, 10000) / 100.0
+        self.salary = random.randint(40, 180) * 10
         self.bool = random.randint(0, 1) and True or False
 
     def __repr__(self):
@@ -43,12 +44,12 @@ def color(data):
 
 columns = [
     SequentialColumn(),
-    MyColumn('name', tooltip='What about a stupid tooltip?', editable=True, expand=True),
+    MyColumn('name', tooltip='What about a stupid tooltip?', editable=True),
     Column('age', data_type=int, format_func=format_func, editable=True,
            width=40),
     Column('bool', data_type=bool, editable=True, width=40),
-    Column('worth', data_type=currency, editable=True),
-    Column('city', visible=True, sorted=True, expand=True),
+    Column('salary', data_type=currency, editable=True),
+    Column('city', visible=True, sorted=True),
     Column('date', data_type=datetime.date),
     Column('time', data_type=datetime.time),
     Column('datetime', data_type=datetime.datetime),
@@ -56,10 +57,10 @@ columns = [
     ]
 
 data = (Person('Evandro', 23, 'Belo Horizonte'),
-        Person('Daniel', 22, 'Sao Carlos'),
-        Person('Henrique', 21, 'Sao Carlos'),
-        Person('Gustavo', 23, 'San Jose do Santos'),
-        Person('Johan', 23, 'Goteborg'),
+        Person('Daniel', 22, 'São Carlos'),
+        Person('Henrique', 21, 'São Carlos'),
+        Person('Gustavo', 23, 'São Jose do Santos'),
+        Person('Johan', 23, 'Göteborg'),
         Person('Lorenzo', 26, 'Granada')
        )
 
