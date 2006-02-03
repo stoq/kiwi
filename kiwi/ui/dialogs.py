@@ -287,10 +287,10 @@ def save(title='', parent=None, current_name='', folder=None):
         result = messagedialog(gtk.MESSAGE_ERROR,
                                text,
                                parent=parent,
-                               buttons=(gtk.STOCK_CANCEL,
-                                        gtk.RESPONSE_CANCEL,
-                                        _("Replace"),
-                                        gtk.RESPONSE_YES))
+                               buttons=((gtk.STOCK_CANCEL,
+                                        gtk.RESPONSE_CANCEL),
+                                        (_("Replace"),
+                                         gtk.RESPONSE_YES)))
         # the user want to overwrite the file
         if result == gtk.RESPONSE_YES:
             break
