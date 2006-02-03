@@ -43,12 +43,12 @@ def color(data):
 
 columns = [
     SequentialColumn(),
-    MyColumn('name', tooltip='What about a stupid tooltip?', editable=True),
+    MyColumn('name', tooltip='What about a stupid tooltip?', editable=True, expand=True),
     Column('age', data_type=int, format_func=format_func, editable=True,
            width=40),
     Column('bool', data_type=bool, editable=True, width=40),
     Column('worth', data_type=currency, editable=True),
-    Column('city', visible=True, sorted=True),
+    Column('city', visible=True, sorted=True, expand=True),
     Column('date', data_type=datetime.date),
     Column('time', data_type=datetime.time),
     Column('datetime', data_type=datetime.datetime),
