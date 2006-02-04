@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-# Setup file for Kiwi 
+# Setup file for Kiwi
 # Code by Async Open Source <http://www.async.com.br>
 # setup.py written by Christian Reis <kiko@async.com.br>
+# re-written various times by Johan Dahlin <jdahlin@async.com.br>
 
 """
 kiwi offers a set of enhanced widgets for
@@ -20,7 +21,7 @@ class InstallLib(TemplateInstallLib):
     name = 'kiwi'
     global_resources = dict(glade='$datadir/glade',
                             pixmap='$datadir/pixmaps')
-    
+
 version = ''
 execfile("kiwi/__version__.py")
 assert version
@@ -40,7 +41,8 @@ setup(name="kiwi",
                   ('share/gazpacho/catalogs',
                    listfiles('gazpacho-plugin', 'kiwiwidgets.xml')),
                   ('share/gazpacho/resources/kiwiwidgets',
-                   listfiles('gazpacho-plugin', 'resources', '*.png')),
+                   listfiles('gazpacho-plugin', 'resources', 
+                             'kiwiwidgets', '*.png')),
                   (get_site_packages_dir('gazpacho', 'widgets'),
                    listfiles('gazpacho-plugin', 'kiwiwidgets.py')),
                   ('share/doc/kiwi',

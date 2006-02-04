@@ -1,3 +1,8 @@
+2006-02-04  Johan Dahlin  <jdahlin@async.com.br>
+
+	* setup.py: Move kiwiwidgets to a subdirectory to mirror the layout
+	of the installed resources.
+
 2006-02-03  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/list.py (List._setup_columns): If there are no
