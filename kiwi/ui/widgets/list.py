@@ -406,6 +406,9 @@ class List(PropertyObject, gtk.ScrolledWindow):
     # edited object, attribute name
     gsignal('cell-edited', object, str)
 
+    # emitted when empty or non-empty status changes
+    gsignal('has-rows', bool)
+
     # this property is used to serialize the columns of a List. The format
     # is a big string with '^' as the column separator and '|' as the field
     # separator
@@ -455,6 +458,8 @@ class List(PropertyObject, gtk.ScrolledWindow):
         self.set_shadow_type(gtk.SHADOW_ETCHED_IN)
 
         self._model = gtk.ListStore(object)
+        self._model.connect('row-inserted', self._on_model__row_inserted)
+        self._model.connect('row-deleted', self._on_model__row_deleted)
         self._treeview = gtk.TreeView(self._model)
         self._treeview.show()
         self.add(self._treeview)
@@ -633,6 +638,16 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
     def prop_get_selection_mode(self):
         return self.get_selection_mode()
+
+    # Model
+
+    def _on_model__row_inserted(self, model, path, iter):
+        if len(model) == 1:
+            self.emit('has-rows', True)
+
+    def _on_model__row_deleted(self, model, path):
+        if not len(model):
+            self.emit('has-rows', False)
 
     # Columns handling
     def _load(self, instances, clear):

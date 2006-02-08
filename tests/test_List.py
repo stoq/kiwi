@@ -162,5 +162,35 @@ class DataTests(unittest.TestCase):
         self.list.remove(first)
         self.assertRaises(ValueError, self.list.select, first)
 
+class TestSignals(unittest.TestCase):
+    def setUp(self):
+        self.klist = List()
+        self.klist.connect('has-rows', self._on_klist__has_rows)
+        self.rows = None
+
+    def _on_klist__has_rows(self, klist, rows):
+        self.rows = rows
+
+    def testHasRows(self):
+        self.assertEqual(self.rows, None)
+        self.assertEqual(len(self.klist), 0)
+        # Add one
+        self.klist.append(0)
+        self.assertEqual(len(self.klist), 1)
+        self.assertEqual(self.rows, True)
+        self.klist.remove(0)
+        self.assertEqual(self.rows, False)
+        self.assertEqual(len(self.klist), 0)
+
+        # Add several
+        self.klist.extend((1, 2))
+        self.assertEqual(len(self.klist), 2)
+        self.assertEqual(self.rows, True)
+        self.klist.remove(1)
+        self.assertEqual(self.rows, True)
+        self.klist.remove(2)
+        self.assertEqual(self.rows, False)
+        self.assertEqual(len(self.klist), 0)
+
 if __name__ == '__main__':
     unittest.main()
