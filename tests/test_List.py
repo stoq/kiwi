@@ -8,7 +8,7 @@ from utils import refresh_gui
 
 class Person:
     def __init__(self, name, age):
-        self.name, self.age = name, age        
+        self.name, self.age = name, age
 
 # we will use this tuple in several tests
 persons = (Person('Johan', 24), Person('Gustavo', 25),
@@ -33,13 +33,13 @@ class ColumnTests(unittest.TestCase):
     def testOneColumn(self):
         # column's attribute can not contain spaces
         self.assertRaises(AttributeError, Column, 'test column')
-        
+
         mylist = List(Column('test_column'))
         self.win.add(mylist)
         refresh_gui()
 
         self.assertEqual(1, len(mylist.get_columns()))
-        
+
 class DataTests(unittest.TestCase):
     """In all this tests we use the same configuration for a list"""
     def setUp(self):
@@ -56,7 +56,7 @@ class DataTests(unittest.TestCase):
     def testAddingOneInstance(self):
         # we should have two columns now
         self.assertEqual(2, len(self.list.get_columns()))
-                         
+
         person = Person('henrique', 21)
         self.list.append(person)
 
@@ -76,9 +76,9 @@ class DataTests(unittest.TestCase):
 
         self.list.add_list(persons)
         refresh_gui()
-        
+
         self.assertEqual(len(self.list), len(persons))
-        
+
     def testAddingABunchOfInstances(self):
         global persons
 
@@ -120,7 +120,7 @@ class DataTests(unittest.TestCase):
         self.list.clear()
 
         self.assertEqual(len(self.list), 0)
-        
+
 
     def testUpdatingOneInstance(self):
         global persons
@@ -132,7 +132,7 @@ class DataTests(unittest.TestCase):
         self.list.update(persons[0])
 
         refresh_gui()
-        
+
         # Do we have the same number of instances that we had before ?
         self.assertEqual(len(self.list), len(persons))
 
@@ -161,6 +161,6 @@ class DataTests(unittest.TestCase):
 
         self.list.remove(first)
         self.assertRaises(ValueError, self.list.select, first)
-        
+
 if __name__ == '__main__':
     unittest.main()
