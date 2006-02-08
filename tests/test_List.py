@@ -166,14 +166,21 @@ class TestSignals(unittest.TestCase):
     def setUp(self):
         self.klist = List()
         self.klist.connect('has-rows', self._on_klist__has_rows)
+        self.klist.connect('selection-changed',
+                           self._on_klist__selection_changed)
         self.rows = None
+        self.selected = None
 
     def _on_klist__has_rows(self, klist, rows):
         self.rows = rows
 
+    def _on_klist__selection_changed(self, klist, selected):
+        self.selected = selected
+
     def testHasRows(self):
         self.assertEqual(self.rows, None)
         self.assertEqual(len(self.klist), 0)
+
         # Add one
         self.klist.append(0)
         self.assertEqual(len(self.klist), 1)
@@ -191,6 +198,17 @@ class TestSignals(unittest.TestCase):
         self.klist.remove(2)
         self.assertEqual(self.rows, False)
         self.assertEqual(len(self.klist), 0)
+
+    def testSelectionChanged(self):
+        self.assertEqual(self.selected, None)
+        self.assertEqual(len(self.klist), 0)
+        self.klist.extend((0, 1))
+        self.klist.select(0)
+        self.assertEqual(self.selected, 0)
+        self.klist.unselect_all()
+        self.assertEqual(self.selected, None)
+        self.assertRaises(ValueError, self.klist.select, 2)
+
 
 if __name__ == '__main__':
     unittest.main()

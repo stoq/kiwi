@@ -1310,7 +1310,7 @@ class List(PropertyObject, gtk.ScrolledWindow):
 
         objid = id(instance)
         if not objid in self._iters:
-            raise ValueError("instance %r is not in the list" % instance)
+            raise ValueError("instance %s is not in the list" % repr(instance))
 
         treeiter = self._iters[objid]
 
