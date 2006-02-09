@@ -454,24 +454,20 @@ class List(PropertyObject, gtk.ScrolledWindow):
         # of it doesn't make sense. This button is used to display the popup
         # menu
         self.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
-
         self.set_shadow_type(gtk.SHADOW_ETCHED_IN)
 
         self._model = gtk.ListStore(object)
         self._model.connect('row-inserted', self._on_model__row_inserted)
         self._model.connect('row-deleted', self._on_model__row_deleted)
         self._treeview = gtk.TreeView(self._model)
+        self._treeview.connect_after("row-activated",
+                                    self._after_treeview__row_activated)
+        self._treeview.set_rules_hint(True)
         self._treeview.show()
         self.add(self._treeview)
 
-        self._treeview.set_rules_hint(True)
-
         # these tooltips are used for the columns
         self._tooltips = gtk.Tooltips()
-
-        # convenience connections
-        self._treeview.connect_after("row-activated",
-                                    self._after_treeview__row_activated)
 
         # create a popup menu for showing or hiding columns
         self._popup = ContextMenu(self._treeview)
