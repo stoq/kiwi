@@ -24,9 +24,11 @@
 
 """Interface specifications and utilities"""
 
+from kiwi.component import Interface
+
 Nothing = object()
 
-class Mixin(object):
+class Mixin(Interface):
     # gsignal('content-changed')
     # gproperty('data-type')
     # gproperty('model-attribute')
@@ -38,7 +40,7 @@ class Mixin(object):
     def update(self, value):
         pass
 
-class MixinSupportValidation(object):
+class MixinSupportValidation(Interface):
     # gproperty('mandatory')
     def is_valid(self):
         pass
@@ -50,7 +52,7 @@ class MixinSupportValidation(object):
     def before_validate(self, data):
         pass
 
-class AbstractGladeAdaptor(object):
+class AbstractGladeAdaptor(Interface):
     """Abstract class that define the functionality an class that handle
     glade files should provide."""
 
