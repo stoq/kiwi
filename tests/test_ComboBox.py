@@ -3,7 +3,9 @@ import utils
 
 import unittest
 
-from kiwi.ui.widgets.combobox import ComboBox
+from kiwi.python import Settable
+from kiwi.proxies import Proxy
+from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
 
 class TestComboBox(unittest.TestCase):
     def setUp(self):
@@ -73,6 +75,42 @@ class TestComboBox(unittest.TestCase):
         self._prefill()
         self.combo.clear()
         self.assertEqual(map(list, self.combo.get_model()), [])
+
+class FakeView:
+    def handler_block(self, widget):
+        pass
+
+    def handler_unblock(self, widget):
+        pass
+
+class BaseModelTest:
+    def setUp(self):
+        self.model = Settable(attr=0)
+        proxy = Proxy(FakeView(), self.model)
+        self.combo = self.type()
+        self.combo.data_type = int
+        self.combo.model_attribute = 'attr'
+        self.combo.prefill([('foo', 0),
+                            ('bar', 1)])
+        proxy.add_widget('attr', self.combo)
+
+    def testSelectItemByData(self):
+        self.combo.select_item_by_data(1)
+        self.assertEqual(self.model.attr, 1)
+        self.combo.select_item_by_data(0)
+        self.assertEqual(self.model.attr, 0)
+
+    def testSelectItemBylabel(self):
+        self.combo.select_item_by_label('bar')
+        self.assertEqual(self.model.attr, 1)
+        self.combo.select_item_by_label('foo')
+        self.assertEqual(self.model.attr, 0)
+
+class ComboModelTest(BaseModelTest, unittest.TestCase):
+    type = ComboBox
+
+class ComboEntryModelTest(BaseModelTest, unittest.TestCase):
+    type = ComboBoxEntry
 
 if __name__ == '__main__':
     unittest.main()
