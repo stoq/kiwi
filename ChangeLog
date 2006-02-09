@@ -1,5 +1,9 @@
 2006-02-09  Johan Dahlin  <jdahlin@async.com.br>
 
+	* tests/test_argcheck.py: 100% coverage here
+
+	* kiwi/argcheck.py: Remove tests, they're in tests/ now
+
 	* tools/showcoverage: Steal from gazpacho (who stole from flumotion)
 
 	* kiwi/ui/widgets/list.py (List.index): Use is None instead of if,

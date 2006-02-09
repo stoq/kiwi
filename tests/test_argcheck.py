@@ -119,5 +119,25 @@ class ArgTest(unittest.TestCase):
                           date=None, date2=True)
 
 
+    def testCustom(self):
+        @argcheck(number)
+        def func(n):
+            pass
+        func(10)
+
+    def testDisable(self):
+        argcheck.disable()
+        @argcheck(str)
+        def func(s):
+            pass
+        func(10)
+        argcheck.enable()
+
+    def testErrorHandling(self):
+        self.assertRaises(TypeError, argcheck(str), True)
+        self.assertRaises(TypeError, argcheck(int), lambda **x: None)
+        self.assertRaises(TypeError, argcheck(int), lambda : None)
+        self.assertRaises(TypeError, argcheck(int), lambda x='str': None)
+
 if __name__ == '__main__':
     unittest.main()

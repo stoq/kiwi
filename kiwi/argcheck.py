@@ -196,30 +196,3 @@ class argcheck(object):
                                            type(value).__name__))
         if custom:
             argument_type.value_check(name, value)
-
-
-def test():
-    @argcheck(int)
-    def function(number):
-        pass
-
-    class Class:
-        @argcheck(percent)
-        def method(self, value):
-            pass
-
-    function(1)
-    try:
-        function(None) # fails
-    except TypeError, e:
-        print e
-
-    o = Class()
-    o.method(10.4) # works
-    try:
-        o.method(-1) # fails
-    except ValueError, e:
-        print e
-
-if __name__ == '__main__':
-    test()
