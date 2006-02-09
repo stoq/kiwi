@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Lorenzo Gil Sanchez <lgs@sicem.biz>
 #            Johan Dahlin <jdahlin@async.com.br>
 #
@@ -31,13 +31,13 @@ class Mixin(object):
     # gproperty('data-type')
     # gproperty('model-attribute')
     # gproperty('validation-changed')
-    
+
     def read(self):
         pass
-    
+
     def update(self, value):
         pass
-    
+
 class MixinSupportValidation(object):
     # gproperty('mandatory')
     def is_valid(self):
@@ -46,7 +46,7 @@ class MixinSupportValidation(object):
     # These two are mainly used by subclasses
     def validate(self, data=Nothing, force=False):
         pass
-    
+
     def before_validate(self, data):
         pass
 
