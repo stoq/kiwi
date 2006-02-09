@@ -7,19 +7,19 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): (C) Ali Afshar <aafshar@gmail.com>
-# 
+#
 # Contact Ali if you require release under a different license.
 
 
@@ -99,7 +99,7 @@ class HyperLink(PropertyObject, gtk.EventBox):
     def set_text(self, text):
         """
         Set the text of the hyperlink.
-        
+
         @param text: The text to set the hyperlink to.
         @type text: str
         """
@@ -118,7 +118,7 @@ class HyperLink(PropertyObject, gtk.EventBox):
     def has_menu(self):
         """
         Return whether the widget has a menu set.
-        
+
         @return: a boolean value indicating whether the internal menu has been
             set.
         """
@@ -191,7 +191,7 @@ class HyperLink(PropertyObject, gtk.EventBox):
     def _on_button_press_event(self, eventbox, event):
         """
         Called on mouse down.
-        
+
         Behaves in 2 ways.
             1. if left-button, register the start of a click and grab the
                 mouse.
@@ -209,7 +209,7 @@ class HyperLink(PropertyObject, gtk.EventBox):
     def _on_button_release_event(self, eventbox, event):
         """
         Called on mouse up.
-    
+
         If the left-button is released and the widget was earlier activated by
         a mouse down event a clicked signal is fired.
         """
@@ -223,7 +223,7 @@ class HyperLink(PropertyObject, gtk.EventBox):
     def _on_hover_changed(self, eb, event, hover):
         """
         Called when the mouse pinter enters or leaves the widget.
-        
+
         @param hover: Whether the mouse has entered the widget.
         @type hover: boolean
         """
@@ -233,7 +233,7 @@ class HyperLink(PropertyObject, gtk.EventBox):
     def _on_notify(self, eventbox, param):
         """
         Called on property notification.
-        
+
         Ensure that the look is up to date with the properties
         """
         if (param.name == 'text' or
