@@ -533,6 +533,9 @@ class List(PropertyObject, gtk.ScrolledWindow):
             def __init__(self):
                 self._index = -1
 
+            def __iter__(self):
+                return self
+
             def next(self, model=self._model):
                 try:
                     self._index += 1
@@ -585,14 +588,14 @@ class List(PropertyObject, gtk.ScrolledWindow):
         @param stop
         """
 
-        if start or stop:
+        if start is not None or stop is not None:
             raise NotImplementedError("start and stop")
 
         treeiter = self._iters.get(id(item), _marker)
         if treeiter is _marker:
             raise ValueError("item %r is not in the list" % item)
 
-        return self._model[item.iter].path[0]
+        return self._model[treeiter].path[0]
 
     def count(self, item):
         "L.count(item) -> integer -- return number of occurrences of value"

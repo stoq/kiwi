@@ -4,6 +4,8 @@ import unittest
 import gtk
 
 from kiwi.ui.widgets.list import List, Column
+from kiwi.python import Settable
+
 from utils import refresh_gui
 
 class Person:
@@ -209,6 +211,116 @@ class TestSignals(unittest.TestCase):
         self.assertEqual(self.selected, None)
         self.assertRaises(ValueError, self.klist.select, 2)
 
+class ConstructorTest(unittest.TestCase):
+    def testInvalidArguments(self):
+        self.assertRaises(TypeError, List, columns='')
+        self.assertRaises(TypeError, List, mode='')
+
+    def testInstanceList(self):
+        klist = List([Column('name', sorted=True)],
+                     [Settable(name='first')])
+        columns = klist.get_columns()
+        self.assertEqual(len(columns), 1)
+        self.assertEqual(columns[0].attribute, 'name')
+
+class MethodTest(unittest.TestCase):
+    def setUp(self):
+        self.klist = List([Column('name', sorted=True)],
+                          [Settable(name='first')])
+
+    def testNonZero(self):
+        self.assertEqual(self.klist.__nonzero__(), True)
+        self.klist.remove(self.klist[0])
+        self.assertEqual(self.klist.__nonzero__(), True)
+        if not self.klist:
+            raise AssertionError
+
+    def testIter(self):
+        for item1 in self.klist:
+            pass
+        for item2 in iter(self.klist):
+            self.assertEqual(item1, item2)
+
+    def testGetItem(self):
+        self.klist.append(Settable(name='second'))
+        model = self.klist.get_model()
+        item1 = model[0][0]
+        item2 = model[1][0]
+        self.assertEqual(self.klist[0], item1)
+        self.assertEqual(self.klist[:1], [item1])
+        self.assertEqual(self.klist[-1:], [item2])
+        self.assertRaises(TypeError, self.klist.__getitem__, None)
+
+    def testSetItem(self):
+        self.klist[0] = Settable(name='second')
+        self.assertRaises(NotImplementedError, self.klist.__setitem__,
+                          slice(0), None)
+        self.assertRaises(TypeError, self.klist.__setitem__, None, None)
+
+    def testIndex(self):
+        self.assertRaises(NotImplementedError, self.klist.index, 0, start=0)
+        self.assertRaises(NotImplementedError, self.klist.index, 0, stop=0)
+
+        self.assertEqual(self.klist.index(self.klist[0]), 0)
+        self.assertRaises(ValueError, self.klist.index, None)
+
+    def testCount(self):
+        item = self.klist[0]
+        self.assertEqual(self.klist.count(item), 1)
+        self.klist.append(item)
+        self.assertEqual(self.klist.count(item), 2)
+        self.klist.clear()
+        self.assertEqual(self.klist.count(item), 0)
+
+    def testInsert(self):
+        self.assertRaises(NotImplementedError, self.klist.insert, 1, 2)
+
+    def testPop(self):
+        self.assertRaises(NotImplementedError, self.klist.pop, None)
+
+    def testReverse(self):
+        self.assertRaises(NotImplementedError, self.klist.reverse, 1, 2)
+
+    def testSort(self):
+        self.assertRaises(NotImplementedError, self.klist.sort, 1, 2)
+
+    def testSelectPath(self):
+        self.klist.get_treeview().get_selection().set_mode(gtk.SELECTION_NONE)
+        self.assertRaises(TypeError, self.klist.select_paths, (0,))
+        self.klist.get_treeview().get_selection().set_mode(gtk.SELECTION_SINGLE)
+        self.klist.select_paths((0,))
+
+    def testSelect(self):
+        self.klist.get_treeview().get_selection().set_mode(gtk.SELECTION_NONE)
+        self.assertRaises(TypeError, self.klist.select, None)
+        self.klist.get_treeview().get_selection().set_mode(gtk.SELECTION_SINGLE)
+
+    def testGetSelected(self):
+        item = self.klist[0]
+        self.klist.select(item)
+        self.klist.get_treeview().get_selection().set_mode(gtk.SELECTION_SINGLE)
+        self.assertEqual(self.klist.get_selected(), item)
+
+    def testGetSelectedRows(self):
+        self.klist.get_treeview().get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+        item = self.klist[0]
+        self.klist.select(item)
+        self.assertEqual(self.klist.get_selected_rows(), [item])
+
+    def testGetNextAndPrevious(self):
+        self.klist.append(Settable(name='second'))
+        self.klist.append(Settable(name='third'))
+        item1, item2, item3 = self.klist
+
+        self.assertEqual(self.klist.get_next(item1), item2)
+        self.assertEqual(self.klist.get_next(item2), item3)
+        self.assertEqual(self.klist.get_next(item3), item1)
+        self.assertRaises(ValueError, self.klist.get_next, None)
+
+        self.assertEqual(self.klist.get_previous(item1), item3)
+        self.assertEqual(self.klist.get_previous(item2), item1)
+        self.assertEqual(self.klist.get_previous(item3), item2)
+        self.assertRaises(ValueError, self.klist.get_previous, None)
 
 if __name__ == '__main__':
     unittest.main()
