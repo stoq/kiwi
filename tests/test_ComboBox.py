@@ -13,13 +13,13 @@ class TestComboBox(unittest.TestCase):
         self.combo.prefill((('Johan', 1981),
                             ('Lorenzo', 1979),
                             ('Christian', 1976)))
-                           
+
     def testPrefill(self):
         self.combo.prefill(('foo', 'bar'))
         model = self.combo.get_model()
         self.assertEqual(tuple(model[0]), ('foo', None))
         self.assertEqual(tuple(model[1]), ('bar', None))
-        
+
     def testPrefillWithData(self):
         self.combo.prefill((('foo', 42), ('bar', 138)))
         model = self.combo.get_model()
@@ -63,9 +63,9 @@ class TestComboBox(unittest.TestCase):
         self._prefill()
         self.combo.select_item_by_position(0)
         self.assertEqual(self.combo.get_selected_data(), 1981)
-        self.assertRaises(TypeError, 
+        self.assertRaises(TypeError,
                           self.combo.select_item_by_position, 'foobar')
-        
+
     def testGetSelectedLabel(self):
         self._prefill()
 
@@ -73,6 +73,6 @@ class TestComboBox(unittest.TestCase):
         self._prefill()
         self.combo.clear()
         self.assertEqual(map(list, self.combo.get_model()), [])
-    
+
 if __name__ == '__main__':
     unittest.main()
