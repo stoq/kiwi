@@ -187,7 +187,7 @@ class ComboProxyMixin(object):
                 self.set_active_iter(row.iter)
                 break
         else:
-            raise KeyError("No item correspond to label %s in the combo %s"
+            raise KeyError("No item correspond to label %r in the combo %s"
                            % (label, self.name))
 
     def select_item_by_data(self, data):
