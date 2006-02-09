@@ -28,8 +28,8 @@ class DataTypesTest(unittest.TestCase):
         # set the date format to the spanish one
         try:
             locale.setlocale(locale.LC_TIME, 'es_ES')
-            print 'skipping es_ES, locale not available'
         except locale.Error:
+            print 'skipping es_ES, locale not available'
             return
 
         birthdate = date(1979, 2, 12)
@@ -41,8 +41,8 @@ class DataTypesTest(unittest.TestCase):
         # let's try with the portuguese locale
         try:
             locale.setlocale(locale.LC_TIME, 'pt_BR')
-            print 'skipping pt_BR, locale not available'
         except locale.Error:
+            print 'skipping pt_BR, locale not available'
             return
 
         birthdate = date(1979, 2, 12)
@@ -70,8 +70,8 @@ class DataTypesTest(unittest.TestCase):
     def testdate2str_ptBR(self):
         try:
             locale.setlocale(locale.LC_TIME, 'pt_BR')
-            print 'skipping pt_BR, locale not available'
         except locale.Error:
+            print 'skipping pt_BR, locale not available'
             return
 
         self.assertEqual(date_converter.as_string(date(1979, 2, 12)),
@@ -79,7 +79,7 @@ class DataTypesTest(unittest.TestCase):
 
     def testFormatPricePtBR(self):
         try:
-            locale.setlocale(locale.LC_TIME, 'pt_BR')
+            locale.setlocale(locale.LC_MONETARY, 'pt_BR')
         except locale.Error:
             print 'skipping pt_BR, locale not available'
             return
@@ -91,7 +91,7 @@ class DataTypesTest(unittest.TestCase):
 
     def testFormatPriceEnUS(self):
         try:
-            locale.setlocale(locale.LC_TIME, 'en_US')
+            locale.setlocale(locale.LC_MONETARY, 'en_US')
         except locale.Error:
             print 'skipping en_US, locale not available'
             return
