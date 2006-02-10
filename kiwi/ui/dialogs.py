@@ -127,6 +127,9 @@ class BaseDialog(gtk.Dialog):
 
         gtk.Dialog.__init__(self, title=title, parent=parent,
                             flags=flags, buttons=buttons)
+        self.set_border_width(6)
+        self.set_has_separator(False)
+        self.vbox.set_spacing(6)
 
 def messagedialog(dialog_type, short, long=None, parent=None,
                   buttons=gtk.BUTTONS_OK, default=-1):
