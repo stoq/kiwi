@@ -7,21 +7,21 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Christian Reis <kiko@async.com.br>
 #            Lorenzo Gil Sanchez <lgs@sicem.biz>
 #            Johan Dahlin <jdahlin@async.com.br>
-#         
+#
 
 """Kiwi is a library designed to make developing graphical applications as
 easy as possible. It offers both a framework and a set of enhanced widgets,
@@ -37,7 +37,7 @@ Kiwi includes a Framework and a set of enhanced widgets
       - Johan Dahlin <jdahlin@async.com.br>
     - Website: U{http://www.async.com.br/projects/kiwi/}
     - Organization: Async Open Source
-"""            
+"""
 
 import sys
 
