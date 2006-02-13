@@ -1,0 +1,34 @@
+1. Resources
+ 
+  - Normal resource loading,
+    environ.find_resource(resource_name, object)
+
+    * Locale
+    * Images
+    * Glade files
+    * Documentation
+
+  - Directories
+    To be able to extend.
+
+  Can a directory be a normal resource (dict) or a special list/constant?
+
+2. Library
+   
+   A resource container
+
+3. Application
+   
+   Like a library in most senses, but has some additional features
+   
+   - Launcher script and main script
+   - Translation
+
+4. Uninstalled vs Installed
+  
+  - Installed structure, defined in setup.py
+  
+  - Uninstalled structure, defined in __init__.py for library
+    and in launcher script or main.py for applications.
+
+   
