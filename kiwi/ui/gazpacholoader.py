@@ -152,46 +152,56 @@ class DataTypeAdaptor(PropertyCustomEditor):
 
 class SpinBtnDataType(DataTypeAdaptor):
     def get_data_types(self):
-        return [(_('Integer'), int),
-                (_('Float'), float),
-                (_('Currency'), currency)]
+        return [
+            (_('Integer'), int),
+            (_('Float'), float),
+            (_('Currency'), currency)
+            ]
 
 class EntryDataType(DataTypeAdaptor):
     def get_data_types(self):
-        return [(_('Integer'), int),
-                (_('Float'), float),
-                (_('String'), str),
-                (_('Currency'), currency),
-                (_('Date'), datetime.date),
-                (_('Datetime'), datetime.datetime),
-                (_('Time'), datetime.time),
-                (_('Object'), object)]
+        return [
+            (_('String'), str),
+            (_('Integer'), int),
+            (_('Float'), float),
+            (_('Currency'), currency),
+            (_('Date'), datetime.date),
+            (_('Datetime'), datetime.datetime),
+            (_('Time'), datetime.time),
+            (_('Object'), object)
+            ]
 
 class TextViewDataType(DataTypeAdaptor):
     def get_data_types(self):
-        return [(_('Integer'), int),
-                (_('Float'), float),
-                (_('Date'), datetime.date),
-                (_('String'), str)]
+        return [
+            (_('String'), str),
+            (_('Integer'), int),
+            (_('Float'), float),
+            (_('Date'), datetime.date),
+            ]
 
 class ComboBoxDataType(DataTypeAdaptor):
     def get_data_types(self):
-        return [(_('Boolean'), bool),
-                (_('String'), str),
-                (_('Integer'), int),
-                (_('Float'), float),
-                (_('Object'), object)]
+        return [
+            (_('String'), str),
+            (_('Boolean'), bool),
+            (_('Integer'), int),
+            (_('Float'), float),
+            (_('Object'), object)
+            ]
 
 class LabelDataType(DataTypeAdaptor):
     def get_data_types(self):
-        return [(_('Boolean'), bool),
-                (_('String'), str),
-                (_('Integer'), int),
-                (_('Float'), float),
-                (_('Date'), datetime.date),
-                (_('Datetime'), datetime.datetime),
-                (_('Time'), datetime.time),
-                (_('Currency'), currency)]
+        return [
+            (_('String'), str),
+            (_('Boolean'), bool),
+            (_('Integer'), int),
+            (_('Float'), float),
+            (_('Date'), datetime.date),
+            (_('Datetime'), datetime.datetime),
+            (_('Time'), datetime.time),
+            (_('Currency'), currency)
+            ]
 
 class DataTypeProperty(CustomProperty, StringType):
     translatable = False
