@@ -7,19 +7,19 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
-#            
+#
 
 """A tooltip popup window which only pop ups on demand, which
 makes it possible for us to tie it to a specific gtk.gdk.Window
@@ -44,13 +44,13 @@ class Tooltip(gtk.Window):
         self._label = gtk.Label()
         self.add(self._label)
         self._show_timeout_id = -1
-        
+
     # from gtktooltips.c:gtk_tooltips_draw_tips
     def _calculate_pos(self, widget):
         screen = widget.get_screen()
-        
+
         w, h = self.size_request()
-        
+
         x, y = widget.window.get_origin()
 
         if widget.flags() & gtk.NO_WINDOW:
@@ -89,15 +89,15 @@ class Tooltip(gtk.Window):
                                     None, window, "tooltip",
                                     0, 0, w, h)
         return False
-    
+
     def _real_display(self, widget):
         x, y = self._calculate_pos(widget)
-        
+
         self.move(x, y)
         self.show_all()
 
     # Public API
-    
+
     def set_text(self, text):
         self._label.set_text(text)
 
@@ -109,10 +109,10 @@ class Tooltip(gtk.Window):
     def display(self, widget):
         if not self._label.get_text():
             return
-        
+
         if self._show_timeout_id != -1:
             return
-        
+
         self._show_timeout_id = gobject.timeout_add(DEFAULT_DELAY,
                                                     self._real_display,
                                                     widget)
