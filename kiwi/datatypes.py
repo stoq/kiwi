@@ -150,6 +150,19 @@ class _StringConverter(BaseConverter):
 
 converter.add(_StringConverter)
 
+class _UnicodeConverter(BaseConverter):
+    type = unicode
+
+    def as_string(self, value, format=None):
+        if format is None:
+            format = u'%s'
+        return format % value
+
+    def from_string(self, value):
+        return unicode(value)
+
+converter.add(_UnicodeConverter)
+
 class _IntConverter(BaseConverter):
     type = int
 

@@ -162,6 +162,7 @@ class EntryDataType(DataTypeAdaptor):
     def get_data_types(self):
         return [
             (_('String'), str),
+            (_('Unicode'), unicode),
             (_('Integer'), int),
             (_('Float'), float),
             (_('Currency'), currency),
@@ -175,6 +176,7 @@ class TextViewDataType(DataTypeAdaptor):
     def get_data_types(self):
         return [
             (_('String'), str),
+            (_('Unicode'), unicode),
             (_('Integer'), int),
             (_('Float'), float),
             (_('Date'), datetime.date),
@@ -184,6 +186,7 @@ class ComboBoxDataType(DataTypeAdaptor):
     def get_data_types(self):
         return [
             (_('String'), str),
+            (_('Unicode'), unicode),
             (_('Boolean'), bool),
             (_('Integer'), int),
             (_('Float'), float),
@@ -194,6 +197,7 @@ class LabelDataType(DataTypeAdaptor):
     def get_data_types(self):
         return [
             (_('String'), str),
+            (_('Unicode'), unicode),
             (_('Boolean'), bool),
             (_('Integer'), int),
             (_('Float'), float),

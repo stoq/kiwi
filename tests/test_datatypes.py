@@ -90,5 +90,18 @@ class CurrencyTest(unittest.TestCase):
         self.assertEqual(currency(1).format(False), '1')
         self.assertEqual(currency(0).format(True), '$0')
 
+class UnicodeTest(unittest.TestCase):
+    def setUp(self):
+        self.conv = converter.get_converter(unicode)
+
+    def testFromString(self):
+        self.assertEqual(self.conv.from_string('foobar'), u'foobar')
+        # utf-8 encoded, as default after importing gtk
+        self.assertEqual(self.conv.from_string('\xc3\xa4'), u'\xe4')
+
+    def testAsString(self):
+        self.assertEqual(self.conv.as_string(u'foobar'), 'foobar')
+        self.assertEqual(self.conv.as_string(u'\xe4'), '\xc3\xa4')
+
 if __name__ == "__main__":
     unittest.main()

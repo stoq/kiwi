@@ -63,7 +63,7 @@ class Form(Delegate):
             return ValidationError("use a better language")
 
 person = Person()
-person.name = 'John Doe'
+person.name = u'John Doe'
 person.age = 36
 person.birthdate = datetime.datetime(year=1969, month=2, day=20)
 person.height = 183.0

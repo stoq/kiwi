@@ -1,3 +1,14 @@
+2006-02-13  Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/validation/personalinformation.glade:
+	* examples/validation/personalinformation.py:
+	* kiwi/datatypes.py:
+	* kiwi/ui/gazpacholoader.py:
+	* tests/test_datatypes.py:
+
+	Add a unicode datatype, tests and modify a model attribute in
+	personalinformation to use it.
+
 2006-02-09  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/component.py:
