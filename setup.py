@@ -14,6 +14,12 @@ simpler.
 
 from distutils.core import setup
 
+try:
+    import gobject
+    import gtk
+except ImportError:
+    raise SystemExit("Kiwi requires PyGTK 2.8 or higher")
+
 from kiwi.dist import listfiles, listpackages, TemplateInstallLib, \
      get_site_packages_dir
 
