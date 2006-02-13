@@ -1,5 +1,11 @@
 2006-02-13  Johan Dahlin  <jdahlin@async.com.br>
 
+	* examples/comboentry.py:
+	* kiwi/ui/comboentry.py:
+	Add a comboentry and example
+
+2006-02-13  Johan Dahlin  <jdahlin@async.com.br>
+
 	* examples/validation/personalinformation.glade:
 	* examples/validation/personalinformation.py:
 	* kiwi/datatypes.py:
