@@ -2,12 +2,9 @@ from datetime import date
 import unittest
 import locale
 
-from kiwi.datatypes import currency, converter, ValidationError
+from kiwi.datatypes import currency, converter, ValidationError, ValueUnset
 
 import utils
-
-date_converter = converter.get_converter(date)
-bool_converter = converter.get_converter(bool)
 
 def set_locale(category, name):
     # set the date format to the spanish one
@@ -19,56 +16,70 @@ def set_locale(category, name):
     return True
 
 class DataTypesTest(unittest.TestCase):
+    def setUp(self):
+        self.date = date(1979, 2, 12)
+        self.conv = converter.get_converter(bool)
+
     def testFromString(self):
-        self.assertEqual(bool_converter.from_string('TRUE'), True)
-        self.assertEqual(bool_converter.from_string('true'), True)
-        self.assertEqual(bool_converter.from_string('TrUe'), True)
-        self.assertEqual(bool_converter.from_string('1'), True)
-        self.assertEqual(bool_converter.from_string('FALSE'), False)
-        self.assertEqual(bool_converter.from_string('false'), False)
-        self.assertEqual(bool_converter.from_string('FalSE'), False)
-        self.assertEqual(bool_converter.from_string('0'), False)
+        self.assertEqual(self.conv.from_string('TRUE'), True)
+        self.assertEqual(self.conv.from_string('true'), True)
+        self.assertEqual(self.conv.from_string('TrUe'), True)
+        self.assertEqual(self.conv.from_string('1'), True)
+        self.assertEqual(self.conv.from_string('FALSE'), False)
+        self.assertEqual(self.conv.from_string('false'), False)
+        self.assertEqual(self.conv.from_string('FalSE'), False)
+        self.assertEqual(self.conv.from_string('0'), False)
 
         # you are not supposed to pass something that is not a string
-        self.assertRaises(AttributeError, bool_converter.from_string, None)
+        self.assertRaises(AttributeError, self.conv.from_string, None)
 
 class DateTest(unittest.TestCase):
     def setUp(self):
         self.date = date(1979, 2, 12)
+        self.conv = converter.get_converter(date)
+
+    def tearDown(self):
+        set_locale(locale.LC_ALL, 'C')
 
     def testFromStringES(self):
         if not set_locale(locale.LC_TIME, 'es_ES'):
             return
 
-        self.assertEqual(date_converter.from_string("12/2/79"), self.date)
-        self.assertEqual(date_converter.from_string("12/02/79"), self.date)
+        self.assertEqual(self.conv.from_string("12/2/79"), self.date)
+        self.assertEqual(self.conv.from_string("12/02/79"), self.date)
 
     def testAsStringES(self):
         if not set_locale(locale.LC_TIME, 'es_ES'):
             return
 
-        self.assertEqual(date_converter.as_string(self.date), "12/02/79")
+        self.assertEqual(self.conv.as_string(self.date), "12/02/79")
 
     def tesFromStringBR(self):
         if not set_locale(locale.LC_TIME, 'pt_BR'):
             return
 
-        self.assertEqual(date_converter.from_string("12-2-1979"), self.date)
-        self.assertEqual(date_converter.from_string("12-02-1979"), self.date)
+        self.assertEqual(self.conv.from_string("12-2-1979"), self.date)
+        self.assertEqual(self.conv.from_string("12-02-1979"), self.date)
 
         # test some invalid dates
         self.assertRaises(ValidationError,
-                          date_converter.from_string, "40-10-2005")
+                          self.conv.from_string, "40-10-2005")
         self.assertRaises(ValidationError,
-                          date_converter.from_string, "30-02-2005")
+                          self.conv.from_string, "30-02-2005")
 
     def testAsStringBR(self):
         if not set_locale(locale.LC_TIME, 'pt_BR'):
             return
 
-        self.assertEqual(date_converter.as_string(self.date), "12-02-1979")
+        self.assertEqual(self.conv.as_string(self.date), "12-02-1979")
 
 class CurrencyTest(unittest.TestCase):
+    def setUp(self):
+        self.conv = converter.get_converter(currency)
+
+    def tearDown(self):
+        set_locale(locale.LC_ALL, 'C')
+
     def testFormatBR(self):
         if not set_locale(locale.LC_MONETARY, 'pt_BR'):
             return
@@ -90,6 +101,14 @@ class CurrencyTest(unittest.TestCase):
         self.assertEqual(currency(1).format(False), '1')
         self.assertEqual(currency(0).format(True), '$0')
 
+        self.assertEqual(self.conv.from_string(''), ValueUnset)
+        self.assertEqual(self.conv.from_string('0'), currency(0))
+        self.assertRaises(ValidationError, self.conv.from_string, 'foo')
+
+        self.assertEqual(self.conv.as_string(currency(0)), '$0.00')
+        self.assertEqual(self.conv.as_string(currency(-10)), '$-10.00')
+        #self.assertEqual(ValidationError, self.conv.as_string, object)
+
 class UnicodeTest(unittest.TestCase):
     def setUp(self):
         self.conv = converter.get_converter(unicode)
@@ -102,6 +121,69 @@ class UnicodeTest(unittest.TestCase):
     def testAsString(self):
         self.assertEqual(self.conv.as_string(u'foobar'), 'foobar')
         self.assertEqual(self.conv.as_string(u'\xe4'), '\xc3\xa4')
+
+class IntTest(unittest.TestCase):
+    def setUp(self):
+        self.conv = converter.get_converter(int)
+
+    def testFromString(self):
+        self.assertEqual(self.conv.from_string('0'), 0)
+        self.assertRaises(ValidationError, self.conv.from_string, '0.5')
+
+    def testAsString(self):
+        self.assertEqual(self.conv.as_string(0), '0')
+        self.assertEqual(self.conv.as_string(-10), '-10')
+
+class FloatTest(unittest.TestCase):
+    def setUp(self):
+        self.conv = converter.get_converter(float)
+        self.inf = float('inf')
+        self.nan = float('nan')
+
+    def tearDown(self):
+        set_locale(locale.LC_ALL, 'C')
+
+    def testFromString(self):
+        self.assertEqual(self.conv.from_string('-2.5'), -2.5)
+        self.assertEqual(self.conv.from_string('10.33'), 10.33)
+        self.assertEqual(self.conv.from_string('inf'), self.inf)
+        # You can't compare nan to itself
+        #self.assertEqual(self.conv.from_string('nan'), self.nan)
+        self.assertRaises(ValidationError, self.conv.from_string, 'foo')
+        self.assertRaises(ValidationError, self.conv.from_string, '1.2.3')
+        self.assertEqual(self.conv.from_string(''), ValueUnset)
+
+    def testFromStringUS(self):
+        if not set_locale(locale.LC_NUMERIC, 'en_US'):
+            return
+        self.assertEqual(self.conv.from_string('0.'), 0)
+        self.assertEqual(self.conv.from_string('1.75'), 1.75)
+        self.assertEqual(self.conv.from_string('10,000'), 10000)
+        self.assertEqual(self.conv.from_string('10,000,000.5'), 10000000.5)
+
+    def testFromStringSE(self):
+        # Swedish is interesting here because it has different
+        # thousand separator and decimal points (compared to en_US)
+        if not set_locale(locale.LC_NUMERIC, 'sv_SE'):
+            return
+        self.assertEqual(self.conv.from_string('0,'), 0)
+        self.assertEqual(self.conv.from_string('1,75'), 1.75)
+        self.assertEqual(self.conv.from_string('4 321'), 4321)
+        self.assertEqual(self.conv.from_string('54 321'), 54321)
+        self.assertEqual(self.conv.from_string('654 321'), 654321)
+        self.assertEqual(self.conv.from_string('7 654 321'), 7654321)
+        self.assertEqual(self.conv.from_string('10 000 000,5'), 10000000.5)
+        self.assertRaises(ValidationError, self.conv.from_string, '1,2 3')
+        self.assertRaises(ValidationError, self.conv.from_string, '1 23 ')
+        self.assertRaises(ValidationError, self.conv.from_string, ' 23 ')
+        #self.assertRaises(ValidationError, self.conv.from_string, '1234 234')
+
+    def testAsString(self):
+        self.assertEqual(self.conv.as_string(0.5), '0.5')
+        self.assertEqual(self.conv.as_string(-10.5), '-10.5')
+        self.assertEqual(self.conv.as_string(0.5), '0.5')
+        self.assertEqual(self.conv.as_string(self.inf), 'inf')
+        self.assertEqual(self.conv.as_string(self.nan), 'nan')
 
 if __name__ == "__main__":
     unittest.main()

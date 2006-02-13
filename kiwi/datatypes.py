@@ -231,10 +231,7 @@ class _FloatConverter(BaseConverter):
         # Check so we only have one decimal point
         decimal_point = conv["decimal_point"]
         decimal_points = value.count(decimal_point)
-        if decimal_points == 1:
-            # Replace the decimal point with a dot, which float() can handle
-            value = value.replace(decimal_point, '.')
-        elif decimal_points > 1:
+        if decimal_points > 1:
             raise ValidationError(
                 'You have more than one decimal point ("%s") '
                 ' in your number "%s"' % (decimal_point, value))
@@ -275,7 +272,7 @@ class _FloatConverter(BaseConverter):
     def as_string(self, value, format=None):
         """Convert a float to a string"""
         if format is None:
-            format = '%f'
+            format = '%g'
         return lformat(format, value)
 
     def from_string(self, value):
@@ -560,7 +557,3 @@ def format_price(value, symbol=True, precision=None):
     """
 
     return currency(value).format(symbol, precision)
-
-if __name__ == '__main__':
-    print currency(10.0)
-    print currency(10.3)
