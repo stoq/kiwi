@@ -79,7 +79,7 @@ l.append(Person('Nando', 29+len(l), 'Santos'))
 
 vbox.pack_start(l)
 
-label = SummaryLabel(klist=l, column='age', label='<b>Total:</b>',
+label = SummaryLabel(klist=l, column='salary', label='<b>Total:</b>',
                      value_format='<b>%s</b>')
 vbox.pack_start(label, expand=False, padding=6)
 
