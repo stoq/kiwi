@@ -1,13 +1,13 @@
 import gtk
 
-from kiwi.ui.widgets.list import Column, List
+from kiwi.ui.objectlist import Column, ObjectList
 
 class Fruit:
     def __init__(self, icon, name):
         self.icon = icon
         self.name = name
 
-fruits = List([Column('icon', use_stock=True,
+fruits = ObjectList([Column('icon', use_stock=True,
                       justify=gtk.JUSTIFY_CENTER,
                       icon_size=gtk.ICON_SIZE_LARGE_TOOLBAR),
                Column('name')])

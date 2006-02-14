@@ -1,7 +1,7 @@
 import gtk
 
 from kiwi.datatypes import currency
-from kiwi.ui.widgets.list import Column, List
+from kiwi.ui.objectlist import Column, ObjectList
 
 class Product:
     def __init__(self, name, price):
@@ -42,7 +42,7 @@ entry = gtk.Entry()
 entry.connect('activate', entry_activate_cb)
 vbox.pack_start(entry, False, False, 6)
 
-l = List(columns)
+l = ObjectList(columns)
 l.extend(data)
 vbox.pack_start(l)
 

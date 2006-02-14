@@ -39,11 +39,11 @@ from gazpacho.properties import prop_registry, CustomProperty, StringType
 from kiwi import _warn
 from kiwi.datatypes import currency
 from kiwi.environ import environ
+from kiwi.ui.objectlist import Column, ObjectList
 from kiwi.ui.widgets.checkbutton import CheckButton
 from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
 from kiwi.ui.widgets.entry import Entry
 from kiwi.ui.widgets.label import Label
-from kiwi.ui.widgets.list import Column, List
 from kiwi.ui.widgets.radiobutton import RadioButton
 from kiwi.ui.widgets.spinbutton import SpinButton
 from kiwi.ui.widgets.textview import TextView
@@ -229,9 +229,9 @@ class KiwiColumnAdapter(Adapter):
         return Column(name)
 adapter_registry.register_adapter(KiwiColumnAdapter)
 
-class ListAdapter(PythonWidgetAdapter):
-    object_type = List
-adapter_registry.register_adapter(ListAdapter)
+class ObjectListAdapter(PythonWidgetAdapter):
+    object_type = ObjectList
+adapter_registry.register_adapter(ObjectListAdapter)
 
 # Register widgets which have data-type and model-attributes
 # ComboBox is a special case, it needs to inherit from another

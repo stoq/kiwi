@@ -1,5 +1,30 @@
 2006-02-14  Johan Dahlin  <jdahlin@async.com.br>
 
+	* examples/framework/news/news2.py:
+	* examples/framework/news/news3.py:
+	* examples/framework/news/news4.py:
+	* examples/list/editable.py:
+	* examples/list/kitchensink.py:
+	* examples/list/radio.py:
+	* examples/list/searchbar.py:
+	* examples/list/simple.py:
+	* examples/list/sortable.py:
+	* examples/list/stockicon.py:
+	* gazpacho-plugin/kiwiwidgets.xml:
+	* kiwi/ui/gazpacholoader.py:
+	* kiwi/ui/objectlist.py:
+	* kiwi/ui/test/listener.py:
+	* kiwi/ui/widgets/list.py:
+	* tests/test_List.py:
+	* tests/test_ObjectList.py:
+	* tools/glade_conversor.py:
+
+	Rename List to ObjectList and move it to kiwi.ui.
+	Update examples, tests, callsites and conversion helpers.
+	Keep a backwards compatibility layer.
+
+2006-02-14  Johan Dahlin  <jdahlin@async.com.br>
+
 	* tests/test_utils.py: Add tests for various scenarios
 
 	* kiwi/python.py: Use __init__ instead of __new__ in 

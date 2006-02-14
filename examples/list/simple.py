@@ -1,13 +1,13 @@
 import gtk
 
-from kiwi.ui.widgets.list import Column, List
+from kiwi.ui.objectlist import Column, ObjectList
 
 class Fruit:
     def __init__(self, name, price):
         self.name = name
         self.price = price
         
-fruits = List([Column('name', data_type=str),
+fruits = ObjectList([Column('name', data_type=str),
                Column('price', data_type=int)])
 
 for name, price in [('Apple', 4),

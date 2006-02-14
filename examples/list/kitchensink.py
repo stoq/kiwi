@@ -6,7 +6,7 @@ import time
 import gtk
 
 from kiwi.datatypes import currency
-from kiwi.ui.widgets.list import (Column, List, SequentialColumn,
+from kiwi.ui.objectlist import (Column, ObjectList, SequentialColumn,
                                   ColoredColumn, SummaryLabel)
 
 def random_date():
@@ -70,7 +70,7 @@ win.connect('destroy', gtk.main_quit)
 vbox = gtk.VBox()
 win.add(vbox)
 
-l = List(columns, mode=gtk.SELECTION_MULTIPLE)
+l = ObjectList(columns, mode=gtk.SELECTION_MULTIPLE)
 l.extend(data)
 l.append(Person('Nando', 29+len(l), 'Santos'))
 

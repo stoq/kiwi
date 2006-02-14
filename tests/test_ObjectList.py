@@ -3,7 +3,7 @@ import unittest
 
 import gtk
 
-from kiwi.ui.widgets.list import List, Column
+from kiwi.ui.objectlist import ObjectList, Column
 from kiwi.python import Settable
 
 from utils import refresh_gui
@@ -27,8 +27,8 @@ class ColumnTests(unittest.TestCase):
         self.win.destroy()
         del self.win
 
-    def testEmptyList(self):
-        mylist = List()
+    def testEmptyObjectList(self):
+        mylist = ObjectList()
         self.win.add(mylist)
         refresh_gui()
 
@@ -36,7 +36,7 @@ class ColumnTests(unittest.TestCase):
         # column's attribute can not contain spaces
         self.assertRaises(AttributeError, Column, 'test column')
 
-        mylist = List(Column('test_column'))
+        mylist = ObjectList(Column('test_column'))
         self.win.add(mylist)
         refresh_gui()
 
@@ -47,7 +47,7 @@ class DataTests(unittest.TestCase):
     def setUp(self):
         self.win = gtk.Window()
         self.win.set_default_size(400, 400)
-        self.list = List([Column('name'), Column('age')])
+        self.list = ObjectList([Column('name'), Column('age')])
         self.win.add(self.list)
         refresh_gui()
 
@@ -73,7 +73,7 @@ class DataTests(unittest.TestCase):
         # we still have to columns, right?
         self.assertEqual(2, len(self.list.get_columns()))
 
-    def testAddingAList(self):
+    def testAddingAObjectList(self):
         global persons
 
         self.list.add_list(persons)
@@ -113,7 +113,7 @@ class DataTests(unittest.TestCase):
         #self.assertRaises(ValueError, self.list.remove,
         #                  existing_person)
 
-    def testClearList(self):
+    def testClearObjectList(self):
         global persons
 
         self.list.add_list(persons)
@@ -166,7 +166,7 @@ class DataTests(unittest.TestCase):
 
 class TestSignals(unittest.TestCase):
     def setUp(self):
-        self.klist = List()
+        self.klist = ObjectList()
         self.klist.connect('has-rows', self._on_klist__has_rows)
         self.klist.connect('selection-changed',
                            self._on_klist__selection_changed)
@@ -213,11 +213,11 @@ class TestSignals(unittest.TestCase):
 
 class ConstructorTest(unittest.TestCase):
     def testInvalidArguments(self):
-        self.assertRaises(TypeError, List, columns='')
-        self.assertRaises(TypeError, List, mode='')
+        self.assertRaises(TypeError, ObjectList, columns='')
+        self.assertRaises(TypeError, ObjectList, mode='')
 
-    def testInstanceList(self):
-        klist = List([Column('name', sorted=True)],
+    def testInstanceObjectList(self):
+        klist = ObjectList([Column('name', sorted=True)],
                      [Settable(name='first')])
         columns = klist.get_columns()
         self.assertEqual(len(columns), 1)
@@ -225,8 +225,8 @@ class ConstructorTest(unittest.TestCase):
 
 class MethodTest(unittest.TestCase):
     def setUp(self):
-        self.klist = List([Column('name', sorted=True)],
-                          [Settable(name='first')])
+        self.klist = ObjectList([Column('name', sorted=True)],
+                                [Settable(name='first')])
 
     def testNonZero(self):
         self.assertEqual(self.klist.__nonzero__(), True)

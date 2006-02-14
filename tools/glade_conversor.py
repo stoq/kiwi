@@ -8,10 +8,11 @@ filters = [
     ("Kiwi2+Widgets+ComboBox", "kiwi+ui+widgets+combobox"),
     ("Kiwi2+Widgets+Entry", "kiwi+ui+widgets+entry"),
     ("Kiwi2+Widgets+Label", "kiwi+ui+widgets+label"),
-    ("Kiwi2+Widgets+List", "kiwi+ui+widgets+list"),
+    ("Kiwi2+Widgets+List+List", "ObjectList"),
     ("Kiwi2+Widgets+RadioButton", "kiwi+ui+widgets+radiobutton"),
     ("Kiwi2+Widgets+SpinButton", "kiwi+ui+widgets+spinbutton"),
     ("Kiwi2+Widgets+TextView", "kiwi+ui+widgets+textview"),
+    ("kiwi+ui+widgets+list+List", "ObjectList")
 ]
 
 def apply_filter((first, second), line):
@@ -24,17 +25,17 @@ def main(args):
     if len(args) < 2:
         print 'Need a filename'
         return
-    
+
     filename = args[1]
     tmp = filename + '.tmp'
     out = open(tmp, 'w')
-    
+
     for line in open(filename).readlines():
         for filter in filters:
             line = apply_filter(filter, line)
         out.write(line)
     os.unlink(filename)
     os.rename(tmp, filename)
-    
+
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

@@ -5,7 +5,7 @@ import gtk
 
 from kiwi.ui import gadgets
 from kiwi.ui.delegates import Delegate, SlaveDelegate
-from kiwi.ui.widgets.list import List, Column
+from kiwi.ui.objectlist import ObjectList, Column
 
 class NewsItem:
     def __init__(self, title, author, url):
@@ -44,10 +44,10 @@ class Shell(Delegate):
         gadgets.set_foreground(self.title, "blue")
 
         # Create the delegate and set it up
-        kiwilist = List(my_columns, news)
-        kiwilist.connect('selection-changed', self.news_selected)
-        kiwilist.connect('double-click', self.double_click)
-        slave = SlaveDelegate(toplevel=kiwilist)
+        objectlist = ObjectList(my_columns, news)
+        objectlist.connect('selection-changed', self.news_selected)
+        objectlist.connect('double-click', self.double_click)
+        slave = SlaveDelegate(toplevel=objectlist)
         
         self.attach_slave("placeholder", slave)
         slave.focus_toplevel() # Must be done after attach
@@ -55,7 +55,7 @@ class Shell(Delegate):
         self.slave = slave
     
     def news_selected(self, the_list, item):
-        kiwilist = self.slave.get_toplevel()
+        objectlist = self.slave.get_toplevel()
         print "%s %s %s\n" % (item.title, item.author, item.url)
 
     def double_click(self, the_list, selected_object):
@@ -63,8 +63,8 @@ class Shell(Delegate):
         self.hide_and_quit()
         
     def on_ok__clicked(self, *args):
-        kiwilist = self.slave.get_toplevel()
-        item = kiwilist.get_selected()
+        objectlist = self.slave.get_toplevel()
+        item = objectlist.get_selected()
         if item:
             self.emit('result', item.url)
         self.hide_and_quit()

@@ -40,7 +40,7 @@ import gtk
 
 from kiwi.ui.test.common import Base
 from kiwi.ui.widgets.combobox import ComboProxyMixin
-from kiwi.ui.widgets.list import List
+from kiwi.ui.objectlist import ObjectList
 
 _events = []
 
@@ -246,22 +246,23 @@ class ButtonClickedEvent(SignalEvent):
 register_event_type(ButtonClickedEvent)
 
 # Kiwi widget support
-class KiwiListSelectionChanged(SignalEvent):
+class ObjectListSelectionChanged(SignalEvent):
     """
-    This event represents a selection change on a L{kiwi.ui.widgets.list.List},
+    This event represents a selection change on a
+    L{kiwi.ui.objectlist.ObjectList},
     eg when the user selects or unselects a row.
     It is actually tied to the signal changed on GtkTreeSelection object.
     """
-    object_type = List
+    object_type = ObjectList
     signal_name = 'changed'
-    def __init__(self, klist, name, args):
-        self._klist = klist
-        SignalEvent.__init__(self, klist, name=klist.get_name(),
+    def __init__(self, objectlist, name, args):
+        self._objectlist = objectlist
+        SignalEvent.__init__(self, objectlist, name=objectlist.get_name(),
                              args=args)
         self.rows = self._get_rows()
 
     def _get_rows(self):
-        selection = self._klist.get_treeview().get_selection()
+        selection = self._objectlist.get_treeview().get_selection()
 
         if selection.get_mode() == gtk.SELECTION_MULTIPLE:
             # get_selected_rows() returns a list of paths
@@ -283,26 +284,26 @@ class KiwiListSelectionChanged(SignalEvent):
     connect = classmethod(connect)
 
     def get_toplevel(self, widget):
-        return self._klist.get_toplevel()
+        return self._objectlist.get_toplevel()
 
     def serialize(self):
         return '%s.select_paths(%s)' % (self.name, self.rows)
-register_event_type(KiwiListSelectionChanged)
+register_event_type(ObjectListSelectionChanged)
 
-class KiwiListDoubleClick(SignalEvent):
+class ObjectListDoubleClick(SignalEvent):
     """
-    This event represents a double click on a row in klist
+    This event represents a double click on a row in objectlist
     """
     signal_name = 'button-press-event'
-    object_type = List
+    object_type = ObjectList
 
-    def __init__(self, klist, name, args):
+    def __init__(self, objectlist, name, args):
         event, = args
         if event.type != gdk._2BUTTON_PRESS:
             raise SkipEvent
 
-        SignalEvent.__init__(self, klist, name, args)
-        self.row = klist.get_selected_row_number()
+        SignalEvent.__init__(self, objectlist, name, args)
+        self.row = objectlist.get_selected_row_number()
 
     def connect(cls, orig, signal_name, cb):
         object = orig.get_treeview()
@@ -311,7 +312,7 @@ class KiwiListDoubleClick(SignalEvent):
 
     def serialize(self):
         return '%s.double_click(%s)' % (self.name, self.row)
-register_event_type(KiwiListDoubleClick)
+register_event_type(ObjectListDoubleClick)
 
 class KiwiComboBoxChangedEvent(SignalEvent):
     """

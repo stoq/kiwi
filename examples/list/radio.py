@@ -1,5 +1,5 @@
 import gtk
-from kiwi.ui.widgets.list import Column, List
+from kiwi.ui.objectlist import Column, ObjectList
 
 class Object:
     def __init__(self, name, value): 
@@ -12,7 +12,7 @@ win = gtk.Window()
 win.set_size_request(300, 120)
 win.connect('delete-event', gtk.main_quit)
 
-list = List(columns)
+list = ObjectList(columns)
 win.add(list)
 
 for name, value in [('First', False),

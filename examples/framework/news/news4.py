@@ -63,8 +63,8 @@ class Shell(Delegate):
         self.slave.focus_toplevel() # Must be done after attach
     
     def on_ok__clicked(self, button):
-        kiwilist = self.slave.news_list
-        item = kiwilist.get_selected()
+        objectlist = self.slave.news_list
+        item = objectlist.get_selected()
         self.emit('result', item.url)
         self.hide_and_quit()
 

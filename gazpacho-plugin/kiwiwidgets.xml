@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <glade-catalog name="kiwiwidgets" library="kiwi">
   <glade-widget-classes>
-    <glade-widget-class name="kiwi+ui+widgets+list+List"
-                        generic-name="kiwilist"
-                        title="Kiwi List" />
+    <glade-widget-class name="ObjectList"
+                        generic-name="objectlist"
+                        title="Object List" />
     <glade-widget-class name="kiwi+ui+widgets+entry+Entry"
                         generic-name="kiwientry"
                         title="Kiwi Entry" />
@@ -35,7 +35,7 @@
     <glade-widget-class-ref name="kiwi+ui+widgets+label+Label"/>
     <glade-widget-class-ref name="kiwi+ui+widgets+combobox+ComboBox"/>
     <glade-widget-class-ref name="kiwi+ui+widgets+combobox+ComboBoxEntry"/>
-    <glade-widget-class-ref name="kiwi+ui+widgets+list+List"/>
+    <glade-widget-class-ref name="ObjectList"/>
     <glade-widget-class-ref name="kiwi+ui+widgets+checkbutton+CheckButton"/>
     <glade-widget-class-ref name="kiwi+ui+widgets+radiobutton+RadioButton"/>
     <glade-widget-class-ref name="kiwi+ui+widgets+spinbutton+SpinButton"/>
