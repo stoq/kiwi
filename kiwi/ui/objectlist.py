@@ -1636,11 +1636,26 @@ class SummaryLabel(ListLabel):
 
     def update_total(self):
         """Recalculate the total value of all columns"""
-        attr = self._column.attribute
-        get_attribute = self._column.get_attribute
+        column = self._column
+        attr = column.attribute
+        get_attribute = column.get_attribute
 
         value = sum([get_attribute(obj, attr) for obj in self._klist], 0.0)
-        self.set_value(value)
+
+        # duplication of _cell_data_text_func
+        if column.format:
+            text = lformat(column.format, value)
+        elif column.format_func:
+            text = column.format_func(value)
+        elif (column.data_type == datetime.date or
+              column.data_type == datetime.datetime or
+              column.data_type == datetime.time or
+              column.data_type == currency):
+            text = column.as_string(value)
+        else:
+            text = value
+
+        self.set_value(text)
 
     # Callbacks
 
