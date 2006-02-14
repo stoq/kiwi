@@ -67,7 +67,7 @@ class PropertyMeta(ClassInittableMetaType):
     classes.
     """
     # pylint fails to understand this is a metaclass
-    def __init__(cls, name, bases, namespace):
+    def __init__(self, name, bases, namespace):
         def _update_bases(bases, props, signals):
             for base in bases:
                 props.update(getattr(base, '__gproperties__', {}))
@@ -86,10 +86,10 @@ class PropertyMeta(ClassInittableMetaType):
                 break
 
         # Workaround brokenness in PyGObject meta/type registration
-        if hasattr(cls, '__gtype__'):
-            cls.__gproperties__ = namespace.get('__gproperties__', {})
-            cls.__gsignals__ = namespace.get('__gsignals__', {})
-        ClassInittableMetaType.__init__(cls, name, bases, namespace)
+        if hasattr(self, '__gtype__'):
+            self.__gproperties__ = namespace.get('__gproperties__', {})
+            self.__gsignals__ = namespace.get('__gsignals__', {})
+        ClassInittableMetaType.__init__(self, name, bases, namespace)
 
 class PropertyObject(object):
     """
