@@ -67,7 +67,7 @@ class PropertyMeta(ClassInittableMetaType):
     classes.
     """
     # pylint fails to understand this is a metaclass
-    def __new__(cls, name, bases, namespace):
+    def __init__(cls, name, bases, namespace):
         def _update_bases(bases, props, signals):
             for base in bases:
                 props.update(getattr(base, '__gproperties__', {}))
@@ -85,7 +85,11 @@ class PropertyMeta(ClassInittableMetaType):
                 _update_bases(bases, props, signals)
                 break
 
-        return ClassInittableMetaType.__new__(cls, name, bases, namespace)
+        # Workaround brokenness in PyGObject meta/type registration
+        if hasattr(cls, '__gtype__'):
+            cls.__gproperties__ = namespace.get('__gproperties__', {})
+            cls.__gsignals__ = namespace.get('__gsignals__', {})
+        ClassInittableMetaType.__init__(cls, name, bases, namespace)
 
 class PropertyObject(object):
     """
@@ -134,28 +138,6 @@ class PropertyObject(object):
         if not issubclass(cls, gobject.GObject):
             return
 
-        # Sort of a hack, remove signals already present
-        signals = namespace.get('__gsignals__')
-        for signal in gobject.signal_list_names(cls):
-            if signal in signals:
-                del signals[signal]
-
-        # The default value for enum GParamSpecs (returned by list_properties)
-        # lacks the enum wrapper so save a reference to the value, it needs to
-        # be done here because when we register the GType pygtk removes the
-        # attribute __gproperties__. It's fixed in PyGTK CVS, so it can be
-        # remove when we can depend on PyGTK 2.8
-        pytypes = {}
-        for prop_name, value in namespace.get('__gproperties__', {}).items():
-            if gobject.type_is_a(value[0], gobject.GEnum):
-                prop_name = prop_name.replace('-', '_')
-                pytypes[prop_name] = value[3]
-
-        # Register the type, here so don't have to do it explicitly, it
-        # can be removed in PyGTK 2.8, since it does this magic for us.
-        type_register(cls)
-        del namespace['__gsignals__']
-
         # Create python properties for gobject properties, store all
         # the values in self._attributes, so do_set/get_property
         # can access them. Using set property for attribute assignments
@@ -169,15 +151,7 @@ class PropertyObject(object):
                          lambda self, v, n=prop_name: self.set_property(n, v))
             setattr(cls, prop_name, p)
 
-            # PyGTK 2.7.1-2.8.0 bugfix
-            default_value = getattr(pspec, 'default_value', None)
-
-            # Resolve an integer to a real enum
-            if gobject.type_is_a(pspec.value_type, gobject.GEnum):
-                pyenum = pytypes[prop_name]
-                default_value = pyenum.__enum_values__[default_value]
-
-            default_values[prop_name] = default_value
+            default_values[prop_name] = pspec.default_value
 
         cls._default_values.update(default_values)
 

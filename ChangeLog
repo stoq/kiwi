@@ -1,3 +1,16 @@
+2006-02-14  Johan Dahlin  <jdahlin@async.com.br>
+
+	* tests/test_utils.py: Add tests for various scenarios
+
+	* kiwi/python.py: Use __init__ instead of __new__ in 
+	ClassInittableMetaType.
+
+	* kiwi/utils.py: Simplify, make sure the GObject Meta class
+	registers the GType instead of ourselves. That's the only way
+	to make it honor __gtype_name__ in PyGTK 2.8.x. Remove
+	some backwards compatibility code. And add a hack to make
+	it pickup signals and properties.
+
 2006-02-13  Johan Dahlin  <jdahlin@async.com.br>
 
 	* examples/comboentry.py:
