@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Christian Reis <kiko@async.com.br>
 #            Gustavo Rahal <gustavo@async.com.br>
 #            Lorenzo Gil Sanchez <lgs@sicem.biz>
@@ -44,15 +44,15 @@ class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
 
     """
     allowed_data_types = int, float
-    
+
     def __init__(self):
-        # since the default data_type is str we need to set it to int 
+        # since the default data_type is str we need to set it to int
         # or float for spinbuttons
         gtk.SpinButton.__init__(self)
         PropertyObject.__init__(self, data_type=int)
         WidgetMixinSupportValidation.__init__(self)
         self._icon = IconEntry(self)
-        
+
     # GtkEditable.changed is called too often
     # GtkSpinButton.value-changed is called only when the value changes
     gsignal('value-changed', 'override')
@@ -62,7 +62,7 @@ class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
 
     def read(self):
         return self._from_string(self.get_text())
-    
+
     def update(self, data):
         if data is None:
             self.set_text("")
@@ -82,7 +82,7 @@ class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
     def do_size_allocate(self, allocation):
 
         self.chain(allocation)
-    
+
 	if self.flags() & gtk.REALIZED:
             self._icon.resize_windows()
 
@@ -93,12 +93,12 @@ class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
     def do_unrealize(self):
         self._icon.deconstruct()
         gtk.SpinButton.do_unrealize(self)
-        
+
     # IconEntry
-    
+
     def set_pixbuf(self, pixbuf):
         self._icon.set_pixbuf(pixbuf)
-        
+
     def update_background(self, color):
         self._icon.update_background(color)
 
