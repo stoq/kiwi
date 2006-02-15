@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Christian Reis <kiko@async.com.br>
 #            Daniel Saran R. da Cunha <daniel@async.com.br>
 #            Lorenzo Gil Sanchez <lgs@sicem.biz>
@@ -39,7 +39,7 @@ class RadioButton(PropertyObject, gtk.RadioButton, WidgetMixin):
         gtk.RadioButton.__init__(self)
         WidgetMixin.__init__(self)
         PropertyObject.__init__(self)
-    
+
     gsignal('toggled', 'override')
     def do_toggled(self):
         self.emit('content-changed')
@@ -48,11 +48,11 @@ class RadioButton(PropertyObject, gtk.RadioButton, WidgetMixin):
     def get_selected(self):
         """
         Get the currently selected radiobutton.
-        
+
         @returns: The selected L{RadioButton} or None if there are no
           selected radiobuttons.
         """
-        
+
         for button in self.get_group():
             if button.get_active():
                 return button
@@ -61,13 +61,13 @@ class RadioButton(PropertyObject, gtk.RadioButton, WidgetMixin):
         button = self.get_selected()
         if button is None:
             return ValueUnset
-        
+
         return self._from_string(button.data_value)
-    
+
     def update(self, data):
         if data is None:
             return
-        
+
         data = self._as_string(data)
         for rb in self.get_group():
             if rb.get_property('data-value') == data:
