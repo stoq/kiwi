@@ -93,6 +93,16 @@ class BaseComboBoxEntry(gtk.ComboBox):
     def get_text_column(self):
         return self._text_column
 
+    # IconEntry
+    def set_pixbuf(self, pixbuf):
+        self.entry.set_pixbuf(pixbuf)
+
+    def update_background(self, color):
+        self.entry.update_background(color)
+
+    def get_icon_window(self):
+        return self.entry.get_icon_window()
+
 gobject.type_register(BaseComboBoxEntry)
 
 def test():

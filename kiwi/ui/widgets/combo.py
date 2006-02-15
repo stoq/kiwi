@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2003-2005 Async Open Source
+# Copyright (C) 2003-2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -38,12 +38,16 @@ from gtk import keysyms
 
 from kiwi import ValueUnset
 from kiwi.ui.comboboxentry import BaseComboBoxEntry
+from kiwi.ui.comboentry import ComboEntry
 from kiwi.ui.combomixin import COL_COMBO_LABEL, COMBO_MODE_STRING, \
      COMBO_MODE_DATA, COMBO_MODE_UNKNOWN, ComboMixin
 from kiwi.ui.widgets.proxy import WidgetMixin, WidgetMixinSupportValidation
 from kiwi.utils import PropertyObject, gproperty
 
-class ComboBox(PropertyObject, gtk.ComboBox, ComboMixin, WidgetMixin):
+class ProxyComboBox(PropertyObject, gtk.ComboBox, ComboMixin, WidgetMixin):
+
+    __gtype_name__ = 'ProxyComboBox'
+
     def __init__(self):
         gtk.ComboBox.__init__(self)
         ComboMixin.__init__(self)
@@ -99,9 +103,9 @@ class ComboBox(PropertyObject, gtk.ComboBox, ComboMixin, WidgetMixin):
         ComboMixin.clear(self)
         self.emit('content-changed')
 
-class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
-                    WidgetMixinSupportValidation):
-
+class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
+                         WidgetMixinSupportValidation):
+    __gtype_name__ = 'ProxyComboBoxEntry'
     # it doesn't make sense to connect to this signal
     # because we want to monitor the entry of the combo
     # not the combo box itself.
@@ -221,12 +225,12 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
         ComboMixin.clear(self)
         self.entry.set_text("")
 
-    # IconEntry
-    def set_pixbuf(self, pixbuf):
-        self.entry.set_pixbuf(pixbuf)
+class ProxyComboEntry(PropertyObject, ComboEntry, ComboMixin, WidgetMixin):
+    __gtype_name__ = 'ProxyComboEntry'
 
-    def update_background(self, color):
-        self.entry.update_background(color)
+    def __init__(self):
+        ComboEntry.__init__(self)
+        ComboMixin.__init__(self)
+        WidgetMixin.__init__(self)
+        PropertyObject.__init__(self)
 
-    def get_icon_window(self):
-        return self.entry.get_icon_window()

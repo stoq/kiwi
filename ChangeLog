@@ -1,3 +1,17 @@
+2006-02-15  Johan Dahlin  <jdahlin@async.com.br>
+
+	* gazpacho-plugin/kiwiwidgets.xml:
+	* kiwi/ui/comboboxentry.py:
+	* kiwi/ui/comboentry.py:
+	* kiwi/ui/combomixin.py:
+	* kiwi/ui/gazpacholoader.py:
+	* kiwi/ui/widgets/combo.py:
+	* kiwi/ui/widgets/combobox.py:
+	* kiwi/ui/widgets/list.py:
+	* tools/glade_conversor.py:
+
+	Refactor combos, beginning of gazpacho/proxy support for comboentry.
+
 2006-02-14  Johan Dahlin  <jdahlin@async.com.br>
 
 	* examples/framework/news/news2.py:

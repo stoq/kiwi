@@ -18,14 +18,17 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
 #
-# Author(s): Johan Dahlin <jdahlin@async.com.br>
+# Author(s): Christian Reis <kiko@async.com.br>
+#            Lorenzo Gil Sanchez <lgs@sicem.biz>
+#            Gustavo Rahal <gustavo@async.com.br>
+#            Johan Dahlin <jdahlin@async.com.br>
 #
 
-"""High level wrapper for GtkTreeView: backwards compatibility layer"""
+"""GtkComboBox and GtkComboBoxEntry support for the Kiwi Framework.
+backwards compatibility layer"""
 
-from kiwi.ui.objectlist import Column, SequentialColumn, ColoredColumn, \
-     ListLabel, SummaryLabel
-from kiwi.ui.objectlist import ObjectList as List
+from kiwi.ui.widgets.combo import ProxyComboBox as ComboBox
+from kiwi.ui.widgets.combo import ProxyComboBoxEntry as ComboBoxEntry
 
 # pyflakes
-Column, SequentialColumn, ColoredColumn, ListLabel, SummaryLabel, List
+ComboBox, ComboBoxEntry

@@ -10,10 +10,13 @@
     <glade-widget-class name="kiwi+ui+widgets+label+Label"
                         generic-name="kiwilabel"
                         title="Kiwi Label" />
-    <glade-widget-class name="kiwi+ui+widgets+combobox+ComboBox"
+    <glade-widget-class name="ProxyComboBox"
                         generic-name="kiwicombobox"
                         title="Kiwi Combo Box"/>
-    <glade-widget-class name="kiwi+ui+widgets+combobox+ComboBoxEntry"
+    <glade-widget-class name="ProxyComboEntry"
+                        generic-name="kiwicomboentry"
+                        title="Kiwi Combo Entry"/>
+    <glade-widget-class name="ProxyComboBoxEntry"
                         generic-name="kiwicomboboxentry"
                         title="Kiwi Combo Box Entry"/>
     <glade-widget-class name="kiwi+ui+widgets+checkbutton+CheckButton"
@@ -33,8 +36,9 @@
   <glade-widget-group name="kiwi" title="Kiwi Widgets">
     <glade-widget-class-ref name="kiwi+ui+widgets+entry+Entry"/>
     <glade-widget-class-ref name="kiwi+ui+widgets+label+Label"/>
-    <glade-widget-class-ref name="kiwi+ui+widgets+combobox+ComboBox"/>
-    <glade-widget-class-ref name="kiwi+ui+widgets+combobox+ComboBoxEntry"/>
+    <glade-widget-class-ref name="ProxyComboBox"/>
+    <glade-widget-class-ref name="ProxyComboBoxEntry"/>
+    <glade-widget-class-ref name="ProxyComboEntry"/>
     <glade-widget-class-ref name="ObjectList"/>
     <glade-widget-class-ref name="kiwi+ui+widgets+checkbutton+CheckButton"/>
     <glade-widget-class-ref name="kiwi+ui+widgets+radiobutton+RadioButton"/>

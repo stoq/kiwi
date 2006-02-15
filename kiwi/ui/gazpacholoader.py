@@ -41,7 +41,7 @@ from kiwi.datatypes import currency
 from kiwi.environ import environ
 from kiwi.ui.objectlist import Column, ObjectList
 from kiwi.ui.widgets.checkbutton import CheckButton
-from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
+from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox, ProxyComboBoxEntry
 from kiwi.ui.widgets.entry import Entry
 from kiwi.ui.widgets.label import Label
 from kiwi.ui.widgets.radiobutton import RadioButton
@@ -237,12 +237,12 @@ adapter_registry.register_adapter(ObjectListAdapter)
 # ComboBox is a special case, it needs to inherit from another
 # adapter and need to support two types.
 class KiwiComboBoxAdapter(ComboBoxAdapter):
-    object_type = ComboBox, ComboBoxEntry
+    object_type = ProxyComboBox, ProxyComboBoxEntry
     def construct(self, name, gtype, properties):
-        if gtype == ComboBox.__gtype__:
-            object_type = ComboBox
-        elif gtype == ComboBoxEntry.__gtype__:
-            object_type = ComboBoxEntry
+        if gtype == ProxyComboBox.__gtype__:
+            object_type = ProxyComboBox
+        elif gtype == ProxyComboBoxEntry.__gtype__:
+            object_type = ProxyComboBoxEntry
 
         obj = object_type()
         obj.set_name(name)
@@ -252,8 +252,9 @@ adapter_registry.register_adapter(KiwiComboBoxAdapter)
 for gobj, editor in [(Entry, EntryDataType),
                      (CheckButton, None),
                      (Label, LabelDataType),
-                     (ComboBox, ComboBoxDataType),
-                     (ComboBoxEntry, ComboBoxDataType),
+                     (ProxyComboBox, ComboBoxDataType),
+                     (ProxyComboBoxEntry, ComboBoxDataType),
+                     (ProxyComboEntry, ComboBoxDataType),
                      (SpinButton, SpinBtnDataType),
                      (RadioButton, None),
                      (TextView, TextViewDataType)]:
@@ -280,7 +281,7 @@ for gobj, editor in [(Entry, EntryDataType),
     # Register custom adapters, since gobject.new is broken in 2.6
     # Used by loader, eg in gazpacho and in applications
     # ComboBox is registered above
-    if gobj == ComboBox:
+    if gobj == ProxyComboBox:
         continue
 
     klass = type('Kiwi%sAdapter', (PythonWidgetAdapter,),

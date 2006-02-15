@@ -98,7 +98,8 @@ class _ComboEntryPopup(gtk.Window):
             toplevel.group.add_window(self)
 
         x, y, width, height = self._get_position()
-        self.set_size_request(width, height)
+        if height >= 1 and width >= 1:
+            self.set_size_request(width, height)
         self.move(x, y)
         self.show_all()
 
@@ -320,6 +321,15 @@ class ComboEntry(gtk.HBox):
         if self._popping_down:
             return
         self.popup()
+
+    def set_model(self, model):
+        """
+        Set the tree model to model
+        @param model: a gtk.TreeModel
+        """
+        self._popup.set_model(model)
+        completion = self.entry.get_completion()
+        completion.set_model(model)
 
     def popup(self):
         """

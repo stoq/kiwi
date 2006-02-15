@@ -12,7 +12,9 @@ filters = [
     ("Kiwi2+Widgets+RadioButton", "kiwi+ui+widgets+radiobutton"),
     ("Kiwi2+Widgets+SpinButton", "kiwi+ui+widgets+spinbutton"),
     ("Kiwi2+Widgets+TextView", "kiwi+ui+widgets+textview"),
-    ("kiwi+ui+widgets+list+List", "ObjectList")
+    ("kiwi+ui+widgets+list+List", "ObjectList"),
+    ("kiwi+ui+widgets+combobox+ComboBox", "ProxyComboBox"),
+    ("kiwi+ui+widgets+combobox+ComboBoxEntry", "ProxyComboBoxEntry"),
 ]
 
 def apply_filter((first, second), line):
