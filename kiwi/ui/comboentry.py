@@ -59,6 +59,7 @@ class _ComboEntryPopup(gtk.Window):
 
         self._model = gtk.ListStore(str)
         self._treeview = gtk.TreeView(self._model)
+        self._treeview.set_enable_search(False)
         self._treeview.connect('motion-notify-event',
                                self._on_treeview__motion_notify_event)
         self._treeview.connect('button-release-event',
@@ -337,3 +338,17 @@ class ComboEntry(gtk.HBox):
         See L{kiwi.ui.entry}
         """
         self.entry.set_completion_strings(strs)
+
+    def set_text(self, text):
+        self.entry.set_text(text)
+
+    # IconEntry
+
+    def set_pixbuf(self, pixbuf):
+        self.entry.set_pixbuf(pixbuf)
+
+    def update_background(self, color):
+        self.entry.update_background(color)
+
+    def get_icon_window(self):
+        return self.entry.get_icon_window()
