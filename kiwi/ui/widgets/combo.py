@@ -229,6 +229,13 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ComboMixin,
 
         self.emit('content-changed')
 
+    def prop_set_list_editable(self, value):
+        if self.mode == COMBO_MODE_DATA:
+            raise AssertionError("You cannot use list-editable in data mode")
+
+        self.entry.set_editable(value)
+
+        return value
     def read(self):
         if self.mode == COMBO_MODE_UNKNOWN:
             return ValueUnset
