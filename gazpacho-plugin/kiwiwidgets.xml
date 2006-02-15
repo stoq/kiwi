@@ -16,9 +16,11 @@
     <glade-widget-class name="ProxyComboEntry"
                         generic-name="kiwicomboentry"
                         title="Kiwi Combo Entry"/>
+<!-- One combo entry is enough
     <glade-widget-class name="ProxyComboBoxEntry"
                         generic-name="kiwicomboboxentry"
                         title="Kiwi Combo Box Entry"/>
+-->
     <glade-widget-class name="kiwi+ui+widgets+checkbutton+CheckButton"
                         generic-name="kiwicheckbutton"
                         title="Kiwi Check Button"/>
