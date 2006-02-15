@@ -49,10 +49,8 @@ from kiwi.ui.widgets.spinbutton import SpinButton
 from kiwi.ui.widgets.textview import TextView
 
 # Backwards compatibility + pyflakes
-import kiwi.ui.widgets.combobox
-kiwi
-import kiwi.ui.widgets.list
-kiwi
+from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
+from kiwi.ui.widgets.list import List
 
 _ = gettext.gettext
 
@@ -237,6 +235,11 @@ adapter_registry.register_adapter(KiwiColumnAdapter)
 
 class ObjectListAdapter(PythonWidgetAdapter):
     object_type = ObjectList
+    def construct(self, name, gtype, properties):
+        if gtype == List:
+            gtype == ObjectType
+        return super(ObjectListAdapter, self).construct(name, gtype,
+                                                        properties)
 adapter_registry.register_adapter(ObjectListAdapter)
 
 # Register widgets which have data-type and model-attributes
@@ -245,9 +248,9 @@ adapter_registry.register_adapter(ObjectListAdapter)
 class KiwiComboBoxAdapter(ComboBoxAdapter):
     object_type = ProxyComboBox, ProxyComboBoxEntry
     def construct(self, name, gtype, properties):
-        if gobject.type_is_a(gtype, ProxyComboBox):
+        if gtype in (ProxyComboBox, ComboBox):
             object_type = ProxyComboBox
-        elif gobject.type_is_a(gtype, ProxyComboBoxEntry):
+        elif gtype in (ProxyComboBoxEntry, ComboBoxEntry):
             object_type = ProxyComboBoxEntry
         else:
             raise AssertionError("Unknown ComboBox GType: %r" % gtype)
