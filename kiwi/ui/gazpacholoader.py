@@ -249,6 +249,8 @@ class KiwiComboBoxAdapter(ComboBoxAdapter):
             object_type = ProxyComboBox
         elif gobject.type_is_a(gtype, ProxyComboBoxEntry):
             object_type = ProxyComboBoxEntry
+        else:
+            raise AssertionError("Unknown ComboBox GType: %r" % gtype)
 
         obj = object_type()
         obj.set_name(name)
