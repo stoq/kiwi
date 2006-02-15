@@ -217,11 +217,11 @@ class _ComboEntryPopup(gtk.Window):
         treeview.realize()
         cell = treeview.get_cell_area(0, treeview.get_column(0))
 
-        sample = self._comboentry.entry
+        sample = self._comboentry
 
         # We need to fetch the coordinates of the entry window
         # since comboentry itself does not have a window
-        x, y = sample.window.get_origin()
+        x, y = sample.entry.window.get_origin()
         width = sample.allocation.width
 
         hpolicy = vpolicy = gtk.POLICY_NEVER
