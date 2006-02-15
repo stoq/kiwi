@@ -283,10 +283,13 @@ class ComboEntry(gtk.HBox):
         self.entry = Entry()
         self.entry.connect('scroll-event',
                            self._on_entry__scroll_event)
-        self.entry.connect('key-press-event', self._on_entry__key_press_event)
+        self.entry.connect('key-press-event',
+                           self._on_entry__key_press_event)
         self.pack_start(self.entry, True, True)
 
         self._button = gtk.ToggleButton()
+        self._button.connect('scroll-event',
+                             self._on_entry__scroll_event)
         self._button.set_focus_on_click(False)
         self._button.connect('toggled', self._on_button__toggled)
         self._popping_down = False
@@ -305,13 +308,13 @@ class ComboEntry(gtk.HBox):
 
     def _on_entry__scroll_event(self, entry, event):
         model = self.get_model()
-        popup = self._popup
-        iter = popup.get_selected_iter()
-        curr = model[iter].path[0]
+        curr = model[self._popup.get_selected_iter()].path[0]
+        # Scroll up, select the previous item
         if event.direction == gdk.SCROLL_UP:
             curr -= 1
             if curr >= 0:
                 self.set_active_iter(model[curr].iter)
+        # Scroll down, select the next item
         elif event.direction == gdk.SCROLL_DOWN:
             curr += 1
             if curr < len(model):
