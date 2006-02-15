@@ -48,9 +48,11 @@ from kiwi.ui.widgets.radiobutton import RadioButton
 from kiwi.ui.widgets.spinbutton import SpinButton
 from kiwi.ui.widgets.textview import TextView
 
-# Backwards compatibility
-from kiwi.ui.widgets.combobox import ComboBoxEntry, ComboBox
-from kiwi.ui.widgets.list import List
+# Backwards compatibility + pyflakes
+import kiwi.ui.widgets.combobox
+kiwi
+import kiwi.ui.widgets.list
+kiwi
 
 _ = gettext.gettext
 
