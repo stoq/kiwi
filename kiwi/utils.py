@@ -86,10 +86,28 @@ class PropertyMeta(ClassInittableMetaType):
                 break
 
         # Workaround brokenness in PyGObject meta/type registration
+        props = namespace.get('__gproperties__', {})
+        signals = namespace.get('__gsignals__', {})
         if hasattr(self, '__gtype__'):
-            self.__gproperties__ = namespace.get('__gproperties__', {})
-            self.__gsignals__ = namespace.get('__gsignals__', {})
+            self.__gproperties__ = props
+            self.__gsignals__ = signals
+            gtype = self.__gtype__
+            # Delete signals and properties which are already
+            # present in the list
+            signal_names = gobject.signal_list_names(gtype)
+            for signal in signals.copy():
+                if signal in signal_names :
+                    del signals[signal]
+            prop_names = [prop.name for prop in gobject.list_properties(gtype)]
+            for prop in props.copy():
+                if prop in prop_names:
+                    del props[prop]
+
         ClassInittableMetaType.__init__(self, name, bases, namespace)
+
+        # The metaclass forgets to remove properties and signals
+        self.__gproperties__ = {}
+        self.__gsignals__ = {}
 
 class PropertyObject(object):
     """

@@ -1,5 +1,10 @@
 2006-02-15  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/utils.py (PropertyMeta._update_bases): Make sure subclassing 
+	of a combobox works
+
+	* tests/test_utils.py (Subclassing.testCombo): Add a test for this
+
 	* gazpacho-plugin/kiwiwidgets.xml:
 	* kiwi/ui/comboboxentry.py:
 	* kiwi/ui/comboentry.py:

@@ -2,6 +2,7 @@ import unittest
 
 import gobject
 
+from kiwi.ui.widgets.combo import ProxyComboBox
 from kiwi.utils import PropertyObject, gproperty
 
 class Test(gobject.GObject, PropertyObject):
@@ -30,9 +31,12 @@ class Subclassing(unittest.TestCase):
         self.failUnless(isinstance(instance, Test))
         self.failUnless(isinstance(instance, subtype))
 
-    # This is busted, find out why
-    #def testEntry(self):
-    #    subentry = type('Entry2', (Entry,), {})
+    def testCombo(self):
+        self.assertEqual(getattr(ProxyComboBox, '__gsignals__', {}), {})
+        self.assertEqual(getattr(ProxyComboBox, '__gproperties__', {}), {})
+        subentry = type('MyClass', (ProxyComboBox,), {})
+        self.assertNotEqual(gobject.type_name(subentry),
+                            gobject.type_name(ProxyComboBox))
 
 class MixinTest(unittest.TestCase):
     def testProperties(self):
