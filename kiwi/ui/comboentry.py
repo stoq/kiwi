@@ -281,6 +281,8 @@ class ComboEntry(gtk.HBox):
         gtk.HBox.__init__(self)
 
         self.entry = Entry()
+        self.entry.connect('scroll-event',
+                           self._on_entry__scroll_event)
         self.entry.connect('key-press-event', self._on_entry__key_press_event)
         self.pack_start(self.entry, True, True)
 
@@ -300,6 +302,20 @@ class ComboEntry(gtk.HBox):
         self._popup.connect('hide', self._on_popup__hide)
 
         self.set_model(self.entry.get_completion().get_model())
+
+    def _on_entry__scroll_event(self, entry, event):
+        model = self.get_model()
+        popup = self._popup
+        iter = popup.get_selected_iter()
+        curr = model[iter].path[0]
+        if event.direction == gdk.SCROLL_UP:
+            curr -= 1
+            if curr >= 0:
+                self.set_active_iter(model[curr].iter)
+        elif event.direction == gdk.SCROLL_DOWN:
+            curr += 1
+            if curr < len(model):
+                self.set_active_iter(model[curr].iter)
 
     def _on_entry__key_press_event(self, entry, event):
         """
@@ -366,6 +382,7 @@ class ComboEntry(gtk.HBox):
 
     def set_active_iter(self, iter):
         self._popup.set_selected_iter(iter)
+        self.entry.set_text(self._model[iter][0])
 
     def get_active_iter(self):
         return self._popup.get_selected_iter()
