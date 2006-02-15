@@ -245,9 +245,9 @@ adapter_registry.register_adapter(ObjectListAdapter)
 class KiwiComboBoxAdapter(ComboBoxAdapter):
     object_type = ProxyComboBox, ProxyComboBoxEntry
     def construct(self, name, gtype, properties):
-        if gtype == ProxyComboBox.__gtype__:
+        if gobject.type_is_a(gtype, ProxyComboBox):
             object_type = ProxyComboBox
-        elif gtype == ProxyComboBoxEntry.__gtype__:
+        elif gobject.type_is_a(gtype, ProxyComboBoxEntry):
             object_type = ProxyComboBoxEntry
 
         obj = object_type()
