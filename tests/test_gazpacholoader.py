@@ -7,17 +7,21 @@ from gazpacho.loader.loader import ObjectBuilder
 import kiwi.ui.gazpacholoader
 kiwi
 
+HAVE_2_8 = gobject.pygtk_version[:2] == (2, 8)
+
 def glade(s):
     return '<glade-interface>%s</glade-interface>' % s
 
 class TestGazpachoLoader(unittest.TestCase):
     def testConstruct(self):
-        objs = (("kiwi+ui+widgets+list+List", "w1"),
-                ("ObjectList", "w2"),
+        objs = [("kiwi+ui+widgets+list+List", "w1"),
                 ("kiwi+ui+widgets+combobox+ComboBox", "w3"),
-                ("ProxyComboBox", "w4"),
-                ("kiwi+ui+widgets+combobox+ComboBoxEntry", "w5"),
-                ("ProxyComboBoxEntry", "w6"))
+                ("kiwi+ui+widgets+combobox+ComboBoxEntry", "w5")]
+
+        if HAVE_2_8:
+            objs.extend([("ObjectList", "w2"),
+                         ("ProxyComboBox", "w4"),
+                         ("ProxyComboBoxEntry", "w6")])
         s = ''
 
         for obj, name in objs:

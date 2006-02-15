@@ -1,5 +1,14 @@
 2006-02-15  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/comboentry.py:
+	* kiwi/utils.py:
+	* tests/test_gazpacholoader.py:
+	* tests/test_utils.py:
+
+	2.6 compatibility added
+
+2006-02-15  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/utils.py (PropertyMeta._update_bases): Make sure subclassing 
 	of a combobox works
 

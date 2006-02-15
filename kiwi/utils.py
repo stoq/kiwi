@@ -41,6 +41,7 @@ def list_properties(gtype, parent=True):
         return pspecs
 
     parent = gobject.type_parent(gtype)
+
     parent_pspecs = gobject.list_properties(parent)
     return [pspec for pspec in pspecs
                       if pspec not in parent_pspecs]
@@ -58,6 +59,8 @@ def type_register(gtype):
     gobject.type_register(gtype)
 
     return True
+
+HAVE_2_6 = gobject.pygtk_version[:2] == (2, 6)
 
 class PropertyMeta(ClassInittableMetaType):
     """
@@ -102,6 +105,9 @@ class PropertyMeta(ClassInittableMetaType):
             for prop in props.copy():
                 if prop in prop_names:
                     del props[prop]
+
+        if HAVE_2_6 and issubclass(self, gobject.GObject):
+            gobject.type_register(self)
 
         ClassInittableMetaType.__init__(self, name, bases, namespace)
 

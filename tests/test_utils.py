@@ -3,7 +3,7 @@ import unittest
 import gobject
 
 from kiwi.ui.widgets.combo import ProxyComboBox
-from kiwi.utils import PropertyObject, gproperty
+from kiwi.utils import PropertyObject, gproperty, HAVE_2_6
 
 class Test(gobject.GObject, PropertyObject):
     __gtype_name__ = 'Test'
@@ -66,6 +66,8 @@ class MixinTest(unittest.TestCase):
     def testTypeName(self):
         class Object(gobject.GObject, PropertyObject):
             __gtype_name__ = 'Object'
+        if HAVE_2_6:
+            return
         self.assertEqual(gobject.type_name(Object), 'Object')
 
 if __name__ == '__main__':

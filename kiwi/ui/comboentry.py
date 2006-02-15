@@ -26,7 +26,7 @@
 import gtk
 from gtk import gdk, keysyms
 
-from kiwi.utils import gsignal
+from kiwi.utils import gsignal, type_register
 from kiwi.ui.widgets.entry import Entry
 
 class _ComboEntryPopup(gtk.Window):
@@ -278,6 +278,7 @@ class _ComboEntryPopup(gtk.Window):
 
     def set_selected_iter(self, iter):
         self._selection.select_iter(iter)
+type_register(_ComboEntryPopup)
 
 class ComboEntry(gtk.HBox):
     gsignal('changed')
@@ -440,3 +441,4 @@ class ComboEntry(gtk.HBox):
     def get_icon_window(self):
         return self.entry.get_icon_window()
 
+type_register(ComboEntry)
