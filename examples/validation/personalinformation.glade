@@ -43,7 +43,7 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="kiwi+ui+widgets+combobox+ComboBox" id="sex">
+                            <widget class="ProxyComboBox" id="sex">
                                 <property name="model_attribute">sex</property>
                                 <property name="events"></property>
                                 <property name="data_type">str</property>
@@ -193,7 +193,7 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="kiwi+ui+widgets+combobox+ComboBoxEntry" id="nationality">
+                            <widget class="ProxyComboEntry" id="nationality">
                                 <property name="mandatory">True</property>
                                 <property name="model_attribute">nationality</property>
                                 <property name="events"></property>
