@@ -278,6 +278,7 @@ class _ComboEntryPopup(gtk.Window):
         self._selection.select_iter(iter)
 
 class ComboEntry(gtk.HBox):
+    gsignal('changed')
     def __init__(self):
         gtk.HBox.__init__(self)
 
@@ -306,6 +307,8 @@ class ComboEntry(gtk.HBox):
         self._popup.connect('hide', self._on_popup__hide)
 
         self.set_model(self.entry.get_completion().get_model())
+
+    # Callbacks
 
     def _on_entry__scroll_event(self, entry, event):
         model = self.get_model()
@@ -350,17 +353,38 @@ class ComboEntry(gtk.HBox):
             return
         self.popup()
 
+    # Private
+
+    def _update(self):
+        model = self._model
+        if not len(model):
+            return
+
+        iter = self._popup.get_selected_iter()
+        if not iter:
+            iter = model[0].iter
+        self._popup.set_selected_iter(iter)
+
+    # Public API
+
     def set_model(self, model):
         """
         Set the tree model to model
-        @param model: a gtk.TreeModel
+        @param model: new model
+        @type model: gtk.TreeModel
         """
         self._model = model
         self._popup.set_model(model)
         completion = self.entry.get_completion()
         completion.set_model(model)
 
+        self._update()
+
     def get_model(self):
+        """
+        @returns: our model
+        @rtype: gtk.TreeModel
+        """
         return self._model
 
     def popup(self):
@@ -382,13 +406,25 @@ class ComboEntry(gtk.HBox):
         self.entry.set_completion_strings(strs)
 
     def set_text(self, text):
+        """
+        @param text:
+        """
         self.entry.set_text(text)
+        self.emit('changed')
 
     def set_active_iter(self, iter):
+        """
+        @param iter: iter to select
+        @type iter: gtk.TreeIter
+        """
         self._popup.set_selected_iter(iter)
-        self.entry.set_text(self._model[iter][0])
+        self.set_text(self._model[iter][0])
 
     def get_active_iter(self):
+        """
+        @returns: the selected iter
+        @rtype: gtk.TreeIter
+        """
         return self._popup.get_selected_iter()
 
     # IconEntry

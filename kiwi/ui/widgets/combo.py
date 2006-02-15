@@ -219,7 +219,15 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ComboMixin,
         ComboMixin.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
         PropertyObject.__init__(self)
+        self.connect('changed', self._on__changed)
+
         self.mode = COMBO_MODE_STRING
+
+    def _on__changed(self, widget):
+        if not self.entry.get_text():
+            return
+
+        self.emit('content-changed')
 
     def read(self):
         if self.mode == COMBO_MODE_UNKNOWN:
