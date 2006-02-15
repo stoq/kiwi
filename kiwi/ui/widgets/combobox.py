@@ -38,208 +38,15 @@ from gtk import keysyms
 
 from kiwi import ValueUnset
 from kiwi.ui.comboboxentry import BaseComboBoxEntry
+from kiwi.ui.combomixin import COL_COMBO_LABEL, COMBO_MODE_STRING, \
+     COMBO_MODE_DATA, COMBO_MODE_UNKNOWN, ComboMixin
 from kiwi.ui.widgets.proxy import WidgetMixin, WidgetMixinSupportValidation
 from kiwi.utils import PropertyObject, gproperty
 
-(COL_COMBO_LABEL,
- COL_COMBO_DATA) = range(2)
-
-# 1) strings (DONE)
-# 2) strings with data attached (DONE)
-# 3) searchable strings (DONE)
-# 4) searchable strings with data
-# 5) editable strings
-#
-# 5 Does not allow data to be attached
-# 3-4 supports validation
-
-(COMBO_MODE_UNKNOWN,
- COMBO_MODE_STRING,
- COMBO_MODE_DATA) = range(3)
-
-class ComboProxyMixin(object):
-    """Our combos always have one model with two columns, one for the string
-    that is displayed and one for the object it cames from.
-    """
-    def __init__(self):
-        """Call this constructor after the Combo one"""
-        model = gtk.ListStore(str, object)
-        self.set_model(model)
-        self.mode = COMBO_MODE_UNKNOWN
-
-    def set_mode(self, mode):
-        if self.mode != COMBO_MODE_UNKNOWN:
-            raise AssertionError
-        self.mode = mode
-
-    def __nonzero__(self):
-        return True
-
-    def __len__(self):
-        return len(self.get_model())
-
-    def prefill(self, itemdata, sort=False):
-        """Fills the Combo with listitems corresponding to the itemdata
-        provided.
-
-        Parameters:
-          - itemdata is a list of strings or tuples, each item corresponding
-            to a listitem. The simple list format is as follows::
-
-            >>> [ label0, label1, label2 ]
-
-            If you require a data item to be specified for each item, use a
-            2-item tuple for each element. The format is as follows::
-
-            >>> [ ( label0, data0 ), (label1, data1), ... ]
-
-          - Sort is a boolean that specifies if the list is to be sorted by
-            label or not. By default it is not sorted
-        """
-        if not isinstance(itemdata, (list, tuple)):
-            raise TypeError("'data' parameter must be a list or tuple of item "
-                            "descriptions, found %s") % type(itemdata)
-
-        if len(itemdata) == 0:
-            self.clear()
-            return
-
-        if self.mode == COMBO_MODE_UNKNOWN:
-            first = itemdata[0]
-            if isinstance(first, str):
-                self.set_mode(COMBO_MODE_STRING)
-            elif isinstance(first, (tuple, list)):
-                self.set_mode(COMBO_MODE_DATA)
-            else:
-                raise TypeError("Could not determine type, items must "
-                                "be strings or tuple/list")
-
-        mode = self.mode
-        model = self.get_model()
-
-        values = {}
-        if mode == COMBO_MODE_STRING:
-            if sort:
-                itemdata.sort()
-
-            for item in itemdata:
-                if item in values:
-                    raise KeyError("Tried to insert duplicate value "
-                                   "%s into Combo!" % item)
-                else:
-                    values[item] = None
-
-                model.append((item, None))
-        elif mode == COMBO_MODE_DATA:
-            if sort:
-                itemdata.sort(lambda x, y: cmp(x[0], y[0]))
-
-            for item in itemdata:
-                text, data = item
-                if text in values:
-                    raise KeyError("Tried to insert duplicate value "
-                                   "%s into Combo!" % item)
-                else:
-                    values[text] = None
-                model.append((text, data))
-        else:
-            raise TypeError("Incorrect format for itemdata; see "
-                            "docstring for more information")
-
-    def append_item(self, label, data=None):
-        """ Adds a single item to the Combo. Takes:
-        - label: a string with the text to be added
-        - data: the data to be associated with that item
-        """
-        if not isinstance(label, str):
-            raise TypeError("label must be string, found %s" % label)
-
-        if self.mode == COMBO_MODE_UNKNOWN:
-            if data is not None:
-                self.set_mode(COMBO_MODE_DATA)
-            else:
-                self.set_mode(COMBO_MODE_STRING)
-
-        model = self.get_model()
-        if self.mode == COMBO_MODE_STRING:
-            if data is not None:
-                raise TypeError("data can not be specified in string mode")
-            model.append((label, None))
-        elif self.mode == COMBO_MODE_DATA:
-            if data is None:
-                raise TypeError("data must be specified in string mode")
-            model.append((label, data))
-        else:
-            raise AssertionError
-
-    def clear(self):
-        """Removes all items from list"""
-        model = self.get_model()
-        model.clear()
-
-    def select_item_by_position(self, pos):
-        self.set_active(pos)
-
-    def select_item_by_label(self, label):
-        model = self.get_model()
-        for row in model:
-            if row[COL_COMBO_LABEL] == label:
-                self.set_active_iter(row.iter)
-                break
-        else:
-            raise KeyError("No item correspond to label %r in the combo %s"
-                           % (label, self.name))
-
-    def select_item_by_data(self, data):
-        if self.mode != COMBO_MODE_DATA:
-            raise TypeError("select_item_by_data can only be used in data mode")
-
-        model = self.get_model()
-        for row in model:
-            if row[COL_COMBO_DATA] == data:
-                self.set_active_iter(row.iter)
-                break
-        else:
-            raise KeyError("No item correspond to data %r in the combo %s"
-                           % (data, self.name))
-
-    def get_model_strings(self):
-        return [row[COL_COMBO_LABEL] for row in self.get_model()]
-
-    def get_model_items(self):
-        if self.mode != COMBO_MODE_DATA:
-            raise TypeError("get_model_items can only be used in data mode")
-
-        model = self.get_model()
-        items = {}
-        for row in model:
-            items[row[COL_COMBO_LABEL]] = row[COL_COMBO_DATA]
-
-        return items
-
-    def get_selected_label(self):
-        iter = self.get_active_iter()
-        if not iter:
-            return
-
-        model = self.get_model()
-        return model.get_value(iter, COL_COMBO_LABEL)
-
-    def get_selected_data(self):
-        if self.mode != COMBO_MODE_DATA:
-            raise TypeError("get_selected_data can only be used in data mode")
-
-        iter = self.get_active_iter()
-        if not iter:
-            return
-
-        model = self.get_model()
-        return model.get_value(iter, COL_COMBO_DATA)
-
-class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
+class ComboBox(PropertyObject, gtk.ComboBox, ComboMixin, WidgetMixin):
     def __init__(self):
         gtk.ComboBox.__init__(self)
-        ComboProxyMixin.__init__(self)
+        ComboMixin.__init__(self)
         WidgetMixin.__init__(self)
         PropertyObject.__init__(self)
         self.connect('changed', self._on__changed)
@@ -282,17 +89,17 @@ class ComboBox(PropertyObject, gtk.ComboBox, ComboProxyMixin, WidgetMixin):
             raise TypeError("unknown ComboBox mode. Did you call prefill?")
 
     def prefill(self, itemdata, sort=False):
-        ComboProxyMixin.prefill(self, itemdata, sort)
+        ComboMixin.prefill(self, itemdata, sort)
 
         # we always have something selected, by default the first item
         self.set_active(0)
         self.emit('content-changed')
 
     def clear(self):
-        ComboProxyMixin.clear(self)
+        ComboMixin.clear(self)
         self.emit('content-changed')
 
-class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
+class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
                     WidgetMixinSupportValidation):
 
     # it doesn't make sense to connect to this signal
@@ -303,7 +110,7 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
 
     def __init__(self, **kwargs):
         BaseComboBoxEntry.__init__(self)
-        ComboProxyMixin.__init__(self)
+        ComboMixin.__init__(self)
         WidgetMixinSupportValidation.__init__(self, widget=self.entry)
         PropertyObject.__init__(self, **kwargs)
 
@@ -368,7 +175,7 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
         if (self.mode == COMBO_MODE_UNKNOWN and mode == COMBO_MODE_DATA):
             self.entry.set_editable(False)
 
-        ComboProxyMixin.set_mode(self, mode)
+        ComboMixin.set_mode(self, mode)
 
     def read(self):
         mode = self.mode
@@ -399,7 +206,7 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
             raise AssertionError
 
     def prefill(self, itemdata, sort=False, clear_entry=False):
-        ComboProxyMixin.prefill(self, itemdata, sort)
+        ComboMixin.prefill(self, itemdata, sort)
         if clear_entry:
             self.entry.set_text("")
 
@@ -411,7 +218,7 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
 
     def clear(self):
         """Removes all items from list and erases entry"""
-        ComboProxyMixin.clear(self)
+        ComboMixin.clear(self)
         self.entry.set_text("")
 
     # IconEntry
