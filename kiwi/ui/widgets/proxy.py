@@ -176,9 +176,6 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     def set_pixbuf(self, pixbuf):
         "Implement in subclass"
 
-    def before_validate(self, data):
-        "Implement in subclass"
-
     def get_icon_window(self):
         "Implement in subclass"
 
@@ -220,16 +217,9 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
                 self.set_blank()
                 return ValueUnset
             else:
-
-                # Step 1: A WidgetProxy subclass can implement a
-                #         before_validate callback which is called before
-                #         user functions.
-                #         For example, check if the value is in the combo
-                self.before_validate(data)
-
-                # Step 2: The widgets themselves have now valid the data
-                #         Next step is to call the application specificed
-                #         checks, which are found in the view.
+                # The widgets themselves have now valid the data
+                # Next step is to call the application specificed
+                # checks, which are found in the view.
                 if data is not None and data is not ValueUnset:
                     # this signal calls the on_widgetname__validate method
                     # of the view class and gets the exception (if any).

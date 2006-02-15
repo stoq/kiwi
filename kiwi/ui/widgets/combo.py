@@ -190,15 +190,6 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
         else:
             return ValueUnset
 
-    def before_validate(self, data):
-        """ComboBoxEntry has a validate default handler that check if the
-        text of the entry is an item of the list"""
-
-        # XXX: Check so data is in list
-        #items = self.get_model_items()
-        #if data not in items.keys():
-        #    raise ValidationError("Entered value not in list")
-
     def update(self, data):
         if data is ValueUnset or data is None:
             self.entry.set_text("")
@@ -233,4 +224,5 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ComboMixin, WidgetMixin):
         ComboMixin.__init__(self)
         WidgetMixin.__init__(self)
         PropertyObject.__init__(self)
+
 

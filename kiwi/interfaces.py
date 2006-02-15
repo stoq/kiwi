@@ -49,9 +49,6 @@ class MixinSupportValidation(Interface):
     def validate(self, data=Nothing, force=False):
         pass
 
-    def before_validate(self, data):
-        pass
-
 class AbstractGladeAdaptor(Interface):
     """Abstract class that define the functionality an class that handle
     glade files should provide."""
