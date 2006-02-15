@@ -27,11 +27,11 @@
 """GtkComboBox and GtkComboBoxEntry support for the Kiwi Framework.
 backwards compatibility layer"""
 
-from kiwi.ui.widgets.combo import ProxyComboBox as ComboBox
-from kiwi.ui.widgets.combo import ProxyComboBoxEntry as ComboBoxEntry
+from kiwi.ui.widgets.combo import ProxyComboBox
+from kiwi.ui.widgets.combo import ProxyComboBoxEntry
 
-class ComboBox(ComboBox):
+class ComboBox(ProxyComboBox):
     pass
 
-class ComboBoxEntry(ComboBoxEntry):
+class ComboBoxEntry(ProxyComboBoxEntry):
     pass

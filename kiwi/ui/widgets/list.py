@@ -25,10 +25,10 @@
 
 from kiwi.ui.objectlist import Column, SequentialColumn, ColoredColumn, \
      ListLabel, SummaryLabel
-from kiwi.ui.objectlist import ObjectList as List
+from kiwi.ui.objectlist import ObjectList
 
 # pyflakes
 Column, SequentialColumn, ColoredColumn, ListLabel, SummaryLabel
 
-class List(List):
+class List(ObjectList):
     pass
