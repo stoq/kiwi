@@ -28,4 +28,7 @@ from kiwi.ui.objectlist import Column, SequentialColumn, ColoredColumn, \
 from kiwi.ui.objectlist import ObjectList as List
 
 # pyflakes
-Column, SequentialColumn, ColoredColumn, ListLabel, SummaryLabel, List
+Column, SequentialColumn, ColoredColumn, ListLabel, SummaryLabel
+
+class List(List):
+    pass

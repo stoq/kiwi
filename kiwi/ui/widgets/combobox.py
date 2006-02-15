@@ -30,5 +30,8 @@ backwards compatibility layer"""
 from kiwi.ui.widgets.combo import ProxyComboBox as ComboBox
 from kiwi.ui.widgets.combo import ProxyComboBoxEntry as ComboBoxEntry
 
-# pyflakes
-ComboBox, ComboBoxEntry
+class ComboBox(ComboBox):
+    pass
+
+class ComboBoxEntry(ComboBoxEntry):
+    pass
