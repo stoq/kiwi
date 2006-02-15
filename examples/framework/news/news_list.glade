@@ -3,7 +3,7 @@
     <requires lib="kiwi2"/>
     <widget class="GtkWindow" id="window_container">
         <child>
-            <widget class="kiwi+ui+widgets+list+List" id="news_list">
+            <widget class="ObjectList" id="news_list">
                 <property name="hscrollbar_policy">never</property>
                 <property name="vscrollbar_policy">automatic</property>
                 <property name="column_definitions">title|Title|str|True|left|Title of article||0|True|^author|Author|str|True|left|Author of article||0|False|^url|Url|str|False|left|Address of article||0|False|</property>
