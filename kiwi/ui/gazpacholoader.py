@@ -237,7 +237,7 @@ class ObjectListAdapter(PythonWidgetAdapter):
     object_type = ObjectList
     def construct(self, name, gtype, properties):
         if gtype == List:
-            gtype == ObjectType
+            gtype == ObjectList
         return super(ObjectListAdapter, self).construct(name, gtype,
                                                         properties)
 adapter_registry.register_adapter(ObjectListAdapter)
