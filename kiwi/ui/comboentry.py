@@ -98,8 +98,7 @@ class _ComboEntryPopup(gtk.Window):
             toplevel.group.add_window(self)
 
         x, y, width, height = self._get_position()
-        if height >= 1 and width >= 1:
-            self.set_size_request(width, height)
+        self.set_size_request(width, height)
         self.move(x, y)
         self.show_all()
 
@@ -190,8 +189,12 @@ class _ComboEntryPopup(gtk.Window):
         self._treeview.set_cursor(path)
 
     def _on_treeview__button_release_event(self, treeview, event):
-        path, column, x, y = treeview.get_path_at_pos(int(event.x),
-                                                      int(event.y))
+        retval = treeview.get_path_at_pos(int(event.x),
+                                          int(event.y))
+        if not retval:
+            return
+        path, column, x, y = retval
+
         model = treeview.get_model()
         self.emit('text-selected', model[path][0])
 
@@ -267,6 +270,12 @@ class _ComboEntryPopup(gtk.Window):
 
         return x, y, width, height
 
+    def get_selected_iter(self):
+        return self._selection.get_selected()[1]
+
+    def set_selected_iter(self, iter):
+        self._selection.select_iter(iter)
+
 class ComboEntry(gtk.HBox):
     def __init__(self):
         gtk.HBox.__init__(self)
@@ -290,8 +299,7 @@ class ComboEntry(gtk.HBox):
         self._popup.connect('text-selected', self._on_popup__text_selected)
         self._popup.connect('hide', self._on_popup__hide)
 
-        completion = self.entry.get_completion()
-        self._popup.set_model(completion.get_model())
+        self.set_model(self.entry.get_completion().get_model())
 
     def _on_entry__key_press_event(self, entry, event):
         """
@@ -327,9 +335,13 @@ class ComboEntry(gtk.HBox):
         Set the tree model to model
         @param model: a gtk.TreeModel
         """
+        self._model = model
         self._popup.set_model(model)
         completion = self.entry.get_completion()
         completion.set_model(model)
+
+    def get_model(self):
+        return self._model
 
     def popup(self):
         """
@@ -352,6 +364,12 @@ class ComboEntry(gtk.HBox):
     def set_text(self, text):
         self.entry.set_text(text)
 
+    def set_active_iter(self, iter):
+        self._popup.set_selected_iter(iter)
+
+    def get_active_iter(self):
+        return self._popup.get_selected_iter()
+
     # IconEntry
 
     def set_pixbuf(self, pixbuf):
@@ -362,3 +380,4 @@ class ComboEntry(gtk.HBox):
 
     def get_icon_window(self):
         return self.entry.get_icon_window()
+

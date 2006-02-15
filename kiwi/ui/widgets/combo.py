@@ -70,12 +70,14 @@ class ProxyComboBox(PropertyObject, gtk.ComboBox, ComboMixin, WidgetMixin):
         self.emit('content-changed')
 
     def read(self):
-        if self.mode == COMBO_MODE_STRING:
-            return self._from_string(self.get_selected_label())
-        elif self.mode == COMBO_MODE_DATA:
-            return self.get_selected_data()
+        if self.mode == COMBO_MODE_UNKNOWN:
+            return ValueUnset
 
-        return ValueUnset
+        data = self.get_selected()
+        if self.mode == COMBO_MODE_STRING:
+            data = self._from_string(data)
+
+        return data
 
     def update(self, data):
         # We dont need validation because the user always
@@ -83,14 +85,11 @@ class ProxyComboBox(PropertyObject, gtk.ComboBox, ComboMixin, WidgetMixin):
 
         if data is None:
             return
-        elif self.mode == COMBO_MODE_STRING:
-            self.select_item_by_label(self._as_string(data))
-        elif self.mode == COMBO_MODE_DATA:
-            self.select_item_by_data(data)
-        else:
-            # XXX: When setting the datatype to non string, automatically go to
-            #      data mode
-            raise TypeError("unknown ComboBox mode. Did you call prefill?")
+
+        if self.mode == COMBO_MODE_STRING:
+            data = self._as_string(data)
+
+        self.select(data)
 
     def prefill(self, itemdata, sort=False):
         ComboMixin.prefill(self, itemdata, sort)
@@ -119,6 +118,7 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
         PropertyObject.__init__(self, **kwargs)
 
         self.set_text_column(COL_COMBO_LABEL)
+
         # here we connect the expose-event signal directly to the entry
         self.child.connect('changed', self._on_child_entry__changed)
 
@@ -182,23 +182,15 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
         ComboMixin.set_mode(self, mode)
 
     def read(self):
-        mode = self.mode
-        if mode == COMBO_MODE_STRING:
-            return self.get_selected_label()
-        elif mode == COMBO_MODE_DATA:
-            return self.get_selected_data()
-        else:
+        if self.mode == COMBO_MODE_UNKNOWN:
             return ValueUnset
+        return self.get_selected()
 
     def update(self, data):
         if data is ValueUnset or data is None:
             self.entry.set_text("")
-        elif self.mode == COMBO_MODE_STRING:
-            self.select_item_by_label(data)
-        elif self.mode == COMBO_MODE_DATA:
-            self.select_item_by_data(data)
         else:
-            raise AssertionError
+            self.select(data)
 
     def prefill(self, itemdata, sort=False, clear_entry=False):
         ComboMixin.prefill(self, itemdata, sort)
@@ -216,13 +208,31 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
         ComboMixin.clear(self)
         self.entry.set_text("")
 
-class ProxyComboEntry(PropertyObject, ComboEntry, ComboMixin, WidgetMixin):
+class ProxyComboEntry(PropertyObject, ComboEntry, ComboMixin,
+                      WidgetMixinSupportValidation):
     __gtype_name__ = 'ProxyComboEntry'
+
+    gproperty("list-editable", bool, True, "Editable")
 
     def __init__(self):
         ComboEntry.__init__(self)
         ComboMixin.__init__(self)
-        WidgetMixin.__init__(self)
+        WidgetMixinSupportValidation.__init__(self)
         PropertyObject.__init__(self)
+        self.mode = COMBO_MODE_STRING
 
+    def read(self):
+        if self.mode == COMBO_MODE_UNKNOWN:
+            return ValueUnset
+        return self.get_selected()
 
+    def update(self, data):
+        if data is ValueUnset or data is None:
+            self.entry.set_text("")
+        else:
+            self.select(data)
+
+    def clear(self):
+        """Removes all items from list and erases entry"""
+        ComboMixin.clear(self)
+        self.entry.set_text("")
