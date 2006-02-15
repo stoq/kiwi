@@ -217,9 +217,11 @@ class _ComboEntryPopup(gtk.Window):
         treeview.realize()
         cell = treeview.get_cell_area(0, treeview.get_column(0))
 
-        sample = self._comboentry
-        x, y = sample.window.get_origin()
+        sample = self._comboentry.entry
 
+        # We need to fetch the coordinates of the entry window
+        # since comboentry itself does not have a window
+        x, y = sample.window.get_origin()
         width = sample.allocation.width
 
         hpolicy = vpolicy = gtk.POLICY_NEVER
@@ -262,8 +264,7 @@ class _ComboEntryPopup(gtk.Window):
             height = y - monitor.y
             y = monitor.y
 
-
-        # Use 60% of available screen space
+        # Use half of the available screen space
         max_height = monitor.height / 2
         if height > max_height:
             height = int(max_height)
