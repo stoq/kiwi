@@ -71,7 +71,7 @@
 
 Currently only a L{kiwi.ui.widgets.entry.Entry} and widgets
 which embed them, L{kiwi.ui.widgets.spinbutton.SpinButton} and
-L{kiwi.ui.widgets.comboboxentry.BaseComboBoxEntry}.
+L{kiwi.ui.comboboxentry.BaseComboBoxEntry}.
 """
 
 import gtk

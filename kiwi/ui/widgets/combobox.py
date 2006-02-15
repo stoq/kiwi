@@ -37,7 +37,7 @@ import gtk
 from gtk import keysyms
 
 from kiwi import ValueUnset
-from kiwi.ui.widgets.comboboxentry import BaseComboBoxEntry
+from kiwi.ui.comboboxentry import BaseComboBoxEntry
 from kiwi.ui.widgets.proxy import WidgetMixin, WidgetMixinSupportValidation
 from kiwi.utils import PropertyObject, gproperty
 
@@ -415,7 +415,6 @@ class ComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboProxyMixin,
         self.entry.set_text("")
 
     # IconEntry
-
     def set_pixbuf(self, pixbuf):
         self.entry.set_pixbuf(pixbuf)
 
