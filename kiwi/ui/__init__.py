@@ -23,6 +23,7 @@
 
 try:
     import gtk
+    gtk
 except ImportError:
     raise SystemExit(
         "PyGTK is required by kiwi.ui")

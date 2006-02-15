@@ -43,6 +43,7 @@ import sys
 
 try:
     import gobject
+    gobject
 except ImportError:
     raise SystemExit(
         "PyGTK 2.8 or PyGObject 2.9.0 or higher is required by kiwi")
