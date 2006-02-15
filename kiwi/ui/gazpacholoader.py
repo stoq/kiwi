@@ -48,6 +48,10 @@ from kiwi.ui.widgets.radiobutton import RadioButton
 from kiwi.ui.widgets.spinbutton import SpinButton
 from kiwi.ui.widgets.textview import TextView
 
+# Backwards compatibility
+from kiwi.ui.widgets.combobox import ComboBoxEntry, ComboBox
+from kiwi.ui.widgets.list import List
+
 _ = gettext.gettext
 
 class Builder(ObjectBuilder):
