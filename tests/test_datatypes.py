@@ -175,7 +175,7 @@ class FloatTest(unittest.TestCase):
 
     def testAsString(self):
         self.assertEqual(self.conv.as_string(0.5), '0.5')
-        self.assertEqual(self.conv.as_strging(-10.5), '-10.5')
+        self.assertEqual(self.conv.as_string(-10.5), '-10.5')
         self.assertEqual(self.conv.as_string(0.5), '0.5')
 
 if __name__ == "__main__":
