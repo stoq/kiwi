@@ -29,6 +29,8 @@ backwards compatibility layer"""
 
 from kiwi.ui.widgets.combo import ProxyComboBox
 from kiwi.ui.widgets.combo import ProxyComboBoxEntry
+from kiwi.ui.combomixin import COL_COMBO_LABEL, COL_COMBO_DATA, \
+     COMBO_MODE_STRING, COMBO_MODE_DATA, COMBO_MODE_UNKNOWN
 
 class ComboBox(ProxyComboBox):
     pass
