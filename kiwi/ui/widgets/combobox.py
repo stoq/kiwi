@@ -37,3 +37,7 @@ class ComboBox(ProxyComboBox):
 
 class ComboBoxEntry(ProxyComboBoxEntry):
     pass
+
+# pyflakes
+(COL_COMBO_LABEL, COL_COMBO_DATA, COMBO_MODE_STRING,
+ COMBO_MODE_DATA, COMBO_MODE_UNKNOWN)
