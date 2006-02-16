@@ -137,8 +137,6 @@ class IntTest(unittest.TestCase):
 class FloatTest(unittest.TestCase):
     def setUp(self):
         self.conv = converter.get_converter(float)
-        self.inf = float('inf')
-        self.nan = float('nan')
 
     def tearDown(self):
         set_locale(locale.LC_ALL, 'C')
@@ -146,9 +144,6 @@ class FloatTest(unittest.TestCase):
     def testFromString(self):
         self.assertEqual(self.conv.from_string('-2.5'), -2.5)
         self.assertEqual(self.conv.from_string('10.33'), 10.33)
-        self.assertEqual(self.conv.from_string('inf'), self.inf)
-        # You can't compare nan to itself
-        #self.assertEqual(self.conv.from_string('nan'), self.nan)
         self.assertRaises(ValidationError, self.conv.from_string, 'foo')
         self.assertRaises(ValidationError, self.conv.from_string, '1.2.3')
         self.assertEqual(self.conv.from_string(''), ValueUnset)
@@ -180,10 +175,8 @@ class FloatTest(unittest.TestCase):
 
     def testAsString(self):
         self.assertEqual(self.conv.as_string(0.5), '0.5')
-        self.assertEqual(self.conv.as_string(-10.5), '-10.5')
+        self.assertEqual(self.conv.as_strging(-10.5), '-10.5')
         self.assertEqual(self.conv.as_string(0.5), '0.5')
-        self.assertEqual(self.conv.as_string(self.inf), 'inf')
-        self.assertEqual(self.conv.as_string(self.nan), 'nan')
 
 if __name__ == "__main__":
     unittest.main()
