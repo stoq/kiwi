@@ -30,7 +30,10 @@ support and display an icon using L{kiwi.ui.icon.IconEntry}.
 """
 
 import gettext
+import string
 
+import gobject
+import pango
 import gtk
 
 from kiwi.ui.icon import IconEntry
@@ -39,11 +42,24 @@ from kiwi.utils import PropertyObject, gproperty, gsignal, type_register
 
 _ = gettext.gettext
 
+class MaskError(Exception):
+    pass
+
 (COL_TEXT,
  COL_OBJECT) = range(2)
 
 (ENTRY_MODE_TEXT,
  ENTRY_MODE_DATA) = range(2)
+
+(INPUT_CHARACTER,
+ INPUT_ALPHA,
+ INPUT_DIGIT) = range(3)
+
+INPUT_FORMATS = {
+    'a': INPUT_ALPHA,
+    'd': INPUT_DIGIT,
+    'c': INPUT_CHARACTER,
+    }
 
 class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
     """The Kiwi Entry widget has many special features that extend the basic
@@ -63,6 +79,7 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
 
     gproperty("completion", bool, False)
     gproperty('exact-completion', bool, default=False)
+    gproperty("mask", str, default='')
 
     def __init__(self, data_type=None):
         gtk.Entry.__init__(self)
@@ -71,6 +88,16 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         self._current_object = None
         self._entry_mode = ENTRY_MODE_TEXT
         self._icon = IconEntry(self)
+
+        self.connect('insert-text', self._on_insert_text)
+        self.connect('delete-text', self._on_delete_text)
+
+        # List of validators
+        #  str -> static characters
+        #  int -> dynamic, according to constants above
+        self._validators = []
+        self._interactive_input = True
+        self._mask = None
 
     # Virtual methods
     gsignal('changed', 'override')
@@ -85,6 +112,29 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
 
         self._update_current_object(self.get_text())
         self.emit('content-changed')
+
+    gsignal('size-allocate', 'override')
+    def do_size_allocate(self, allocation):
+        #gtk.Entry.do_size_allocate(self, allocation)
+        self.chain(allocation)
+
+	if self.flags() & gtk.REALIZED:
+            self._icon.resize_windows()
+
+    def do_expose_event(self, event):
+        gtk.Entry.do_expose_event(self, event)
+
+        if event.window == self.window:
+            self._icon.draw_pixbuf()
+
+    def do_realize(self):
+        gtk.Entry.do_realize(self)
+        self._icon.construct()
+
+    def do_unrealize(self):
+        self._icon.deconstruct()
+        gtk.Entry.do_unrealize(self)
+
 
     # Properties
     def prop_set_exact_completion(self, value):
@@ -101,6 +151,14 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         if not self.get_completion():
             self._enable_completion()
         return value
+
+    def prop_set_mask(self, value):
+        try:
+            self.set_mask(value)
+            return self._mask
+        except MaskError, e:
+            pass
+        return ''
 
     # Public API
     def set_exact_completion(self, value):
@@ -148,11 +206,159 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
                 model.append([s, None])
             self._entry_mode = ENTRY_MODE_TEXT
 
+    # Public API
+
+    def set_mask(self, mask):
+        """
+        Sets the mask of the Entry.
+        The format of the mask is similar to printf, but the
+        only supported format characters are:
+        - 'd' digit
+        - 'a' alphabet, honors the locale
+        - 'c' any character
+        A digit is supported after the control.
+        Example mask for a ISO-8601 date
+        >>> entry.set_mask('%4d-%2d-%2d')
+
+        @param mask: the mask to set
+        """
+
+        if not mask:
+            self.modify_font(pango.FontDescription("sans"))
+            self._mask = mask
+            return
+
+        input_length = len(mask)
+        keys = INPUT_FORMATS.keys()
+        lenght = 0
+        pos = 0
+        while True:
+            if pos >= input_length:
+                break
+            if mask[pos] == '%':
+                s = ''
+                format_char = None
+                # Validate/extract format mask
+                pos += 1
+                while True:
+                    if pos >= len(mask):
+                        raise MaskError("Invalid mask: %s" % mask)
+
+                    if mask[pos] not in string.digits:
+                        raise MaskError(
+                            "invalid format padding character: %s" % mask[pos])
+                    s += mask[pos]
+                    pos += 1
+                    if pos >= len(mask):
+                        raise MaskError("Invalid mask: %s" % mask)
+
+                    if mask[pos] in INPUT_FORMATS:
+                        format_char = mask[pos]
+                        break
+                pos += 1
+                self._validators += [INPUT_FORMATS[format_char]] * int(s)
+            else:
+                self._validators.append(mask[pos])
+            pos += 1
+
+        s = ''
+        for validator in self._validators:
+            if isinstance(validator, int):
+                s += ' '
+            elif isinstance(validator, str):
+                s += validator
+            else:
+                raise AssertionError
+
+        self.set_text(s)
+
+        self.modify_font(pango.FontDescription("monospace"))
+        self._mask = mask
+
+    def get_field_text(self):
+        """
+        Get the fields assosiated with the entry
+        if a field is empty it'll return an empty string
+        otherwise it'll include the content
+
+        @returns: fields
+        @rtype: list of strings
+        """
+        if not self._mask:
+            raise MaskError("a mask must be set before calling get_field_text")
+
+        def append_field(fields, field_type, s):
+            if s.count(' ') == len(s):
+                s = ''
+            if field_type == INPUT_DIGIT:
+                s = int(s)
+            fields.append(s)
+
+        fields = []
+        pos = 0
+        s = ''
+        field_type = -1
+        text = self.get_text()
+        validators = self._validators
+        while True:
+            if pos >= len(validators):
+                append_field(fields, field_type, s)
+                break
+
+            validator = validators[pos]
+            if isinstance(validator, int):
+                s += text[pos]
+                field_type = validator
+            else:
+                append_field(fields, field_type, s)
+                s = ''
+                field_type = -1
+            pos += 1
+
+        return fields
+
     def set_text(self, text):
+        """
+        Sets the text of the entry
+
+        @param text:
+        """
+
         self._update_current_object(text)
 
-        gtk.Entry.set_text(self, text)
+        self._interactive_input = False
+        try:
+            gtk.Entry.set_text(self, text)
+        finally:
+            self._interactive_input = True
+
         self.emit('content-changed')
+
+    def delete_text(self, start, end):
+        """
+        Deletes text at a certain range
+
+        @param start:
+        @param end:
+        """
+        self._interactive_input = False
+        try:
+            gtk.Entry.delete_text(self, start, end)
+        finally:
+            self._interactive_input = True
+
+    def insert_text(self, text, position=0):
+        """
+        Insert text at a specific position
+
+        @param text:
+        @param position:
+        """
+        self._interactive_input = False
+        try:
+            gtk.Entry.insert_text(self, text, position)
+        finally:
+            self._interactive_input = True
 
     # Private / Semi-Private
     def _update_current_object(self, text):
@@ -218,16 +424,6 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         content = model[iter][COL_TEXT].lower()
         return self.get_text().lower() in content
 
-    def _on_completion__match_selected(self, completion, model, iter):
-        if not len(model):
-            return
-
-        # this updates current_object and triggers content-changed
-        self.set_text(model[iter][COL_TEXT])
-        self.set_position(-1)
-        # FIXME: Enable this at some point
-        #self.activate()
-
     def read(self):
         mode = self._entry_mode
         if mode == ENTRY_MODE_TEXT:
@@ -252,28 +448,80 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
 
         self.set_text(text)
 
-    def do_expose_event(self, event):
-        gtk.Entry.do_expose_event(self, event)
+    # Callbacks
 
-        if event.window == self.window:
-            self._icon.draw_pixbuf()
+    def _on_insert_text(self, editable, new, length, position):
+        if not self._interactive_input:
+            return
 
-    gsignal('size-allocate', 'override')
-    def do_size_allocate(self, allocation):
-        #gtk.Entry.do_size_allocate(self, allocation)
-        self.chain(allocation)
+        if length != 1:
+            print 'TODO: paste'
+            self.stop_emission('insert-text')
+            return
 
-	if self.flags() & gtk.REALIZED:
-            self._icon.resize_windows()
+        position = self.get_position()
+        next = position + 1
+        validators = self._validators
+        if len(validators) <= position:
+            self.stop_emission('insert-text')
+            return
 
-    def do_realize(self):
-        gtk.Entry.do_realize(self)
-        self._icon.construct()
+        validator = validators[position]
+        if validator == INPUT_CHARACTER:
+            # Accept anything
+            pass
+        elif validator == INPUT_ALPHA:
+            if not new in string.lowercase:
+                self.stop_emission('insert-text')
+                return
+        elif validator == INPUT_DIGIT:
+            if not new in string.digits:
+                self.stop_emission('insert-text')
+                return
+        elif isinstance(validator, str):
+            self.set_position(next)
+            self.stop_emission('insert-text')
+            return
 
-    def do_unrealize(self):
-        self._icon.deconstruct()
-        gtk.Entry.do_unrealize(self)
+        self.delete_text(position, next)
 
+        # If the next position is a static character and
+        # the one after the next is input, skip over
+        # the static character
+        if len(validators) > next + 1:
+            if (isinstance(validators[next], str) and
+                isinstance(validators[next+1], int)):
+                # Ugly: but it must be done after the parent
+                #       inserts the text
+                gobject.idle_add(self.set_position, next+1)
+
+    def _on_delete_text(self, editable, start, end):
+        if not self._interactive_input:
+            return
+        if end - start != 1:
+            print 'TODO: cut/delete several'
+            self.stop_emission('delete-text')
+            return
+
+        validator = self._validators[start]
+        if isinstance(validator, str):
+            self.set_position(start)
+            self.stop_emission('delete-text')
+            return
+
+        self.insert_text(' ', end)
+        return False
+
+    def _on_completion__match_selected(self, completion, model, iter):
+        if not len(model):
+            return
+
+        # this updates current_object and triggers content-changed
+        self.set_text(model[iter][COL_TEXT])
+        self.set_position(-1)
+        # FIXME: Enable this at some point
+        #self.activate()
+        
     # IconEntry
 
     def set_pixbuf(self, pixbuf):

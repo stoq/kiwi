@@ -27,6 +27,7 @@ class Form(Delegate):
         #                          ('Yankee', 2),
         #                          ('Other', 3)])
         self.sex.prefill(('Male', 'Female'))
+        self.age.set_mask('%2d')
         self.height.set_data_format('%4.4f')
         self.register_validate_function(self.validity)
         self.force_validation()
@@ -39,6 +40,10 @@ class Form(Delegate):
             # we need to return an exception that will be displayed on
             # the information tooltip and the delegate option
             return ValidationError("The name is too long")
+
+    def on_age__validate(self, widget, year):
+        if year > 75:
+            return ValidationError("Too old")
 
     def on_height__validate(self, widget, data):
         if data > 200:

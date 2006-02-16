@@ -1,3 +1,10 @@
+2006-02-16  Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/validation/personalinformation.py:
+	* kiwi/ui/widgets/entry.py:
+	Add basic mask support to entry, still needs a few
+	improvements. Also add a simple example.
+
 2006-02-15  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/comboentry.py:
