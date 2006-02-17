@@ -26,6 +26,7 @@
 """Data type converters with locale and currency support"""
 
 import datetime
+import decimal
 import locale
 import sys
 import time
@@ -292,6 +293,23 @@ class _FloatConverter(BaseConverter):
 
 converter.add(_FloatConverter)
 
+class _DecimalConverter(_FloatConverter):
+    type = decimal.Decimal
+    def from_string(self, value):
+        if value == '':
+            return ValueUnset
+
+        value = self._filter_locale(value)
+
+        try:
+            retval = decimal.Decimal(value)
+        except decimal.InvalidOperation:
+            raise ValidationError("This field requires a number")
+
+        return retval
+
+converter.add(_DecimalConverter)
+
 class _BaseDateTimeConverter(BaseConverter):
     """
     Abstract class for converting datatime objects to and from strings
@@ -400,12 +418,12 @@ class _ObjectConverter(BaseConverter):
     from_string = None
 converter.add(_ObjectConverter)
 
-class currency(float):
+class currency(decimal.Decimal):
     """
     A datatype representing currency, used together with the list and
     the framework
     """
-    _converter = converter.get_converter(float)
+    _converter = converter.get_converter(decimal.Decimal)
 
     def __new__(cls, value):
         """
@@ -417,14 +435,17 @@ class currency(float):
             currency_symbol = conv.get('currency_symbol')
             text = value.strip(currency_symbol)
             value = currency._converter.from_string(text)
-        elif not isinstance(value, (int, float, long)):
+        elif isinstance(value, float):
+            value = str(value)
+        elif not isinstance(value, (int, long, decimal.Decimal)):
             raise TypeError(
                 "cannot convert %r of type %s to a currency" % (
                 value, type(value)))
-        return float.__new__(cls, value)
+
+        return decimal.Decimal.__new__(cls, value)
 
     def format(self, symbol=True, precision=None):
-        value = float(self)
+        value = decimal.Decimal(self)
 
         conv = locale.localeconv()
 
