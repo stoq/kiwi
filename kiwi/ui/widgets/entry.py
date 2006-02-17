@@ -68,11 +68,6 @@ DATE_MASK_TABLE = {
     '%y': '%2d',
     '%d': '%2d',
     '%Y': '%4d',
-    # For win32
-    # FIXME: How can we figure out the real format string?
-    '%X': '%2d:%2d:%2d',
-    '%x': '%4d-%2d-%2d',
-    '%c': '%4d-%2d-%2d %2d:%2d:%2d',
     }
 
 class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
@@ -435,6 +430,13 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
             return
         conv = converter.get_converter(data_type)
         mask = conv.get_format()
+
+        # For win32, skip mask
+        # FIXME: How can we figure out the real format string?
+        for m in ('%X', '%x', '%c'):
+            if m in mask:
+                return
+
         for format_char, mask_char in DATE_MASK_TABLE.items():
             mask = mask.replace(format_char, mask_char)
 
