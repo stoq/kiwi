@@ -27,6 +27,7 @@ Argument checking decorator and support
 
 import inspect
 from types import ClassType
+from decimal import Decimal
 
 class CustomType(type):
     def value_check(mcs, name, value):
@@ -37,7 +38,7 @@ class number(CustomType):
     """
     Custom type that verifies that the type is a number (eg float or int)
     """
-    type = int, float, long
+    type = int, float, long, Decimal
 
 class percent(CustomType):
     """
