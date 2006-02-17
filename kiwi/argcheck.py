@@ -44,7 +44,7 @@ class percent(CustomType):
     """
     Custom type that verifies that the value is a percentage
     """
-    type = int, float
+    type = int, float, Decimal
     def value_check(mcs, name, value):
         if (value < 0) or (value > 100):
             raise ValueError("%s must be between 0 and 100" % name)
