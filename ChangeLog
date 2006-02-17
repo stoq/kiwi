@@ -1,4 +1,7 @@
+=== 1.9.6 ===
 2006-02-17  Johan Dahlin  <jdahlin@async.com.br>
+
+	* NEWS: 1.9.6
 
 	* kiwi/ui/widgets/entry.py:
 	(Entry._set_mask_for_data_type, Entry.prop_set_data_type): 

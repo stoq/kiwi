@@ -1,3 +1,14 @@
+kiwi-1.9.6: 30-january-2006
+    - argcheck bugfix (Patrick K O'Brien)
+    - Some basic dialogs imported from gazpacho
+    - Fix kiwilist sorting (Patrick)
+    - Much improved unittest coverage
+    - Simple component system (Johan & Ali Afshar)
+    - Better Unicode and Decimal support
+    - ComboEntry widget
+    - Rename list to ObjectList
+    - Mask support for entry
+
 kiwi-1.9.5: 30-january-2006
     - Installation bug fix
 
