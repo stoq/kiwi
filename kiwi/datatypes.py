@@ -322,7 +322,7 @@ class _BaseDateTimeConverter(BaseConverter):
                 return cmp(a, b)
         return _datecmp
 
-    def _get_format(self):
+    def get_format(self):
         if sys.platform == 'win32':
             return self.date_format
         else:
@@ -331,7 +331,7 @@ class _BaseDateTimeConverter(BaseConverter):
     def as_string(self, value, format=None):
         "Convert a date to a string"
         if format is None:
-            format = self._get_format()
+            format = self.get_format()
 
         if value is None:
             return ''
@@ -348,7 +348,7 @@ class _BaseDateTimeConverter(BaseConverter):
         # perhaps we should add macros, to be able to write
         # yyyy instead of %Y
 
-        format = self._get_format()
+        format = self.get_format()
         try:
             # time.strptime (python 2.4) does not support %r
             # pending SF bug #1396946
