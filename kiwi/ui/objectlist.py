@@ -27,6 +27,7 @@
 """High level wrapper for GtkTreeView"""
 
 import datetime
+import decimal
 import gettext
 
 import gobject
@@ -946,7 +947,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             if column.editable:
                 raise TypeError("use-stock columns cannot be editable")
         elif issubclass(data_type, (datetime.date, datetime.time,
-                                    basestring, int, float)):
+                                    basestring, int, float, decimal.Decimal,
+                                    currency)):
             renderer = gtk.CellRendererText()
             prop = 'text'
             if column.editable:
@@ -1626,7 +1628,7 @@ class SummaryLabel(ListLabel):
 
     def __init__(self, klist, column, label=_('Total:'), value_format='%s'):
         ListLabel.__init__(self, klist, column, label, value_format)
-        if not issubclass(self._column.data_type, (int, float)):
+        if not issubclass(self._column.data_type, (int, float, decimal.Decimal)):
             raise TypeError("data_type of column must be int or float, not %r",
                             self._column.data_type)
         klist.connect('cell-edited', self._on_klist__cell_edited)
@@ -1640,7 +1642,8 @@ class SummaryLabel(ListLabel):
         attr = column.attribute
         get_attribute = column.get_attribute
 
-        value = sum([get_attribute(obj, attr) for obj in self._klist], 0.0)
+        value = sum([get_attribute(obj, attr) for obj in self._klist],
+                    column.data_type('0'))
 
         # duplication of _cell_data_text_func
         if column.format:
