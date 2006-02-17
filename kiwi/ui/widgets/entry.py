@@ -119,7 +119,7 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         #gtk.Entry.do_size_allocate(self, allocation)
         self.chain(allocation)
 
-	if self.flags() & gtk.REALIZED:
+        if self.flags() & gtk.REALIZED:
             self._icon.resize_windows()
 
     def do_expose_event(self, event):
@@ -230,7 +230,6 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
             return
 
         input_length = len(mask)
-        keys = INPUT_FORMATS.keys()
         lenght = 0
         pos = 0
         while True:
