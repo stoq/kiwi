@@ -63,10 +63,17 @@ INPUT_FORMATS = {
     'c': INPUT_CHARACTER,
     }
 
-DATE_MASK_TABLE = {'%m': '%2d',
-                   '%y': '%2d',
-                   '%d': '%2d',
-                   '%Y': '%4d'}
+DATE_MASK_TABLE = {
+    '%m': '%2d',
+    '%y': '%2d',
+    '%d': '%2d',
+    '%Y': '%4d'
+    # For win32
+    # FIXME: How can we figure out the real format string?
+    '%X': '%2d:%2d:%2d',
+    '%x': '%4d-%2d-%2d',
+    '%c': '%4d-%2d-%2d %2d:%2d:%2d',
+    }
 
 class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
     """The Kiwi Entry widget has many special features that extend the basic
