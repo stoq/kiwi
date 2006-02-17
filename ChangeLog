@@ -3,6 +3,9 @@
 	* kiwi/ui/widgets/entry.py:
 	(Entry._set_mask_for_data_type, Entry.prop_set_data_type): 
 	For datetime objects, set a default mask
+	(Entry._insert_mask): Split into two
+	(Entry.read): If the input is just the empty mask
+	return an empty string. 
 
 	* tests/test_Entry.py:
 	Add paste/cut support. Refactor cleanup.

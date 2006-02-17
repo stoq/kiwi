@@ -37,7 +37,7 @@ import gobject
 import pango
 import gtk
 
-from kiwi.datatypes import converter
+from kiwi.datatypes import ValidationError, converter
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import PropertyObject, gproperty, gsignal, type_register
@@ -356,7 +356,16 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
     def read(self):
         mode = self._entry_mode
         if mode == ENTRY_MODE_TEXT:
-            return self._from_string(self.get_text())
+            text = self.get_text()
+            try:
+                return self._from_string(text)
+            except ValidationError:
+                # Do not consider masks which only displays static
+                # characters invalid, instead return an empty string
+                if self._mask and text == self._get_empty_mask():
+                    return ""
+                else:
+                    raise
         elif mode == ENTRY_MODE_DATA:
             return self._current_object
         else:
@@ -391,7 +400,12 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         self.insert_text(text, position)
         self._block_insert = False
 
-    def _insert_mask(self, start, end):
+    def _get_empty_mask(self, start=None, end=None):
+        if start is None:
+            start = 0
+        if end is None:
+            end = len(self._mask_validators)
+
         s = ''
         for validator in self._mask_validators[start:end]:
             if isinstance(validator, int):
@@ -400,8 +414,11 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
                 s += validator
             else:
                 raise AssertionError
+        return s
 
-        self._really_insert_text(s, position=start)
+    def _insert_mask(self, start, end):
+        text = self._get_empty_mask(start, end)
+        self._really_insert_text(text, position=start)
 
     def _confirms_to_mask(self, position, text):
         validators = self._mask_validators
