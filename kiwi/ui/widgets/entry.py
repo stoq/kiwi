@@ -231,9 +231,9 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         Sets the mask of the Entry.
         The format of the mask is similar to printf, but the
         only supported format characters are:
-        - 'd' digit
-        - 'a' alphabet, honors the locale
-        - 'c' any character
+          - 'd' digit
+          - 'a' alphabet, honors the locale
+          - 'c' any character
         A digit is supported after the control.
         Example mask for a ISO-8601 date
         >>> entry.set_mask('%4d-%2d-%2d')

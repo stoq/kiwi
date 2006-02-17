@@ -217,9 +217,9 @@ class Proxy:
         """
         Like L{update} but takes a sequence of attributes
 
-        @param: attribute: sequence of attributes to update
-        @param: see L{update}
-        @param: see L{update}
+        @param attributes: sequence of attributes to update
+        @param value: see L{update}
+        @param block: see L{update}
         """
 
         for attribute in attributes:

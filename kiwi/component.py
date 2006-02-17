@@ -50,7 +50,7 @@ class _UtilityHandler(object):
 
 _handler = _UtilityHandler()
 
-def provide_utility(iface, obj):
+def provide_utility(iface, utility):
     """
     Set the utility for the named interface. If the utility is already
     set, an {AlreadyImplementedError} is raised.
@@ -59,7 +59,7 @@ def provide_utility(iface, obj):
     @param utility: utility providing the interface.
     """
 
-    _handler.provide(iface, obj)
+    _handler.provide(iface, utility)
 
 def get_utility(iface):
     """
