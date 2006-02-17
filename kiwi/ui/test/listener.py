@@ -39,7 +39,7 @@ from gtk import gdk
 import gtk
 
 from kiwi.ui.test.common import Base
-from kiwi.ui.widgets.combobox import ComboProxyMixin
+from kiwi.ui.combomixin import ComboMixin
 from kiwi.ui.objectlist import ObjectList
 
 _events = []
@@ -321,7 +321,7 @@ class KiwiComboBoxChangedEvent(SignalEvent):
     L{kiwi.ui.widgets.combobox.ComboBox}.
     """
     signal_name = 'changed'
-    object_type = ComboProxyMixin
+    object_type = ComboMixin
     def __init__(self, combo, name, args):
         SignalEvent.__init__(self, combo, name, args)
         self.label = combo.get_selected_label()
