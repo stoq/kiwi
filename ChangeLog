@@ -1,3 +1,10 @@
+2006-02-17  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/entry.py:
+	* tests/test_Entry.py:
+	Add paste/cut support. Refactor cleanup.
+	Add a couple of basic tests.
+
 2006-02-16  Johan Dahlin  <jdahlin@async.com.br>
 
 	* examples/validation/personalinformation.py:

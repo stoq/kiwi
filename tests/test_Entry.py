@@ -14,7 +14,6 @@ class EntryTest(unittest.TestCase):
         entry.set_property("data-type", "str")
         self.assertEqual(entry.read(), 'value')
 
-
     # FIXME
     def _testValidDataType(self):
 
@@ -44,6 +43,17 @@ class EntryTest(unittest.TestCase):
             # wrong value
             entry.set_text("23.400.000,2")
             self.assertEqual(entry.read(), ValueUnset)
+
+    def testMask(self):
+        e = Entry()
+        e.set_mask('%3d.%3d')
+        self.assertEqual(e.get_text(), '   .   ')
+        self.assertEqual(e.get_field_text(), [None, None])
+        e.set_text('123.456')
+        self.assertEqual(e.get_text(), '123.456')
+        e.delete_text(0, 2)
+        self.assertEqual(e.get_text(), '  3.456')
+        self.assertEqual(e.get_field_text(), [3, 456])
 
 if __name__ == '__main__':
     unittest.main()

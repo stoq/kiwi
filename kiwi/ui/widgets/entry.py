@@ -96,8 +96,9 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         #  str -> static characters
         #  int -> dynamic, according to constants above
         self._validators = []
-        self._interactive_input = True
         self._mask = None
+        self._block_insert = False
+        self._block_delete = False
 
     # Virtual methods
     gsignal('changed', 'override')
@@ -255,24 +256,14 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
                     if mask[pos] in INPUT_FORMATS:
                         format_char = mask[pos]
                         break
-                pos += 1
                 self._validators += [INPUT_FORMATS[format_char]] * int(s)
             else:
                 self._validators.append(mask[pos])
             pos += 1
 
-        s = ''
-        for validator in self._validators:
-            if isinstance(validator, int):
-                s += ' '
-            elif isinstance(validator, str):
-                s += validator
-            else:
-                raise AssertionError
-
-        self.set_text(s)
-
         self.modify_font(pango.FontDescription("monospace"))
+
+        self._insert_mask(0, input_length)
         self._mask = mask
 
     def get_field_text(self):
@@ -291,7 +282,10 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
             if s.count(' ') == len(s):
                 s = ''
             if field_type == INPUT_DIGIT:
-                s = int(s)
+                try:
+                    s = int(s)
+                except ValueError:
+                    s = None
             fields.append(s)
 
         fields = []
@@ -307,7 +301,10 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
 
             validator = validators[pos]
             if isinstance(validator, int):
-                s += text[pos]
+                try:
+                    s += text[pos]
+                except IndexError:
+                    s = ''
                 field_type = validator
             else:
                 append_field(fields, field_type, s)
@@ -326,41 +323,61 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
 
         self._update_current_object(text)
 
-        self._interactive_input = False
-        try:
-            gtk.Entry.set_text(self, text)
-        finally:
-            self._interactive_input = True
+        gtk.Entry.set_text(self, text)
 
         self.emit('content-changed')
 
-    def delete_text(self, start, end):
-        """
-        Deletes text at a certain range
+    # WidgetMixin implementation
+    def read(self):
+        mode = self._entry_mode
+        if mode == ENTRY_MODE_TEXT:
+            return self._from_string(self.get_text())
+        elif mode == ENTRY_MODE_DATA:
+            return self._current_object
+        else:
+            raise AssertionError
 
-        @param start:
-        @param end:
-        """
-        self._interactive_input = False
-        try:
-            gtk.Entry.delete_text(self, start, end)
-        finally:
-            self._interactive_input = True
+    def update(self, data):
+        if data is None:
+            text = ""
+        else:
+            mode = self._entry_mode
+            if mode == ENTRY_MODE_DATA:
+                new = self._get_text_from_object(data)
+                if new is None:
+                    raise TypeError("%r is not a data object" % data)
+                text = new
+            elif mode == ENTRY_MODE_TEXT:
+                text = self._as_string(data)
 
-    def insert_text(self, text, position=0):
-        """
-        Insert text at a specific position
+        self.set_text(text)
 
-        @param text:
-        @param position:
-        """
-        self._interactive_input = False
-        try:
-            gtk.Entry.insert_text(self, text, position)
-        finally:
-            self._interactive_input = True
+    # Private
 
-    # Private / Semi-Private
+    def _really_delete_text(self, start, end):
+        # A variant of delete_text that never is blocked by us
+        self._block_delete = True
+        self.delete_text(start, end)
+        self._block_delete = False
+
+    def _really_insert_text(self, text, position):
+        # A variant of insert_text that never is blocked by us
+        self._block_insert = True
+        self.insert_text(text, position)
+        self._block_insert = False
+
+    def _insert_mask(self, start, end):
+        s = ''
+        for validator in self._validators[start:end]:
+            if isinstance(validator, int):
+                s += ' '
+            elif isinstance(validator, str):
+                s += validator
+            else:
+                raise AssertionError
+
+        self._really_insert_text(s, position=start)
+
     def _update_current_object(self, text):
         if self._entry_mode != ENTRY_MODE_DATA:
             return
@@ -424,70 +441,49 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         content = model[iter][COL_TEXT].lower()
         return self.get_text().lower() in content
 
-    def read(self):
-        mode = self._entry_mode
-        if mode == ENTRY_MODE_TEXT:
-            return self._from_string(self.get_text())
-        elif mode == ENTRY_MODE_DATA:
-            return self._current_object
-        else:
-            raise AssertionError
-
-    def update(self, data):
-        if data is None:
-            text = ""
-        else:
-            mode = self._entry_mode
-            if mode == ENTRY_MODE_DATA:
-                new = self._get_text_from_object(data)
-                if new is None:
-                    raise TypeError("%r is not a data object" % data)
-                text = new
-            elif mode == ENTRY_MODE_TEXT:
-                text = self._as_string(data)
-
-        self.set_text(text)
-
     # Callbacks
 
-    def _on_insert_text(self, editable, new, length, position):
-        if not self._interactive_input:
-            return
+    def _is_valid(self, position, text):
+        validators = self._validators
+        if position >= len(validators):
+            return False
 
-        if length != 1:
-            print 'TODO: paste'
-            self.stop_emission('insert-text')
+        validator = validators[position]
+        if validator == INPUT_ALPHA:
+            if not text in string.lowercase:
+                return False
+        elif validator == INPUT_DIGIT:
+            if not text in string.digits:
+                return False
+        elif isinstance(validator, str):
+            if validator == text:
+                return True
+            #self.set_position(position + 1)
+            return False
+        elif validator == INPUT_CHARACTER:
+            # Accept anything
+            pass
+
+        return True
+
+    def _on_insert_text(self, editable, new, length, position):
+        if not self._mask or self._block_insert:
             return
 
         position = self.get_position()
+        for inc, c in enumerate(new):
+            current = position + inc
+            if not self._is_valid(current, c):
+                self.stop_emission('insert-text')
+                return
+
+            self._really_delete_text(position, position+1)
+
         next = position + 1
-        validators = self._validators
-        if len(validators) <= position:
-            self.stop_emission('insert-text')
-            return
-
-        validator = validators[position]
-        if validator == INPUT_CHARACTER:
-            # Accept anything
-            pass
-        elif validator == INPUT_ALPHA:
-            if not new in string.lowercase:
-                self.stop_emission('insert-text')
-                return
-        elif validator == INPUT_DIGIT:
-            if not new in string.digits:
-                self.stop_emission('insert-text')
-                return
-        elif isinstance(validator, str):
-            self.set_position(next)
-            self.stop_emission('insert-text')
-            return
-
-        self.delete_text(position, next)
-
         # If the next position is a static character and
         # the one after the next is input, skip over
         # the static character
+        validators = self._validators
         if len(validators) > next + 1:
             if (isinstance(validators[next], str) and
                 isinstance(validators[next+1], int)):
@@ -496,21 +492,18 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
                 gobject.idle_add(self.set_position, next+1)
 
     def _on_delete_text(self, editable, start, end):
-        if not self._interactive_input:
-            return
-        if end - start != 1:
-            print 'TODO: cut/delete several'
-            self.stop_emission('delete-text')
+        if not self._mask or self._block_delete:
             return
 
-        validator = self._validators[start]
-        if isinstance(validator, str):
-            self.set_position(start)
-            self.stop_emission('delete-text')
-            return
+        # This is tricky, quite ugly but it works.
+        # We want to insert the text after the delete is done
+        # Instead of using idle_add we delete the text first
+        # insert our mask afterwards and finally blocks the call
+        # from happing in the entry itself
+        self._really_delete_text(start, end)
+        self._insert_mask(start, end)
 
-        self.insert_text(' ', end)
-        return False
+        self.stop_emission('delete-text')
 
     def _on_completion__match_selected(self, completion, model, iter):
         if not len(model):
@@ -521,7 +514,7 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         self.set_position(-1)
         # FIXME: Enable this at some point
         #self.activate()
-        
+
     # IconEntry
 
     def set_pixbuf(self, pixbuf):
@@ -535,3 +528,24 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
 
 type_register(Entry)
 
+def main(args):
+    win = gtk.Window()
+    win.set_title('gtk.Entry subclass')
+    def cb(window, event):
+        print 'fields', widget.get_field_text()
+        gtk.main_quit()
+    win.connect('delete-event', cb)
+
+    widget = Entry()
+    widget.set_mask('%3d.%3d.%3d.%3d')
+
+    win.add(widget)
+
+    win.show_all()
+
+    widget.select_region(0, 0)
+    gtk.main()
+
+if __name__ == '__main__':
+    import sys
+    sys.exit(main(sys.argv))
