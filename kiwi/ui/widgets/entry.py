@@ -85,17 +85,17 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         gtk.Entry.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
         PropertyObject.__init__(self, data_type=data_type)
+        self.connect('insert-text', self._on_insert_text)
+        self.connect('delete-text', self._on_delete_text)
+
         self._current_object = None
         self._entry_mode = ENTRY_MODE_TEXT
         self._icon = IconEntry(self)
 
-        self.connect('insert-text', self._on_insert_text)
-        self.connect('delete-text', self._on_delete_text)
-
         # List of validators
         #  str -> static characters
         #  int -> dynamic, according to constants above
-        self._validators = []
+        self._mask_validators = []
         self._mask = None
         self._block_insert = False
         self._block_delete = False
@@ -245,6 +245,10 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
                     if pos >= len(mask):
                         raise MaskError("Invalid mask: %s" % mask)
 
+                    if mask[pos] in INPUT_FORMATS:
+                        format_char = mask[pos]
+                        break
+
                     if mask[pos] not in string.digits:
                         raise MaskError(
                             "invalid format padding character: %s" % mask[pos])
@@ -253,12 +257,14 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
                     if pos >= len(mask):
                         raise MaskError("Invalid mask: %s" % mask)
 
-                    if mask[pos] in INPUT_FORMATS:
-                        format_char = mask[pos]
-                        break
-                self._validators += [INPUT_FORMATS[format_char]] * int(s)
+                # If there a none specificed, assume 1, follows printf
+                try:
+                    chars = int(s)
+                except ValueError:
+                    chars = 1
+                self._mask_validators += [INPUT_FORMATS[format_char]] * chars
             else:
-                self._validators.append(mask[pos])
+                self._mask_validators.append(mask[pos])
             pos += 1
 
         self.modify_font(pango.FontDescription("monospace"))
@@ -268,7 +274,10 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
 
     def get_field_text(self):
         """
-        Get the fields assosiated with the entry
+        Get the fields assosiated with the entry.
+        A field is dynamic content separated by static.
+        For example, the format string %3d-%3d has two fields
+        separated by a dash.
         if a field is empty it'll return an empty string
         otherwise it'll include the content
 
@@ -293,7 +302,7 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         s = ''
         field_type = -1
         text = self.get_text()
-        validators = self._validators
+        validators = self._mask_validators
         while True:
             if pos >= len(validators):
                 append_field(fields, field_type, s)
@@ -355,20 +364,20 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
     # Private
 
     def _really_delete_text(self, start, end):
-        # A variant of delete_text that never is blocked by us
+        # A variant of delete_text() that never is blocked by us
         self._block_delete = True
         self.delete_text(start, end)
         self._block_delete = False
 
     def _really_insert_text(self, text, position):
-        # A variant of insert_text that never is blocked by us
+        # A variant of insert_text() that never is blocked by us
         self._block_insert = True
         self.insert_text(text, position)
         self._block_insert = False
 
     def _insert_mask(self, start, end):
         s = ''
-        for validator in self._validators[start:end]:
+        for validator in self._mask_validators[start:end]:
             if isinstance(validator, int):
                 s += ' '
             elif isinstance(validator, str):
@@ -377,6 +386,28 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
                 raise AssertionError
 
         self._really_insert_text(s, position=start)
+
+    def _confirms_to_mask(self, position, text):
+        validators = self._mask_validators
+        if position >= len(validators):
+            return False
+
+        validator = validators[position]
+        if validator == INPUT_ALPHA:
+            if not text in string.lowercase:
+                return False
+        elif validator == INPUT_DIGIT:
+            if not text in string.digits:
+                return False
+        elif isinstance(validator, str):
+            if validator == text:
+                return True
+            return False
+        elif validator == INPUT_CHARACTER:
+            # Accept anything
+            pass
+
+        return True
 
     def _update_current_object(self, text):
         if self._entry_mode != ENTRY_MODE_DATA:
@@ -443,51 +474,27 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
 
     # Callbacks
 
-    def _is_valid(self, position, text):
-        validators = self._validators
-        if position >= len(validators):
-            return False
-
-        validator = validators[position]
-        if validator == INPUT_ALPHA:
-            if not text in string.lowercase:
-                return False
-        elif validator == INPUT_DIGIT:
-            if not text in string.digits:
-                return False
-        elif isinstance(validator, str):
-            if validator == text:
-                return True
-            #self.set_position(position + 1)
-            return False
-        elif validator == INPUT_CHARACTER:
-            # Accept anything
-            pass
-
-        return True
-
     def _on_insert_text(self, editable, new, length, position):
         if not self._mask or self._block_insert:
             return
 
         position = self.get_position()
         for inc, c in enumerate(new):
-            current = position + inc
-            if not self._is_valid(current, c):
+            if not self._confirms_to_mask(position + inc, c):
                 self.stop_emission('insert-text')
                 return
 
             self._really_delete_text(position, position+1)
 
-        next = position + 1
-        # If the next position is a static character and
+        # If the next character is a static character and
         # the one after the next is input, skip over
         # the static character
-        validators = self._validators
-        if len(validators) > next + 1:
+        next = position + 1
+        validators = self._mask_validators
+        if len(validators) + 1:
             if (isinstance(validators[next], str) and
                 isinstance(validators[next+1], int)):
-                # Ugly: but it must be done after the parent
+                # Ugly: but it must be done after the entry
                 #       inserts the text
                 gobject.idle_add(self.set_position, next+1)
 
@@ -496,7 +503,7 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
             return
 
         # This is tricky, quite ugly but it works.
-        # We want to insert the text after the delete is done
+        # We want to insert the mask after the delete is done
         # Instead of using idle_add we delete the text first
         # insert our mask afterwards and finally blocks the call
         # from happing in the entry itself
