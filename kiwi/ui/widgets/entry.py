@@ -29,6 +29,7 @@ The L{Entry} is also extended to provide an easy way to add entry completion
 support and display an icon using L{kiwi.ui.icon.IconEntry}.
 """
 
+import datetime
 import gettext
 import string
 
@@ -36,6 +37,7 @@ import gobject
 import pango
 import gtk
 
+from kiwi.datatypes import converter
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import PropertyObject, gproperty, gsignal, type_register
@@ -60,6 +62,11 @@ INPUT_FORMATS = {
     'd': INPUT_DIGIT,
     'c': INPUT_CHARACTER,
     }
+
+DATE_MASK_TABLE = {'%m': '%2d',
+                   '%y': '%2d',
+                   '%d': '%2d',
+                   '%Y': '%4d'}
 
 class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
     """The Kiwi Entry widget has many special features that extend the basic
@@ -160,6 +167,14 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         except MaskError, e:
             pass
         return ''
+
+    def prop_set_data_type(self, value):
+        value = super(Entry, self).prop_set_data_type(value)
+
+        # Apply a mask for the data types, some types like
+        # dates has a default mask
+        self._set_mask_for_data_type(value)
+        return value
 
     # Public API
     def set_exact_completion(self, value):
@@ -408,6 +423,16 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
 
         return True
 
+    def _set_mask_for_data_type(self, data_type):
+        if not data_type in (datetime.datetime, datetime.date, datetime.time):
+            return
+        conv = converter.get_converter(data_type)
+        mask = conv.get_format()
+        for format_char, mask_char in DATE_MASK_TABLE.items():
+            mask = mask.replace(format_char, mask_char)
+
+        self.set_mask(mask)
+
     def _update_current_object(self, text):
         if self._entry_mode != ENTRY_MODE_DATA:
             return
@@ -490,7 +515,7 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         # the static character
         next = position + 1
         validators = self._mask_validators
-        if len(validators) + 1:
+        if len(validators) > next + 1:
             if (isinstance(validators[next], str) and
                 isinstance(validators[next+1], int)):
                 # Ugly: but it must be done after the entry

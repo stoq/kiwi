@@ -1,6 +1,9 @@
 2006-02-17  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/entry.py:
+	(Entry._set_mask_for_data_type, Entry.prop_set_data_type): 
+	For datetime objects, set a default mask
+
 	* tests/test_Entry.py:
 	Add paste/cut support. Refactor cleanup.
 	Add a couple of basic tests.
