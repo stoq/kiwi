@@ -1,3 +1,10 @@
+2006-02-18  Patrick K O'Brien <pobrien@orbtech.com>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/dist.py (TemplateInstallLib.install): win32 install fix
+	Fixes bug 2446
+
 === 1.9.6 ===
 2006-02-17  Johan Dahlin  <jdahlin@async.com.br>
 
