@@ -25,9 +25,9 @@
 Argument checking decorator and support
 """
 
+from decimal import Decimal
 import inspect
 from types import ClassType
-from decimal import Decimal
 
 class CustomType(type):
     def value_check(mcs, name, value):
@@ -44,7 +44,7 @@ class percent(CustomType):
     """
     Custom type that verifies that the value is a percentage
     """
-    type = int, float, Decimal
+    type = int, float, long, Decimal
     def value_check(mcs, name, value):
         if (value < 0) or (value > 100):
             raise ValueError("%s must be between 0 and 100" % name)

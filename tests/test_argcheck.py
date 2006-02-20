@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 import unittest
 
 from kiwi.argcheck import argcheck, number, percent
@@ -119,11 +120,31 @@ class ArgTest(unittest.TestCase):
                           date=None, date2=True)
 
 
-    def testCustom(self):
+    def testNumber(self):
         @argcheck(number)
         def func(n):
-            pass
-        func(10)
+            return n
+        self.assertEqual(func(0), 0)
+        self.assertEqual(func(0L), 0L)
+        self.assertEqual(func(0.0), 0.0)
+        self.assertEqual(func(Decimal(0)), Decimal(0))
+
+    def testPercent(self):
+        @argcheck(percent)
+        def func(n):
+            return n
+        self.assertEqual(func(50), 50)
+        self.assertEqual(func(50L), 50L)
+        self.assertEqual(func(50.0), 50.0)
+        self.assertEqual(func(Decimal(50)), Decimal(50))
+        self.assertRaises(ValueError, func, -1)
+        self.assertRaises(ValueError, func, -1L)
+        self.assertRaises(ValueError, func, -1.0)
+        self.assertRaises(ValueError, func, Decimal(-1))
+        self.assertRaises(ValueError, func, 101)
+        self.assertRaises(ValueError, func, 101L)
+        self.assertRaises(ValueError, func, 101.0)
+        self.assertRaises(ValueError, func, Decimal(101))
 
     def testDisable(self):
         argcheck.disable()
