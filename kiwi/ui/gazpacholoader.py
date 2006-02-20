@@ -25,6 +25,7 @@
 """Gazpacho integration: loader and extensions"""
 
 import datetime
+from decimal import Decimal
 import gettext
 import os
 
@@ -159,6 +160,7 @@ class SpinBtnDataType(DataTypeAdaptor):
         return [
             (_('Integer'), int),
             (_('Float'), float),
+            (_('Decimal'), Decimal),
             (_('Currency'), currency)
             ]
 
@@ -169,6 +171,7 @@ class EntryDataType(DataTypeAdaptor):
             (_('Unicode'), unicode),
             (_('Integer'), int),
             (_('Float'), float),
+            (_('Decimal'), Decimal),
             (_('Currency'), currency),
             (_('Date'), datetime.date),
             (_('Datetime'), datetime.datetime),
@@ -183,6 +186,7 @@ class TextViewDataType(DataTypeAdaptor):
             (_('Unicode'), unicode),
             (_('Integer'), int),
             (_('Float'), float),
+            (_('Decimal'), Decimal),
             (_('Date'), datetime.date),
             ]
 
@@ -194,6 +198,7 @@ class ComboBoxDataType(DataTypeAdaptor):
             (_('Boolean'), bool),
             (_('Integer'), int),
             (_('Float'), float),
+            (_('Decimal'), Decimal),
             (_('Object'), object)
             ]
 
@@ -205,6 +210,7 @@ class LabelDataType(DataTypeAdaptor):
             (_('Boolean'), bool),
             (_('Integer'), int),
             (_('Float'), float),
+            (_('Decimal'), Decimal),
             (_('Date'), datetime.date),
             (_('Datetime'), datetime.datetime),
             (_('Time'), datetime.time),
