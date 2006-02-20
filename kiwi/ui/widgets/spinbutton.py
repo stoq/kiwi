@@ -30,6 +30,8 @@ L{SpinButton} is also enhanced to display an icon using
 L{kiwi.ui.icon.IconEntry}
 """
 
+from decimal import Decimal
+
 import gtk
 
 from kiwi.ui.icon import IconEntry
@@ -43,7 +45,7 @@ class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
     The only allowed types for spinbutton are int and float.
 
     """
-    allowed_data_types = int, float
+    allowed_data_types = int, long, float, Decimal
 
     def __init__(self):
         # since the default data_type is str we need to set it to int
