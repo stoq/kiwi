@@ -54,7 +54,7 @@ class TimeOutError(Exception):
     """
     pass
 
-log = Logger('test')
+log = Logger('uitest')
 
 class ThreadSafeFunction:
     """

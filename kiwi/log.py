@@ -28,7 +28,8 @@ import sys
 
 from kiwi.environ import environ
 
-_log_level = None
+class LogError(Exception):
+    pass
 
 class Formatter(logging.Formatter):
     def format(self, record):
@@ -54,8 +55,9 @@ class Logger(logging.Logger):
           - logging.ERROR
           - logging.CRITICAL
         """
-        global _log_level
-        logging.Logger.__init__(self, name or Logger.log_name, _log_level)
+        if not name:
+            name or Logger.log_name
+        logging.Logger.__init__(self, name, get_log_level(name))
 
         stream_handler = logging.StreamHandler(sys.stdout)
 
@@ -73,14 +75,39 @@ class Logger(logging.Logger):
     def __call__(self, message, *args, **kwargs):
         self.info(message, *args, **kwargs)
 
-def set_log_level(level):
-    global _log_level
-    _log_level = level
+_log_levels = {}
 
-log_level = environ.get_log_level()
-if log_level is None:
-    # Default is to show only warnings and higher
-    log_level = logging.WARNING
-else:
-    log_level = int(log_level)
-set_log_level(log_level)
+def set_log_level(name, level):
+    """
+    @param name: logging category
+    @param level: level
+    """
+    _log_levels[name] = level
+
+def get_log_level(name):
+    """
+    @param name: logging category
+    @returns: the level
+    """
+    return _log_levels.get(name, logging.WARNING)
+
+def _read_log_level():
+    log_levels = {}
+    log_level = environ.get_log_level()
+    for part in log_level.split(','):
+        if ':' in part:
+            if part.count(':') > 1:
+                raise LogError("too many : in part %s" % part)
+            name, level = part.split(':')
+            try:
+                level = int(level)
+            except ValueError:
+                raise LogError("invalid level: %s" % level)
+
+            if level < 0 or level > 5:
+                raise LogError("level must be between 0 and 5")
+        log_levels[name] = level
+
+    return log_levels
+
+_log_levels = _read_log_level()

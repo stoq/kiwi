@@ -217,6 +217,7 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
                 self.set_blank()
                 return ValueUnset
             else:
+
                 # The widgets themselves have now valid the data
                 # Next step is to call the application specificed
                 # checks, which are found in the view.
