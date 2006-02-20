@@ -36,7 +36,7 @@ from gtk import gdk
 
 from kiwi import _warn
 from kiwi.accessors import kgetattr
-from kiwi.datatypes import converter, currency, lformat
+from kiwi.datatypes import converter, currency, lformat, number
 from kiwi.decorators import deprecated
 from kiwi.python import slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
@@ -91,7 +91,7 @@ class Column(PropertyObject, gobject.GObject):
     def __init__(self, attribute, title=None, data_type=None, **kwargs):
         """
         Creates a new Column, which describes how a column in a
-        List should be rendered.
+        ObjectList should be rendered.
 
         @param attribute: a string with the name of the instance attribute the
             column represents.
@@ -105,17 +105,17 @@ class Column(PropertyObject, gobject.GObject):
         @keyword justify: one of gtk.JUSTIFY_LEFT, gtk.JUSTIFY_RIGHT or
             gtk.JUSTIFY_CENTER or None. If None, the justification will be
             determined by the type of the attribute value of the first
-            instance to be inserted in the List (integers and floats
-            will be right-aligned).
+            instance to be inserted in the ObjectList (numbers will be
+            right-aligned).
         @keyword format: a format string to be applied to the attribute
             value upon insertion in the list.
         @keyword width: the width in pixels of the column, if not set, uses the
-            default to List. If no Column specifies a width,
-            columns_autosize() will be called on the List upon append()
+            default to ObjectList. If no Column specifies a width,
+            columns_autosize() will be called on the ObjectList upon append()
             or the first add_list().
-        @keyword sorted: whether or not the List is to be sorted by this
+        @keyword sorted: whether or not the ObjectList is to be sorted by this
             column.
-            If no Columns are sorted, the List will be created unsorted.
+            If no Columns are sorted, the ObjectList will be created unsorted.
         @keyword order: one of gtk.SORT_ASCENDING or gtk.SORT_DESCENDING or
             -1. The value -1 is used internally when the column is not sorted.
         @keyword expand: if set column will expand. Note: this space is shared
@@ -169,7 +169,7 @@ class Column(PropertyObject, gobject.GObject):
             if data_type:
                 if issubclass(data_type, bool):
                     kwargs['justify'] = gtk.JUSTIFY_CENTER
-                elif issubclass(data_type, (int, float, long, currency)):
+                elif issubclass(data_type, (number, currency)):
                     kwargs['justify'] = gtk.JUSTIFY_RIGHT
 
         format_func = kwargs.get('format_func')
@@ -293,8 +293,8 @@ class ColoredColumn(Column):
 
     def __init__(self, attribute, title=None, data_type=None,
                  color=None, data_func=None, **kwargs):
-        if not issubclass(data_type, (int, float)):
-            raise TypeError("data type must be int or float")
+        if not issubclass(data_type, number):
+            raise TypeError("data type must be a number")
         if not callable(data_func):
             raise TypeError("data func must be callable")
 
@@ -436,7 +436,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     # emitted when empty or non-empty status changes
     gsignal('has-rows', bool)
 
-    # this property is used to serialize the columns of a List. The format
+    # this property is used to serialize the columns of a ObjectList. The format
     # is a big string with '^' as the column separator and '|' as the field
     # separator
     gproperty('column-definitions', str, nick="ColumnDefinitions")
@@ -947,7 +947,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             if column.editable:
                 raise TypeError("use-stock columns cannot be editable")
         elif issubclass(data_type, (datetime.date, datetime.time,
-                                    basestring, int, float, decimal.Decimal,
+                                    basestring, number,
                                     currency)):
             renderer = gtk.CellRendererText()
             prop = 'text'
@@ -1020,7 +1020,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def _on_renderer__edited(self, renderer, path, value, column):
         data_type = column.data_type
-        if data_type in (int, float):
+        if data_type in number:
             value = data_type(value)
 
         # XXX convert new_text to the proper data type
@@ -1520,7 +1520,7 @@ class ListLabel(gtk.HBox):
     def __init__(self, klist, column, label='', value_format='%s'):
         """
         @param klist:        list to follow
-        @type klist:         kiwi.ui.widget.list.List
+        @type klist:         kiwi.ui.objectlist.ObjectList
         @param column:       name of a column in a klist
         @type column:        string
         @param label:        label
@@ -1623,13 +1623,13 @@ class ListLabel(gtk.HBox):
 class SummaryLabel(ListLabel):
     """I am a subclass of ListLabel which you can use if you want
     to summarize all the values of a specific column.
-    Please note that I only know how to handle int and float column
+    Please note that I only know how to handle number column
     data types and I will complain if you give me something else."""
 
     def __init__(self, klist, column, label=_('Total:'), value_format='%s'):
         ListLabel.__init__(self, klist, column, label, value_format)
-        if not issubclass(self._column.data_type, (int, float, decimal.Decimal)):
-            raise TypeError("data_type of column must be int or float, not %r",
+        if not issubclass(self._column.data_type, number):
+            raise TypeError("data_type of column must be a number, not %r",
                             self._column.data_type)
         klist.connect('cell-edited', self._on_klist__cell_edited)
         self.update_total()

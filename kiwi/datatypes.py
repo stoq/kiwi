@@ -26,7 +26,7 @@
 """Data type converters with locale and currency support"""
 
 import datetime
-import decimal
+from decimal import Decimal, InvalidOperation
 import locale
 import sys
 import time
@@ -38,6 +38,8 @@ from kiwi import ValueUnset
 locale.setlocale(locale.LC_ALL, '') # this set the user locale ( $LANG )
 
 __all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
+
+number = (int, float, long, Decimal)
 
 class ValidationError(Exception):
     pass
@@ -294,7 +296,7 @@ class _FloatConverter(BaseConverter):
 converter.add(_FloatConverter)
 
 class _DecimalConverter(_FloatConverter):
-    type = decimal.Decimal
+    type = Decimal
     def from_string(self, value):
         if value == '':
             return ValueUnset
@@ -302,8 +304,8 @@ class _DecimalConverter(_FloatConverter):
         value = self._filter_locale(value)
 
         try:
-            retval = decimal.Decimal(value)
-        except decimal.InvalidOperation:
+            retval = Decimal(value)
+        except InvalidOperation:
             raise ValidationError("This field requires a number")
 
         return retval
@@ -418,12 +420,12 @@ class _ObjectConverter(BaseConverter):
     from_string = None
 converter.add(_ObjectConverter)
 
-class currency(decimal.Decimal):
+class currency(Decimal):
     """
     A datatype representing currency, used together with the list and
     the framework
     """
-    _converter = converter.get_converter(decimal.Decimal)
+    _converter = converter.get_converter(Decimal)
 
     def __new__(cls, value):
         """
@@ -437,15 +439,15 @@ class currency(decimal.Decimal):
             value = currency._converter.from_string(text)
         elif isinstance(value, float):
             value = str(value)
-        elif not isinstance(value, (int, long, decimal.Decimal)):
+        elif not isinstance(value, (int, long, Decimal)):
             raise TypeError(
                 "cannot convert %r of type %s to a currency" % (
                 value, type(value)))
 
-        return decimal.Decimal.__new__(cls, value)
+        return Decimal.__new__(cls, value)
 
     def format(self, symbol=True, precision=None):
-        value = decimal.Decimal(self)
+        value = Decimal(self)
 
         conv = locale.localeconv()
 

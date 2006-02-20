@@ -29,6 +29,8 @@ from decimal import Decimal
 import inspect
 from types import ClassType
 
+from kiwi.datatypes import number as number_type
+
 class CustomType(type):
     def value_check(mcs, name, value):
         pass
@@ -38,13 +40,14 @@ class number(CustomType):
     """
     Custom type that verifies that the type is a number (eg float or int)
     """
-    type = int, float, long, Decimal
+    type = number_type
 
 class percent(CustomType):
     """
     Custom type that verifies that the value is a percentage
     """
-    type = int, float, long, Decimal
+    type = number_type
+
     def value_check(mcs, name, value):
         if (value < 0) or (value > 100):
             raise ValueError("%s must be between 0 and 100" % name)

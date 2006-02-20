@@ -34,6 +34,7 @@ from decimal import Decimal
 
 import gtk
 
+from kiwi.datatypes import number
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import PropertyObject, gsignal
@@ -45,7 +46,7 @@ class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
     The only allowed types for spinbutton are int and float.
 
     """
-    allowed_data_types = int, long, float, Decimal
+    allowed_data_types = number
 
     def __init__(self):
         # since the default data_type is str we need to set it to int
