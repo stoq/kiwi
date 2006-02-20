@@ -1,4 +1,5 @@
-from datetime import date
+from decimal import Decimal
+import datetime
 import unittest
 import locale
 
@@ -17,7 +18,7 @@ def set_locale(category, name):
 
 class DataTypesTest(unittest.TestCase):
     def setUp(self):
-        self.date = date(1979, 2, 12)
+        self.date = datetime.date(1979, 2, 12)
         self.conv = converter.get_converter(bool)
 
     def testFromString(self):
@@ -35,8 +36,8 @@ class DataTypesTest(unittest.TestCase):
 
 class DateTest(unittest.TestCase):
     def setUp(self):
-        self.date = date(1979, 2, 12)
-        self.conv = converter.get_converter(date)
+        self.date = datetime.date(1979, 2, 12)
+        self.conv = converter.get_converter(datetime.date)
 
     def tearDown(self):
         set_locale(locale.LC_ALL, 'C')
@@ -177,6 +178,17 @@ class FloatTest(unittest.TestCase):
         self.assertEqual(self.conv.as_string(0.5), '0.5')
         self.assertEqual(self.conv.as_string(-10.5), '-10.5')
         self.assertEqual(self.conv.as_string(0.5), '0.5')
+
+class DecimalTest(unittest.TestCase):
+    def setUp(self):
+        self.conv = converter.get_converter(Decimal)
+
+    def testFromString(self):
+        self.assertEqual(self.conv.from_string('-2.5'), Decimal('-2.5'))
+        self.assertEqual(self.conv.from_string('10.33'), Decimal('10.33'))
+        self.assertRaises(ValidationError, self.conv.from_string, 'foo')
+        self.assertRaises(ValidationError, self.conv.from_string, '1.2.3')
+        self.assertEqual(self.conv.from_string(''), ValueUnset)
 
 if __name__ == "__main__":
     unittest.main()
