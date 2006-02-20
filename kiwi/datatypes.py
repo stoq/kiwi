@@ -438,6 +438,8 @@ class currency(Decimal):
             text = value.strip(currency_symbol)
             value = currency._converter.from_string(text)
         elif isinstance(value, float):
+            print ('Warning: losing precision converting float %r to currency'
+                   % value)
             value = str(value)
         elif not isinstance(value, (int, long, Decimal)):
             raise TypeError(
