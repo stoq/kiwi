@@ -65,7 +65,6 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('width', int, maximum=2**16)
     gproperty('sorted', bool, default=False)
     gproperty('order', gtk.SortType, default=gtk.SORT_ASCENDING)
-    #gproperty('title_pixmap', str)
     gproperty('expand', bool, default=False)
     gproperty('tooltip', str)
     gproperty('format_func', object)
@@ -75,6 +74,8 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('cache', bool, default=False)
     gproperty('use-stock', bool, default=False)
     gproperty('icon-size', gtk.IconSize, default=gtk.ICON_SIZE_MENU)
+    gproperty('editable_attribute', str)
+    #gproperty('title_pixmap', str)
 
     # This can be set in subclasses, to be able to allow custom
     # cell_data_functions, used by SequentialColumn
@@ -141,6 +142,8 @@ class Column(PropertyObject, gobject.GObject):
             value which should be a stock id.
         @keyword icon_size: a gtk.IconSize constant, gtk.ICON_SIZE_MENU if not
             specified.
+        @keyword editable_attribute: a string which is the attribute
+            which should decide if the cell is editable or not.
         @keyword title_pixmap: (TODO) if set to a filename a pixmap will be
             used *instead* of the title set. The title string will still be
             used to identify the column in the column selection and in a
@@ -179,6 +182,13 @@ class Column(PropertyObject, gobject.GObject):
             if 'format' in kwargs:
                 raise TypeError(
                     "format and format_func can not be used at the same time")
+
+        # editable_attribute always turns on editable
+        if 'editable_attribute' in kwargs:
+            if not kwargs.get('editable', True):
+                raise TypeError(
+                    "editable cannot be disabled when using editable_attribute")
+            kwargs['editable'] = True
 
         PropertyObject.__init__(self, **kwargs)
         gobject.GObject.__init__(self)
@@ -318,6 +328,7 @@ class ColoredColumn(Column):
         renderer.set_property('foreground-gdk', color)
 
 class _ContextMenu(gtk.Menu):
+
     """
     ContextMenu is a wrapper for the menu that's displayed when right
     clicking on a column header. It monitors the treeview and rebuilds
@@ -973,6 +984,17 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                              (column, renderer_prop, as_string)):
 
         row = model[treeiter]
+        if column.editable_attribute:
+            data = column.get_attribute(row[COL_MODEL],
+                                        column.editable_attribute, None)
+            data_type = column.data_type
+            if isinstance(renderer, gtk.CellRendererToggle):
+                renderer.set_property('activatable', data)
+            elif isinstance(renderer, gtk.CellRendererText):
+                renderer.set_property('editable', data)
+            else:
+                raise AssertionError
+
         if column.cache:
             cache = self._cell_data_caches[column.attribute]
             path = row.path[0]
