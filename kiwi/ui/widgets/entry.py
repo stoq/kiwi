@@ -37,7 +37,7 @@ import gobject
 import pango
 import gtk
 
-from kiwi.datatypes import ValidationError, converter
+from kiwi.datatypes import ValidationError, converter, number
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import PropertyObject, gproperty, gsignal, type_register
@@ -170,13 +170,17 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
             pass
         return ''
 
-    def prop_set_data_type(self, value):
-        value = super(Entry, self).prop_set_data_type(value)
+    def prop_set_data_type(self, data_type):
+        data_type = super(Entry, self).prop_set_data_type(data_type)
+
+        # Numbers should be right aligned
+        if data_type and issubclass(data_type, number):
+            self.set_property('xalign', 1.0)
 
         # Apply a mask for the data types, some types like
         # dates has a default mask
-        self._set_mask_for_data_type(value)
-        return value
+        self._set_mask_for_data_type(data_type)
+        return data_type
 
     # Public API
     def set_exact_completion(self, value):
@@ -351,6 +355,7 @@ class Entry(PropertyObject, gtk.Entry, WidgetMixinSupportValidation):
         gtk.Entry.set_text(self, text)
 
         self.emit('content-changed')
+        self.set_position(-1)
 
     # WidgetMixin implementation
     def read(self):

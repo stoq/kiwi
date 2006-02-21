@@ -1,5 +1,10 @@
 2006-02-21  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/entry.py (Entry.set_text): Set the cursor
+	after the inserted text
+	(Entry.prop_set_data_type): Right align entries which contain
+	numbers by default
+
 	* kiwi/ui/objectlist.py: Add Column.editable_attribute which
 	is a row (object) specific way of saying if an attribute
 	is editable or not.
