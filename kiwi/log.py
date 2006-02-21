@@ -94,6 +94,9 @@ def get_log_level(name):
 def _read_log_level():
     log_levels = {}
     log_level = environ.get_log_level()
+    if not log_level:
+        return log_levels
+
     for part in log_level.split(','):
         if ':' in part:
             if part.count(':') > 1:
