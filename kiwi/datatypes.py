@@ -437,6 +437,8 @@ class currency(Decimal):
             currency_symbol = conv.get('currency_symbol')
             text = value.strip(currency_symbol)
             value = currency._converter.from_string(text)
+            if value == ValueUnset:
+                raise InvalidOperation
         elif isinstance(value, float):
             print ('Warning: losing precision converting float %r to currency'
                    % value)
@@ -540,7 +542,7 @@ class currency(Decimal):
     def __repr__(self):
         return '<currency %s> ' % self.format()
 
-class _CurrencyConverter(BaseConverter):
+class _CurrencyConverter(_DecimalConverter):
     type = currency
 
     def __init__(self):
@@ -562,7 +564,7 @@ class _CurrencyConverter(BaseConverter):
             return ValueUnset
         try:
             return currency(value)
-        except ValueError:
+        except (ValueError, InvalidOperation):
             raise ValidationError(
                 "%s can not be converted to a currency" % value)
 
