@@ -56,7 +56,7 @@ class Logger(logging.Logger):
           - logging.CRITICAL
         """
         if not name:
-            name or Logger.log_name
+            name = Logger.log_name
         logging.Logger.__init__(self, name, get_log_level(name))
 
         stream_handler = logging.StreamHandler(sys.stdout)
