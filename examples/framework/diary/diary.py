@@ -22,7 +22,7 @@ class Diary(ProxyDelegate):
         entry = DiaryEntry()
         entry.title = 'New title'
 
-        self.new_model(entry)
+        self.set_model(entry)
         self.entries.append(entry)
         self.title.grab_focus()
 
