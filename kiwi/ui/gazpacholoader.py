@@ -230,7 +230,7 @@ class BoolDataTypeProperty(CustomProperty, StringType):
     def save(self):
         return 'bool'
 
-class ModelProperty(CustomProperty):
+class ModelProperty(CustomProperty, StringType):
     translatable = False
 
 class KiwiColumnAdapter(Adapter):
