@@ -157,7 +157,7 @@ Kiwi is distributed through its official website, at
 \url{http://www.async.com.br/projects/kiwi/}. It is released as a
 tarball frequently, and the tarball is distributed from that page.
 Announcements of the release should go out to \code{pygtk-list},
-\citetitle[http://www.freshmeat.net/]{Freshmeat} and \code{python-announce}.
+\citetitle[http://freshmeat.net/]{Freshmeat} and \code{python-announce}.
 
 You will need to install the following packages if they are not
 already on your system:
@@ -222,11 +222,11 @@ saves information defined in a graphical form. This app is included in
 \file{Kiwi/examples/Person/person.py}.  Note that this app uses the
 glade file \citetitle[Person.glade]{Person.glade}.
 
-\begin{center}
-\includegraphics[scale=0.905]{images/simple.eps}
-\end{center}
+% \begin{center}
+% \includegraphics[scale=0.905]{images/simple.eps}
+% \end{center}
 
-\verbatiminput{../examples/Person/person.py}
+% \verbatiminput{../examples/Person/person.py}
 
 This application (17 lines) renders an interface to edit personal data,
 transparently saving and loading it. A quick glance at the code:
@@ -262,7 +262,6 @@ MVC\footnote{ While MVC is both interesting and commonplace, I criticize
 it as a generic solution to an application-level framework because it
 tends to promote highly-coupled classes (it does work quite nicely as a
 widget-level framework, having said that).
-
 Of course, this doesn't mean it's not useful to many applications (or at
 least parts of them).} and MVC implementations in modern frameworks
 (Swing and MFC both implement MVC in their own ways), and Kiwi provides
@@ -349,11 +348,11 @@ This first example will use GTK+ widgets directly, just to show how they
 fit in (it's available in the Kiwi tarball in
 \file{Kiwi/examples/HeyPlanet/hey.py}).
 
-\begin{center}
-\includegraphics[scale=0.905]{images/london.eps}
-\end{center}
+%% \begin{center}
+%% \includegraphics[scale=0.905]{images/london.eps}
+%% \end{center}
 
-\verbatiminput{../examples/HeyPlanet/hey.py}
+%% \verbatiminput{../examples/HeyPlanet/hey.py}
 
 So what does the example do? To start off with, it defines a view class
 that inherits from \class{BaseView}, the View with a toplevel window.
@@ -545,11 +544,11 @@ Proxy yet, I'll leave this to be mentioned when we get there.
 As an example of how \code{widgets} should be specified and used, let's
 change \file{heyglade.py} to \file{heyglade2.py}:
 
-\begin{center}
-\includegraphics[scale=0.905]{images/london2.eps}
-\end{center}
+%% \begin{center}
+%% \includegraphics[scale=0.905]{images/london2.eps}
+%% \end{center}
 
-\verbatiminput{../examples/HeyPlanet/heyglade2.py}
+%% \verbatiminput{../examples/HeyPlanet/heyglade2.py}
 
 Of course, it is often useful to subclass \code{GladeView} to be able to
 customize the behavior that you want for that view. I recommend
@@ -568,7 +567,7 @@ An example of a subclassed \class{GladeView} using \code{widgets} as a
 class variable follows (in the Kiwi tarball in
 \file{Kiwi/examples/HeyPlanet/heyglade3.py}):
 
-\verbatiminput{../examples/HeyPlanet/heyglade3.py}
+%% \verbatiminput{../examples/HeyPlanet/heyglade3.py}
 
 \subsection{UI Composition} 
 
@@ -611,9 +610,9 @@ padding and span).
 I'll demonstrate by showing how a parent view is built in glade. Look at
 \file{examples/Browser/news\_shell.glade}:
 
-\begin{center}
-\includegraphics[scale=0.905]{images/shell1.eps}
-\end{center}
+%% \begin{center}
+%% \includegraphics[scale=0.905]{images/shell1.eps}
+%% \end{center}
 
 In \file{news.glade} I put together a simple dialog, and in the place where
 I want the slave to be embedded, I have added an EventBox (with any
@@ -673,9 +672,9 @@ minor detail with widget focus that is discussed in the next section;
 basically, the slave needs to be attached to the parent before trying to
 focus its widgets).  The final result is shown below:
 
-\begin{center}
-\includegraphics[scale=0.905]{images/shell2.eps}
-\end{center}
+%% \begin{center}
+%% \includegraphics[scale=0.905]{images/shell2.eps}
+%% \end{center}
 
 Note that all the examples up to now have been very simple and static:
 there is no user interaction going on beyond closing the window (for
@@ -772,11 +771,11 @@ one kind of signal, if you need to). Let's see a simple example to make
 these concepts more concrete (included in the Kiwi tarball at
 \file{Kiwi/examples/Faren/faren.py}):
 
-\begin{center}
-\includegraphics[scale=0.905]{images/faren.eps}
-\end{center}
+%% \begin{center}
+%% \includegraphics[scale=0.905]{images/faren.eps}
+%% \end{center}
 
-\verbatiminput{../examples/Faren/faren.py}
+%% \verbatiminput{../examples/Faren/faren.py}
 
 Let's have a look at the code. I define a Controller
 \class{FarenControl} that inherits from \class{BaseController}, and
@@ -907,7 +906,7 @@ which is a sign of high coupling. One good way to solve these issues is
 to provide a subclass of GladeView that does some extra setup and
 provides an API for the Controller (\file{faren2.py}):
 
-\verbatiminput{../examples/Faren/faren2.py}
+%% \verbatiminput{../examples/Faren/faren2.py}
 
 This (much longer, sure, but with a nicer division) example shows us
 using a separate View class, which presents an API for manipulating the
@@ -964,15 +963,15 @@ to individual views and controllers. A very simple (yes, I too get bored
 of hand-coding PyGTK widgets) example follows, found in the distribution
 as \file{examples/Simple/simple.py}:
 
-\begin{center}
-\includegraphics[scale=0.905]{images/simple2.eps}
-\end{center}
+%% \begin{center}
+%% \includegraphics[scale=0.905]{images/simple2.eps}
+%% \end{center}
 
-    \verbatiminput{../examples/Simple/simple.py}
+%%     \verbatiminput{../examples/Simple/simple.py}
 
-\begin{center}
-\includegraphics[scale=0.905]{images/simple3.eps}
-\end{center}
+%% \begin{center}
+%% \includegraphics[scale=0.905]{images/simple3.eps}
+%% \end{center}
 
 As you can see, the Delegate was the only class we needed to inherit
 from and instantiate. This makes the amount of infrastructure code go
@@ -982,7 +981,7 @@ Delegate and GladeDelegate subclasses. As an example for using the
 GladeDelegate, below is a third version of our temperature conversion
 application, \file{examples/Faren/faren3.py}:
 
-    \verbatiminput{../examples/Faren/faren3.py}
+%%     \verbatiminput{../examples/Faren/faren3.py}
 
 As you can see, using the delegates makes a lot of sense in many cases:
 the view and controller split isn't essential, and you can end up
@@ -1083,7 +1082,7 @@ example we saw a while back. I'm going to need to change the news data
 structures from tuples to instances, and create a CListDelegate for
 it (see \code{News/news2.py}):
 
-    \verbatiminput{../examples/News/news2.py}
+%%     \verbatiminput{../examples/News/news2.py}
 
 Wow! Assuming you have data in the correct format, in some 25 lines you
 defined the data for your applications, and in about 5 lines you
@@ -1096,9 +1095,9 @@ composition: attach it to a parent view. I'll show for now a screenshot
 of the generated widget inside a single window just so you know how it
 looks:
 
-\begin{center}
-\includegraphics[scale=0.88]{images/news2.eps}
-\end{center}
+%% \begin{center}
+%% \includegraphics[scale=0.88]{images/news2.eps}
+%% \end{center}
 
 If you look at this image, you might notice some important details:
 \begin{enumerate}
@@ -1147,11 +1146,11 @@ in as many places of your applications as you like.  I'm going to use
 the CListDelegate from the last example to build a (rather fake) news
 browsing application in the next example:
 
-\begin{center}
-\includegraphics[scale=0.905]{images/news3.eps}
-\end{center}
+%% \begin{center}
+%% \includegraphics[scale=0.905]{images/news3.eps}
+%% \end{center}
 
-    \verbatiminput{../examples/News/news3.py}
+%%     \verbatiminput{../examples/News/news3.py}
 
 Let's have a quick look at the code: 
 
@@ -1260,11 +1259,11 @@ the callback syntax should not include it.
 For the first example, let's attach a proxy to an interface specified
 in glade (\file{examples/NewsForm/newsform.py}):
 
-\begin{center}
-\includegraphics[scale=0.626]{images/newsform.eps}
-\end{center}
+%% \begin{center}
+%% \includegraphics[scale=0.626]{images/newsform.eps}
+%% \end{center}
     
-\verbatiminput{../examples/NewsForm/newsform.py}
+%% \verbatiminput{../examples/NewsForm/newsform.py}
 
 Let's look at this simple example. First, I define a model class which
 is really just a shell class, with no methods or attributes:
@@ -1301,11 +1300,11 @@ also a Delegate, as stated before, and thus supports the special handler
 syntax \code{on\_*()}) to define a handler for clicking on the reset
 button (\file{examples/NewsForm/newsform2.py}):
 
-\begin{center}
-\includegraphics[scale=0.626]{images/newsform2.eps}
-\end{center}
+%% \begin{center}
+%% \includegraphics[scale=0.626]{images/newsform2.eps}
+%% \end{center}
 
-\verbatiminput{../examples/NewsForm/newsform2.py}
+%% \verbatiminput{../examples/NewsForm/newsform2.py}
 
 If we look at the handler for reset, \code{on\_reset\_\_clicked()}, we
 can see it alters the model directly. These changes reflect
@@ -1472,7 +1471,7 @@ interface representation of that attribute.
 As an example, I will include here a final version of the Faren application
 that uses a Proxy (\file{Faren/faren4.py}):
 
-\verbatiminput{../examples/Faren/faren4.py}
+%% \verbatiminput{../examples/Faren/faren4.py}
 
 A step-by-step analysis of this example:
 
@@ -1680,7 +1679,7 @@ called \class{PickledModel}. To demonstrate by example, I will revisit
 the first example we saw in this text, the Person editor from section
 \ref{person}. Let's see the code again:
 
-\verbatiminput{../examples/Person/person.py}
+%% \verbatiminput{../examples/Person/person.py}
 
 Looking at the code, you might notice three special issues:
 
@@ -1731,11 +1730,11 @@ syntax for using multiple proxies is straightforward; simply create the
 proxies and attach the same model to them. A small example
 (\file{NewsForm/newsform4.py}) follows:
 
-\begin{center}
-\includegraphics[scale=0.626]{images/newsform4.eps}
-\end{center}
+%% \begin{center}
+%% \includegraphics[scale=0.626]{images/newsform4.eps}
+%% \end{center}
 
-\verbatiminput{../examples/NewsForm/newsform4.py}
+%% \verbatiminput{../examples/NewsForm/newsform4.py}
 
 This example shows some of the power of multiple proxies; as you edit
 the title you can see the label update immediately. If you look at the
