@@ -29,11 +29,11 @@
 
 \title{Developing applications with Kiwi}
 
-\release{0.5.0}
+\release{1.9.6}
 
-\author{Christian Reis\\Async Open Source, Brazil}
-\authoraddress{kiko@async.com.br\\http://www.async.com.br/projects/kiwi/}
-\date{November, 2002}
+\author{Christian Reis\\Johan Dahlin\\Async Open Source, Brazil}
+\authoraddress{kiko@async.com.br\\jdahlin@async.com.br\\http://www.async.com.br/projects/kiwi/}
+\date{February, 2006}
 
 \begin{document}
 \maketitle
@@ -58,8 +58,9 @@ documentation} to accompany the library, and this paper covers the
 Framework in detail, providing examples, screenshots and advice on
 designing your application.
 
-All you need to use Kiwi is Python and PyGTK. It's free software
-licensed under the LGPL and can be used and embedded in any application.
+All you need to use Kiwi is Python and PyGTK. Additionally Gazpacho is 
+strongly recommended. It's free software licensed under the LGPL and can 
+be used and embedded in any application.
 \end{abstract}
 
 \section{Kiwi: An Overview}
@@ -71,6 +72,10 @@ provides a high-level framework that helps developers organize their
 code and develop applications quickly, removing the need to do a lot of
 low-level work to get basic functionality implemented. The framework
 allows you to easily write applications that look like this:
+
+% ====================
+% ====== MARK ========
+% ====================
 
 \begin{center}
 \includegraphics[scale=0.626]{images/diary.eps}

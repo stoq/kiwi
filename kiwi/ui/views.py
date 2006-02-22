@@ -39,7 +39,7 @@ from gtk import gdk
 
 from kiwi import _warn
 from kiwi.environ import is_gazpacho_required
-from kiwi.interfaces import MixinSupportValidation
+from kiwi.interfaces import Mixin, MixinSupportValidation
 from kiwi.proxies import Proxy
 from kiwi.utils import gsignal, type_register
 from kiwi.ui.gadgets import quit_if_last
@@ -243,6 +243,9 @@ class SlaveView(gobject.GObject):
         self._check_reserved()
         self._glade_adaptor = self.get_glade_adaptor()
         self.toplevel = self._get_toplevel()
+        if not isinstance(self.toplevel, gtk.Widget):
+            raise TypeError("toplevel must be a gtk.Widget subclass, not %s" %
+                            self.toplevel)
 
         # grab the accel groups
         self._accel_groups = gtk.accel_groups_from_object(self.toplevel)
@@ -370,6 +373,20 @@ class SlaveView(gobject.GObject):
     #
     # GTK+ proxies and convenience functions
     #
+
+    def show_and_loop(self, parent=None):
+        """
+        Runs show() and runs the GTK+ event loop. If the parent
+        argument is supplied and is a valid view, this view is set as a
+        transient for the parent view
+
+        @param parent:
+        """
+
+        self.show()
+        if parent:
+            self.set_transient_for(parent)
+        gtk.main()
 
     def show(self, *args):
         """Shows the toplevel widget"""
@@ -550,13 +567,16 @@ class SlaveView(gobject.GObject):
                       "a window and was not a slave view" % (slave, self))
             slave._accel_groups = []
 
+        # Sizegroups merging, disabled for now
+        #self._merge_size_groups(slave)
+
         if isinstance(placeholder, gtk.EventBox):
-            # standard mechanism
+            # Remove eventbox and put the slave there
+            parent.remove(placeholder)
             child = placeholder.get_child()
             if child is not None:
                 placeholder.remove(child)
-            placeholder.set_visible_window(False)
-            placeholder.add(new_widget)
+            parent.add(new_widget)
         elif isinstance(parent, gtk.EventBox):
             # backwards compatibility
             _warn("attach_slave's api has changed: read docs, update code!")
@@ -566,10 +586,13 @@ class SlaveView(gobject.GObject):
             raise TypeError(
                 "widget to be replaced must be wrapped in eventbox")
 
+
         # when attaching a slave we usually want it visible
         parent.show()
         # call slave's callback
         slave.on_attach(self)
+
+        # Validation
 
         slave.connect_object('validation-changed',
                              self._on_child__validation_changed,
@@ -619,6 +642,33 @@ class SlaveView(gobject.GObject):
                 # skip group already attached
                 continue
             win.add_accel_group(group)
+
+    def _merge_size_groups(self, slave):
+        main_groups = self._glade_adaptor.get_sizegroups()
+        groups = {}
+        for main_group in main_groups:
+            groups[main_group.get_data('gazpacho::object-id')] = main_group
+
+        for slave_group in slave._glade_adaptor.get_sizegroups():
+            name = slave_group.get_data('gazpacho::object-id')
+            if not name in groups:
+                continue
+            main_group = groups[name]
+            if main_group.get_mode() != slave_group.get_mode():
+                print 'warning: different mode on sizegroups, skipping'
+                continue
+
+            widgets = []
+            for widget in slave_group.get_data('gazpacho::sizegroup-widgets'):
+                slave_group.remove_widget(widget)
+                widgets.append(widget)
+            for widget in main_group.get_data('gazpacho::sizegroup-widgets'):
+                main_group.remove_widget(widget)
+                widgets.append(widget)
+
+            group = gtk.SizeGroup(main_group.get_mode())
+            for widget in widgets:
+                group.add_widget(widget)
 
     def get_slave(self, holder):
         return self.slaves.get(holder)
@@ -691,23 +741,30 @@ class SlaveView(gobject.GObject):
             self.__class__.__name__,
             model and model.__class__.__name__))
 
-        widgets = widgets or self.widgets
+        proxy_widgets = []
+        if widgets is None:
+            for widget in self._glade_adaptor.get_widgets():
+                if not isinstance(widget, Mixin):
+                    continue
+                if widget.get_property('model-attribute'):
+                    proxy_widgets.append(widget)
+        else:
+            for widget_name in self.widgets:
+                widget = getattr(self, widget_name, None)
+                if (widget is not None and
+                    isinstance(widget, MixinSupportValidation)):
+                    proxy_widgets.append(widget)
 
-        for widget_name in widgets:
-            widget = getattr(self, widget_name, None)
-            if (widget is None or
-                not isinstance(widget, MixinSupportValidation)):
-                continue
-
+        for widget in proxy_widgets:
             try:
                 widget.connect_object('validation-changed',
                                       self._on_child__validation_changed,
-                                      widget_name)
+                                      widget.get_name())
             except TypeError:
                 raise AssertionError("%r does not have a validation-changed "
                                      "signal." % widget)
 
-        proxy = Proxy(self, model, widgets)
+        proxy = Proxy(self, model, [w.get_name() for w in proxy_widgets])
         self._proxies.append(proxy)
         return proxy
 

@@ -1,3 +1,18 @@
+2006-02-22  Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/framework/diary/diary.glade:
+	* examples/framework/diary/diary.py:
+	* kiwi/proxies.py:
+	* kiwi/ui/delegates.py:
+	* kiwi/ui/gazpacholoader.py:
+	* kiwi/ui/libgladeloader.py:
+	* kiwi/ui/views.py:
+	Add ProxyDelegate and example. Rename proxy.new_model to
+	proxy.set_model.
+	Add sizegroup merging support (disabled).
+	Add show_and_loop method on the view.
+	Remove a few mutable default arguments.
+	
 2006-02-21  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/entry.py (Entry.set_text): Set the cursor

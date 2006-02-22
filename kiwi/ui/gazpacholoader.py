@@ -108,6 +108,9 @@ class GazpachoWidgetTree:
     def signal_autoconnect(self, dic):
         self._tree.signal_autoconnect(dic)
 
+    def get_sizegroups(self):
+        return self._tree.sizegroups
+
 class DataTypeAdaptor(PropertyCustomEditor):
     def __init__(self):
         super(DataTypeAdaptor, self).__init__()

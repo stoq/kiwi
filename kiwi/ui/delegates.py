@@ -25,6 +25,7 @@
 
 """Defines the Delegate classes that are included in the Kiwi Framework."""
 
+from kiwi.proxies import Proxy
 from kiwi.ui.views import SlaveView, BaseView
 from kiwi.controllers import BaseController
 
@@ -33,7 +34,7 @@ class SlaveDelegate(SlaveView, BaseController):
     single package. It does not possess a top-level window, but is instead
     intended to be plugged in to a View or Delegate using attach_slave().
     """
-    def __init__(self, toplevel=None, widgets=[], gladefile=None,
+    def __init__(self, toplevel=None, widgets=(), gladefile=None,
                  gladename=None, toplevel_name=None, domain=None,
                  keyactions=None):
         """
@@ -48,7 +49,7 @@ class Delegate(BaseView, BaseController):
     """A class that combines view and controller functionality into a
     single package. The Delegate class possesses a top-level window.
     """
-    def __init__(self, toplevel=None, widgets=[], gladefile=None,
+    def __init__(self, toplevel=None, widgets=(), gladefile=None,
                  gladename=None, toplevel_name=None, domain=None,
                  delete_handler=None, keyactions=None):
         """Creates a new Delegate.
@@ -61,3 +62,29 @@ class Delegate(BaseView, BaseController):
                           delete_handler)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
+class ProxyDelegate(Delegate):
+    """A class that combines view, controller and proxy functionality into a
+    single package. The Delegate class possesses a top-level window.
+    """
+    def __init__(self, model, proxy_widgets=None, gladefile=None,
+                 toplevel=None, widgets=(), gladename=None,
+                 toplevel_name=None, domain=None, delete_handler=None,
+                 keyactions=None):
+        """Creates a new Delegate.
+        @param model: instance to be attached
+        @param proxy_widgets:
+        The keyactions parameter is sent to L{kiwi.controllers.BaseController},
+        the rest are sent to L{kiwi.ui.views.BaseView}
+        """
+
+        BaseView.__init__(self, toplevel, widgets, gladefile,
+                          gladename, toplevel_name, domain,
+                          delete_handler)
+        self._proxy = self.add_proxy(model, proxy_widgets)
+        BaseController.__init__(self, view=self, keyactions=keyactions)
+
+    def set_model(self, model):
+        """
+        @param model:
+        """
+        self._proxy.set_model(model)

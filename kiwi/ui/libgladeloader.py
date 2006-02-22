@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
@@ -37,7 +37,7 @@ class LibgladeWidgetTree(XML):
             raise TypeError(
                   "gladefile should be a string, found %s" % type(gladefile))
         filename = os.path.splitext(os.path.basename(gladefile))[0]
-        
+
         self._view = view
         self._gladefile = environ.find_resource("glade", filename + ".glade")
         self._widgets =  (widgets or view.widgets or [])[:]
@@ -46,7 +46,7 @@ class LibgladeWidgetTree(XML):
         if not self._widgets:
             self._widgets = [w.get_name() for w in self.get_widget_prefix('')]
         self._attach_widgets()
-        
+
     def _attach_widgets(self):
         # Attach widgets in the widgetlist to the view specified, so
         # widgets = [label1, button1] -> view.label1, view.button1
@@ -56,12 +56,12 @@ class LibgladeWidgetTree(XML):
                 setattr(self._view, w, widget)
             else:
                 _warn("Widget %s was not found in glade widget tree." % w)
-            
+
     def get_widget(self, name):
         """Retrieves the named widget from the View (or glade tree)"""
         name = name.replace('.', '_')
         widget = XML.get_widget(self, name)
-            
+
         if widget is None:
             raise AttributeError(
                   "Widget %s not found in view %s" % (name, self._view))
@@ -69,3 +69,6 @@ class LibgladeWidgetTree(XML):
 
     def get_widgets(self):
         return self.get_widget_prefix('')
+
+    def get_sizegroups(self):
+        return []

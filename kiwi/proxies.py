@@ -63,7 +63,7 @@ class Proxy:
     has the model-attribute set.
     """
 
-    def __init__(self, view, model=None, widgets=[]):
+    def __init__(self, view, model=None, widgets=()):
         """
         @param view:    view attched to the slave
         @type  view:    a L{kiwi.ui.views.BaseView} subclass
@@ -294,19 +294,22 @@ class Proxy:
         return True
 
     def new_model(self, new_model, relax_type=False):
-        """ Reuses the same proxy with another instance as model. Allows a
-        proxy interface to change model without the need to destroy and
+        self.set_model(new_model, relax_type)
+
+    def set_model(self, model, relax_type=False):
+        """ Updates the model instance of the proxy.
+        Allows a proxy interface to change model without the need to destroy and
         recreate the UI (which would cause flashing, at least)
+
         @param new_model:
         @param relax_type:
         """
-
         if self.model is not None:
             if (not relax_type and
-                type(new_model) != type(self.model) and
-                not isinstance(new_model, self.model.__class__)):
+                type(model) != type(self.model) and
+                not isinstance(model, self.model.__class__)):
                 raise TypeError("New model has wrong type %s, expected %s"
-                                % (type(new_model), type(self.model)))
+                                % (type(model), type(self.model)))
 
         # the following isn't strictly necessary, but it currently works
         # around a bug with reused ids in the attribute cache and also
@@ -317,7 +320,7 @@ class Proxy:
         # unregister previous proxy
         self._unregister_proxy_in_model()
 
-        self.model = new_model
+        self.model = model
 
         for attribute, widget in self._model_attributes.items():
             self._reset_widget(attribute, widget)
