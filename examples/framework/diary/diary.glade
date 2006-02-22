@@ -73,7 +73,6 @@
                                                 <property name="data_type">str</property>
                                                 <property name="data_value">afternoon</property>
                                                 <property name="group">period</property>
-                                                <property name="is_focus">True</property>
                                                 <property name="label" context="yes" translatable="yes">Afternoon</property>
                                                 <property name="visible">True</property>
                                             </widget>
@@ -88,7 +87,6 @@
                                                 <property name="data_type">str</property>
                                                 <property name="data_value">evening</property>
                                                 <property name="group">period</property>
-                                                <property name="is_focus">True</property>
                                                 <property name="label" context="yes" translatable="yes">Evening</property>
                                                 <property name="visible">True</property>
                                             </widget>

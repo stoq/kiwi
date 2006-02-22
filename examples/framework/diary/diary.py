@@ -18,7 +18,7 @@ class Diary(ProxyDelegate):
         self.entries.show()
         self.entries.grab_focus()
 
-    def on_add__clicked(self, *args):
+    def on_add__clicked(self, button):
         entry = DiaryEntry()
         entry.title = 'New title'
 
