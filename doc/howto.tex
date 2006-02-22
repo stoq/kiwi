@@ -73,17 +73,12 @@ code and develop applications quickly, removing the need to do a lot of
 low-level work to get basic functionality implemented. The framework
 allows you to easily write applications that look like this:
 
-% ====================
-% ====== MARK ========
-% ====================
-
 \begin{center}
 \includegraphics[scale=0.626]{images/diary.eps}
 
-\small{(This example application, \file{examples/Diary/diary3.py}, has
-99 lines, not counting the Glade XML specification)}
+\small{(This example application, \file{examples/Diary/diary2.py}, has
+65 lines, not counting the XML specification)}
 \end{center}
-
 
 \subsection{Introduction}
 For many platforms, graphical applications are developed based on an
@@ -93,7 +88,7 @@ general, these frameworks include a set of widgets that are used
 natively.
 
 James Henstridge's
-\citetitle[http://www.daa.com.au/\%7ejames/pygtk/]{PyGTK}, an excellent
+\citetitle[http://www.pygtk.org/]{PyGTK}, an excellent
 set of \citetitle[http://www.gtk.org/]{GTK+} bindings for
 \citetitle[http://www.python.org/]{Python}, supports graphical programs
 written in Python, but it offers only a set of widgets, not a framework;
@@ -139,21 +134,22 @@ way beyond providing a basic `document plus view' schema, doing widget
 conversion, automatic signal connection, and adjusting behavior
 automatically to reduce drastically the amount of code needed to define
 the windows and dialogs for your application. Kiwi also includes native
-libglade support, which allows you to graphically specify (using Glade)
-your user interfaces and use them seamlessly as part of the framework.
+gazpacho support, which allows you to graphically specify (using 
+Gazpacho, the UI designer) your user interfaces and use them seamlessly 
+as part of the framework.
 
 The code used in Kiwi has been developed with quite a lot of care, and
-though it is complex in parts (even crufty in a few spots), I consider
+though it is complex in parts (even crufty in a few spots), We consider
 it to be generally easy to understand and change, and you can hijack and
 customize the code to your need if you feel you don't want YAD (yet
 another dependency) for your application.
 
 Kiwi is also being actively developed and supported as a building block
-in Stoq, and over the past months has grown to become very useful (or so
-the users say :-). I welcome feedback and have been very fast to respond
-to requests and bug reports, so you can be sure your application can
-rely on a library that is actively supported and that its author has a
-continued interest in maintaining.
+in Stoq, and over the past years has grown to become very useful. 
+We welcome feedback and have been very fast to respond to requests and 
+bug reports, so you can be sure your application can rely on a library that 
+is actively supported and that its authors has a continued interest 
+in maintaining.
 
 \subsection{Getting and Installing Kiwi}
 
@@ -161,22 +157,21 @@ Kiwi is distributed through its official website, at
 \url{http://www.async.com.br/projects/kiwi/}. It is released as a
 tarball frequently, and the tarball is distributed from that page.
 Announcements of the release should go out to \code{pygtk-list},
-\citetitle[http://freshmeat.net/]{Freshmeat} and \code{python-announce}.
+\citetitle[http://www.freshmeat.net/]{Freshmeat} and \code{python-announce}.
 
 You will need to install the following packages if they are not
 already on your system:
 
 \begin{itemize}
-  \item  \citetitle[http://www.python.org/]{Python} 1.5 or newer
-  \item  \citetitle[http://www.gtk.org/]{GTK+} 1.2\footnote{GTK+ and
-  PyGTK 2.0 support is not implemented yet. I've been trying to
-  stabilize the Kiwi API for a while now, and when the change to GTK+
-  2.0 does happen, I will make great effort to keep things backwards
-  compatible.}
-  \item  \citetitle[http://www.daa.com.au/\%7ejames/gnome/]{libglade}
-  0.12 (or higher)
-  \item  \citetitle[http://www.daa.com.au/\%7ejames/pygtk/]{PyGTK} 0.6
+  \item  \citetitle[http://www.python.org/]{Python} 2.3 or newer
+  \item  \citetitle[http://www.gtk.org/]{GTK+} 2.6
+  \item  \citetitle[http://www.pygtk.org]{PyGTK} 2.6
+  \item  \citetitle[http://gazpacho.sicem.biz]{PyGTK} 0.6.5
 \end{itemize}
+
+% ====================
+% ====== MARK ========
+% ====================
 
 Most of these packages are available on the main distributions,
 including Redhat, Debian, Conectiva and Mandrake, and might even be
