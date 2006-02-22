@@ -17,13 +17,13 @@ class Dialog(Delegate):
 
     def on_ok_button__clicked(self, button):
         raise SystemExit
-    
+
 class English(SlaveDelegate):
     def __init__(self):
         box = gtk.HBox(spacing=6)
         box.set_border_width(6)
         box.show()
-        
+
         label = gtk.Label("Number:")
         label.show()
         box.pack_start(label, False, False)
@@ -35,7 +35,7 @@ class English(SlaveDelegate):
         combo.show()
         box.pack_start(combo)
         self.combo = combo
-        
+
         SlaveDelegate.__init__(self, toplevel=box, widgets=['combo'])
 
     def on_combo__validate(self, widget, data):
@@ -47,7 +47,7 @@ class Swedish(SlaveDelegate):
         box = gtk.HBox(spacing=6)
         box.set_border_width(6)
         box.show()
-        
+
         label = gtk.Label("Nummer:")
         label.show()
         box.pack_start(label, False, False)
@@ -59,7 +59,7 @@ class Swedish(SlaveDelegate):
         combo.show()
         box.pack_start(combo)
         self.combo = combo
-        
+
         SlaveDelegate.__init__(self, toplevel=box, widgets=['combo'])
 
     def on_combo__validate(self, widget, data):
