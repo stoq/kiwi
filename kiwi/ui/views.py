@@ -749,13 +749,15 @@ class SlaveView(gobject.GObject):
                 if widget.get_property('model-attribute'):
                     proxy_widgets.append(widget)
         else:
-            for widget_name in self.widgets:
+            for widget_name in widgets:
                 widget = getattr(self, widget_name, None)
-                if (widget is not None and
-                    isinstance(widget, MixinSupportValidation)):
+                if (widget is not None and isinstance(widget, Mixin)):
                     proxy_widgets.append(widget)
 
         for widget in proxy_widgets:
+            if not isinstance(widget, MixinSupportValidation):
+                continue
+
             try:
                 widget.connect_object('validation-changed',
                                       self._on_child__validation_changed,
