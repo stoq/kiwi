@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Christian Reis <kiko@async.com.br>
 #
 
@@ -79,7 +79,7 @@ class Model:
         Proxy.notify())."""
         if not hasattr(self, "_v_proxies"):
             self.ensure_init()
-        
+
         # XXX: should use weakref if possible, and if not, warn of leaks
         proxies = self._v_proxies
         if not proxies.has_key(attr):
@@ -87,7 +87,7 @@ class Model:
         else:
             if proxy in proxies[attr]:
                 raise AssertionError, ("Tried to attach proxy %s "
-                                       "twice to attribute `%s'." 
+                                       "twice to attribute `%s'."
                                        % ( proxy, attr ))
             proxies[attr].append(proxy)
 
@@ -126,7 +126,7 @@ class Model:
         blocked_proxies = self._v_blocked_proxies
         if proxy not in blocked_proxies:
             blocked_proxies.append(proxy)
-    
+
     def unblock_proxy(self, proxy):
         """Re-enable notifications to a proxy"""
         if not hasattr(self, "_v_proxies"):
@@ -241,7 +241,7 @@ def unpickle_model(klass, file=None):
         data = fh.read()
         ret = pickle.loads(data)
     except (EOFError, KeyError):
-        # save backup of original pickle with an extension of 
+        # save backup of original pickle with an extension of
         # .err, .err.1, .err.2, etc.
         stem = file + ".err"
         i = 0
