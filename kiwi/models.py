@@ -70,7 +70,7 @@ class Model:
             self.ensure_init()
         for proxy in self._v_proxies.get(attr, []):
             if proxy not in self._v_blocked_proxies:
-                proxy.notify(attr, ValueUnset, block=True)
+                proxy.update(attr, ValueUnset, block=True)
 
     def register_proxy_for_attribute(self, attr, proxy):
         """
