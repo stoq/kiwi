@@ -33,7 +33,8 @@ class Diary(ProxyDelegate):
             self.entries.remove(entry)
 
     def on_entries__selection_changed(self, entries, instance):
-        self.set_model(instance)
+        if instance:
+            self.set_model(instance)
 
 proxy = Diary()
 proxy.show_and_loop()

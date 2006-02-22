@@ -54,7 +54,8 @@ class Diary(ProxyDelegate):
         self.entries.update(self.model)
 
     def on_entries__selection_changed(self, entries, instance):
-        self.set_model(instance)
+        if instance:
+            self.set_model(instance)
 
     def set_editable(self, editable):
         self.leftbox.set_sensitive(editable)
