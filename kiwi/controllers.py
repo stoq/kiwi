@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Christian Reis <kiko@async.com.br>
 #            Lorenzo Gil Sanchez <lgs@sicem.biz>
 #
@@ -30,8 +30,8 @@ class BaseController:
     """
     A generic controller that can be attached to any View
 
-    BaseController defines one public variable: 
-    
+    BaseController defines one public variable:
+
         - view: corresponds to a the associated View instance, which
           holds the UI implementation itself (widgets, layout, etc.)
     """
@@ -70,7 +70,7 @@ class BaseController:
         """
         The keypress handler, which dispatches keypresses to the
         functions mapped to in self.keyactions"""
-        
+
         # Order is important, we want control_shift_alt_XXX
         method_name = 'key_'
         if event.state & gdk.CONTROL_MASK:
@@ -99,7 +99,7 @@ class BaseController:
     def set_parent(self, parent):
         """parent: the correspondent parent for the controller"""
         self.parent = parent
-    
+
     def get_view(self):
         """view: the correspondent view for the controller"""
         return self.view
@@ -111,7 +111,7 @@ class BaseController:
             raise AssertionError(msg % self.view)
         self.view = view
         view.set_controller(self)
-    
+
     def set_keyactions(self, keyactions):
         """
         Sets the keyactions mapping. See the constructor
@@ -131,7 +131,7 @@ class BaseController:
     def _get_all_methods(self, klass=None):
         klass = klass or self.__class__
         # Very poor simulation of inheritance, but WFM(tm)
-        classes = [klass] 
+        classes = [klass]
         # Collect bases for class, using a pretty evil recursion
         for klass in classes:
             map(classes.append, klass.__bases__)
