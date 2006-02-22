@@ -80,7 +80,11 @@ class ProxyDelegate(Delegate):
         BaseView.__init__(self, toplevel, widgets, gladefile,
                           gladename, toplevel_name, domain,
                           delete_handler)
+        self.model = model
         self._proxy = self.add_proxy(model, proxy_widgets)
+        # HACK: Use signals instead, right?
+        self._proxy.proxy_updated = self.proxy_updated
+
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
     def set_model(self, model):
@@ -88,3 +92,11 @@ class ProxyDelegate(Delegate):
         @param model:
         """
         self._proxy.set_model(model)
+        self.model = model
+
+    def proxy_updated(self, widget, attribute, value):
+        # Can be overriden in subclasses
+        pass
+
+    def update(self, attribute):
+        self._proxy.update(attribute)
