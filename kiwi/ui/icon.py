@@ -90,7 +90,7 @@ class IconEntry(object):
         self._pixw = 1
         self._pixh = 1
         self._text_area = None
-        self._text_area_size = (1, 1)
+        self._text_area_pos = (0, 0)
         self._icon_win = None
         self._entry = entry
         entry.connect('enter-notify-event',
@@ -175,6 +175,7 @@ class IconEntry(object):
 
         # Hack: Save a reference to the text area, now when its created
         self._text_area = entry.window.get_children()[0]
+        self._text_area_pos = self._text_area.get_position()
 
         # PyGTK should allow default values for most of the values here.
         win = gtk.gdk.Window(entry.window,
@@ -216,26 +217,29 @@ class IconEntry(object):
         if not self._pixbuf:
             return
 
+        icony = iconx = 4
+
         # Make space for the icon, both windows
         winw = self._entry.window.get_size()[0]
         textw, texth = self._text_area.get_size()
-        textw = winw - self._pixw - 8
+        textw = winw - self._pixw - (iconx + icony)
+
+        if self._pos == gtk.POS_LEFT:
+            textx, texty = self._text_area_pos
+            textx += iconx + self._pixw
+
+            # FIXME: Why is this needed. Focus padding?
+            #        The text jumps without this
+            textw -= 2
+            self._text_area.move_resize(textx, texty, textw, texth)
+        elif self._pos == gtk.POS_RIGHT:
+            self._text_area.resize(textw, texth)
+            iconx += textw
 
         icon_win = self._icon_win
         # XXX: Why?
         if not icon_win:
             return
-
-        icony = 4
-        iconx = 4
-        if self._pos == gtk.POS_RIGHT:
-            self._text_area.resize(textw, texth)
-            iconx += textw
-        elif self._pos == gtk.POS_LEFT:
-            textx, texty = self._text_area.get_position()
-            textx += 4 + self._pixw
-            textw -= 2
-            self._text_area.move_resize(textx, texty, textw, texth)
 
         # If the size of the window is large enough, resize and move it
         # Otherwise just move it to the right side of the entry
