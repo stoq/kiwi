@@ -265,11 +265,7 @@ class IconEntry(object):
                             self._pixw, self._pixh)
 
     def _update_position(self):
-        print self._entry.get_property('xalign')
-
         if self._entry.get_property('xalign') > 0.5:
             self._pos = gtk.POS_LEFT
         else:
             self._pos = gtk.POS_RIGHT
-
-        print self._pos
