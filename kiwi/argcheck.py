@@ -25,7 +25,6 @@
 Argument checking decorator and support
 """
 
-from decimal import Decimal
 import inspect
 from types import ClassType
 

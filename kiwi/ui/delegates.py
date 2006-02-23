@@ -25,7 +25,6 @@
 
 """Defines the Delegate classes that are included in the Kiwi Framework."""
 
-from kiwi.proxies import Proxy
 from kiwi.ui.views import SlaveView, BaseView
 from kiwi.controllers import BaseController
 

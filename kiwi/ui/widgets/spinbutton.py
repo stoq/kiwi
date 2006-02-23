@@ -30,8 +30,6 @@ L{SpinButton} is also enhanced to display an icon using
 L{kiwi.ui.icon.IconEntry}
 """
 
-from decimal import Decimal
-
 import gtk
 
 from kiwi.datatypes import number

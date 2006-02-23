@@ -27,7 +27,6 @@
 """High level wrapper for GtkTreeView"""
 
 import datetime
-import decimal
 import gettext
 
 import gobject
