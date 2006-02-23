@@ -285,29 +285,31 @@ class ComboEntry(gtk.HBox):
     def __init__(self):
         gtk.HBox.__init__(self)
 
+        self._popping_down = False
+
         self.entry = Entry()
         self.entry.connect('scroll-event',
                            self._on_entry__scroll_event)
         self.entry.connect('key-press-event',
                            self._on_entry__key_press_event)
         self.pack_start(self.entry, True, True)
+        self.entry.show()
 
         self._button = gtk.ToggleButton()
-        self._button.connect('scroll-event',
-                             self._on_entry__scroll_event)
-        self._button.set_focus_on_click(False)
+        self._button.connect('scroll-event', self._on_entry__scroll_event)
         self._button.connect('toggled', self._on_button__toggled)
-        self._popping_down = False
+        self._button.set_focus_on_click(False)
         self.pack_end(self._button, False, False)
+        self._button.show()
 
         arrow = gtk.Arrow(gtk.ARROW_DOWN, gtk.SHADOW_NONE)
-        arrow.show()
         self._button.add(arrow)
+        arrow.show()
 
         self._popup = _ComboEntryPopup(self)
-        self._popup.set_size_request(-1, 24)
         self._popup.connect('text-selected', self._on_popup__text_selected)
         self._popup.connect('hide', self._on_popup__hide)
+        self._popup.set_size_request(-1, 24)
 
         self.set_model(self.entry.get_completion().get_model())
 
