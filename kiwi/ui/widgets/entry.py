@@ -35,7 +35,7 @@ import gettext
 import gtk
 
 from kiwi.datatypes import ValidationError, converter, number
-from kiwi.ui.entry import KiwiEntry
+from kiwi.ui.entry import MaskError, KiwiEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import PropertyObject, gproperty, gsignal, type_register
 
@@ -72,6 +72,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
 
     gproperty("completion", bool, False)
     gproperty('exact-completion', bool, default=False)
+    gproperty("mask", str, default='')
 
     def __init__(self, data_type=None):
         KiwiEntry.__init__(self)
@@ -120,8 +121,22 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
 
         # Apply a mask for the data types, some types like
         # dates has a default mask
-        self._set_mask_for_data_type(data_type)
+        try:
+            self._set_mask_for_data_type(data_type)
+        except MaskError:
+            pass
+
         return data_type
+
+    # Properties
+
+    def prop_set_mask(self, value):
+        try:
+            self.set_mask(value)
+            return self._mask
+        except MaskError, e:
+            pass
+        return ''
 
     # Public API
     def set_exact_completion(self, value):

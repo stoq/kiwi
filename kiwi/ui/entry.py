@@ -32,7 +32,7 @@ import pango
 import gtk
 
 from kiwi.ui.icon import IconEntry
-from kiwi.utils import gproperty, gsignal, type_register
+from kiwi.utils import gsignal, type_register
 
 class MaskError(Exception):
     pass
@@ -50,10 +50,9 @@ INPUT_FORMATS = {
 class KiwiEntry(gtk.Entry):
     __gtype_name__ = 'KiwiEntry'
 
-    gproperty("mask", str, default='')
-
     def __init__(self):
         gtk.Entry.__init__(self)
+
         self.connect('insert-text', self._on_insert_text)
         self.connect('delete-text', self._on_delete_text)
 
@@ -88,17 +87,6 @@ class KiwiEntry(gtk.Entry):
     def do_unrealize(self):
         self._icon.deconstruct()
         gtk.Entry.do_unrealize(self)
-
-
-    # Properties
-
-    def prop_set_mask(self, value):
-        try:
-            self.set_mask(value)
-            return self._mask
-        except MaskError, e:
-            pass
-        return ''
 
     # Public API
 
