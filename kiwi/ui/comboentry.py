@@ -404,11 +404,11 @@ class ComboEntry(gtk.HBox):
         """
         self._popup.popdown()
 
-    def prefill(self, strs):
+    def prefill(self, itemdata, sort=False):
         """
-        See L{kiwi.ui.entry}
+        See L{kiwi.ui.widgets.entry}
         """
-        self.entry.set_completion_strings(strs)
+        self.entry.prefill(itemdata, sort)
 
     def set_text(self, text):
         """

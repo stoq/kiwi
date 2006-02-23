@@ -80,7 +80,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         PropertyObject.__init__(self, data_type=data_type)
 
         self._current_object = None
-        self._entry_mode = ENTRY_MODE_TEXT
+        self._mode = ENTRY_MODE_TEXT
 
     # Virtual methods
     gsignal('changed', 'override')
@@ -151,7 +151,6 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
 
         self.exact_completion = value
 
-    # XXX: Decide if this API or the Combobox prefill API should be used
     def set_completion_strings(self, strings=[], values=[]):
         """
         Set strings used for entry completion.
@@ -163,26 +162,83 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         @param values:
         @type  values: list of values
         """
+        print 'set_completion_strings() is deprecated, use prefill()'
 
         completion = self._create_completion()
         model = completion.get_model()
         model.clear()
 
         if values:
-            if len(strings) != len(values):
-                raise ValueError("values must have the same length as strings")
-
-            for i, text in enumerate(strings):
-                model.append([text, values[i]])
-            self._entry_mode = ENTRY_MODE_DATA
-        elif not strings:
-            # This is considered disabling completion, PyGTK 2.8.1
-            #self.set_completion(None)
-            pass
+            self._mode = ENTRY_MODE_DATA
+            self.prefill(zip(strings, values))
         else:
-            for s in strings:
-                model.append([s, None])
-            self._entry_mode = ENTRY_MODE_TEXT
+            self._mode = ENTRY_MODE_TEXT
+            self.prefill(strings)
+
+    def prefill(self, itemdata, sort=False):
+        """Fills the Combo with listitems corresponding to the itemdata
+        provided.
+
+        Parameters:
+          - itemdata is a list of strings or tuples, each item corresponding
+            to a listitem. The simple list format is as follows::
+
+            >>> [ label0, label1, label2 ]
+
+            If you require a data item to be specified for each item, use a
+            2-item tuple for each element. The format is as follows::
+
+            >>> [ ( label0, data0 ), (label1, data1), ... ]
+
+          - Sort is a boolean that specifies if the list is to be sorted by
+            label or not. By default it is not sorted
+        """
+        if not isinstance(itemdata, (list, tuple)):
+            raise TypeError("'data' parameter must be a list or tuple of item "
+                            "descriptions, found %s") % type(itemdata)
+
+        completion = self._create_completion()
+        model = completion.get_model()
+
+        if len(itemdata) == 0:
+            model.clear()
+            return
+
+        if (len(itemdata) > 0 and
+            type(itemdata[0]) in (tuple, list) and
+            len(itemdata[0]) == 2):
+            mode = self._mode = ENTRY_MODE_DATA
+        else:
+            mode = self._mode
+
+        values = {}
+        if mode == ENTRY_MODE_TEXT:
+            if sort:
+                itemdata.sort()
+
+            for item in itemdata:
+                if item in values:
+                    raise KeyError("Tried to insert duplicate value "
+                                   "%s into Combo!" % item)
+                else:
+                    values[item] = None
+
+                model.append((item, None))
+        elif mode == ENTRY_MODE_DATA:
+            if sort:
+                itemdata.sort(lambda x, y: cmp(x[0], y[0]))
+
+            for item in itemdata:
+                text, data = item
+                if text in values:
+                    raise KeyError("Tried to insert duplicate value "
+                                   "%s into Combo!" % item)
+                else:
+                    values[text] = None
+                model.append((text, data))
+        else:
+            raise TypeError("Incorrect format for itemdata; see "
+                            "docstring for more information")
 
     def set_text(self, text):
         """
@@ -201,7 +257,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
     # WidgetMixin implementation
 
     def read(self):
-        mode = self._entry_mode
+        mode = self._mode
         if mode == ENTRY_MODE_TEXT:
             text = self.get_text()
             try:
@@ -222,7 +278,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         if data is None:
             text = ""
         else:
-            mode = self._entry_mode
+            mode = self._mode
             if mode == ENTRY_MODE_DATA:
                 new = self._get_text_from_object(data)
                 if new is None:
@@ -253,7 +309,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         self.set_mask(mask)
 
     def _update_current_object(self, text):
-        if self._entry_mode != ENTRY_MODE_DATA:
+        if self._mode != ENTRY_MODE_DATA:
             return
 
         for row in self.get_completion().get_model():
@@ -271,7 +327,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
             self._current_object = None
 
     def _get_text_from_object(self, obj):
-        if self._entry_mode != ENTRY_MODE_DATA:
+        if self._mode != ENTRY_MODE_DATA:
             return
 
         for row in self.get_completion().get_model():

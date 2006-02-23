@@ -1,5 +1,14 @@
 2006-02-23  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/comboentry.py (ComboEntry.prefill): 
+	Use entry.prefill
+
+	* kiwi/ui/widgets/entry.py (Entry.prefill): New method
+	(Entry.set_completion_strings): Deprecate and use
+	prefill internally
+
+2006-02-23  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/ui/widgets/entry.py: Split out mask and icon
 	to a separate entry which doesn't depend on the framework.
 	Make get_empty_mask() public.
