@@ -18,7 +18,10 @@ class Diary(ProxyDelegate):
         self.entries = ObjectList([Column("title", width=120, sorted=True),
                                    Column("period", width=80),
                                    Column("text", expand=True, visible=False)])
-        ProxyDelegate.__init__(self, DiaryEntry(), gladefile="diary2",
+        ProxyDelegate.__init__(self, DiaryEntry(),
+                               ['title', 'period', 'text', 'chars',
+                                'words'],
+                               gladefile="diary2",
                                delete_handler=self.quit_if_last)
         self.hbox.pack_start(self.entries)
         self.entries.show()
