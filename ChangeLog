@@ -1,5 +1,9 @@
 2006-02-23  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/datatypes.py (_BaseDateTimeConverter.from_string): 
+	* kiwi/ui/widgets/entry.py (DATE_MASK_TABLE): 
+	Add support for datetime.time
+
 	* kiwi/ui/comboentry.py (ComboEntry.prefill): 
 	Use entry.prefill
 

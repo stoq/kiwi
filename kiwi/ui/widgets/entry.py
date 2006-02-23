@@ -52,6 +52,12 @@ DATE_MASK_TABLE = {
     '%y': '%2d',
     '%d': '%2d',
     '%Y': '%4d',
+    '%H': '%2d',
+    '%M': '%2d',
+    '%S': '%2d',
+    '%T': '%2d:%2d:%2d',
+    # FIXME: locale specific
+    '%r': '%2d:%2d:%2d %2c',
     }
 
 class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
@@ -125,7 +131,6 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
             self._set_mask_for_data_type(data_type)
         except MaskError:
             pass
-
         return data_type
 
     # Properties

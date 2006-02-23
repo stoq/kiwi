@@ -373,6 +373,7 @@ class _BaseDateTimeConverter(BaseConverter):
             # time.strptime (python 2.4) does not support %r
             # pending SF bug #1396946
             format = format.replace('%r', '%I:%M:%S %p')
+            format = format.replace('%T', '%H:%M:%S')
             dateinfo = time.strptime(value, format)
             return self.from_dateinfo(dateinfo)
         except ValueError:
