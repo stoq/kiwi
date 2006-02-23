@@ -53,6 +53,7 @@ class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
         PropertyObject.__init__(self, data_type=int)
         WidgetMixinSupportValidation.__init__(self)
         self._icon = IconEntry(self)
+        self.set_property('xalign', 1.0)
 
     # GtkEditable.changed is called too often
     # GtkSpinButton.value-changed is called only when the value changes
