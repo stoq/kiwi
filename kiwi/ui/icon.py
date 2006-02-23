@@ -85,6 +85,7 @@ class IconEntry(object):
     def __init__(self, entry):
         if not isinstance(entry, gtk.Entry):
             raise TypeError("entry must be a gtk.Entry")
+        self._constructed = False
         self._pixbuf = None
         self._pixw = 1
         self._pixh = 1
@@ -92,11 +93,16 @@ class IconEntry(object):
         self._text_area_size = (1, 1)
         self._icon_win = None
         self._entry = entry
-        self._constructed = False
-        self._entry.connect('enter-notify-event',
-                            self._on_entry__enter_notify_event)
-        self._entry.connect('leave-notify-event',
-                            self._on_entry__leave_notify_event)
+        entry.connect('enter-notify-event',
+                      self._on_entry__enter_notify_event)
+        entry.connect('leave-notify-event',
+                      self._on_entry__leave_notify_event)
+        entry.connect('notify::xalign',
+                      self._on_entry__notify_xalign)
+        self._update_position()
+
+    def _on_entry__notify_xalign(self, entry, pspec):
+        self._update_position()
 
     def _on_entry__enter_notify_event(self, entry, event):
         icon_win = self.get_icon_window()
@@ -214,14 +220,22 @@ class IconEntry(object):
         winw = self._entry.window.get_size()[0]
         textw, texth = self._text_area.get_size()
         textw = winw - self._pixw - 8
-        self._text_area.resize(textw, texth)
 
-        iconx = 4 + textw
-        icony = 4
         icon_win = self._icon_win
         # XXX: Why?
         if not icon_win:
             return
+
+        icony = 4
+        iconx = 4
+        if self._pos == gtk.POS_RIGHT:
+            self._text_area.resize(textw, texth)
+            iconx += textw
+        elif self._pos == gtk.POS_LEFT:
+            textx, texty = self._text_area.get_position()
+            textx += 4 + self._pixw
+            textw -= 2
+            self._text_area.move_resize(textx, texty, textw, texth)
 
         # If the size of the window is large enough, resize and move it
         # Otherwise just move it to the right side of the entry
@@ -250,3 +264,12 @@ class IconEntry(object):
             win.draw_pixbuf(None, self._pixbuf, 0, 0, 0, 0,
                             self._pixw, self._pixh)
 
+    def _update_position(self):
+        print self._entry.get_property('xalign')
+
+        if self._entry.get_property('xalign') > 0.5:
+            self._pos = gtk.POS_LEFT
+        else:
+            self._pos = gtk.POS_RIGHT
+
+        print self._pos

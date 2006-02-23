@@ -1,5 +1,9 @@
 2006-02-23  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/icon.py (IconEntry.deconstruct): 
+	Add support for drawing the icon on the left side and when xalign 
+	is higher than 0.5, draw the icon on the left side. 
+	
 	* kiwi/datatypes.py (_BaseDateTimeConverter.from_string): 
 	* kiwi/ui/widgets/entry.py (DATE_MASK_TABLE): 
 	Add support for datetime.time
