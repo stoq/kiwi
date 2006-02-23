@@ -32,7 +32,7 @@
                         <property name="visible">True</property>
                         <child>
                             <widget class="GtkLabel" id="label9">
-                                <property name="label" context="True" translatable="True">Sex:</property>
+                                <property name="label" context="True" translatable="True">Gender:</property>
                                 <property name="events"></property>
                                 <property name="xalign">1.0</property>
                                 <property name="visible">True</property>
@@ -43,8 +43,8 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="ProxyComboBox" id="sex">
-                                <property name="model_attribute">sex</property>
+                            <widget class="ProxyComboBox" id="gender">
+                                <property name="model_attribute">gender</property>
                                 <property name="events"></property>
                                 <property name="data_type">str</property>
                                 <property name="visible">True</property>

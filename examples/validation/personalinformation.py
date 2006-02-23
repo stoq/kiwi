@@ -23,14 +23,9 @@ class Form(Delegate):
         self.nationality.prefill(['Brazilian',
                                   'Yankee',
                                   'Other'])
-        #self.nationality.prefill([('Brazilian', 1),
-        #                          ('Yankee', 2),
-        #                          ('Other', 3)])
-        self.sex.prefill(('Male', 'Female'))
+        self.gender.prefill(('Male', 'Female'))
         self.age.set_mask('%2d')
         self.height.set_data_format('%4.4f')
-        self.register_validate_function(self.validity)
-        self.force_validation()
 
     # here we define our custom validation. When a user types anything,
     # the validate signal calls methods with the signature
@@ -76,11 +71,12 @@ person.weight = 86.0
 person.nationality = 'Yankee'
 person.about = 'Kinda fat'
 person.status = True
+person.gender = 'Female'
 
 form = Form()
 proxy = form.add_proxy(person, ['name', 'age', 'birthdate',
                                 'height', 'weight', 'about',
-                                'nationality', 'status'])
+                                'nationality', 'status', 'gender'])
 form.show_all()
 
 def on_ok_btn_clicked(widget):
