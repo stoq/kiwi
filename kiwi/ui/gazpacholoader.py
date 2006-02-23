@@ -271,41 +271,39 @@ class KiwiComboBoxAdapter(ComboBoxAdapter):
         return obj
 adapter_registry.register_adapter(KiwiComboBoxAdapter)
 
-for gobj, editor in [(Entry, EntryDataType),
-                     (CheckButton, None),
-                     (Label, LabelDataType),
-                     (ProxyComboBox, ComboBoxDataType),
-                     (ProxyComboBoxEntry, ComboBoxDataType),
-                     (ProxyComboEntry, ComboBoxDataType),
-                     (SpinButton, SpinBtnDataType),
-                     (RadioButton, None),
-                     (TextView, TextViewDataType)]:
-    # Property overrides, used in the editor
-    type_name = gobject.type_name(gobj)
+def register_widgets():
+    for gobj, editor in [(Entry, EntryDataType),
+                         (CheckButton, None),
+                         (Label, LabelDataType),
+                         (ProxyComboBox, ComboBoxDataType),
+                         (ProxyComboBoxEntry, ComboBoxDataType),
+                         (ProxyComboEntry, ComboBoxDataType),
+                         (SpinButton, SpinBtnDataType),
+                         (RadioButton, None),
+                         (TextView, TextViewDataType)]:
+        # Property overrides, used in the editor
+        type_name = gobject.type_name(gobj)
 
-    # This is a hack for epydoc
-    if type_name is None:
-        import sys
-        assert sys.argv == ['IGNORE']
-        continue
-
-    data_name = type_name + '::data-type'
-    if editor:
-        prop_registry.override_simple(data_name, DataTypeProperty,
-                                      editor=editor)
-    else:
-        prop_registry.override_simple(data_name, BoolDataTypeProperty)
+        data_name = type_name + '::data-type'
+        if editor:
+            prop_registry.override_simple(data_name, DataTypeProperty,
+                                          editor=editor)
+        else:
+            prop_registry.override_simple(data_name, BoolDataTypeProperty)
 
 
-    prop_registry.override_simple(type_name + '::model-attribute',
-                                  ModelProperty)
+        prop_registry.override_simple(type_name + '::model-attribute',
+                                      ModelProperty)
 
-    # Register custom adapters, since gobject.new is broken in 2.6
-    # Used by loader, eg in gazpacho and in applications
-    # ComboBox is registered above
-    if gobj == ProxyComboBox:
-        continue
+        # Register custom adapters, since gobject.new is broken in 2.6
+        # Used by loader, eg in gazpacho and in applications
+        # ComboBox is registered above
+        if gobj == ProxyComboBox:
+            continue
 
-    klass = type('Kiwi%sAdapter', (PythonWidgetAdapter,),
-                 dict(object_type=gobj))
-    adapter_registry.register_adapter(klass)
+        klass = type('Kiwi%sAdapter', (PythonWidgetAdapter,),
+                     dict(object_type=gobj))
+        adapter_registry.register_adapter(klass)
+
+if not environ.epydoc:
+    register_widgets()
