@@ -282,6 +282,17 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         else:
             raise AssertionError
 
+    def get_iter_from_obj(self, obj):
+        mode = self._mode
+        if mode == ENTRY_MODE_TEXT:
+            return self.get_iter_by_label(obj)
+        elif mode == ENTRY_MODE_DATA:
+            return self.get_iter_by_data(obj)
+        else:
+            # XXX: When setting the datatype to non string, automatically go to
+            #      data mode
+            raise TypeError("unknown Entry mode. Did you call prefill?")
+
     def set_text(self, text):
         """
         Sets the text of the entry

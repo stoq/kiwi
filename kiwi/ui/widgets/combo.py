@@ -221,7 +221,6 @@ class ProxyComboEntry(PropertyObject, ComboEntry,
         PropertyObject.__init__(self)
         self.connect('changed', self._on__changed)
 
-
     def _on__changed(self, widget):
         if not self.entry.get_text():
             return

@@ -1,6 +1,5 @@
 2006-02-24  Johan Dahlin  <jdahlin@async.com.br>
 
-	* kiwi/ui/comboentry.py:
 	* kiwi/ui/widgets/combo.py:
 	* kiwi/ui/widgets/entry.py:
 	* tests/test_comboentry.py:

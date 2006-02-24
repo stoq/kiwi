@@ -323,7 +323,13 @@ class ComboEntry(gtk.HBox):
 
     def _on_entry__scroll_event(self, entry, event):
         model = self.get_model()
-        curr = model[self._popup.get_selected_iter()].path[0]
+        treeiter = self._popup.get_selected_iter()
+        # If nothing is selected, select the first one
+        if not treeiter:
+            self.set_active_iter(model[0].iter)
+            return
+
+        curr = model[treeiter].path[0]
         # Scroll up, select the previous item
         if event.direction == gdk.SCROLL_UP:
             curr -= 1
@@ -358,6 +364,7 @@ class ComboEntry(gtk.HBox):
         popup.popdown()
         self.entry.grab_focus()
         self.entry.set_position(len(self.entry.get_text()))
+        self.emit('changed')
 
     def _on_button__toggled(self, button):
         if self._popping_down:
@@ -470,6 +477,13 @@ class ComboEntry(gtk.HBox):
         treeiter = self.get_active_iter()
         if treeiter:
             return self.entry.get_selected_by_iter(treeiter)
+
+    def select(self, obj):
+        """
+        @param obj: data or text to select
+        """
+        treeiter = self.entry.get_iter_from_obj(obj)
+        self.set_active_iter(treeiter)
 
     # IconEntry
 
