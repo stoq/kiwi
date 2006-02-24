@@ -54,12 +54,14 @@ class TestProxyComboEntry(unittest.TestCase):
 
     def testGetSelectedInTextMode(self):
         entry = ProxyComboEntry()
+        self.assertEqual(entry.get_selected(), None)
         entry.prefill(['one', 'two'])
         entry.select_item_by_label('two')
         self.assertEqual(entry.get_selected(), 'two')
 
     def testGetSelectedInDataMode(self):
         entry = ProxyComboEntry()
+        self.assertEqual(entry.get_selected(), None)
         entry.prefill([('one', 1), ('two', 2)])
         entry.select_item_by_label('two')
         self.assertEqual(entry.get_selected(), 2)

@@ -458,10 +458,12 @@ class ComboEntry(gtk.HBox):
 
     def get_selected(self):
         """
-        @returns: selected text or item
+        @returns: selected text or item or None if nothing
+          is selected
         """
         treeiter = self.get_active_iter()
-        return self.entry.get_selected_by_iter(treeiter)
+        if treeiter:
+            return self.entry.get_selected_by_iter(treeiter)
 
     # IconEntry
 
