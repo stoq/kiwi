@@ -282,12 +282,15 @@ type_register(_ComboEntryPopup)
 
 class ComboEntry(gtk.HBox):
     gsignal('changed')
+    gsignal('activate')
     def __init__(self):
         gtk.HBox.__init__(self)
 
         self._popping_down = False
 
         self.entry = Entry()
+        self.entry.connect('activate',
+                           self._on_entry__activate)
         self.entry.connect('scroll-event',
                            self._on_entry__scroll_event)
         self.entry.connect('key-press-event',
@@ -314,6 +317,9 @@ class ComboEntry(gtk.HBox):
         self.set_model(self.entry.get_completion().get_model())
 
     # Callbacks
+
+    def _on_entry__activate(self, entry):
+        self.emit('activate')
 
     def _on_entry__scroll_event(self, entry, event):
         model = self.get_model()

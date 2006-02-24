@@ -6,6 +6,9 @@ from kiwi.ui.comboentry import ComboEntry
 from kiwi.ui.widgets.combo import ProxyComboEntry
 
 class TestComboEntry(unittest.TestCase):
+    def setUp(self):
+        self.called = False
+
     def testSimple(self):
         entry = ComboEntry()
         self.failUnless(isinstance(entry, ComboEntry))
@@ -18,6 +21,15 @@ class TestComboEntry(unittest.TestCase):
         entry.hide()
         entry.popup()
         entry.popdown()
+
+    def _on_activate(self, combo):
+        self.called = True
+
+    def testActivate(self):
+        entry = ComboEntry()
+        entry.connect('activate', self._on_activate)
+        entry.entry.emit('activate')
+        self.assertEqual(self.called, True)
 
 class TestProxyComboEntry(unittest.TestCase):
     def testSelectItemByLabel(self):
