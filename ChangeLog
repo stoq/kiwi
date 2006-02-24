@@ -1,3 +1,9 @@
+2006-02-24  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/datatypes.py (_BaseDateTimeConverter.get_format): Remove
+	seconds and AM/PM for now, since we don't have enough infrastructure
+	to support optional AM/PM.
+
 2006-02-23  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/icon.py (IconEntry.deconstruct): 

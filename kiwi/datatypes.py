@@ -320,6 +320,10 @@ class _BaseDateTimeConverter(BaseConverter):
     """
     date_format = None
 
+    def __init__(self):
+        self._keep_am_pm = False
+        self._keep_seconds = False
+
     def get_lang_constant(self):
         # This is a method and not a class variable since it does not
         # exist on all supported platforms, eg win32
@@ -344,9 +348,30 @@ class _BaseDateTimeConverter(BaseConverter):
 
     def get_format(self):
         if sys.platform == 'win32':
-            return self.date_format
+            format = self.date_format
         else:
-            return locale.nl_langinfo(self.get_lang_constant())
+            format = locale.nl_langinfo(self.get_lang_constant())
+
+        format = format.replace('%r', '%I:%M:%S %p')
+        format = format.replace('%T', '%H:%M:%S')
+
+        # Strip AM/PM
+        if not self._keep_am_pm:
+            if '%p' in format:
+                format = format.replace('%p', '')
+                # 12h -> 24h
+                format = format.replace('%I', '%H')
+
+        # Strip seconds
+        if not self._keep_seconds:
+            if '%S' in format:
+                format = format.replace('%S', '')
+
+        # Strip trailing characters
+        while format[-1] in ('.', ':', ' '):
+            format = format[:-1]
+
+        return format
 
     def as_string(self, value, format=None):
         "Convert a date to a string"
@@ -372,8 +397,6 @@ class _BaseDateTimeConverter(BaseConverter):
         try:
             # time.strptime (python 2.4) does not support %r
             # pending SF bug #1396946
-            format = format.replace('%r', '%I:%M:%S %p')
-            format = format.replace('%T', '%H:%M:%S')
             dateinfo = time.strptime(value, format)
             return self.from_dateinfo(dateinfo)
         except ValueError:
