@@ -28,5 +28,20 @@ class TestProxyComboEntry(unittest.TestCase):
         entry.select_item_by_data(2)
         self.assertEqual(entry.get_text(), 'two')
 
+    def testSelectItemByLabel(self):
+        entry = ProxyComboEntry()
+        entry.prefill([('one', 1), ('two', 2)])
+        entry.select_item_by_label('one')
+        self.assertEqual(entry.get_text(), 'one')
+        entry.select_item_by_label('two')
+        self.assertEqual(entry.get_text(), 'two')
+
+        entry = ProxyComboEntry()
+        entry.prefill(['one', 'two'])
+        entry.select_item_by_label('one')
+        self.assertEqual(entry.get_text(), 'one')
+        entry.select_item_by_label('two')
+        self.assertEqual(entry.get_text(), 'two')
+
 if __name__ == '__main__':
     unittest.main()
