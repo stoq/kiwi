@@ -108,7 +108,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
             match_func = self._completion_exact_match_func
         else:
             match_func = self._completion_normal_match_func
-        completion = self._create_completion()
+        completion = self._get_completion()
         completion.set_match_func(match_func)
 
         return value
@@ -169,7 +169,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         """
         print 'set_completion_strings() is deprecated, use prefill()'
 
-        completion = self._create_completion()
+        completion = self._get_completion()
         model = completion.get_model()
         model.clear()
 
@@ -202,7 +202,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
             raise TypeError("'data' parameter must be a list or tuple of item "
                             "descriptions, found %s") % type(itemdata)
 
-        completion = self._create_completion()
+        completion = self._get_completion()
         model = completion.get_model()
 
         if len(itemdata) == 0:
@@ -244,6 +244,22 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         else:
             raise TypeError("Incorrect format for itemdata; see "
                             "docstring for more information")
+
+    def get_iter_by_data(self, data):
+        if self._mode != ENTRY_MODE_DATA:
+            raise TypeError(
+                "select_item_by_data can only be used in data mode")
+
+        completion = self._get_completion()
+        model = completion.get_model()
+
+        for row in model:
+            if row[COL_OBJECT] == data:
+                return row.iter
+                break
+        else:
+            raise KeyError("No item correspond to data %r in the combo %s"
+                           % (data, self.name))
 
     def set_text(self, text):
         """
@@ -339,7 +355,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
             if row[COL_OBJECT] == obj:
                 return row[COL_TEXT]
 
-    def _create_completion(self):
+    def _get_completion(self):
         # Check so we have completion enabled, not this does not
         # depend on the property, the user can manually override it,
         # as long as there is a completion object set

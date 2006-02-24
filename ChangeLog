@@ -1,5 +1,17 @@
 2006-02-24  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/comboentry.py:
+	* kiwi/ui/widgets/combo.py:
+	* kiwi/ui/widgets/entry.py:
+	* tests/test_comboentry.py:
+
+	Add support for comboentry.select_item_by_data.
+	Add tests and remove ComboMixin interface from ProxyComboEntry.
+	Rename _create_completion to _get_completion.
+	Reorganize methods in comboentry to match the 
+	
+2006-02-24  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/datatypes.py (_BaseDateTimeConverter.get_format): Remove
 	seconds and AM/PM for now, since we don't have enough infrastructure
 	to support optional AM/PM.

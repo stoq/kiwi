@@ -372,6 +372,35 @@ class ComboEntry(gtk.HBox):
 
     # Public API
 
+    def popup(self):
+        """
+        Hide the popup window
+        """
+        self._popup.popup(self.entry.get_text())
+
+    def popdown(self):
+        """
+        Show the popup window
+        """
+        self._popup.popdown()
+
+    # Entry interface
+
+    def set_text(self, text):
+        """
+        @param text:
+        """
+        self.entry.set_text(text)
+        self.emit('changed')
+
+    def get_text(self):
+        """
+        @returns: current text
+        """
+        return self.entry.get_text()
+
+    # ComboMixin interface
+
     def set_model(self, model):
         """
         Set the tree model to model
@@ -392,31 +421,6 @@ class ComboEntry(gtk.HBox):
         """
         return self._model
 
-    def popup(self):
-        """
-        Hide the popup window
-        """
-        self._popup.popup(self.entry.get_text())
-
-    def popdown(self):
-        """
-        Show the popup window
-        """
-        self._popup.popdown()
-
-    def prefill(self, itemdata, sort=False):
-        """
-        See L{kiwi.ui.widgets.entry}
-        """
-        self.entry.prefill(itemdata, sort)
-
-    def set_text(self, text):
-        """
-        @param text:
-        """
-        self.entry.set_text(text)
-        self.emit('changed')
-
     def set_active_iter(self, iter):
         """
         @param iter: iter to select
@@ -431,6 +435,19 @@ class ComboEntry(gtk.HBox):
         @rtype: gtk.TreeIter
         """
         return self._popup.get_selected_iter()
+
+    def prefill(self, itemdata, sort=False):
+        """
+        See L{kiwi.ui.widgets.entry}
+        """
+        self.entry.prefill(itemdata, sort)
+
+    def select_item_by_data(self, data):
+        """
+        @param data: object to select
+        """
+        treeiter = self.entry.get_iter_by_data(data)
+        self.set_active_iter(treeiter)
 
     # IconEntry
 

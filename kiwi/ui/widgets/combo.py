@@ -208,20 +208,19 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
         ComboMixin.clear(self)
         self.entry.set_text("")
 
-class ProxyComboEntry(PropertyObject, ComboEntry, ComboMixin,
+class ProxyComboEntry(PropertyObject, ComboEntry,
                       WidgetMixinSupportValidation):
     __gtype_name__ = 'ProxyComboEntry'
 
     gproperty("list-editable", bool, True, "Editable")
 
     def __init__(self):
+        self.mode = COMBO_MODE_STRING
         ComboEntry.__init__(self)
-        ComboMixin.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
         PropertyObject.__init__(self)
         self.connect('changed', self._on__changed)
 
-        self.mode = COMBO_MODE_STRING
 
     def _on__changed(self, widget):
         if not self.entry.get_text():
@@ -236,6 +235,7 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ComboMixin,
         self.entry.set_editable(value)
 
         return value
+
     def read(self):
         if self.mode == COMBO_MODE_UNKNOWN:
             return ValueUnset
