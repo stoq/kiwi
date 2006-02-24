@@ -221,57 +221,6 @@ converter.add(_BoolConverter)
 class _FloatConverter(BaseConverter):
     type = float
 
-    def _filter_locale(self, value):
-        """
-        Removes the locale specific data from the value string.
-        Currently we only remove the thousands separator and
-        convert the decimal point.
-        The returned value of this function can safely be passed to float()
-        """
-
-        conv = locale.localeconv()
-
-        # Check so we only have one decimal point
-        decimal_point = conv["decimal_point"]
-        decimal_points = value.count(decimal_point)
-        if decimal_points > 1:
-            raise ValidationError(
-                'You have more than one decimal point ("%s") '
-                ' in your number "%s"' % (decimal_point, value))
-
-        thousands_sep = conv["thousands_sep"]
-        if not thousands_sep:
-            return value
-
-        # Check so we don't have any thousand separators to the right
-        # of the decimal point
-        th_sep_count = value.count(thousands_sep)
-        if th_sep_count and decimal_points:
-            decimal_point_pos = value.index(decimal_point)
-            if thousands_sep in value[decimal_point_pos+1:]:
-                raise ValidationError("You have a thousand separator to the "
-                                      "right of the decimal point")
-            check_value = value[:decimal_point_pos]
-        else:
-            check_value = value
-
-        # Verify so the thousand separators are placed properly
-        # TODO: Use conv['grouping'] for locales where it's not 3
-        parts = check_value.split(thousands_sep)
-
-        # First part is a special case, It can be 1, 2 or 3
-        if 3 > len(parts[0]) < 1:
-            raise ValidationError("Inproperly placed thousands separator")
-
-        # Middle parts should have a length of 3
-        for part in parts[1:]:
-            if len(part) != 3:
-                raise ValidationError("Inproperly placed thousand "
-                                      "separators")
-
-        # Remove all thousand separators
-        return value.replace(thousands_sep, '')
-
     def as_string(self, value, format=None):
         """Convert a float to a string"""
         if format is None:
@@ -284,12 +233,13 @@ class _FloatConverter(BaseConverter):
         if value == '':
             return ValueUnset
 
-        value = self._filter_locale(value)
+        value = filter_locale(value)
 
         try:
             retval = float(value)
         except ValueError:
-            raise ValidationError("This field requires a number")
+            raise ValidationError("This field requires a number, not %r" %
+                                  value)
 
         return retval
 
@@ -301,12 +251,13 @@ class _DecimalConverter(_FloatConverter):
         if value == '':
             return ValueUnset
 
-        value = self._filter_locale(value)
+        value = filter_locale(value)
 
         try:
             retval = Decimal(value)
         except InvalidOperation:
-            raise ValidationError("This field requires a number")
+            raise ValidationError("This field requires a number, not %r" %
+                                  value)
 
         return retval
 
@@ -608,3 +559,63 @@ def format_price(value, symbol=True, precision=None):
     """
 
     return currency(value).format(symbol, precision)
+
+def filter_locale(value):
+    """
+    Removes the locale specific data from the value string.
+    Currently we only remove the thousands separator and
+    convert the decimal point.
+    The returned value of this function can safely be passed to float()
+
+    @param value: value to convert
+    @returns: the value without locale specific data
+    """
+
+    conv = locale.localeconv()
+
+    # Check so we only have one decimal point
+    decimal_point = conv["decimal_point"]
+    decimal_points = value.count(decimal_point)
+    if decimal_points > 1:
+        raise ValidationError(
+            'You have more than one decimal point ("%s") '
+            ' in your number "%s"' % (decimal_point, value))
+
+    thousands_sep = conv["thousands_sep"]
+    if not thousands_sep:
+        return value
+
+    # Check so we don't have any thousand separators to the right
+    # of the decimal point
+    th_sep_count = value.count(thousands_sep)
+    if th_sep_count and decimal_points:
+        decimal_point_pos = value.index(decimal_point)
+        if thousands_sep in value[decimal_point_pos+1:]:
+            raise ValidationError("You have a thousand separator to the "
+                                  "right of the decimal point")
+        check_value = value[:decimal_point_pos]
+    else:
+        check_value = value
+
+    # Verify so the thousand separators are placed properly
+    # TODO: Use conv['grouping'] for locales where it's not 3
+    parts = check_value.split(thousands_sep)
+
+    # First part is a special case, It can be 1, 2 or 3
+    if 3 > len(parts[0]) < 1:
+        raise ValidationError("Inproperly placed thousands separator")
+
+    # Middle parts should have a length of 3
+    for part in parts[1:]:
+        if len(part) != 3:
+            raise ValidationError("Inproperly placed thousand "
+                                  "separators")
+
+    # Remove all thousand separators
+    value = value.replace(thousands_sep, '')
+
+    # Replace all decimal points with .
+    if decimal_point != '.':
+        value = value.replace(decimal_point, '.')
+    return value
+

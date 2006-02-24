@@ -86,16 +86,18 @@ class CurrencyTest(unittest.TestCase):
             return
 
         self.assertEqual(currency(100).format(), 'R$100')
-        self.assertEqual(currency(123.45).format(), 'R$123,45')
+        self.assertEqual(currency('123.45').format(), 'R$123,45')
         self.assertEqual(currency(12345).format(), 'R$12.345')
         self.assertEqual(currency(-100).format(), 'R$-100')
+
+        self.assertEqual(self.conv.from_string('0,5'), currency('0.5'))
 
     def testFormatUS(self):
         if not set_locale(locale.LC_MONETARY, 'en_US'):
             return
 
         self.assertEqual(currency(100).format(), '$100')
-        self.assertEqual(currency(123.45).format(), '$123.45')
+        self.assertEqual(currency('123.45').format(), '$123.45')
         self.assertEqual(currency(12345).format(), '$12,345')
         self.assertEqual(currency(-100).format(), '$-100')
         self.assertEqual(currency(1).format(True), '$1')
@@ -104,6 +106,7 @@ class CurrencyTest(unittest.TestCase):
 
         self.assertEqual(self.conv.from_string(''), ValueUnset)
         self.assertEqual(self.conv.from_string('0'), currency(0))
+        self.assertEqual(self.conv.from_string('0.5'), currency('0.5'))
         self.assertRaises(ValidationError, self.conv.from_string, 'foo')
 
         self.assertEqual(self.conv.as_string(currency(0)), '$0.00')

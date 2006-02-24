@@ -3,6 +3,11 @@
 	* kiwi/datatypes.py (_BaseDateTimeConverter.get_format): Remove
 	seconds and AM/PM for now, since we don't have enough infrastructure
 	to support optional AM/PM.
+	(filter_locale): Refactor to a function and replace decimal point
+	with a .
+
+	* tests/test_datatypes.py (CurrencyTest.testFormatBR): 
+	Add tests for decimal points which are not .
 
 2006-02-23  Johan Dahlin  <jdahlin@async.com.br>
 
