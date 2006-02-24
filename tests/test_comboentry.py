@@ -52,5 +52,17 @@ class TestProxyComboEntry(unittest.TestCase):
         entry.prefill(['one', 'two'])
         self.assertRaises(TypeError, entry.select_item_by_data, 1)
 
+    def testGetSelectedInTextMode(self):
+        entry = ProxyComboEntry()
+        entry.prefill(['one', 'two'])
+        entry.select_item_by_label('two')
+        self.assertEqual(entry.get_selected(), 'two')
+
+    def testGetSelectedInDataMode(self):
+        entry = ProxyComboEntry()
+        entry.prefill([('one', 1), ('two', 2)])
+        entry.select_item_by_label('two')
+        self.assertEqual(entry.get_selected(), 2)
+
 if __name__ == '__main__':
     unittest.main()

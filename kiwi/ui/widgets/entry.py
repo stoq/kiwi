@@ -271,6 +271,17 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
             raise KeyError("No item correspond to label %r in the combo %s"
                            % (label, self.name))
 
+    def get_selected_by_iter(self, treeiter):
+        completion = self._get_completion()
+        model = completion.get_model()
+        mode = self._mode
+        if mode == ENTRY_MODE_TEXT:
+            return model[treeiter][COL_TEXT]
+        elif mode == ENTRY_MODE_DATA:
+            return model[treeiter][COL_OBJECT]
+        else:
+            raise AssertionError
+
     def set_text(self, text):
         """
         Sets the text of the entry

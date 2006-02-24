@@ -456,6 +456,13 @@ class ComboEntry(gtk.HBox):
         treeiter = self.entry.get_iter_by_label(text)
         self.set_active_iter(treeiter)
 
+    def get_selected(self):
+        """
+        @returns: selected text or item
+        """
+        treeiter = self.get_active_iter()
+        return self.entry.get_selected_by_iter(treeiter)
+
     # IconEntry
 
     def set_pixbuf(self, pixbuf):
