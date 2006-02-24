@@ -20,6 +20,24 @@ class TestComboEntry(unittest.TestCase):
         entry.popdown()
 
 class TestProxyComboEntry(unittest.TestCase):
+    def testSelectItemByLabel(self):
+        entry = ProxyComboEntry()
+        entry.prefill(['one', 'two'])
+        entry.select_item_by_label('one')
+        self.assertEqual(entry.get_text(), 'one')
+        entry.select_item_by_label('two')
+        self.assertEqual(entry.get_text(), 'two')
+        self.assertRaises(KeyError, entry.select_item_by_label, 'three')
+
+    def testSelectItemByLabelInDataMode(self):
+        entry = ProxyComboEntry()
+        entry.prefill([('one', 1), ('two', 2)])
+        entry.select_item_by_label('one')
+        self.assertEqual(entry.get_text(), 'one')
+        entry.select_item_by_label('two')
+        self.assertEqual(entry.get_text(), 'two')
+        self.assertRaises(KeyError, entry.select_item_by_label, 'three')
+
     def testSelectItemByData(self):
         entry = ProxyComboEntry()
         entry.prefill([('one', 1), ('two', 2)])
@@ -29,22 +47,10 @@ class TestProxyComboEntry(unittest.TestCase):
         self.assertEqual(entry.get_text(), 'two')
         self.assertRaises(KeyError, entry.select_item_by_data, 3)
 
-    def testSelectItemByLabel(self):
-        entry = ProxyComboEntry()
-        entry.prefill([('one', 1), ('two', 2)])
-        entry.select_item_by_label('one')
-        self.assertEqual(entry.get_text(), 'one')
-        entry.select_item_by_label('two')
-        self.assertEqual(entry.get_text(), 'two')
-        self.assertRaises(KeyError, entry.select_item_by_label, 'three')
-
+    def testSelectItemByDataInTextMode(self):
         entry = ProxyComboEntry()
         entry.prefill(['one', 'two'])
-        entry.select_item_by_label('one')
-        self.assertEqual(entry.get_text(), 'one')
-        entry.select_item_by_label('two')
-        self.assertEqual(entry.get_text(), 'two')
-        self.assertRaises(KeyError, entry.select_item_by_label, 'three')
+        self.assertRaises(TypeError, entry.select_item_by_data, 1)
 
 if __name__ == '__main__':
     unittest.main()
