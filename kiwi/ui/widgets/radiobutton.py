@@ -39,11 +39,14 @@ class RadioButton(PropertyObject, gtk.RadioButton, WidgetMixin):
         gtk.RadioButton.__init__(self)
         WidgetMixin.__init__(self)
         PropertyObject.__init__(self)
+        self.connect('group-changed', self._on_group_changed)
 
-    gsignal('toggled', 'override')
-    def do_toggled(self):
+    def _on_radio__toggled(self, radio):
         self.emit('content-changed')
-        self.chain()
+
+    def _on_group_changed(self, radio):
+        for radio in radio.get_group():
+            radio.connect('toggled', self._on_radio__toggled)
 
     def get_selected(self):
         """
