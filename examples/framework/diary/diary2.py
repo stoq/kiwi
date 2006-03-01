@@ -27,23 +27,23 @@ class Diary(ProxyDelegate):
         self.entries.grab_focus()
         self.set_editable(False)
 
+    def set_editable(self, editable):
+        self.leftbox.set_sensitive(editable)
+        self.remove.set_sensitive(editable)
+
     def proxy_updated(self, *args):
         self.entries.update(self.model)
 
     def on_add__clicked(self, button):
         entry = DiaryEntry()
-        self.entries.append(entry)
-        self.entries.select(entry)
+        self.entries.append(entry, select=True)
         self.set_editable(True)
         self.set_model(entry)
 
     def on_remove__clicked(self, button):
         entry = self.entries.get_selected()
         if entry:
-            prev = self.entries.get_previous(entry)
-            self.entries.remove(entry)
-            if prev != entry:
-                self.entries.select(prev)
+            self.entries.remove(entry, select=True)
 
         if len(self.entries) < 1:
             editable = False
@@ -51,19 +51,14 @@ class Diary(ProxyDelegate):
             editable = True
         self.set_editable(editable)
 
-    def on_text__content_changed(self, *args):
-        self.update("chars")
-        self.update("words")
+    def on_text__content_changed(self, text):
+        self.update_many(("chars", "words"))
         self.entries.update(self.model)
 
     def on_entries__selection_changed(self, entries, instance):
         if instance:
             self.set_model(instance)
             self.title.grab_focus()
-
-    def set_editable(self, editable):
-        self.leftbox.set_sensitive(editable)
-        self.remove.set_sensitive(editable)
 
 proxy = Diary()
 proxy.show_and_loop()
