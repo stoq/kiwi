@@ -1,11 +1,11 @@
 #!/usr/bin/env python
+from kiwi.python import Settable
 from kiwi.ui.delegates import ProxyDelegate
 from kiwi.ui.objectlist import Column, ObjectList
 
-class DiaryEntry:
-    title = ''
-    text = ''
-    period = 'morning'
+class DiaryEntry(Settable):
+    def __init__(self):
+        Settable.__init__(self, title='Untitled', period='morning', text='')
 
     def get_words(self):
         return len(self.text.split())
@@ -19,8 +19,7 @@ class Diary(ProxyDelegate):
                                    Column("period", width=80),
                                    Column("text", expand=True, visible=False)])
         ProxyDelegate.__init__(self, DiaryEntry(),
-                               ['title', 'period', 'text', 'chars',
-                                'words'],
+                               ['title', 'period', 'text', 'chars', 'words'],
                                gladefile="diary2",
                                delete_handler=self.quit_if_last)
         self.hbox.pack_start(self.entries)
@@ -33,17 +32,19 @@ class Diary(ProxyDelegate):
 
     def on_add__clicked(self, button):
         entry = DiaryEntry()
-        entry.title = 'New title'
-
-        self.set_model(entry)
         self.entries.append(entry)
-        self.title.grab_focus()
+        self.entries.select(entry)
         self.set_editable(True)
+        self.set_model(entry)
+        self.title.grab_focus()
 
     def on_remove__clicked(self, button):
         entry = self.entries.get_selected()
         if entry:
+            prev = self.entries.get_previous(entry)
             self.entries.remove(entry)
+            if prev != entry:
+                self.entries.select(prev)
 
         if len(self.entries) < 1:
             editable = False
