@@ -1286,17 +1286,29 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             if path in cache:
                 del cache[path]
 
-    def remove(self, instance):
+    def remove(self, instance, select=False):
         """Remove an instance from the list.
         If the instance is not in the list it returns False. Otherwise it
         returns True.
+
+        @param instance:
+        @param select: if true, the previous item will be selected
+          if there is one.
         """
 
         objid = id(instance)
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
 
-        return self._remove(objid)
+
+        if select:
+            prev = self.get_previous(instance)
+            rv = self._remove(objid)
+            if prev != instance:
+                self.select(prev)
+        else:
+            rv = self._remove(objid)
+        return rv
 
     def update(self, instance):
         objid = id(instance)
@@ -1459,7 +1471,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             pos += 1
         return model[pos][COL_MODEL]
 
-    def get_previous(self, instance=False):
+    def get_previous(self, instance):
         """
         Returns the item before instance in the list.
         Note that the instance must be inserted before this can be called

@@ -1,5 +1,8 @@
 2006-03-01  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/objectlist.py (ObjectList.remove): Add an optional select 
+	argument to be consistent with append.
+
 	* kiwi/ui/widgets/radiobutton.py (RadioButton._on_group_changed): 
 	Emit content changed when any radio button in the group changes
 
