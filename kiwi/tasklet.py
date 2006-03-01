@@ -183,8 +183,6 @@ import warnings
 
 import gobject
 
-from kiwi.argcheck import argcheck
-
 if gobject.pygtk_version <= (2, 8):
     raise RuntimeError("PyGTK 2.8 or later is required for kiwi.tasklet")
 
@@ -456,7 +454,6 @@ class WaitForTasklet(WaitCondition):
 class WaitForSignal(WaitCondition):
     '''An object that waits for a signal emission'''
 
-    @argcheck(gobject.GObject, str)
     def __init__(self, obj, signal):
         '''Waits for a signal to be emitted on a specific GObject instance.
 
@@ -466,6 +463,11 @@ class WaitForSignal(WaitCondition):
         @type signal: str
         '''
         WaitCondition.__init__(self)
+        if not isinstance(obj, gobject.GObject):
+            raise TypeError("obj must be a GObject instance")
+        if not gobject.signal_lookup(signal, obj):
+            raise ValueError("gobject %r does not have a signal called %r" %
+                             (obj, signal))
         self.object = obj
         self.signal = signal
         self._callback = None
