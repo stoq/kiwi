@@ -57,7 +57,7 @@
                                         <child>
                                             <widget class="kiwi+ui+widgets+radiobutton+RadioButton" id="period">
                                                 <property name="data_type">str</property>
-                                                <property name="data_value" context="yes" translatable="yes">morning</property>
+                                                <property name="data_value">morning</property>
                                                 <property name="is_focus">True</property>
                                                 <property name="label" context="yes" translatable="yes">Morning</property>
                                                 <property name="model_attribute">period</property>
@@ -72,7 +72,7 @@
                                             <widget class="kiwi+ui+widgets+radiobutton+RadioButton" id="afternoon">
                                                 <property name="active">False</property>
                                                 <property name="data_type">str</property>
-                                                <property name="data_value" context="yes" translatable="yes">afternoon</property>
+                                                <property name="data_value">afternoon</property>
                                                 <property name="group">period</property>
                                                 <property name="label" context="yes" translatable="yes">Afternoon</property>
                                                 <property name="visible">True</property>
@@ -87,7 +87,7 @@
                                             <widget class="kiwi+ui+widgets+radiobutton+RadioButton" id="evening">
                                                 <property name="active">False</property>
                                                 <property name="data_type">str</property>
-                                                <property name="data_value" context="yes" translatable="yes">evening</property>
+                                                <property name="data_value">evening</property>
                                                 <property name="group">period</property>
                                                 <property name="label" context="yes" translatable="yes">Evening</property>
                                                 <property name="visible">True</property>

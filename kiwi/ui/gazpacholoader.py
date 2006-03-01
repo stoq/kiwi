@@ -236,6 +236,9 @@ class BoolDataTypeProperty(CustomProperty, StringType):
 class ModelProperty(CustomProperty, StringType):
     translatable = False
 
+class DataValueProperty(CustomProperty, StringType):
+    translatable = False
+
 class KiwiColumnAdapter(Adapter):
     object_type = Column
     def construct(self, name, gtype, properties):
@@ -295,6 +298,9 @@ def register_widgets():
         prop_registry.override_simple(type_name + '::model-attribute',
                                       ModelProperty)
 
+        if issubclass(gobj, RadioButton):
+            prop_registry.override_simple(type_name + '::data-value',
+                                          DataValueProperty)
         # Register custom adapters, since gobject.new is broken in 2.6
         # Used by loader, eg in gazpacho and in applications
         # ComboBox is registered above
