@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Gustavo J. A. M. Carneiro <gjc@inescporto.pt>
 #
 
@@ -87,7 +87,7 @@ Syntax for yield in tasklets
        - L{WaitCondition}, meaning to wait for that specific condition
 
        - L{Tasklet}, with the same meaning as L{WaitForTasklet}C{(tasklet)}
-       
+
        - generator, with the same meaning as L{WaitForTasklet}C{(Tasklet(gen))}
 
       In this case, the tasklet is suspended until either one of the
@@ -198,7 +198,7 @@ class task(object):
         self._func = func
         self.__name__ = func.__name__
         self.__doc__ = func.__doc__
-        
+
     def __call__(self, *args, **kwargs):
         return Tasklet(self._func(*args, **kwargs))
 
@@ -235,7 +235,7 @@ class WaitCondition(object):
     WaitConditions are used in a yield statement inside tasklets body
     for specifying what event(s) it should wait for in order to
     receive control once more.'''
-    
+
     def __init__(self):
         '''Abstract base class, do not call directly'''
         self.triggered = False
@@ -283,7 +283,7 @@ class WaitForIO(WaitCondition):
         @type condition: a set of C{gobject.IO_*} flags ORed together
         @param priority: mainloop source priority
         '''
-        
+
         WaitCondition.__init__(self)
         self.filedes = filedes
         self._condition = condition # listen condition
@@ -339,13 +339,13 @@ class WaitForTimeout(WaitCondition):
         @param timeout: ammount of time to wait, in miliseconds
         @param priority: mainloop priority for the timeout event
         '''
-        
+
         WaitCondition.__init__(self)
         self.timeout = timeout
         self._id = None
         self._tasklet = None
         self._priority = priority
-        
+
     def arm(self, tasklet):
         '''See L{WaitCondition.arm}'''
         if self._id is None:
@@ -412,14 +412,14 @@ class WaitForTasklet(WaitCondition):
     '''An object that waits for a tasklet to complete'''
     def __init__(self, tasklet):
         '''An object that waits for another tasklet to complete'''
-        
+
         WaitCondition.__init__(self)
         self._tasklet = tasklet
         self._id = None
         self._idle_id = None
         self._callback = None
         self.retval = None
-        
+
     def arm(self, tasklet):
         '''See L{WaitCondition.arm}'''
         self._callback = tasklet.wait_condition_fired
@@ -481,7 +481,7 @@ class WaitForSignal(WaitCondition):
             if gobject.signal_lookup("destroy", self.object):
                 self._destroy_id = self.object.connect("destroy",
                                                        self._object_destroyed)
-                
+
     def _object_destroyed(self, obj):
         self.object = None
         self._id = None
@@ -548,7 +548,7 @@ class WaitForProcess(WaitCondition):
 
 class Message(object):
     '''A message that can be received by or sent to a tasklet.'''
-    
+
     _slots_ = 'name', 'dest', 'value', 'sender'
 
     ACCEPT, DEFER, DISCARD = range(3)
@@ -571,7 +571,7 @@ class Message(object):
         self.value = value
         self.sender = sender
         self.dest = dest
-        
+
 #     def get_name(self):
 #         """Return the message name"""
 #         return self.name
@@ -590,7 +590,7 @@ def _normalize_list_argument(arg, name):
     """returns a list of strings from an argument that can be either
     list of strings, None (returns []), or a single string returns
     ([arg])"""
-    
+
     if arg is None:
         return []
     elif isinstance(arg, basestring):
@@ -632,7 +632,7 @@ class WaitForMessages(WaitCondition):
             self.actions[name] = Message.DEFER
         for name in discard:
             self.actions[name] = Message.DISCARD
-        
+
     def arm(self, tasklet):
         '''Overrides WaitCondition.arm'''
         self._tasklet = tasklet
@@ -649,7 +649,7 @@ class Tasklet(object):
     '''An object that launches and manages a tasklet.'''
 
     STATE_RUNNING, STATE_SUSPENDED, STATE_MSGSEND = range(3)
-    
+
     def __init__(self, gen=None):
         '''
         Launch a generator tasklet.
@@ -681,7 +681,7 @@ class Tasklet(object):
         return self._message_actions
 
     message_actions = property(get_message_actions)
-        
+
     def run(self):
         """
         Method that executes the task.
@@ -734,7 +734,7 @@ class Tasklet(object):
                 self.wait_list = gen_value
             else:
                 self.wait_list = [gen_value]
-            
+
             for i, val in enumerate(self.wait_list):
                 if isinstance(val, WaitCondition):
                     continue
@@ -788,16 +788,16 @@ class Tasklet(object):
         else:
             return None
         return self._message_queue.pop(idx)
-    
+
 
     def _update_wait_conditions(self, old_wait_list):
         '''disarm wait conditions removed and arm new wait conditions'''
-        
+
         ## disarm conditions removed from the wait list
         for cond in old_wait_list:
             if cond not in self.wait_list:
                 cond.disarm()
-        
+
         ## arm the conditions added to the wait list
         for cond in self.wait_list:
             if cond not in old_wait_list:
