@@ -36,7 +36,6 @@ class Diary(ProxyDelegate):
         self.entries.select(entry)
         self.set_editable(True)
         self.set_model(entry)
-        self.title.grab_focus()
 
     def on_remove__clicked(self, button):
         entry = self.entries.get_selected()
@@ -60,6 +59,7 @@ class Diary(ProxyDelegate):
     def on_entries__selection_changed(self, entries, instance):
         if instance:
             self.set_model(instance)
+            self.title.grab_focus()
 
     def set_editable(self, editable):
         self.leftbox.set_sensitive(editable)
