@@ -131,6 +131,9 @@ class IntTest(unittest.TestCase):
     def setUp(self):
         self.conv = converter.get_converter(int)
 
+    def tearDown(self):
+        set_locale(locale.LC_ALL, 'C')
+
     def testFromString(self):
         self.assertEqual(self.conv.from_string('0'), 0)
         self.assertRaises(ValidationError, self.conv.from_string, '0.5')
@@ -138,6 +141,12 @@ class IntTest(unittest.TestCase):
     def testAsString(self):
         self.assertEqual(self.conv.as_string(0), '0')
         self.assertEqual(self.conv.as_string(-10), '-10')
+
+    def testAsStringUS(self):
+        if not set_locale(locale.LC_NUMERIC, 'en_US'):
+            return
+
+        self.assertEqual(self.conv.as_string(123456789), '123456789')
 
 class FloatTest(unittest.TestCase):
     def setUp(self):

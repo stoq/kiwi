@@ -1,3 +1,11 @@
+2006-03-02  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/datatypes.py (_IntConverter.as_string): 
+	Do not use a locale specific way of formatting integers.
+	
+	* tests/test_datatypes.py (IntTest.testAsStringUS) 
+	(IntTest.testAsStringUS): Add a test
+
 2006-03-01  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/objectlist.py (ObjectList.remove): Add an optional select 
