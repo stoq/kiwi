@@ -45,11 +45,7 @@ class Diary(ProxyDelegate):
         if entry:
             self.entries.remove(entry, select=True)
 
-        if len(self.entries) < 1:
-            editable = False
-        else:
-            editable = True
-        self.set_editable(editable)
+        self.set_editable(len(self.entries) >= 1)
 
     def on_text__content_changed(self, text):
         self.update_many(("chars", "words"))
