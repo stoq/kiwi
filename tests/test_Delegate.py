@@ -12,7 +12,7 @@ class A:
 class B:
     def on_foo__clicked(self, *args):
         self.x = "FOO in B"
-    
+
     def on_bar__clicked(self, *args):
         self.y = "BAR in B"
 
@@ -44,7 +44,7 @@ class Foo(X,Y,Delegate):
 
     def on_foo__clicked(self, *args):
         self.x = "FOO in Foo"
-    
+
     def on_bar__clicked(self, *args):
         self.y = "BAR in B"
 
@@ -72,7 +72,7 @@ class GladeClickCounter(Delegate):
 
     def on_button__clicked(self, *args):
         self.clicks += 1
-        
+
 class DelegateTest(unittest.TestCase):
     def testButtons(self):
         f = Foo()
@@ -87,7 +87,7 @@ class DelegateTest(unittest.TestCase):
     def testClickCounter(self):
         clickcounter = ClickCounter()
         refresh_gui()
-        
+
         # one for the boys
         clickcounter.button.clicked()
         self.assertEqual(clickcounter.clicks, 1)
@@ -99,7 +99,7 @@ class DelegateTest(unittest.TestCase):
     def testClickCounterGlade(self):
         clickcounter = GladeClickCounter()
         refresh_gui()
-        
+
         # one for the boys
         clickcounter.button.clicked()
         self.assertEqual(clickcounter.clicks, 1)
@@ -107,6 +107,6 @@ class DelegateTest(unittest.TestCase):
         # one for the girls
         clickcounter.button.clicked()
         self.assertEqual(clickcounter.clicks, 2)
-        
+
 if __name__ == '__main__':
     unittest.main()
