@@ -181,6 +181,7 @@ class _IntConverter(BaseConverter):
         if format is None:
             format = '%d'
 
+        return lformat(format, value)
         # Do not use lformat here, since an integer should always
         # be formatted without thousand separators. Think of the
         # use case of a port number, "3128" is desired, and not "3,128"
