@@ -91,7 +91,7 @@ class BaseViewTest(unittest.TestCase):
         refresh_gui()
         self.assertEqual(self.foo.view.label.get_text(),
                          "Good click!")
-        
+
     def testSubView(self):
         self.foo.view.button.clicked()
         refresh_gui()
@@ -99,7 +99,7 @@ class BaseViewTest(unittest.TestCase):
         self.assertEqual(self.foo.bar.toplevel, self.foo.bar.win)
         # setting None as transient window should be an error
         self.assertRaises(TypeError, self.foo.bar.set_transient_for, None)
-    
+
     def testColors(self):
         self.foo.view.button.clicked()
         refresh_gui()
@@ -114,16 +114,16 @@ class BaseViewTest(unittest.TestCase):
 
 
 class BrokenViewsTest(unittest.TestCase):
-    
+
     def testNoWindow(self):
         # A View requires an instance variable called toplevel that
         # specifies the toplevel widget in it
         self.assertRaises(TypeError, NoWinFoo)
 
     def testNotAWidget(self):
-        # noogie (__main__.NotWidgetFoo) is not a widget and 
+        # noogie (__main__.NotWidgetFoo) is not a widget and
         # can't be connected to
         self.assertRaises(AttributeError, NotWidgetFoo)
-        
+
 if __name__ == '__main__':
     unittest.main()
