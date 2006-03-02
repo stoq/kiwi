@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2005 Async Open Source
+# Copyright (C) 2005-2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,22 @@
 # USA
 #
 # Author(s): Lorenzo Gil Sanchez <lgs@sicem.biz>
-#            Gustavo Rahal <gustavo@async.com.br>
 #            Johan Dahlin <jdahlin@async.com.br>
 #
 
-"""Data type converters with locale and currency support"""
+"""Data type converters with locale and currency support.
+
+Provides routines for converting data to and from strings.
+Simple example:
+
+    >>> from kiwi.datatypes import converter
+    >>> converter.from_string(int, '1,234')
+    '1234'
+    >>> converter.from_string(float, '1,234')
+    '1234.0'
+    >>> converter.to_string(currency, currency('10.5'))
+    '$10.50'
+"""
 
 import datetime
 from decimal import Decimal, InvalidOperation
@@ -32,10 +43,6 @@ import sys
 import time
 
 from kiwi import ValueUnset
-
-# by default locale uses the C locale but our date conversions use the user
-# locale so we need to set the locale to that one
-locale.setlocale(locale.LC_ALL, '') # this set the user locale ( $LANG )
 
 __all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
 
@@ -622,4 +629,8 @@ def filter_locale(value):
     if decimal_point != '.':
         value = value.replace(decimal_point, '.')
     return value
+
+# by default locale uses the C locale but our date conversions use the user
+# locale so we need to set the locale to that one
+locale.setlocale(locale.LC_ALL, '') # this set the user locale ( $LANG )
 
