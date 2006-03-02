@@ -235,7 +235,7 @@ class _FloatConverter(BaseConverter):
     def as_string(self, value, format=None):
         """Convert a float to a string"""
         if format is None:
-            format = '%g'
+            return str(float(value))
         return lformat(format, value)
 
     def from_string(self, value):

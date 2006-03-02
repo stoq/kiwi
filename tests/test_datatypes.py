@@ -55,7 +55,7 @@ class DateTest(unittest.TestCase):
 
         self.assertEqual(self.conv.as_string(self.date), "12/02/79")
 
-    def tesFromStringBR(self):
+    def testFromStringBR(self):
         if not set_locale(locale.LC_TIME, 'pt_BR'):
             return
 
@@ -190,7 +190,8 @@ class FloatTest(unittest.TestCase):
     def testAsString(self):
         self.assertEqual(self.conv.as_string(0.5), '0.5')
         self.assertEqual(self.conv.as_string(-10.5), '-10.5')
-        self.assertEqual(self.conv.as_string(0.5), '0.5')
+        self.assertEqual(self.conv.as_string(0.12345), '0.12345')
+        self.assertEqual(self.conv.as_string(10000000), '10000000.0')
 
 class DecimalTest(unittest.TestCase):
     def setUp(self):
