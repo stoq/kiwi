@@ -24,7 +24,7 @@ offers extended widgets based upon the original PyGTK widgets.
 
     (You can optionally provide a prefix using the following form,
     but if you do remember to setup PYTHONPATH accordingly)
-    
+
         python setup.py install [--prefix=<prefix>]
 
 * Documentation
