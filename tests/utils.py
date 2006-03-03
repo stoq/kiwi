@@ -2,8 +2,13 @@ import os
 import sys
 import time
 
-import gtk
+try:
+    import pygtk
+    pygtk.require('2.0')
+except:
+    pass
 
+import gtk
 
 def refresh_gui(delay=0):
     while gtk.events_pending():
