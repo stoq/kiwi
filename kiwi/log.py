@@ -33,7 +33,7 @@ class LogError(Exception):
 
 class Formatter(logging.Formatter):
     def format(self, record):
-        frame = sys._getframe(8)
+        frame = sys._getframe(9)
         filename = os.path.basename(frame.f_code.co_filename)
         record.msg = '%s:%d %s' % (filename, frame.f_lineno, record.msg)
         return logging.Formatter.format(self, record)
@@ -82,6 +82,7 @@ def set_log_level(name, level):
     @param name: logging category
     @param level: level
     """
+    global _log_levels
     _log_levels[name] = level
 
 def get_log_level(name):
@@ -89,6 +90,7 @@ def get_log_level(name):
     @param name: logging category
     @returns: the level
     """
+    global _log_levels
     return _log_levels.get(name, logging.WARNING)
 
 def _read_log_level():
