@@ -21,9 +21,19 @@
 
 """User interface: Framework and Widget support"""
 
+
 try:
     import gtk
     gtk
 except ImportError:
-    raise SystemExit(
-        "PyGTK is required by kiwi.ui")
+    try:
+        import pygtk
+        pygtk.require('2.0')
+    except:
+        pass
+    try:
+        import gtk
+        gtk
+    except ImportError:
+        raise SystemExit(
+            "PyGTK is required by kiwi.ui")
