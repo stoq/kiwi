@@ -70,5 +70,8 @@ class MixinTest(unittest.TestCase):
             return
         self.assertEqual(gobject.type_name(Object), 'Object')
 
+    def testDecorator(self):
+        exec '@str\ndef foo():\n    pass'
+
 if __name__ == '__main__':
     unittest.main()
