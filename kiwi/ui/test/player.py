@@ -68,8 +68,9 @@ class ThreadSafeFunction:
 
     def _invoke(self, *args, **kwargs):
         gdk.threads_enter()
-        log('Calling %s.%s(%r)' % (self._obj_name,
-                                   self._func.__name__, args))
+        log('Calling %s.%s(%s)' % (self._obj_name,
+                                   self._func.__name__,
+                                   args.join(', ')))
         self._func(*args, **kwargs)
         gdk.threads_leave()
         return False
