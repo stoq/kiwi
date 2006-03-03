@@ -15,6 +15,12 @@ simpler.
 from distutils.core import setup
 
 try:
+    import pygtk
+    pygtk.require('2.0')
+except ImportError:
+    pass
+
+try:
     import gobject
     import gtk
 except ImportError:
