@@ -20,7 +20,7 @@ offers extended widgets based upon the original PyGTK widgets.
     To install (having made sure that the dependencies are installed and
     working) do (as root normally):
 
-        python setup.py install 
+        python setup.py install
 
     (You can optionally provide a prefix using the following form,
     but if you do remember to setup PYTHONPATH accordingly)
