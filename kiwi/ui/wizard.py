@@ -7,20 +7,20 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Gustavo Rahal <gustavo@async.com.br>
 #            Evandro Vale Miquelito <evandro@async.com.br>
-#            
+#
 
 import gtk
 
@@ -35,21 +35,21 @@ class WizardStep:
     def post_init(self):
         """A method called after the wizard step constructor and the main
         wizard update_view method.
-        This is a virtual method, which must be redefined on children 
+        This is a virtual method, which must be redefined on children
         classes, if applicable.
         """
-    
+
     def next_step(self):
-        # This is a virtual method, which must be redefined on children 
+        # This is a virtual method, which must be redefined on children
         # classes. It should not be called by the last step (in this case,
         # has_next_step should return 0).
         raise NotImplementedError
-       
+
     def has_next_step(self):
         # This method should return False on last step classes
         return True
 
-    def has_previous_step(self): 
+    def has_previous_step(self):
         # This method should return False on first step classes; since
         # self.previous is normally None for them, we can get away with
         # this simplified check. Redefine as necessary.
@@ -58,6 +58,12 @@ class WizardStep:
     def previous_step(self):
         return self.previous
 
+    def validate_step(self):
+        """A hook called always when changing steps. If it returns False
+        we can not go forward.
+        """
+        return True
+
 class PluggableWizard(Delegate):
     """ Wizard controller and view class """
     gladefile = 'PluggableWizard'
@@ -65,7 +71,7 @@ class PluggableWizard(Delegate):
 
     def __init__(self, title, first_step, size=None, edit_mode=False):
         Delegate.__init__(self, delete_handler=self.quit_if_last,
-                          gladefile=self.gladefile, 
+                          gladefile=self.gladefile,
                           widgets=self.widgets)
         self.set_title(title)
         self.first_step = first_step
@@ -77,12 +83,12 @@ class PluggableWizard(Delegate):
         self.change_step(first_step)
         if not self.edit_mode:
             self.ok_button.hide()
-        
+
     def change_step(self, step=None):
         if step is None:
             # This is the last step and we can finish the job here
             self.finish()
-            return 
+            return
         step.show()
         holder_name = 'slave_area'
         if self.get_slave(holder_name):
@@ -98,7 +104,7 @@ class PluggableWizard(Delegate):
         self.current.post_init()
         return None
 
-    def update_view(self): 
+    def update_view(self):
         # First page
         if self.edit_mode:
             self.ok_button.set_sensitive(True)
@@ -108,7 +114,7 @@ class PluggableWizard(Delegate):
             self.disable_finish()
             self.notification_lbl.hide()
         # Middle page
-        elif self.current.has_next_step(): 
+        elif self.current.has_next_step():
             self.enable_back()
             self.enable_next()
             self.disable_finish()
@@ -136,7 +142,7 @@ class PluggableWizard(Delegate):
             widget = self.next_button
         widget.set_label(gtk.STOCK_APPLY)
         self.wizard_finished = True
-    
+
     def disable_next(self):
         self.next_button.set_sensitive(False)
 
@@ -150,6 +156,8 @@ class PluggableWizard(Delegate):
             self.next_button.set_label(gtk.STOCK_GO_FORWARD)
 
     def on_next_button__clicked(self, button):
+        if not self.current.validate_step():
+            return
         if not self.current.has_next_step():
             # This is the last step
             self.change_step()
@@ -158,7 +166,7 @@ class PluggableWizard(Delegate):
 
     def on_ok_button__clicked(self, button):
         self.change_step()
-            
+
     def on_previous_button__clicked(self, button):
         self.change_step(self.current.previous_step())
 
