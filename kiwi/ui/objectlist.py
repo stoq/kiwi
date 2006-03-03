@@ -1112,7 +1112,14 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self.emit('selection-changed', item)
 
     def _after_treeview__row_activated(self, treeview, path, view_column):
-        self.emit('double-click', self._model[path][COL_MODEL])
+        try:
+            row = self._model[path]
+        except IndexError:
+            print 'path %s was not found in model: %s' % (path,
+                                                          map(list, model))
+            return
+
+        self.emit('double-click', row[COL_MODEL])
 
     # hacks
     def _get_column_button(self, column):
