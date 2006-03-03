@@ -133,7 +133,7 @@ def compile_po_files(appname, dirname='locale'):
 
     return data_files
 
-def listpackages(root):
+def listpackages(root, exclude=None):
     "Recursivly list all packages in directory root"
 
     packages = []
@@ -147,5 +147,11 @@ def listpackages(root):
         full = os.path.join(root, filename)
         if os.path.isdir(full):
             packages.extend(listpackages(full))
+
+    if exclude:
+        for package in packages[:]:
+            if package.startswith(exclude):
+                packages.remove(package)
+
     return packages
 
