@@ -55,6 +55,7 @@ class TemplateInstallLib(install_lib):
         fp.write('%s = {}\n' % name)
         for key, value in dictionary.items():
             value = value.replace('$datadir', '$prefix/share/%s' % self.name)
+            value = value.replace('$sysconfdir', '$prefix/etc')
             parts = []
             for part in value.split('/'):
                 if part == '$prefix':
