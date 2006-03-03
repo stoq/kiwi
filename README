@@ -9,7 +9,7 @@ offers extended widgets based upon the original PyGTK widgets.
 
     - GTK+ 2.6.x      ftp://ftp.gtk.org/pub/gtk/v2.6/
     - PyGTK 2.6.x     ftp://ftp.gtk.org/pub/gtk/python/v2.6/
-    - Python > 2.3    http://www.python.org/download/         
+    - Python > 2.3    http://www.python.org/download/
 
   Optional
 
