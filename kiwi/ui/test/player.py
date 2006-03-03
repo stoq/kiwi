@@ -70,7 +70,7 @@ class ThreadSafeFunction:
         gdk.threads_enter()
         log('Calling %s.%s(%s)' % (self._obj_name,
                                    self._func.__name__,
-                                   ', '.join(args)))
+                                   ', '.join(map(repr, args))))
         self._func(*args, **kwargs)
         gdk.threads_leave()
         return False
