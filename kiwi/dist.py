@@ -135,7 +135,13 @@ def compile_po_files(appname, dirname='locale'):
     return data_files
 
 def listpackages(root, exclude=None):
-    "Recursivly list all packages in directory root"
+    """Recursivly list all packages in directory root
+    Optionally exclude can be specified which is a string
+    like foo/bar.
+    
+    @param root: directory
+    @param exclude: optional packages to be skipped
+    """
 
     packages = []
     if not os.path.isdir(root):
