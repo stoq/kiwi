@@ -105,6 +105,16 @@ def get_site_packages_dir(*dirs):
     return os.path.join(libdir, 'site-packages', *dirs)
 
 def listfiles(*dirs):
+    """
+    Lists all files in directories and optionally uses basic shell
+    matching, example:
+
+    >>> listfiles('data', 'glade', '*.glade')
+    ['data/glade/Foo.glade', 'data/glade/Bar.glade', ...]
+
+    @param dirs: directory parts
+    """
+
     dir, pattern = os.path.split(os.path.join(*dirs))
     return [os.path.join(dir, filename)
             for filename in os.listdir(os.path.abspath(dir))
@@ -138,7 +148,7 @@ def listpackages(root, exclude=None):
     """Recursivly list all packages in directory root
     Optionally exclude can be specified which is a string
     like foo/bar.
-    
+
     @param root: directory
     @param exclude: optional packages to be skipped
     """
