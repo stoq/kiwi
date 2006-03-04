@@ -120,7 +120,15 @@ def listfiles(*dirs):
             for filename in os.listdir(os.path.abspath(dir))
                 if filename[0] != '.' and fnmatch(filename, pattern)]
 
-def compile_po_files(appname, dirname='locale'):
+def compile_po_files(domain, dirname='locale'):
+    """
+    Compiles po files to mo files.
+    Note. this function depends on gettext utilities being installed
+
+    @param domain: gettext domain
+    @param dirname: base directory
+    @returns: a list of po files
+    """
     if os.system('msgfmt 2> /dev/null') != 256:
         warn('msgfmt is missing, not installing translations')
         return []
@@ -128,7 +136,7 @@ def compile_po_files(appname, dirname='locale'):
     data_files = []
     for po in listfiles('po', '*.po'):
         lang = os.path.basename(po[:-3])
-        mo = os.path.join(dirname, lang, 'LC_MESSAGES', appname + '.mo')
+        mo = os.path.join(dirname, lang, 'LC_MESSAGES', domain + '.mo')
 
         if not os.path.exists(mo) or newer(po, mo):
             directory = os.path.dirname(mo)
