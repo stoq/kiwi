@@ -26,11 +26,10 @@ try:
 except ImportError:
     raise SystemExit("Kiwi requires PyGTK 2.8 or higher")
 
-from kiwi.dist import listfiles, listpackages, TemplateInstallLib, \
-     get_site_packages_dir
+from kiwi.dist import listfiles, listpackages, KiwiInstallLib, \
+     get_site_packages_dir, KiwiInstallData
 
-class InstallLib(TemplateInstallLib):
-    name = 'kiwi'
+class InstallLib(KiwiInstallLib):
     global_resources = dict(glade='$datadir/glade',
                             pixmap='$datadir/pixmaps')
 
@@ -46,9 +45,9 @@ setup(name="kiwi",
       author_email="kiwi@async.com.br",
       url="http://www.async.com.br/projects/",
       license="GNU LGPL 2.1 (see COPYING)",
-      data_files=[('share/kiwi/glade',
+      data_files=[('$datadir/glade',
                    listfiles('glade', '*.glade')),
-                  ('share/kiwi/pixmaps',
+                  ('$datadir/pixmaps',
                    listfiles('pixmaps', '*.png')),
                   ('share/gazpacho/catalogs',
                    listfiles('gazpacho-plugin', 'kiwiwidgets.xml')),
@@ -59,9 +58,11 @@ setup(name="kiwi",
                    listfiles('gazpacho-plugin', 'kiwiwidgets.py')),
                   ('share/doc/kiwi',
                    ('AUTHORS', 'ChangeLog', 'NEWS', 'README')),
+                  ('$sysconfdir/kiwi', ['setup.py']),
                   ],
       scripts=['bin/kiwi-i18n',
                'bin/kiwi-ui-test'],
       packages=listpackages('kiwi'),
-      cmdclass=dict(install_lib=InstallLib),
+      cmdclass=dict(install_lib=InstallLib,
+                    install_data=KiwiInstallData),
       )

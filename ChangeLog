@@ -1,3 +1,11 @@
+2006-03-05  Johan Dahlin  <jdahlin@async.com.br>
+
+	* setup.py (version): Use the new features
+
+	* kiwi/dist.py: Add support for $sysconfdir and add an install_data
+	subclass which replaces variables. Fetch name from distribution object
+	instead of subclass. Refactoring and cleanups
+
 2006-03-02  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/datatypes.py (_IntConverter.as_string): 
