@@ -21,6 +21,7 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
+import gettext
 import datetime
 
 import gtk
@@ -29,6 +30,8 @@ from gtk import gdk, keysyms
 from kiwi.datatypes import converter
 from kiwi.ui.entry import KiwiEntry
 from kiwi.utils import gsignal, type_register
+
+_ = lambda m: gettext.dgettext('kiwi', m)
 
 date_converter = converter.get_converter(datetime.date)
 
@@ -41,9 +44,14 @@ class _DateEntryPopup(gtk.Window):
         self.connect('button-press-event', self._on__button_press_event)
         self._dateentry = dateentry
 
+        vbox = gtk.VBox()
+        self.add(vbox)
+        vbox.show()
+        self._vbox = vbox
+
         frame = gtk.Frame()
         frame.set_shadow_type(gtk.SHADOW_ETCHED_OUT)
-        self.add(frame)
+        vbox.pack_start(frame, False, False, 6)
         frame.show()
 
         self.calendar = gtk.Calendar()
@@ -52,8 +60,25 @@ class _DateEntryPopup(gtk.Window):
         frame.add(self.calendar)
         self.calendar.show()
 
+        buttonbox = gtk.HButtonBox()
+        buttonbox.set_border_width(6)
+        buttonbox.set_layout(gtk.BUTTONBOX_SPREAD)
+        vbox.pack_start(buttonbox, False, False, 6)
+        buttonbox.show()
+
+        for label, callback in [(_('_Today'), self._on_today__clicked),
+                                (_('_Cancel'), self._on_cancel__clicked),
+                                (_('_Select'), self._on_select__clicked)]:
+            button = gtk.Button(label, use_underline=True)
+            button.connect('clicked', callback)
+            buttonbox.pack_start(button)
+            button.show()
+
         self.set_resizable(False)
         self.set_screen(dateentry.get_screen())
+
+        self.realize()
+        self.height = self._vbox.size_request()[1]
 
     def _on_calendar__day_selected_double_click(self, calendar):
         self.emit('date-selected', self.get_date())
@@ -96,6 +121,15 @@ class _DateEntryPopup(gtk.Window):
 
         return False
 
+    def _on_select__clicked(self, button):
+        self.emit('date-selected', self.get_date())
+
+    def _on_cancel__clicked(self, button):
+        self.popdown()
+
+    def _on_today__clicked(self, button):
+        self.set_date(datetime.date.today())
+
     def _popup_grab_window(self):
         activate_time = 0L
         if gdk.pointer_grab(self.window, True,
@@ -111,8 +145,8 @@ class _DateEntryPopup(gtk.Window):
         return False
 
     def _get_position(self):
-        calendar = self.calendar
-        calendar.realize()
+        self.realize()
+        calendar = self
 
         sample = self._dateentry
 
@@ -120,11 +154,8 @@ class _DateEntryPopup(gtk.Window):
         # since comboentry itself does not have a window
         x, y = sample.window.get_origin()
         width, height = calendar.size_request()
-
-        pwidth = self.size_request()[0]
-        if pwidth > width:
-            pwidth, pheight = self.size_request()
-
+        height = self.height
+        
         screen = sample.get_screen()
         monitor_num = screen.get_monitor_at_window(sample.window)
         monitor = screen.get_monitor_geometry(monitor_num)
@@ -145,13 +176,6 @@ class _DateEntryPopup(gtk.Window):
         else :
             height = y - monitor.y
             y = monitor.y
-
-        # Use half of the available screen space
-        max_height = monitor.height / 2
-        if height > max_height:
-            height = int(max_height)
-        elif height < 0:
-            height = 0
 
         return x, y, width, height
 
@@ -207,6 +231,7 @@ class _DateEntryPopup(gtk.Window):
     def set_date(self, date):
         self.calendar.select_month(date.month - 1, date.year)
         self.calendar.select_day(date.day)
+        self.calendar.mark_day(date.day)
 
 class DateEntry(gtk.HBox):
     gsignal('changed')
