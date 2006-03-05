@@ -51,7 +51,7 @@ class _DateEntryPopup(gtk.Window):
 
         frame = gtk.Frame()
         frame.set_shadow_type(gtk.SHADOW_ETCHED_OUT)
-        vbox.pack_start(frame, False, False, 6)
+        vbox.pack_start(frame, False, False)
         frame.show()
 
         self.calendar = gtk.Calendar()
@@ -63,7 +63,7 @@ class _DateEntryPopup(gtk.Window):
         buttonbox = gtk.HButtonBox()
         buttonbox.set_border_width(6)
         buttonbox.set_layout(gtk.BUTTONBOX_SPREAD)
-        vbox.pack_start(buttonbox, False, False, 6)
+        vbox.pack_start(buttonbox, False, False)
         buttonbox.show()
 
         for label, callback in [(_('_Today'), self._on_today__clicked),
@@ -155,7 +155,7 @@ class _DateEntryPopup(gtk.Window):
         x, y = sample.window.get_origin()
         width, height = calendar.size_request()
         height = self.height
-        
+
         screen = sample.get_screen()
         monitor_num = screen.get_monitor_at_window(sample.window)
         monitor = screen.get_monitor_geometry(monitor_num)
