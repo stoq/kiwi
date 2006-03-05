@@ -36,6 +36,7 @@ import gtk
 
 from kiwi.datatypes import ValidationError, converter, number
 from kiwi.ui.entry import MaskError, KiwiEntry
+from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
 from kiwi.utils import PropertyObject, gproperty, gsignal, type_register
 
@@ -138,7 +139,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
     def prop_set_mask(self, value):
         try:
             self.set_mask(value)
-            return self._mask
+            return self.get_mask()
         except MaskError, e:
             pass
         return ''
@@ -318,7 +319,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
             except ValidationError:
                 # Do not consider masks which only displays static
                 # characters invalid, instead return an empty string
-                if self._mask and text == self.get_empty_mask():
+                if self.get_mask() and text == self.get_empty_mask():
                     return ""
                 else:
                     raise
@@ -435,3 +436,37 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         #self.activate()
 
 type_register(Entry)
+
+class ProxyDateEntry(PropertyObject, DateEntry, WidgetMixinSupportValidation):
+    __gtype_name__ = 'ProxyDateEntry'
+
+    # changed allowed data types because checkbuttons can only
+    # accept bool values
+    allowed_data_types = datetime.date,
+
+    def __init__(self):
+        DateEntry.__init__(self)
+        WidgetMixinSupportValidation.__init__(self)
+        PropertyObject.__init__(self)
+
+    gproperty("mask", str, default='')
+    def prop_set_mask(self, value):
+        try:
+            self.entry.set_mask(value)
+            mask = self.entry.get_mask()
+        except MaskError, e:
+            mask = ''
+        return mask
+
+    # WidgetMixin implementation
+
+    def read(self):
+        return self.entry.get_date()
+
+    def update(self, data):
+        if data is None:
+            self.entry.set_text("")
+        else:
+            self.entry.set_date(data)
+
+type_register(ProxyDateEntry)

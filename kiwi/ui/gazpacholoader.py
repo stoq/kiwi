@@ -44,7 +44,7 @@ from kiwi.ui.objectlist import Column, ObjectList
 from kiwi.ui.widgets.checkbutton import CheckButton
 from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox, \
      ProxyComboBoxEntry
-from kiwi.ui.widgets.entry import Entry
+from kiwi.ui.widgets.entry import ProxyDateEntry, Entry
 from kiwi.ui.widgets.label import Label
 from kiwi.ui.widgets.radiobutton import RadioButton
 from kiwi.ui.widgets.spinbutton import SpinButton
@@ -284,6 +284,7 @@ adapter_registry.register_adapter(KiwiComboBoxAdapter)
 def register_widgets():
     for gobj, editor, data_type in [
         (Entry, EntryDataType, DataType),
+        (ProxyDateEntry, None, DateOnlyDataType),
         (CheckButton, None, BoolOnlyDataType),
         (Label, LabelDataType, DataType),
         (ProxyComboBox, ComboBoxDataType, DataType),

@@ -1,5 +1,15 @@
 2006-03-05  Johan Dahlin  <jdahlin@async.com.br>
 
+	* gazpacho-plugin/kiwiwidgets.xml:
+	* kiwi/ui/dateentry.py:
+	* kiwi/ui/gazpacholoader.py:
+	* kiwi/ui/widgets/entry.py:
+	* tests/test_dateentry.py:
+
+	Add a DateEntry which has a toggle button that popups a calendar.
+
+2006-03-05  Johan Dahlin  <jdahlin@async.com.br>
+
 	* setup.py (version): Use the new features
 
 	* kiwi/dist.py: Add support for $sysconfdir and add an install_data

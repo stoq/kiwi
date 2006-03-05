@@ -1,0 +1,284 @@
+#
+# Kiwi: a Framework and Enhanced Widgets for Python
+#
+# Copyright (C) 2006 Async Open Source
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+# USA
+#
+# Author(s): Johan Dahlin <jdahlin@async.com.br>
+#
+
+import datetime
+
+import gtk
+from gtk import gdk, keysyms
+
+from kiwi.datatypes import converter
+from kiwi.ui.entry import KiwiEntry
+from kiwi.utils import gsignal, type_register
+
+date_converter = converter.get_converter(datetime.date)
+
+class _DateEntryPopup(gtk.Window):
+    gsignal('date-selected', object)
+    def __init__(self, dateentry):
+        gtk.Window.__init__(self, gtk.WINDOW_POPUP)
+        self.add_events(gdk.BUTTON_PRESS_MASK)
+        self.connect('key-press-event', self._on__key_press_event)
+        self.connect('button-press-event', self._on__button_press_event)
+        self._dateentry = dateentry
+
+        frame = gtk.Frame()
+        frame.set_shadow_type(gtk.SHADOW_ETCHED_OUT)
+        self.add(frame)
+        frame.show()
+
+        self.calendar = gtk.Calendar()
+        self.calendar.connect('day-selected-double-click',
+                               self._on_calendar__day_selected_double_click)
+        frame.add(self.calendar)
+        self.calendar.show()
+
+        self.set_resizable(False)
+        self.set_screen(dateentry.get_screen())
+
+    def _on_calendar__day_selected_double_click(self, calendar):
+        self.emit('date-selected', self.get_date())
+
+    def _on__button_press_event(self, window, event):
+        # If we're clicking outside of the window close the popup
+        if tuple(self.allocation.intersect(
+             gdk.Rectangle(x=int(event.x), y=int(event.y),
+                           width=1, height=1))) == (0, 0, 0, 0):
+            self.popdown()
+
+        # XXX: Clicking on button + entry
+
+    def _on__key_press_event(self, window, event):
+        """
+        Mimics Combobox behavior
+
+        Escape or Alt+Up: Close
+        Enter, Return or Space: Select
+        """
+
+        keyval = event.keyval
+        state = event.state & gtk.accelerator_get_default_mod_mask()
+        if (keyval == keysyms.Escape or
+            ((keyval == keysyms.Up or keyval == keysyms.KP_Up) and
+             state == gdk.MOD1_MASK)):
+            self.popdown()
+            return True
+        elif keyval == keysyms.Tab:
+            self.popdown()
+            # XXX: private member of dateentry
+            self._comboentry._button.grab_focus()
+            return True
+        elif (keyval == keysyms.Return or
+              keyval == keysyms.space or
+              keyval == keysyms.KP_Enter or
+              keyval == keysyms.KP_Space):
+            self.emit('date-selected', self.get_date())
+            return True
+
+        return False
+
+    def _popup_grab_window(self):
+        activate_time = 0L
+        if gdk.pointer_grab(self.window, True,
+                            (gdk.BUTTON_PRESS_MASK |
+                             gdk.BUTTON_RELEASE_MASK |
+                             gdk.POINTER_MOTION_MASK),
+                             None, None, activate_time) == 0:
+            if gdk.keyboard_grab(self.window, True, activate_time) == 0:
+                return True
+            else:
+                self.window.get_display().pointer_ungrab(activate_time);
+                return False
+        return False
+
+    def _get_position(self):
+        calendar = self.calendar
+        calendar.realize()
+
+        sample = self._dateentry
+
+        # We need to fetch the coordinates of the entry window
+        # since comboentry itself does not have a window
+        x, y = sample.window.get_origin()
+        width, height = calendar.size_request()
+
+        pwidth = self.size_request()[0]
+        if pwidth > width:
+            pwidth, pheight = self.size_request()
+
+        screen = sample.get_screen()
+        monitor_num = screen.get_monitor_at_window(sample.window)
+        monitor = screen.get_monitor_geometry(monitor_num)
+
+        if x < monitor.x:
+            x = monitor.x
+        elif x + width > monitor.x + monitor.width:
+            x = monitor.x + monitor.width - width
+
+        if y + sample.allocation.height + height <= monitor.y + monitor.height:
+            y += sample.allocation.height
+        elif y - height >= monitor.y:
+            y -= height
+        elif (monitor.y + monitor.height - (y + sample.allocation.height) >
+              y - monitor.y):
+            y += sample.allocation.height
+            height = monitor.y + monitor.height - y
+        else :
+            height = y - monitor.y
+            y = monitor.y
+
+        # Use half of the available screen space
+        max_height = monitor.height / 2
+        if height > max_height:
+            height = int(max_height)
+        elif height < 0:
+            height = 0
+
+        return x, y, width, height
+
+    def popup(self, text=None):
+        """
+        Shows the list of options. And optionally selects an item
+        @param text: text to select
+        """
+        combo = self._dateentry
+        if not (combo.flags() & gtk.REALIZED):
+            return
+
+        treeview = self.calendar
+        if treeview.flags() & gtk.MAPPED:
+            return
+        toplevel = combo.get_toplevel()
+        if isinstance(toplevel, gtk.Window) and toplevel.group:
+            toplevel.group.add_window(self)
+
+        x, y, width, height = self._get_position()
+        self.set_size_request(width, height)
+        self.move(x, y)
+        self.show_all()
+
+        # XXX: Select date from text
+        self.grab_focus()
+
+        if not (self.calendar.flags() & gtk.HAS_FOCUS):
+            self.calendar.grab_focus()
+
+        if not self._popup_grab_window():
+            self.hide()
+            return
+
+        self.grab_add()
+
+    def popdown(self):
+        combo = self._dateentry
+        if not (combo.flags() & gtk.REALIZED):
+            return
+
+        self.grab_remove()
+        self.hide_all()
+
+    # month in gtk.Calendar is zero-based (i.e the allowed values are 0-11)
+    # datetime one-based (i.e. the allowed values are 1-12)
+    # So convert between them
+
+    def get_date(self):
+        y, m, d = self.calendar.get_date()
+        return datetime.date(y, m + 1, d)
+
+    def set_date(self, date):
+        self.calendar.select_month(date.month - 1, date.year)
+        self.calendar.select_day(date.day)
+
+class DateEntry(gtk.HBox):
+    gsignal('changed')
+    gsignal('activate')
+    def __init__(self):
+        gtk.HBox.__init__(self)
+
+        self._popping_down = False
+
+        self.entry = KiwiEntry()
+        self.pack_start(self.entry, True, True)
+
+        self._button = gtk.ToggleButton()
+        self._button.connect('scroll-event', self._on_entry__scroll_event)
+        self._button.connect('toggled', self._on_button__toggled)
+        self._button.set_focus_on_click(False)
+        self.pack_end(self._button, False, False)
+        self._button.show()
+
+        arrow = gtk.Arrow(gtk.ARROW_DOWN, gtk.SHADOW_NONE)
+        self._button.add(arrow)
+        arrow.show()
+
+        self._popup = _DateEntryPopup(self)
+        self._popup.connect('date-selected', self._on_popup__date_selected)
+        self._popup.connect('hide', self._on_popup__hide)
+        self._popup.set_size_request(-1, 24)
+        self._popup.emit('date-selected', self._popup.get_date())
+
+    def _on_entry__activate(self, entry):
+        self.emit('activate')
+
+    def _on_entry__scroll_event(self, entry, event):
+        if event.direction == gdk.SCROLL_UP:
+            days = 1
+        elif event.direction == gdk.SCROLL_DOWN:
+            days = -1
+        else:
+            return
+
+        date = self._popup.get_date()
+        newdate = date + datetime.timedelta(days=days)
+        self.set_date(newdate)
+        self._popup.set_date(newdate)
+
+    def _on_button__toggled(self, button):
+        if self._popping_down:
+            return
+        self._popup.popup(self.entry.get_text())
+
+    def _on_popup__hide(self, popup):
+        self._popping_down = True
+        self._button.set_active(False)
+        self._popping_down = False
+
+    def _on_popup__date_selected(self, popup, date):
+        self.set_date(date)
+        popup.popdown()
+        self.entry.grab_focus()
+        self.entry.set_position(len(self.entry.get_text()))
+        self.emit('changed')
+
+    def set_date(self, date):
+        """
+        @param date: a datetime.date instance
+        """
+        if not isinstance(date, datetime.date):
+            raise TypeError("date must be a datetime.date instance")
+
+        self.entry.set_text(date_converter.as_string(date))
+
+    def get_date(self):
+        return self._popup.get_date()
+
+type_register(DateEntry)
