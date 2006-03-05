@@ -26,8 +26,8 @@ import gettext
 import atk
 import gtk
 
-__all__ = ['error', 'info', 'messagedialog', 'warning', 'yesno', 'save', 'open',
-           'HIGAlertDialog', 'BaseDialog']
+__all__ = ['error', 'info', 'messagedialog', 'warning', 'yesno', 'save',
+           'open', 'HIGAlertDialog', 'BaseDialog']
 
 _ = gettext.gettext
 
@@ -63,7 +63,10 @@ class HIGAlertDialog(gtk.Dialog):
 	self.set_border_width(5)
 	self.set_resizable(False)
 	self.set_has_separator(False)
-	self.set_title("")
+        # Some window managers (ION) displays a default title (???) if
+        # the specified one is empty, workaround this by setting it
+        # to a single space instead
+	self.set_title(" ")
 	self.set_skip_taskbar_hint(True)
 	self.vbox.set_spacing(14)
 	self.get_accessible().set_role(atk.ROLE_ALERT)
@@ -91,7 +94,8 @@ class HIGAlertDialog(gtk.Dialog):
         vbox.pack_start(self._primary_label, False, False)
         vbox.pack_start(self._secondary_label, False, False)
 
-	self._expander = gtk.expander_new_with_mnemonic(_("Show more _details"))
+	self._expander = gtk.expander_new_with_mnemonic(
+            _("Show more _details"))
         self._expander.set_spacing(6)
         self._expander.add(self._details_label)
         vbox.pack_start(self._expander, False, False)
@@ -101,7 +105,8 @@ class HIGAlertDialog(gtk.Dialog):
         self.add_buttons(*_BUTTON_TYPES[buttons])
 
     def set_primary(self, text):
-        self._primary_label.set_markup("<span weight=\"bold\" size=\"larger\">%s</span>" % text)
+        self._primary_label.set_markup(
+            "<span weight=\"bold\" size=\"larger\">%s</span>" % text)
 
     def set_secondary(self, text):
         self._secondary_label.set_markup(text)
@@ -306,8 +311,8 @@ def _test():
      info('Some information displayed not too long\nbut not too short',
           long=('foobar ba asdjaiosjd oiadjoisjaoi aksjdasdasd kajsdhakjsdh\n'
                 'askdjhaskjdha skjdhasdasdjkasldj alksdjalksjda lksdjalksdj\n'
-                'asdjaslkdj alksdj lkasjdlkjasldkj alksjdlkasjdlkasjdlka jklsdjakls\n'
-                'ask;ldjaklsjdlkasjd alksdj laksjdlkasjd lkajs lkjdl kjaslk jkl\n'),
+                'asdjaslkdj alksdj lkasjdlkjasldkj alksjdlkasjd jklsdjakls\n'
+                'ask;ldjaklsjdlkasjd alksdj laksjdlkasjd lkajs kjaslk jkl\n'),
           default=gtk.RESPONSE_OK,
           )
 
