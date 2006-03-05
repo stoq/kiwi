@@ -1115,8 +1115,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         try:
             row = self._model[path]
         except IndexError:
-            print 'path %s was not found in model: %s' % (path,
-                                                          map(list, model))
+            print 'path %s was not found in model: %s' % (
+                path, map(list, self._model))
             return
 
         self.emit('double-click', row[COL_MODEL])

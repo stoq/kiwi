@@ -29,7 +29,7 @@
 import gtk
 
 from kiwi import ValueUnset
-from kiwi.utils import PropertyObject, gsignal, gproperty
+from kiwi.utils import PropertyObject, gproperty
 from kiwi.ui.widgets.proxy import WidgetMixin
 
 class RadioButton(PropertyObject, gtk.RadioButton, WidgetMixin):
