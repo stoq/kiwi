@@ -42,7 +42,8 @@ from kiwi.datatypes import currency
 from kiwi.environ import environ
 from kiwi.ui.objectlist import Column, ObjectList
 from kiwi.ui.widgets.checkbutton import CheckButton
-from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox, ProxyComboBoxEntry
+from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox, \
+     ProxyComboBoxEntry
 from kiwi.ui.widgets.entry import Entry
 from kiwi.ui.widgets.label import Label
 from kiwi.ui.widgets.radiobutton import RadioButton
@@ -220,18 +221,24 @@ class LabelDataType(DataTypeAdaptor):
             (_('Currency'), currency)
             ]
 
-class DataTypeProperty(CustomProperty, StringType):
+class DataType(CustomProperty, StringType):
     translatable = False
     def save(self):
         value = self.get()
         if value is not None:
             return value.__name__
 
-class BoolDataTypeProperty(CustomProperty, StringType):
+class BoolOnlyDataType(CustomProperty, StringType):
     translatable = False
     editable = False
     def save(self):
         return 'bool'
+
+class DateOnlyDataType(CustomProperty, StringType):
+    translatable = False
+    editable = False
+    def save(self):
+        return 'date'
 
 class ModelProperty(CustomProperty, StringType):
     translatable = False
@@ -275,25 +282,25 @@ class KiwiComboBoxAdapter(ComboBoxAdapter):
 adapter_registry.register_adapter(KiwiComboBoxAdapter)
 
 def register_widgets():
-    for gobj, editor in [(Entry, EntryDataType),
-                         (CheckButton, None),
-                         (Label, LabelDataType),
-                         (ProxyComboBox, ComboBoxDataType),
-                         (ProxyComboBoxEntry, ComboBoxDataType),
-                         (ProxyComboEntry, ComboBoxDataType),
-                         (SpinButton, SpinBtnDataType),
-                         (RadioButton, None),
-                         (TextView, TextViewDataType)]:
+    for gobj, editor, data_type in [
+        (Entry, EntryDataType, DataType),
+        (CheckButton, None, BoolOnlyDataType),
+        (Label, LabelDataType, DataType),
+        (ProxyComboBox, ComboBoxDataType, DataType),
+        (ProxyComboBoxEntry, ComboBoxDataType, DataType),
+        (ProxyComboEntry, ComboBoxDataType, DataType),
+        (SpinButton, SpinBtnDataType, DataType),
+        (RadioButton, None, BoolOnlyDataType),
+        (TextView, TextViewDataType, DataType)
+        ]:
         # Property overrides, used in the editor
         type_name = gobject.type_name(gobj)
 
         data_name = type_name + '::data-type'
         if editor:
-            prop_registry.override_simple(data_name, DataTypeProperty,
-                                          editor=editor)
+            prop_registry.override_simple(data_name, data_type, editor=editor)
         else:
-            prop_registry.override_simple(data_name, BoolDataTypeProperty)
-
+            prop_registry.override_simple(data_name, data_type)
 
         prop_registry.override_simple(type_name + '::model-attribute',
                                       ModelProperty)
