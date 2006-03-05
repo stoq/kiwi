@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2005 Async Open Source
+# Copyright (C) 2005-2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -78,8 +78,6 @@ class PluggableWizard(Delegate):
         self.edit_mode = edit_mode
         if size:
             self.get_toplevel().set_default_size(size[0], size[1])
-        toplevel = self.get_toplevel()
-        toplevel.show_all()
         self.change_step(first_step)
         if not self.edit_mode:
             self.ok_button.hide()

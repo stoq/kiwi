@@ -38,7 +38,8 @@
                                 <property name="spacing">5</property>
                                 <property name="visible">True</property>
                                 <child>
-                                    <widget class="GtkHButtonBox" id="hbuttonbox1">
+                                    <widget class="GtkHButtonBox" id="buttonbox">
+                                        <property name="visible">True</property>
                                         <child>
                                             <widget class="GtkButton" id="cancel_button">
                                                 <property name="is_focus">True</property>
@@ -94,6 +95,7 @@
                             </widget>
                             <packing>
                                 <property name="expand">False</property>
+                                <property name="pack-type">end</property>
                                 <property name="position">2</property>
                             </packing>
                         </child>
