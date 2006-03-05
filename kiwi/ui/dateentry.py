@@ -304,6 +304,9 @@ class DateEntry(gtk.HBox):
         self.entry.set_text(date_converter.as_string(date))
 
     def get_date(self):
+        """
+        @returns: the currently selected day
+        """
         return self._popup.get_date()
 
 type_register(DateEntry)
