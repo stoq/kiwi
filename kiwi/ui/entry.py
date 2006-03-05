@@ -152,6 +152,12 @@ class KiwiEntry(gtk.Entry):
         self._insert_mask(0, input_length)
         self._mask = mask
 
+    def get_mask(self):
+        """
+        @returns: the mask
+        """
+        return self._mask
+
     def get_field_text(self):
         """
         Get the fields assosiated with the entry.
