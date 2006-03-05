@@ -76,7 +76,6 @@ class KiwiInstallLib(install_lib):
         return filename
 
     def _write_dictionary(self, fp, name, dictionary, prefix):
-        name = self.distribution.get_name()
         fp.write('%s = {}\n' % name)
         for key, value in dictionary.items():
             value = self.varext.extend(value)
