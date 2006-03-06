@@ -20,24 +20,22 @@
 #
 # Author(s): Gustavo Rahal <gustavo@async.com.br>
 #            Evandro Vale Miquelito <evandro@async.com.br>
+#            Johan Dahlin <jdahlin@async.com.br>
 #
+
+import gettext
 
 import gtk
 
 from kiwi.ui.delegates import Delegate
+
+_ = lambda m: gettext.dgettext('kiwi', m)
 
 class WizardStep:
     """ This class must be inherited by the steps """
     def __init__(self, previous=None, header=None):
         self.previous = previous
         self.header = header
-
-    def post_init(self):
-        """A method called after the wizard step constructor and the main
-        wizard update_view method.
-        This is a virtual method, which must be redefined on children
-        classes, if applicable.
-        """
 
     def next_step(self):
         # This is a virtual method, which must be redefined on children
@@ -70,108 +68,154 @@ class PluggableWizard(Delegate):
     retval = None
 
     def __init__(self, title, first_step, size=None, edit_mode=False):
+        """
+        @param title:
+        @param first_step:
+        @param size:
+        @param edit_mode:
+        """
         Delegate.__init__(self, delete_handler=self.quit_if_last,
                           gladefile=self.gladefile,
                           widgets=self.widgets)
+        if not isinstance(first_step, WizardStep):
+            raise TypeError("first_step must be a WizardStep instance")
+
         self.set_title(title)
-        self.first_step = first_step
+        self._current = None
+        self._first_step = first_step
         self.edit_mode = edit_mode
         if size:
             self.get_toplevel().set_default_size(size[0], size[1])
-        self.change_step(first_step)
+
+        self._change_step(first_step)
         if not self.edit_mode:
             self.ok_button.hide()
 
-    def change_step(self, step=None):
+    # Callbacks
+
+    def on_next_button__clicked(self, button):
+        if not self._current.validate_step():
+            return
+
+        if not self._current.has_next_step():
+            # This is the last step
+            self._change_step()
+            return
+
+        self._change_step(self._current.next_step())
+
+    def on_ok_button__clicked(self, button):
+        self._change_step()
+
+    def on_previous_button__clicked(self, button):
+        self._change_step(self._current.previous_step())
+
+    def on_cancel_button__clicked(self, button):
+        self.cancel()
+
+    # Private API
+
+    def _change_step(self, step=None):
         if step is None:
             # This is the last step and we can finish the job here
             self.finish()
             return
         step.show()
-        holder_name = 'slave_area'
-        if self.get_slave(holder_name):
-            self.detach_slave(holder_name)
-        self.attach_slave(holder_name, step)
-        self.current = step
+        self._refresh_slave()
+        self._current = step
         if step.header:
             self.header_lbl.show()
             self.header_lbl.set_text(step.header)
         else:
             self.header_lbl.hide()
         self.update_view()
-        self.current.post_init()
-        return None
 
+    def _refresh_slave(self):
+        holder_name = 'slave_area'
+        if self.get_slave(holder_name):
+            self.detach_slave(holder_name)
+        self.attach_slave(holder_name, step)
+
+    def _show_first_page(self):
+        self.enable_next()
+        self.disable_back()
+        self.disable_finish()
+        self.notification_lbl.hide()
+
+    def _show_page(self):
+        self.enable_back()
+        self.enable_next()
+        self.disable_finish()
+        self.notification_lbl.hide()
+
+    def _show_last_page(self):
+        self.enable_back()
+        self.notification_lbl.show()
+        if self.edit_mode:
+            self.disable_next()
+        else:
+            self.enable_next()
+        self.enable_finish()
+
+    # Public API
     def update_view(self):
-        # First page
         if self.edit_mode:
             self.ok_button.set_sensitive(True)
-        if not self.current.has_previous_step():
-            self.enable_next()
-            self.disable_back()
-            self.disable_finish()
-            self.notification_lbl.hide()
-        # Middle page
-        elif self.current.has_next_step():
-            self.enable_back()
-            self.enable_next()
-            self.disable_finish()
-            self.notification_lbl.hide()
-        # Last page
+
+        if not self._current.has_previous_step():
+            self._show_first_page()
+        elif self._current.has_next_step():
+            self._show_page()
         else:
-            self.enable_back()
-            self.notification_lbl.show()
-            if self.edit_mode:
-                self.disable_next()
-            else:
-                self.enable_next()
-            self.enable_finish()
+            self._show_last_page()
 
     def enable_next(self):
+        """
+        Enables the next button in the wizard.
+        """
         self.next_button.set_sensitive(True)
 
-    def enable_back(self):
-        self.previous_button.set_sensitive(True)
-
-    def enable_finish(self):
-        if self.edit_mode:
-            widget = self.ok_button
-        else:
-            widget = self.next_button
-        widget.set_label(gtk.STOCK_APPLY)
-        self.wizard_finished = True
-
     def disable_next(self):
+        """
+        Enables the next button in the wizard.
+        """
         self.next_button.set_sensitive(False)
 
+    def enable_back(self):
+        """
+        Enables the back button in the wizard.
+        """
+        self.previous_button.set_sensitive(True)
+
     def disable_back(self):
+        """
+        Enables the back button in the wizard.
+        """
         self.previous_button.set_sensitive(False)
 
+    def enable_finish(self):
+        """
+        Enables the finish button in the wizard.
+        """
+        if self.edit_mode:
+            button = self.ok_button
+        else:
+            button = self.next_button
+        button.set_label(_('Finish'))
+
     def disable_finish(self):
+        """
+        Disables the finish button in the wizard.
+        """
         if self.edit_mode:
             self.ok_button.set_label(gtk.STOCK_OK)
         else:
             self.next_button.set_label(gtk.STOCK_GO_FORWARD)
 
-    def on_next_button__clicked(self, button):
-        if not self.current.validate_step():
-            return
-        if not self.current.has_next_step():
-            # This is the last step
-            self.change_step()
-            return
-        self.change_step(self.current.next_step())
-
-    def on_ok_button__clicked(self, button):
-        self.change_step()
-
-    def on_previous_button__clicked(self, button):
-        self.change_step(self.current.previous_step())
-
-    def on_cancel_button__clicked(self, button):
-        self.cancel()
-
     def set_message(self, message):
+        """
+        @param message:
+        """
         self.notification_lbl.set_text(message)
 
     def cancel(self, *args):
