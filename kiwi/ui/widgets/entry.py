@@ -461,7 +461,7 @@ class ProxyDateEntry(PropertyObject, DateEntry, WidgetMixinSupportValidation):
     # WidgetMixin implementation
 
     def read(self):
-        return self.entry.get_date()
+        return self.get_date()
 
     def update(self, data):
         if data is None:
