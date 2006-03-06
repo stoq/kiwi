@@ -32,23 +32,25 @@ class _UtilityHandler(object):
         self._utilities = {}
 
     def provide(self, iface, obj):
-        if not issubclass(iface, Interface):
-            raise TypeError("iface must be an Interface and not %r" % iface)
+        global _interfaces
+        if not issubclass(iface, _interfaces):
+            raise TypeError(
+                "iface must be an Interface subclass and not %r" % iface)
 
         if iface in self._utilities:
             raise AlreadyImplementedError("%s is already implemented" % iface)
         self._utilities[iface] = obj
 
     def get(self, iface):
-        if not issubclass(iface, Interface):
-            raise TypeError("iface must be an Interface and not %r" % iface)
+        global _interfaces
+        if not issubclass(iface, _interfaces):
+            raise TypeError(
+                "iface must be an Interface subclass and not %r" % iface)
 
         if not iface in self._utilities:
             raise NotImplementedError("No utility provided for %r" % iface)
 
         return self._utilities[iface]
-
-_handler = _UtilityHandler()
 
 def provide_utility(iface, utility):
     """
@@ -58,7 +60,7 @@ def provide_utility(iface, utility):
     @param iface: interface to set the utility for.
     @param utility: utility providing the interface.
     """
-
+    global _handler
     _handler.provide(iface, utility)
 
 def get_utility(iface):
@@ -70,4 +72,14 @@ def get_utility(iface):
     @type iface: utility providing the interface
     """
 
+    global _handler
     return _handler.get(iface)
+
+try:
+    from zope.interface import Interface as ZInterface
+    _interfaces = Interface, ZInterface
+except ImportError:
+    _interfaces = Interface
+
+_handler = _UtilityHandler()
+
