@@ -451,6 +451,11 @@ class ProxyDateEntry(PropertyObject, DateEntry, WidgetMixinSupportValidation):
         PropertyObject.__init__(self)
         _set_mask_for_data_type(self.entry, datetime.date)
 
+    gsignal('changed', 'override')
+    def do_changed(self):
+        self.chain()
+        self.emit('content-changed')
+
     # WidgetMixin implementation
 
     def read(self):
