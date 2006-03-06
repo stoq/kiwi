@@ -241,6 +241,7 @@ class DateEntry(gtk.HBox):
         gtk.HBox.__init__(self)
 
         self._popping_down = False
+        self._old_date = None
 
         self.entry = KiwiEntry()
         self.entry.connect('changed', self._on_entry__changed)
@@ -263,10 +264,8 @@ class DateEntry(gtk.HBox):
         self._popup.connect('hide', self._on_popup__hide)
         self._popup.set_size_request(-1, 24)
 
-        self._popup.emit('date-selected', self._popup.get_date())
-
     def _on_entry__changed(self, entry):
-        self.emit('changed')
+        self._changed(self.get_date())
 
     def _on_entry__activate(self, entry):
         self.emit('activate')
@@ -279,20 +278,18 @@ class DateEntry(gtk.HBox):
         else:
             return
 
-        date = self._popup.get_date()
-        newdate = date + datetime.timedelta(days=days)
+        date = self.get_date()
+        if not date:
+            newdate = datetime.date.today()
+        else:
+            newdate = date + datetime.timedelta(days=days)
         self.set_date(newdate)
-        self._popup.set_date(newdate)
 
     def _on_button__toggled(self, button):
         if self._popping_down:
             return
 
-        try:
-            date = date_converter.from_string(self.entry.get_text())
-        except ValidationError:
-            date = None
-        self._popup.popup(date)
+        self._popup.popup(self.get_date())
 
     def _on_popup__hide(self, popup):
         self._popping_down = True
@@ -304,7 +301,13 @@ class DateEntry(gtk.HBox):
         popup.popdown()
         self.entry.grab_focus()
         self.entry.set_position(len(self.entry.get_text()))
-        self.emit('changed')
+        self._changed(date)
+
+    def _changed(self, date):
+        # Only emit when something really change
+        if bool(self._old_date) ^ bool(date):
+            self.emit('changed')
+            self._old_date = date
 
     def set_date(self, date):
         """
@@ -319,6 +322,9 @@ class DateEntry(gtk.HBox):
         """
         @returns: the currently selected day
         """
-        return self._popup.get_date()
+        try:
+            return date_converter.from_string(self.entry.get_text())
+        except ValidationError:
+            pass
 
 type_register(DateEntry)
