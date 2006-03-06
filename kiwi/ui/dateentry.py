@@ -27,7 +27,7 @@ import datetime
 import gtk
 from gtk import gdk, keysyms
 
-from kiwi.datatypes import converter
+from kiwi.datatypes import converter, ValidationError
 from kiwi.ui.entry import KiwiEntry
 from kiwi.utils import gsignal, type_register
 
@@ -179,7 +179,7 @@ class _DateEntryPopup(gtk.Window):
 
         return x, y, width, height
 
-    def popup(self, text=None):
+    def popup(self, date):
         """
         Shows the list of options. And optionally selects an item
         @param text: text to select
@@ -200,7 +200,8 @@ class _DateEntryPopup(gtk.Window):
         self.move(x, y)
         self.show_all()
 
-        # XXX: Select date from text
+        if date:
+            self.set_date(date)
         self.grab_focus()
 
         if not (self.calendar.flags() & gtk.HAS_FOCUS):
@@ -282,7 +283,12 @@ class DateEntry(gtk.HBox):
     def _on_button__toggled(self, button):
         if self._popping_down:
             return
-        self._popup.popup(self.entry.get_text())
+
+        try:
+            date = date_converter.from_string(self.entry.get_text())
+        except ValidationError:
+            date = None
+        self._popup.popup(date)
 
     def _on_popup__hide(self, popup):
         self._popping_down = True
