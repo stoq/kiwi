@@ -467,6 +467,6 @@ class ProxyDateEntry(PropertyObject, DateEntry, WidgetMixinSupportValidation):
         if data is None:
             self.entry.set_text("")
         else:
-            self.entry.set_date(data)
+            self.set_date(data)
 
 type_register(ProxyDateEntry)
