@@ -451,15 +451,6 @@ class ProxyDateEntry(PropertyObject, DateEntry, WidgetMixinSupportValidation):
         PropertyObject.__init__(self)
         _set_mask_for_data_type(self.entry, datetime.date)
 
-    gproperty("mask", str, default='')
-    def prop_set_mask(self, value):
-        try:
-            self.entry.set_mask(value)
-            mask = self.entry.get_mask()
-        except MaskError, e:
-            mask = ''
-        return mask
-
     # WidgetMixin implementation
 
     def read(self):

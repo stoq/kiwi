@@ -149,6 +149,7 @@ class KiwiEntry(gtk.Entry):
 
         self.modify_font(pango.FontDescription("monospace"))
 
+        self.set_text("")
         self._insert_mask(0, input_length)
         self._mask = mask
 
