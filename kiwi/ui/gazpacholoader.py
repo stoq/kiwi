@@ -36,10 +36,12 @@ from gazpacho.loader.loader import ObjectBuilder
 from gazpacho.loader.custom import Adapter, ComboBoxAdapter, \
      PythonWidgetAdapter, adapter_registry
 from gazpacho.properties import prop_registry, CustomProperty, StringType
+from gazpacho.widgets.base.base import ContainerAdaptor
 
 from kiwi import _warn
 from kiwi.datatypes import currency
 from kiwi.environ import environ
+from kiwi.ui.hyperlink import HyperLink
 from kiwi.ui.objectlist import Column, ObjectList
 from kiwi.ui.widgets.checkbutton import CheckButton
 from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox, \
@@ -111,6 +113,36 @@ class GazpachoWidgetTree:
 
     def get_sizegroups(self):
         return self._tree.sizegroups
+
+# Normal widgets
+for prop in ('normal-color', 'normal-underline', 'normal-bold',
+             'hover-color', 'hover-underline', 'hover-bold',
+             'active-color', 'active-underline', 'active-bold'):
+    prop_registry.override_simple('HyperLink::%s' % prop, editable=False)
+
+class HyperLinkAdaptor(ContainerAdaptor):
+    def fill_empty(self, context, widget):
+        pass
+
+    def post_create(self, context, widget, interactive):
+        widget.set_text(widget.get_name())
+
+class KiwiColumnAdapter(Adapter):
+    object_type = Column
+    def construct(self, name, gtype, properties):
+        return Column(name)
+adapter_registry.register_adapter(KiwiColumnAdapter)
+
+class ObjectListAdapter(PythonWidgetAdapter):
+    object_type = ObjectList
+    def construct(self, name, gtype, properties):
+        if gtype == List:
+            gtype == ObjectList
+        return super(ObjectListAdapter, self).construct(name, gtype,
+                                                        properties)
+adapter_registry.register_adapter(ObjectListAdapter)
+
+# Framework widgets
 
 class DataTypeAdaptor(PropertyCustomEditor):
     def __init__(self):
@@ -245,21 +277,6 @@ class ModelProperty(CustomProperty, StringType):
 
 class DataValueProperty(CustomProperty, StringType):
     translatable = False
-
-class KiwiColumnAdapter(Adapter):
-    object_type = Column
-    def construct(self, name, gtype, properties):
-        return Column(name)
-adapter_registry.register_adapter(KiwiColumnAdapter)
-
-class ObjectListAdapter(PythonWidgetAdapter):
-    object_type = ObjectList
-    def construct(self, name, gtype, properties):
-        if gtype == List:
-            gtype == ObjectList
-        return super(ObjectListAdapter, self).construct(name, gtype,
-                                                        properties)
-adapter_registry.register_adapter(ObjectListAdapter)
 
 # Register widgets which have data-type and model-attributes
 # ComboBox is a special case, it needs to inherit from another

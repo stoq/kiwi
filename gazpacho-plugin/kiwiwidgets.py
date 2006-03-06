@@ -20,12 +20,9 @@ import gtk
 from gazpacho.util import get_bool_from_string_with_default
 
 # Register adapters
-import kiwi.ui.gazpacholoader
+from kiwi.ui.gazpacholoader import HyperLinkAdaptor
 root_library = 'kiwi.ui.widgets'
 widget_prefix = 'Kiwi'
-
-# pyflakes
-assert kiwi
 
 class ColumnDefinitionsAdaptor(object):
     def __init__(self):
@@ -258,3 +255,4 @@ class ListColumnDefinitionsEditor(object):
         if path > 0 and path < (size - 1):
             self.up.set_sensitive(True)
             self.down.set_sensitive(True)
+

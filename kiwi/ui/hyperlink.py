@@ -30,9 +30,10 @@ from cgi import escape
 
 import gtk
 
-from kiwi.utils import gsignal, gproperty, PropertyObject
+from kiwi.utils import gsignal, gproperty, PropertyObject, type_register
 
 class HyperLink(PropertyObject, gtk.EventBox):
+    __gtype_name__ = 'HyperLink'
     """
     A hyperlink widget.
 
@@ -171,7 +172,7 @@ class HyperLink(PropertyObject, gtk.EventBox):
         color =  self.get_property('%s-color' % state)
         underline =  self.get_property('%s-underline' % state)
         bold =  self.get_property('%s-bold' % state)
-        markup_string = self._build_markup(self.get_text(),
+        markup_string = self._build_markup(self.get_text() or '',
                                            color, underline, bold)
         self._label.set_markup(markup_string)
 
@@ -251,3 +252,4 @@ class HyperLink(PropertyObject, gtk.EventBox):
         cursor = gtk.gdk.Cursor(gtk.gdk.HAND1)
         self.window.set_cursor(cursor)
 
+type_register(HyperLink)
