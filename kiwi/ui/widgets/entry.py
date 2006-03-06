@@ -449,7 +449,7 @@ class ProxyDateEntry(PropertyObject, DateEntry, WidgetMixinSupportValidation):
         DateEntry.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
         PropertyObject.__init__(self)
-        _set_mask_for_data_type(self, datetime.date)
+        _set_mask_for_data_type(self.entry, datetime.date)
 
     gproperty("mask", str, default='')
     def prop_set_mask(self, value):
