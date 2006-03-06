@@ -121,8 +121,8 @@ class PluggableWizard(Delegate):
             self.finish()
             return
         step.show()
-        self._refresh_slave()
         self._current = step
+        self._refresh_slave()
         if step.header:
             self.header_lbl.show()
             self.header_lbl.set_text(step.header)
@@ -134,7 +134,7 @@ class PluggableWizard(Delegate):
         holder_name = 'slave_area'
         if self.get_slave(holder_name):
             self.detach_slave(holder_name)
-        self.attach_slave(holder_name, step)
+        self.attach_slave(holder_name, self._current)
 
     def _show_first_page(self):
         self.enable_next()
