@@ -43,6 +43,12 @@ class WizardStep:
         # has_next_step should return 0).
         raise NotImplementedError
 
+    def post_init(self):
+        """A virtual method that must be defined on child when it's
+        necessary. This method will be called right after the change_step
+        method on PluggableWizard is concluded for the current step.
+        """
+
     def has_next_step(self):
         # This method should return False on last step classes
         return True
@@ -129,6 +135,7 @@ class PluggableWizard(Delegate):
         else:
             self.header_lbl.hide()
         self.update_view()
+        self._current.post_init()
 
     def _refresh_slave(self):
         holder_name = 'slave_area'
