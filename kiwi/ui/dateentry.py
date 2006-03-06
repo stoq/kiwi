@@ -243,6 +243,7 @@ class DateEntry(gtk.HBox):
         self._popping_down = False
 
         self.entry = KiwiEntry()
+        self.entry.connect('changed', self._on_entry__changed)
         self.pack_start(self.entry, True, True)
         self.entry.show()
 
@@ -263,6 +264,9 @@ class DateEntry(gtk.HBox):
         self._popup.set_size_request(-1, 24)
 
         self._popup.emit('date-selected', self._popup.get_date())
+
+    def _on_entry__changed(self, entry):
+        self.emit('changed')
 
     def _on_entry__activate(self, entry):
         self.emit('activate')
