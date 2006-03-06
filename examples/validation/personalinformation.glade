@@ -120,7 +120,7 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="kiwi+ui+widgets+entry+Entry" id="birthdate">
+                            <widget class="ProxyDateEntry" id="birthdate">
                                 <property name="mandatory">True</property>
                                 <property name="model_attribute">birthdate</property>
                                 <property name="events"></property>
