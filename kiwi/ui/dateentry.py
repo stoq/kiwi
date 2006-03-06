@@ -243,6 +243,7 @@ class DateEntry(gtk.HBox):
 
         self.entry = KiwiEntry()
         self.pack_start(self.entry, True, True)
+        self.entry.show()
 
         self._button = gtk.ToggleButton()
         self._button.connect('scroll-event', self._on_entry__scroll_event)
@@ -259,6 +260,7 @@ class DateEntry(gtk.HBox):
         self._popup.connect('date-selected', self._on_popup__date_selected)
         self._popup.connect('hide', self._on_popup__hide)
         self._popup.set_size_request(-1, 24)
+
         self._popup.emit('date-selected', self._popup.get_date())
 
     def _on_entry__activate(self, entry):
