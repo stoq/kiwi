@@ -35,6 +35,7 @@ import gettext
 import gtk
 
 from kiwi.datatypes import ValidationError, number
+from kiwi.decorators import deprecated
 from kiwi.ui.entry import MaskError, KiwiEntry
 from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
@@ -144,6 +145,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
 
         self.exact_completion = value
 
+    #@deprecated('prefill')
     def set_completion_strings(self, strings=[], values=[]):
         """
         Set strings used for entry completion.
@@ -155,7 +157,6 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         @param values:
         @type  values: list of values
         """
-        print 'set_completion_strings() is deprecated, use prefill()'
 
         completion = self._get_completion()
         model = completion.get_model()
@@ -167,6 +168,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         else:
             self._mode = ENTRY_MODE_TEXT
             self.prefill(strings)
+    set_completion_strings = deprecated('prefill')(set_completion_strings)
 
     def prefill(self, itemdata, sort=False):
         """Fills the Combo with listitems corresponding to the itemdata
