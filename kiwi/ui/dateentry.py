@@ -305,7 +305,7 @@ class DateEntry(gtk.HBox):
 
     def _changed(self, date):
         # Only emit when something really change
-        if bool(self._old_date) ^ bool(date):
+        if self._old_date != date:
             self.emit('changed')
             self._old_date = date
 
