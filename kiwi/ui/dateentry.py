@@ -152,7 +152,7 @@ class _DateEntryPopup(gtk.Window):
 
         # We need to fetch the coordinates of the entry window
         # since comboentry itself does not have a window
-        x, y = sample.window.get_origin()
+        x, y = sample.entry.window.get_origin()
         width, height = calendar.size_request()
         height = self.height
 
