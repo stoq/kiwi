@@ -316,6 +316,11 @@ class ComboEntry(gtk.HBox):
 
         self.set_model(self.entry.get_completion().get_model())
 
+    # Virtual methods
+
+    def do_grab_focus(self):
+        self.entry.grab_focus()
+
     # Callbacks
 
     def _on_entry__activate(self, entry):

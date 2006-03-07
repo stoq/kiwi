@@ -266,6 +266,13 @@ class DateEntry(gtk.HBox):
         self._popup.connect('hide', self._on_popup__hide)
         self._popup.set_size_request(-1, 24)
 
+    # Virtual methods
+
+    def do_grab_focus(self):
+        self.entry.grab_focus()
+
+    # Callbacks
+
     def _on_entry__changed(self, entry):
         self._changed(self.get_date())
 
@@ -306,10 +313,11 @@ class DateEntry(gtk.HBox):
         self._changed(date)
 
     def _changed(self, date):
-        # Only emit when something really change
         if self._old_date != date:
             self.emit('changed')
             self._old_date = date
+
+    # Public API
 
     def set_date(self, date):
         """
