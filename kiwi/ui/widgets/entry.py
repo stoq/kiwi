@@ -34,7 +34,7 @@ import gettext
 
 import gtk
 
-from kiwi.datatypes import ValidationError, converter, number
+from kiwi.datatypes import ValidationError, number
 from kiwi.ui.entry import MaskError, KiwiEntry
 from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
@@ -47,37 +47,6 @@ _ = gettext.gettext
 
 (ENTRY_MODE_TEXT,
  ENTRY_MODE_DATA) = range(2)
-
-DATE_MASK_TABLE = {
-    '%m': '%2d',
-    '%y': '%2d',
-    '%d': '%2d',
-    '%Y': '%4d',
-    '%H': '%2d',
-    '%M': '%2d',
-    '%S': '%2d',
-    '%T': '%2d:%2d:%2d',
-    # FIXME: locale specific
-    '%r': '%2d:%2d:%2d %2c',
-    }
-
-def _set_mask_for_data_type(entry, data_type):
-    if not data_type in (datetime.datetime, datetime.date, datetime.time):
-        return
-    conv = converter.get_converter(data_type)
-    mask = conv.get_format()
-
-    # For win32, skip mask
-    # FIXME: How can we figure out the real format string?
-    for m in ('%X', '%x', '%c'):
-        if m in mask:
-            return
-
-    for format_char, mask_char in DATE_MASK_TABLE.items():
-        mask = mask.replace(format_char, mask_char)
-
-    entry.set_mask(mask)
-
 
 class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
     """The Kiwi Entry widget has many special features that extend the basic
@@ -147,7 +116,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         # Apply a mask for the data types, some types like
         # dates has a default mask
         try:
-            _set_mask_for_data_type(self, data_type)
+            self.set_mask_for_data_type(data_type)
         except MaskError:
             pass
         return data_type
@@ -449,7 +418,6 @@ class ProxyDateEntry(PropertyObject, DateEntry, WidgetMixinSupportValidation):
         DateEntry.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
         PropertyObject.__init__(self)
-        _set_mask_for_data_type(self.entry, datetime.date)
 
     gsignal('changed', 'override')
     def do_changed(self):

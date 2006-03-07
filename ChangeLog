@@ -1,3 +1,12 @@
+2006-03-07  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/dateentry.py:
+	* kiwi/ui/entry.py:
+	* kiwi/ui/widgets/entry.py:
+
+	Make sure the width of the dateentry is not longer than
+	it needs to be, don't expand at all.
+
 2006-03-06  Johan Dahlin  <jdahlin@async.com.br>
 
 	* gazpacho-plugin/kiwiwidgets.py:

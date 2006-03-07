@@ -245,14 +245,16 @@ class DateEntry(gtk.HBox):
 
         self.entry = KiwiEntry()
         self.entry.connect('changed', self._on_entry__changed)
-        self.pack_start(self.entry, True, True)
+        self.entry.set_mask_for_data_type(datetime.date)
+        self.entry.set_width_chars(len(self.entry.get_mask()))
+        self.pack_start(self.entry, False, False)
         self.entry.show()
 
         self._button = gtk.ToggleButton()
         self._button.connect('scroll-event', self._on_entry__scroll_event)
         self._button.connect('toggled', self._on_button__toggled)
         self._button.set_focus_on_click(False)
-        self.pack_end(self._button, False, False)
+        self.pack_start(self._button, False, False)
         self._button.show()
 
         arrow = gtk.Arrow(gtk.ARROW_DOWN, gtk.SHADOW_NONE)
