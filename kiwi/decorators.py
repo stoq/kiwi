@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
@@ -65,7 +65,7 @@ class signal_block(object):
     When calling update_money() the value of the spinbutton called money
     will be updated, but on_money__changed will not be called.
     """
-    
+
     def __init__(self, *signals):
         self.signals = []
         for signal in signals:
@@ -82,13 +82,13 @@ class signal_block(object):
                 if widget is None:
                     raise TypeError("Unknown widget %s in view " % name)
                 view.handler_block(widget, signal)
-                
+
             retval = func(view, *args, **kwargs)
-            
+
             for name, signal in self.signals:
                 widget = getattr(view, name, None)
                 view.handler_unblock(widget, signal)
-                
+
             return retval
         wrapper.__name__ = func.__name__
         return wrapper
