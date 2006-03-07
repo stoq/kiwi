@@ -151,6 +151,17 @@ class ComboMixin(object):
         model = self.get_model()
         model.clear()
 
+    def select(self, data):
+        mode = self.mode
+        if self.mode == COMBO_MODE_STRING:
+            self.select_item_by_label(data)
+        elif self.mode == COMBO_MODE_DATA:
+            self.select_item_by_data(data)
+        else:
+            # XXX: When setting the datatype to non string, automatically go to
+            #      data mode
+            raise TypeError("unknown ComboBox mode. Did you call prefill?")
+
     def select_item_by_position(self, pos):
         self.set_active(pos)
 
@@ -218,15 +229,4 @@ class ComboMixin(object):
             return self.get_selected_data()
         else:
             raise AssertionError
-
-    def select(self, data):
-        mode = self.mode
-        if self.mode == COMBO_MODE_STRING:
-            self.select_item_by_label(data)
-        elif self.mode == COMBO_MODE_DATA:
-            self.select_item_by_data(data)
-        else:
-            # XXX: When setting the datatype to non string, automatically go to
-            #      data mode
-            raise TypeError("unknown ComboBox mode. Did you call prefill?")
 
