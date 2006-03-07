@@ -82,7 +82,6 @@ proxy = form.add_proxy(person, ['name', 'age', 'birthdate',
                                 'height', 'weight', 'about',
                                 'nationality', 'status', 'gender'])
 form.show_all()
-form.birthdate.grab_focus()
 
 def on_ok_btn_clicked(widget):
     print "Name:", person.name
