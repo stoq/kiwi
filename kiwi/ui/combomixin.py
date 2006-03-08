@@ -74,8 +74,8 @@ class ComboMixin(object):
             raise TypeError("'data' parameter must be a list or tuple of item "
                             "descriptions, found %s") % type(itemdata)
 
+        self.clear()
         if len(itemdata) == 0:
-            self.clear()
             return
 
         if self.mode == COMBO_MODE_UNKNOWN:
