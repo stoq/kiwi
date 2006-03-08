@@ -36,7 +36,12 @@ class _VariableExtender:
     def __init__(self, distribution):
         install = distribution.get_command_obj('install')
         name = distribution.get_name()
-        self.prefix = install.prefix
+        # Remove trailing /
+        prefix = install.prefix
+        if prefix[-1] == '/':
+            prefix = prefix[:-1]
+        self.prefix = prefix
+
         self.datadir = os.path.join(self.prefix, 'share', name)
         if self.prefix == '/usr':
             self.sysconfdir = '/etc'
@@ -86,7 +91,6 @@ class KiwiInstallLib(install_lib):
                 else:
                     part = '"%s"' % part
                 parts.append(part)
-
             fp.write("%s['%s'] = %s\n" % (
                 name, key, 'os.path.join(%s)' % ', '.join(parts)))
 
