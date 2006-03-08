@@ -55,8 +55,10 @@ assert kiwi_version # pyflakes
 
 lib = Library('kiwi')
 if lib.uninstalled:
+    lib.add_resource('locale', 'locale')
     lib.add_global_resource('glade', 'glade')
     lib.add_global_resource('pixmap', 'pixmaps')
+lib.enable_translation()
 
 del Library, lib
 

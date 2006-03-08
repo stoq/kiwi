@@ -30,6 +30,7 @@ from kiwi.dist import listfiles, listpackages, KiwiInstallLib, \
      get_site_packages_dir, KiwiInstallData
 
 class InstallLib(KiwiInstallLib):
+    resources = dict(locale='$prefix/share/locale')
     global_resources = dict(glade='$datadir/glade',
                             pixmap='$datadir/pixmaps')
 

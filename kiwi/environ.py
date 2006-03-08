@@ -216,12 +216,20 @@ class Library(Environment):
                            charset='utf-8'):
         if not domain:
             domain = self.name
-
         # XXX: locale should not be a list
         localedir = self._resources.get(locale)
         if localedir:
             gettext.bindtextdomain(domain, localedir[0])
+        else:
+            print 'Warning, no localedir for: %s' % domain
         gettext.bind_textdomain_codeset(domain, charset)
+
+    def set_application_domain(self, domain):
+        """
+        Sets the default application domain
+        @param domain: the domain
+        """
+        gettext.textdomain(domain)
 
     def add_global_resource(self, resource, path):
         """Convenience method to add a global resource.
@@ -285,7 +293,11 @@ class Application(Library):
             domain = self.name
 
         Library.enable_translation(self, domain, locale, charset)
-        gettext.textdomain(domain)
+        old_domain = gettext.textdomain()
+        if old_domain  != 'messages':
+            print 'Warning: overriding default domain, was %s' % old_domain
+
+        self.set_application_domain(domain)
 
     def run(self):
         main = self._get_main()
