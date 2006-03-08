@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-08 12:31-0300\n"
-"PO-Revision-Date: 2006-02-03 19:25-0200\n"
+"PO-Revision-Date: 2006-03-08 13:42-0300\n"
 "Last-Translator: Johan Dahlin <jdahlin@async.com.br>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -103,7 +103,7 @@ msgstr "Vill du verkligen ersätta den med den nuvarande?"
 
 #: ../kiwi/ui/dialogs.py:274
 msgid "Replace"
-msgstr "Ersätt\n"
+msgstr "Ersätt"
 
 #: ../kiwi/ui/dialogs.py:280
 msgid "Save"

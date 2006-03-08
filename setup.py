@@ -27,12 +27,17 @@ except ImportError:
     raise SystemExit("Kiwi requires PyGTK 2.8 or higher")
 
 from kiwi.dist import listfiles, listpackages, KiwiInstallLib, \
-     get_site_packages_dir, KiwiInstallData
+     get_site_packages_dir, compile_po_files, KiwiInstallData
 
 class InstallLib(KiwiInstallLib):
     resources = dict(locale='$prefix/share/locale')
     global_resources = dict(glade='$datadir/glade',
                             pixmap='$datadir/pixmaps')
+
+class InstallData(KiwiInstallData):
+    def run(self):
+        self.data_files.extend(compile_po_files('kiwi'))
+        KiwiInstallData.run(self)
 
 version = ''
 execfile("kiwi/__version__.py")
@@ -65,5 +70,5 @@ setup(name="kiwi",
                'bin/kiwi-ui-test'],
       packages=listpackages('kiwi'),
       cmdclass=dict(install_lib=InstallLib,
-                    install_data=KiwiInstallData),
+                    install_data=InstallData),
       )
