@@ -272,6 +272,11 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         else:
             raise AssertionError
 
+    def get_selected_label(self, treeiter):
+        completion = self._get_completion()
+        model = completion.get_model()
+        return model[treeiter][COL_COMBO_LABEL]
+
     def get_iter_from_obj(self, obj):
         mode = self._mode
         if mode == ENTRY_MODE_TEXT:

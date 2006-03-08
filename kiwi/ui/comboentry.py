@@ -285,7 +285,7 @@ class ComboEntry(gtk.HBox):
     gsignal('activate')
     def __init__(self):
         gtk.HBox.__init__(self)
-
+        self.connect('notify::name', self. _on_notify__name)
         self._popping_down = False
 
         self.entry = Entry()
@@ -322,6 +322,9 @@ class ComboEntry(gtk.HBox):
         self.entry.grab_focus()
 
     # Callbacks
+
+    def _on_notify__name(self, comboentry, pspec):
+        self.entry.set_name(self.get_name())
 
     def _on_entry__activate(self, entry):
         self.emit('activate')
@@ -390,6 +393,9 @@ class ComboEntry(gtk.HBox):
 
     # Public API
 
+    def clicked(self):
+        pass
+
     def popup(self):
         """
         Hide the popup window
@@ -440,7 +446,7 @@ class ComboEntry(gtk.HBox):
         return self._model
 
     def set_active_iter(self, iter):
-        """
+       """
         @param iter: iter to select
         @type iter: gtk.TreeIter
         """
@@ -458,6 +464,7 @@ class ComboEntry(gtk.HBox):
         """
         See L{kiwi.ui.widgets.entry}
         """
+        self._model.clear()
         self.entry.prefill(itemdata, sort)
 
     def select_item_by_data(self, data):
@@ -482,6 +489,14 @@ class ComboEntry(gtk.HBox):
         treeiter = self.get_active_iter()
         if treeiter:
             return self.entry.get_selected_by_iter(treeiter)
+
+    def get_selected_label(self):
+        """
+        @returns: the label of the currently selected item
+        """
+        treeiter = self.get_active_iter()
+        if treeiter:
+            return self.entry.get_selected_label(treeiter)
 
     def select(self, obj):
         """
