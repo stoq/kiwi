@@ -446,7 +446,7 @@ class ComboEntry(gtk.HBox):
         return self._model
 
     def set_active_iter(self, iter):
-       """
+        """
         @param iter: iter to select
         @type iter: gtk.TreeIter
         """
