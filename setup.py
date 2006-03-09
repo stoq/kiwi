@@ -14,18 +14,7 @@ simpler.
 
 from distutils.core import setup
 
-try:
-    import pygtk
-    pygtk.require('2.0')
-except ImportError:
-    pass
-
-try:
-    import gobject
-    import gtk
-except ImportError:
-    raise SystemExit("Kiwi requires PyGTK 2.8 or higher")
-
+from kiwi import kiwi_version
 from kiwi.dist import listfiles, listpackages, KiwiInstallLib, \
      get_site_packages_dir, compile_po_files, KiwiInstallData
 
@@ -39,12 +28,8 @@ class InstallData(KiwiInstallData):
         self.data_files.extend(compile_po_files('kiwi'))
         KiwiInstallData.run(self)
 
-version = ''
-execfile("kiwi/__version__.py")
-assert version
-
 setup(name="kiwi",
-      version=".".join(map(str, version)),
+      version=".".join(map(str, kiwi_version)),
       description="A framework and a set of enhanced widgets based on PyGTK",
       long_description=__doc__,
       author="Async Open Source",
