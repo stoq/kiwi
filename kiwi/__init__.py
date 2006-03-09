@@ -49,13 +49,16 @@ except ImportError:
         "PyGTK 2.8 or PyGObject 2.9.0 or higher is required by kiwi")
 
 from kiwi.__version__ import version as kiwi_version
-from kiwi.environ import Library
+from kiwi.environ import EnvironmentError, Library
 
 assert kiwi_version # pyflakes
 
 lib = Library('kiwi')
 if lib.uninstalled:
-    lib.add_resource('locale', 'locale')
+    try:
+        lib.add_resource('locale', 'locale')
+    except EnvironmentError:
+        pass
     lib.add_global_resource('glade', 'glade')
     lib.add_global_resource('pixmap', 'pixmaps')
 lib.enable_translation()
