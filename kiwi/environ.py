@@ -279,7 +279,7 @@ class Application(Library):
     def _get_main(self):
         try:
             module = namedAny(self._path)
-        except (ValueError, AttributeError, ImportError), e:
+        except ImportError, e:
             raise SystemExit("ERROR: Could not find item '%s', %s" %
                              (self._path, e))
 
