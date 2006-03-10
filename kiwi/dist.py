@@ -207,4 +207,3 @@ def listpackages(root, exclude=None):
                 packages.remove(package)
 
     return packages
-

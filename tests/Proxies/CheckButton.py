@@ -61,4 +61,3 @@ assert f.A == 0, f.A
 assert f.B == 1, f.B
 if DEBUG: c.show_all_and_loop(); print f.__dict__
 print "ToggleButton OK"
-

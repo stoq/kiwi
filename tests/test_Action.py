@@ -14,7 +14,7 @@ class ActionDelegate(Delegate):
 
     def on_New__activate(self, *args):
         self.new_activated = True
-        
+
 class ActionTest(unittest.TestCase):
     def testButtons(self):
         action_delegate = ActionDelegate()

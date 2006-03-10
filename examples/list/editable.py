@@ -27,4 +27,3 @@ window.add(fruits)
 window.show_all()
 
 gtk.main()
-

@@ -7,7 +7,7 @@ class Product:
     def __init__(self, name, price):
         self.name = name
         self.price = price
-        
+
     def __repr__(self):
         return '<Product %s>' % self.name
 
@@ -20,7 +20,7 @@ data = (Product('Snacks', 3.50),
         Product('Juice', 4.75),
         Product('Apple', 0.35),
         Product('Chocolate bar', 8.5),
-        Product('Bubble gum', 0.3), 
+        Product('Bubble gum', 0.3),
         Product('Tutti-frutti', 1.50)
        )
 
@@ -37,7 +37,7 @@ def entry_activate_cb(entry):
     products = [product for product in data
                             if text.lower() in product.name.lower()]
     l.add_list(products)
-    
+
 entry = gtk.Entry()
 entry.connect('activate', entry_activate_cb)
 vbox.pack_start(entry, False, False, 6)
@@ -49,4 +49,3 @@ vbox.pack_start(l)
 win.show_all()
 
 gtk.main()
-

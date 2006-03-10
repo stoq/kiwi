@@ -16,18 +16,17 @@ class Hello(Delegate):
 
         Delegate.__init__(self, topwidget, delete_handler=self.quit_if_last)
         # focus button, our only widget
-        self.focus_topmost() 
+        self.focus_topmost()
 
     def on_button__clicked(self, button, *args):
         self.index = self.index + 1
         # Two clicks and we're gone
-        if self.index > 1: 
+        if self.index > 1:
             self.hide_and_quit()
             # the *handler's* return value disappears into GTK+
-            return 
+            return
         button.set_label(self.text[self.index])
 
 app = Hello()
 app.show_all()
 gtk.main()
-

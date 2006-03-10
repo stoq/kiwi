@@ -10,7 +10,7 @@ testdir =  os.path.dirname(myself)
 if testdir not in sys.path:
     sys.path.append(testdir)
 sys.path.insert(0, os.path.join(testdir, '..'))
-    
+
 print 'Running tests on', testdir
 
 from kiwi.environ import require_gazpacho

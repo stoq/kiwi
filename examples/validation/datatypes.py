@@ -15,15 +15,15 @@ window.add(vbox)
 data_types = [
     (True, bool),
     (42, int),
-    (22.0/7.0, float), 
-    (3000L, long), 
+    (22.0/7.0, float),
+    (3000L, long),
     ('THX', str),
     (datetime.datetime.now(), datetime.datetime),
     (datetime.date.today(), datetime.date),
     (datetime.time(11, 38, 00), datetime.time),
     (currency(50.1), currency),
     ]
-    
+
 for data, data_type in data_types:
     hbox = gtk.HBox(True)
     vbox.pack_start(hbox, False, False, 6)

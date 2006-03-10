@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Lorenzo Gil Sanchez <lgs@sicem.biz>
 #            Johan Dahlin <jdahlin@async.com.br>
 #
@@ -33,8 +33,8 @@ from kiwi.utils import gsignal, type_register
 
 def gdk_color_to_string(color):
     """Convert a color to a #AABBCC string"""
-    return "#%02X%02X%02X" % (int(color.red) >> 8, 
-                              int(color.green) >> 8, 
+    return "#%02X%02X%02X" % (int(color.red) >> 8,
+                              int(color.green) >> 8,
                               int(color.blue) >> 8)
 
 def set_foreground(widget, color, state=gtk.STATE_NORMAL):
@@ -48,7 +48,7 @@ def set_foreground(widget, color, state=gtk.STATE_NORMAL):
     widget.modify_fg(state, gdk.color_parse(color))
 
 def get_foreground(widget, state=gtk.STATE_NORMAL):
-    """Return the foreground color of the widget as a string"""    
+    """Return the foreground color of the widget as a string"""
     style = widget.get_style()
     color = style.fg[state]
     return gdk_color_to_string(color)
@@ -103,14 +103,14 @@ class FadeOut(gobject.GObject):
         self._countdown_timeout_id = -1
         self._log = Logger('fade')
         self._done = False
-        
+
     def _merge_colors(self, src_color, dst_color, steps=10):
         """
         Change the background of widget from src_color to dst_color
         in the number of steps specified
         """
         self._log.debug('_merge_colors: %s -> %s' % (src_color, dst_color))
-        
+
         gdk_src = gdk.color_parse(src_color)
         gdk_dst = gdk.color_parse(dst_color)
         rs, gs, bs = gdk_src.red, gdk_src.green, gdk_src.blue
@@ -145,7 +145,7 @@ class FadeOut(gobject.GObject):
         self._background_timeout_id = (
             gobject.timeout_add(FadeOut.MERGE_COLORS_DELAY, func))
         self._countdown_timeout_id = -1
-        
+
     def start(self):
         """Schedules a start of the countdown.
         @returns: True if we could start, False if was already in progress
@@ -159,13 +159,13 @@ class FadeOut(gobject.GObject):
         if self._done:
             self._log.debug('start: Not running, already set')
             return False
-            
+
         self._log.debug('start: Scheduling')
         self._countdown_timeout_id = gobject.timeout_add(
             FadeOut.COMPLAIN_DELAY, self._start_merging)
 
         return True
-    
+
     def stop(self):
         """Stops the fadeout and restores the background color"""
         self._log.debug('Stopping')
@@ -175,7 +175,7 @@ class FadeOut(gobject.GObject):
         if self._countdown_timeout_id != -1:
             gobject.source_remove(self._countdown_timeout_id)
             self._countdown_timeout_id = -1
-            
+
         self._widget.update_background(gdk.color_parse(FadeOut.GOOD_COLOR))
         self._done = False
 

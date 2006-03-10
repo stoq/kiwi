@@ -145,4 +145,3 @@ class BaseController:
                 # Need to use getattr() to ensure we get bound methods
                 methods[name] = getattr(self, name)
         return methods
-

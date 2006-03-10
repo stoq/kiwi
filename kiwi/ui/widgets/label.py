@@ -143,4 +143,4 @@ class Label(PropertyObject, gtk.Label, WidgetMixin):
         self._apply_attributes()
 
     def set_color(self, color):
-       set_foreground(self, color)
+        set_foreground(self, color)

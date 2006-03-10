@@ -36,7 +36,7 @@ class FarenView(BaseView):
     def update_temp(self, farenheit, celsius):
         self.farenheit.set_text("%.2f" % farenheit)
         self.celsius.set_text("%.2f" % celsius)
-    
+
     def clear_temp(self):
         self.farenheit.set_text("")
         self.celsius.set_text("")

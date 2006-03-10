@@ -1704,4 +1704,3 @@ class SummaryLabel(ListLabel):
 
     def _on_klist__cell_edited(self, klist, object, attribute):
         self.update_total()
-

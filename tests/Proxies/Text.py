@@ -61,9 +61,9 @@ class TextProxy(Proxy):
         self.win.add(vbox)
 
 f = Foo()
-try: 
-    c = TextProxy(f) 
-except TypeError: 
+try:
+    c = TextProxy(f)
+except TypeError:
     pass
 f.flush_proxies()
 assert f.A == "Alphabet", f.A
@@ -90,4 +90,3 @@ t = c.G.get_chars(0, c.G.get_length())
 assert t == "30.420", t
 if DEBUG: c.show_all_and_loop() ; pprint.pprint(f.__dict__)
 print "Text OK"
-

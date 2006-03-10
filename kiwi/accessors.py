@@ -7,17 +7,17 @@
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
-# 
+#
 # Author(s): Andreas Kostyrka <andreas@mtg.co.at>
 #            Christian Reis <kiko@async.com.br>
 #            Johan Dahlin <jdahlin@async.com.br>
@@ -125,7 +125,7 @@ def kgetattr_guard(wref):
     except KeyError:
         # This path is used only when the program terminates.
         pass
-    
+
 def ksetattr_guard(wref):
     try:
         key = _ksetattr_wref[id(wref)][0]
@@ -205,7 +205,7 @@ def kgetattr(model,
                 # allows caching.
                 cache = dummycache
                 get_getter = None
-                
+
                 func = getattr(obj, "get_%s" % name, None)
                 if callable(func):
                     icode = FAST_METHOD_ACCESS
@@ -223,7 +223,7 @@ def kgetattr(model,
                     if default == _AttrUnset:
                         raise
                     return default
-            
+
                 if isinstance(func, TupleType):
                     data1, data2 = func
                     if data1 == obj:
@@ -264,7 +264,7 @@ def kgetattr(model,
                 # object dies. We just remove the cache entry containing the
                 # weakref, _kgetattr_wref is used to associate which key has
                 # to be killed for a given weakref.
-                
+
                 try:
                     objref = ref(obj, kgetattr_guard)
                     _kgetattr_wref[id(objref)] = (key, objref)
@@ -326,7 +326,7 @@ def ksetattr(model,
              ksetattr_guard=ksetattr_guard,
              getattr=getattr,
              dummycache=CacheControl((None,None)),
-             
+
              # constants:
              LAMBDA_ACCESS = 0,
              METHOD_ACCESS = 1,
@@ -380,7 +380,7 @@ def ksetattr(model,
                 icode = FAST_TUPLE_ACCESS
                 data1 = None
                 data2 = attr_name
-            
+
         if get_setter is not None:
             func = get_setter(model, attr_name, cache)
 
@@ -446,7 +446,7 @@ def ksetattr(model,
         data1(value)
     else:
         raise AssertionError("Unknown tuple type in _ksetattr_cache")
-    
+
 def enable_attr_cache():
     """Enables the use of the kgetattr cache when using Python
     versions that do not support weakrefs (1.5.x and earlier). Be

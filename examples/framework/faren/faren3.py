@@ -9,14 +9,14 @@ class Farenheit(Delegate):
     gladefile = "faren"
     def __init__(self):
         Delegate.__init__(self, delete_handler=self.quit_if_last)
-        
+
     def convert_temperature(self, temp):
         farenheit = (temp * 9/5.0) + 32
         celsius = (temp - 32) * 5/9.0
-        return farenheit, celsius 
-    
+        return farenheit, celsius
+
     def clear_temperature(self):
-        self.farenheit.set_text("") 
+        self.farenheit.set_text("")
         self.celsius.set_text("")
 
     # Signal handlers

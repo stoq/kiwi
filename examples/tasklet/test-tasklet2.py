@@ -52,7 +52,7 @@ def main():
     if len(args) != 1:
         parser.print_help()
         sys.exit(1)
-    
+
     win = gtk.Window()
     textview = gtk.TextView()
     textview.modify_font(pango.FontDescription("Monospace"))

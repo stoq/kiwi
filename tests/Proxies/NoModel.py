@@ -44,8 +44,6 @@ f = Foo()
 f.A = 10
 c.new_model(f)
 assert f.A == 10, f.A
-t = c.A.get_text() 
+t = c.A.get_text()
 assert t == "10", t
 print "NoModel ok"
-
-

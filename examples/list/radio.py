@@ -2,7 +2,7 @@ import gtk
 from kiwi.ui.objectlist import Column, ObjectList
 
 class Object:
-    def __init__(self, name, value): 
+    def __init__(self, name, value):
         self.name, self.value = name, value
 
 columns = [Column('name'),
@@ -24,4 +24,3 @@ for name, value in [('First', False),
 win.show_all()
 
 gtk.main()
-

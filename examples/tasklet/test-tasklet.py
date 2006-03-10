@@ -9,18 +9,18 @@ class Counter(tasklet.Tasklet):
     def __init__(self, dialog):
         self.dialog = dialog
         super(Counter, self).__init__()
-        
+
     def run(self):
         timeout = tasklet.WaitForTimeout(1000)
         msgwait = tasklet.WaitForMessages(accept='quit')
-        
+
         for i in xrange(10, 0, -1):
             self.dialog.format_secondary_markup(
                 "Time left: <b>%i</b> seconds" % i)
 
             yield timeout, msgwait
             ev = tasklet.get_event()
-            
+
             if isinstance(ev, tasklet.Message) and ev.name == 'quit':
                 return
             elif ev is timeout:
@@ -40,7 +40,7 @@ def main():
     yield (tasklet.WaitForTasklet(counter),
            tasklet.WaitForSignal(dialog, "response"),
            tasklet.WaitForSignal(dialog, "close"))
-    
+
     event = tasklet.get_event()
     if isinstance(event, tasklet.WaitForSignal):
         print "signal '%s', stopping counter" % event.signal
@@ -49,7 +49,7 @@ def main():
         if event.signal == 'close':
             gtk.main_quit()
             return
-        
+
         response = event.signal_args[0]
         msgbox = gtk.MessageDialog(parent=dialog,
                                    flags=gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -75,7 +75,7 @@ def main():
         yield (tasklet.WaitForSignal(msgbox, "response"),
                tasklet.WaitForSignal(msgbox, "close"))
         print "event", tasklet.get_event()
-        
+
     else:
         ## timeout must have exausted..
         assert isinstance(event, tasklet.WaitForTasklet)

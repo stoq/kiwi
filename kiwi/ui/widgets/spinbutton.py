@@ -85,7 +85,7 @@ class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
 
         self.chain(allocation)
 
-	if self.flags() & gtk.REALIZED:
+        if self.flags() & gtk.REALIZED:
             self._icon.resize_windows()
 
     def do_realize(self):

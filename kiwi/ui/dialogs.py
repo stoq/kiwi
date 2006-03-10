@@ -60,25 +60,25 @@ class HIGAlertDialog(gtk.Dialog):
                 "buttons be one of: %s", ', '.join(_BUTTON_TYPES.keys()))
 
         gtk.Dialog.__init__(self, '', parent, flags)
-	self.set_border_width(5)
-	self.set_resizable(False)
-	self.set_has_separator(False)
+        self.set_border_width(5)
+        self.set_resizable(False)
+        self.set_has_separator(False)
         # Some window managers (ION) displays a default title (???) if
         # the specified one is empty, workaround this by setting it
         # to a single space instead
-	self.set_title(" ")
-	self.set_skip_taskbar_hint(True)
-	self.vbox.set_spacing(14)
-	self.get_accessible().set_role(atk.ROLE_ALERT)
+        self.set_title(" ")
+        self.set_skip_taskbar_hint(True)
+        self.vbox.set_spacing(14)
+        self.get_accessible().set_role(atk.ROLE_ALERT)
 
-	self._primary_label = gtk.Label()
-	self._secondary_label = gtk.Label()
-	self._details_label = gtk.Label()
-	self._image = gtk.image_new_from_stock(_IMAGE_TYPES[type],
+        self._primary_label = gtk.Label()
+        self._secondary_label = gtk.Label()
+        self._details_label = gtk.Label()
+        self._image = gtk.image_new_from_stock(_IMAGE_TYPES[type],
                                                gtk.ICON_SIZE_DIALOG)
-	self._image.set_alignment(0.5, 0.0)
+        self._image.set_alignment(0.5, 0.0)
 
-	self._primary_label.set_use_markup(True)
+        self._primary_label.set_use_markup(True)
         for label in (self._primary_label, self._secondary_label,
                       self._details_label):
             label.set_line_wrap(True)
@@ -89,12 +89,12 @@ class HIGAlertDialog(gtk.Dialog):
         hbox.set_border_width(5)
         hbox.pack_start(self._image, False, False)
 
-	vbox = gtk.VBox(False, 0)
+        vbox = gtk.VBox(False, 0)
         hbox.pack_start(vbox, False, False)
         vbox.pack_start(self._primary_label, False, False)
         vbox.pack_start(self._secondary_label, False, False)
 
-	self._expander = gtk.expander_new_with_mnemonic(
+        self._expander = gtk.expander_new_with_mnemonic(
             _("Show more _details"))
         self._expander.set_spacing(6)
         self._expander.add(self._details_label)
@@ -306,21 +306,21 @@ def save(title='', parent=None, current_name='', folder=None):
     return path
 
 def _test():
-     yesno('Kill?', default=gtk.RESPONSE_NO)
+    yesno('Kill?', default=gtk.RESPONSE_NO)
 
-     info('Some information displayed not too long\nbut not too short',
-          long=('foobar ba asdjaiosjd oiadjoisjaoi aksjdasdasd kajsdhakjsdh\n'
-                'askdjhaskjdha skjdhasdasdjkasldj alksdjalksjda lksdjalksdj\n'
-                'asdjaslkdj alksdj lkasjdlkjasldkj alksjdlkasjd jklsdjakls\n'
-                'ask;ldjaklsjdlkasjd alksdj laksjdlkasjd lkajs kjaslk jkl\n'),
-          default=gtk.RESPONSE_OK,
-          )
+    info('Some information displayed not too long\nbut not too short',
+         long=('foobar ba asdjaiosjd oiadjoisjaoi aksjdasdasd kajsdhakjsdh\n'
+               'askdjhaskjdha skjdhasdasdjkasldj alksdjalksjda lksdjalksdj\n'
+               'asdjaslkdj alksdj lkasjdlkjasldkj alksjdlkasjd jklsdjakls\n'
+               'ask;ldjaklsjdlkasjd alksdj laksjdlkasjd lkajs kjaslk jkl\n'),
+         default=gtk.RESPONSE_OK,
+         )
 
-     error('An error occurred', gtk.Button('Woho'))
-     error('Unable to mount the selected volume.',
-           'mount: can\'t find /media/cdrom0 in /etc/fstab or /etc/mtab')
-     print open(title='Open a file', patterns=['*.py'])
-     print save(title='Save a file', current_name='foobar.py')
+    error('An error occurred', gtk.Button('Woho'))
+    error('Unable to mount the selected volume.',
+          'mount: can\'t find /media/cdrom0 in /etc/fstab or /etc/mtab')
+    print open(title='Open a file', patterns=['*.py'])
+    print save(title='Save a file', current_name='foobar.py')
 
 if __name__ == '__main__':
     _test()

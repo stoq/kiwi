@@ -244,4 +244,3 @@ class Player(Base):
 
         while self._appthread.isAlive():
             time.sleep(0.1)
-

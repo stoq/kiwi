@@ -229,4 +229,3 @@ class ComboMixin(object):
             return self.get_selected_data()
         else:
             raise AssertionError
-

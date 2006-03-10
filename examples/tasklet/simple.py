@@ -13,7 +13,7 @@ class _CountSomeNumbers2(Tasklet):
         self.count = count
         self.timeout = timeout
         Tasklet.__init__(self)
-    
+
     def run(self):
         '''Execute the task.'''
         import random

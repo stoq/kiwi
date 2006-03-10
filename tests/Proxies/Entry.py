@@ -159,9 +159,9 @@ class SpinProxy(EntryProxy):
         self.set_numeric(["A", "B", "C", "D", "E", "F"])
 
 f = Foo()
-try: 
-    c = EntryProxy(f) 
-except TypeError: 
+try:
+    c = EntryProxy(f)
+except TypeError:
     pass
 f.flush_proxies()
 c = EntryProxy(f, 1)
@@ -187,9 +187,9 @@ if DEBUG: c.show_all_and_loop() ; pprint.pprint(f.__dict__)
 print "Entry OK"
 
 f = Foo()
-try: 
-    c = ComboProxy(f) 
-except TypeError: 
+try:
+    c = ComboProxy(f)
+except TypeError:
     pass
 f.flush_proxies()
 c = ComboProxy(f, 1)
@@ -213,9 +213,9 @@ if DEBUG: c.show_all_and_loop() ; pprint.pprint(f.__dict__)
 print "Combo OK"
 
 f = Foo()
-try: 
-    c = LabelProxy(f) 
-except TypeError: 
+try:
+    c = LabelProxy(f)
+except TypeError:
     pass
 f.flush_proxies()
 c = LabelProxy(f, 1)
@@ -227,7 +227,7 @@ assert f.C == 10, f.C
 assert f.D == 20
 # XXX: label doesn't generate signals, so we can't pick up the
 # set_text() changes done to it. This is why
-#   assert f.F == "NOOGIE" 
+#   assert f.F == "NOOGIE"
 # fails here. See WidgetProxies.Entry:Labelproxy.update for details.
 f.A = "Aspargus"
 f.B = "Barney"
@@ -248,9 +248,9 @@ print "Label OK"
 
 f = NumberFoo()
 assert f.D == 4, f.D
-try: 
-    c = SpinProxy(f) 
-except TypeError: 
+try:
+    c = SpinProxy(f)
+except TypeError:
     pass
 f.flush_proxies()
 c = SpinProxy(f, 1)
@@ -272,4 +272,3 @@ assert f.D == 1, f.D
 t = c.G.get_text()
 assert t == "30,420", t
 print "SpinButton OK"
-

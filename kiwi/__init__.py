@@ -74,4 +74,3 @@ def _warn(msg):
     sys.stderr.write("Kiwi warning: "+msg+"\n")
 
 __all__ = ['ValueUnset', '_warn', 'kiwi_version']
-

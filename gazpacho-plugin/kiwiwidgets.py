@@ -256,4 +256,3 @@ class ListColumnDefinitionsEditor(object):
         if path > 0 and path < (size - 1):
             self.up.set_sensitive(True)
             self.down.set_sensitive(True)
-

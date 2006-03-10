@@ -312,4 +312,3 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
 
     def _on_fadeout__color_changed(self, fadeout, color):
         self.update_background(color)
-

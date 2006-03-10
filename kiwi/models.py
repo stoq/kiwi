@@ -258,4 +258,3 @@ def unpickle_model(klass, file=None):
     return ret
 
 # TODO: implement a Model that saves itself as CSV/XML?
-

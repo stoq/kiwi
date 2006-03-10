@@ -12,7 +12,7 @@ from Kiwi.Models import Model
 
 class Foo(Model):
     A = "Play"
-    B = 222 
+    B = 222
     C = "OOH"
     # No D - Play
     E = None # Run
@@ -71,7 +71,7 @@ class RadioProxy(Proxy):
 
 f = Foo()
 try:
-    f.D 
+    f.D
     raise AssertionError
 except:
     pass

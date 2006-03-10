@@ -5,7 +5,7 @@ from kiwi.ui.gadgets import quit_if_last
 from kiwi.ui.views import BaseView
 
 class NewsItem:
-    """An instance representing an item of news. 
+    """An instance representing an item of news.
        Attributes: title, author, url, size"""
     title = ''
     url = ''

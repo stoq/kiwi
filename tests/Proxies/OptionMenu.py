@@ -75,4 +75,3 @@ except ValueError:
     f.E = 222
 if DEBUG: c.show_all_and_loop() ; pprint.pprint(f.__dict__)
 print "OptionMenu OK"
-

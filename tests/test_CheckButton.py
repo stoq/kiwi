@@ -12,6 +12,6 @@ class CheckButtonTest(unittest.TestCase):
 
         # this test doens't work... maybe be a pygtk bug
         #self.assertRaises(TypeError, myChkBtn.set_property, 'data-type', str)
-        
+
 if __name__ == '__main__':
     unittest.main()

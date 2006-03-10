@@ -86,4 +86,3 @@ vbox.pack_start(label, expand=False, padding=6)
 win.show_all()
 
 gtk.main()
-

@@ -31,9 +31,8 @@ class NoProxy(Proxy):
         self.win.add(self.A)
 
 f = Foo()
-try: 
-    c = NoProxy(f) 
+try:
+    c = NoProxy(f)
     raise AssertionError
 except TypeError:
     print "None ok"
-

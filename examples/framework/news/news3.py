@@ -26,20 +26,20 @@ news = [
           "http://www.pigdog.org/auto/viva_la_musica/link/2678.html")
 ]
 
-my_columns = [Column("title", sorted=True, tooltip="Title of article", width=50), 
-              Column("author", tooltip="Author of article"), 
-              Column("url", title="Address", visible=False, 
+my_columns = [Column("title", sorted=True, tooltip="Title of article", width=50),
+              Column("author", tooltip="Author of article"),
+              Column("url", title="Address", visible=False,
                      tooltip="Address of article")]
 
 class Shell(Delegate):
     widgets = ["ok", "cancel", "header", "footer", "title"]
     def __init__(self):
-        Delegate.__init__(self, gladefile="news_shell", 
+        Delegate.__init__(self, gladefile="news_shell",
                           delete_handler=self.quit_if_last)
 
         # paint header and footer; they are eventboxes that hold a
         # label and buttonbox respectively
-        gadgets.set_background(self.header, "white") 
+        gadgets.set_background(self.header, "white")
         gadgets.set_background(self.footer, "#A0A0A0")
         gadgets.set_foreground(self.title, "blue")
 
@@ -48,12 +48,12 @@ class Shell(Delegate):
         objectlist.connect('selection-changed', self.news_selected)
         objectlist.connect('double-click', self.double_click)
         slave = SlaveDelegate(toplevel=objectlist)
-        
+
         self.attach_slave("placeholder", slave)
         slave.focus_toplevel() # Must be done after attach
-        
+
         self.slave = slave
-    
+
     def news_selected(self, the_list, item):
         objectlist = self.slave.get_toplevel()
         print "%s %s %s\n" % (item.title, item.author, item.url)
@@ -61,7 +61,7 @@ class Shell(Delegate):
     def double_click(self, the_list, selected_object):
         self.emit('result', selected_object.url)
         self.hide_and_quit()
-        
+
     def on_ok__clicked(self, *args):
         objectlist = self.slave.get_toplevel()
         item = objectlist.get_selected()
@@ -78,7 +78,7 @@ shell.show_all()
 def get_url(view, result):
     global url
     url = result
-    
+
 shell.connect('result', get_url)
 
 gtk.main()
@@ -87,4 +87,3 @@ if url is not None:
     # Try to run BROWSER (or lynx) on the URL returned
     browser = os.environ.get("BROWSER", "lynx")
     os.system("%s %s" % (browser, url))
-    

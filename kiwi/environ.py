@@ -323,4 +323,3 @@ def is_gazpacho_required():
 environ = Environment()
 
 app = None
-

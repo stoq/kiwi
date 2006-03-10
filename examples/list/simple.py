@@ -6,7 +6,7 @@ class Fruit:
     def __init__(self, name, price):
         self.name = name
         self.price = price
-        
+
 fruits = ObjectList([Column('name', data_type=str),
                Column('price', data_type=int)])
 
@@ -26,4 +26,3 @@ window.add(fruits)
 window.show_all()
 
 gtk.main()
-

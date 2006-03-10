@@ -39,7 +39,7 @@ class ListSlave(SlaveDelegate):
 
     def on_news_list__double_click(self, the_list, selected_object):
         self.parent.ok.clicked()
-                
+
 class Shell(Delegate):
     widgets = ["ok", "cancel", "header", "footer", "title"]
     def __init__(self):
@@ -53,15 +53,15 @@ class Shell(Delegate):
 
         # paint header and footer; they are eventboxes that hold a
         # label and buttonbox respectively
-        set_background(self.header, "white") 
+        set_background(self.header, "white")
         set_background(self.footer, "#A0A0A0")
         set_foreground(self.title,  "blue")
 
-        self.slave = ListSlave(self) 
+        self.slave = ListSlave(self)
         self.attach_slave("placeholder", self.slave)
         self.slave.show()
         self.slave.focus_toplevel() # Must be done after attach
-    
+
     def on_ok__clicked(self, button):
         objectlist = self.slave.news_list
         item = objectlist.get_selected()
@@ -79,7 +79,7 @@ shell.show()
 def get_url(view, result):
     global url
     url = result
-    
+
 shell.connect('result', get_url)
 
 gtk.main()
@@ -88,4 +88,3 @@ if url is not None:
     # Try to run BROWSER (or lynx) on the URL returned
     browser = os.environ.get("BROWSER", "lynx")
     os.system("%s %s" % (browser, url))
-    

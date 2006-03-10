@@ -39,4 +39,3 @@ class Diary(ProxyDelegate):
 
 proxy = Diary()
 proxy.show_and_loop()
-
