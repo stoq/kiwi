@@ -37,6 +37,7 @@ from gazpacho.loader.custom import Adapter, ComboBoxAdapter, \
      PythonWidgetAdapter, adapter_registry
 from gazpacho.properties import prop_registry, CustomProperty, StringType
 from gazpacho.widgets.base.base import ContainerAdaptor
+from gazpacho.widgets.base.box import BoxAdaptor
 
 from kiwi import _warn
 from kiwi.datatypes import currency
@@ -126,6 +127,14 @@ class HyperLinkAdaptor(ContainerAdaptor):
 
     def post_create(self, context, widget, interactive):
         widget.set_text(widget.get_name())
+
+class ComboEntryAdaptor(BoxAdaptor):
+    def get_children(self, context, comboentry):
+        return []
+
+class DateEntryAdaptor(BoxAdaptor):
+    def get_children(self, context, comboentry):
+        return []
 
 class KiwiColumnAdapter(Adapter):
     object_type = Column

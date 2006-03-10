@@ -13,7 +13,8 @@
                         title="Kiwi Entry" />
     <glade-widget-class name="ProxyDateEntry"
                         generic-name="kiwidateentry"
-                        title="Kiwi Date Entry" />
+                        title="Kiwi Date Entry"
+			adaptor-class="DateEntryAdaptor"/>
     <glade-widget-class name="kiwi+ui+widgets+label+Label"
                         generic-name="kiwilabel"
                         title="Kiwi Label" />
@@ -22,7 +23,8 @@
                         title="Kiwi Combo Box"/>
     <glade-widget-class name="ProxyComboEntry"
                         generic-name="kiwicomboentry"
-                        title="Kiwi Combo Entry"/>
+                        title="Kiwi Combo Entry"
+			adaptor-class="ComboEntryAdaptor"/>
     <glade-widget-class name="kiwi+ui+widgets+checkbutton+CheckButton"
                         generic-name="kiwicheckbutton"
                         title="Kiwi Check Button"/>

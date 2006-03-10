@@ -20,7 +20,8 @@ import gtk
 from gazpacho.util import get_bool_from_string_with_default
 
 # Register adapters
-from kiwi.ui.gazpacholoader import HyperLinkAdaptor
+from kiwi.ui.gazpacholoader import HyperLinkAdaptor, ComboEntryAdaptor
+
 root_library = 'kiwi.ui.widgets'
 widget_prefix = 'Kiwi'
 
