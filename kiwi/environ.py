@@ -33,8 +33,7 @@ from kiwi.python import namedAny
 __all__ = ['Application', 'Library', 'app', 'environ', 'require_gazpacho',
            'is_gazpacho_required']
 
-class EnvironmentError(Exception):
-    pass
+EnvironmentError = EnvironmentError
 
 # From http://tinyurl.com/77ukj
 def _is_frozen():
