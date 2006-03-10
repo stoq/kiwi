@@ -85,7 +85,9 @@ class KiwiInstallLib(install_lib):
             value = self.varext.extend(value)
             value = value.replace(self.varext.prefix, '$prefix')
             parts = []
-            for part in value.split('/'):
+            for part in value.split(os.sep):
+                if part == "":
+                    part = os.sep
                 if part == '$prefix':
                     part = 'prefix'
                 else:
