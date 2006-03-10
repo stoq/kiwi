@@ -285,7 +285,6 @@ class ComboEntry(gtk.HBox):
     gsignal('activate')
     def __init__(self):
         gtk.HBox.__init__(self)
-        self.connect('notify::name', self. _on_notify__name)
         self._popping_down = False
 
         self.entry = Entry()
@@ -322,9 +321,6 @@ class ComboEntry(gtk.HBox):
         self.entry.grab_focus()
 
     # Callbacks
-
-    def _on_notify__name(self, comboentry, pspec):
-        self.entry.set_name(self.get_name())
 
     def _on_entry__activate(self, entry):
         self.emit('activate')
