@@ -70,12 +70,12 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
     gproperty("mask", str, default='')
 
     def __init__(self, data_type=None):
+        self._current_object = None
+        self._mode = ENTRY_MODE_TEXT
         KiwiEntry.__init__(self)
         WidgetMixinSupportValidation.__init__(self)
         PropertyObject.__init__(self, data_type=data_type)
 
-        self._current_object = None
-        self._mode = ENTRY_MODE_TEXT
 
     # Virtual methods
     gsignal('changed', 'override')
