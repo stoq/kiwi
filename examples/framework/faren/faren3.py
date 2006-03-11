@@ -29,7 +29,10 @@ class Farenheit(Delegate):
         if temp is None:
             self.clear_temperature()
         else:
-            farenheit, celsius = self.convert_temperature(float(temp))
+            try:
+                farenheit, celsius = self.convert_temperature(float(temp)))
+            except ValueError:
+                farenheit = celsius = -1
             self.farenheit.set_text("%.2f" % farenheit)
             self.celsius.set_text("%.2f" % celsius)
 
