@@ -21,7 +21,7 @@ data_types = [
     (datetime.datetime.now(), datetime.datetime),
     (datetime.date.today(), datetime.date),
     (datetime.time(11, 38, 00), datetime.time),
-    (currency(50.1), currency),
+    (currency('50.1'), currency),
     ]
 
 for data, data_type in data_types:
