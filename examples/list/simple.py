@@ -20,7 +20,7 @@ for name, price in [('Apple', 4),
 window = gtk.Window()
 window.connect('delete-event', gtk.main_quit)
 window.set_title('Fruits')
-window.set_size_request(150, 150)
+window.set_size_request(150, 180)
 
 window.add(fruits)
 window.show_all()
