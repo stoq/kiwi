@@ -42,7 +42,6 @@ from gazpacho.widgets.base.box import BoxAdaptor
 from kiwi import _warn
 from kiwi.datatypes import currency
 from kiwi.environ import environ
-from kiwi.ui.hyperlink import HyperLink
 from kiwi.ui.objectlist import Column, ObjectList
 from kiwi.ui.widgets.checkbutton import CheckButton
 from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox, \

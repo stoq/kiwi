@@ -275,7 +275,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
     def get_selected_label(self, treeiter):
         completion = self._get_completion()
         model = completion.get_model()
-        return model[treeiter][COL_COMBO_LABEL]
+        return model[treeiter][COL_TEXT]
 
     def get_iter_from_obj(self, obj):
         mode = self._mode
