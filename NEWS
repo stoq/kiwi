@@ -1,3 +1,18 @@
+kiwi-1.9.7: 11-march-2006
+    - installation fixes (Patrick)
+    - Much improved mask support
+    - DateEntry widget
+    - Re-add ProxyDelegate (lost since kiwi1)
+    - Draw validation icon on the left side for right align entries
+    - Many ComboEntry bug fixes
+    - Distribution helper improvements
+    - Limited support for zope.interfaces
+    - Add a better HIG alert dialog
+    - Improved searching ObjectList (Patrick)
+    - Better unittest coverage, add coverage test script, support for trial
+    - Unicode datatype
+    - Improved logging (a la GStreamer)
+
 kiwi-1.9.6: 30-january-2006
     - argcheck bugfix (Patrick K O'Brien)
     - Some basic dialogs imported from gazpacho
