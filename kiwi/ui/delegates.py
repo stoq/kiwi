@@ -64,6 +64,9 @@ class Delegate(BaseView, BaseController):
 class ProxyDelegate(Delegate):
     """A class that combines view, controller and proxy functionality into a
     single package. The Delegate class possesses a top-level window.
+
+    @ivar model: the model
+    @ivar proxy: the proxy
     """
     def __init__(self, model, proxy_widgets=None, gladefile=None,
                  toplevel=None, widgets=(), gladename=None,
@@ -80,9 +83,8 @@ class ProxyDelegate(Delegate):
                           gladename, toplevel_name, domain,
                           delete_handler)
         self.model = model
-        self._proxy = self.add_proxy(model, proxy_widgets)
-        # HACK: Use signals instead, right?
-        self._proxy.proxy_updated = self.proxy_updated
+        self.proxy = self.add_proxy(model, proxy_widgets)
+        self.proxy.proxy_updated = self.proxy_updated
 
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
@@ -90,7 +92,7 @@ class ProxyDelegate(Delegate):
         """
         @param model:
         """
-        self._proxy.set_model(model)
+        self.proxy.set_model(model)
         self.model = model
 
     def proxy_updated(self, widget, attribute, value):
@@ -98,4 +100,4 @@ class ProxyDelegate(Delegate):
         pass
 
     def update(self, attribute):
-        self._proxy.update(attribute)
+        self.proxy.update(attribute)
