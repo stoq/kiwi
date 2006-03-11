@@ -1,0 +1,16 @@
+Check bugzilla
+Run epydoc, fix all problems
+Go through the examples
+Run pyflakes
+Run all tests
+Check buildbot
+Bump version number
+Update translations
+Update NEWS
+Commit
+Branch: svn cp svn+ssh://svn.async.com.br/pub/kiwi/trunk \
+               svn+ssh://svn.async.com.br/pub/kiwi/tags/1.9.x
+python setup.py -q sdist
+python setup.py -q bdist_wininst
+Update website
+Write release announcement
