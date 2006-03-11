@@ -365,6 +365,8 @@ class _ContextMenu(gtk.Menu):
 
         for column in self._treeview.get_columns():
             header_widget = column.get_widget()
+            if not header_widget:
+                continue
             title = header_widget.get_text()
 
             menuitem = gtk.CheckMenuItem(title)
