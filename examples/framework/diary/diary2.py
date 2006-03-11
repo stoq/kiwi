@@ -48,7 +48,7 @@ class Diary(ProxyDelegate):
         self.set_editable(len(self.entries) >= 1)
 
     def on_text__content_changed(self, text):
-        self.update_many(("chars", "words"))
+        self.proxy.update_many(("chars", "words"))
         self.entries.update(self.model)
 
     def on_entries__selection_changed(self, entries, instance):
