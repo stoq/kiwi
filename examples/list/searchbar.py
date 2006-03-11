@@ -16,12 +16,12 @@ columns = [
     Column('price', data_type=currency, sorted=True),
     ]
 
-data = (Product('Snacks', 3.50),
-        Product('Juice', 4.75),
-        Product('Apple', 0.35),
-        Product('Chocolate bar', 8.5),
-        Product('Bubble gum', 0.3),
-        Product('Tutti-frutti', 1.50)
+data = (Product('Snacks', '3.50'),
+        Product('Juice', '4.75'),
+        Product('Apple', '0.35'),
+        Product('Chocolate bar', '8.5'),
+        Product('Bubble gum', '0.3'),
+        Product('Tutti-frutti', '1.50')
        )
 
 win = gtk.Window()
