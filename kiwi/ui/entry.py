@@ -170,7 +170,7 @@ class KiwiEntry(gtk.Entry):
 
     def set_mask_for_data_type(self, data_type):
         """
-        @param: data_type
+        @param data_type:
         """
 
         if not data_type in (datetime.datetime, datetime.date, datetime.time):

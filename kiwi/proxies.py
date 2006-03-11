@@ -297,11 +297,12 @@ class Proxy:
         self.set_model(new_model, relax_type)
 
     def set_model(self, model, relax_type=False):
-        """ Updates the model instance of the proxy.
-        Allows a proxy interface to change model without the need to destroy and
-        recreate the UI (which would cause flashing, at least)
+        """
+        Updates the model instance of the proxy.
+        Allows a proxy interface to change model without the need to destroy
+        and recreate the UI (which would cause flashing, at least)
 
-        @param new_model:
+        @param model:
         @param relax_type:
         """
         if self.model is not None:

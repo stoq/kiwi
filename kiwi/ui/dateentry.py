@@ -182,7 +182,7 @@ class _DateEntryPopup(gtk.Window):
     def popup(self, date):
         """
         Shows the list of options. And optionally selects an item
-        @param text: text to select
+        @param date: date to select
         """
         combo = self._dateentry
         if not (combo.flags() & gtk.REALIZED):
@@ -232,7 +232,10 @@ class _DateEntryPopup(gtk.Window):
     def set_date(self, date):
         self.calendar.select_month(date.month - 1, date.year)
         self.calendar.select_day(date.day)
-        self.calendar.mark_day(date.day)
+        # XXX: Need to unmark/mark when switching months/years
+        #for i in range(31):
+        #    self.calendar.unmark_day(i+1)
+        #self.calendar.mark_day(date.day)
 
 class DateEntry(gtk.HBox):
     gsignal('changed')

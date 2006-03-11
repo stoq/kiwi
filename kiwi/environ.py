@@ -245,7 +245,7 @@ class Library(Environment):
             self.add_global_resource(resource, path)
 
 class Application(Library):
-    """Application extends a L{library}. It's meant to be used
+    """Application extends a L{Library}. It's meant to be used
     by applications
 
     Libraries are usually instantiated in __init__.py in the topmost package

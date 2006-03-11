@@ -472,7 +472,7 @@ class ComboEntry(gtk.HBox):
 
     def select_item_by_label(self, text):
         """
-        @param data: text to select
+        @param text: text to select
         """
         treeiter = self.entry.get_iter_by_label(text)
         self.set_active_iter(treeiter)

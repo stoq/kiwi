@@ -46,7 +46,7 @@ class MixinSupportValidation(Interface):
         pass
 
     # These two are mainly used by subclasses
-    def validate(self, data=Nothing, force=False):
+    def validate(self, force=False):
         pass
 
 class AbstractGladeAdaptor(Interface):
