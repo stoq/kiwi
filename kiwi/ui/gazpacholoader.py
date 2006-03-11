@@ -42,6 +42,7 @@ from gazpacho.widgets.base.box import BoxAdaptor
 from kiwi import _warn
 from kiwi.datatypes import currency
 from kiwi.environ import environ
+from kiwi.ui.hyperlink import HyperLink
 from kiwi.ui.objectlist import Column, ObjectList
 from kiwi.ui.widgets.checkbutton import CheckButton
 from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox, \
@@ -55,7 +56,7 @@ from kiwi.ui.widgets.textview import TextView
 # Backwards compatibility + pyflakes
 from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
 from kiwi.ui.widgets.list import List
-
+HyperLink
 _ = gettext.gettext
 
 class Builder(ObjectBuilder):
