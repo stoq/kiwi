@@ -7,6 +7,7 @@ Check buildbot
 Bump version number
 Update translations
 Update NEWS
+Update ChangeLog, add marker
 Commit
 Branch: svn cp svn+ssh://svn.async.com.br/pub/kiwi/trunk \
                svn+ssh://svn.async.com.br/pub/kiwi/tags/1.9.x
