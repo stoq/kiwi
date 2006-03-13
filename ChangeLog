@@ -1,3 +1,13 @@
+2006-03-13  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/comboentry.py (_ComboEntryPopup.popup): 
+	Set the height on the treeview instead of the popup window.
+
+=== 1.9.7 ===
+2006-03-11  Johan Dahlin  <jdahlin@async.com.br>
+
+	* NEWS: Update
+
 2006-03-07  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/dateentry.py:

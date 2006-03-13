@@ -97,8 +97,12 @@ class _ComboEntryPopup(gtk.Window):
         if isinstance(toplevel, gtk.Window) and toplevel.group:
             toplevel.group.add_window(self)
 
+        # width is meant for the popup window
+        # height is meant for the treeview, since it calculates using
+        # the height of the cells on the rows
         x, y, width, height = self._get_position()
-        self.set_size_request(width, height)
+        self.set_size_request(width, -1)
+        treeview.set_size_request(-1, height)
         self.move(x, y)
         self.show_all()
 
@@ -215,7 +219,6 @@ class _ComboEntryPopup(gtk.Window):
     def _get_position(self):
         treeview = self._treeview
         treeview.realize()
-        cell = treeview.get_cell_area(0, treeview.get_column(0))
 
         sample = self._comboentry
 
@@ -237,11 +240,9 @@ class _ComboEntryPopup(gtk.Window):
             rows = self._visible_rows
             self._sw.set_policy(hpolicy, gtk.POLICY_ALWAYS)
 
-        # This needs some quite serious improvements
         focus_padding = treeview.style_get_property('focus-line-width') * 2
-        height = (cell.height *
-                  (rows + focus_padding) -
-                  (2 + focus_padding))
+        cell_height = treeview.get_column(0).cell_get_size()[4]
+        height = (cell_height + focus_padding) * rows
 
         screen = self._comboentry.get_screen()
         monitor_num = screen.get_monitor_at_window(sample.window)
