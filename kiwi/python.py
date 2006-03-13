@@ -120,8 +120,9 @@ class Settable:
         self.__dict__.update(**kw)
 
     def __repr__(self):
-        return '<Settable %s>' % ', '.join(
-            ['%s=%r' % (attr, getattr(self, attr)) for attr in self._attrs])
+        return '<%s %s>' % (self.__class__.__name__,
+                            ', '.join(
+            ['%s=%r' % (attr, getattr(self, attr)) for attr in self._attrs]))
 
 def qual(klass):
     """
