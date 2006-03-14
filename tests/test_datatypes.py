@@ -18,9 +18,7 @@ def set_locale(category, name):
 
 class RegistryTest(unittest.TestCase):
     def testAdd(self):
-        class MyConverter:
-            type = bool
-        self.assertRaises(TypeError, converter.add, MyConverter)
+        self.assertRaises(TypeError, converter.add, object)
 
 class BoolTest(unittest.TestCase):
     def setUp(self):
@@ -174,6 +172,8 @@ class FloatTest(unittest.TestCase):
         self.assertEqual(self.conv.from_string('1.75'), 1.75)
         self.assertEqual(self.conv.from_string('10,000'), 10000)
         self.assertEqual(self.conv.from_string('10,000,000.5'), 10000000.5)
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, ',210,000,000.5')
 
     def testFromStringSE(self):
         # Swedish is interesting here because it has different
