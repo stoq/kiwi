@@ -159,6 +159,7 @@ class FloatTest(unittest.TestCase):
         set_locale(locale.LC_ALL, 'C')
 
     def testFromString(self):
+        self.assertEqual(self.conv.from_string('.5'), .5)
         self.assertEqual(self.conv.from_string('-2.5'), -2.5)
         self.assertEqual(self.conv.from_string('10.33'), 10.33)
         self.assertRaises(ValidationError, self.conv.from_string, 'foo')
