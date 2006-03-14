@@ -76,7 +76,6 @@ class _ComboEntryPopup(gtk.Window):
 
         self._label = gtk.Label()
         vbox.pack_start(self._label, False, False)
-        self._label.show()
 
         self.set_resizable(False)
         self.set_screen(comboentry.get_screen())
@@ -91,8 +90,6 @@ class _ComboEntryPopup(gtk.Window):
             return
 
         treeview = self._treeview
-        if treeview.flags() & gtk.MAPPED:
-            return
         toplevel = combo.get_toplevel()
         if isinstance(toplevel, gtk.Window) and toplevel.group:
             toplevel.group.add_window(self)
@@ -104,7 +101,7 @@ class _ComboEntryPopup(gtk.Window):
         self.set_size_request(width, -1)
         treeview.set_size_request(-1, height)
         self.move(x, y)
-        self.show_all()
+        self.show()
 
         treeview.set_hover_expand(True)
         selection = treeview.get_selection()
@@ -133,9 +130,14 @@ class _ComboEntryPopup(gtk.Window):
             return
 
         self.grab_remove()
-        self.hide_all()
+        self.hide()
 
     def set_label_text(self, text):
+        if text is None:
+            text = ''
+            self._label.hide()
+        else:
+            self._label.show()
         self._label.set_text(text)
 
     def set_model(self, model):
