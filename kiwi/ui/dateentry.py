@@ -21,6 +21,11 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
+#
+# Based on date cell renderer in Planner written by Richard Hult
+#  and Mikael Hallendal
+#
+
 import gettext
 import datetime
 
