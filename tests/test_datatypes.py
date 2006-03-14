@@ -16,9 +16,14 @@ def set_locale(category, name):
         return False
     return True
 
-class DataTypesTest(unittest.TestCase):
+class RegistryTest(unittest.TestCase):
+    def testAdd(self):
+        class MyConverter:
+            type = bool
+        self.assertRaises(TypeError, converter.add, MyConverter)
+
+class BoolTest(unittest.TestCase):
     def setUp(self):
-        self.date = datetime.date(1979, 2, 12)
         self.conv = converter.get_converter(bool)
 
     def testFromString(self):

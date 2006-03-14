@@ -56,6 +56,10 @@ class ConverterRegistry:
         self._converters = {}
 
     def add(self, converter_type):
+        """
+        Adds converter_type as a new converter
+        @param converter_type: a L{BaseConverter} subclass
+        """
         if not issubclass(converter_type, BaseConverter):
             raise TypeError("converter_type must be a BaseConverter subclass")
 
