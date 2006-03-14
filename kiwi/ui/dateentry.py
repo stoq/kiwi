@@ -44,20 +44,21 @@ class _DateEntryPopup(gtk.Window):
         self.connect('button-press-event', self._on__button_press_event)
         self._dateentry = dateentry
 
+        frame = gtk.Frame()
+        frame.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        self.add(frame)
+        frame.show()
+
         vbox = gtk.VBox()
-        self.add(vbox)
+        vbox.set_border_width(6)
+        frame.add(vbox)
         vbox.show()
         self._vbox = vbox
-
-        frame = gtk.Frame()
-        frame.set_shadow_type(gtk.SHADOW_ETCHED_OUT)
-        vbox.pack_start(frame, False, False)
-        frame.show()
 
         self.calendar = gtk.Calendar()
         self.calendar.connect('day-selected-double-click',
                                self._on_calendar__day_selected_double_click)
-        frame.add(self.calendar)
+        vbox.pack_start(self.calendar, False, False)
         self.calendar.show()
 
         buttonbox = gtk.HButtonBox()
@@ -232,10 +233,9 @@ class _DateEntryPopup(gtk.Window):
     def set_date(self, date):
         self.calendar.select_month(date.month - 1, date.year)
         self.calendar.select_day(date.day)
-        # XXX: Need to unmark/mark when switching months/years
-        #for i in range(31):
-        #    self.calendar.unmark_day(i+1)
-        #self.calendar.mark_day(date.day)
+        # FIXME: Only mark the day in the current month?
+        self.calendar.clear_marks()
+        self.calendar.mark_day(date.day)
 
 class DateEntry(gtk.HBox):
     gsignal('changed')
