@@ -159,9 +159,14 @@ class FloatTest(unittest.TestCase):
         set_locale(locale.LC_ALL, 'C')
 
     def testFromString(self):
+        self.assertEqual(self.conv.from_string('0'), 0.0)
+        self.assertEqual(self.conv.from_string('-0'), 0.0)
+        self.assertEqual(self.conv.from_string('0.'), 0.0)
+        self.assertEqual(self.conv.from_string('0.0'), 0.0)
         self.assertEqual(self.conv.from_string('.5'), .5)
         self.assertEqual(self.conv.from_string('-2.5'), -2.5)
         self.assertEqual(self.conv.from_string('10.33'), 10.33)
+        self.assertEqual(self.conv.from_string('0.00000000001'), 0.00000000001)
         self.assertRaises(ValidationError, self.conv.from_string, 'foo')
         self.assertRaises(ValidationError, self.conv.from_string, '1.2.3')
         self.assertEqual(self.conv.from_string(''), ValueUnset)
@@ -194,9 +199,11 @@ class FloatTest(unittest.TestCase):
         #self.assertRaises(ValidationError, self.conv.from_string, '1234 234')
 
     def testAsString(self):
+        self.assertEqual(self.conv.as_string(0.0), '0.0')
         self.assertEqual(self.conv.as_string(0.5), '0.5')
-        self.assertEqual(self.conv.as_string(-10.5), '-10.5')
-        self.assertEqual(self.conv.as_string(0.12345), '0.12345')
+        self.assertEqual(self.conv.as_string(-0.5), '-0.5')
+        self.assertEqual(self.conv.as_string(0.123456789), '0.123456789')
+        self.assertEqual(self.conv.as_string(-0.123456789), '-0.123456789')
         self.assertEqual(self.conv.as_string(10000000), '10000000.0')
 
 class DecimalTest(unittest.TestCase):
