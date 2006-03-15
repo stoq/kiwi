@@ -25,7 +25,6 @@ class Form(Delegate):
                                   'Other'])
         self.gender.prefill(('Male', 'Female'))
         self.age.set_mask('%2d')
-        self.height.set_data_format('%4.4f')
 
         self.register_validate_function(self.validity)
         # XXX: Get rid of this
