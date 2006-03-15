@@ -279,9 +279,9 @@ class Application(Library):
     def _get_main(self):
         try:
             module = namedAny(self._path)
-        except ImportError, e:
-            raise SystemExit("ERROR: Could not find item '%s', %s" %
-                             (self._path, e))
+        except:
+            print '== ERROR while importing %s' % self._path
+            raise
 
         main = getattr(module, 'main', None)
         if not main or not callable(main):
