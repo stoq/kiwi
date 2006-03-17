@@ -1,3 +1,7 @@
+2006-03-17  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/comboentry.py (ComboEntry._on_entry_completion__match_selected): When entry completion is used, update the iter in the treeview aswell.
+
 2006-03-13  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/comboentry.py (_ComboEntryPopup.popup): 

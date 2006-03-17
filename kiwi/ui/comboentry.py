@@ -325,6 +325,11 @@ class ComboEntry(gtk.HBox):
 
     # Callbacks
 
+    def _on_entry_completion__match_selected(self, completion, model, iter):
+        # the iter we receive is specific to the tree model filter used
+        # In the entry completion, convert it to an iter in the real model
+        self.set_active_iter(model.convert_iter_to_child_iter(iter))
+
     def _on_entry__activate(self, entry):
         self.emit('activate')
 
@@ -433,6 +438,8 @@ class ComboEntry(gtk.HBox):
         self._model = model
         self._popup.set_model(model)
         completion = self.entry.get_completion()
+        completion.connect('match-selected',
+                           self._on_entry_completion__match_selected)
         completion.set_model(model)
 
         self._update()
