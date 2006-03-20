@@ -56,9 +56,9 @@ in the root directory.
 
 To run a single file, class or test:
 
-$ trial tests.test_datatype
-$ trial tests.test_datatype.BoolTest
-$ trial tests.test_datatype.BoolTest.testFromString
+$ trial tests.test_datatypes
+$ trial tests.test_datatypes.BoolTest
+$ trial tests.test_datatypes.BoolTest.testFromString
 
 Coverage
 ========
