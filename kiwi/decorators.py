@@ -23,25 +23,26 @@
 
 """Function and method decorators used in kiwi"""
 
-from kiwi import _warn
+from kiwi.log import kiwi_log
 
 class deprecated(object):
     """
     I am a decorator which prints a deprecation warning each
     time you call the decorated (and deprecated) function
     """
-    def __init__(self, new):
+    def __init__(self, new, log=None):
         """
         @param new: the name of the new function replacing the old
           deprecated one
         @type new: string
         """
         self._new = new
+        self._log = log or kiwi_log
 
     def __call__(self, func):
         def wrapper(*args, **kwargs):
-            _warn("%s is deprecated, use %s instead" % (func.__name__,
-                                                        self._new))
+            self._log.warn("%s is deprecated, use %s instead" %
+                           (func.__name__, self._new))
             return func(*args, **kwargs)
         wrapper.__name__ = func.__name__
         return wrapper

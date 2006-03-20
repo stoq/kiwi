@@ -1,3 +1,9 @@
+2006-03-20  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/decorators.py (deprecated.wrapper): Add an optional log argument
+
+	* kiwi/log.py (_log_levels): Add a global log object
+
 2006-03-17  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/comboentry.py (ComboEntry._on_entry_completion__match_selected): When entry completion is used, update the iter in the treeview aswell.

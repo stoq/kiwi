@@ -116,3 +116,5 @@ def _read_log_level():
     return log_levels
 
 _log_levels = _read_log_level()
+
+kiwi_log = Logger('kiwi')
