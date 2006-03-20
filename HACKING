@@ -1,0 +1,75 @@
+Code repository layout
+======================
+
+bin/
+  Scripts which are going to be installed
+
+doc/
+  Manual, API reference etc
+
+examples/
+  Code examples and demonstrations of features in kiwi
+  
+kiwi/ 
+  Source code goes in here
+
+gazpacho-plugin/
+  Gazpacho integration, also look at kiwi/ui/gazpacholoader.py  
+  
+glade/
+  Glade files used by kiwi itself
+
+pixmaps/
+  Pixmaps, images etc
+
+po/
+  Translations
+
+tests/
+  Unittests goes in here
+
+tools/
+  Useful scripts
+
+Contributing
+============
+
+Make sure all unittests pass.
+If possible, add a new, or modify an existing test after applying a patch.
+Feature requests, bug fixes or added features should be submitted through
+bugzilla, http://bugs.async.com.br/enter_bug.cgi?product=Kiwi
+
+Always run pyflakes on the whole source code before submitting, it's important
+that pyflakes does not show *ANY* warnings at all. Sometimes you have to
+add tiny hacks to workaround bugs in pyflakes.
+
+Try to keep ChangeLog updated
+
+Testsuite
+=========
+
+To run the whole testsuite, type:
+
+$ trial tests
+
+in the root directory.
+
+To run a single file, class or test:
+
+$ trial tests.test_datatype
+$ trial tests.test_datatype.BoolTest
+$ trial tests.test_datatype.BoolTest.testFromString
+
+Coverage
+========
+
+Code coverage should generally not increase after checkins, run
+the script showcoverage from the tools directory to get a listing of the
+current coverage:
+
+$ tools/showcoverage
+
+If you want to see the exact lines, go and dig in _trial_temp/coverage/
+
+It's a little bit broken, so sometimes you have to delete _trial_temp
+between runs.
