@@ -238,9 +238,33 @@ class _FloatConverter(BaseConverter):
 
     def as_string(self, value, format=None):
         """Convert a float to a string"""
+        format_set = True
+
         if format is None:
-            return str(float(value))
-        return lformat(format, value)
+            # From Objects/floatobject.c:
+            #
+            # The precision (12) is chosen so that in most cases, the rounding noise
+            # created by various operations is suppressed, while giving plenty of
+            # precision for practical use.
+            format = '%.12g'
+
+            format_set = False
+
+        as_str = lformat(format, value)
+
+        # If the format was not set, the resoult should be treated, as
+        # follows.
+        if not format_set and not value % 1:
+            # value % 1 is used to check if value has an decimal part. If it
+            # doen't then it's an integer
+
+            # When format is '%g', if value is an integer, the result
+            # will also be formated as an integer, so we add a '.0'
+
+            conv = locale.localeconv()
+            as_str +=  conv.get('decimal_point') + '0'
+            
+        return as_str
 
     def from_string(self, value):
         """Convert a string to a float"""

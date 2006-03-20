@@ -1,3 +1,13 @@
+2006-03-20  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
+	* kiwi/datatypes.py:
+	* tests/test_datatypes.py:
+	Output a string in a locale dependent way, even if a format is not
+	provided
+	Fixes #2486
+
 2006-03-20  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/component.py:
