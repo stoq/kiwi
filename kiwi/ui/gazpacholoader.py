@@ -39,9 +39,9 @@ from gazpacho.properties import prop_registry, CustomProperty, StringType
 from gazpacho.widgets.base.base import ContainerAdaptor
 from gazpacho.widgets.base.box import BoxAdaptor
 
-from kiwi import _warn
 from kiwi.datatypes import currency
 from kiwi.environ import environ
+from kiwi.log import Logger
 from kiwi.ui.hyperlink import HyperLink
 from kiwi.ui.objectlist import Column, ObjectList
 from kiwi.ui.widgets.checkbutton import CheckButton
@@ -58,6 +58,8 @@ from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
 from kiwi.ui.widgets.list import List
 HyperLink
 _ = gettext.gettext
+
+log = Logger('gazpacholoader')
 
 class Builder(ObjectBuilder):
     def find_resource(self, filename):
@@ -94,7 +96,7 @@ class GazpachoWidgetTree:
             if widget is not None:
                 setattr(self._view, w, widget)
             else:
-                _warn("Widget %s was not found in glade widget tree." % w)
+                log.warn("Widget %s was not found in glade widget tree." % w)
 
     def get_widget(self, name):
         """Retrieves the named widget from the View (or glade tree)"""
