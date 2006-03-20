@@ -73,3 +73,18 @@ If you want to see the exact lines, go and dig in _trial_temp/coverage/
 
 It's a little bit broken, so sometimes you have to delete _trial_temp
 between runs.
+
+Checklist
+=========
+To make it easier to get your patch accepted, follow these steps.
+
+* PEP-8 compatible code
+* include test
+* does the whole testsuite run
+* no pyflakes warnings
+* if new/modified API:
+  * add doc strings
+  * example
+* ChangeLog entry
+* diff -u
+* bugzilla
