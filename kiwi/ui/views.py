@@ -37,13 +37,12 @@ import gobject
 import gtk
 from gtk import gdk
 
-from kiwi import _warn
 from kiwi.environ import is_gazpacho_required
 from kiwi.interfaces import MixinSupportValidation
+from kiwi.log import Logger
 from kiwi.proxies import Proxy
 from kiwi.utils import gsignal, type_register
 from kiwi.ui.gadgets import quit_if_last
-from kiwi.log import Logger
 
 log = Logger('view')
 
@@ -129,8 +128,8 @@ class SignalBroker(object):
                 else:
                     signal_id = widget.connect(signal, methods[fname])
             except TypeError:
-                _warn("Widget %s doesn't provide a signal %s"
-                     % (widget.__class__, signal))
+                log.warn("Widget %s doesn't provide a signal %s" % (
+                widget.__class__, signal))
                 continue
             self._autoconnected.setdefault(widget, []).append((
                 signal, signal_id))
@@ -284,8 +283,8 @@ class SlaveView(gobject.GObject):
 
         if isinstance(toplevel, gtk.Window):
             if toplevel.flags() & gtk.VISIBLE:
-                _warn("Toplevel widget %s (%s) is visible; that's probably "
-                      "wrong" % (toplevel, toplevel.get_name()))
+                log.warn("Toplevel widget %s (%s) is visible; that's probably "
+                         "wrong" % (toplevel, toplevel.get_name()))
 
         return toplevel
 
@@ -447,8 +446,8 @@ class SlaveView(gobject.GObject):
                 if isinstance(widget.get_toplevel(), gtk.Window):
                     widget.realize()
                 else:
-                    _warn("get_topmost_widget: widget %s was not realized"
-                          % widget_name)
+                    log.warn("get_topmost_widget: widget %s was not realized"
+                             % widget_name)
                     continue
             if can_focus:
                 # Combos don't focus, but their entries do
@@ -485,7 +484,7 @@ class SlaveView(gobject.GObject):
 #    def _setup_keypress_handler(self, keypress_handler):
 #        # Only useful in BaseView and derived classes
 #        # XXX: support slaveview correctly
-#        _warn("Tried to setup a keypress handler for %s "
+#        log.warn("Tried to setup a keypress handler for %s "
 #              "but no toplevel window exists to attach to" % self)
 
     #
@@ -518,8 +517,8 @@ class SlaveView(gobject.GObject):
 
         if name in self.slaves:
             # XXX: TypeError
-            _warn("A slave with name %s is already attached to %r"  % (
-                  name, self))
+            log.warn("A slave with name %s is already attached to %r"  % (
+                name, self))
         self.slaves[name] = slave
 
         if not isinstance(slave, SlaveView):
@@ -560,8 +559,8 @@ class SlaveView(gobject.GObject):
             elif isinstance(self, SlaveView):
                 self._accel_groups.extend(slave._accel_groups)
             else:
-                _warn("attached slave %s to parent %s, but parent lacked "
-                      "a window and was not a slave view" % (slave, self))
+                log.warn("attached slave %s to parent %s, but parent lacked "
+                         "a window and was not a slave view" % (slave, self))
             slave._accel_groups = []
 
         if isinstance(placeholder, gtk.EventBox):
@@ -573,7 +572,7 @@ class SlaveView(gobject.GObject):
             placeholder.add(new_widget)
         elif isinstance(parent, gtk.EventBox):
             # backwards compatibility
-            _warn("attach_slave's api has changed: read docs, update code!")
+            log.warn("attach_slave's api has changed: read docs, update code!")
             parent.remove(placeholder)
             parent.add(new_widget)
         else:
@@ -882,8 +881,8 @@ class BaseView(SlaveView):
                 isinstance(v, _non_interactive)):
                 interactive = v
         if interactive:
-            _warn("No widget is focused in view %s but you have an "
-                  "interactive widget in it: %s""" % (self, interactive))
+            log.warn("No widget is focused in view %s but you have an "
+                     "interactive widget in it: %s""" % (self, interactive))
 
     #
     # Window show/hide and mainloop manipulation

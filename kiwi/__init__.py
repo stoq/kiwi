@@ -39,8 +39,6 @@ Kiwi includes a Framework and a set of enhanced widgets
     - Organization: Async Open Source
 """
 
-import sys
-
 try:
     import gobject
     gobject
@@ -70,7 +68,4 @@ class ValueUnset:
     mainly in the Kiwi Proxy"""
     pass
 
-def _warn(msg):
-    sys.stderr.write("Kiwi warning: "+msg+"\n")
-
-__all__ = ['ValueUnset', '_warn', 'kiwi_version']
+__all__ = ['ValueUnset', 'kiwi_version']

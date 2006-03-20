@@ -27,6 +27,7 @@ import os
 import pickle
 
 from kiwi import ValueUnset
+from kiwi.log import Logger
 
 log = Logger('model')
 
