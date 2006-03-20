@@ -33,14 +33,16 @@ import gobject
 import gtk
 from gtk import gdk
 
-from kiwi import _warn
 from kiwi.accessors import kgetattr
 from kiwi.datatypes import converter, currency, lformat, number
 from kiwi.decorators import deprecated
+from kiwi.log import Logger
 from kiwi.python import slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 
 _ = gettext.gettext
+
+log = Logger('objectlist')
 
 str2type = converter.str_to_type
 
@@ -1402,7 +1404,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         if mode == gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed in %r mode" % mode)
         elif mode not in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
-            _warn('get_selected() called when multiple rows can be selected')
+            log.warn('get_selected() called when multiple rows '
+                     'can be selected')
 
         model, treeiter = selection.get_selected()
         if treeiter:
@@ -1421,8 +1424,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         if mode == gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed in %r mode" % mode)
         elif mode in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
-            _warn('get_selected_rows() called when only a single row '
-                  'can be selected')
+            log.warn('get_selected_rows() called when only a single row '
+                     'can be selected')
 
         model, paths = selection.get_selected_rows()
         if paths:
