@@ -21,8 +21,33 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #            Ali Afshar <aafshar@gmail.com>
 
-class Interface(object):
-    pass
+import sys
+
+try:
+    from zope.interface import implements, Attribute, Interface
+    # pyflakes
+    implements, Attribute, Interface
+except ImportError:
+    class Interface(object):
+        def providedBy(cls, impl):
+            for iface in getattr(impl, '__interfaces__', []):
+                if issubclass(iface, cls):
+                    return True
+            return False
+
+        providedBy = classmethod(providedBy)
+
+    class Attribute(object):
+        def __init__(self, __name__, __doc__=''):
+            self.__name__=__name__
+            self.__doc__=__doc__
+
+    def implements(iface):
+        frame = sys._getframe(1)
+        try:
+            frame.f_locals.setdefault('__interfaces__', []).append(iface)
+        finally:
+            del frame
 
 class AlreadyImplementedError(Exception):
     """Called when a utility already exists."""
@@ -33,7 +58,7 @@ class _UtilityHandler(object):
 
     def provide(self, iface, obj):
         global _interfaces
-        if not issubclass(iface, _interfaces):
+        if not issubclass(iface, Interface):
             raise TypeError(
                 "iface must be an Interface subclass and not %r" % iface)
 
@@ -43,7 +68,7 @@ class _UtilityHandler(object):
 
     def get(self, iface):
         global _interfaces
-        if not issubclass(iface, _interfaces):
+        if not issubclass(iface, Interface):
             raise TypeError(
                 "iface must be an Interface subclass and not %r" % iface)
 
@@ -75,10 +100,6 @@ def get_utility(iface):
     global _handler
     return _handler.get(iface)
 
-try:
-    from zope.interface import Interface as ZInterface
-    _interfaces = Interface, ZInterface
-except ImportError:
-    _interfaces = Interface
-
 _handler = _UtilityHandler()
+
+

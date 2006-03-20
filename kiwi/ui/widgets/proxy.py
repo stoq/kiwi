@@ -33,6 +33,7 @@ import gtk
 from gtk import gdk
 
 from kiwi import ValueUnset
+from kiwi.component import implements
 from kiwi.datatypes import ValidationError, converter
 from kiwi.environ import environ
 from kiwi.interfaces import Mixin, MixinSupportValidation
@@ -45,7 +46,7 @@ log = Logger('widget proxy')
 
 _ = gettext.gettext
 
-class WidgetMixin(Mixin):
+class WidgetMixin(object):
     """This class is a mixin that provide a common interface for KiwiWidgets.
 
     Usually the Proxy class need to set and get data from the widgets. It also
@@ -54,6 +55,8 @@ class WidgetMixin(Mixin):
     @cvar allowed_data_types: A list of types which we are allowed to use
       in this class.
     """
+
+    implements(Mixin)
 
     gsignal('content-changed')
     gsignal('validation-changed', bool)
@@ -148,7 +151,7 @@ MANDATORY_ICON = gtk.STOCK_EDIT
 ERROR_ICON = gdk.pixbuf_new_from_file(
     environ.find_resource('pixmap', 'validation-error-16.png'))
 
-class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
+class WidgetMixinSupportValidation(WidgetMixin):
     """Class used by some Kiwi Widgets that need to support mandatory
     input and validation features such as custom validation and data-type
     validation.
@@ -157,6 +160,8 @@ class WidgetMixinSupportValidation(WidgetMixin, MixinSupportValidation):
     The validatation feature provides a way to check the data entered and to
     display information about what is wrong.
     """
+
+    implements(MixinSupportValidation)
 
     gproperty('mandatory', bool, default=False)
 

@@ -1,7 +1,7 @@
 import unittest
 
 from kiwi.component import AlreadyImplementedError, Interface, \
-     get_utility, provide_utility
+     get_utility, provide_utility, implements
 
 class IBanana(Interface):
     pass
@@ -48,6 +48,74 @@ class TestUtilities(unittest.TestCase):
         self.assertRaises(AlreadyImplementedError,
                           provide_utility, IApple, o)
         self._clear(IApple)
+
+    def testImplements(self):
+        class I1(Interface):
+            pass
+        class C(object):
+            implements(I1)
+        c = C()
+        class X(object):
+            pass
+        x = X()
+        self.assertEqual(I1.providedBy(x), False)
+        #self.assertEqual(I1.providedBy(C), False)
+        self.assertEqual(I1.providedBy(c), True)
+
+    def testInterfaceSub(self):
+        class I1(Interface):
+            pass
+        class I2(I1):
+            pass
+        class C(object):
+            implements(I2)
+        class D(object):
+            implements(I1)
+        c = C()
+        self.assertEqual(I1.providedBy(c), True)
+        self.assertEqual(I2.providedBy(c), True)
+        d = D()
+        self.assertEqual(I1.providedBy(d), True)
+        self.assertEqual(I2.providedBy(d), False)
+
+    def testZImplements(self):
+        try:
+            from zope.interface import Interface, implements
+        except ImportError:
+            return
+
+        class I1(Interface):
+            pass
+        class C(object):
+            implements(I1)
+        c = C()
+        class X(object):
+            pass
+        x = X()
+        self.assertEqual(I1.providedBy(x), False)
+        self.assertEqual(I1.providedBy(C), False)
+        self.assertEqual(I1.providedBy(c), True)
+
+    def testZInterfaceSub(self):
+        try:
+            from zope.interface import Interface, implements
+        except ImportError:
+            return
+
+        class I1(Interface):
+            pass
+        class I2(I1):
+            pass
+        class C(object):
+            implements(I2)
+        class D(object):
+            implements(I1)
+        c = C()
+        self.assertEqual(I1.providedBy(c), True)
+        self.assertEqual(I2.providedBy(c), True)
+        d = D()
+        self.assertEqual(I1.providedBy(d), True)
+        self.assertEqual(I2.providedBy(d), False)
 
 if __name__ == '__main__':
     unittest.main()

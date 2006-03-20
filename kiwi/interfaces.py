@@ -34,19 +34,19 @@ class Mixin(Interface):
     # gproperty('model-attribute')
     # gproperty('validation-changed')
 
-    def read(self):
+    def read():
         pass
 
-    def update(self, value):
+    def update(value):
         pass
 
-class MixinSupportValidation(Interface):
+class MixinSupportValidation(Mixin):
     # gproperty('mandatory')
-    def is_valid(self):
+    def is_valid():
         pass
 
     # These two are mainly used by subclasses
-    def validate(self, force=False):
+    def validate(force=False):
         pass
 
 class AbstractGladeAdaptor(Interface):

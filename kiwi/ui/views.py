@@ -709,11 +709,10 @@ class SlaveView(gobject.GObject):
 
         for widget_name in widgets:
             widget = getattr(self, widget_name, None)
-            if (widget is None or
-                not isinstance(widget, MixinSupportValidation)):
+            if widget is None:
                 continue
 
-            if not isinstance(widget, MixinSupportValidation):
+            if not MixinSupportValidation.providedBy(widget):
                 continue
 
             try:

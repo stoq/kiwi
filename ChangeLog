@@ -1,5 +1,17 @@
 2006-03-20  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/component.py:
+	* kiwi/interfaces.py:
+	* kiwi/proxies.py:
+	* kiwi/ui/views.py:
+	* kiwi/ui/widgets/proxy.py:
+	* tests/test_component.py:
+	Add implements() and providedBy() in a (almost) zope.interface
+	compatible way. Plenty of tests.
+	Fixes #2501
+
+2006-03-20  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/decorators.py (deprecated.wrapper): Add an optional log argument
 
 	* kiwi/log.py (_log_levels): Add a global log object

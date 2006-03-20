@@ -99,13 +99,13 @@ class Proxy:
         # The initial value of the model is set, at this point
         # do a read, it'll trigger a validation for widgets who
         # supports it.
-        if not isinstance(widget, MixinSupportValidation):
+        if not MixinSupportValidation.providedBy(widget):
             return
 
         widget.validate(force=True)
 
     def _setup_widget(self, widget_name, widget):
-        if not isinstance(widget, Mixin):
+        if not Mixin.providedBy(widget):
             raise ProxyError("The widget %s (%r), in view %s is not "
                              "a kiwi widget and cannot be added to a proxy"
                              % (widget_name, widget,
@@ -131,7 +131,7 @@ class Proxy:
             'content-changed',
             self._on_widget__content_changed,
             attribute,
-            isinstance(widget, MixinSupportValidation))
+            MixinSupportValidation.providedBy(widget))
         widget.set_data('content-changed-id', connection_id)
 
         model_attributes = self._model_attributes
@@ -351,6 +351,6 @@ class Proxy:
             raise TypeError("there is no widget called %s" % name)
 
         widget = self._model_attributes.pop(name)
-        if isinstance(widget, MixinSupportValidation):
+        if MixinSupportValidation.providedBy(widget):
             connection_id = widget.get_data('content-changed-id')
             widget.disconnect(connection_id)
