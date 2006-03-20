@@ -25,8 +25,10 @@ import os
 
 from gtk.glade import XML
 
-from kiwi import _warn
 from kiwi.environ import environ
+from kiwi.log import Logger
+
+log = Logger('libgladeloader')
 
 class LibgladeWidgetTree(XML):
     def __init__(self, view, gladefile, widgets, gladename=None, domain=None):
@@ -55,7 +57,7 @@ class LibgladeWidgetTree(XML):
             if widget is not None:
                 setattr(self._view, w, widget)
             else:
-                _warn("Widget %s was not found in glade widget tree." % w)
+                log.warn("Widget %s was not found in glade widget tree." % w)
 
     def get_widget(self, name):
         """Retrieves the named widget from the View (or glade tree)"""
