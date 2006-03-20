@@ -26,7 +26,9 @@
 import os
 import pickle
 
-from kiwi import _warn, ValueUnset
+from kiwi import ValueUnset
+
+log = Logger('model')
 
 #
 # A model that implements half of an observer pattern; when its
@@ -250,8 +252,8 @@ def unpickle_model(klass, file=None):
             i = i + 1
             backup = stem + ".%d" % i
         open(backup, "w").write(data)
-        _warn("pickle in %r was broken, saving backup in %r and creating "
-              "new <%s> instance\n""" % (file, backup, klass.__name__))
+        log.warn("pickle in %r was broken, saving backup in %r and creating "
+                 "new <%s> instance\n""" % (file, backup, klass.__name__))
         ret = klass()
     fh.close()
     ret.set_filename(file)
