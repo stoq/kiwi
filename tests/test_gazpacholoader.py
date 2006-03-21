@@ -4,6 +4,7 @@ import gobject
 import gtk
 from gazpacho.loader.loader import ObjectBuilder
 
+from kiwi.python import disabledeprecationcall
 import kiwi.ui.gazpacholoader
 kiwi
 
@@ -16,17 +17,19 @@ class TestGazpachoLoader(unittest.TestCase):
     def testConstruct(self):
         objs = [("kiwi+ui+widgets+list+List", "w1"),
                 ("kiwi+ui+widgets+combobox+ComboBox", "w3"),
-                ("kiwi+ui+widgets+combobox+ComboBoxEntry", "w5")]
+                ("kiwi+ui+widgets+combobox+ComboBoxEntry", "w5")
+                ]
 
         if HAVE_2_8:
             objs.extend([("ObjectList", "w2"),
                          ("ProxyComboBox", "w4"),
-                         ("ProxyComboBoxEntry", "w6")])
+                         ("ProxyComboBoxEntry", "w6")
+                         ])
         s = ''
 
         for obj, name in objs:
             s += '<widget class="%s" id="%s"/>\n' % (obj, name)
-        ob = ObjectBuilder(buffer=glade(s))
+        ob = disabledeprecationcall(ObjectBuilder, buffer=glade(s))
         for obj, name in objs:
             widget = ob.get_widget(name)
             self.failUnless(isinstance(widget, gtk.Widget))

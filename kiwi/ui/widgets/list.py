@@ -23,6 +23,9 @@
 
 """High level wrapper for GtkTreeView: backwards compatibility layer"""
 
+import gtk
+
+from kiwi.python import deprecationwarn
 from kiwi.ui.objectlist import Column, SequentialColumn, ColoredColumn, \
      ListLabel, SummaryLabel
 from kiwi.ui.objectlist import ObjectList
@@ -31,4 +34,10 @@ from kiwi.ui.objectlist import ObjectList
 Column, SequentialColumn, ColoredColumn, ListLabel, SummaryLabel
 
 class List(ObjectList):
-    pass
+    def __init__(self, columns=[],
+                 instance_list=None,
+                 mode=gtk.SELECTION_BROWSE):
+        deprecationwarn(
+            'ProxyComboBoxEntry is deprecated, use ProxyComboEntry instead',
+            stacklevel=3)
+        ObjectList.__init__(self, columns, instance_list, mode)

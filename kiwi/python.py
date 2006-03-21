@@ -25,6 +25,7 @@
 
 import os
 import sys
+import warnings
 
 import gobject
 
@@ -155,3 +156,26 @@ def slicerange(slice, limit):
     """
 
     return xrange(*slice.indices(limit))
+
+_no_deprecation = False
+
+def deprecationwarn(msg, stacklevel=2):
+    """
+    Prints a deprecation warning
+    """
+    global _no_deprecation
+    if _no_deprecation:
+        return
+
+    warnings.warn(msg, DeprecationWarning, stacklevel=stacklevel)
+
+def disabledeprecationcall(func, *args, **kwargs):
+    """
+    Disables all deprecation warnings during the function call to func
+    """
+    global _no_deprecation
+    old = _no_deprecation
+    _no_deprecation = True
+    retval = func(*args, **kwargs)
+    _no_deprecation = old
+    return retval

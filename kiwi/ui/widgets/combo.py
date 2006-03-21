@@ -37,6 +37,7 @@ import gtk
 from gtk import keysyms
 
 from kiwi import ValueUnset
+from kiwi.python import deprecationwarn
 from kiwi.ui.comboboxentry import BaseComboBoxEntry
 from kiwi.ui.comboentry import ComboEntry
 from kiwi.ui.combomixin import COL_COMBO_LABEL, COMBO_MODE_STRING, \
@@ -112,6 +113,9 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
     gproperty("list-editable", bool, True, "Editable")
 
     def __init__(self, **kwargs):
+        deprecationwarn(
+            'ProxyComboBoxEntry is deprecated, use ProxyComboEntry instead',
+            stacklevel=3)
         BaseComboBoxEntry.__init__(self)
         ComboMixin.__init__(self)
         WidgetMixinSupportValidation.__init__(self, widget=self.entry)

@@ -3,13 +3,13 @@ import utils
 
 import unittest
 
-from kiwi.python import Settable
+from kiwi.python import disabledeprecationcall, Settable
 from kiwi.proxies import Proxy
-from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
+from kiwi.ui.widgets.combobox import ProxyComboBox, ProxyComboBoxEntry
 
 class TestComboBox(unittest.TestCase):
     def setUp(self):
-        self.combo = ComboBox()
+        self.combo = ProxyComboBox()
 
     def _prefill(self):
         self.combo.prefill((('Johan', 1981),
@@ -87,7 +87,7 @@ class BaseModelTest:
     def setUp(self):
         self.model = Settable(attr=0)
         proxy = Proxy(FakeView(), self.model)
-        self.combo = self.type()
+        self.combo = disabledeprecationcall(self.type)
         self.combo.data_type = int
         self.combo.model_attribute = 'attr'
         self.combo.prefill([('foo', 0),
@@ -107,10 +107,10 @@ class BaseModelTest:
         self.assertEqual(self.model.attr, 0)
 
 class ComboModelTest(BaseModelTest, unittest.TestCase):
-    type = ComboBox
+    type = ProxyComboBox
 
 class ComboEntryModelTest(BaseModelTest, unittest.TestCase):
-    type = ComboBoxEntry
+    type = ProxyComboBoxEntry
 
 if __name__ == '__main__':
     unittest.main()

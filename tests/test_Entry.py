@@ -5,11 +5,11 @@ import unittest
 
 from kiwi import ValueUnset
 from kiwi import datatypes
-from kiwi.ui.widgets.entry import Entry
+from kiwi.ui.widgets.entry import ProxyEntry
 
 class EntryTest(unittest.TestCase):
     def testModel(self):
-        entry = Entry()
+        entry = ProxyEntry()
         entry.set_text('value')
         entry.set_property("data-type", "str")
         self.assertEqual(entry.read(), 'value')
@@ -17,7 +17,7 @@ class EntryTest(unittest.TestCase):
     # FIXME
     def _testValidDataType(self):
 
-        entry = Entry()
+        entry = ProxyEntry()
         entry.set_property("data-type", "date")
         # let's make the entry complain!
         entry.set_text("string")
@@ -45,7 +45,7 @@ class EntryTest(unittest.TestCase):
             self.assertEqual(entry.read(), ValueUnset)
 
     def testMask(self):
-        e = Entry()
+        e = ProxyEntry()
         e.set_mask('%3d.%3d')
         self.assertEqual(e.get_text(), '   .   ')
         self.assertEqual(e.get_field_text(), [None, None])
@@ -57,7 +57,7 @@ class EntryTest(unittest.TestCase):
         self.assertEqual(e.get_field_text(), [3, 456])
 
     def testMaskSmallFields(self):
-        e = Entry()
+        e = ProxyEntry()
         e.set_mask('%d.%d.%d')
         self.assertEqual(e.get_text(), ' . . ')
         self.assertEqual(e.get_field_text(), [None, None, None])

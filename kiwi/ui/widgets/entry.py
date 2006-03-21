@@ -36,6 +36,7 @@ import gtk
 
 from kiwi.datatypes import ValidationError, number
 from kiwi.decorators import deprecated
+from kiwi.python import deprecationwarn
 from kiwi.ui.entry import MaskError, KiwiEntry
 from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
@@ -49,7 +50,7 @@ _ = gettext.gettext
 (ENTRY_MODE_TEXT,
  ENTRY_MODE_DATA) = range(2)
 
-class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
+class ProxyEntry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
     """The Kiwi Entry widget has many special features that extend the basic
     gtk entry.
 
@@ -64,6 +65,8 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
     entry. When dealing with date and float data-type the information on
     how to fill these entries is displayed according to the current locale.
     """
+
+    __gtype_name__ = 'ProxyEntry'
 
     gproperty("completion", bool, False)
     gproperty('exact-completion', bool, default=False)
@@ -108,7 +111,7 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         return value
 
     def prop_set_data_type(self, data_type):
-        data_type = super(Entry, self).prop_set_data_type(data_type)
+        data_type = super(ProxyEntry, self).prop_set_data_type(data_type)
 
         # Numbers should be right aligned
         if data_type and issubclass(data_type, number):
@@ -412,7 +415,13 @@ class Entry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         # FIXME: Enable this at some point
         #self.activate()
 
-type_register(Entry)
+type_register(ProxyEntry)
+
+class Entry(ProxyEntry):
+    def __init__(self, data_type=None):
+        ProxyEntry.__init__(self, data_type)
+        deprecationwarn('Entry is deprecated, use ProxyEntry instead',
+                        stacklevel=3)
 
 class ProxyDateEntry(PropertyObject, DateEntry, WidgetMixinSupportValidation):
     __gtype_name__ = 'ProxyDateEntry'

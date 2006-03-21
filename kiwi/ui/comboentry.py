@@ -27,7 +27,7 @@ import gtk
 from gtk import gdk, keysyms
 
 from kiwi.utils import gsignal, type_register
-from kiwi.ui.widgets.entry import Entry
+from kiwi.ui.widgets.entry import ProxyEntry
 
 class _ComboEntryPopup(gtk.Window):
     gsignal('text-selected', str)
@@ -290,7 +290,8 @@ class ComboEntry(gtk.HBox):
         gtk.HBox.__init__(self)
         self._popping_down = False
 
-        self.entry = Entry()
+        # XXX: KiwiEntry?
+        self.entry = ProxyEntry()
         self.entry.connect('activate',
                            self._on_entry__activate)
         self.entry.connect('scroll-event',

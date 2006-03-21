@@ -1,3 +1,13 @@
+2006-03-21  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/entry.py: Rename Entry to ProxyEntry
+
+	* kiwi/ui/gazpacholoader.py (GazpachoWidgetTree.__init__): 
+	Print deprecation warnings inside a glade file nicely
+
+	* kiwi/python.py (deprecationwarn, disabledeprecationcall): New
+	functions, to manage deprecation warnings
+
 2005-12-14  Ali Afshar <aafshar@gmail.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

@@ -28,6 +28,7 @@ import datetime
 from decimal import Decimal
 import gettext
 import os
+import warnings
 
 import gobject
 import gtk
@@ -42,6 +43,7 @@ from gazpacho.widgets.base.box import BoxAdaptor
 from kiwi.datatypes import currency
 from kiwi.environ import environ
 from kiwi.log import Logger
+from kiwi.python import disabledeprecationcall
 from kiwi.ui.hyperlink import HyperLink
 from kiwi.ui.objectlist import Column, ObjectList
 from kiwi.ui.widgets.checkbutton import CheckButton
@@ -77,16 +79,23 @@ class GazpachoWidgetTree:
             raise TypeError(
                   "gladefile should be a string, found %s" % type(gladefile))
         filename = os.path.splitext(os.path.basename(gladefile))[0]
-
+        self._filename = filename + '.glade'
         self._view = view
-        self._gladefile = environ.find_resource("glade", filename + ".glade")
+        self._gladefile = environ.find_resource("glade", self._filename)
         self._widgets =  (widgets or view.widgets or [])[:]
         self.gladename = gladename or filename
+        self._showwarning = warnings.showwarning
+        warnings.showwarning = self._on_load_warning
         self._tree = Builder(self._gladefile, domain=domain)
+        warnings.showwarning = self._showwarning
         if not self._widgets:
             self._widgets = [w.get_data("gazpacho::object-id")
                              for w in self._tree.get_widgets()]
         self._attach_widgets()
+
+    def _on_load_warning(self, warning, category, file, line):
+        self._showwarning('while loading glade file: %s' % warning,
+                          category, self._filename, '???')
 
     def _attach_widgets(self):
         # Attach widgets in the widgetlist to the view specified, so
@@ -304,7 +313,7 @@ class KiwiComboBoxAdapter(ComboBoxAdapter):
         else:
             raise AssertionError("Unknown ComboBox GType: %r" % gtype)
 
-        obj = object_type()
+        obj = disabledeprecationcall(object_type)
         obj.set_name(name)
         return obj
 adapter_registry.register_adapter(KiwiComboBoxAdapter)

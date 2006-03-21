@@ -28,12 +28,17 @@ is that a {kiwi.ui.widgets.entry.Entry} is used instead of a GtkEntry."""
 import gobject
 import gtk
 
-from kiwi.ui.widgets.entry import Entry
+from kiwi.python import deprecationwarn
+from kiwi.ui.widgets.entry import ProxyEntry
 
 class BaseComboBoxEntry(gtk.ComboBox):
     def __init__(self, model=None, text_column=-1):
+        deprecationwarn(
+            'ComboBoxEntry is deprecated, use ComboEntry instead',
+            stacklevel=3)
+
         gtk.ComboBox.__init__(self)
-        self.entry = Entry()
+        self.entry = ProxyEntry()
         # HACK: We need to set a private variable, this seems to
         #       be the only way of doing so
         self.entry.start_editing(gtk.gdk.Event(gtk.gdk.BUTTON_PRESS))
