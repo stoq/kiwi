@@ -31,7 +31,7 @@ import gtk
 from kiwi import ValueUnset
 from kiwi.python import deprecationwarn
 from kiwi.utils import PropertyObject, gproperty
-from kiwi.ui.widgets.proxy import ProxyWidgetMixin
+from kiwi.ui.proxywidget import ProxyWidgetMixin
 
 class ProxyRadioButton(PropertyObject, gtk.RadioButton, ProxyWidgetMixin):
     gproperty('data-value', str, nick='Data Value')

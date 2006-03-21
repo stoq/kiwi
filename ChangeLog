@@ -1,5 +1,20 @@
 2006-03-21  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/proxywidget.py:
+	* kiwi/ui/proxywidget.py:
+	* kiwi/ui/widgets/checkbutton.py:
+	* kiwi/ui/widgets/combo.py:
+	* kiwi/ui/widgets/entry.py:
+	* kiwi/ui/widgets/filechooser.py:
+	* kiwi/ui/widgets/label.py:
+	* kiwi/ui/widgets/proxy.py:
+	* kiwi/ui/widgets/radiobutton.py:
+	* kiwi/ui/widgets/spinbutton.py:
+	* kiwi/ui/widgets/textview.py:
+	Rename mixins and move out of kiwi/ui/widgets/
+
+2006-03-21  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/interfaces.py:
 	* kiwi/proxies.py:
 	* kiwi/ui/views.py:

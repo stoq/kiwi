@@ -30,7 +30,7 @@ L{Label.set_bold}"""
 import gtk
 
 from kiwi.ui.gadgets import set_foreground
-from kiwi.ui.widgets.proxy import ProxyWidgetMixin
+from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import PropertyObject
 
 class Label(PropertyObject, gtk.Label, ProxyWidgetMixin):

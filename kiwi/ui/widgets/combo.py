@@ -42,7 +42,7 @@ from kiwi.ui.comboboxentry import BaseComboBoxEntry
 from kiwi.ui.comboentry import ComboEntry
 from kiwi.ui.combomixin import COL_COMBO_LABEL, COMBO_MODE_STRING, \
      COMBO_MODE_DATA, COMBO_MODE_UNKNOWN, ComboMixin
-from kiwi.ui.widgets.proxy import ProxyWidgetMixin, ValidatableProxyWidgetMixin
+from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
 from kiwi.utils import PropertyObject, gproperty
 
 class ProxyComboBox(PropertyObject, gtk.ComboBox, ComboMixin, ProxyWidgetMixin):

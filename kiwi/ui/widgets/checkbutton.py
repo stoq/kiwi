@@ -28,7 +28,7 @@
 
 import gtk
 
-from kiwi.ui.widgets.proxy import ProxyWidgetMixin
+from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import PropertyObject, gsignal
 
 class CheckButton(PropertyObject, gtk.CheckButton, ProxyWidgetMixin):

@@ -39,7 +39,7 @@ from kiwi.decorators import deprecated
 from kiwi.python import deprecationwarn
 from kiwi.ui.entry import MaskError, KiwiEntry
 from kiwi.ui.dateentry import DateEntry
-from kiwi.ui.widgets.proxy import ValidatableProxyWidgetMixin
+from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
 from kiwi.utils import PropertyObject, gproperty, gsignal, type_register
 
 _ = gettext.gettext

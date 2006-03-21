@@ -27,7 +27,7 @@
 
 import gtk
 
-from kiwi.ui.widgets.proxy import ValidatableProxyWidgetMixin
+from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
 from kiwi.utils import PropertyObject
 
 class TextView(PropertyObject, gtk.TextView, ValidatableProxyWidgetMixin):

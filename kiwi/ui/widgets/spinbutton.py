@@ -34,7 +34,7 @@ import gtk
 
 from kiwi.datatypes import number
 from kiwi.ui.icon import IconEntry
-from kiwi.ui.widgets.proxy import ValidatableProxyWidgetMixin
+from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
 from kiwi.utils import PropertyObject, gsignal
 
 class SpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixin):
