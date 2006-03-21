@@ -1,4 +1,12 @@
+2005-12-14  Ali Afshar <aafshar@gmail.com>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/filechooser.py:
+	Add widget support for filechooserbutton and filechooserdialog.
+	
 2006-03-21  Johan Dahlin  <jdahlin@async.com.br>
+
 
 	* kiwi/dist.py (setup): Add a distutils setup() replacement to
 	simplify installation of kiwi packages.
