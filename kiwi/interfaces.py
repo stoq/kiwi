@@ -28,19 +28,33 @@ from kiwi.component import Interface
 
 Nothing = object()
 
-class Mixin(Interface):
-    # gsignal('content-changed')
-    # gproperty('data-type')
-    # gproperty('model-attribute')
-    # gproperty('validation-changed')
+class IProxyWidget(Interface):
+    """
+    IProxyWidget is a widget that can be attached to a proxy.
+
+    Signals:
+       content-changed: This must be emitted when the content changes
+
+    Properties:
+       data-type: data type of the model
+       model-attribute: name of the attribute in the model
+    """
 
     def read():
+        """
+        Reads the content of the widget and returns in an appropriate
+        data type.
+        ValueUnset is returned when the user has not modified the entry
+        """
         pass
 
     def update(value):
+        """
+        Updates the content of the widget with a value
+        """
         pass
 
-class MixinSupportValidation(Mixin):
+class IValidatableProxyWidget(IProxyWidget):
     # gproperty('mandatory')
     def is_valid():
         pass

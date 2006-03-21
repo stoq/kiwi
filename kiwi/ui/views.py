@@ -38,7 +38,7 @@ import gtk
 from gtk import gdk
 
 from kiwi.environ import is_gazpacho_required
-from kiwi.interfaces import MixinSupportValidation
+from kiwi.interfaces import IValidatableProxyWidget
 from kiwi.log import Logger
 from kiwi.proxies import Proxy
 from kiwi.utils import gsignal, type_register
@@ -711,7 +711,7 @@ class SlaveView(gobject.GObject):
             if widget is None:
                 continue
 
-            if not MixinSupportValidation.providedBy(widget):
+            if not IValidatableProxyWidget.providedBy(widget):
                 continue
 
             try:

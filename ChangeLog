@@ -1,5 +1,13 @@
 2006-03-21  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/interfaces.py:
+	* kiwi/proxies.py:
+	* kiwi/ui/views.py:
+	* kiwi/ui/widgets/proxy.py:
+	Rename interfaces and start to document
+
+2006-03-21  Johan Dahlin  <jdahlin@async.com.br>
+
 	* gazpacho-plugin/kiwiwidgets.xml: 
 	* tools/glade_conversor.py (filters): 
 	Update to reflect renames.

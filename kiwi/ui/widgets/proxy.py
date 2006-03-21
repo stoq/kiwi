@@ -36,7 +36,7 @@ from kiwi import ValueUnset
 from kiwi.component import implements
 from kiwi.datatypes import ValidationError, converter
 from kiwi.environ import environ
-from kiwi.interfaces import Mixin, MixinSupportValidation
+from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
 from kiwi.log import Logger
 from kiwi.ui.gadgets import FadeOut
 from kiwi.ui.tooltip import Tooltip
@@ -56,7 +56,7 @@ class WidgetMixin(object):
       in this class.
     """
 
-    implements(Mixin)
+    implements(IProxyWidget)
 
     gsignal('content-changed')
     gsignal('validation-changed', bool)
@@ -161,7 +161,7 @@ class WidgetMixinSupportValidation(WidgetMixin):
     display information about what is wrong.
     """
 
-    implements(MixinSupportValidation)
+    implements(IValidatableProxyWidget)
 
     gproperty('mandatory', bool, default=False)
 
