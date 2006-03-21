@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2005 Async Open Source
+# Copyright (C) 2005-2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -25,8 +25,6 @@
 import logging
 import os
 import sys
-
-from kiwi.environ import environ
 
 class LogError(Exception):
     pass
@@ -95,7 +93,8 @@ def get_log_level(name):
 
 def _read_log_level():
     log_levels = {}
-    log_level = environ.get_log_level()
+    # bootstrap issue, cannot depend on environ
+    log_level = os.environ.get('KIWI_LOG')
     if not log_level:
         return log_levels
 

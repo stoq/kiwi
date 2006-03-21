@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2005 Async Open Source
+# Copyright (C) 2005-2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -28,10 +28,13 @@ import imp
 import os
 import sys
 
+from kiwi.log import Logger
 from kiwi.python import namedAny
 
 __all__ = ['Application', 'Library', 'app', 'environ', 'require_gazpacho',
            'is_gazpacho_required']
+
+log = Logger('environ')
 
 EnvironmentError = EnvironmentError
 
@@ -174,6 +177,7 @@ class Library(Environment):
 
         # py2exe
         if _is_frozen():
+            log.info('py2exe found')
             executable = os.path.realpath(os.path.abspath(sys.executable))
             root = os.path.dirname(executable)
         # normal
@@ -214,17 +218,38 @@ class Library(Environment):
 
         self.uninstalled = uninstalled
 
-    def enable_translation(self, domain=None, locale='locale',
-                           charset='utf-8'):
+    def enable_translation(self, domain=None, localedir=None):
+        """
+        Enables translation for a library
+
+        @param domain: optional, if not specified name sent to constructor
+          will be used
+        @param localedir: directory to get locales from when running in
+          uninstalled mode. If not specified a directory called 'locale' in
+          the root will be used.
+        """
         if not domain:
             domain = self.name
+
+        if not localedir:
+            localedir = 'locale'
+
+        if self.uninstalled:
+            try:
+                self.add_resource('locale', localedir)
+            except EnvironmentError:
+                pass
+
         # XXX: locale should not be a list
-        localedir = self._resources.get(locale)
+        localedir = self._resources.get('locale')
         if localedir:
             gettext.bindtextdomain(domain, localedir[0])
         else:
-            print 'Warning, no localedir for: %s' % domain
-        gettext.bind_textdomain_codeset(domain, charset)
+            log.warn('no localedir for: %s' % domain)
+
+        # Gtk+ only supports utf-8, it makes no sense to support
+        # other encodings in kiwi it self
+        gettext.bind_textdomain_codeset(domain, 'utf-8')
 
     def set_application_domain(self, domain):
         """
@@ -280,7 +305,7 @@ class Application(Library):
         try:
             module = namedAny(self._path)
         except:
-            print '== ERROR while importing %s' % self._path
+            log.warn('importing %s' % self._path)
             raise
 
         main = getattr(module, 'main', None)
@@ -289,15 +314,16 @@ class Application(Library):
                              'main', self._path)
         return main
 
-    def enable_translation(self, domain=None, locale='locale',
-                           charset='utf-8'):
-        if not domain:
-            domain = self.name
+    def enable_translation(self, domain=None, localedir=None):
+        """
+        Enables translation for a application
+        See L{Library.enable_translation}.
 
-        Library.enable_translation(self, domain, locale, charset)
+        """
+        Library.enable_translation(self, domain, localedir)
         old_domain = gettext.textdomain()
         if old_domain  != 'messages':
-            print 'Warning: overriding default domain, was %s' % old_domain
+            log.warn('overriding default domain, was %s' % old_domain)
 
         self.set_application_domain(domain)
 

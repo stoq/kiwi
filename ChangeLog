@@ -1,3 +1,11 @@
+2006-03-21  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/__init__.py:
+	* kiwi/environ.py:
+	* kiwi/log.py:
+	Simplify localization for uninstalled applications. Use proper logging
+	in environment
+
 2006-03-20  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: jdahlin

@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2003-2005 Async Open Source
+# Copyright (C) 2003-2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -47,21 +47,18 @@ except ImportError:
         "PyGTK 2.8 or PyGObject 2.9.0 or higher is required by kiwi")
 
 from kiwi.__version__ import version as kiwi_version
-from kiwi.environ import EnvironmentError, Library
+from kiwi.environ import Library
 
 assert kiwi_version # pyflakes
 
 lib = Library('kiwi')
 if lib.uninstalled:
-    try:
-        lib.add_resource('locale', 'locale')
-    except EnvironmentError:
-        pass
     lib.add_global_resource('glade', 'glade')
     lib.add_global_resource('pixmap', 'pixmaps')
 lib.enable_translation()
 
-del Library, lib
+# Be careful to not export too much
+del Library, lib, gobject
 
 class ValueUnset:
     """To differentiate from places where None is a valid default. Used
