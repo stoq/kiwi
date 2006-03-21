@@ -25,11 +25,13 @@
 
 from distutils.command.install_data import install_data
 from distutils.command.install_lib import install_lib
+from distutils.core import setup as DS_setup
 from distutils.dep_util import newer
 from distutils.log import info, warn
 from distutils.sysconfig import get_python_lib
 from fnmatch import fnmatch
 import os
+import new
 import sys
 
 class _VariableExtender:
@@ -209,3 +211,32 @@ def listpackages(root, exclude=None):
                 packages.remove(package)
 
     return packages
+
+def setup(**kwargs):
+    """
+    A drop in replacement for distutils.core.setup which
+    integrates nicely with kiwi.environ
+    @kwarg resources:
+    @kwarg global_resources:
+    """
+    resources = {}
+    global_resources = {}
+    if 'resources' in kwargs:
+        resources = kwargs.pop('resources')
+    if 'global_resources' in kwargs:
+        global_resources = kwargs.pop('global_resources')
+
+    def run_install(self):
+        self.data_files.extend(compile_po_files(kwargs['name']))
+        KiwiInstallData.run(self)
+
+    # distutils uses old style classes
+    InstallData = new.classobj('InstallData', (KiwiInstallData,),
+                               dict(run=run_install))
+    InstallLib = new.classobj('InstallLib', (KiwiInstallLib,),
+                              dict(resources=resources,
+                                   global_resources=global_resources))
+    kwargs['cmdclass'] = dict(install_data=InstallData,
+                              install_lib=InstallLib)
+
+    DS_setup(**kwargs)

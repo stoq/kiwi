@@ -1,5 +1,8 @@
 2006-03-21  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/dist.py (setup): Add a distutils setup() replacement to
+	simplify installation of kiwi packages.
+
 	* kiwi/__init__.py:
 	* kiwi/environ.py:
 	* kiwi/log.py:
