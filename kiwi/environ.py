@@ -245,7 +245,9 @@ class Library(Environment):
         if localedir:
             gettext.bindtextdomain(domain, localedir[0])
         else:
-            log.warn('no localedir for: %s' % domain)
+            # Only complain when running installed
+            if not self.uninstalled:
+                log.warn('no localedir for: %s' % domain)
 
         # Gtk+ only supports utf-8, it makes no sense to support
         # other encodings in kiwi it self
