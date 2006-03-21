@@ -13,7 +13,7 @@ simpler.
 """
 
 from kiwi import kiwi_version
-from kiwi.dist import setup, listfiles, listpackages
+from kiwi.dist import setup, listfiles, listpackages, get_site_packages_dir
 
 setup(name="kiwi",
       version=".".join(map(str, kiwi_version)),
