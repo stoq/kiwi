@@ -31,14 +31,14 @@ import gtk
 from kiwi import ValueUnset
 from kiwi.python import deprecationwarn
 from kiwi.utils import PropertyObject, gproperty
-from kiwi.ui.widgets.proxy import WidgetMixin
+from kiwi.ui.widgets.proxy import ProxyWidgetMixin
 
-class ProxyRadioButton(PropertyObject, gtk.RadioButton, WidgetMixin):
+class ProxyRadioButton(PropertyObject, gtk.RadioButton, ProxyWidgetMixin):
     gproperty('data-value', str, nick='Data Value')
 
     def __init__(self, group=None, label=None, use_underline=True):
         gtk.RadioButton.__init__(self, group, label, use_underline)
-        WidgetMixin.__init__(self)
+        ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self)
         self.connect('group-changed', self._on_group_changed)
 

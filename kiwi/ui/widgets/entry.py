@@ -39,7 +39,7 @@ from kiwi.decorators import deprecated
 from kiwi.python import deprecationwarn
 from kiwi.ui.entry import MaskError, KiwiEntry
 from kiwi.ui.dateentry import DateEntry
-from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
+from kiwi.ui.widgets.proxy import ValidatableProxyWidgetMixin
 from kiwi.utils import PropertyObject, gproperty, gsignal, type_register
 
 _ = gettext.gettext
@@ -50,7 +50,7 @@ _ = gettext.gettext
 (ENTRY_MODE_TEXT,
  ENTRY_MODE_DATA) = range(2)
 
-class ProxyEntry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
+class ProxyEntry(PropertyObject, KiwiEntry, ValidatableProxyWidgetMixin):
     """The Kiwi Entry widget has many special features that extend the basic
     gtk entry.
 
@@ -76,7 +76,7 @@ class ProxyEntry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         self._current_object = None
         self._mode = ENTRY_MODE_TEXT
         KiwiEntry.__init__(self)
-        WidgetMixinSupportValidation.__init__(self)
+        ValidatableProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=data_type)
 
 
@@ -305,7 +305,7 @@ class ProxyEntry(PropertyObject, KiwiEntry, WidgetMixinSupportValidation):
         self.emit('content-changed')
         self.set_position(-1)
 
-    # WidgetMixin implementation
+    # ProxyWidgetMixin implementation
 
     def read(self):
         mode = self._mode
@@ -423,7 +423,7 @@ class Entry(ProxyEntry):
         deprecationwarn('Entry is deprecated, use ProxyEntry instead',
                         stacklevel=3)
 
-class ProxyDateEntry(PropertyObject, DateEntry, WidgetMixinSupportValidation):
+class ProxyDateEntry(PropertyObject, DateEntry, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyDateEntry'
 
     # changed allowed data types because checkbuttons can only
@@ -432,7 +432,7 @@ class ProxyDateEntry(PropertyObject, DateEntry, WidgetMixinSupportValidation):
 
     def __init__(self):
         DateEntry.__init__(self)
-        WidgetMixinSupportValidation.__init__(self)
+        ValidatableProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self)
 
     gsignal('changed', 'override')
@@ -440,7 +440,7 @@ class ProxyDateEntry(PropertyObject, DateEntry, WidgetMixinSupportValidation):
         self.chain()
         self.emit('content-changed')
 
-    # WidgetMixin implementation
+    # ProxyWidgetMixin implementation
 
     def read(self):
         return self.get_date()

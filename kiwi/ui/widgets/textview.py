@@ -27,14 +27,14 @@
 
 import gtk
 
-from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
+from kiwi.ui.widgets.proxy import ValidatableProxyWidgetMixin
 from kiwi.utils import PropertyObject
 
-class TextView(PropertyObject, gtk.TextView, WidgetMixinSupportValidation):
+class TextView(PropertyObject, gtk.TextView, ValidatableProxyWidgetMixin):
     def __init__(self):
         gtk.TextView.__init__(self)
         PropertyObject.__init__(self, data_type=str)
-        WidgetMixinSupportValidation.__init__(self)
+        ValidatableProxyWidgetMixin.__init__(self)
 
         self._textbuffer = gtk.TextBuffer()
         self._textbuffer.connect('changed',

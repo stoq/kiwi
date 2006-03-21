@@ -28,16 +28,16 @@
 
 import gtk
 
-from kiwi.ui.widgets.proxy import WidgetMixin
+from kiwi.ui.widgets.proxy import ProxyWidgetMixin
 from kiwi.utils import PropertyObject, gsignal
 
-class CheckButton(PropertyObject, gtk.CheckButton, WidgetMixin):
+class CheckButton(PropertyObject, gtk.CheckButton, ProxyWidgetMixin):
     # changed allowed data types because checkbuttons can only
     # accept bool values
     allowed_data_types = bool,
 
     def __init__(self):
-        WidgetMixin.__init__(self)
+        ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=bool)
         gtk.CheckButton.__init__(self)
 

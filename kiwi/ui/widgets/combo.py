@@ -42,17 +42,17 @@ from kiwi.ui.comboboxentry import BaseComboBoxEntry
 from kiwi.ui.comboentry import ComboEntry
 from kiwi.ui.combomixin import COL_COMBO_LABEL, COMBO_MODE_STRING, \
      COMBO_MODE_DATA, COMBO_MODE_UNKNOWN, ComboMixin
-from kiwi.ui.widgets.proxy import WidgetMixin, WidgetMixinSupportValidation
+from kiwi.ui.widgets.proxy import ProxyWidgetMixin, ValidatableProxyWidgetMixin
 from kiwi.utils import PropertyObject, gproperty
 
-class ProxyComboBox(PropertyObject, gtk.ComboBox, ComboMixin, WidgetMixin):
+class ProxyComboBox(PropertyObject, gtk.ComboBox, ComboMixin, ProxyWidgetMixin):
 
     __gtype_name__ = 'ProxyComboBox'
 
     def __init__(self):
         gtk.ComboBox.__init__(self)
         ComboMixin.__init__(self)
-        WidgetMixin.__init__(self)
+        ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self)
         self.connect('changed', self._on__changed)
 
@@ -104,7 +104,7 @@ class ProxyComboBox(PropertyObject, gtk.ComboBox, ComboMixin, WidgetMixin):
         self.emit('content-changed')
 
 class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
-                         WidgetMixinSupportValidation):
+                         ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyComboBoxEntry'
     # it doesn't make sense to connect to this signal
     # because we want to monitor the entry of the combo
@@ -118,7 +118,7 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
             stacklevel=3)
         BaseComboBoxEntry.__init__(self)
         ComboMixin.__init__(self)
-        WidgetMixinSupportValidation.__init__(self, widget=self.entry)
+        ValidatableProxyWidgetMixin.__init__(self, widget=self.entry)
         PropertyObject.__init__(self, **kwargs)
 
         self.set_text_column(COL_COMBO_LABEL)
@@ -213,7 +213,7 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
         self.entry.set_text("")
 
 class ProxyComboEntry(PropertyObject, ComboEntry,
-                      WidgetMixinSupportValidation):
+                      ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyComboEntry'
 
     gproperty("list-editable", bool, True, "Editable")
@@ -221,7 +221,7 @@ class ProxyComboEntry(PropertyObject, ComboEntry,
     def __init__(self):
         self.mode = COMBO_MODE_STRING
         ComboEntry.__init__(self)
-        WidgetMixinSupportValidation.__init__(self)
+        ValidatableProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self)
         self.connect('changed', self._on__changed)
 

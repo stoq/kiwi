@@ -34,10 +34,10 @@ import gtk
 
 from kiwi.datatypes import number
 from kiwi.ui.icon import IconEntry
-from kiwi.ui.widgets.proxy import WidgetMixinSupportValidation
+from kiwi.ui.widgets.proxy import ValidatableProxyWidgetMixin
 from kiwi.utils import PropertyObject, gsignal
 
-class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
+class SpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixin):
     """
     A SpinButton subclass which adds supports for the Kiwi Framework.
     This widget supports validation
@@ -51,7 +51,7 @@ class SpinButton(PropertyObject, gtk.SpinButton, WidgetMixinSupportValidation):
         # or float for spinbuttons
         gtk.SpinButton.__init__(self)
         PropertyObject.__init__(self, data_type=int)
-        WidgetMixinSupportValidation.__init__(self)
+        ValidatableProxyWidgetMixin.__init__(self)
         self._icon = IconEntry(self)
         self.set_property('xalign', 1.0)
 

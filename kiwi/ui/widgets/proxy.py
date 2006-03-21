@@ -46,7 +46,7 @@ log = Logger('widget proxy')
 
 _ = gettext.gettext
 
-class WidgetMixin(object):
+class ProxyWidgetMixin(object):
     """This class is a mixin that provide a common interface for KiwiWidgets.
 
     Usually the Proxy class need to set and get data from the widgets. It also
@@ -151,7 +151,7 @@ MANDATORY_ICON = gtk.STOCK_EDIT
 ERROR_ICON = gdk.pixbuf_new_from_file(
     environ.find_resource('pixmap', 'validation-error-16.png'))
 
-class WidgetMixinSupportValidation(WidgetMixin):
+class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     """Class used by some Kiwi Widgets that need to support mandatory
     input and validation features such as custom validation and data-type
     validation.
@@ -166,7 +166,7 @@ class WidgetMixinSupportValidation(WidgetMixin):
     gproperty('mandatory', bool, default=False)
 
     def __init__(self, widget=None):
-        WidgetMixin.__init__(self)
+        ProxyWidgetMixin.__init__(self)
 
         self._valid = True
         self._tooltip = Tooltip(self)

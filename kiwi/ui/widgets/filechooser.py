@@ -26,7 +26,7 @@
 
 import gtk
 
-from kiwi.ui.widgets.proxy import WidgetMixin
+from kiwi.ui.widgets.proxy import ProxyWidgetMixin
 from kiwi.utils import PropertyObject, gsignal
 
 class _FileChooserMixin(object):
@@ -48,16 +48,16 @@ class _FileChooserMixin(object):
         self.set_filename(data)
 
 class FileChooserButton(_FileChooserMixin, PropertyObject,
-                        gtk.FileChooserButton, WidgetMixin):
+                        gtk.FileChooserButton, ProxyWidgetMixin):
     def __init__(self):
-        WidgetMixin.__init__(self)
+        ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=str)
         gtk.FileChooserButton.__init__(self)
 
 class FileChooserWidget(_FileChooserMixin, PropertyObject,
-                        gtk.FileChooserWidget, WidgetMixin):
+                        gtk.FileChooserWidget, ProxyWidgetMixin):
     def __init__(self):
-        WidgetMixin.__init__(self)
+        ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=str)
         gtk.FileChooserWidget.__init__(self)
 

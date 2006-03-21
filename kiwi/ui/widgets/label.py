@@ -30,10 +30,10 @@ L{Label.set_bold}"""
 import gtk
 
 from kiwi.ui.gadgets import set_foreground
-from kiwi.ui.widgets.proxy import WidgetMixin
+from kiwi.ui.widgets.proxy import ProxyWidgetMixin
 from kiwi.utils import PropertyObject
 
-class Label(PropertyObject, gtk.Label, WidgetMixin):
+class Label(PropertyObject, gtk.Label, ProxyWidgetMixin):
     def __init__(self, label='', data_type=None):
         """
         @param label: initial text
@@ -41,7 +41,7 @@ class Label(PropertyObject, gtk.Label, WidgetMixin):
         """
         gtk.Label.__init__(self, label)
         PropertyObject.__init__(self, data_type=data_type)
-        WidgetMixin.__init__(self)
+        ProxyWidgetMixin.__init__(self)
         self.set_use_markup(True)
         self._attr_dic = { "style": None,
                            "weight": None,
