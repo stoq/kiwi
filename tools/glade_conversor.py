@@ -13,6 +13,8 @@ filters = [
     ("Kiwi2+Widgets+SpinButton", "kiwi+ui+widgets+spinbutton"),
     ("Kiwi2+Widgets+TextView", "kiwi+ui+widgets+textview"),
     ("kiwi+ui+widgets+list+List", "ObjectList"),
+    ("kiwi+ui+widgets+entry+Entry", "ProxyEntry"),
+    ("kiwi+ui+widgets+radiobutton+RadioButton", "ProxyRadioButton"),
     ("kiwi+ui+widgets+combobox+ComboBox", "ProxyComboBox"),
     ("kiwi+ui+widgets+combobox+ComboBoxEntry", "ProxyComboBoxEntry"),
 ]

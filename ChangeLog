@@ -1,5 +1,13 @@
 2006-03-21  Johan Dahlin  <jdahlin@async.com.br>
 
+	* gazpacho-plugin/kiwiwidgets.xml: 
+	* tools/glade_conversor.py (filters): 
+	Update to reflect renames.
+
+	* kiwi/ui/widgets/radiobutton.py (RadioButton.__init__): Rename
+	RadioButton to ProxyRadioButton.
+	Add gtk.RadioButton compatible arguments to ProxyRadioButton
+
 	* kiwi/ui/widgets/entry.py: Rename Entry to ProxyEntry
 
 	* kiwi/ui/gazpacholoader.py (GazpachoWidgetTree.__init__): 

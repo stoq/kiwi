@@ -29,14 +29,15 @@
 import gtk
 
 from kiwi import ValueUnset
+from kiwi.python import deprecationwarn
 from kiwi.utils import PropertyObject, gproperty
 from kiwi.ui.widgets.proxy import WidgetMixin
 
-class RadioButton(PropertyObject, gtk.RadioButton, WidgetMixin):
+class ProxyRadioButton(PropertyObject, gtk.RadioButton, WidgetMixin):
     gproperty('data-value', str, nick='Data Value')
 
-    def __init__(self):
-        gtk.RadioButton.__init__(self)
+    def __init__(self, group=None, label=None, use_underline=True):
+        gtk.RadioButton.__init__(self, group, label, use_underline)
         WidgetMixin.__init__(self)
         PropertyObject.__init__(self)
         self.connect('group-changed', self._on_group_changed)
@@ -75,3 +76,10 @@ class RadioButton(PropertyObject, gtk.RadioButton, WidgetMixin):
         for rb in self.get_group():
             if rb.get_property('data-value') == data:
                 rb.set_active(True)
+
+class RadioButton(ProxyRadioButton):
+    def __init__(self):
+        deprecationwarn(
+            'RadioButton is deprecated, use ProxyRadioButton instead',
+            stacklevel=3)
+        ProxyRadioButton.__init__(self)
