@@ -12,21 +12,8 @@ creating Python applications using PyGTK and libglade much
 simpler.
 """
 
-from distutils.core import setup
-
 from kiwi import kiwi_version
-from kiwi.dist import listfiles, listpackages, KiwiInstallLib, \
-     get_site_packages_dir, compile_po_files, KiwiInstallData
-
-class InstallLib(KiwiInstallLib):
-    resources = dict(locale='$prefix/share/locale')
-    global_resources = dict(glade='$datadir/glade',
-                            pixmap='$datadir/pixmaps')
-
-class InstallData(KiwiInstallData):
-    def run(self):
-        self.data_files.extend(compile_po_files('kiwi'))
-        KiwiInstallData.run(self)
+from kiwi.dist import setup, listfiles, listpackages
 
 setup(name="kiwi",
       version=".".join(map(str, kiwi_version)),
@@ -54,6 +41,7 @@ setup(name="kiwi",
       scripts=['bin/kiwi-i18n',
                'bin/kiwi-ui-test'],
       packages=listpackages('kiwi'),
-      cmdclass=dict(install_lib=InstallLib,
-                    install_data=InstallData),
+      resources=dict(locale='$prefix/share/locale'),
+      global_resources=dict(glade='$datadir/glade',
+                            pixmap='$datadir/pixmaps'),
       )
