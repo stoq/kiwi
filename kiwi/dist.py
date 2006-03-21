@@ -230,6 +230,15 @@ def setup(**kwargs):
         self.data_files.extend(compile_po_files(kwargs['name']))
         KiwiInstallData.run(self)
 
+        # Copied from gazpacho, needs to be tested
+
+        #if 'bdist_wininst' in sys.argv:
+        #    prefix_code = 'import sys; prefix = sys.prefix'
+        #else:
+        #    install = self.distribution.get_command_obj('install')
+        #    prefix = install.prefix
+        #    prefix_code = 'prefix = r"%s"' % prefix
+
     # distutils uses old style classes
     InstallData = new.classobj('InstallData', (KiwiInstallData,),
                                dict(run=run_install))
