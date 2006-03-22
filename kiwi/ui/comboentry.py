@@ -26,8 +26,8 @@
 import gtk
 from gtk import gdk, keysyms
 
-from kiwi.utils import gsignal, type_register
 from kiwi.ui.entry import KiwiEntry
+from kiwi.utils import gsignal, type_register
 
 class _ComboEntryPopup(gtk.Window):
     gsignal('text-selected', str)
