@@ -35,7 +35,6 @@ from gtk import gdk
 
 from kiwi.accessors import kgetattr
 from kiwi.datatypes import converter, currency, lformat, number
-from kiwi.decorators import deprecated
 from kiwi.log import Logger
 from kiwi.python import slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
@@ -1537,23 +1536,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         @param value: if true, shows the headers, if false hide then
         """
         self._treeview.set_headers_visible(value)
-
-    # Backwards compat
-    def add_instance(self, *args, **kwargs):
-        return self.append(*args, **kwargs)
-    add_instance = deprecated('append')(add_instance)
-
-    def remove_instance(self, *args, **kwargs):
-        return self.remove(*args, **kwargs)
-    remove_instance = deprecated('remove')(remove_instance)
-
-    def update_instance(self, *args, **kwargs):
-        return self.update(*args, **kwargs)
-    update_instance = deprecated('update')(update_instance)
-
-    def select_instance(self, *args, **kwargs):
-        return self.select(*args, **kwargs)
-    select_instance = deprecated('select')(select_instance)
 
 type_register(ObjectList)
 

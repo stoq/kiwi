@@ -25,10 +25,11 @@
 
 import gtk
 
+from kiwi.decorators import deprecated
 from kiwi.python import deprecationwarn
 from kiwi.ui.objectlist import Column, SequentialColumn, ColoredColumn, \
      ListLabel, SummaryLabel
-from kiwi.ui.objectlist import ObjectList
+from kiwi.ui.objectlist import ObjectList, log
 
 # pyflakes
 Column, SequentialColumn, ColoredColumn, ListLabel, SummaryLabel
@@ -38,6 +39,24 @@ class List(ObjectList):
                  instance_list=None,
                  mode=gtk.SELECTION_BROWSE):
         deprecationwarn(
-            'ProxyComboBoxEntry is deprecated, use ProxyComboEntry instead',
+            'List is deprecated, use ObjectList instead',
             stacklevel=3)
         ObjectList.__init__(self, columns, instance_list, mode)
+
+    # Backwards compat
+    def add_instance(self, *args, **kwargs):
+        return self.append(*args, **kwargs)
+    add_instance = deprecated('append', log)(add_instance)
+
+    def remove_instance(self, *args, **kwargs):
+        return self.remove(*args, **kwargs)
+    remove_instance = deprecated('remove', log)(remove_instance)
+
+    def update_instance(self, *args, **kwargs):
+        return self.update(*args, **kwargs)
+    update_instance = deprecated('update', log)(update_instance)
+
+    def select_instance(self, *args, **kwargs):
+        return self.select(*args, **kwargs)
+    select_instance = deprecated('select', log)(select_instance)
+
