@@ -1,5 +1,9 @@
 2006-03-22  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/proxies.py:
+	Reorganize, Deprecate new_model, Rename model to _model and 
+	add a property.
+
 	* kiwi/interfaces.py:
 	* kiwi/proxywidget.py:
 	Document/reorganize signals

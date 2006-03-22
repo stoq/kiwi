@@ -33,6 +33,7 @@ import gtk
 
 from kiwi import ValueUnset
 from kiwi.accessors import kgetattr, ksetattr, clear_attr_cache
+from kiwi.decorators import deprecated
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
 from kiwi.log import Logger
 
@@ -72,7 +73,7 @@ class Proxy:
         @type  widgets: list of strings
         """
         self._view = view
-        self.model = model
+        self._model = model
         self._model_attributes = {}
 
         for widget_name in widgets:
@@ -84,15 +85,17 @@ class Proxy:
 
             self._setup_widget(widget_name, widget)
 
+    # Private API
+
     def _reset_widget(self, attribute, widget):
-        if self.model is None:
+        if self._model is None:
             # if we have no model, leave value unset so we pick up
             # the widget default below.
             value = ValueUnset
         else:
             # if we have a model, grab its value to update the widgets
             self._register_proxy_in_model(attribute)
-            value = kgetattr(self.model, attribute, ValueUnset)
+            value = kgetattr(self._model, attribute, ValueUnset)
 
         self.update(attribute, value, block=True)
 
@@ -148,41 +151,8 @@ class Proxy:
         model_attributes[attribute] = widget
         self._reset_widget(attribute, widget)
 
-    def _on_widget__content_changed(self, widget, attribute, validate):
-        """This is called as soon as the content of one of the widget
-        changes, the widgets tries fairly hard to not emit when it's not
-        neccessary"""
-
-        # skip updates for model if there is none, right?
-        if self.model is None:
-            return
-
-        if validate:
-            value = widget.validate()
-        else:
-            value = widget.read()
-
-        log('%s.%s = %r' % (self.model.__class__.__name__,
-                            attribute, value))
-
-        # only update the model if the data is correct
-        if value is ValueUnset:
-            return
-
-        model = self.model
-        # XXX: one day we might want to queue and unique updates?
-        if hasattr(model, "block_proxy"):
-            model.block_proxy(self)
-            ksetattr(model, attribute, value)
-            model.unblock_proxy(self)
-        else:
-            ksetattr(model, attribute, value)
-
-        # Call global update hook
-        self.proxy_updated(widget, attribute, value)
-
     def _register_proxy_in_model(self, attribute):
-        model = self.model
+        model = self._model
         if not hasattr(model, "register_proxy_for_attribute"):
             return
         try:
@@ -199,10 +169,52 @@ class Proxy:
             raise TypeError(msg % (model, self))
 
     def _unregister_proxy_in_model(self):
-        if self.model and hasattr(self.model, "unregister_proxy"):
-            self.model.unregister_proxy(self)
+        if self._model and hasattr(self._model, "unregister_proxy"):
+            self._model.unregister_proxy(self)
+
+    # Callbacks
+
+    def _on_widget__content_changed(self, widget, attribute, validate):
+        """This is called as soon as the content of one of the widget
+        changes, the widgets tries fairly hard to not emit when it's not
+        neccessary"""
+
+        # skip updates for model if there is none, right?
+        if self._model is None:
+            return
+
+        if validate:
+            value = widget.validate()
+        else:
+            value = widget.read()
+
+        log('%s.%s = %r' % (self._model.__class__.__name__,
+                            attribute, value))
+
+        # only update the model if the data is correct
+        if value is ValueUnset:
+            return
+
+        model = self._model
+        # XXX: one day we might want to queue and unique updates?
+        if hasattr(model, "block_proxy"):
+            model.block_proxy(self)
+            ksetattr(model, attribute, value)
+            model.unblock_proxy(self)
+        else:
+            ksetattr(model, attribute, value)
+
+        # Call global update hook
+        self.proxy_updated(widget, attribute, value)
+
+    # Properties
+
+    def _get_model(self):
+        return self._model
+    model = property(_get_model)
 
     # Public API
+
     def proxy_updated(self, widget, attribute, value):
         """ This is a hook that is called whenever the proxy updates the
         model. Implement it in the inherited class to perform actions that
@@ -248,7 +260,7 @@ class Proxy:
 
         if value is ValueUnset:
         # We want to obtain a value from our model
-            if self.model is None:
+            if self._model is None:
                 # We really want to avoid trying to update our UI if our
                 # model doesn't exist yet and no value was provided.
                 # update() is also called by user code, but it should be
@@ -256,7 +268,7 @@ class Proxy:
                 # around the lack of a model in your callbacks if you
                 # can help it.
                 return
-            value = kgetattr(self.model, attribute, ValueUnset)
+            value = kgetattr(self._model, attribute, ValueUnset)
 
         widget = self._model_attributes.get(attribute, None)
 
@@ -279,7 +291,7 @@ class Proxy:
                 raise TypeError(
                     "attribute %s of model %r requires a value of "
                     "type %s, not %s" % (
-                    attribute, self.model,
+                    attribute, self._model,
                     data_type.__name__,
                     value_type.__name__))
 
@@ -293,9 +305,6 @@ class Proxy:
             widget.update(value)
         return True
 
-    def new_model(self, new_model, relax_type=False):
-        self.set_model(new_model, relax_type)
-
     def set_model(self, model, relax_type=False):
         """
         Updates the model instance of the proxy.
@@ -305,12 +314,12 @@ class Proxy:
         @param model:
         @param relax_type:
         """
-        if self.model is not None:
+        if self._model is not None:
             if (not relax_type and
-                type(model) != type(self.model) and
-                not isinstance(model, self.model.__class__)):
+                type(model) != type(self._model) and
+                not isinstance(model, self._model.__class__)):
                 raise TypeError("New model has wrong type %s, expected %s"
-                                % (type(model), type(self.model)))
+                                % (type(model), type(self._model)))
 
         # the following isn't strictly necessary, but it currently works
         # around a bug with reused ids in the attribute cache and also
@@ -321,7 +330,7 @@ class Proxy:
         # unregister previous proxy
         self._unregister_proxy_in_model()
 
-        self.model = model
+        self._model = model
 
         for attribute, widget in self._model_attributes.items():
             self._reset_widget(attribute, widget)
@@ -354,3 +363,10 @@ class Proxy:
         if IValidatableProxyWidget.providedBy(widget):
             connection_id = widget.get_data('content-changed-id')
             widget.disconnect(connection_id)
+
+    # Backwards compatibility
+
+    def new_model(self, model, relax_type=False):
+        self.set_model(model)
+    new_model = deprecated('set_model', log)(new_model)
+
