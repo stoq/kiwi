@@ -32,7 +32,7 @@ import gobject
 import gtk
 
 from kiwi import ValueUnset
-from kiwi.accessors import kgetattr, ksetattr, clear_attr_cache
+from kiwi.accessor import kgetattr, ksetattr, clear_attr_cache
 from kiwi.decorators import deprecated
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
 from kiwi.log import Logger

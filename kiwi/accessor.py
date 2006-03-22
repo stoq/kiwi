@@ -23,7 +23,7 @@
 #            Johan Dahlin <jdahlin@async.com.br>
 #
 
-"""The accessors module offers two important front-end functions:
+"""The accessor module offers two important front-end functions:
 kgetattr and ksetattr. These functions allow retrieving attribute values
 from objects much in the same way as getattr/setattr allow, but with two
 important differences:

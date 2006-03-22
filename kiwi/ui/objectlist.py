@@ -33,7 +33,7 @@ import gobject
 import gtk
 from gtk import gdk
 
-from kiwi.accessors import kgetattr
+from kiwi.accessor import kgetattr
 from kiwi.datatypes import converter, currency, lformat, number
 from kiwi.log import Logger
 from kiwi.python import slicerange
