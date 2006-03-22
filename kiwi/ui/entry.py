@@ -25,7 +25,6 @@
 An enchanced version of GtkEntry that supports icons and masks
 """
 
-import datetime
 import gettext
 import string
 
@@ -33,7 +32,6 @@ import gobject
 import pango
 import gtk
 
-from kiwi.datatypes import converter
 from kiwi.ui.icon import IconEntry
 from kiwi.utils import gsignal, gproperty, type_register
 
@@ -48,19 +46,6 @@ INPUT_FORMATS = {
     'a': INPUT_ALPHA,
     'd': INPUT_DIGIT,
     'c': INPUT_CHARACTER,
-    }
-
-DATE_MASK_TABLE = {
-    '%m': '%2d',
-    '%y': '%2d',
-    '%d': '%2d',
-    '%Y': '%4d',
-    '%H': '%2d',
-    '%M': '%2d',
-    '%S': '%2d',
-    '%T': '%2d:%2d:%2d',
-    # FIXME: locale specific
-    '%r': '%2d:%2d:%2d %2c',
     }
 
 (COL_TEXT,
@@ -217,27 +202,6 @@ class KiwiEntry(gtk.Entry):
         self.set_text("")
         self._insert_mask(0, input_length)
         self._mask = mask
-
-    def set_mask_for_data_type(self, data_type):
-        """
-        @param data_type:
-        """
-
-        if not data_type in (datetime.datetime, datetime.date, datetime.time):
-            return
-        conv = converter.get_converter(data_type)
-        mask = conv.get_format()
-
-        # For win32, skip mask
-        # FIXME: How can we figure out the real format string?
-        for m in ('%X', '%x', '%c'):
-            if m in mask:
-                return
-
-        for format_char, mask_char in DATE_MASK_TABLE.items():
-            mask = mask.replace(format_char, mask_char)
-
-        self.set_mask(mask)
 
     def get_mask(self):
         """

@@ -29,7 +29,7 @@ import datetime
 
 import gtk
 
-from kiwi.datatypes import ValidationError, number
+from kiwi.datatypes import ValidationError, converter, number
 from kiwi.decorators import deprecated
 from kiwi.python import deprecationwarn
 from kiwi.ui.entry import MaskError, KiwiEntry, ENTRY_MODE_TEXT, \
@@ -37,6 +37,19 @@ from kiwi.ui.entry import MaskError, KiwiEntry, ENTRY_MODE_TEXT, \
 from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
 from kiwi.utils import PropertyObject, gsignal, type_register
+
+DATE_MASK_TABLE = {
+    '%m': '%2d',
+    '%y': '%2d',
+    '%d': '%2d',
+    '%Y': '%4d',
+    '%H': '%2d',
+    '%M': '%2d',
+    '%S': '%2d',
+    '%T': '%2d:%2d:%2d',
+    # FIXME: locale specific
+    '%r': '%2d:%2d:%2d %2c',
+    }
 
 class ProxyEntry(PropertyObject, KiwiEntry, ValidatableProxyWidgetMixin):
     """The Kiwi Entry widget has many special features that extend the basic
@@ -89,6 +102,29 @@ class ProxyEntry(PropertyObject, KiwiEntry, ValidatableProxyWidgetMixin):
         except MaskError:
             pass
         return data_type
+
+    # Public API
+
+    def set_mask_for_data_type(self, data_type):
+        """
+        @param data_type:
+        """
+
+        if not data_type in (datetime.datetime, datetime.date, datetime.time):
+            return
+        conv = converter.get_converter(data_type)
+        mask = conv.get_format()
+
+        # For win32, skip mask
+        # FIXME: How can we figure out the real format string?
+        for m in ('%X', '%x', '%c'):
+            if m in mask:
+                return
+
+        for format_char, mask_char in DATE_MASK_TABLE.items():
+            mask = mask.replace(format_char, mask_char)
+
+        self.set_mask(mask)
 
     #@deprecated('prefill')
     def set_completion_strings(self, strings=[], values=[]):
