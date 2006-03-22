@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2002, 2003 Async Open Source
+# Copyright (C) 2002-2003, 2005-2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 # USA
 #
 # Author(s): Christian Reis <kiko@async.com.br>
+#            Johan Dahlin <jdahlin@async.com.br>
 #
 
 """Holds the models part of the Kiwi Framework"""
@@ -214,50 +215,50 @@ class PickledModel(Model):
         Model.__dict__["__init__"](self)
         self.__dict__.update(dict)
 
-def unpickle_model(klass, file=None):
-    """
-    Loads an instance from a pickle file; if it fails for some reason,
-    create a new instance.
+    def unpickle(cls, filename=None):
+        """
+        Loads an instance from a pickle file; if it fails for some reason,
+        create a new instance.
 
-        - klass: a class to instance if the pickle is non-existent,
-          empty or invalid
+            - filename: the file from which the pickle should be loaded.
+              If file is not provided, the name of the class suffixed by
+              ".pickle" is used (i.e.  "FooClass.pickle" for the
+              class FooClass).
 
-        - file: the file from which the pickle should be loaded. If file
-          is not provided, the name of the class suffixed by ".pickle"
-          is used (i.e.  "FooClass.pickle" for the class FooClass).
+        If the pickle file is damaged, it will be saved with the extension
+        ".err"; if a file with that name also exists, it will use ".err.1"
+        and so on. This is to avoid the damaged file being clobbered by an
+        instance calling save() unsuspectingly.
+        """
+        if not filename:
+            filename = cls.__name__ + ".pickle"
 
-    If the pickle file is damaged, it will be saved with the extension
-    ".err"; if a file with that name also exists, it will use ".err.1"
-    and so on. This is to avoid the damaged file being clobbered by an
-    instance calling save() unsuspectingly.
-    """
-    if not file:
-        file = klass.__name__ + ".pickle"
+        if not os.path.exists(filename):
+            ret = cls()
+            ret.set_filename(filename)
+            return ret
 
-    if not os.path.exists(file):
-        ret = klass()
-        ret.set_filename(file)
+        fh = open(filename, "r")
+        try:
+            data = fh.read()
+            ret = pickle.loads(data)
+        except (EOFError, KeyError):
+            # save backup of original pickle with an extension of
+            # .err, .err.1, .err.2, etc.
+            stem = filename + ".err"
+            i = 0
+            backup = stem
+            while os.path.exists(backup):
+                i = i + 1
+                backup = stem + ".%d" % i
+            open(backup, "w").write(data)
+            log.warn(
+                "pickle in %r was broken, saving backup in %r and creating "
+                "new <%s> instance\n""" % (filename, backup, cls.__name__))
+            ret = cls()
+        fh.close()
+        ret.set_filename(filename)
         return ret
-
-    fh = open(file, "r")
-    try:
-        data = fh.read()
-        ret = pickle.loads(data)
-    except (EOFError, KeyError):
-        # save backup of original pickle with an extension of
-        # .err, .err.1, .err.2, etc.
-        stem = file + ".err"
-        i = 0
-        backup = stem
-        while os.path.exists(backup):
-            i = i + 1
-            backup = stem + ".%d" % i
-        open(backup, "w").write(data)
-        log.warn("pickle in %r was broken, saving backup in %r and creating "
-                 "new <%s> instance\n""" % (file, backup, klass.__name__))
-        ret = klass()
-    fh.close()
-    ret.set_filename(file)
-    return ret
+    unpickle = classmethod(unpickle)
 
 # TODO: implement a Model that saves itself as CSV/XML?
