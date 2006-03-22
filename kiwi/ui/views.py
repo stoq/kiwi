@@ -40,9 +40,9 @@ from gtk import gdk
 from kiwi.environ import is_gazpacho_required
 from kiwi.interfaces import IValidatableProxyWidget
 from kiwi.log import Logger
-from kiwi.proxies import Proxy
 from kiwi.utils import gsignal, type_register
 from kiwi.ui.gadgets import quit_if_last
+from kiwi.ui.proxy import Proxy
 
 log = Logger('view')
 

@@ -1,5 +1,9 @@
 2006-03-22  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/proxy.py: Rename from kiwi.proxies
+	* kiwi/acccessor.py: Rename from accessors
+	* kiwi/model.py: Rename from model
+
 	* kiwi/proxies.py:
 	Reorganize, Deprecate new_model, Rename model to _model and 
 	add a property.
