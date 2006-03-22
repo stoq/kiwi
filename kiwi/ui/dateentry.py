@@ -33,7 +33,6 @@ import gtk
 from gtk import gdk, keysyms
 
 from kiwi.datatypes import converter, ValidationError
-from kiwi.ui.entry import KiwiEntry
 from kiwi.utils import gsignal, type_register
 
 _ = lambda m: gettext.dgettext('kiwi', m)
@@ -251,7 +250,10 @@ class DateEntry(gtk.HBox):
         self._popping_down = False
         self._old_date = None
 
-        self.entry = KiwiEntry()
+        # bootstrap problems, kiwi.ui.widgets.entry imports dateentry
+        # we need to use a proxy entry because we want the mask
+        from kiwi.ui.widgets.entry import ProxyEntry
+        self.entry = ProxyEntry()
         self.entry.connect('changed', self._on_entry__changed)
         self.entry.set_mask_for_data_type(datetime.date)
         self.entry.set_width_chars(len(self.entry.get_mask()))
