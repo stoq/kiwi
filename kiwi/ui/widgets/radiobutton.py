@@ -79,7 +79,7 @@ class ProxyRadioButton(PropertyObject, gtk.RadioButton, ProxyWidgetMixin):
 
 class RadioButton(ProxyRadioButton):
     def __init__(self):
-        deprecationwarn(
-            'RadioButton is deprecated, use ProxyRadioButton instead',
-            stacklevel=3)
+        #deprecationwarn(
+        #    'RadioButton is deprecated, use ProxyRadioButton instead',
+        #    stacklevel=3)
         ProxyRadioButton.__init__(self)

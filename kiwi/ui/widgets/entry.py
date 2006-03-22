@@ -204,9 +204,9 @@ type_register(ProxyEntry)
 
 class Entry(ProxyEntry):
     def __init__(self, data_type=None):
+        #deprecationwarn('Entry is deprecated, use ProxyEntry instead',
+        #                stacklevel=3)
         ProxyEntry.__init__(self, data_type)
-        deprecationwarn('Entry is deprecated, use ProxyEntry instead',
-                        stacklevel=3)
 
 class ProxyDateEntry(PropertyObject, DateEntry, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyDateEntry'
