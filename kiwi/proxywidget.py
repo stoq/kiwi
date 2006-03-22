@@ -59,8 +59,6 @@ class ProxyWidgetMixin(object):
     implements(IProxyWidget)
 
     gsignal('content-changed')
-    gsignal('validation-changed', bool)
-    gsignal('validate', object, retval=object)
 
     gproperty('data-type', object, blurb='Data Type')
     gproperty('model-attribute', str, blurb='Model attribute')
@@ -164,6 +162,8 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     implements(IValidatableProxyWidget)
 
     gproperty('mandatory', bool, default=False)
+    gsignal('validate', object, retval=object)
+    gsignal('validation-changed', bool)
 
     def __init__(self, widget=None):
         ProxyWidgetMixin.__init__(self)
@@ -181,25 +181,13 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     def set_pixbuf(self, pixbuf):
         "Implement in subclass"
 
-    def get_icon_window(self):
-        "Implement in subclass"
-
-    # Public API
+    # IValidatableProxyWidget
 
     def is_valid(self):
         """
         @returns: True if the widget is in validated state
         """
         return self._valid
-
-    def show_tooltip(self, widget):
-        """
-        @param widget:
-        """
-        self._tooltip.display(widget)
-
-    def hide_tooltip(self):
-        self._tooltip.hide()
 
     def validate(self, force=False):
         """Checks if the data is valid.
@@ -238,6 +226,17 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         except ValidationError, e:
             self.set_invalid(str(e))
             return ValueUnset
+
+    # Public API
+
+    def show_tooltip(self, widget):
+        """
+        @param widget:
+        """
+        self._tooltip.display(widget)
+
+    def hide_tooltip(self):
+        self._tooltip.hide()
 
     def set_valid(self):
         """Changes the validation state to valid, which will remove icons and

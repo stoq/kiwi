@@ -26,8 +26,6 @@
 
 from kiwi.component import Interface
 
-Nothing = object()
-
 class IProxyWidget(Interface):
     """
     IProxyWidget is a widget that can be attached to a proxy.
@@ -36,8 +34,8 @@ class IProxyWidget(Interface):
        content-changed: This must be emitted when the content changes
 
     Properties:
-       data-type: data type of the model
-       model-attribute: name of the attribute in the model
+       data-type: string, data type of the model
+       model-attribute: string, name of the attribute in the model
     """
 
     def read():
@@ -55,11 +53,22 @@ class IProxyWidget(Interface):
         pass
 
 class IValidatableProxyWidget(IProxyWidget):
-    # gproperty('mandatory')
+    """
+    IValidatableProxyWidget extends IProxyWidget with validation support
+
+    Signals:
+       validate: This emitted so each widget can provide it's own
+         custom validation.
+       validation-changed: This is emitted when the validation status
+         changes, mainly used by the proxy.
+
+    Properties:
+       mandatory: bool, if the widget is mandatory
+    """
+
     def is_valid():
         pass
 
-    # These two are mainly used by subclasses
     def validate(force=False):
         pass
 

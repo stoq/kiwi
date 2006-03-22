@@ -1,3 +1,9 @@
+2006-03-22  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/interfaces.py:
+	* kiwi/proxywidget.py:
+	Document/reorganize signals
+
 2006-03-21  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/proxywidget.py:
