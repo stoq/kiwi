@@ -4,7 +4,7 @@ import utils
 import unittest
 
 from kiwi.python import disabledeprecationcall, Settable
-from kiwi.proxies import Proxy
+from kiwi.ui.proxy import Proxy
 from kiwi.ui.widgets.combobox import ProxyComboBox, ProxyComboBoxEntry
 
 class TestComboBox(unittest.TestCase):
