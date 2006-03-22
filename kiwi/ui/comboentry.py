@@ -27,7 +27,7 @@ import gtk
 from gtk import gdk, keysyms
 
 from kiwi.utils import gsignal, type_register
-from kiwi.ui.widgets.entry import ProxyEntry
+from kiwi.ui.entry import KiwiEntry
 
 class _ComboEntryPopup(gtk.Window):
     gsignal('text-selected', str)
@@ -290,8 +290,7 @@ class ComboEntry(gtk.HBox):
         gtk.HBox.__init__(self)
         self._popping_down = False
 
-        # XXX: KiwiEntry?
-        self.entry = ProxyEntry()
+        self.entry = KiwiEntry()
         self.entry.connect('activate',
                            self._on_entry__activate)
         self.entry.connect('scroll-event',
@@ -300,6 +299,9 @@ class ComboEntry(gtk.HBox):
                            self._on_entry__key_press_event)
         self.pack_start(self.entry, True, True)
         self.entry.show()
+
+        completion = gtk.EntryCompletion()
+        self.entry.set_completion(completion)
 
         self._button = gtk.ToggleButton()
         self._button.connect('scroll-event', self._on_entry__scroll_event)
@@ -317,7 +319,10 @@ class ComboEntry(gtk.HBox):
         self._popup.connect('hide', self._on_popup__hide)
         self._popup.set_size_request(-1, 24)
 
-        self.set_model(self.entry.get_completion().get_model())
+        model = gtk.ListStore(str, object)
+        completion.set_model(model)
+        completion.set_text_column(0)
+        self.set_model(model)
 
     # Virtual methods
 

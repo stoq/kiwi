@@ -26,6 +26,7 @@ An enchanced version of GtkEntry that supports icons and masks
 """
 
 import datetime
+import gettext
 import string
 
 import gobject
@@ -34,7 +35,7 @@ import gtk
 
 from kiwi.datatypes import converter
 from kiwi.ui.icon import IconEntry
-from kiwi.utils import gsignal, type_register
+from kiwi.utils import gsignal, gproperty, type_register
 
 class MaskError(Exception):
     pass
@@ -62,8 +63,28 @@ DATE_MASK_TABLE = {
     '%r': '%2d:%2d:%2d %2c',
     }
 
+(COL_TEXT,
+ COL_OBJECT) = range(2)
+
+(ENTRY_MODE_TEXT,
+ ENTRY_MODE_DATA) = range(2)
+
+_ = lambda msg: gettext.dgettext('kiwi', msg)
+
 class KiwiEntry(gtk.Entry):
+    """
+    The KiwiEntry is a Entry subclass with the following additions:
+
+      - IconEntry, allows you to have an icon inside the entry
+      - Mask, force the input to meet certain requirements
+      - IComboMixin: Allows you work with objects instead of strings
+        Adds a number of convenience methods such as L{prefill}().
+    """
     __gtype_name__ = 'KiwiEntry'
+
+    gproperty("completion", bool, False)
+    gproperty('exact-completion', bool, default=False)
+    gproperty("mask", str, default='')
 
     def __init__(self):
         gtk.Entry.__init__(self)
@@ -71,6 +92,8 @@ class KiwiEntry(gtk.Entry):
         self.connect('insert-text', self._on_insert_text)
         self.connect('delete-text', self._on_delete_text)
 
+        self._current_object = None
+        self._mode = ENTRY_MODE_TEXT
         self._icon = IconEntry(self)
 
         # List of validators
@@ -80,6 +103,8 @@ class KiwiEntry(gtk.Entry):
         self._mask = None
         self._block_insert = False
         self._block_delete = False
+
+    # Virtual methods
 
     gsignal('size-allocate', 'override')
     def do_size_allocate(self, allocation):
@@ -102,6 +127,31 @@ class KiwiEntry(gtk.Entry):
     def do_unrealize(self):
         self._icon.deconstruct()
         gtk.Entry.do_unrealize(self)
+
+    # Properties
+
+    def prop_set_exact_completion(self, value):
+        if value:
+            match_func = self._completion_exact_match_func
+        else:
+            match_func = self._completion_normal_match_func
+        completion = self._get_completion()
+        completion.set_match_func(match_func)
+
+        return value
+
+    def prop_set_completion(self, value):
+        if not self.get_completion():
+            self._enable_completion()
+        return value
+
+    def prop_set_mask(self, value):
+        try:
+            self.set_mask(value)
+            return self.get_mask()
+        except MaskError, e:
+            pass
+        return ''
 
     # Public API
 
@@ -271,6 +321,18 @@ class KiwiEntry(gtk.Entry):
                 raise AssertionError
         return s
 
+    def set_exact_completion(self, value):
+        """
+        Enable exact entry completion.
+        Exact means it needs to start with the value typed
+        and the case needs to be correct.
+
+        @param value: enable exact completion
+        @type value:  boolean
+        """
+
+        self.exact_completion = value
+
     # Private
 
     def _really_delete_text(self, start, end):
@@ -310,6 +372,79 @@ class KiwiEntry(gtk.Entry):
             pass
 
         return True
+
+    def _update_current_object(self, text):
+        if self._mode != ENTRY_MODE_DATA:
+            return
+
+        for row in self.get_completion().get_model():
+            if row[COL_TEXT] == text:
+                self._current_object = row[COL_OBJECT]
+                break
+        else:
+            # Customized validation
+            if text:
+                self.set_invalid(_("'%s' is not a valid object" % text))
+            elif self.mandatory:
+                self.set_blank()
+            else:
+                self.set_valid()
+            self._current_object = None
+
+    def _get_text_from_object(self, obj):
+        if self._mode != ENTRY_MODE_DATA:
+            return
+
+        for row in self.get_completion().get_model():
+            if row[COL_OBJECT] == obj:
+                return row[COL_TEXT]
+
+    def _get_completion(self):
+        # Check so we have completion enabled, not this does not
+        # depend on the property, the user can manually override it,
+        # as long as there is a completion object set
+        completion = self.get_completion()
+        if completion:
+            return completion
+
+        return self._enable_completion()
+
+    def _enable_completion(self):
+        completion = gtk.EntryCompletion()
+        self.set_completion(completion)
+        completion.set_model(gtk.ListStore(str, object))
+        completion.set_text_column(0)
+        self.exact_completion = False
+        completion.connect("match-selected",
+                           self._on_completion__match_selected)
+        self._current_object = None
+        return completion
+
+    def _completion_exact_match_func(self, completion, _, iter):
+        model = completion.get_model()
+        if not len(model):
+            return
+
+        content = model[iter][COL_TEXT]
+        return self.get_text().startswith(content)
+
+    def _completion_normal_match_func(self, completion, _, iter):
+        model = completion.get_model()
+        if not len(model):
+            return
+
+        content = model[iter][COL_TEXT].lower()
+        return self.get_text().lower() in content
+
+    def _on_completion__match_selected(self, completion, model, iter):
+        if not len(model):
+            return
+
+        # this updates current_object and triggers content-changed
+        self.set_text(model[iter][COL_TEXT])
+        self.set_position(-1)
+        # FIXME: Enable this at some point
+        #self.activate()
 
     # Callbacks
 
@@ -361,6 +496,126 @@ class KiwiEntry(gtk.Entry):
 
     def get_icon_window(self):
         return self._icon.get_icon_window()
+
+    # IComboMixin
+
+    def prefill(self, itemdata, sort=False):
+        """Fills the Combo with listitems corresponding to the itemdata
+        provided.
+
+        Parameters:
+          - itemdata is a list of strings or tuples, each item corresponding
+            to a listitem. The simple list format is as follows::
+
+            >>> [ label0, label1, label2 ]
+
+            If you require a data item to be specified for each item, use a
+            2-item tuple for each element. The format is as follows::
+
+            >>> [ ( label0, data0 ), (label1, data1), ... ]
+
+          - Sort is a boolean that specifies if the list is to be sorted by
+            label or not. By default it is not sorted
+        """
+        if not isinstance(itemdata, (list, tuple)):
+            raise TypeError("'data' parameter must be a list or tuple of item "
+                            "descriptions, found %s") % type(itemdata)
+
+        completion = self._get_completion()
+        model = completion.get_model()
+
+        if len(itemdata) == 0:
+            model.clear()
+            return
+
+        if (len(itemdata) > 0 and
+            type(itemdata[0]) in (tuple, list) and
+            len(itemdata[0]) == 2):
+            mode = self._mode = ENTRY_MODE_DATA
+        else:
+            mode = self._mode
+
+        values = {}
+        if mode == ENTRY_MODE_TEXT:
+            if sort:
+                itemdata.sort()
+
+            for item in itemdata:
+                if item in values:
+                    raise KeyError("Tried to insert duplicate value "
+                                   "%s into Combo!" % item)
+                else:
+                    values[item] = None
+
+                model.append((item, None))
+        elif mode == ENTRY_MODE_DATA:
+            if sort:
+                itemdata.sort(lambda x, y: cmp(x[0], y[0]))
+
+            for item in itemdata:
+                text, data = item
+                if text in values:
+                    raise KeyError("Tried to insert duplicate value "
+                                   "%s into Combo!" % item)
+                else:
+                    values[text] = None
+                model.append((text, data))
+        else:
+            raise TypeError("Incorrect format for itemdata; see "
+                            "docstring for more information")
+
+    def get_iter_by_data(self, data):
+        if self._mode != ENTRY_MODE_DATA:
+            raise TypeError(
+                "select_item_by_data can only be used in data mode")
+
+        completion = self._get_completion()
+        model = completion.get_model()
+
+        for row in model:
+            if row[COL_OBJECT] == data:
+                return row.iter
+                break
+        else:
+            raise KeyError("No item correspond to data %r in the combo %s"
+                           % (data, self.name))
+
+    def get_iter_by_label(self, label):
+        completion = self._get_completion()
+        model = completion.get_model()
+        for row in model:
+            if row[COL_TEXT] == label:
+                return row.iter
+        else:
+            raise KeyError("No item correspond to label %r in the combo %s"
+                           % (label, self.name))
+
+    def get_selected_by_iter(self, treeiter):
+        completion = self._get_completion()
+        model = completion.get_model()
+        mode = self._mode
+        if mode == ENTRY_MODE_TEXT:
+            return model[treeiter][COL_TEXT]
+        elif mode == ENTRY_MODE_DATA:
+            return model[treeiter][COL_OBJECT]
+        else:
+            raise AssertionError
+
+    def get_selected_label(self, treeiter):
+        completion = self._get_completion()
+        model = completion.get_model()
+        return model[treeiter][COL_TEXT]
+
+    def get_iter_from_obj(self, obj):
+        mode = self._mode
+        if mode == ENTRY_MODE_TEXT:
+            return self.get_iter_by_label(obj)
+        elif mode == ENTRY_MODE_DATA:
+            return self.get_iter_by_data(obj)
+        else:
+            # XXX: When setting the datatype to non string, automatically go to
+            #      data mode
+            raise TypeError("unknown Entry mode. Did you call prefill?")
 
 type_register(KiwiEntry)
 

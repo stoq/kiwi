@@ -1,5 +1,13 @@
 2006-03-22  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/entry.py:
+	* kiwi/ui/widgets/entry.py:
+	* tests/test_Entry.py:
+	Move stuff from ProxyEntry to KiwiEntry, use
+	a kiwi entry in the ComboEntry.
+
+2006-03-22  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/ui/proxy.py: Rename from kiwi.proxies
 	* kiwi/acccessor.py: Rename from accessors
 	* kiwi/model.py: Rename from model

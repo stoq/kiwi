@@ -23,32 +23,20 @@
 #            Gustavo Rahal <gustavo@async.com.br>
 #
 
-"""GtkEntry support for the Kiwi Framework
-
-The L{Entry} is also extended to provide an easy way to add entry completion
-support and display an icon using L{kiwi.ui.icon.IconEntry}.
-"""
+"""GtkEntry support for the Kiwi Framework"""
 
 import datetime
-import gettext
 
 import gtk
 
 from kiwi.datatypes import ValidationError, number
 from kiwi.decorators import deprecated
 from kiwi.python import deprecationwarn
-from kiwi.ui.entry import MaskError, KiwiEntry
+from kiwi.ui.entry import MaskError, KiwiEntry, ENTRY_MODE_TEXT, \
+     ENTRY_MODE_DATA
 from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
-from kiwi.utils import PropertyObject, gproperty, gsignal, type_register
-
-_ = gettext.gettext
-
-(COL_TEXT,
- COL_OBJECT) = range(2)
-
-(ENTRY_MODE_TEXT,
- ENTRY_MODE_DATA) = range(2)
+from kiwi.utils import PropertyObject, gsignal, type_register
 
 class ProxyEntry(PropertyObject, KiwiEntry, ValidatableProxyWidgetMixin):
     """The Kiwi Entry widget has many special features that extend the basic
@@ -68,17 +56,10 @@ class ProxyEntry(PropertyObject, KiwiEntry, ValidatableProxyWidgetMixin):
 
     __gtype_name__ = 'ProxyEntry'
 
-    gproperty("completion", bool, False)
-    gproperty('exact-completion', bool, default=False)
-    gproperty("mask", str, default='')
-
     def __init__(self, data_type=None):
-        self._current_object = None
-        self._mode = ENTRY_MODE_TEXT
         KiwiEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=data_type)
-
 
     # Virtual methods
     gsignal('changed', 'override')
@@ -94,22 +75,6 @@ class ProxyEntry(PropertyObject, KiwiEntry, ValidatableProxyWidgetMixin):
         self._update_current_object(self.get_text())
         self.emit('content-changed')
 
-    # Properties
-    def prop_set_exact_completion(self, value):
-        if value:
-            match_func = self._completion_exact_match_func
-        else:
-            match_func = self._completion_normal_match_func
-        completion = self._get_completion()
-        completion.set_match_func(match_func)
-
-        return value
-
-    def prop_set_completion(self, value):
-        if not self.get_completion():
-            self._enable_completion()
-        return value
-
     def prop_set_data_type(self, data_type):
         data_type = super(ProxyEntry, self).prop_set_data_type(data_type)
 
@@ -124,29 +89,6 @@ class ProxyEntry(PropertyObject, KiwiEntry, ValidatableProxyWidgetMixin):
         except MaskError:
             pass
         return data_type
-
-    # Properties
-
-    def prop_set_mask(self, value):
-        try:
-            self.set_mask(value)
-            return self.get_mask()
-        except MaskError, e:
-            pass
-        return ''
-
-    # Public API
-    def set_exact_completion(self, value):
-        """
-        Enable exact entry completion.
-        Exact means it needs to start with the value typed
-        and the case needs to be correct.
-
-        @param value: enable exact completion
-        @type value:  boolean
-        """
-
-        self.exact_completion = value
 
     #@deprecated('prefill')
     def set_completion_strings(self, strings=[], values=[]):
@@ -172,124 +114,6 @@ class ProxyEntry(PropertyObject, KiwiEntry, ValidatableProxyWidgetMixin):
             self._mode = ENTRY_MODE_TEXT
             self.prefill(strings)
     set_completion_strings = deprecated('prefill')(set_completion_strings)
-
-    def prefill(self, itemdata, sort=False):
-        """Fills the Combo with listitems corresponding to the itemdata
-        provided.
-
-        Parameters:
-          - itemdata is a list of strings or tuples, each item corresponding
-            to a listitem. The simple list format is as follows::
-
-            >>> [ label0, label1, label2 ]
-
-            If you require a data item to be specified for each item, use a
-            2-item tuple for each element. The format is as follows::
-
-            >>> [ ( label0, data0 ), (label1, data1), ... ]
-
-          - Sort is a boolean that specifies if the list is to be sorted by
-            label or not. By default it is not sorted
-        """
-        if not isinstance(itemdata, (list, tuple)):
-            raise TypeError("'data' parameter must be a list or tuple of item "
-                            "descriptions, found %s") % type(itemdata)
-
-        completion = self._get_completion()
-        model = completion.get_model()
-
-        if len(itemdata) == 0:
-            model.clear()
-            return
-
-        if (len(itemdata) > 0 and
-            type(itemdata[0]) in (tuple, list) and
-            len(itemdata[0]) == 2):
-            mode = self._mode = ENTRY_MODE_DATA
-        else:
-            mode = self._mode
-
-        values = {}
-        if mode == ENTRY_MODE_TEXT:
-            if sort:
-                itemdata.sort()
-
-            for item in itemdata:
-                if item in values:
-                    raise KeyError("Tried to insert duplicate value "
-                                   "%s into Combo!" % item)
-                else:
-                    values[item] = None
-
-                model.append((item, None))
-        elif mode == ENTRY_MODE_DATA:
-            if sort:
-                itemdata.sort(lambda x, y: cmp(x[0], y[0]))
-
-            for item in itemdata:
-                text, data = item
-                if text in values:
-                    raise KeyError("Tried to insert duplicate value "
-                                   "%s into Combo!" % item)
-                else:
-                    values[text] = None
-                model.append((text, data))
-        else:
-            raise TypeError("Incorrect format for itemdata; see "
-                            "docstring for more information")
-
-    def get_iter_by_data(self, data):
-        if self._mode != ENTRY_MODE_DATA:
-            raise TypeError(
-                "select_item_by_data can only be used in data mode")
-
-        completion = self._get_completion()
-        model = completion.get_model()
-
-        for row in model:
-            if row[COL_OBJECT] == data:
-                return row.iter
-                break
-        else:
-            raise KeyError("No item correspond to data %r in the combo %s"
-                           % (data, self.name))
-
-    def get_iter_by_label(self, label):
-        completion = self._get_completion()
-        model = completion.get_model()
-        for row in model:
-            if row[COL_TEXT] == label:
-                return row.iter
-        else:
-            raise KeyError("No item correspond to label %r in the combo %s"
-                           % (label, self.name))
-
-    def get_selected_by_iter(self, treeiter):
-        completion = self._get_completion()
-        model = completion.get_model()
-        mode = self._mode
-        if mode == ENTRY_MODE_TEXT:
-            return model[treeiter][COL_TEXT]
-        elif mode == ENTRY_MODE_DATA:
-            return model[treeiter][COL_OBJECT]
-        else:
-            raise AssertionError
-
-    def get_selected_label(self, treeiter):
-        completion = self._get_completion()
-        model = completion.get_model()
-        return model[treeiter][COL_TEXT]
-
-    def get_iter_from_obj(self, obj):
-        mode = self._mode
-        if mode == ENTRY_MODE_TEXT:
-            return self.get_iter_by_label(obj)
-        elif mode == ENTRY_MODE_DATA:
-            return self.get_iter_by_data(obj)
-        else:
-            # XXX: When setting the datatype to non string, automatically go to
-            #      data mode
-            raise TypeError("unknown Entry mode. Did you call prefill?")
 
     def set_text(self, text):
         """
@@ -339,81 +163,6 @@ class ProxyEntry(PropertyObject, KiwiEntry, ValidatableProxyWidgetMixin):
                 text = self._as_string(data)
 
         self.set_text(text)
-
-    # Private
-
-    def _update_current_object(self, text):
-        if self._mode != ENTRY_MODE_DATA:
-            return
-
-        for row in self.get_completion().get_model():
-            if row[COL_TEXT] == text:
-                self._current_object = row[COL_OBJECT]
-                break
-        else:
-            # Customized validation
-            if text:
-                self.set_invalid(_("'%s' is not a valid object" % text))
-            elif self.mandatory:
-                self.set_blank()
-            else:
-                self.set_valid()
-            self._current_object = None
-
-    def _get_text_from_object(self, obj):
-        if self._mode != ENTRY_MODE_DATA:
-            return
-
-        for row in self.get_completion().get_model():
-            if row[COL_OBJECT] == obj:
-                return row[COL_TEXT]
-
-    def _get_completion(self):
-        # Check so we have completion enabled, not this does not
-        # depend on the property, the user can manually override it,
-        # as long as there is a completion object set
-        completion = self.get_completion()
-        if completion:
-            return completion
-
-        return self._enable_completion()
-
-    def _enable_completion(self):
-        completion = gtk.EntryCompletion()
-        self.set_completion(completion)
-        completion.set_model(gtk.ListStore(str, object))
-        completion.set_text_column(0)
-        self.exact_completion = False
-        completion.connect("match-selected",
-                           self._on_completion__match_selected)
-        self._current_object = None
-        return completion
-
-    def _completion_exact_match_func(self, completion, _, iter):
-        model = completion.get_model()
-        if not len(model):
-            return
-
-        content = model[iter][COL_TEXT]
-        return self.get_text().startswith(content)
-
-    def _completion_normal_match_func(self, completion, _, iter):
-        model = completion.get_model()
-        if not len(model):
-            return
-
-        content = model[iter][COL_TEXT].lower()
-        return self.get_text().lower() in content
-
-    def _on_completion__match_selected(self, completion, model, iter):
-        if not len(model):
-            return
-
-        # this updates current_object and triggers content-changed
-        self.set_text(model[iter][COL_TEXT])
-        self.set_position(-1)
-        # FIXME: Enable this at some point
-        #self.activate()
 
 type_register(ProxyEntry)
 

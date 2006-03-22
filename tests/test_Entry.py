@@ -1,11 +1,14 @@
 #!/usr/bin/env python
-import utils
-
 import unittest
+
+import gobject
 
 from kiwi import ValueUnset
 from kiwi import datatypes
+from kiwi.ui.entry import KiwiEntry
 from kiwi.ui.widgets.entry import ProxyEntry
+
+import utils
 
 class EntryTest(unittest.TestCase):
     def testModel(self):
@@ -64,6 +67,13 @@ class EntryTest(unittest.TestCase):
         e.set_text('1.2.3')
         self.assertEqual(e.get_text(), '1.2.3')
         self.assertEqual(e.get_field_text(), [1, 2, 3])
+
+    def testGType(self):
+        entry = KiwiEntry()
+        self.assertEqual(gobject.type_name(entry), 'KiwiEntry')
+
+        entry = ProxyEntry()
+        self.assertEqual(gobject.type_name(entry), 'ProxyEntry')
 
 if __name__ == '__main__':
     unittest.main()
