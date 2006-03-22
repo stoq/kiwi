@@ -84,6 +84,7 @@ class KiwiInstallLib(install_lib):
     def _write_dictionary(self, fp, name, dictionary):
         fp.write('%s = {}\n' % name)
         for key, value in dictionary.items():
+            value = value.replace('/', os.sep)
             value = self.varext.extend(value)
             value = value.replace(self.varext.prefix, '$prefix')
             parts = []

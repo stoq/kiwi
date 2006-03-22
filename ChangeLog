@@ -1,5 +1,8 @@
 2006-03-22  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/dist.py (KiwiInstallLib._write_dictionary): Replace / with 
+	os.sep on win32, fixes installation.
+
 	* kiwi/ui/entry.py:
 	* kiwi/ui/widgets/entry.py:
 	* tests/test_Entry.py:
