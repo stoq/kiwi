@@ -31,7 +31,7 @@ import gtk
 
 from kiwi.datatypes import ValidationError, converter, number
 from kiwi.decorators import deprecated
-from kiwi.python import deprecationwarn
+#from kiwi.python import deprecationwarn
 from kiwi.ui.entry import MaskError, KiwiEntry, ENTRY_MODE_TEXT, \
      ENTRY_MODE_DATA
 from kiwi.ui.dateentry import DateEntry
@@ -51,7 +51,7 @@ DATE_MASK_TABLE = {
     '%r': '%2d:%2d:%2d %2c',
     }
 
-class ProxyEntry(PropertyObject, KiwiEntry, ValidatableProxyWidgetMixin):
+class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     """The Kiwi Entry widget has many special features that extend the basic
     gtk entry.
 
@@ -72,7 +72,7 @@ class ProxyEntry(PropertyObject, KiwiEntry, ValidatableProxyWidgetMixin):
     def __init__(self, data_type=None):
         KiwiEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
-        PropertyObject.__init__(self, data_type=data_type)
+        self.set_property('data-type', data_type)
 
     # Virtual methods
     gsignal('changed', 'override')
@@ -207,6 +207,7 @@ class Entry(ProxyEntry):
         #deprecationwarn('Entry is deprecated, use ProxyEntry instead',
         #                stacklevel=3)
         ProxyEntry.__init__(self, data_type)
+type_register(Entry)
 
 class ProxyDateEntry(PropertyObject, DateEntry, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyDateEntry'

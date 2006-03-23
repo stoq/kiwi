@@ -8,7 +8,7 @@
                         generic-name="hyperlink"
                         title="Hyper Link" 
                         adaptor-class="HyperLinkAdaptor"/>
-    <glade-widget-class name="ProxyEntry"
+    <glade-widget-class name="kiwi+ui+widgets+entry+Entry"
                         generic-name="kiwientry"
                         title="Kiwi Entry" />
     <glade-widget-class name="ProxyDateEntry"
@@ -48,7 +48,7 @@
   <glade-widget-group name="kiwi" title="Kiwi Widgets">
     <glade-widget-class-ref name="ObjectList"/>
     <glade-widget-class-ref name="HyperLink"/>
-    <glade-widget-class-ref name="ProxyEntry"/>
+    <glade-widget-class-ref name="kiwi+ui+widgets+entry+Entry"/>
     <glade-widget-class-ref name="kiwi+ui+widgets+label+Label"/>
     <glade-widget-class-ref name="ProxyComboBox"/>
     <glade-widget-class-ref name="ProxyComboEntry"/>

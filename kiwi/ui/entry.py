@@ -33,7 +33,7 @@ import pango
 import gtk
 
 from kiwi.ui.icon import IconEntry
-from kiwi.utils import gsignal, gproperty, type_register
+from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 
 class MaskError(Exception):
     pass
@@ -56,7 +56,7 @@ INPUT_FORMATS = {
 
 _ = lambda msg: gettext.dgettext('kiwi', msg)
 
-class KiwiEntry(gtk.Entry):
+class KiwiEntry(PropertyObject, gtk.Entry):
     """
     The KiwiEntry is a Entry subclass with the following additions:
 
@@ -73,6 +73,7 @@ class KiwiEntry(gtk.Entry):
 
     def __init__(self):
         gtk.Entry.__init__(self)
+        PropertyObject.__init__(self)
 
         self.connect('insert-text', self._on_insert_text)
         self.connect('delete-text', self._on_delete_text)

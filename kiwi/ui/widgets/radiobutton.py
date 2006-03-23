@@ -29,7 +29,7 @@
 import gtk
 
 from kiwi import ValueUnset
-from kiwi.python import deprecationwarn
+#from kiwi.python import deprecationwarn
 from kiwi.utils import PropertyObject, gproperty
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 
