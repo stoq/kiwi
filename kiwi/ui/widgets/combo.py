@@ -43,6 +43,7 @@ from kiwi.ui.comboentry import ComboEntry
 from kiwi.ui.combomixin import COL_COMBO_LABEL, COMBO_MODE_STRING, \
      COMBO_MODE_DATA, COMBO_MODE_UNKNOWN, ComboMixin
 from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
+from kiwi.ui.widgets.entry import ProxyEntry
 from kiwi.utils import PropertyObject, gproperty
 
 class ProxyComboBox(PropertyObject, gtk.ComboBox, ComboMixin, ProxyWidgetMixin):
@@ -220,7 +221,7 @@ class ProxyComboEntry(PropertyObject, ComboEntry,
 
     def __init__(self):
         self.mode = COMBO_MODE_STRING
-        ComboEntry.__init__(self)
+        ComboEntry.__init__(self, entry=ProxyEntry())
         ValidatableProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self)
         self.connect('changed', self._on__changed)

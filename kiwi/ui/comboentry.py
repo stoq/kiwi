@@ -286,11 +286,17 @@ type_register(_ComboEntryPopup)
 class ComboEntry(gtk.HBox):
     gsignal('changed')
     gsignal('activate')
-    def __init__(self):
+    def __init__(self, entry=None):
+        """
+        @param entry: a gtk.Entry subclass to use
+        """
         gtk.HBox.__init__(self)
         self._popping_down = False
 
-        self.entry = KiwiEntry()
+        if not entry:
+            entry = KiwiEntry()
+
+        self.entry = entry
         self.entry.connect('activate',
                            self._on_entry__activate)
         self.entry.connect('scroll-event',
