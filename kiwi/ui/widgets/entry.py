@@ -31,7 +31,7 @@ import gtk
 
 from kiwi.datatypes import ValidationError, converter, number
 from kiwi.decorators import deprecated
-#from kiwi.python import deprecationwarn
+from kiwi.python import deprecationwarn
 from kiwi.ui.entry import MaskError, KiwiEntry, ENTRY_MODE_TEXT, \
      ENTRY_MODE_DATA
 from kiwi.ui.dateentry import DateEntry
@@ -204,8 +204,8 @@ type_register(ProxyEntry)
 
 class Entry(ProxyEntry):
     def __init__(self, data_type=None):
-        #deprecationwarn('Entry is deprecated, use ProxyEntry instead',
-        #                stacklevel=3)
+        deprecationwarn('Entry is deprecated, use ProxyEntry instead',
+                        stacklevel=3)
         ProxyEntry.__init__(self, data_type)
 type_register(Entry)
 

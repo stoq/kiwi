@@ -46,14 +46,14 @@ from kiwi.log import Logger
 from kiwi.python import disabledeprecationcall
 from kiwi.ui.hyperlink import HyperLink
 from kiwi.ui.objectlist import Column, ObjectList
-from kiwi.ui.widgets.checkbutton import CheckButton
+from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox, \
      ProxyComboBoxEntry
-from kiwi.ui.widgets.entry import ProxyDateEntry, Entry
-from kiwi.ui.widgets.label import Label
-from kiwi.ui.widgets.radiobutton import RadioButton
-from kiwi.ui.widgets.spinbutton import SpinButton
-from kiwi.ui.widgets.textview import TextView
+from kiwi.ui.widgets.entry import ProxyDateEntry, ProxyEntry
+from kiwi.ui.widgets.label import ProxyLabel
+from kiwi.ui.widgets.radiobutton import ProxyRadioButton
+from kiwi.ui.widgets.spinbutton import ProxySpinButton
+from kiwi.ui.widgets.textview import ProxyTextView
 
 # Backwards compatibility + pyflakes
 from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
@@ -320,16 +320,16 @@ adapter_registry.register_adapter(KiwiComboBoxAdapter)
 
 def register_widgets():
     for gobj, editor, data_type in [
-        (Entry, EntryDataType, DataType),
+        (ProxyEntry, EntryDataType, DataType),
         (ProxyDateEntry, None, DateOnlyDataType),
-        (CheckButton, None, BoolOnlyDataType),
-        (Label, LabelDataType, DataType),
+        (ProxyCheckButton, None, BoolOnlyDataType),
+        (ProxyLabel, LabelDataType, DataType),
         (ProxyComboBox, ComboBoxDataType, DataType),
         (ProxyComboBoxEntry, ComboBoxDataType, DataType),
         (ProxyComboEntry, ComboBoxDataType, DataType),
-        (SpinButton, SpinBtnDataType, DataType),
-        (RadioButton, None, BoolOnlyDataType),
-        (TextView, TextViewDataType, DataType)
+        (ProxySpinButton, SpinBtnDataType, DataType),
+        (ProxyRadioButton, None, BoolOnlyDataType),
+        (ProxyTextView, TextViewDataType, DataType)
         ]:
         # Property overrides, used in the editor
         type_name = gobject.type_name(gobj)
@@ -343,7 +343,7 @@ def register_widgets():
         prop_registry.override_simple(type_name + '::model-attribute',
                                       ModelProperty)
 
-        if issubclass(gobj, RadioButton):
+        if issubclass(gobj, ProxyRadioButton):
             prop_registry.override_simple(type_name + '::data-value',
                                           DataValueProperty)
         # Register custom adapters, since gobject.new is broken in 2.6

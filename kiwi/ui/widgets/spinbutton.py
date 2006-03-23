@@ -33,17 +33,19 @@ L{kiwi.ui.icon.IconEntry}
 import gtk
 
 from kiwi.datatypes import number
+from kiwi.python import deprecationwarn
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
-from kiwi.utils import PropertyObject, gsignal
+from kiwi.utils import PropertyObject, gsignal, type_register
 
-class SpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixin):
+class ProxySpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixin):
     """
     A SpinButton subclass which adds supports for the Kiwi Framework.
     This widget supports validation
     The only allowed types for spinbutton are int and float.
 
     """
+    __gtype_name__ = 'ProxySpinButton'
     allowed_data_types = number
 
     def __init__(self):
@@ -106,3 +108,11 @@ class SpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixin):
 
     def get_icon_window(self):
         return self._icon.get_icon_window()
+
+class SpinButton(ProxySpinButton):
+    def __init__(self):
+        deprecationwarn(
+            'SpinButton is deprecated, use ProxySpinButton instead',
+            stacklevel=3)
+        ProxySpinButton.__init__(self)
+type_register(SpinButton)

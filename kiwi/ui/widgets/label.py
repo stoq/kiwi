@@ -29,11 +29,13 @@ L{Label.set_bold}"""
 
 import gtk
 
+from kiwi.python import deprecationwarn
 from kiwi.ui.gadgets import set_foreground
 from kiwi.ui.proxywidget import ProxyWidgetMixin
-from kiwi.utils import PropertyObject
+from kiwi.utils import PropertyObject, type_register
 
-class Label(PropertyObject, gtk.Label, ProxyWidgetMixin):
+class ProxyLabel(PropertyObject, gtk.Label, ProxyWidgetMixin):
+    __gtype_name__ = 'ProxyLabel'
     def __init__(self, label='', data_type=None):
         """
         @param label: initial text
@@ -144,3 +146,12 @@ class Label(PropertyObject, gtk.Label, ProxyWidgetMixin):
 
     def set_color(self, color):
         set_foreground(self, color)
+type_register(ProxyLabel)
+
+class Label(ProxyLabel):
+    def __init__(self):
+        deprecationwarn(
+            'Label is deprecated, use ProxyLabel instead',
+            stacklevel=3)
+        ProxyLabel.__init__(self)
+type_register(Label)

@@ -58,8 +58,8 @@ class MixinTest(unittest.TestCase):
         self.assertEqual(o.mixin_prop, 'foo')
 
     def testSpinButton(self):
-        from kiwi.ui.widgets.spinbutton import SpinButton
-        s = SpinButton()
+        from kiwi.ui.widgets.spinbutton import ProxySpinButton
+        s = ProxySpinButton()
         self.failUnless(hasattr(s, 'data_type'))
         self.assertEqual(s.data_type, int)
 

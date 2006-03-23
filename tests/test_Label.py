@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 import unittest
 
-from kiwi.ui.widgets.label import Label
+from kiwi.ui.widgets.label import ProxyLabel
 
 class LabelTest(unittest.TestCase):
     def testAttr(self):
-        label = Label()
+        label = ProxyLabel()
         label.set_text("test label")
         label.set_italic(True)
         self.assertEqual(label.get_label(),

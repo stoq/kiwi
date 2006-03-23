@@ -27,10 +27,12 @@
 
 import gtk
 
+from kiwi.python import deprecationwarn
 from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
-from kiwi.utils import PropertyObject
+from kiwi.utils import PropertyObject, type_register
 
-class TextView(PropertyObject, gtk.TextView, ValidatableProxyWidgetMixin):
+class ProxyTextView(PropertyObject, gtk.TextView, ValidatableProxyWidgetMixin):
+    __gtype_name__ = 'ProxyTextView'
     def __init__(self):
         gtk.TextView.__init__(self)
         PropertyObject.__init__(self, data_type=str)
@@ -58,3 +60,11 @@ class TextView(PropertyObject, gtk.TextView, ValidatableProxyWidgetMixin):
             text = self._as_string(data)
 
         self._textbuffer.set_text(text)
+
+class TextView(ProxyTextView):
+    def __init__(self):
+        deprecationwarn(
+            'TextView is deprecated, use ProxyTextView instead',
+            stacklevel=3)
+        ProxyTextView.__init__(self)
+type_register(TextView)

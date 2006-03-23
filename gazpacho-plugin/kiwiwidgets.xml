@@ -8,14 +8,14 @@
                         generic-name="hyperlink"
                         title="Hyper Link" 
                         adaptor-class="HyperLinkAdaptor"/>
-    <glade-widget-class name="kiwi+ui+widgets+entry+Entry"
+    <glade-widget-class name="ProxyEntry"
                         generic-name="kiwientry"
                         title="Kiwi Entry" />
     <glade-widget-class name="ProxyDateEntry"
                         generic-name="kiwidateentry"
                         title="Kiwi Date Entry"
 			adaptor-class="DateEntryAdaptor"/>
-    <glade-widget-class name="kiwi+ui+widgets+label+Label"
+    <glade-widget-class name="ProxyLabel"
                         generic-name="kiwilabel"
                         title="Kiwi Label" />
     <glade-widget-class name="ProxyComboBox"
@@ -25,16 +25,16 @@
                         generic-name="kiwicomboentry"
                         title="Kiwi Combo Entry"
 			adaptor-class="ComboEntryAdaptor"/>
-    <glade-widget-class name="kiwi+ui+widgets+checkbutton+CheckButton"
+    <glade-widget-class name="ProxyCheckButton"
                         generic-name="kiwicheckbutton"
                         title="Kiwi Check Button"/>
-    <glade-widget-class name="kiwi+ui+widgets+radiobutton+RadioButton"
+    <glade-widget-class name="ProxyRadioButton"
                         generic-name="kiwiradiobutton"
                         title="Kiwi Radio Button"/>
-    <glade-widget-class name="kiwi+ui+widgets+spinbutton+SpinButton"
+    <glade-widget-class name="ProxySpinButton"
                         generic-name="kiwispinbutton"
                         title="Kiwi Spin Button"/>
-    <glade-widget-class name="kiwi+ui+widgets+textview+TextView"
+    <glade-widget-class name="ProxyTextView"
                         generic-name="kiwitextview"
                         title="Kiwi TextView"/>
 
@@ -48,14 +48,14 @@
   <glade-widget-group name="kiwi" title="Kiwi Widgets">
     <glade-widget-class-ref name="ObjectList"/>
     <glade-widget-class-ref name="HyperLink"/>
-    <glade-widget-class-ref name="kiwi+ui+widgets+entry+Entry"/>
-    <glade-widget-class-ref name="kiwi+ui+widgets+label+Label"/>
+    <glade-widget-class-ref name="ProxyEntry"/>
+    <glade-widget-class-ref name="ProxyLabel"/>
     <glade-widget-class-ref name="ProxyComboBox"/>
     <glade-widget-class-ref name="ProxyComboEntry"/>
-    <glade-widget-class-ref name="kiwi+ui+widgets+checkbutton+CheckButton"/>
-    <glade-widget-class-ref name="kiwi+ui+widgets+radiobutton+RadioButton"/>
-    <glade-widget-class-ref name="kiwi+ui+widgets+spinbutton+SpinButton"/>
-    <glade-widget-class-ref name="kiwi+ui+widgets+textview+TextView"/>
+    <glade-widget-class-ref name="ProxyCheckButton"/>
+    <glade-widget-class-ref name="ProxyRadioButton"/>
+    <glade-widget-class-ref name="ProxySpinButton"/>
+    <glade-widget-class-ref name="ProxyTextView"/>
     <glade-widget-class-ref name="ProxyDateEntry"/>
   </glade-widget-group>
   

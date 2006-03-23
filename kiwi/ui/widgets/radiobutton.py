@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2003-2005 Async Open Source
+# Copyright (C) 2003-2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -29,11 +29,12 @@
 import gtk
 
 from kiwi import ValueUnset
-#from kiwi.python import deprecationwarn
-from kiwi.utils import PropertyObject, gproperty
+from kiwi.python import deprecationwarn
+from kiwi.utils import PropertyObject, gproperty, type_register
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 
 class ProxyRadioButton(PropertyObject, gtk.RadioButton, ProxyWidgetMixin):
+    __gtype_name__ = 'ProxyRadioButton'
     gproperty('data-value', str, nick='Data Value')
 
     def __init__(self, group=None, label=None, use_underline=True):
@@ -73,7 +74,7 @@ class ProxyRadioButton(PropertyObject, gtk.RadioButton, ProxyWidgetMixin):
             # In a group of radiobuttons, the only widget which is in
             # the proxy is ourself, the other buttons do not get their
             # update() method called, so the default value is activate
-            # ourselves when the model is empty        
+            # ourselves when the model is empty
             self.set_active(True)
             return
 
@@ -84,7 +85,8 @@ class ProxyRadioButton(PropertyObject, gtk.RadioButton, ProxyWidgetMixin):
 
 class RadioButton(ProxyRadioButton):
     def __init__(self):
-        #deprecationwarn(
-        #    'RadioButton is deprecated, use ProxyRadioButton instead',
-        #    stacklevel=3)
+        deprecationwarn(
+            'RadioButton is deprecated, use ProxyRadioButton instead',
+            stacklevel=3)
         ProxyRadioButton.__init__(self)
+type_register(RadioButton)

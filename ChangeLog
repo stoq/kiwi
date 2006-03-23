@@ -1,3 +1,20 @@
+2006-03-23  Johan Dahlin  <jdahlin@async.com.br>
+
+	* gazpacho-plugin/kiwiwidgets.xml:
+	* kiwi/ui/gazpacholoader.py:
+	* kiwi/ui/widgets/checkbutton.py:
+	* kiwi/ui/widgets/entry.py:
+	* kiwi/ui/widgets/filechooser.py: 
+	* kiwi/ui/widgets/label.py:
+	* kiwi/ui/widgets/radiobutton.py:
+	* kiwi/ui/widgets/spinbutton.py:
+	* kiwi/ui/widgets/textview.py:
+	* tests/test_CheckButton.py:
+	* tests/test_Label.py:
+	* tests/test_SpinButton.py:
+	* tests/test_utils.py:
+	Rename all widgets to Proxy..., update gazpacho and tests.
+
 2006-03-23  Ronaldo Maia,,,  <romaia@async.com.br>
 
 	reviewed by: jdahlin: 

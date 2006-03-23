@@ -47,15 +47,17 @@ class _FileChooserMixin(object):
             return
         self.set_filename(data)
 
-class FileChooserButton(_FileChooserMixin, PropertyObject,
-                        gtk.FileChooserButton, ProxyWidgetMixin):
+class ProxyFileChooserButton(_FileChooserMixin, PropertyObject,
+                             gtk.FileChooserButton, ProxyWidgetMixin):
+    __gtype_name__ = 'ProxyFileChooserButton'
     def __init__(self):
         ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=str)
         gtk.FileChooserButton.__init__(self)
 
-class FileChooserWidget(_FileChooserMixin, PropertyObject,
-                        gtk.FileChooserWidget, ProxyWidgetMixin):
+class ProxyFileChooserWidget(_FileChooserMixin, PropertyObject,
+                             gtk.FileChooserWidget, ProxyWidgetMixin):
+    __gtype_name__ = 'ProxyFileChooserWidget'
     def __init__(self):
         ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=str)

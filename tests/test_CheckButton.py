@@ -3,11 +3,11 @@ import utils
 
 import unittest
 
-from kiwi.ui.widgets.checkbutton import CheckButton
+from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 
 class CheckButtonTest(unittest.TestCase):
     def testForBool(self):
-        myChkBtn = CheckButton()
+        myChkBtn = ProxyCheckButton()
         self.assertEqual(myChkBtn.get_property("data-type"), bool)
 
         # this test doens't work... maybe be a pygtk bug
