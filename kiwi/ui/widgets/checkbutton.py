@@ -51,6 +51,7 @@ class CheckButton(PropertyObject, gtk.CheckButton, ProxyWidgetMixin):
 
     def update(self, data):
         if data is None:
+            self.set_active(False);
             return
 
         # No conversion to string needed, we only accept bool

@@ -267,8 +267,9 @@ class Proxy:
                 # safe to return here since you shouldn't need to code
                 # around the lack of a model in your callbacks if you
                 # can help it.
-                return
-            value = kgetattr(self._model, attribute, ValueUnset)
+                value = None 
+            else: 
+                value = kgetattr(self._model, attribute, ValueUnset)
 
         widget = self._model_attributes.get(attribute, None)
 
@@ -314,7 +315,7 @@ class Proxy:
         @param model:
         @param relax_type:
         """
-        if self._model is not None:
+        if self._model is not None and model is not None:
             if (not relax_type and
                 type(model) != type(self._model) and
                 not isinstance(model, self._model.__class__)):

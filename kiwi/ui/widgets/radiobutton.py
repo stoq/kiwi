@@ -70,6 +70,11 @@ class ProxyRadioButton(PropertyObject, gtk.RadioButton, ProxyWidgetMixin):
 
     def update(self, data):
         if data is None:
+            # In a group of radiobuttons, the only widget which is in
+            # the proxy is ourself, the other buttons do not get their
+            # update() method called, so the default value is activate
+            # ourselves when the model is empty        
+            self.set_active(True)
             return
 
         data = self._as_string(data)
