@@ -66,3 +66,9 @@ class ValueUnset:
     pass
 
 __all__ = ['ValueUnset', 'kiwi_version']
+
+# by default locale uses the C locale but our date conversions use the user
+# locale so we need to set the locale to that one
+import locale
+locale.setlocale(locale.LC_ALL, '') # this set the user locale ( $LANG )
+del locale

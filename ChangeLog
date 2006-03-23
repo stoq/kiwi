@@ -1,3 +1,11 @@
+2006-03-23  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/datatypes.py: Move setlocale() call to __init__.py
+
+	* kiwi/environ.py (Library.enable_translation): Refactor a little bit
+	try to locate the .mo file and give a warning if it cannot
+	be found.
+
 2006-03-22  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/dist.py (KiwiInstallLib._write_dictionary): Replace / with 

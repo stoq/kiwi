@@ -25,6 +25,7 @@
 
 import gettext
 import imp
+import locale
 import os
 import sys
 
@@ -218,6 +219,25 @@ class Library(Environment):
 
         self.uninstalled = uninstalled
 
+    def _check_translation(self, domain, directory):
+        loc = locale.getlocale()[0]
+
+        # We're not interested in warnings for these locales
+        if loc in (None, 'C', 'en_US'):
+            return
+
+        # check sv_SE and sv
+        locales = [loc]
+        if '_' in loc:
+            locales.append(loc.split('_')[0])
+
+        for l in locales:
+            path = os.path.join(directory, l, 'LC_MESSAGES', domain + '.mo')
+            if os.path.exists(path):
+                break
+        else:
+            log.warn('No %s translation found for domain %s' % (loc, domain))
+
     def enable_translation(self, domain=None, localedir=None):
         """
         Enables translation for a library
@@ -242,12 +262,14 @@ class Library(Environment):
 
         # XXX: locale should not be a list
         localedir = self._resources.get('locale')
-        if localedir:
-            gettext.bindtextdomain(domain, localedir[0])
-        else:
+        if not localedir:
             # Only complain when running installed
             if not self.uninstalled:
                 log.warn('no localedir for: %s' % domain)
+
+            return
+        directory = gettext.bindtextdomain(domain, localedir[0])
+        self._check_translation(domain, directory)
 
         # Gtk+ only supports utf-8, it makes no sense to support
         # other encodings in kiwi it self

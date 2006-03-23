@@ -263,7 +263,7 @@ class _FloatConverter(BaseConverter):
 
             conv = locale.localeconv()
             as_str +=  conv.get('decimal_point') + '0'
-            
+
         return as_str
 
     def from_string(self, value):
@@ -654,7 +654,3 @@ def filter_locale(value):
     if decimal_point != '.':
         value = value.replace(decimal_point, '.')
     return value
-
-# by default locale uses the C locale but our date conversions use the user
-# locale so we need to set the locale to that one
-locale.setlocale(locale.LC_ALL, '') # this set the user locale ( $LANG )
