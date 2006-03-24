@@ -299,6 +299,8 @@ class ComboEntry(gtk.HBox):
         self.entry = entry
         self.entry.connect('activate',
                            self._on_entry__activate)
+        self.entry.connect('changed',
+                           self._on_entry__changed)
         self.entry.connect('scroll-event',
                            self._on_entry__scroll_event)
         self.entry.connect('key-press-event',
@@ -344,6 +346,9 @@ class ComboEntry(gtk.HBox):
 
     def _on_entry__activate(self, entry):
         self.emit('activate')
+
+    def _on_entry__changed(self, entry):
+        self.emit('changed')
 
     def _on_entry__scroll_event(self, entry, event):
         model = self.get_model()
@@ -431,7 +436,6 @@ class ComboEntry(gtk.HBox):
         @param text:
         """
         self.entry.set_text(text)
-        self.emit('changed')
 
     def get_text(self):
         """

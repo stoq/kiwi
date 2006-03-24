@@ -1,3 +1,15 @@
+2006-03-24  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/comboentry.py:
+	* kiwi/ui/entry.py:
+	* kiwi/ui/widgets/combo.py:
+	* kiwi/ui/widgets/entry.py:
+	In ProxyComboEntry, only listen to content-changed on the ProxyEntry.
+	In ProxyEntry, work around GtkEntry::changed which sometimes is emitted
+	twice when set_text is called.
+	In KiwiEntry.get_selected_by_iter, return None if the text from the 
+	model doesn't match the text
+
 2006-03-23  Johan Dahlin  <jdahlin@async.com.br>
 
 	* gazpacho-plugin/kiwiwidgets.xml:

@@ -70,6 +70,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyEntry'
 
     def __init__(self, data_type=None):
+        self._block_changed = False
         KiwiEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
         self.set_property('data-type', data_type)
@@ -160,10 +161,21 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
 
         self._update_current_object(text)
 
+        # If content isn't empty set_text emitts changed twice.
+        # Protect content-changed from being updated and issue
+        # a manual emission afterwards
+        self._block_changed = True
         gtk.Entry.set_text(self, text)
-
+        self._block_changed = False
         self.emit('content-changed')
+
         self.set_position(-1)
+
+    def do_changed(self):
+        if self._block_changed:
+            self.emit_stop_by_name('changed')
+            return
+        self.emit('content-changed')
 
     # ProxyWidgetMixin implementation
 

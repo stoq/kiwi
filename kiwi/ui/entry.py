@@ -559,8 +559,12 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         completion = self._get_completion()
         model = completion.get_model()
         mode = self._mode
+        text = model[treeiter][COL_TEXT]
+        if text != self.get_text():
+            return
+
         if mode == ENTRY_MODE_TEXT:
-            return model[treeiter][COL_TEXT]
+            return text
         elif mode == ENTRY_MODE_DATA:
             return model[treeiter][COL_OBJECT]
         else:

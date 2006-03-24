@@ -220,29 +220,22 @@ class ProxyComboEntry(PropertyObject, ComboEntry,
     gproperty("list-editable", bool, True, "Editable")
 
     def __init__(self):
-        self.mode = COMBO_MODE_STRING
-        ComboEntry.__init__(self, entry=ProxyEntry())
+        entry = ProxyEntry()
+        ComboEntry.__init__(self, entry=entry)
         ValidatableProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self)
-        self.connect('changed', self._on__changed)
+        entry.connect('content-changed', self._on_entry__content_changed)
 
-    def _on__changed(self, widget):
-        if not self.entry.get_text():
-            return
-
+    # We only need to listen for changes in the entry, it's updated
+    # even if you select something in the popup list
+    def _on_entry__content_changed(self, entry):
         self.emit('content-changed')
 
     def prop_set_list_editable(self, value):
-        if self.mode == COMBO_MODE_DATA:
-            raise AssertionError("You cannot use list-editable in data mode")
-
         self.entry.set_editable(value)
-
         return value
 
     def read(self):
-        if self.mode == COMBO_MODE_UNKNOWN:
-            return ValueUnset
         return self.get_selected()
 
     def update(self, data):
