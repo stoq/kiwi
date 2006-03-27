@@ -319,7 +319,7 @@ class Proxy:
             if (not relax_type and
                 type(model) != type(self._model) and
                 not isinstance(model, self._model.__class__)):
-                raise TypeError("New model has wrong type %s, expected %s"
+                raise TypeError("model has wrong type %s, expected %s"
                                 % (type(model), type(self._model)))
 
         # the following isn't strictly necessary, but it currently works
