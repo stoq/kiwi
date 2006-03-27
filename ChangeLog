@@ -1,3 +1,7 @@
+2006-03-26  Johan Dahlin  <jdahlin@async.com.br>
+	
+	* kiwi/desktopparser.py: Add a GKeyFile inspired .desktop parser
+
 2006-03-24  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/comboentry.py:
