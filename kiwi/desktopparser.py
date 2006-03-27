@@ -98,15 +98,6 @@ class DesktopParser(ConfigParser):
         """
         return self.get(section, _localize(option, locale))
 
-    def set_string_list(self, section, option, values):
-        """
-        @param section: section name
-        @param option: an option
-        @param values: list of strings
-        """
-        value = self._list_separator.join(values)
-        self.set(section, option, value)
-
     def get_string_list(self, section, option):
         """
         @param section: section name
