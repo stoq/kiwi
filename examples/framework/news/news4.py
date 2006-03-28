@@ -62,13 +62,13 @@ class Shell(Delegate):
         self.slave.show()
         self.slave.focus_toplevel() # Must be done after attach
 
-    def on_ok__clicked(self, button):
+    def on_ok__clicked(self, *args):
         objectlist = self.slave.news_list
         item = objectlist.get_selected()
         self.emit('result', item.url)
         self.hide_and_quit()
 
-    def on_cancel__clicked(self, button):
+    def on_cancel__clicked(self, *args):
         self.hide_and_quit()
 
 url = None

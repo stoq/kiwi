@@ -5,7 +5,7 @@ from kiwi.ui.objectlist import Column, ObjectList
 
 class DiaryEntry(Settable):
     def __init__(self):
-        Settable.__init__(self, title='Untitled', period='morning', text='')
+        Settable.__init__(self, title='', period='morning', text='')
 
     def get_words(self):
         return len(self.text.split())
@@ -36,9 +36,9 @@ class Diary(ProxyDelegate):
 
     def on_add__clicked(self, button):
         entry = DiaryEntry()
+        entry.title = 'Untitled'
         self.entries.append(entry, select=True)
         self.set_editable(True)
-        self.set_model(entry)
 
     def on_remove__clicked(self, button):
         entry = self.entries.get_selected()
@@ -46,6 +46,8 @@ class Diary(ProxyDelegate):
             self.entries.remove(entry, select=True)
 
         self.set_editable(len(self.entries) >= 1)
+        if not len(self.entries):
+            self.set_model(None)
 
     def on_text__content_changed(self, text):
         self.proxy.update_many(("chars", "words"))
