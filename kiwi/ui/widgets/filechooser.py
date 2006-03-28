@@ -50,16 +50,31 @@ class _FileChooserMixin(object):
 class ProxyFileChooserButton(_FileChooserMixin, PropertyObject,
                              gtk.FileChooserButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFileChooserButton'
-    def __init__(self):
+    def __init__(self, title=None, parent=None,
+                 action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                 buttons=None, backend=None):
+        """
+        @param title:
+        @param parent:
+        @param action:
+        @param buttons:
+        @param backend:
+        """
         ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=str)
-        gtk.FileChooserButton.__init__(self)
+        gtk.FileChooserButton.__init__(self, title=title,
+                                       parent=parent, action=action,
+                                       buttons=buttons, backend=backend)
 
 class ProxyFileChooserWidget(_FileChooserMixin, PropertyObject,
                              gtk.FileChooserWidget, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFileChooserWidget'
-    def __init__(self):
+    def __init__(self, title, backend=None):
+        """
+        @param title:
+        @param backend:
+        """
         ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=str)
-        gtk.FileChooserWidget.__init__(self)
+        gtk.FileChooserWidget.__init__(self, title=title, backend=backend)
 
