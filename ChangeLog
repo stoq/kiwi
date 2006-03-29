@@ -1,4 +1,4 @@
-2005-12-14  Ali Afshar <aafshar@gmail.com>
+2005-03-29  Ali Afshar <aafshar@gmail.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
 
@@ -6,13 +6,6 @@
 	* kiwi/ui/widgets/fontbutton.py:
 	Add proxy widgets for gtk.ColorButton and gtk.FontButton.
 	Fixes #2511
-
-2006-03-29  Johan Dahlin  <jdahlin@async.com.br>
-
-	reviewed by: <delete if not using a buddy>
-
-	* kiwi/ui/widgets/colorbutton.py:
-	* kiwi/ui/widgets/fontbutton.py:
 
 2006-03-29  Ronaldo Maia  <romaia@async.com.br>
 
