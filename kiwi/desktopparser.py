@@ -27,7 +27,6 @@
 #
 
 from ConfigParser import ConfigParser
-import sys
 
 # Private
 
