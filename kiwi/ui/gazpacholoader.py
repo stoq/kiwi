@@ -230,7 +230,7 @@ class EntryDataType(DataTypeAdaptor):
             (_('Decimal'), Decimal),
             (_('Currency'), currency),
             (_('Date'), datetime.date),
-            (_('Datetime'), datetime.datetime),
+            (_('Date and Time'), datetime.datetime),
             (_('Time'), datetime.time),
             (_('Object'), object)
             ]
@@ -268,7 +268,7 @@ class LabelDataType(DataTypeAdaptor):
             (_('Float'), float),
             (_('Decimal'), Decimal),
             (_('Date'), datetime.date),
-            (_('Datetime'), datetime.datetime),
+            (_('Date and Time'), datetime.datetime),
             (_('Time'), datetime.time),
             (_('Currency'), currency)
             ]

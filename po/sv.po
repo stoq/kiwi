@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-11 11:34-0300\n"
+"POT-Creation-Date: 2006-03-29 12:20-0300\n"
 "PO-Revision-Date: 2006-03-08 13:42-0300\n"
 "Last-Translator: Johan Dahlin <jdahlin@async.com.br>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -16,63 +16,30 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ../kiwi/ui/dateentry.py:74
+msgid "_Today"
+msgstr ""
+
+#: ../kiwi/ui/dateentry.py:75
+msgid "_Cancel"
+msgstr ""
+
+#: ../kiwi/ui/dateentry.py:76
+msgid "_Select"
+msgstr ""
+
 #: ../kiwi/ui/wizard.py:211
 msgid "Finish"
 msgstr ""
 
-#: ../kiwi/ui/gazpacholoader.py:206 ../kiwi/ui/gazpacholoader.py:217
-#: ../kiwi/ui/gazpacholoader.py:232 ../kiwi/ui/gazpacholoader.py:244
-#: ../kiwi/ui/gazpacholoader.py:256
-msgid "Integer"
-msgstr "Heltal"
+#: ../kiwi/ui/entry.py:352
+#, python-format
+msgid "'%s' is not a valid object"
+msgstr "'%s' är inte ett giltligt objekt"
 
-#: ../kiwi/ui/gazpacholoader.py:207 ../kiwi/ui/gazpacholoader.py:218
-#: ../kiwi/ui/gazpacholoader.py:233 ../kiwi/ui/gazpacholoader.py:245
-#: ../kiwi/ui/gazpacholoader.py:257
-msgid "Float"
-msgstr "Flyttal"
-
-#: ../kiwi/ui/gazpacholoader.py:208 ../kiwi/ui/gazpacholoader.py:219
-#: ../kiwi/ui/gazpacholoader.py:234 ../kiwi/ui/gazpacholoader.py:246
-#: ../kiwi/ui/gazpacholoader.py:258
-msgid "Decimal"
-msgstr ""
-
-#: ../kiwi/ui/gazpacholoader.py:209 ../kiwi/ui/gazpacholoader.py:220
-#: ../kiwi/ui/gazpacholoader.py:262
-msgid "Currency"
-msgstr "Valuta"
-
-#: ../kiwi/ui/gazpacholoader.py:215 ../kiwi/ui/gazpacholoader.py:230
-#: ../kiwi/ui/gazpacholoader.py:241 ../kiwi/ui/gazpacholoader.py:253
-msgid "String"
-msgstr "Sträng"
-
-#: ../kiwi/ui/gazpacholoader.py:216 ../kiwi/ui/gazpacholoader.py:231
-#: ../kiwi/ui/gazpacholoader.py:242 ../kiwi/ui/gazpacholoader.py:254
-msgid "Unicode"
-msgstr ""
-
-#: ../kiwi/ui/gazpacholoader.py:221 ../kiwi/ui/gazpacholoader.py:235
-#: ../kiwi/ui/gazpacholoader.py:259
-msgid "Date"
-msgstr "Datum"
-
-#: ../kiwi/ui/gazpacholoader.py:222 ../kiwi/ui/gazpacholoader.py:260
-msgid "Datetime"
-msgstr "Datumtid"
-
-#: ../kiwi/ui/gazpacholoader.py:223 ../kiwi/ui/gazpacholoader.py:261
-msgid "Time"
-msgstr "Tid"
-
-#: ../kiwi/ui/gazpacholoader.py:224 ../kiwi/ui/gazpacholoader.py:247
-msgid "Object"
-msgstr "Objekt"
-
-#: ../kiwi/ui/gazpacholoader.py:243 ../kiwi/ui/gazpacholoader.py:255
-msgid "Boolean"
-msgstr "Boolean"
+#: ../kiwi/ui/objectlist.py:1656
+msgid "Total:"
+msgstr "Total:"
 
 #: ../kiwi/ui/dialogs.py:98
 msgid "Show more _details"
@@ -109,27 +76,64 @@ msgstr "Ersätt"
 msgid "Save"
 msgstr "Spara"
 
-#: ../kiwi/ui/objectlist.py:1671
-msgid "Total:"
-msgstr "Total:"
+#: ../kiwi/ui/gazpacholoader.py:217 ../kiwi/ui/gazpacholoader.py:228
+#: ../kiwi/ui/gazpacholoader.py:243 ../kiwi/ui/gazpacholoader.py:255
+#: ../kiwi/ui/gazpacholoader.py:267
+msgid "Integer"
+msgstr "Heltal"
 
-#: ../kiwi/ui/dateentry.py:69
-msgid "_Today"
+#: ../kiwi/ui/gazpacholoader.py:218 ../kiwi/ui/gazpacholoader.py:229
+#: ../kiwi/ui/gazpacholoader.py:244 ../kiwi/ui/gazpacholoader.py:256
+#: ../kiwi/ui/gazpacholoader.py:268
+msgid "Float"
+msgstr "Flyttal"
+
+#: ../kiwi/ui/gazpacholoader.py:219 ../kiwi/ui/gazpacholoader.py:230
+#: ../kiwi/ui/gazpacholoader.py:245 ../kiwi/ui/gazpacholoader.py:257
+#: ../kiwi/ui/gazpacholoader.py:269
+msgid "Decimal"
 msgstr ""
 
-#: ../kiwi/ui/dateentry.py:70
-msgid "_Cancel"
+#: ../kiwi/ui/gazpacholoader.py:220 ../kiwi/ui/gazpacholoader.py:231
+#: ../kiwi/ui/gazpacholoader.py:273
+msgid "Currency"
+msgstr "Valuta"
+
+#: ../kiwi/ui/gazpacholoader.py:226 ../kiwi/ui/gazpacholoader.py:241
+#: ../kiwi/ui/gazpacholoader.py:252 ../kiwi/ui/gazpacholoader.py:264
+msgid "String"
+msgstr "Sträng"
+
+#: ../kiwi/ui/gazpacholoader.py:227 ../kiwi/ui/gazpacholoader.py:242
+#: ../kiwi/ui/gazpacholoader.py:253 ../kiwi/ui/gazpacholoader.py:265
+msgid "Unicode"
 msgstr ""
 
-#: ../kiwi/ui/dateentry.py:71
-msgid "_Select"
-msgstr ""
+#: ../kiwi/ui/gazpacholoader.py:232 ../kiwi/ui/gazpacholoader.py:246
+#: ../kiwi/ui/gazpacholoader.py:270
+msgid "Date"
+msgstr "Datum"
 
-#: ../kiwi/ui/widgets/entry.py:353
-#, python-format
-msgid "'%s' is not a valid object"
-msgstr "'%s' är inte ett giltligt objekt"
+#: ../kiwi/ui/gazpacholoader.py:233 ../kiwi/ui/gazpacholoader.py:271
+#, fuzzy
+msgid "Date and Time"
+msgstr "Datumtid"
 
-#: ../kiwi/ui/widgets/proxy.py:287
+#: ../kiwi/ui/gazpacholoader.py:234 ../kiwi/ui/gazpacholoader.py:272
+msgid "Time"
+msgstr "Tid"
+
+#: ../kiwi/ui/gazpacholoader.py:235 ../kiwi/ui/gazpacholoader.py:258
+msgid "Object"
+msgstr "Objekt"
+
+#: ../kiwi/ui/gazpacholoader.py:254 ../kiwi/ui/gazpacholoader.py:266
+msgid "Boolean"
+msgstr "Boolean"
+
+#: ../kiwi/ui/proxywidget.py:292
 msgid "This field is mandatory"
 msgstr "Detta fältet är obligatoriskt"
+
+#~ msgid "Datetime"
+#~ msgstr "Datumtid"

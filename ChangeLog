@@ -2,6 +2,16 @@
 
 	reviewed by: jdahlin
 
+	* kiwi/ui/gazpacholoader.py:
+	* po/kiwi.pot:
+	* po/pt_BR.po:
+	* po/sv.po:
+	pt_BR translation
+
+2006-03-29  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
 	* kiwi/ui/widgets/spinbutton.py: No need to press enter to notify that
 	the value of the spinbutton changed.
 	* tests/test_proxy.py: Fixing some tests and adding new ones.
