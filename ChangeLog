@@ -1,3 +1,11 @@
+2006-03-29  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
+	* kiwi/ui/widgets/spinbutton.py: No need to press enter to notify that
+	the value of the spinbutton changed.
+	* tests/test_proxy.py: Fixing some tests and adding new ones.
+
 2006-03-28  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: jdahlin

@@ -9,6 +9,7 @@ from kiwi.ui.widgets.label import ProxyLabel
 from kiwi.ui.widgets.radiobutton import ProxyRadioButton
 from kiwi.ui.widgets.spinbutton import ProxySpinButton
 from kiwi.ui.widgets.textview import ProxyTextView
+from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox
 
 class FakeView(object):
     def __init__(self):
@@ -37,7 +38,9 @@ class Model(Settable):
                           radiobutton='first',
                           label='label',
                           spinbutton=100,
-                          textview='sliff')
+                          textview='sliff',
+                          comboentry='CE1',
+                          combobox='CB1')
 
 class TestProxy(unittest.TestCase):
     def setUp(self):
@@ -52,6 +55,12 @@ class TestProxy(unittest.TestCase):
         self.radio_second = ProxyRadioButton()
         self.radio_second.set_group(self.radio_first)
         self.radio_second.set_property('data_value', 'second')
+
+        self.comboentry = self.view.add('comboentry', str, ProxyComboEntry)
+        self.comboentry.prefill(['CE1','CE2','CE3'])
+
+        self.combobox = self.view.add('combobox', str, ProxyComboBox)
+        self.combobox.prefill(['CB1','CB2','CB3'])
 
         self.model = Model()
         self.proxy = Proxy(self.view, self.model, self.view.widgets)
@@ -80,13 +89,25 @@ class TestProxy(unittest.TestCase):
 
     def testSpinButton(self):
         self.assertEqual(self.model.spinbutton, 100)
-        self.view.spinbutton.set_text('200')
-        #self.assertEqual(self.model.spinbutton, 200)
+        self.view.spinbutton.set_text("200")
+        self.assertEqual(self.model.spinbutton, 200)
 
     def testTextView(self):
         self.assertEqual(self.model.textview, 'sliff')
         self.view.textview.get_buffer().set_text('sloff')
-        #self.assertEqual(self.model.textview, 'sliff')
+        self.assertEqual(self.model.textview, 'sloff')
+
+    def testComboEntry(self):
+        self.assertEqual(self.model.comboentry, 'CE1')
+        self.view.comboentry.select('CE2')
+        self.assertEqual(self.model.comboentry, 'CE2')
+        self.view.comboentry.entry.set_text('CENone')
+        self.assertEqual(self.model.comboentry, None)
+
+    def testComboBox(self):
+        self.assertEqual(self.model.combobox, 'CB1')
+        self.view.combobox.select('CB2')
+        self.assertEqual(self.model.combobox, 'CB2')
 
     def testEmptyModel(self):
         self.radio_second.set_active(True)
@@ -98,3 +119,5 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(self.view.label.read(), '')
         self.assertEqual(self.view.spinbutton.read(), ValueUnset)
         self.assertEqual(self.view.textview.read(), '')
+        self.assertEqual(self.view.comboentry.read(), None)
+        self.assertEqual(self.view.combobox.read(), 'CB1')

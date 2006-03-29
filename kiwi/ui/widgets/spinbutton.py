@@ -57,12 +57,15 @@ class ProxySpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixi
         self._icon = IconEntry(self)
         self.set_property('xalign', 1.0)
 
-    # GtkEditable.changed is called too often
-    # GtkSpinButton.value-changed is called only when the value changes
-    gsignal('value-changed', 'override')
-    def do_value_changed(self):
-        self.emit('content-changed')
-        self.chain()
+    gsignal('changed', 'override')
+    def do_changed(self):
+        """Called when the content of the spinbutton changes.
+        """
+        # This is a work around, because GtkEditable.changed is called too
+        # often, as reported here: http://bugzilla.gnome.org/show_bug.cgi?id=64998
+        if self.get_text() != '':
+            self.emit('content-changed')
+            self.chain()
 
     def read(self):
         return self._from_string(self.get_text())
