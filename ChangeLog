@@ -1,3 +1,13 @@
+2006-03-30  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
+	* kiwi/ui/proxywidget.py: update the validation error tooltip every time
+	the value changes (for tooltips that containg the invalid value)
+	* po/kiwi.pot:
+	* po/pt_BR.po: new translations
+	* po/sv.po:
+
 2005-03-29  Ali Afshar <aafshar@gmail.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

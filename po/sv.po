@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-29 12:20-0300\n"
+"POT-Creation-Date: 2006-03-30 16:53-0300\n"
 "PO-Revision-Date: 2006-03-08 13:42-0300\n"
 "Last-Translator: Johan Dahlin <jdahlin@async.com.br>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -131,7 +131,11 @@ msgstr "Objekt"
 msgid "Boolean"
 msgstr "Boolean"
 
-#: ../kiwi/ui/proxywidget.py:292
+#: ../kiwi/ui/proxywidget.py:268
+msgid "'%s' is not a valid value for this field"
+msgstr "'%s' är inte ett giltligt värde för detta fältet"
+
+#: ../kiwi/ui/proxywidget.py:297
 msgid "This field is mandatory"
 msgstr "Detta fältet är obligatoriskt"
 

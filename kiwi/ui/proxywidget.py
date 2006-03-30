@@ -262,15 +262,20 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         if not fade:
             return
 
+        # If there is no error text, set a generic one so the error icon
+        # still have a tooltip
+        if not text:
+            text = _("'%s' is not a valid value for this field") % self.read()
+
+        self._tooltip.set_text(text)
+
         # When the fading animation is finished, set the error icon
         # We don't need to check if the state is valid, since stop()
         # (which removes this timeout) is called as soon as the user
         # types valid data.
         def done(fadeout, c):
-            if text:
-                self._tooltip.set_text(text)
-                self.set_pixbuf(ERROR_ICON)
-                self.queue_draw()
+            self.set_pixbuf(ERROR_ICON)
+            self.queue_draw()
             fadeout.disconnect(c.signal_id)
 
         class SignalContainer:
