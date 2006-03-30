@@ -256,7 +256,9 @@ class DateEntry(gtk.HBox):
         self.entry = ProxyEntry()
         self.entry.connect('changed', self._on_entry__changed)
         self.entry.set_mask_for_data_type(datetime.date)
-        self.entry.set_width_chars(len(self.entry.get_mask()))
+        mask = self.entry.get_mask()
+        if mask:
+            self.entry.set_width_chars(len(mask))
         self.pack_start(self.entry, False, False)
         self.entry.show()
 

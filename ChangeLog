@@ -1,3 +1,10 @@
+2006-03-30  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/dateentry.py (DateEntry.__init__): Only set the mask if it's not empty
+
+	* kiwi/ui/widgets/entry.py (ProxyEntry.set_mask_for_data_type): 
+	Instead of skipping, try to do an educated guess of the mask.
+
 2006-03-30  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: jdahlin

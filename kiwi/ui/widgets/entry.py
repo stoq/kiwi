@@ -117,10 +117,13 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         mask = conv.get_format()
 
         # For win32, skip mask
-        # FIXME: How can we figure out the real format string?
-        for m in ('%X', '%x', '%c'):
-            if m in mask:
-                return
+        # FIXME: How can we figure out the real locale specific string?
+        if mask == '%X':
+            mask = '%H:%M:%S'
+        elif mask == '%x':
+            mask = '%d/%m/%Y'
+        elif mask == '%c':
+            mask = '%d/%m/%Y %H:%M:%S'
 
         for format_char, mask_char in DATE_MASK_TABLE.items():
             mask = mask.replace(format_char, mask_char)
