@@ -308,9 +308,6 @@ class ComboEntry(gtk.HBox):
         self.pack_start(self.entry, True, True)
         self.entry.show()
 
-        completion = gtk.EntryCompletion()
-        self.entry.set_completion(completion)
-
         self._button = gtk.ToggleButton()
         self._button.connect('scroll-event', self._on_entry__scroll_event)
         self._button.connect('toggled', self._on_button__toggled)
@@ -327,10 +324,9 @@ class ComboEntry(gtk.HBox):
         self._popup.connect('hide', self._on_popup__hide)
         self._popup.set_size_request(-1, 24)
 
-        model = gtk.ListStore(str, object)
-        completion.set_model(model)
-        completion.set_text_column(0)
-        self.set_model(model)
+        completion = gtk.EntryCompletion()
+        self.entry.set_completion(completion)
+        self.set_model(completion.get_model())
 
     # Virtual methods
 

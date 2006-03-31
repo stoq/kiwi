@@ -128,7 +128,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
     def prop_set_completion(self, value):
         if not self.get_completion():
-            self._enable_completion()
+            self.set_completion(gtk.EntryCompletion())
         return value
 
     def prop_set_mask(self, value):
@@ -372,11 +372,12 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         if completion:
             return completion
 
-        return self._enable_completion()
-
-    def _enable_completion(self):
         completion = gtk.EntryCompletion()
         self.set_completion(completion)
+        return completion
+
+    def set_completion(self, completion):
+        gtk.Entry.set_completion(self, completion)
         completion.set_model(gtk.ListStore(str, object))
         completion.set_text_column(0)
         self.exact_completion = False
