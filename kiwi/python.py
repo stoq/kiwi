@@ -23,28 +23,15 @@
 
 """Generic python addons"""
 
-import os
 import sys
 import warnings
 
-import gobject
-
-# When we can depend on 2.8 clean this up, so ClassInittable does not
-# need to be tied to GObjectMeta, since it doesn't need to be a GObject
-# Always use type for epydoc, since GObjectMeta creates lots of trouble
-# for us when using fake objects.
-if (gobject.pygtk_version >= (2, 7, 0) and
-    os.path.basename(sys.argv[0]) != 'epyrun'):
-    metabase = gobject.GObjectMeta
-else:
-    metabase = type
-
 __all__ = ['ClassInittableMetaType', 'ClassInittableObject']
 
-class ClassInittableMetaType(metabase):
+class ClassInittableMetaType(type):
     # pylint fails to understand this is a metaclass
     def __init__(self, name, bases, namespace):
-        metabase.__init__(self, name, bases, namespace)
+        type.__init__(self, name, bases, namespace)
         self.__class_init__(namespace)
 
 class ClassInittableObject(object):

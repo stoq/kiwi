@@ -24,12 +24,22 @@
 
 """GObject utilities and addons"""
 
+import os
 import struct
 import sys
 
 import gobject
 
-from kiwi.python import ClassInittableMetaType
+HAVE_2_6 = gobject.pygtk_version[:2] == (2, 6)
+
+# When we can depend on 2.8 clean this up, so ClassInittable does not
+# need to be tied to GObjectMeta, since it doesn't need to be a GObject
+# Always use type for epydoc, since GObjectMeta creates lots of trouble
+# for us when using fake objects.
+if HAVE_2_6 or os.path.basename(sys.argv[0]) == 'epyrun':
+    metabase = type
+else:
+    metabase = gobject.GObjectMeta
 
 def list_properties(gtype, parent=True):
     """
@@ -60,9 +70,19 @@ def type_register(gtype):
 
     return True
 
-HAVE_2_6 = gobject.pygtk_version[:2] == (2, 6)
+class _GObjectClassInittableMetaType(metabase):
+    def __init__(self, name, bases, namespace):
+        metabase.__init__(self, name, bases, namespace)
+        self.__class_init__(namespace)
 
-class PropertyMeta(ClassInittableMetaType):
+class _GobjectClassInittableObject(object):
+    __metaclass__ = _GObjectClassInittableMetaType
+
+    def __class_init__(cls, namespace):
+        pass
+    __class_init__ = classmethod(__class_init__)
+
+class PropertyMeta(_GObjectClassInittableMetaType):
     """
     Metaclass that takes into account properties and signals
     of baseclasses, even if they're not GObject subclasses.
@@ -109,7 +129,7 @@ class PropertyMeta(ClassInittableMetaType):
         if HAVE_2_6 and issubclass(self, gobject.GObject):
             gobject.type_register(self)
 
-        ClassInittableMetaType.__init__(self, name, bases, namespace)
+        _GObjectClassInittableMetaType.__init__(self, name, bases, namespace)
 
         # The metaclass forgets to remove properties and signals
         self.__gproperties__ = {}
