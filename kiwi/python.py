@@ -24,15 +24,7 @@
 """Generic python addons"""
 
 import sys
-import thread
-import threading
 import warnings
-
-try:
-    from ctypes import pythonapi, py_object
-    pythonapi # pyflakes
-except ImportError:
-    pythonapi = None
 
 __all__ = ['ClassInittableMetaType', 'ClassInittableObject']
 
@@ -175,63 +167,3 @@ def disabledeprecationcall(func, *args, **kwargs):
     _no_deprecation = old
     return retval
 
-def set_exception_for_thread(thread_id, exc):
-    """
-    Raises an exception exc in another thread.
-
-    @param thread_id: thread id, returned from thread.get_ident()
-    @param exc: exception to raise
-    @returns: True if the exception could be sent
-    """
-
-    if not pythonapi:
-        raise RuntimeError("set_exception_for_thread requires ctypes")
-
-    if not isinstance(exc, Exception):
-        raise TypeError("exc must be an exception, not %r" % exc)
-
-    # PyThreadState_SetAsyncExc returns the number of thread states modified;
-    # if it returns a number greater than one, we're in trouble, and we
-    # need call it again with exc set to None to revert the effect.
-    nr = pythonapi.PyThreadState_SetAsyncExc(thread_id, py_object(exc))
-    if nr > 1:
-        nr = pythonapi.PyThreadState_SetAsyncExc(thread_id, None)
-        return False
-
-    return True
-
-class _ThreadAlarm(Exception):
-    pass
-
-class InterruptibleThread(threading.Thread):
-    """
-    A threading.Thread subclass which can be interrupted from
-    another thread. Use with caution.
-    """
-    def __init__(self, target=None):
-        if not pythonapi:
-            raise RuntimeError("InterruptibleThread requires ctypes")
-
-        self._thread_id = -1
-        self._target = target
-        threading.Thread.__init__(self)
-
-    def __repr__(self):
-        return '<Thread id=0x%x>' % (self._thread_id + (2 << 30))
-
-    def run(self):
-        self._thread_id = thread.get_ident()
-        try:
-            self._target()
-        except _ThreadAlarm:
-            pass
-        self._thread_id = -1
-
-    def stop(self):
-        """
-        Stop the thread, the run() method must have been called before this
-        @returns: True if the thread could be stopped, False otherwise.
-        """
-        if self._thread_id == -1:
-            return False
-        return set_exception_for_thread(self._thread_id, _ThreadAlarm())

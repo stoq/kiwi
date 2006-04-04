@@ -1,11 +1,5 @@
 2006-04-04  Johan Dahlin  <jdahlin@async.com.br>
 
-	* README (Kiwi): Add optional dependency of ctypes
-
-	* kiwi/python.py:
-	(InterruptibleThread.__init__, set_exception_for_thread): Add
-	a thread subclass which can be interrupted.
-
 	* kiwi/python.py: Get rid of GObject stuff in base classes, move 
 	it to kiwi utils
 	* kiwi/utils.py: inline class initiable meta here 
