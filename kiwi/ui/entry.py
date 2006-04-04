@@ -117,13 +117,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
     # Properties
 
     def prop_set_exact_completion(self, value):
-        if value:
-            match_func = self._completion_exact_match_func
-        else:
-            match_func = self._completion_normal_match_func
-        completion = self._get_completion()
-        completion.set_match_func(match_func)
-
+        self.set_exact_completion(value)
         return value
 
     def prop_set_completion(self, value):
@@ -296,7 +290,12 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         @type value:  boolean
         """
 
-        self.exact_completion = value
+        if value:
+            match_func = self._completion_exact_match_func
+        else:
+            match_func = self._completion_normal_match_func
+        completion = self._get_completion()
+        completion.set_match_func(match_func)
 
     # Private
 
@@ -380,7 +379,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         gtk.Entry.set_completion(self, completion)
         completion.set_model(gtk.ListStore(str, object))
         completion.set_text_column(0)
-        self.exact_completion = False
+        self.set_exact_completion(False)
         completion.connect("match-selected",
                            self._on_completion__match_selected)
         self._current_object = None

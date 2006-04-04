@@ -1,5 +1,8 @@
 2006-04-04  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/entry.py: Clean up the handling of the exact_completion
+	property.
+
 	* kiwi/python.py: Get rid of GObject stuff in base classes, move 
 	it to kiwi utils
 	* kiwi/utils.py: inline class initiable meta here 
