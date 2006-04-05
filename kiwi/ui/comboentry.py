@@ -523,6 +523,9 @@ class ComboEntry(gtk.HBox):
         treeiter = self.entry.get_iter_from_obj(obj)
         self.set_active_iter(treeiter)
 
+    def set_label_text(self, text):
+        self._popup.set_label_text(text)
+
     # IconEntry
 
     def set_pixbuf(self, pixbuf):
