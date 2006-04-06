@@ -150,7 +150,6 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         return ''
 
     # Public API
-
     def set_mask(self, mask):
         """
         Sets the mask of the Entry.
@@ -443,6 +442,8 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         self.stop_emission('delete-text')
 
     # IconEntry
+    def set_tooltip(self, text):
+        self._icon.set_tooltip(text)
 
     def set_pixbuf(self, pixbuf):
         self._icon.set_pixbuf(pixbuf)

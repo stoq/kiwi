@@ -2,6 +2,17 @@
 
 	reviewed by: jdahlin
 
+	* kiwi/ui/entry.py:
+	* kiwi/ui/icon.py:
+	* kiwi/ui/proxywidget.py:
+	* kiwi/ui/widgets/combo.py:
+	* kiwi/ui/widgets/spinbutton.py:
+	Refactor tooltips to fix bug #1954
+
+2006-04-06  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
 	* examples/validation/personalinformation.py:
 	* kiwi/ui/entry.py:
 	* kiwi/ui/widgets/entry.py:

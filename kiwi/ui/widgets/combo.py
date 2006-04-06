@@ -248,3 +248,7 @@ class ProxyComboEntry(PropertyObject, ComboEntry,
         """Removes all items from list and erases entry"""
         ComboMixin.clear(self)
         self.entry.set_text("")
+
+    def set_tooltip(self, text):
+        self.entry.set_tooltip(text)
+

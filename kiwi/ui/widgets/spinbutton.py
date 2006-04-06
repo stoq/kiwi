@@ -103,6 +103,9 @@ class ProxySpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixi
 
     # IconEntry
 
+    def set_tooltip(self, text):
+        self._icon.set_tooltip(text)
+
     def set_pixbuf(self, pixbuf):
         self._icon.set_pixbuf(pixbuf)
 

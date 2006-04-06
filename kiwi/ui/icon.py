@@ -76,6 +76,7 @@ L{kiwi.ui.comboboxentry.BaseComboBoxEntry}.
 
 import gtk
 from gtk import gdk
+from kiwi.ui.tooltip import Tooltip
 
 class IconEntry(object):
     """
@@ -93,6 +94,7 @@ class IconEntry(object):
         self._text_area_pos = (0, 0)
         self._icon_win = None
         self._entry = entry
+        self._tooltip = Tooltip(self)
         entry.connect('enter-notify-event',
                       self._on_entry__enter_notify_event)
         entry.connect('leave-notify-event',
@@ -109,13 +111,16 @@ class IconEntry(object):
         if event.window != icon_win:
             return
 
-        self._entry.show_tooltip(entry)
+        self._tooltip.display(entry)
 
     def _on_entry__leave_notify_event(self, entry, event):
         if event.window != self.get_icon_window():
             return
 
-        self._entry.hide_tooltip()
+        self._tooltip.hide()
+
+    def set_tooltip(self, text):
+        self._tooltip.set_text(text)
 
     def get_icon_window(self):
         return self._icon_win

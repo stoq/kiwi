@@ -39,7 +39,6 @@ from kiwi.environ import environ
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
 from kiwi.log import Logger
 from kiwi.ui.gadgets import FadeOut
-from kiwi.ui.tooltip import Tooltip
 from kiwi.utils import gsignal, gproperty
 
 log = Logger('widget proxy')
@@ -169,7 +168,6 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         ProxyWidgetMixin.__init__(self)
 
         self._valid = True
-        self._tooltip = Tooltip(self)
         self._fade = FadeOut(self)
         self._fade.connect('color-changed', self._on_fadeout__color_changed)
 
@@ -184,6 +182,9 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     def get_icon_window(self):
         "Implement in subclass"
 
+    def set_tooltip(self, text):
+        "Implement in subclass"
+
     # Public API
 
     def is_valid(self):
@@ -191,15 +192,6 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         @returns: True if the widget is in validated state
         """
         return self._valid
-
-    def show_tooltip(self, widget):
-        """
-        @param widget:
-        """
-        self._tooltip.display(widget)
-
-    def hide_tooltip(self):
-        self._tooltip.hide()
 
     def validate(self, force=False):
         """Checks if the data is valid.
@@ -267,7 +259,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         if not text:
             text = _("'%s' is not a valid value for this field") % self.read()
 
-        self._tooltip.set_text(text)
+        self.set_tooltip(text)
 
         # When the fading animation is finished, set the error icon
         # We don't need to check if the state is valid, since stop()
@@ -294,7 +286,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
         if self.mandatory:
             self._draw_stock_icon(MANDATORY_ICON)
-            self._tooltip.set_text(_('This field is mandatory'))
+            self.set_tooltip(_('This field is mandatory'))
             self._fade.stop()
             valid = False
         else:
