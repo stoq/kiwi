@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import unittest
 
 import gobject
@@ -47,9 +48,9 @@ class EntryTest(unittest.TestCase):
             entry.set_text("23.400.000,2")
             self.assertEqual(entry.read(), ValueUnset)
 
-    def testMask(self):
+    def testDigitMask(self):
         e = ProxyEntry()
-        e.set_mask('%3d.%3d')
+        e.set_mask('000.000')
         self.assertEqual(e.get_text(), '   .   ')
         self.assertEqual(e.get_field_text(), [None, None])
         e.set_text('123.456')
@@ -59,9 +60,27 @@ class EntryTest(unittest.TestCase):
         self.assertEqual(e.get_text(), '  3.456')
         self.assertEqual(e.get_field_text(), [3, 456])
 
+    def testAsciiMask(self):
+        e = ProxyEntry()
+        e.set_mask('LLLL-L')
+        self.assertEqual(e.get_text(), '    - ')
+        self.assertEqual(e.get_field_text(), ['', ''])
+        e.set_text('abcd-e')
+        self.assertEqual(e.get_text(), 'abcd-e')
+        self.assertEqual(e.get_field_text(), ['abcd', 'e'])
+
+    def testAlphaNumericMask(self):
+        e = ProxyEntry()
+        e.set_mask('&&&-aaa')
+        self.assertEqual(e.get_text(), '   -   ')
+        self.assertEqual(e.get_field_text(), ['', ''])
+        e.set_text('aáé-á1e')
+        self.assertEqual(e.get_text(), 'aáé-á1e')
+        self.assertEqual(e.get_field_text(), ['aáé', 'á1e'])
+
     def testMaskSmallFields(self):
         e = ProxyEntry()
-        e.set_mask('%d.%d.%d')
+        e.set_mask('0.0.0')
         self.assertEqual(e.get_text(), ' . . ')
         self.assertEqual(e.get_field_text(), [None, None, None])
         e.set_text('1.2.3')

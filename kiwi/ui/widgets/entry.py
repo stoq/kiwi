@@ -39,16 +39,16 @@ from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
 from kiwi.utils import PropertyObject, gsignal, type_register
 
 DATE_MASK_TABLE = {
-    '%m': '%2d',
-    '%y': '%2d',
-    '%d': '%2d',
-    '%Y': '%4d',
-    '%H': '%2d',
-    '%M': '%2d',
-    '%S': '%2d',
-    '%T': '%2d:%2d:%2d',
+    '%m': '00',
+    '%y': '00',
+    '%d': '00',
+    '%Y': '0000',
+    '%H': '00',
+    '%M': '00',
+    '%S': '00',
+    '%T': '00:00:00',
     # FIXME: locale specific
-    '%r': '%2d:%2d:%2d %2c',
+    '%r': '00:00:00 LL',
     }
 
 class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):

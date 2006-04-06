@@ -38,15 +38,31 @@ from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 class MaskError(Exception):
     pass
 
-(INPUT_CHARACTER,
+(INPUT_ASCII_LETTER,
  INPUT_ALPHA,
- INPUT_DIGIT) = range(3)
+ INPUT_ALPHANUMERIC,
+ INPUT_DIGIT) = range(4)
 
 INPUT_FORMATS = {
-    'a': INPUT_ALPHA,
-    'd': INPUT_DIGIT,
-    'c': INPUT_CHARACTER,
+    '0': INPUT_DIGIT,
+    'L': INPUT_ASCII_LETTER,
+    'A': INPUT_ALPHANUMERIC,
+    'a': INPUT_ALPHANUMERIC,
+    '&': INPUT_ALPHA,
     }
+
+# Todo list: Other usefull Masks
+#  9 - Digit, optional
+#  ? - Ascii letter, optional
+#  C - Alpha, optional
+
+INPUT_CHAR_MAP = {
+    INPUT_ASCII_LETTER:     lambda text: text in string.ascii_letters,
+    INPUT_ALPHA:            unicode.isalpha,
+    INPUT_ALPHANUMERIC:     unicode.isalnum,
+    INPUT_DIGIT:            unicode.isdigit,
+    }
+
 
 (COL_TEXT,
  COL_OBJECT) = range(2)
@@ -138,18 +154,23 @@ class KiwiEntry(PropertyObject, gtk.Entry):
     def set_mask(self, mask):
         """
         Sets the mask of the Entry.
-        The format of the mask is similar to printf, but the
-        only supported format characters are:
-          - 'd' digit
-          - 'a' alphabet, honors the locale
-          - 'c' any character
-        A digit is supported after the control.
+        Supported format characters are:
+          - '0' digit
+          - 'L' ascii letter (a-z and A-Z)
+          - '&' alphabet, honors the locale
+          - 'a' alphanumeric, honors the locale
+          - 'A' alphanumeric, honors the locale
+
+        This is similar to MaskedTextBox: 
+        U{http://msdn2.microsoft.com/en-us/library/system.windows.forms.maskedtextbox.mask(VS.80).aspx}
+
         Example mask for a ISO-8601 date
-        >>> entry.set_mask('%4d-%2d-%2d')
+        >>> entry.set_mask('0000-00-00')
 
         @param mask: the mask to set
         """
 
+        mask = unicode(mask)
         if not mask:
             self.modify_font(pango.FontDescription("sans"))
             self._mask = mask
@@ -161,33 +182,8 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         while True:
             if pos >= input_length:
                 break
-            if mask[pos] == '%':
-                s = ''
-                format_char = None
-                # Validate/extract format mask
-                pos += 1
-                while True:
-                    if pos >= len(mask):
-                        raise MaskError("Invalid mask: %s" % mask)
-
-                    if mask[pos] in INPUT_FORMATS:
-                        format_char = mask[pos]
-                        break
-
-                    if mask[pos] not in string.digits:
-                        raise MaskError(
-                            "invalid format padding character: %s" % mask[pos])
-                    s += mask[pos]
-                    pos += 1
-                    if pos >= len(mask):
-                        raise MaskError("Invalid mask: %s" % mask)
-
-                # If there a none specificed, assume 1, follows printf
-                try:
-                    chars = int(s)
-                except ValueError:
-                    chars = 1
-                self._mask_validators += [INPUT_FORMATS[format_char]] * chars
+            if mask[pos] in INPUT_FORMATS:
+                self._mask_validators += [INPUT_FORMATS[mask[pos]]]
             else:
                 self._mask_validators.append(mask[pos])
             pos += 1
@@ -208,7 +204,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         """
         Get the fields assosiated with the entry.
         A field is dynamic content separated by static.
-        For example, the format string %3d-%3d has two fields
+        For example, the format string 000-000 has two fields
         separated by a dash.
         if a field is empty it'll return an empty string
         otherwise it'll include the content
@@ -233,7 +229,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         pos = 0
         s = ''
         field_type = -1
-        text = self.get_text()
+        text = unicode(self.get_text())
         validators = self._mask_validators
         while True:
             if pos >= len(validators):
@@ -274,7 +270,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         for validator in self._mask_validators[start:end]:
             if isinstance(validator, int):
                 s += ' '
-            elif isinstance(validator, str):
+            elif isinstance(validator, unicode):
                 s += validator
             else:
                 raise AssertionError
@@ -321,19 +317,13 @@ class KiwiEntry(PropertyObject, gtk.Entry):
             return False
 
         validator = validators[position]
-        if validator == INPUT_ALPHA:
-            if not text in string.lowercase:
+        if isinstance(validator, int):
+            if not INPUT_CHAR_MAP[validator](text):
                 return False
-        elif validator == INPUT_DIGIT:
-            if not text in string.digits:
-                return False
-        elif isinstance(validator, str):
+        if isinstance(validator, unicode):
             if validator == text:
                 return True
             return False
-        elif validator == INPUT_CHARACTER:
-            # Accept anything
-            pass
 
         return True
 
@@ -418,6 +408,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
             return
 
         position = self.get_position()
+        new = unicode(new)
         for inc, c in enumerate(new):
             if not self._confirms_to_mask(position + inc, c):
                 self.stop_emission('insert-text')
@@ -431,7 +422,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         next = position + 1
         validators = self._mask_validators
         if len(validators) > next + 1:
-            if (isinstance(validators[next], str) and
+            if (isinstance(validators[next], unicode) and
                 isinstance(validators[next+1], int)):
                 # Ugly: but it must be done after the entry
                 #       inserts the text
@@ -597,7 +588,7 @@ def main(args):
     win.connect('delete-event', cb)
 
     widget = KiwiEntry()
-    widget.set_mask('%3d.%3d.%3d.%3d')
+    widget.set_mask('000.000.000.000')
 
     win.add(widget)
 

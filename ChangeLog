@@ -1,3 +1,13 @@
+2006-04-06  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
+	* examples/validation/personalinformation.py:
+	* kiwi/ui/entry.py:
+	* kiwi/ui/widgets/entry.py:
+	* tests/test_Entry.py:
+	Changed mask characters and some clean-ups. Fixes #2519
+
 2006-04-04  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/entry.py: Clean up the handling of the exact_completion

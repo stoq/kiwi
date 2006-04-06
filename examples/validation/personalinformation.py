@@ -24,7 +24,7 @@ class Form(Delegate):
                                   'Yankee',
                                   'Other'])
         self.gender.prefill(('Male', 'Female'))
-        self.age.set_mask('%2d')
+        self.age.set_mask('00')
 
         self.register_validate_function(self.validity)
         # XXX: Get rid of this
