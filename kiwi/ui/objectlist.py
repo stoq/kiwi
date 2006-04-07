@@ -945,14 +945,15 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             renderer = gtk.CellRendererToggle()
             if column.editable:
                 renderer.set_property('activatable', True)
-
-            if column.radio:
-                renderer.set_radio(True)
-                cb = self._on_renderer_toggle_radio__toggled
-            else:
-                cb = self._on_renderer_toggle_check__toggled
-            renderer.connect('toggled', cb, self._model, column.attribute)
-
+                # Boolean can be either a radio or a checkbox.
+                # Changes are handled by the toggled callback, which
+                # should only be connected if the column is editable.
+                if column.radio:
+                    renderer.set_radio(True)
+                    cb = self._on_renderer_toggle_radio__toggled
+                else:
+                    cb = self._on_renderer_toggle_check__toggled
+                renderer.connect('toggled', cb, self._model, column.attribute)
             prop = 'active'
         elif column.use_stock or data_type == gdk.Pixbuf:
             renderer = gtk.CellRendererPixbuf()
