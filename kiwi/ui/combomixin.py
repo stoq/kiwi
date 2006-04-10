@@ -80,7 +80,7 @@ class ComboMixin(object):
 
         if self.mode == COMBO_MODE_UNKNOWN:
             first = itemdata[0]
-            if isinstance(first, str):
+            if isinstance(first, basestring):
                 self.set_mode(COMBO_MODE_STRING)
             elif isinstance(first, (tuple, list)):
                 self.set_mode(COMBO_MODE_DATA)
@@ -125,7 +125,7 @@ class ComboMixin(object):
         - label: a string with the text to be added
         - data: the data to be associated with that item
         """
-        if not isinstance(label, str):
+        if not isinstance(label, basestring):
             raise TypeError("label must be string, found %s" % label)
 
         if self.mode == COMBO_MODE_UNKNOWN:
