@@ -158,7 +158,6 @@ class Column(PropertyObject, gobject.GObject):
 
         self.attribute = attribute
         self.compare = None
-        self.as_string = None
         self.from_string = None
 
         kwargs['title'] = title or attribute.capitalize()
@@ -201,7 +200,6 @@ class Column(PropertyObject, gobject.GObject):
         if data is not None:
             conv = converter.get_converter(data)
             self.compare = conv.get_compare_function()
-            self.as_string = conv.as_string
             self.from_string = conv.from_string
         return data
 
@@ -222,6 +220,15 @@ class Column(PropertyObject, gobject.GObject):
                (self.attribute, self.title, data_type, self.visible,
                 self.justify, self.tooltip, self.format, self.width,
                 self.sorted, self.order)
+
+    def as_string(self, data):
+        if self.format_func:
+            text = self.format_func(data)
+        elif data is not None:
+            conv = converter.get_converter(self.data_type)
+            text = conv.as_string(data, format=self.format or None)
+
+        return text
 
     def from_string(cls, data_string):
         fields = data_string.split('|')
@@ -269,7 +276,7 @@ class SequentialColumn(Column):
                         title=title, justify=justify, data_type=int, **kwargs)
 
     def cell_data_func(self, tree_column, renderer, model, treeiter,
-                       (column, renderer_prop, as_string)):
+                       (column, renderer_prop)):
         reversed = tree_column.get_sort_order() == gtk.SORT_DESCENDING
 
         row = model[treeiter]
@@ -829,8 +836,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
         treeview_column.pack_start(renderer)
         treeview_column.set_cell_data_func(renderer, cell_data_func,
-                                           (column, renderer_prop,
-                                            column.as_string))
+                                           (column, renderer_prop))
         treeview_column.set_visible(column.visible)
 
         treeview_column.connect("clicked", self._on_column__clicked, column)
@@ -927,9 +933,9 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self.emit('cell-edited', new, attr)
 
     def _on_renderer_text__edited(self, renderer, path, text,
-                                  model, attr, column, as_string):
+                                  model, attr, column, from_string):
         obj = model[path][COL_MODEL]
-        value = as_string(text)
+        value = from_string(text)
         setattr(obj, attr, value)
         self.emit('cell-edited', obj, attr)
 
@@ -984,7 +990,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         return True
 
     def _cell_data_text_func(self, tree_column, renderer, model, treeiter,
-                             (column, renderer_prop, as_string)):
+                             (column, renderer_prop)):
 
         row = model[treeiter]
         if column.editable_attribute:
@@ -1011,17 +1017,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             data = column.get_attribute(row[COL_MODEL],
                                         column.attribute, None)
 
-        if column.format:
-            text = lformat(column.format, data)
-        elif column.format_func:
-            text = column.format_func(data)
-        elif (column.data_type == datetime.date or
-              column.data_type == datetime.datetime or
-              column.data_type == datetime.time or
-              column.data_type == currency):
-            text = as_string(data)
-        else:
-            text = data
+        text = column.as_string(data)
 
         renderer.set_property(renderer_prop, text)
 
@@ -1029,7 +1025,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             column.renderer_func(renderer, data)
 
     def _cell_data_pixbuf_func(self, tree_column, renderer, model, treeiter,
-                               (column, renderer_prop, as_string)):
+                               (column, renderer_prop)):
         row = model[treeiter]
         data = column.get_attribute(row[COL_MODEL],
                                     column.attribute, None)
@@ -1673,20 +1669,7 @@ class SummaryLabel(ListLabel):
         value = sum([get_attribute(obj, attr) for obj in self._klist],
                     column.data_type('0'))
 
-        # duplication of _cell_data_text_func
-        if column.format:
-            text = lformat(column.format, value)
-        elif column.format_func:
-            text = column.format_func(value)
-        elif (column.data_type == datetime.date or
-              column.data_type == datetime.datetime or
-              column.data_type == datetime.time or
-              column.data_type == currency):
-            text = column.as_string(value)
-        else:
-            text = value
-
-        self.set_value(text)
+        self.set_value(column.as_string(value))
 
     # Callbacks
 

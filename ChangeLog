@@ -1,3 +1,10 @@
+006-04-11  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
+	* kiwi/ui/objectlist.py: always use a converter to set the contents of a
+	column in a ObjectList. Fixes #2523
+
 2006-04-10  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/combomixin.py (ComboMixin.prefill) 
