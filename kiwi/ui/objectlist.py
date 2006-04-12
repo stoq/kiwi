@@ -444,10 +444,13 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     __gtype_name__ = 'ObjectList'
 
+    # row activated
+    gsignal('row-activated', object)
+
     # selected row(s)
     gsignal('selection-changed', object)
 
-    # row clicked
+    # row double-clicked
     gsignal('double-click', object)
 
     # edited object, attribute name
@@ -507,8 +510,10 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self._model.connect('row-inserted', self._on_model__row_inserted)
         self._model.connect('row-deleted', self._on_model__row_deleted)
         self._treeview = gtk.TreeView(self._model)
-        self._treeview.connect_after("row-activated",
-                                    self._after_treeview__row_activated)
+        self._treeview.connect('button-press-event',
+                               self._on_treeview__button_press_event)
+        self._treeview.connect_after('row-activated',
+                                     self._after_treeview__row_activated)
         self._treeview.set_rules_hint(True)
         self._treeview.show()
         self.add(self._treeview)
@@ -1101,6 +1106,16 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self._model.set_sort_column_id(self._sort_column_index, new_order)
 
     # handlers
+    def _after_treeview__row_activated(self, treeview, path, view_column):
+        try:
+            row = self._model[path]
+        except IndexError:
+            print 'path %s was not found in model: %s' % (
+                path, map(list, self._model))
+            return
+        item = row[COL_MODEL]
+        self.emit('row-activated', item)
+
     def _on_selection__changed(self, selection):
         mode = selection.get_mode()
         if mode == gtk.SELECTION_MULTIPLE:
@@ -1111,15 +1126,10 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             raise AssertionError
         self.emit('selection-changed', item)
 
-    def _after_treeview__row_activated(self, treeview, path, view_column):
-        try:
-            row = self._model[path]
-        except IndexError:
-            print 'path %s was not found in model: %s' % (
-                path, map(list, self._model))
-            return
-
-        self.emit('double-click', row[COL_MODEL])
+    def _on_treeview__button_press_event(self, treeview, event):
+        if event.type == gtk.gdk._2BUTTON_PRESS:
+            item = self.get_selected()
+            self.emit('double-click', item)
 
     # hacks
     def _get_column_button(self, column):

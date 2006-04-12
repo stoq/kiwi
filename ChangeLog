@@ -1,9 +1,17 @@
-006-04-11  Ronaldo Maia  <romaia@async.com.br>
+2006-04-12  Patrick K O'Brien <pobrien@orbtech.com>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/objectlist.py (ObjectList.__init__): 
+	Add row-activated signal and make the old double-click signal
+	only be emitted when a double-click on the list. Fixes #2526
+
+2006-04-11  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: jdahlin
 
-	* kiwi/ui/objectlist.py: always use a converter to set the contents of a
-	column in a ObjectList. Fixes #2523
+	* kiwi/ui/objectlist.py: always use a converter to set the 
+	contents of a column in a ObjectList. Fixes #2523
 
 2006-04-10  Johan Dahlin  <jdahlin@async.com.br>
 
