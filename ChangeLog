@@ -1,3 +1,9 @@
+2006-04-18  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/radiobutton.py (ProxyRadioButton.__init__): Set 
+	the group after calling the parents constructor, otherwise we'll
+	get :toggled emitted before the object is initialized properly.	
+
 2006-04-12  Patrick K O'Brien <pobrien@orbtech.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

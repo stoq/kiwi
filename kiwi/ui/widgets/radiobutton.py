@@ -38,7 +38,9 @@ class ProxyRadioButton(PropertyObject, gtk.RadioButton, ProxyWidgetMixin):
     gproperty('data-value', str, nick='Data Value')
 
     def __init__(self, group=None, label=None, use_underline=True):
-        gtk.RadioButton.__init__(self, group, label, use_underline)
+        gtk.RadioButton.__init__(self, None, label, use_underline)
+        if group:
+            self.set_group(group)
         ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self)
         self.connect('group-changed', self._on_group_changed)
