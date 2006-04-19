@@ -1,3 +1,15 @@
+2006-04-19  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
+	* examples/framework/sizegroup/shell.glade:
+	* examples/framework/sizegroup/slave_view.glade:
+	* examples/framework/sizegroup/slave_view2.glade:
+	* examples/framework/sizegroup/slaves.py:
+	Sizegroup merging example
+	* kiwi/ui/views.py:
+	When attaching a slave, merge the sizegroups with the same name
+
 2006-04-19  Johan Dahlin  <johan@gnome.org>
 
 	* kiwi/ui/objectlist.py (_ContextMenu._on_menuitem__activate): 

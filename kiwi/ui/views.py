@@ -563,6 +563,13 @@ class SlaveView(gobject.GObject):
                          "a window and was not a slave view" % (slave, self))
             slave._accel_groups = []
 
+        # Merge the sizegroups of the slave that is being attached  with the
+        # sizegroups of where it is being attached to. Only the sizegroups
+        # with the same name will be merged.
+        sizegroups = slave._glade_adaptor.get_sizegroups()
+        for sizegroup in sizegroups:
+            self._merge_sizegroup(sizegroup)
+
         if isinstance(placeholder, gtk.EventBox):
             # standard mechanism
             child = placeholder.get_child()
@@ -604,6 +611,22 @@ class SlaveView(gobject.GObject):
 
         # return placeholder we just removed
         return placeholder
+
+    def _merge_sizegroup(self, other_sizegroup):
+        # Merge sizegroup from other with self that have the same name.
+        # Actually, no merging is being done, since the old group is preserved
+
+        name = other_sizegroup.get_data('gazpacho::object-id')
+        sizegroup = getattr(self, name, None)
+        if not sizegroup:
+            return
+
+        widgets = other_sizegroup.get_data('gazpacho::sizegroup-widgets')
+        if not widgets:
+            return
+
+        for widget in widgets:
+            sizegroup.add_widget(widget)
 
     def detach_slave(self, name):
         """
