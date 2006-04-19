@@ -1,3 +1,9 @@
+2006-04-19  Johan Dahlin  <johan@gnome.org>
+
+	* kiwi/ui/objectlist.py (_ContextMenu._on_menuitem__activate): 
+	Call row_changed for all rows after changing the visibility a
+	column. This will make the treeview remeasure nicely.
+
 2006-04-18  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/radiobutton.py (ProxyRadioButton.__init__): Set 

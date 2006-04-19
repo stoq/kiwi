@@ -395,8 +395,15 @@ class _ContextMenu(gtk.Menu):
         active = menuitem.get_active()
         column.set_visible(active)
 
-        children = self.get_children()
+        # The width or height of some of the rows might have
+        # changed after changing the visibility of the column,
+        # so we have to re-measure all the rows, this can be done
+        # using row_changed.
+        model = self._treeview.get_model()
+        for row in model:
+            model.row_changed(row.path, row.iter)
 
+        children = self.get_children()
         if active:
             # Make sure all items are selectable
             for child in children:
