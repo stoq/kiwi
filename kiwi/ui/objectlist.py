@@ -34,7 +34,7 @@ import gtk
 from gtk import gdk
 
 from kiwi.accessor import kgetattr
-from kiwi.datatypes import converter, currency, lformat, number
+from kiwi.datatypes import converter, currency, number
 from kiwi.log import Logger
 from kiwi.python import slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
@@ -227,7 +227,9 @@ class Column(PropertyObject, gobject.GObject):
         elif data is not None:
             conv = converter.get_converter(self.data_type)
             text = conv.as_string(data, format=self.format or None)
-
+        else:
+            text = ''
+        
         return text
 
     def from_string(cls, data_string):

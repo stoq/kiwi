@@ -1,3 +1,10 @@
+2006-04-24  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
+	* kiwi/ui/objectlist.py: fixing when data is None in as_string
+	* tests/test_ObjectList.py: a test case when data is None
+
 2006-04-24  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/test/main.py:

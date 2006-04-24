@@ -223,6 +223,12 @@ class ConstructorTest(unittest.TestCase):
         self.assertEqual(len(columns), 1)
         self.assertEqual(columns[0].attribute, 'name')
 
+    def testInstanceObjectListWithNoneData(self):
+        klist = ObjectList([Column('name', sorted=True)],
+                     [Settable(name=None)])
+        columns = klist.get_columns()
+        self.assertEqual(len(columns), 1)
+
 class MethodTest(unittest.TestCase):
     def setUp(self):
         self.klist = ObjectList([Column('name', sorted=True)],
