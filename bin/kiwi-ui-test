@@ -59,7 +59,7 @@ elif not os.path.exists(os.path.join(basedir, dirname)):
                      os.path.join(basedir, dirname))
 else:
     pythondir = basedir
-    
+
 sys.path.insert(0, pythondir)
 
 main_module = 'kiwi.ui.test.main'
