@@ -24,6 +24,7 @@
 """
 Test script playback system and infrastructure.
 """
+import os
 import sys
 import threading
 import time
@@ -116,47 +117,11 @@ class DictWrapper(object):
             time.sleep(0.1)
 
 class App(DictWrapper):
-    def __init__(self, app):
-        self._app = app
+    def __init__(self, player):
+        self._player = player
 
     def __getattr__(self, attr):
-        return DictWrapper(self._app.get_object(attr), 'widget')
-
-class ApplicationThread(threading.Thread):
-    """
-    A separate thread in which the application will be executed in.
-    It's necessary to use threads since we want to allow applications
-    to run gtk.main and dialog.run without needing any modifications
-    """
-    def __init__(self, args):
-        threading.Thread.__init__(self)
-        self._args = args
-
-    def run(self):
-        self._running = True
-        gobject.timeout_add(50, self._check_alive)
-
-        sys.argv = self._args[:]
-        execfile(sys.argv[0])
-
-        # Run all pending events, such as idle adds
-        while gtk.events_pending():
-            gtk.main_iteration()
-
-    def _check_alive(self):
-        if not self._running:
-            # Hide all windows, since gtk+ is shared among
-            # multiple threads it won't do it for us
-            for window in gtk.window_list_toplevels():
-                window.hide()
-
-            return False
-
-        return True
-
-    def stop(self):
-        self._running = False
-        self.join()
+        return DictWrapper(self._player.get_object(attr), 'widget')
 
 class Player(Base):
     """
@@ -173,10 +138,23 @@ class Player(Base):
         """
         Base.__init__(self)
 
-        self._appthread = ApplicationThread(args)
-        self._appthread.start()
-
         self._app = App(self)
+
+        if not os.path.exists(args[0]):
+            print >> sys.stderr, \
+                  "ERROR: %s: No such a file or directory" % args[0]
+            os._exit(1)
+
+        # Send notification to main thread
+        gobject.idle_add(self._start_app, args)
+
+    def _start_app(self, args):
+        sys.argv = args[:]
+        execfile(sys.argv[0])
+
+        # Run all pending events, such as idle adds
+        while gtk.events_pending():
+            gtk.main_iteration()
 
     def get_app(self):
         """
@@ -240,7 +218,31 @@ class Player(Base):
             time.sleep(0.1)
 
     def finish(self):
-        self._appthread.stop()
+        pass
 
-        while self._appthread.isAlive():
-            time.sleep(0.1)
+def play_file(filename, args=None):
+    """
+    @args filename:
+    @args args:
+    """
+    if not os.path.exists(filename):
+        raise SystemExit("%s: No such a file or directory" % filename)
+
+    if not args:
+        args = []
+
+    sys.argv = [filename] + args
+
+    def _thread(filename):
+        try:
+            execfile(filename)
+        except:
+            import traceback
+            etype, value, tb = sys.exc_info()
+            traceback.print_exception(etype, value, tb.tb_next)
+            os._exit(1)
+
+    t = threading.Thread(target=_thread, args=[filename])
+    t.start()
+
+    gobject.MainLoop().run()

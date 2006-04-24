@@ -1,3 +1,11 @@
+2006-04-24  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/test/main.py:
+	* kiwi/ui/test/player.py:
+	Run the script in a separate thread and the application
+	in the main thread. Makes it easier to integrate the testsuite
+	in applications that can't be run in threads.
+
 2006-04-19  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: jdahlin

@@ -21,9 +21,14 @@
 
 """XXX"""
 
+import optparse
+import os
 import sys
+import threading
 
-from optparse import OptionParser
+def _play(filename, args):
+    from kiwi.ui.test.player import play_file
+    play_file(filename, args)
 
 def _record(filename, args):
     from kiwi.ui.test.listener import Listener
@@ -34,13 +39,14 @@ def _record(filename, args):
     execfile(sys.argv[0])
 
 def main(args):
-    parser = OptionParser()
+    parser = optparse.OptionParser()
     parser.add_option('', '--record', action="store",
                       dest="record")
-
     options, args = parser.parse_args(args)
 
     if options.record:
         _record(options.record, args)
     else:
-        raise SystemExit("An option needs to be specified")
+        if len(args) < 2:
+            raise SystemExit("Error: needs a filename to play")
+        _play(args[1], args[2:])
