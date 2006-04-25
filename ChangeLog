@@ -1,3 +1,11 @@
+2006-04-25  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
+	* kiwi/ui/objectlist.py (Column.as_string): Use a slightly
+	different logic to convert to a string, fixes boolean radio
+	columns
+
 2006-04-25  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/environ.py: Add support for .gz and .bz2 compressed

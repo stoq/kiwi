@@ -222,14 +222,18 @@ class Column(PropertyObject, gobject.GObject):
                 self.sorted, self.order)
 
     def as_string(self, data):
-        if self.format_func:
-            text = self.format_func(data)
-        elif data is not None:
-            conv = converter.get_converter(self.data_type)
+        data_type = self.data_type
+        if (self.format or
+            data_type == datetime.date or
+            data_type == datetime.datetime or
+            data_type == datetime.time):
+            conv = converter.get_converter(data_type)
             text = conv.as_string(data, format=self.format or None)
+        elif self.format_func:
+            text = self.format_func(data)
         else:
-            text = ''
-        
+            text = data
+
         return text
 
     def from_string(cls, data_string):
