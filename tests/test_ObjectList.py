@@ -328,5 +328,32 @@ class MethodTest(unittest.TestCase):
         self.assertEqual(self.klist.get_previous(item3), item2)
         self.assertRaises(ValueError, self.klist.get_previous, None)
 
+class BooleanDataTests(unittest.TestCase):
+    def setUp(self):
+        self.list = ObjectList([Column('value', data_type=bool, radio=True,
+                                editable=True)])
+        self.list.append(Settable(value=True))
+        self.list.append(Settable(value=False))
+
+    def testAddingInstances(self):
+        self.assertEqual(self.list[0].value, True)
+        self.assertEqual(self.list[1].value, False)
+
+    def testSelect(self):
+        self.assertEqual(self.list[0].value, True)
+        self.assertEqual(self.list[1].value, False)
+
+        column = self.list.get_column_by_name('value')
+        treeview_column = self.list.get_treeview_column(column)
+        renderer = treeview_column.get_cell_renderers()
+        renderer[0].emit('toggled', 1)
+
+        self.assertEqual(self.list[0].value, False)
+        self.assertEqual(self.list[1].value, True)
+        renderer[0].emit('toggled', 0)
+
+        self.assertEqual(self.list[0].value, True)
+        self.assertEqual(self.list[1].value, False)
+
 if __name__ == '__main__':
     unittest.main()
