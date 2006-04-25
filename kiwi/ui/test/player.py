@@ -222,8 +222,10 @@ class Player(Base):
 
 def play_file(filename, args=None):
     """
-    @args filename:
-    @args args:
+    Plays a recorded script file
+
+    @param filename: name to play
+    @param args: additional arguments to put in sys.argv
     """
     if not os.path.exists(filename):
         raise SystemExit("%s: No such a file or directory" % filename)
