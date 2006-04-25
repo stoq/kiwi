@@ -2,8 +2,8 @@ import datetime
 import gtk
 
 from kiwi.datatypes import currency
-from kiwi.ui.widgets.entry import Entry
-from kiwi.ui.widgets.label import Label
+from kiwi.ui.widgets.entry import ProxyEntry
+from kiwi.ui.widgets.label import ProxyLabel
 
 window = gtk.Window()
 window.connect('delete-event', gtk.main_quit)
@@ -28,15 +28,15 @@ for data, data_type in data_types:
     hbox = gtk.HBox(True)
     vbox.pack_start(hbox, False, False, 6)
 
-    label = Label(data_type.__name__.capitalize())
+    label = ProxyLabel(data_type.__name__.capitalize())
     label.set_bold(True)
     hbox.pack_start(label)
 
-    label = Label(data_type=data_type)
+    label = ProxyLabel(data_type=data_type)
     label.update(data)
     hbox.pack_start(label, False, False, 6)
 
-    entry = Entry(data_type=data_type)
+    entry = ProxyEntry(data_type=data_type)
     entry.update(data)
     entry.validate()
     hbox.pack_start(entry, False, False, 6)

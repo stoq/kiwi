@@ -2,7 +2,7 @@
 import gtk
 
 from kiwi.datatypes import ValidationError
-from kiwi.ui.widgets.combobox import ComboBoxEntry
+from kiwi.ui.widgets.combo import ProxyComboEntry
 from kiwi.ui.delegates import Delegate, SlaveDelegate
 
 class Dialog(Delegate):
@@ -28,7 +28,7 @@ class English(SlaveDelegate):
         label.show()
         box.pack_start(label, False, False)
 
-        combo = ComboBoxEntry()
+        combo = ProxyComboEntry()
         combo.set_property('model-attribute', 'number')
         combo.set_property('data-type', 'str')
         combo.prefill(['One', 'Two', 'Three'])
@@ -52,7 +52,7 @@ class Swedish(SlaveDelegate):
         label.show()
         box.pack_start(label, False, False)
 
-        combo = ComboBoxEntry()
+        combo = ProxyComboEntry()
         combo.set_property('model-attribute', 'nummer')
         combo.set_property('data-type', 'str')
         combo.prefill(['Ett', u'Två', 'Tre'])
