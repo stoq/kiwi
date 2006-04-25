@@ -500,7 +500,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
             for item in itemdata:
                 if item in values:
                     raise KeyError("Tried to insert duplicate value "
-                                   "%s into Combo!" % item)
+                                   "%r into the entry" % item)
                 else:
                     values[item] = None
 
@@ -513,7 +513,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
                 text, data = item
                 if text in values:
                     raise KeyError("Tried to insert duplicate value "
-                                   "%s into Combo!" % item)
+                                   "%r into the entry" % text)
                 else:
                     values[text] = None
                 model.append((text, data))
