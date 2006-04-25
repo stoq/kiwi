@@ -19,4 +19,4 @@ Upload epydoc
 Add bugzilla version:
 http://bugs/editversions.cgi?action=new&product=Kiwi&submit=Add&version=1.9.x
 Update website
-Write release announcement
+Use release-anouncement.tmpl to write a new announcement
