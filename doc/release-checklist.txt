@@ -1,5 +1,6 @@
 Check bugzilla
-Run epydoc, fix all problems
+Run epydoc, fix all problems:
+  tools/epydoc
 Go through the examples
 Run pyflakes
 Run all tests
@@ -13,6 +14,8 @@ Branch: svn cp svn+ssh://svn.async.com.br/pub/kiwi/trunk \
                svn+ssh://svn.async.com.br/pub/kiwi/tags/1.9.x
 python setup.py -q sdist
 python setup.py -q bdist_wininst
+Upload tarballs and windows installer
+Upload epydoc
 Add bugzilla version:
 http://bugs/editversions.cgi?action=new&product=Kiwi&submit=Add&version=1.9.x
 Update website
