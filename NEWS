@@ -1,3 +1,15 @@
+kiwi-1.9.8: 25-april-2006
+    - distutils.setup() replacement
+    - date tests
+    - FileChooser & FileChooserButton
+    - Rename all proxy widgets to start with Proxy
+    - Win32 installation fixes
+    - UI test threading fixes
+    - Sizegroup merging (Ronaldo)
+    - Mask improvements (Ronaldo)
+    - ObjectList improvements (Johan, Ronaldo, Patrick)
+    - Lots of bug fixes (Johan, Ronaldo, Sidnei)
+
 kiwi-1.9.7: 11-march-2006
     - Much improved mask support
     - DateEntry widget
