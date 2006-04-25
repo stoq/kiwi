@@ -4,7 +4,7 @@ from sets import Set
 import gtk
 
 from kiwi.ui.views import BaseView
-from kiwi.ui.widgets.combobox import ComboBoxEntry
+from kiwi.ui.widgets.combo import ProxyComboEntry
 
 def load_colors():
     filename = "/usr/X11R6/etc/X11/rgb.txt"
@@ -30,7 +30,7 @@ class FavouriteColor(BaseView):
         label = gtk.Label("What is your favourite color?")
         box = gtk.VBox(spacing=6)
         box.pack_start(label, False)
-        self.combo = ComboBoxEntry()
+        self.combo = ProxyComboEntry()
         self.combo.data_type = str
         self.combo.model_attribute = 'color'
         self.combo.prefill(load_colors(), sort=True)

@@ -30,9 +30,9 @@ class Farenheit(Delegate):
             self.clear_temperature()
         else:
             try:
-                farenheit, celsius = self.convert_temperature(float(temp)))
+                farenheit, celsius = self.convert_temperature(float(temp))
             except ValueError:
-                farenheit = celsius = -1
+                farenheit = celsius = float('nan')
             self.farenheit.set_text("%.2f" % farenheit)
             self.celsius.set_text("%.2f" % celsius)
 
