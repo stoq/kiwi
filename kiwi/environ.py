@@ -56,7 +56,13 @@ class Environment:
 
     def __init__(self, root='.'):
         self._resources = {}
+        self._extensions = {}
         self._root = root
+
+        # Add some compressed formats as alternative extensions to
+        # "glade" resources. A patch has been added to gazpacho trunk
+        # (rev. 2251) to support loading those compressed formats.
+        self._add_extensions("glade", ".bz2", ".gz")
 
         self._add_resource_variable("glade", "KIWI_GLADE_PATH")
         self._add_resource_variable("image", "KIWI_IMAGE_PATH")
@@ -66,6 +72,10 @@ class Environment:
 
     def get_log_level(self):
         return os.environ.get('KIWI_LOG')
+
+    def _add_extensions(self, resource, *args):
+        exts = self._extensions.setdefault(resource, [])
+        exts.extend(list(args))
 
     def _add_resource_variable(self, resource, variable):
         """Add resources from an environment variable"""
@@ -96,15 +106,19 @@ class Environment:
         """Locate a specific resource of called name of type resource"""
 
         resource_paths = self.get_resource_paths(resource)
-        for path in resource_paths:
-            filename = os.path.join(self._root, path, name)
-            if os.path.exists(filename):
-                return filename
 
-        # Finally try to load the file from the current directory
-        filename = os.path.join(self._root, name)
-        if os.path.exists(filename):
-            return filename
+        # Look for alternative extensions for this resource.
+        # But check without extensions first
+        exts = [""] + self._extensions.get(resource, [])
+
+        # Check "scriptdir", which is the directory the script is ran from
+        # and the working directory ("") after all the others fail
+        scriptdir = os.path.dirname(os.path.abspath(sys.argv[0]))
+        for path in resource_paths + [scriptdir, ""]:
+            for ext in exts:
+                filename = os.path.join(self._root, path, "".join((name, ext)))
+                if os.path.exists(filename):
+                    return filename
 
         raise EnvironmentError("Could not find %s resource: %s" % (
             resource, name))

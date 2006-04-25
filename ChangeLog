@@ -1,3 +1,10 @@
+2006-04-25  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/environ.py: Add support for .gz and .bz2 compressed
+	glade files, supported by recent gazpacho versions.
+	Also check in the current directory when everything else
+	fails. Based on patch by Sidnei da Silva, fixes #2409
+
 2006-04-24  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: jdahlin
