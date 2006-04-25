@@ -1137,7 +1137,12 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def _on_treeview__button_press_event(self, treeview, event):
         if event.type == gtk.gdk._2BUTTON_PRESS:
-            item = self.get_selected()
+            selection = self._treeview.get_selection()
+            mode = selection.get_mode()
+            if mode == gtk.SELECTION_MULTIPLE:
+                item = self.get_selected_rows()
+            else:
+                item = self.get_selected()
             self.emit('double-click', item)
 
     # hacks
