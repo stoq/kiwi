@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2005 Async Open Source
+# Copyright (C) 2005,2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,12 @@
 # USA
 #
 
-"""XXX"""
+"""
+Kiwi UI Test: command line interface
+"""
 
 import optparse
-import os
 import sys
-import threading
 
 def _play(filename, args):
     from kiwi.ui.test.player import play_file
