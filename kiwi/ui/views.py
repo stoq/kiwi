@@ -566,9 +566,10 @@ class SlaveView(gobject.GObject):
         # Merge the sizegroups of the slave that is being attached  with the
         # sizegroups of where it is being attached to. Only the sizegroups
         # with the same name will be merged.
-        sizegroups = slave._glade_adaptor.get_sizegroups()
-        for sizegroup in sizegroups:
-            self._merge_sizegroup(sizegroup)
+        if slave._glade_adaptor:
+            sizegroups = slave._glade_adaptor.get_sizegroups()
+            for sizegroup in sizegroups:
+                self._merge_sizegroup(sizegroup)
 
         if isinstance(placeholder, gtk.EventBox):
             # standard mechanism
