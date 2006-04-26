@@ -105,7 +105,7 @@ class _DateEntryPopup(gtk.Window):
         # widget
         toplevel = event.window.get_toplevel()
         parent = self.calendar.get_parent_window()
-        if toplevel == parent:
+        if toplevel != parent:
             hide = True
 
         if hide:
