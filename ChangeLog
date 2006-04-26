@@ -1,3 +1,8 @@
+2006-04-26  Johan Dahlin  <johan@gnome.org>
+
+	* kiwi/dist.py (_VariableExtender.__init__): When prefix is not
+	set, use sys.prefix instead.
+
 2006-04-25  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: jdahlin

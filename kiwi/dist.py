@@ -40,6 +40,9 @@ class _VariableExtender:
         name = distribution.get_name()
         # Remove trailing /
         prefix = install.prefix
+        if not prefix:
+            prefix = sys.prefix
+
         if prefix[-1] == '/':
             prefix = prefix[:-1]
         self.prefix = prefix
@@ -66,7 +69,7 @@ class KiwiInstallLib(install_lib):
             prefix = 'import sys\nprefix = sys.prefix'
         else:
             install = self.distribution.get_command_obj('install')
-            prefix = 'prefix = "%s"' % install.prefix
+            prefix = 'prefix = "%s"' % install.prefix or sys.prefix
 
         name = self.distribution.get_name()
         filename = os.path.join(self.install_dir, name, '__installed__.py')
