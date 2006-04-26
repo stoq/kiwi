@@ -1,3 +1,10 @@
+2006-04-26  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
+	* kiwi/ui/dateentry.py: Fix DateEntry calendar popup, so it hides
+	correctly. Fixes #2545
+
 2006-04-26  Johan Dahlin  <johan@gnome.org>
 
 	* kiwi/dist.py (_VariableExtender.__init__): When prefix is not

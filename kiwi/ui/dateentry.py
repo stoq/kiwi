@@ -90,12 +90,26 @@ class _DateEntryPopup(gtk.Window):
 
     def _on__button_press_event(self, window, event):
         # If we're clicking outside of the window close the popup
-        if tuple(self.allocation.intersect(
-             gdk.Rectangle(x=int(event.x), y=int(event.y),
-                           width=1, height=1))) == (0, 0, 0, 0):
-            self.popdown()
+        hide = False
 
-        # XXX: Clicking on button + entry
+        # Also if the intersection of self and the event is empty, hide
+        # the calendar
+        if (tuple(self.allocation.intersect(
+              gdk.Rectangle(x=int(event.x), y=int(event.y),
+                           width=1, height=1))) == (0, 0, 0, 0)):
+            hide = True
+
+        # Toplevel is the window that received the event, and parent is the
+        # calendar window. If they are not the same, means the popup should
+        # be hidden. This is necessary for when the event happens on another
+        # widget
+        toplevel = event.window.get_toplevel()
+        parent = self.calendar.get_parent_window()
+        if toplevel == parent:
+            hide = True
+
+        if hide:
+            self.popdown()
 
     def _on__key_press_event(self, window, event):
         """
