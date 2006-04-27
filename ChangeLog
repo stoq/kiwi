@@ -1,5 +1,13 @@
 2006-04-27  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/test/player.py:
+	* tests/runuitest.py:
+	* tests/ui/diary.py:
+	* tests/ui/diary2.py:
+	Add a couple of ui tests
+
+2006-04-27  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/ui/test/main.py:
 	* kiwi/ui/test/player.py:
 	* kiwi/ui/test/recorder.py:
