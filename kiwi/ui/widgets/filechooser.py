@@ -62,7 +62,7 @@ class ProxyFileChooserWidget(_FileChooserMixin, PropertyObject,
 class ProxyFileChooserButton(_FileChooserMixin, PropertyObject,
                              gtk.FileChooserButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFileChooserButton'
-    def __init__(self, title, backend=None, dialog=None):
+    def __init__(self, title=None, backend=None, dialog=None):
         """
         @param title:
         @param backend:
