@@ -78,14 +78,9 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     # Virtual methods
     gsignal('changed', 'override')
     def do_changed(self):
-        """Called when the content of the entry changes.
-
-        Sets an internal variable that stores the last time the user
-        changed the entry
-        """
-
-        self.chain()
-
+        if self._block_changed:
+            self.emit_stop_by_name('changed')
+            return
         self._update_current_object(self.get_text())
         self.emit('content-changed')
 
@@ -173,12 +168,6 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         self.emit('content-changed')
 
         self.set_position(-1)
-
-    def do_changed(self):
-        if self._block_changed:
-            self.emit_stop_by_name('changed')
-            return
-        self.emit('content-changed')
 
     # ProxyWidgetMixin implementation
 

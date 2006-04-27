@@ -1,5 +1,8 @@
 2006-04-27  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/entry.py (ProxyEntry.do_changed): Merge the
+	the do_changed methods.
+
 	* kiwi/environ.py (Environment.find_resource): Make sure it's a file
 
 2006-04-26  Ronaldo Maia  <romaia@async.com.br>
