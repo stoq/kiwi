@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2005 Async Open Source
+# Copyright (C) 2005,2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,7 @@ back by simply executing the script through a standard python interpreter.
 
 import atexit
 
+import gobject
 from gtk import gdk
 import gtk
 
@@ -138,19 +139,22 @@ class SignalEvent(Event):
         object.connect(signal_name, cb, cls, object)
     connect = classmethod(connect)
 
-class WindowDeleteEvent(SignalEvent):
+#
+# Special Events
+#
+
+class WindowDeleteEvent(Event):
     """
     This event represents a user click on the close button in the
     window manager.
     """
 
-    signal_name = 'delete-event'
-    object_type = gtk.Window
-
     def serialize(self):
         return 'delete_window("%s")' % self.name
 
-register_event_type(WindowDeleteEvent)
+#
+# Signal Events
+#
 
 class MenuItemActivateEvent(SignalEvent):
     """
@@ -351,8 +355,26 @@ class Listener(Base):
         self._events = []
         self._listened_objects = []
         self._event_types = self._configure_event_types()
+        self._has_emission_hook = False
 
+        # This is sort of a hack, but there are no other realiable ways
+        # of actually having something executed after the application
+        # is finished
         atexit.register(self.save)
+
+        # Register a hook that is called before normal delete-events
+        # because if it's connected using a normal callback it will not
+        # be called if the application returns True in it's signal handler.
+        if hasattr(gobject, 'add_emission_hook'):
+            gobject.add_emission_hook(gtk.Window, 'delete-event',
+                                      self._emission_window__delete_event)
+            self._has_emission_hook = True
+
+    def _emission_window__delete_event(self, window, event, *args):
+        self._add_event(WindowDeleteEvent(window))
+
+        # Yes, please call us again
+        return True
 
     def _configure_event_types(self):
         event_types = {}
@@ -388,7 +410,11 @@ class Listener(Base):
         event_type.connect(object, event_type.signal_name, on_signal)
 
     def window_removed(self, window):
-        self._add_event(WindowDeleteEvent(window, None, []))
+        # It'll already be trapped if we can use an emission hook
+        # skip it here to avoid duplicates
+        if self._has_emission_hook:
+            return
+        self._add_event(WindowDeleteEvent(window))
 
     def parse_one(self, toplevel, gobj):
         Base.parse_one(self, toplevel, gobj)
@@ -414,7 +440,6 @@ class Listener(Base):
                 elif event_type == ButtonClickedEvent:
                     if isinstance(gobj.get_parent(), gtk.ToolButton):
                         continue
-
                 if issubclass(event_type, SignalEvent):
                     self._listen_event(gobj, event_type)
 

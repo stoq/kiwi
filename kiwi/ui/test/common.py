@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2005 Async Open Source
+# Copyright (C) 2005,2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -22,8 +22,7 @@
 #
 
 """
-Common routines used by L{kiwi.ui.test.listener.Listener} and
-L{kiwi.ui.test.player.Player}
+Common routines used by other parts of the ui test framework.
 """
 
 import sets
@@ -32,6 +31,15 @@ import gobject
 import gtk
 
 class Base(object):
+    """
+    Base class used by L{kiwi.ui.test.listener.Listener} and
+    L{kiwi.ui.test.player.Player}.
+
+    The most important functionallity here is the ability track
+    creation and destruction of windows. When a new window is
+    located all the children are traversed recursively.
+    """
+
     def __init__(self):
         self._windows = {}
         self._window_list = self._list_windows()

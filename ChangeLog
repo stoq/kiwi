@@ -1,5 +1,15 @@
 2006-04-27  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/test/common.py:
+	* kiwi/ui/test/listener.py:
+	* kiwi/ui/test/main.py:
+	Add optional support for emission hook.
+
+	* README (Kiwi): 
+	Mention that PyGObject 2.10.0 is recommended for the UI test
+	
+2006-04-27  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/ui/widgets/entry.py (ProxyEntry.do_changed): Merge the
 	the do_changed methods.
 
