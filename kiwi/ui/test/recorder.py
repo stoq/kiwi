@@ -22,7 +22,7 @@
 #
 
 """
-User interface event listener and serializer.
+User interface event recorder and serializer.
 
 This module provides an interface for creating, listening to
 and saving events.
@@ -69,7 +69,7 @@ class Event(object):
     """
     Event is a base class for all events.
     An event represent a user change of an interactive widget.
-    @cvar object_type: subclass for type, L{Listener} uses this to
+    @cvar object_type: subclass for type, L{Recorder} uses this to
       automatically attach events to objects when they appear
     """
     object_type = None
@@ -113,7 +113,7 @@ class Event(object):
 class SignalEvent(Event):
     """
     A SignalEvent is an L{Event} which is tied to a GObject signal,
-    L{Listener} uses this to automatically attach itself to a signal
+    L{Recorder} uses this to automatically attach itself to a signal
     at which point this object will be instantiated.
 
     @cvar signal_name: signal to listen to
@@ -335,9 +335,9 @@ class KiwiComboBoxChangedEvent(SignalEvent):
 
 register_event_type(KiwiComboBoxChangedEvent)
 
-class Listener(Base):
+class Recorder(Base):
     """
-    Listener takes care of attaching events to widgets, when the appear,
+    Recorder takes care of attaching events to widgets, when the appear,
     and creates the events when the user is interacting with some widgets.
     When the tracked program is closed the events are serialized into
     a script which can be played back with help of

@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2005 Async Open Source
+# Copyright (C) 2005,2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -21,4 +21,22 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br
 #
 
-"""User interface: Testing"""
+"""User interface: Testing
+
+This is a framework for testing graphical applications.
+The two main parts of the framework are the
+L{Player<kiwi.ui.test.player.Player>} and the
+L{Recorder<kiwi.ui.test.recorder.Recorder>}.
+
+The recorder listens to certain events happening inside the application
+and writes a script which later on can be played back by the player.
+
+To record a test::
+
+    kiwi-ui-test --record=script.py application [arguments]
+
+To play back a recorded test::
+
+    kiwi-ui-test script.py
+
+"""

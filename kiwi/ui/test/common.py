@@ -32,7 +32,7 @@ import gtk
 
 class Base(object):
     """
-    Base class used by L{kiwi.ui.test.listener.Listener} and
+    Base class used by L{kiwi.ui.test.recorder.Recorder} and
     L{kiwi.ui.test.player.Player}.
 
     The most important functionallity here is the ability track

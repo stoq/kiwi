@@ -31,12 +31,12 @@ def _play(filename, args):
     play_file(filename, args)
 
 def _record(filename, args):
-    from kiwi.ui.test.listener import Listener
+    from kiwi.ui.test.recorder import Recorder
 
-    Listener(filename, args[1:])
+    Recorder(filename, args[1:])
 
     sys.argv = args[1:]
-    execfile(sys.argv[0])
+    execfile(sys.argv[0], globals(), globals())
 
 def main(args):
     parser = optparse.OptionParser()
