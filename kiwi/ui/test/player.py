@@ -47,6 +47,10 @@ WIDGET_TIMEOUT = 2
 # yada yada
 DELETE_WINDOW_WAIT = 4
 
+log = Logger('player')
+
+_mainloop = None
+
 class TimeOutError(Exception):
     """
     Exception that will be raised when a widget cannot be found,
@@ -54,8 +58,6 @@ class TimeOutError(Exception):
     of widget
     """
     pass
-
-log = Logger('uitest')
 
 class ThreadSafeFunction:
     """
@@ -149,6 +151,7 @@ class Player(Base):
         gobject.idle_add(self._start_app, args)
 
     def _start_app(self, args):
+        log("Executing %s %s" % (args[0], args[1:]))
         sys.argv = args[:]
         execfile(sys.argv[0], globals(), globals())
 
@@ -218,7 +221,9 @@ class Player(Base):
             time.sleep(0.1)
 
     def finish(self):
-        pass
+        log("Player finished")
+        global _mainloop
+        _mainloop.quit()
 
 def play_file(filename, args=None):
     """
@@ -227,6 +232,7 @@ def play_file(filename, args=None):
     @param filename: name to play
     @param args: additional arguments to put in sys.argv
     """
+
     if not os.path.exists(filename):
         raise SystemExit("%s: No such a file or directory" % filename)
 
@@ -244,7 +250,12 @@ def play_file(filename, args=None):
             traceback.print_exception(etype, value, tb.tb_next)
             os._exit(1)
 
+    log("Starting script thread")
     t = threading.Thread(target=_thread, args=[filename])
     t.start()
 
-    gobject.MainLoop().run()
+    log("Entering main loop")
+    global _mainloop
+    _mainloop = gobject.MainLoop()
+    _mainloop.run()
+    log("Leaving main loop")

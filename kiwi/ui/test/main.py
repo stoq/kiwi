@@ -26,27 +26,35 @@ Kiwi UI Test: command line interface
 import optparse
 import sys
 
-def _play(filename, args):
+from kiwi.log import set_log_level
+
+def _play(options, filename, args):
     from kiwi.ui.test.player import play_file
     play_file(filename, args)
 
-def _record(filename, args):
+def _record(options, filename, args):
     from kiwi.ui.test.recorder import Recorder
 
-    Recorder(filename, args[1:])
+    Recorder(filename, args)
 
-    sys.argv = args[1:]
+    sys.argv = args
     execfile(sys.argv[0], globals(), globals())
 
 def main(args):
     parser = optparse.OptionParser()
     parser.add_option('', '--record', action="store",
                       dest="record")
+    parser.add_option('-v', '--verbose', action="store_true",
+                      dest="verbose")
     options, args = parser.parse_args(args)
 
     if options.record:
-        _record(options.record, args)
+        if options.verbose:
+            set_log_level('recorder', 5)
+        _record(options, options.record, args[1:])
     else:
         if len(args) < 2:
             raise SystemExit("Error: needs a filename to play")
-        _play(args[1], args[2:])
+        if options.verbose:
+            set_log_level('player', 5)
+        _play(options, args[1], args[2:])

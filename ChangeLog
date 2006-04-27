@@ -1,5 +1,12 @@
 2006-04-27  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/test/main.py:
+	* kiwi/ui/test/player.py:
+	* kiwi/ui/test/recorder.py:
+	Improve logging, fix a bug in finish()
+
+2006-04-27  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/ui/widgets/filechooser.py (ProxyFileChooserButton.__init__): 
 	Immitate PyGTK implementation argument wise
 

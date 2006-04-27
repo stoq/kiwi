@@ -39,11 +39,14 @@ import gobject
 from gtk import gdk
 import gtk
 
+from kiwi.log import Logger
 from kiwi.ui.test.common import Base
 from kiwi.ui.combomixin import ComboMixin
 from kiwi.ui.objectlist import ObjectList
 
 _events = []
+
+log = Logger('recorder')
 
 def register_event_type(event_type):
     """
@@ -387,6 +390,7 @@ class Recorder(Base):
         return event_types
 
     def _add_event(self, event):
+        log("Added event %s" % event.serialize())
         self._events.append(event)
 
     def _listen_event(self, object, event_type):
