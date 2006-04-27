@@ -1,3 +1,7 @@
+2006-04-27  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/environ.py (Environment.find_resource): Make sure it's a file
+
 2006-04-26  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: jdahlin

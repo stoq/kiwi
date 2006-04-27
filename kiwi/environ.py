@@ -117,7 +117,7 @@ class Environment:
         for path in resource_paths + [scriptdir, ""]:
             for ext in exts:
                 filename = os.path.join(self._root, path, "".join((name, ext)))
-                if os.path.exists(filename):
+                if os.path.exists(filename) and os.path.isfile(filename):
                     return filename
 
         raise EnvironmentError("Could not find %s resource: %s" % (
