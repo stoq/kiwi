@@ -30,10 +30,10 @@ class IProxyWidget(Interface):
     """
     IProxyWidget is a widget that can be attached to a proxy.
 
-    Signals:
+    Signals::
        content-changed: This must be emitted when the content changes
 
-    Properties:
+    Properties::
        data-type: string, data type of the model
        model-attribute: string, name of the attribute in the model
     """
@@ -56,13 +56,13 @@ class IValidatableProxyWidget(IProxyWidget):
     """
     IValidatableProxyWidget extends IProxyWidget with validation support
 
-    Signals:
+    Signals::
        validate: This emitted so each widget can provide it's own
          custom validation.
        validation-changed: This is emitted when the validation status
          changes, mainly used by the proxy.
 
-    Properties:
+    Properties::
        mandatory: bool, if the widget is mandatory
     """
 
