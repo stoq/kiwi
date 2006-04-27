@@ -47,28 +47,21 @@ class _FileChooserMixin(object):
             return
         self.set_filename(data)
 
-class ProxyFileChooserButton(_FileChooserMixin, PropertyObject,
-                             gtk.FileChooserButton, ProxyWidgetMixin):
-    __gtype_name__ = 'ProxyFileChooserButton'
-    def __init__(self, title=None, parent=None,
-                 action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                 buttons=None, backend=None):
+class ProxyFileChooserWidget(_FileChooserMixin, PropertyObject,
+                             gtk.FileChooserWidget, ProxyWidgetMixin):
+    __gtype_name__ = 'ProxyFileChooserWidget'
+    def __init__(self, action=gtk.FILE_CHOOSER_ACTION_OPEN, backend=None):
         """
-        @param title:
-        @param parent:
         @param action:
-        @param buttons:
         @param backend:
         """
         ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=str)
-        gtk.FileChooserButton.__init__(self, title=title,
-                                       parent=parent, action=action,
-                                       buttons=buttons, backend=backend)
+        gtk.FileChooserWidget.__init__(self, action=action, backend=backend)
 
-class ProxyFileChooserWidget(_FileChooserMixin, PropertyObject,
-                             gtk.FileChooserWidget, ProxyWidgetMixin):
-    __gtype_name__ = 'ProxyFileChooserWidget'
+class ProxyFileChooserButton(_FileChooserMixin, PropertyObject,
+                             gtk.FileChooserButton, ProxyWidgetMixin):
+    __gtype_name__ = 'ProxyFileChooserButton'
     def __init__(self, title, backend=None):
         """
         @param title:
@@ -76,5 +69,9 @@ class ProxyFileChooserWidget(_FileChooserMixin, PropertyObject,
         """
         ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=str)
-        gtk.FileChooserWidget.__init__(self, title=title, backend=backend)
 
+        # Broken, Broken PyGTK
+        if isinstance(title, str):
+            gtk.FileChooserButton.__init__(self, title, backend)
+        else:
+            gtk.FileChooserButton.__init__(self, title)

@@ -1,5 +1,8 @@
 2006-04-27  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/filechooser.py (ProxyFileChooserButton.__init__): 
+	Immitate PyGTK implementation argument wise
+
 	* kiwi/ui/test/common.py:
 	* kiwi/ui/test/listener.py:
 	* kiwi/ui/test/main.py:
