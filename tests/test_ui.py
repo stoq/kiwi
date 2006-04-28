@@ -12,9 +12,14 @@ def teardown(self):
     os.chdir(self._dir)
 
 def test_filename(rootdir, filename):
-    p = popen2.Popen3('%s %s' % (os.path.join(rootdir, 'bin', 'kiwi-ui-test'),
-                                 os.path.join('tests', 'ui', filename)))
-    status = os.waitpid(p.pid, 0)[1]
+    cmd = '%s %s' % (os.path.join(rootdir, 'bin', 'kiwi-ui-test'),
+                     os.path.join('tests', 'ui', filename))
+    if sys.platform == 'win32':
+        status = os.system(cmd)
+    else:
+        p = popen2.Popen3(cmd)
+        status = os.waitpid(p.pid, 0)[1]
+
     if status != 0:
         raise AssertionError("UI Test %s failed" % filename)
 
