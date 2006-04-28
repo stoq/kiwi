@@ -1,3 +1,10 @@
+2006-04-28  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/test/main.py (excepthook): Add an exception hook
+	* tests/runuitests.py:
+	* tests/test_ui.py:
+	Integrate ui tests into trial, remove old runuitests script.
+
 2006-04-27  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/test/player.py:
