@@ -146,6 +146,7 @@ class ProxyWidgetMixin(object):
 
         return conv.from_string(data)
 
+VALIDATION_ICON_WIDTH = 16
 MANDATORY_ICON = gtk.STOCK_EDIT
 ERROR_ICON = gdk.pixbuf_new_from_file(
     environ.find_resource('pixmap', 'validation-error-16.png'))

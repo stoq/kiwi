@@ -28,6 +28,7 @@
 import datetime
 
 import gtk
+import pango
 
 from kiwi.datatypes import ValidationError, converter, number
 from kiwi.decorators import deprecated
@@ -35,7 +36,8 @@ from kiwi.python import deprecationwarn
 from kiwi.ui.entry import MaskError, KiwiEntry, ENTRY_MODE_TEXT, \
      ENTRY_MODE_DATA
 from kiwi.ui.dateentry import DateEntry
-from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
+from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin, \
+     VALIDATION_ICON_WIDTH
 from kiwi.utils import PropertyObject, gsignal, type_register
 
 DATE_MASK_TABLE = {
@@ -87,8 +89,9 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     def prop_set_data_type(self, data_type):
         data_type = super(ProxyEntry, self).prop_set_data_type(data_type)
 
-        # Numbers should be right aligned
-        if data_type and issubclass(data_type, number):
+        # Numbers and dates should be right aligned
+        if data_type and issubclass(data_type, (number, datetime.date,
+                                    datetime.time, datetime.datetime)):
             self.set_property('xalign', 1.0)
 
         # Apply a mask for the data types, some types like
@@ -225,6 +228,23 @@ class ProxyDateEntry(PropertyObject, DateEntry, ValidatableProxyWidgetMixin):
         ValidatableProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self)
 
+        # Add some space to the entry, so it has rom for the icon, in case
+        # of a validation error.
+        #
+        # Since we set the widget's width based on the number of characters,
+        # get the width of a single char, so we can calculate how many
+        # 'chars' the icon takes.
+        layout = self.entry.get_layout()
+        context = layout.get_context()
+        metrics = context.get_metrics(context.get_font_description())
+        char_width =  metrics.get_approximate_char_width() / pango.SCALE
+        current_width = self.entry.get_width_chars()
+        
+        # We add 4 pixels to the width, because of the icon borders
+        icon_width = VALIDATION_ICON_WIDTH + 4
+        self.entry.set_width_chars(current_width
+                                   + int(icon_width / char_width))
+
     gsignal('changed', 'override')
     def do_changed(self):
         self.chain()
@@ -240,5 +260,25 @@ class ProxyDateEntry(PropertyObject, DateEntry, ValidatableProxyWidgetMixin):
             self.entry.set_text("")
         else:
             self.set_date(data)
+
+    def prop_set_mandatory(self, value):
+        self.entry.set_property('mandatory', value)
+        return value
+
+    # ValidatableProxyWidgetMixin implementation
+    
+    # Since the widget that should be marked as valid/invalid is the entry,
+    # we also call those methods for self.entry
+    def set_valid(self):
+        ValidatableProxyWidgetMixin.set_valid(self)
+        self.entry.set_valid()
+
+    def set_invalid(self, text=None, fade=True):
+        ValidatableProxyWidgetMixin.set_invalid(self, text, fade)
+        self.entry.set_invalid(text, fade)
+
+    def set_blank(self):
+        ValidatableProxyWidgetMixin.set_blank(self)
+        self.entry.set_blank()
 
 type_register(ProxyDateEntry)

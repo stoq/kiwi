@@ -269,7 +269,7 @@ class DateEntry(gtk.HBox):
         from kiwi.ui.widgets.entry import ProxyEntry
         self.entry = ProxyEntry()
         self.entry.connect('changed', self._on_entry__changed)
-        self.entry.set_mask_for_data_type(datetime.date)
+        self.entry.set_property('data-type', datetime.date)
         mask = self.entry.get_mask()
         if mask:
             self.entry.set_width_chars(len(mask))
@@ -300,7 +300,11 @@ class DateEntry(gtk.HBox):
     # Callbacks
 
     def _on_entry__changed(self, entry):
-        self._changed(self.get_date())
+        try:
+            date = self.get_date()
+        except ValidationError:
+            date = None
+        self._changed(date)
 
     def _on_entry__activate(self, entry):
         self.emit('activate')
@@ -313,7 +317,11 @@ class DateEntry(gtk.HBox):
         else:
             return
 
-        date = self.get_date()
+        try:
+            date = self.get_date()
+        except ValidationError:
+            date = None
+
         if not date:
             newdate = datetime.date.today()
         else:
@@ -324,7 +332,12 @@ class DateEntry(gtk.HBox):
         if self._popping_down:
             return
 
-        self._popup.popup(self.get_date())
+        try:
+            date = self.get_date()
+        except ValidationError:
+            date = None
+            
+        self._popup.popup(date)
 
     def _on_popup__hide(self, popup):
         self._popping_down = True
@@ -358,9 +371,6 @@ class DateEntry(gtk.HBox):
         """
         @returns: the currently selected day
         """
-        try:
-            return date_converter.from_string(self.entry.get_text())
-        except ValidationError:
-            pass
+        return date_converter.from_string(self.entry.get_text())
 
 type_register(DateEntry)

@@ -1,3 +1,12 @@
+2006-05-03  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
+	* kiwi/ui/dateentry.py:
+	* kiwi/ui/proxywidget.py:
+	* kiwi/ui/widgets/entry.py:
+	Add validation for DateEntry widget
+
 2006-04-28  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/test/main.py (excepthook): Add an exception hook
