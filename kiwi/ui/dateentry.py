@@ -371,6 +371,6 @@ class DateEntry(gtk.HBox):
         """
         @returns: the currently selected day
         """
-        return date_converter.from_string(self.entry.get_text())
+        return self.entry.read()
 
 type_register(DateEntry)
