@@ -27,6 +27,7 @@
 """High level wrapper for GtkTreeView"""
 
 import datetime
+from decimal import Decimal
 import gettext
 
 import gobject
@@ -224,6 +225,9 @@ class Column(PropertyObject, gobject.GObject):
     def as_string(self, data):
         data_type = self.data_type
         if (self.format or
+            data_type == float or
+            data_type == Decimal or
+            data_type == currency or
             data_type == datetime.date or
             data_type == datetime.datetime or
             data_type == datetime.time):

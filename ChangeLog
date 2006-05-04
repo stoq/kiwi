@@ -1,3 +1,10 @@
+2006-05-04  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: jdahlin
+
+	* kiwi/ui/objectlist.py: display locale specific information for float,
+	decimal and currency datatypes. Fixes #2562
+
 2006-05-03  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: jdahlin
