@@ -1,3 +1,7 @@
+2006-05-04  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/dist.py: Add support for templates
+
 2006-05-04  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: jdahlin

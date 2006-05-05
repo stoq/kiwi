@@ -55,7 +55,8 @@ class _VariableExtender:
 
     def extend(self, string):
         for name, var in [('sysconfdir', self.sysconfdir),
-                          ('datadir', self.datadir)]:
+                          ('datadir', self.datadir),
+                          ('prefix', self.prefix)]:
             string = string.replace('$' + name, var)
         return string
 
@@ -222,17 +223,37 @@ def setup(**kwargs):
     integrates nicely with kiwi.environ
     @kwarg resources:
     @kwarg global_resources:
+    @kwarg templates: List of templates to install
     """
     resources = {}
     global_resources = {}
+    templates = []
     if 'resources' in kwargs:
         resources = kwargs.pop('resources')
     if 'global_resources' in kwargs:
         global_resources = kwargs.pop('global_resources')
+    if 'templates' in kwargs:
+        templates = kwargs.pop('templates')
 
     def run_install(self):
         self.data_files.extend(compile_po_files(kwargs['name']))
         KiwiInstallData.run(self)
+
+        varext = _VariableExtender(self.distribution)
+
+        for path, files in templates:
+            install = self.distribution.get_command_obj('install')
+            target = os.path.join(install.prefix, path)
+            if not os.path.exists(target):
+                info("creating %s" % target)
+                os.makedirs(target)
+
+            for filename in files:
+                data = open(filename).read()
+                data = varext.extend(data)
+                target_file = os.path.join(target, filename)
+                info('installing template %s' % target_file)
+                open(target_file, 'w').write(data)
 
         # Copied from gazpacho, needs to be tested
 
