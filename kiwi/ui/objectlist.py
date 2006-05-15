@@ -40,7 +40,7 @@ from kiwi.log import Logger
 from kiwi.python import slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 
-_ = gettext.gettext
+_ = lambda m: gettext.dgettext('kiwi', m)
 
 log = Logger('objectlist')
 

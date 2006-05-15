@@ -59,7 +59,7 @@ from kiwi.ui.widgets.textview import ProxyTextView
 from kiwi.ui.widgets.combobox import ComboBox, ComboBoxEntry
 from kiwi.ui.widgets.list import List
 HyperLink
-_ = gettext.gettext
+_ = lambda m: gettext.dgettext('kiwi', m)
 
 log = Logger('gazpacholoader')
 

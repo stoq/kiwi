@@ -8,13 +8,54 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-30 16:53-0300\n"
+"POT-Creation-Date: 2006-05-05 11:28-0300\n"
 "PO-Revision-Date: 2005-11-14 10:07-0200\n"
 "Last-Translator: Ronaldo Maia <romaia@async.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: ../kiwi/datatypes.py:211
+#, python-format
+msgid "%s could not be converted to an integer"
+msgstr "%s não pode ser convertido para inteiro"
+
+#: ../kiwi/datatypes.py:235
+#, python-format
+msgid "'%s' can not be converted to a boolean"
+msgstr "%s não pode ser convertido para boleano"
+
+#: ../kiwi/datatypes.py:282 ../kiwi/datatypes.py:300
+msgid "This field requires a number, not %r"
+msgstr "Este campo exige um numero, não %r"
+
+#: ../kiwi/datatypes.py:396
+#, python-format
+msgid "This field requires a date of the format \"%s\" and not \"%s\""
+msgstr "Este campo exige uma data no formato \"%s\", e não \"%s\""
+
+#: ../kiwi/datatypes.py:574 ../kiwi/datatypes.py:585
+#, python-format
+msgid "%s can not be converted to a currency"
+msgstr "%s não pode ser convertido para valor monetário"
+
+#: ../kiwi/datatypes.py:622
+#, python-format
+msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
+msgstr "O numero \"%s\" tem mais de um ponto decimal"
+
+#: ../kiwi/datatypes.py:633
+msgid "You have a thousand separator to the right of the decimal point"
+msgstr "O numero tem um separador de milhares à direita do ponto decimal"
+
+#: ../kiwi/datatypes.py:645
+msgid "Inproperly placed thousands separator"
+msgstr "Separador de milhares colocado em posição incorreta"
+
+#: ../kiwi/datatypes.py:650
+msgid "Inproperly placed thousand separators"
+msgstr "Separadores de milhares colocado em posições incorretas"
 
 #: ../kiwi/ui/dateentry.py:74
 msgid "_Today"
@@ -32,12 +73,12 @@ msgstr "_Selecionar"
 msgid "Finish"
 msgstr "Terminar"
 
-#: ../kiwi/ui/entry.py:352
+#: ../kiwi/ui/entry.py:340
 #, python-format
 msgid "'%s' is not a valid object"
 msgstr "'%s' não é um objeto válido"
 
-#: ../kiwi/ui/objectlist.py:1656
+#: ../kiwi/ui/objectlist.py:1685
 msgid "Total:"
 msgstr "Total:"
 
@@ -130,10 +171,11 @@ msgstr "Objeto"
 msgid "Boolean"
 msgstr "Boleano"
 
-#: ../kiwi/ui/proxywidget.py:268
+#: ../kiwi/ui/proxywidget.py:261
+#, python-format
 msgid "'%s' is not a valid value for this field"
 msgstr "'%s' não é um valor válido para este campo"
 
-#: ../kiwi/ui/proxywidget.py:297
+#: ../kiwi/ui/proxywidget.py:290
 msgid "This field is mandatory"
-msgstr "Essa campo é obrigatorio"
+msgstr "Esse campo é obrigatorio"

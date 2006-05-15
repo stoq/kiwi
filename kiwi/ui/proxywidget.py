@@ -43,7 +43,7 @@ from kiwi.utils import gsignal, gproperty
 
 log = Logger('widget proxy')
 
-_ = gettext.gettext
+_ = lambda m: gettext.dgettext('kiwi', m)
 
 class ProxyWidgetMixin(object):
     """This class is a mixin that provide a common interface for KiwiWidgets.

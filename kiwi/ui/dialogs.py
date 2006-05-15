@@ -29,7 +29,7 @@ import gtk
 __all__ = ['error', 'info', 'messagedialog', 'warning', 'yesno', 'save',
            'open', 'HIGAlertDialog', 'BaseDialog']
 
-_ = gettext.gettext
+_ = lambda m: gettext.dgettext('kiwi', m)
 
 _IMAGE_TYPES = {
     gtk.MESSAGE_INFO: gtk.STOCK_DIALOG_INFO,

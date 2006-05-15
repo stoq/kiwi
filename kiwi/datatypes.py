@@ -38,6 +38,7 @@ Simple example:
 
 import datetime
 from decimal import Decimal, InvalidOperation
+import gettext
 import locale
 import sys
 import time
@@ -45,6 +46,8 @@ import time
 from kiwi import ValueUnset
 
 __all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
+
+_ = lambda m: gettext.dgettext('kiwi', m)
 
 number = (int, float, long, Decimal)
 
@@ -205,7 +208,7 @@ class _IntConverter(BaseConverter):
             return self.type(value)
         except ValueError:
             raise ValidationError(
-                "%s could not be converted to an integer" % value)
+                _("%s could not be converted to an integer") % value)
 
 converter.add(_IntConverter)
 
@@ -229,7 +232,7 @@ class _BoolConverter(BaseConverter):
         elif value.upper() in ('FALSE', '0'):
             return False
 
-        return ValidationError("'%s' can not be converted to a boolean" % value)
+        return ValidationError(_("'%s' can not be converted to a boolean") % value)
 
 converter.add(_BoolConverter)
 
@@ -276,7 +279,7 @@ class _FloatConverter(BaseConverter):
         try:
             retval = float(value)
         except ValueError:
-            raise ValidationError("This field requires a number, not %r" %
+            raise ValidationError(_("This field requires a number, not %r") %
                                   value)
 
         return retval
@@ -294,7 +297,7 @@ class _DecimalConverter(_FloatConverter):
         try:
             retval = Decimal(value)
         except InvalidOperation:
-            raise ValidationError("This field requires a number, not %r" %
+            raise ValidationError(_("This field requires a number, not %r") %
                                   value)
 
         return retval
@@ -390,8 +393,8 @@ class _BaseDateTimeConverter(BaseConverter):
             return self.from_dateinfo(dateinfo)
         except ValueError:
             raise ValidationError(
-                'This field requires a date of the format "%s" and '
-                'not "%s"' % (format, value))
+                _('This field requires a date of the format "%s" and '
+                  'not "%s"') % (format, value))
 
 class _TimeConverter(_BaseDateTimeConverter):
     type = datetime.time
@@ -568,7 +571,7 @@ class _CurrencyConverter(_DecimalConverter):
                 value = currency(value)
             except ValueError:
                 raise ValidationError(
-                    "%s can not be converted to a currency" % value)
+                    _("%s can not be converted to a currency") % value)
 
         return value.format(self.symbol, self.precision)
 
@@ -579,7 +582,7 @@ class _CurrencyConverter(_DecimalConverter):
             return currency(value)
         except (ValueError, InvalidOperation):
             raise ValidationError(
-                "%s can not be converted to a currency" % value)
+                _("%s can not be converted to a currency") % value)
 
 converter.add(_CurrencyConverter)
 
@@ -616,8 +619,8 @@ def filter_locale(value):
     decimal_points = value.count(decimal_point)
     if decimal_points > 1:
         raise ValidationError(
-            'You have more than one decimal point ("%s") '
-            ' in your number "%s"' % (decimal_point, value))
+            _('You have more than one decimal point ("%s") '
+              ' in your number "%s"') % (decimal_point, value))
 
     thousands_sep = conv["thousands_sep"]
     if thousands_sep:
@@ -627,8 +630,8 @@ def filter_locale(value):
         if th_sep_count and decimal_points:
             decimal_point_pos = value.index(decimal_point)
             if thousands_sep in value[decimal_point_pos+1:]:
-                raise ValidationError("You have a thousand separator to the "
-                                      "right of the decimal point")
+                raise ValidationError(_("You have a thousand separator to the "
+                                        "right of the decimal point"))
             check_value = value[:decimal_point_pos]
         else:
             check_value = value
@@ -639,13 +642,13 @@ def filter_locale(value):
 
         # First part is a special case, It can be 1, 2 or 3
         if 3 > len(parts[0]) < 1:
-            raise ValidationError("Inproperly placed thousands separator")
+            raise ValidationError(_("Inproperly placed thousands separator"))
 
         # Middle parts should have a length of 3
         for part in parts[1:]:
             if len(part) != 3:
-                raise ValidationError("Inproperly placed thousand "
-                                      "separators")
+                raise ValidationError(_("Inproperly placed thousand "
+                                        "separators"))
 
         # Remove all thousand separators
         value = value.replace(thousands_sep, '')
