@@ -195,7 +195,8 @@ class PropertyObject(object):
                          lambda self, v, n=prop_name: self.set_property(n, v))
             setattr(cls, prop_name, p)
 
-            default_values[prop_name] = pspec.default_value
+            if hasattr(pspec, 'default_value'):
+                default_values[prop_name] = pspec.default_value
 
         cls._default_values.update(default_values)
 
