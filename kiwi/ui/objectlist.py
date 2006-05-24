@@ -549,10 +549,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             self._load(instance_list, clear=True)
             self._treeview.thaw_notify()
 
-        if self._sort_column_index != -1:
-            column = self._columns[self._sort_column_index]
-            self._model.set_sort_column_id(self._sort_column_index,
-                                           column.order)
 
         # Set selection mode last to avoid spurious events
         selection = self._treeview.get_selection()
@@ -810,6 +806,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             if column.expand:
                 expand = True
 
+        self._sorted = sorted
+
         for column in self._columns:
             self._setup_column(column)
 
@@ -819,16 +817,19 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
         self._columns_configured = True
 
+
     def _setup_column(self, column):
         # You can't subclass bool, so this is okay
         if (column.data_type is bool and column.format):
             raise TypeError("format is not supported for boolean columns")
 
         index = self._columns.index(column)
-        self._model.set_sort_func(index, self._sort_function)
         treeview_column = self._treeview.get_column(index)
         if treeview_column is None:
             treeview_column = self._create_column(column)
+        if self._sorted is not None:
+            self._model.set_sort_func(index, self._sort_function, index)
+            treeview_column.set_sort_column_id(index)
 
         renderer, renderer_prop = self._guess_renderer_for_type(column)
         if column.on_attach_renderer:
@@ -861,7 +862,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                                            (column, renderer_prop))
         treeview_column.set_visible(column.visible)
 
-        treeview_column.connect("clicked", self._on_column__clicked, column)
         if column.width:
             treeview_column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
             treeview_column.set_fixed_width(column.width)
@@ -1085,42 +1085,13 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     def _select_and_focus_row(self, row_iter):
         self._treeview.set_cursor(self._model[row_iter].path)
 
-    def _sort_function(self, model, iter1, iter2):
-        column = self._columns[self._sort_column_index]
+    def _sort_function(self, model, iter1, iter2, index):
+        column = self._columns[index]
         attr = column.attribute
         return column.compare(
             column.get_attribute(model[iter1][COL_MODEL], attr),
             column.get_attribute(model[iter2][COL_MODEL], attr))
 
-    def _on_column__clicked(self, treeview_column, column):
-        # this means we are not sorting at all
-        if self._sort_column_index == -1:
-            return
-
-        old_treeview_column = self._treeview.get_column(
-            self._sort_column_index)
-
-        if treeview_column is old_treeview_column:
-            # same column, so reverse the order
-            if column.order == gtk.SORT_ASCENDING:
-                new_order = gtk.SORT_DESCENDING
-            elif column.order == gtk.SORT_DESCENDING:
-                new_order = gtk.SORT_ASCENDING
-            else:
-                raise AssertionError
-        else:
-            # new column, sort ascending
-            new_order = gtk.SORT_ASCENDING
-            self._sort_column_index = self._columns.index(column)
-            # cosmetic changes
-            old_treeview_column.set_sort_indicator(False)
-            treeview_column.set_sort_indicator(True)
-
-        column.order = new_order
-        treeview_column.set_sort_order(new_order)
-
-        # This performs the actual ordering
-        self._model.set_sort_column_id(self._sort_column_index, new_order)
 
     # handlers
     def _after_treeview__row_activated(self, treeview, path, view_column):
