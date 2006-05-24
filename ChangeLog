@@ -2,6 +2,12 @@
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/objectlist.py: Add a sorted keyword, fixes #2611
+
+2006-05-24  David Cook  <dave@davidcook.org>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/ui/objectlist.py: Remove unnecessary on_column__clicked handler,
 	fixes #2610
 

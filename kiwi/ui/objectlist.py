@@ -485,11 +485,13 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def __init__(self, columns=[],
                  instance_list=None,
-                 mode=gtk.SELECTION_BROWSE):
+                 mode=gtk.SELECTION_BROWSE,
+                 sortable=False):
         """
         @param columns:       a list of L{Column}s
         @param instance_list: a list of objects to be inserted or None
         @param mode:          selection mode
+        @param sortable:      whether the user can sort the list
         """
         # allow to specify only one column
         if isinstance(columns, Column):
@@ -503,6 +505,9 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         # so we can't do this check.
         #elif mode == gtk.SELECTION_EXTENDED:
         #    raise TypeError("gtk.SELECTION_EXTENDED is deprecated")
+
+
+        self._sortable = sortable
 
         # Mapping of instance id -> treeiter
         self._iters = {}
@@ -806,7 +811,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             if column.expand:
                 expand = True
 
-        self._sorted = sorted
+        self._sortable = self._sortable or sorted is not None
 
         for column in self._columns:
             self._setup_column(column)
@@ -827,7 +832,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         treeview_column = self._treeview.get_column(index)
         if treeview_column is None:
             treeview_column = self._create_column(column)
-        if self._sorted is not None:
+            
+        if self._sortable:
             self._model.set_sort_func(index, self._sort_function, index)
             treeview_column.set_sort_column_id(index)
 
