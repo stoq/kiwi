@@ -1334,16 +1334,18 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self._clear_cache_for_iter(treeiter)
         self._model.row_changed(self._model[treeiter].path, treeiter)
 
-    def refresh(self):
+    def refresh(self, view_only=False):
         """
         Reloads the values from all objects.
-        """
-        # XXX: Optimize this to only reload items, no need to remove/readd
-        model = self._model
-        instances = [row[COL_MODEL] for row in model]
-        model.clear()
-        self.add_list(instances)
 
+        @param view_only: if True, only force a refresh of the
+            visible part of this objectlist's Treeview.
+        """
+        if view_only:
+            self._treeview.queue_draw()
+        else:
+            self._model.foreach(gtk.TreeModel.row_changed)
+        
     def set_column_visibility(self, column_index, visibility):
         treeview_column = self._treeview.get_column(column_index)
         treeview_column.set_visible(visibility)
