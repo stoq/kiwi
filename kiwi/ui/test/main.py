@@ -24,19 +24,12 @@ Kiwi UI Test: command line interface
 """
 
 import optparse
-import os
 import sys
-import traceback
 
 from kiwi.log import set_log_level
 
-def excepthook(exc_type, exc_value, tb):
-    traceback.print_exception(exc_type, exc_value, tb.tb_next)
-    os._exit(1)
-
 def _play(options, filename, args):
     from kiwi.ui.test.player import play_file
-    sys.excepthook = excepthook
 
     play_file(filename, args)
 
@@ -44,9 +37,6 @@ def _record(options, filename, args):
     from kiwi.ui.test.recorder import Recorder
 
     Recorder(filename, args)
-
-    sys.argv = args
-    execfile(sys.argv[0], globals(), globals())
 
 def main(args):
     parser = optparse.OptionParser()

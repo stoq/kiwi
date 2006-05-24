@@ -373,6 +373,10 @@ class Recorder(Base):
                                       self._emission_window__delete_event)
             self._has_emission_hook = True
 
+        # Run the script
+        sys.argv = args
+        execfile(sys.argv[0], globals(), globals())
+
     def _emission_window__delete_event(self, window, event, *args):
         self._add_event(WindowDeleteEvent(window))
 
