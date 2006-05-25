@@ -832,9 +832,10 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         treeview_column = self._treeview.get_column(index)
         if treeview_column is None:
             treeview_column = self._create_column(column)
-            
+
         if self._sortable:
-            self._model.set_sort_func(index, self._sort_function, index)
+            self._model.set_sort_func(index, self._sort_function,
+                                      (column, column.attribute))
             treeview_column.set_sort_column_id(index)
 
         renderer, renderer_prop = self._guess_renderer_for_type(column)
@@ -1091,9 +1092,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     def _select_and_focus_row(self, row_iter):
         self._treeview.set_cursor(self._model[row_iter].path)
 
-    def _sort_function(self, model, iter1, iter2, index):
-        column = self._columns[index]
-        attr = column.attribute
+    def _sort_function(self, model, iter1, iter2, (column, attr)):
         return column.compare(
             column.get_attribute(model[iter1][COL_MODEL], attr),
             column.get_attribute(model[iter2][COL_MODEL], attr))
