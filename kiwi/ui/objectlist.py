@@ -466,10 +466,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self._cell_data_caches = {}
         self._autosize = True
         self._vscrollbar = None
-        # by default we are unordered. This index points to the column
-        # definition of the column that dictates the order, in case there is
-        # any
-        self._sort_column_index = -1
 
         gtk.ScrolledWindow.__init__(self)
 
@@ -823,7 +819,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             treeview_column.set_expand(True)
 
         if column.sorted:
-            self._sort_column_index = index
             treeview_column.set_sort_indicator(True)
 
         if column.width:
