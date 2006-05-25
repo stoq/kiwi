@@ -210,18 +210,6 @@ class Column(PropertyObject, gobject.GObject):
         del namespace['attribute']
         return "<%s %s: %s>" % (self.__class__.__name__, attr, namespace)
 
-    # XXX: Replace these two with a gazpacho loader adapter
-    def __str__(self):
-        if self.data_type is None:
-            data_type = ''
-        else:
-            data_type = self.data_type.__name__
-
-        return "%s|%s|%s|%s|%d|%s|%s|%d|%s|%d" % \
-               (self.attribute, self.title, data_type, self.visible,
-                self.justify, self.tooltip, self.format, self.width,
-                self.sorted, self.order)
-
     def as_string(self, data):
         data_type = self.data_type
         if (self.format or
@@ -239,38 +227,6 @@ class Column(PropertyObject, gobject.GObject):
             text = data
 
         return text
-
-    def from_string(cls, data_string):
-        fields = data_string.split('|')
-        if len(fields) != 10:
-            msg = 'every column should have 10 fields, not %d' % len(fields)
-            raise ValueError(msg)
-
-        # the attribute is mandatory
-        if not fields[0]:
-            raise TypeError
-
-        column = cls(fields[0])
-        column.title = fields[1] or ''
-        column.data_type = str2type(fields[2])
-        column.visible = str2bool(fields[3])
-        column.justify = str2enum(fields[4], gtk.JUSTIFY_LEFT)
-        column.tooltip = fields[5]
-        column.format = fields[6]
-
-        try:
-            column.width = int(fields[7])
-        except ValueError:
-            pass
-
-        column.sorted = str2bool(fields[8])
-        column.order = str2enum(fields[9], gtk.SORT_ASCENDING) \
-                     or gtk.SORT_ASCENDING
-
-        # XXX: expand, remember to sync with __str__
-
-        return column
-    from_string = classmethod(from_string)
 
 class SequentialColumn(Column):
     """I am a column which will display a sequence of numbers, which
@@ -476,10 +432,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     # emitted when empty or non-empty status changes
     gsignal('has-rows', bool)
 
-    # this property is used to serialize the columns of a ObjectList. The format
-    # is a big string with '^' as the column separator and '|' as the field
-    # separator
-    gproperty('column-definitions', str, nick="ColumnDefinitions")
     gproperty('selection-mode', gtk.SelectionMode,
               default=gtk.SELECTION_BROWSE, nick="SelectionMode")
 
@@ -506,13 +458,11 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         #elif mode == gtk.SELECTION_EXTENDED:
         #    raise TypeError("gtk.SELECTION_EXTENDED is deprecated")
 
-
         self._sortable = sortable
 
         # Mapping of instance id -> treeiter
         self._iters = {}
         self._cell_data_caches = {}
-        self._columns_configured = False
         self._autosize = True
         self._vscrollbar = None
         # by default we are unordered. This index points to the column
@@ -553,7 +503,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             self._treeview.freeze_notify()
             self._load(instance_list, clear=True)
             self._treeview.thaw_notify()
-
 
         # Set selection mode last to avoid spurious events
         selection = self._treeview.get_selection()
@@ -698,10 +647,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     # Properties
 
-    def prop_set_column_definition(self, value):
-        self.set_columns(value)
-        return value
-
     def prop_set_selection_mode(self, mode):
         self.set_selection_mode(mode)
 
@@ -788,14 +733,11 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             self._treeview.columns_autosize()
             self._autosize = False
 
-    def _setup_columns(self):
-        if self._columns_configured:
-            return
-
+    def _setup_columns(self, columns):
         searchable = None
         sorted = None
         expand = False
-        for column in self._columns:
+        for column in columns:
             if column.searchable:
                 if searchable:
                     raise ValueError("Can't make column %s searchable, column"
@@ -813,15 +755,12 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
         self._sortable = self._sortable or sorted is not None
 
-        for column in self._columns:
+        for column in columns:
             self._setup_column(column)
 
         if not expand:
             column = gtk.TreeViewColumn()
             self._treeview.append_column(column)
-
-        self._columns_configured = True
-
 
     def _setup_column(self, column):
         # You can't subclass bool, so this is okay
@@ -969,14 +908,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             raise ValueError("the type %s is not supported yet" % data_type)
 
         return renderer, prop
-
-    def _clear_columns(self):
-        while self._treeview.get_columns():
-            self._treeview.remove_column(self._treeview.get_column(COL_MODEL))
-
-        self._popup.clean()
-
-        self._columns_configured = False
 
     # selection methods
     def _select_and_focus_row(self, row_iter):
@@ -1242,29 +1173,20 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         tree_columns = self._treeview.get_columns()
         return tree_columns[index]
 
-    def set_columns(self, value):
-        """This function can be called in two different ways:
-         - value is a string with the column definitions in a special format
-           (see column-definitions property at the beginning of this class)
-
-         - value is a list/tuple of Column objects
+    def set_columns(self, columns):
+        """
+        @param columns: a sequence of L{Column} objects.
         """
 
-        if isinstance(value, basestring):
-            self._columns_string = value
-            self._columns = []
-            for col in value.split('^'):
-                if not col:
-                    continue
-                self._columns.append(Column.from_string(col))
-        elif isinstance(value, (list, tuple)):
-            self._columns = value
-            self._columns_string = '^'.join([str(col) for col in value])
-        else:
-            raise ValueError("value should be a string of a list of columns")
+        if not isinstance(columns, (list, tuple)):
+            raise ValueError("columns must be a list or a tuple")
 
-        self._clear_columns()
-        self._setup_columns()
+        self._columns = []
+        while self._treeview.get_columns():
+            self._treeview.remove_column(self._treeview.get_column(COL_MODEL))
+        self._popup.clean()
+        self._columns = columns
+        self._setup_columns(columns)
 
     def append(self, instance, select=False):
         """Adds an instance to the list.
