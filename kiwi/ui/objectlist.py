@@ -834,7 +834,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             treeview_column = self._create_column(column)
 
         if self._sortable:
-            self._model.set_sort_func(index, self._sort_function,
+            self._model.set_sort_func(index,
+                                      self._model_sort_func,
                                       (column, column.attribute))
             treeview_column.set_sort_column_id(index)
 
@@ -893,7 +894,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                 raise TypeError("Unsupported data type for "
                                 "searchable column: %s" % column.data_type)
             self._treeview.set_search_column(index)
-            self._treeview.set_search_equal_func(self._search_equal_func,
+            self._treeview.set_search_equal_func(self._treeview_search_equal_func,
                                                  column)
 
         if column.radio:
@@ -923,50 +924,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         # setup the button to show the popup menu
         button = self._get_column_button(treeview_column)
         button.connect('button-release-event',
-                       self._on_header__button_release_event)
+                       self._on_treeview_header__button_release_event)
         return treeview_column
-
-    def _on_renderer_toggle_check__toggled(self, renderer, path, model, attr):
-        obj = model[path][COL_MODEL]
-        value = not getattr(obj, attr, None)
-        setattr(obj, attr, value)
-        self.emit('cell-edited', obj, attr)
-
-    def _on_renderer_toggle_radio__toggled(self, renderer, path, model, attr):
-        # Deactive old one
-        old = renderer.get_data('kiwilist::radio-active')
-
-        # If we don't have the radio-active set it means we're doing
-        # This for the first time, so scan and see which one is currently
-        # active, so we can deselect it
-        if not old:
-            # XXX: Handle multiple values set to True, this
-            #      algorithm just takes the first one it finds
-            for row in self._model:
-                obj = row[COL_MODEL]
-                value = getattr(obj, attr)
-                if value == True:
-                    old = obj
-                    break
-            else:
-                raise TypeError("You need an initial attribute value set "
-                                "to true when using radio")
-
-        setattr(old, attr, False)
-
-        # Active new and save a reference to the object of the
-        # previously selected row
-        new = model[path][COL_MODEL]
-        setattr(new, attr, True)
-        renderer.set_data('kiwilist::radio-active', new)
-        self.emit('cell-edited', new, attr)
-
-    def _on_renderer_text__edited(self, renderer, path, text,
-                                  model, attr, column, from_string):
-        obj = model[path][COL_MODEL]
-        value = from_string(text)
-        setattr(obj, attr, value)
-        self.emit('cell-edited', obj, attr)
 
     def _guess_renderer_for_type(self, column):
         """Gusses which CellRenderer we should use for a given type.
@@ -1011,16 +970,97 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
         return renderer, prop
 
-    def _search_equal_func(self, model, tree_column, key, treeiter, column):
+    def _clear_columns(self):
+        while self._treeview.get_columns():
+            self._treeview.remove_column(self._treeview.get_column(COL_MODEL))
+
+        self._popup.clean()
+
+        self._columns_configured = False
+
+    # selection methods
+    def _select_and_focus_row(self, row_iter):
+        self._treeview.set_cursor(self._model[row_iter].path)
+
+    # handlers & callbacks
+    def _model_sort_func(self, model, iter1, iter2, (column, attr)):
+        "This method is used to sort the GtkTreeModel"
+        return column.compare(
+            column.get_attribute(model[iter1][COL_MODEL], attr),
+            column.get_attribute(model[iter2][COL_MODEL], attr))
+
+    def _on_selection__changed(self, selection):
+        "This method is used to proxy selection::changed to selection-changed"
+        mode = selection.get_mode()
+        if mode == gtk.SELECTION_MULTIPLE:
+            item = self.get_selected_rows()
+        elif mode in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
+            item = self.get_selected()
+        else:
+            raise AssertionError
+        self.emit('selection-changed', item)
+
+    def _on_scrolled_window__realize(self, widget):
+        toplevel = widget.get_toplevel()
+        self._popup_window.set_transient_for(toplevel)
+        self._popup_window.set_destroy_with_parent(True)
+
+    def _on_scrolled_window__size_allocate(self, widget, allocation):
+        """Resize the Vertical Scrollbar to make it smaller and let space
+        for the popup button. Also put that button there.
+        """
+        old_alloc = self._vscrollbar.get_allocation()
+        height = self._get_header_height()
+        new_alloc = gtk.gdk.Rectangle(old_alloc.x, old_alloc.y + height,
+                                      old_alloc.width,
+                                      old_alloc.height - height)
+        self._vscrollbar.size_allocate(new_alloc)
+        # put the popup_window in its position
+        gdk_window = self.window
+        if gdk_window:
+            winx, winy = gdk_window.get_origin()
+            self._popup_window.move(winx + old_alloc.x,
+                                    winy + old_alloc.y)
+
+    def _treeview_search_equal_func(self, model, tree_column, key, treeiter, column):
+        "for searching inside the treeview"
         data = column.get_attribute(model[treeiter][COL_MODEL],
                                     column.attribute, None)
         if data.startswith(key):
             return False
         return True
 
+    def _on_treeview_header__button_release_event(self, button, event):
+        if event.button == 3:
+            self._popup.popup(event)
+
+        return False
+
+    def _after_treeview__row_activated(self, treeview, path, view_column):
+        "After activated (double clicked or pressed enter) on a row"
+        try:
+            row = self._model[path]
+        except IndexError:
+            print 'path %s was not found in model: %s' % (
+                path, map(list, self._model))
+            return
+        item = row[COL_MODEL]
+        self.emit('row-activated', item)
+
+    def _on_treeview__button_press_event(self, treeview, event):
+        "Generic button-press-event handler to be able to catch double clicks"
+        if event.type == gtk.gdk._2BUTTON_PRESS:
+            selection = self._treeview.get_selection()
+            mode = selection.get_mode()
+            if mode == gtk.SELECTION_MULTIPLE:
+                item = self.get_selected_rows()
+            else:
+                item = self.get_selected()
+            self.emit('double-click', item)
+
     def _cell_data_text_func(self, tree_column, renderer, model, treeiter,
                              (column, renderer_prop)):
-
+        "To render the data of a cell renderer text"
         row = model[treeiter]
         if column.editable_attribute:
             data = column.get_attribute(row[COL_MODEL],
@@ -1055,18 +1095,58 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def _cell_data_pixbuf_func(self, tree_column, renderer, model, treeiter,
                                (column, renderer_prop)):
+        "To render the data of a cell renderer pixbuf"
         row = model[treeiter]
         data = column.get_attribute(row[COL_MODEL],
                                     column.attribute, None)
         pixbuf = self.render_icon(data, column.icon_size)
         renderer.set_property(renderer_prop, pixbuf)
 
-    def _on_header__button_release_event(self, button, event):
-        if event.button == 3:
-            self._popup.popup(event)
-            return False
+    def _on_renderer__toggled(self, renderer, path, column):
+        setattr(self._model[path][COL_MODEL], column.attribute,
+                not renderer.get_active())
 
-        return False
+    def _on_renderer_toggle_check__toggled(self, renderer, path, model, attr):
+        obj = model[path][COL_MODEL]
+        value = not getattr(obj, attr, None)
+        setattr(obj, attr, value)
+        self.emit('cell-edited', obj, attr)
+
+    def _on_renderer_toggle_radio__toggled(self, renderer, path, model, attr):
+        # Deactive old one
+        old = renderer.get_data('kiwilist::radio-active')
+
+        # If we don't have the radio-active set it means we're doing
+        # This for the first time, so scan and see which one is currently
+        # active, so we can deselect it
+        if not old:
+            # XXX: Handle multiple values set to True, this
+            #      algorithm just takes the first one it finds
+            for row in self._model:
+                obj = row[COL_MODEL]
+                value = getattr(obj, attr)
+                if value == True:
+                    old = obj
+                    break
+            else:
+                raise TypeError("You need an initial attribute value set "
+                                "to true when using radio")
+
+        setattr(old, attr, False)
+
+        # Active new and save a reference to the object of the
+        # previously selected row
+        new = model[path][COL_MODEL]
+        setattr(new, attr, True)
+        renderer.set_data('kiwilist::radio-active', new)
+        self.emit('cell-edited', new, attr)
+
+    def _on_renderer_text__edited(self, renderer, path, text,
+                                  model, attr, column, from_string):
+        obj = model[path][COL_MODEL]
+        value = from_string(text)
+        setattr(obj, attr, value)
+        self.emit('cell-edited', obj, attr)
 
     def _on_renderer__edited(self, renderer, path, value, column):
         data_type = column.data_type
@@ -1075,59 +1155,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
         # XXX convert new_text to the proper data type
         setattr(self._model[path][COL_MODEL], column.attribute, value)
-
-    def _on_renderer__toggled(self, renderer, path, column):
-        setattr(self._model[path][COL_MODEL], column.attribute,
-                not renderer.get_active())
-
-    def _clear_columns(self):
-        while self._treeview.get_columns():
-            self._treeview.remove_column(self._treeview.get_column(COL_MODEL))
-
-        self._popup.clean()
-
-        self._columns_configured = False
-
-    # selection methods
-    def _select_and_focus_row(self, row_iter):
-        self._treeview.set_cursor(self._model[row_iter].path)
-
-    def _sort_function(self, model, iter1, iter2, (column, attr)):
-        return column.compare(
-            column.get_attribute(model[iter1][COL_MODEL], attr),
-            column.get_attribute(model[iter2][COL_MODEL], attr))
-
-
-    # handlers
-    def _after_treeview__row_activated(self, treeview, path, view_column):
-        try:
-            row = self._model[path]
-        except IndexError:
-            print 'path %s was not found in model: %s' % (
-                path, map(list, self._model))
-            return
-        item = row[COL_MODEL]
-        self.emit('row-activated', item)
-
-    def _on_selection__changed(self, selection):
-        mode = selection.get_mode()
-        if mode == gtk.SELECTION_MULTIPLE:
-            item = self.get_selected_rows()
-        elif mode in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
-            item = self.get_selected()
-        else:
-            raise AssertionError
-        self.emit('selection-changed', item)
-
-    def _on_treeview__button_press_event(self, treeview, event):
-        if event.type == gtk.gdk._2BUTTON_PRESS:
-            selection = self._treeview.get_selection()
-            mode = selection.get_mode()
-            if mode == gtk.SELECTION_MULTIPLE:
-                item = self.get_selected_rows()
-            else:
-                item = self.get_selected()
-            self.emit('double-click', item)
 
     # hacks
     def _get_column_button(self, column):
@@ -1176,28 +1203,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         button = self._get_column_button(treeview_column)
         alloc = button.get_allocation()
         return alloc.height
-
-    def _on_scrolled_window__realize(self, widget):
-        toplevel = widget.get_toplevel()
-        self._popup_window.set_transient_for(toplevel)
-        self._popup_window.set_destroy_with_parent(True)
-
-    def _on_scrolled_window__size_allocate(self, widget, allocation):
-        """Resize the Vertical Scrollbar to make it smaller and let space
-        for the popup button. Also put that button there.
-        """
-        old_alloc = self._vscrollbar.get_allocation()
-        height = self._get_header_height()
-        new_alloc = gtk.gdk.Rectangle(old_alloc.x, old_alloc.y + height,
-                                      old_alloc.width,
-                                      old_alloc.height - height)
-        self._vscrollbar.size_allocate(new_alloc)
-        # put the popup_window in its position
-        gdk_window = self.window
-        if gdk_window:
-            winx, winy = gdk_window.get_origin()
-            self._popup_window.move(winx + old_alloc.x,
-                                    winy + old_alloc.y)
 
     # end of the popup button hack
 
@@ -1344,7 +1349,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             self._treeview.queue_draw()
         else:
             self._model.foreach(gtk.TreeModel.row_changed)
-        
+
     def set_column_visibility(self, column_index, visibility):
         treeview_column = self._treeview.get_column(column_index)
         treeview_column.set_visible(visibility)
