@@ -750,7 +750,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             if column.expand:
                 expand = True
 
-        self._sortable = self._sortable or sorted is not None
+        self._sortable = self._sortable or sorted
 
         for column in columns:
             self._setup_column(column)
