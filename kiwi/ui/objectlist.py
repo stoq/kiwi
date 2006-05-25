@@ -460,6 +460,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
         self._sortable = sortable
 
+        self._columns = []
         # Mapping of instance id -> treeiter
         self._iters = {}
         self._cell_data_caches = {}
@@ -1173,6 +1174,20 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         tree_columns = self._treeview.get_columns()
         return tree_columns[index]
 
+    def _clear_columns(self):
+        # Reset the sort function for all model columns
+        model = self._model
+        for i, column in enumerate(self._columns):
+            # Bug in PyGTK, it should be possible to remove a sort func.
+            model.set_sort_func(i, lambda m, i1, i2: -1)
+
+        # Remove all columns
+        treeview = self._treeview
+        while treeview.get_columns():
+            treeview.remove_column(treeview.get_column(0))
+
+        self._popup.clean()
+
     def set_columns(self, columns):
         """
         @param columns: a sequence of L{Column} objects.
@@ -1181,10 +1196,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         if not isinstance(columns, (list, tuple)):
             raise ValueError("columns must be a list or a tuple")
 
-        self._columns = []
-        while self._treeview.get_columns():
-            self._treeview.remove_column(self._treeview.get_column(COL_MODEL))
-        self._popup.clean()
+        self._clear_columns()
         self._columns = columns
         self._setup_columns(columns)
 
