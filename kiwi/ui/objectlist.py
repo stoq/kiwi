@@ -648,17 +648,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     def prop_get_selection_mode(self):
         return self.get_selection_mode()
 
-    # Model
-
-    def _on_model__row_inserted(self, model, path, iter):
-        if len(model) == 1:
-            self.emit('has-rows', True)
-
-    def _on_model__row_deleted(self, model, path):
-        if not len(model):
-            self.emit('has-rows', False)
-
     # Columns handling
+
     def _load(self, instances, clear):
         # do nothing if empty list or None provided
         model = self._model
@@ -908,12 +899,23 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self._treeview.set_cursor(self._model[row_iter].path)
 
     # handlers & callbacks
+
+    # Model
+    def _on_model__row_inserted(self, model, path, iter):
+        if len(model) == 1:
+            self.emit('has-rows', True)
+
+    def _on_model__row_deleted(self, model, path):
+        if not len(model):
+            self.emit('has-rows', False)
+
     def _model_sort_func(self, model, iter1, iter2, (column, attr)):
         "This method is used to sort the GtkTreeModel"
         return column.compare(
             column.get_attribute(model[iter1][COL_MODEL], attr),
             column.get_attribute(model[iter2][COL_MODEL], attr))
 
+    # Selection
     def _on_selection__changed(self, selection):
         "This method is used to proxy selection::changed to selection-changed"
         mode = selection.get_mode()
@@ -925,6 +927,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             raise AssertionError
         self.emit('selection-changed', item)
 
+    # ScrolledWindow
     def _on_scrolled_window__realize(self, widget):
         toplevel = widget.get_toplevel()
         self._popup_window.set_transient_for(toplevel)
@@ -947,6 +950,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             self._popup_window.move(winx + old_alloc.x,
                                     winy + old_alloc.y)
 
+    # TreeView
     def _treeview_search_equal_func(self, model, tree_column, key, treeiter, column):
         "for searching inside the treeview"
         data = column.get_attribute(model[treeiter][COL_MODEL],
@@ -983,6 +987,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                 item = self.get_selected()
             self.emit('double-click', item)
 
+    # CellRenderers
     def _cell_data_text_func(self, tree_column, renderer, model, treeiter,
                              (column, renderer_prop)):
         "To render the data of a cell renderer text"
@@ -1180,6 +1185,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             treeview.remove_column(treeview.get_column(0))
 
         self._popup.clean()
+        self._columns = []
 
     def set_columns(self, columns):
         """
