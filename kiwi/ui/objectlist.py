@@ -436,12 +436,12 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
               default=gtk.SELECTION_BROWSE, nick="SelectionMode")
 
     def __init__(self, columns=[],
-                 instance_list=None,
+                 objects=None,
                  mode=gtk.SELECTION_BROWSE,
                  sortable=False):
         """
         @param columns:       a list of L{Column}s
-        @param instance_list: a list of objects to be inserted or None
+        @param objects: a list of objects to be inserted or None
         @param mode:          selection mode
         @param sortable:      whether the user can sort the list
         """
@@ -496,17 +496,15 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         # when setting the column definition the columns are created
         self.set_columns(columns)
 
-        if instance_list:
-            self._treeview.freeze_notify()
-            self._load(instance_list, clear=True)
-            self._treeview.thaw_notify()
+        if objects:
+            self.add_list(objects, clear=True)
 
         # Set selection mode last to avoid spurious events
         selection = self._treeview.get_selection()
         selection.connect("changed", self._on_selection__changed)
 
         # Select the first item if no items are selected
-        if mode != gtk.SELECTION_NONE and instance_list:
+        if mode != gtk.SELECTION_NONE and objects:
             selection.select_iter(self._model[COL_MODEL].iter)
 
         # Depends on treeview and selection being set up
