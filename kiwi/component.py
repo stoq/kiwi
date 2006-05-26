@@ -56,14 +56,16 @@ class _UtilityHandler(object):
     def __init__(self):
         self._utilities = {}
 
-    def provide(self, iface, obj):
+    # FIXME: How to replace a utility properly
+    def provide(self, iface, obj, replace=False):
         global _interfaces
         if not issubclass(iface, Interface):
             raise TypeError(
                 "iface must be an Interface subclass and not %r" % iface)
 
-        if iface in self._utilities:
-            raise AlreadyImplementedError("%s is already implemented" % iface)
+        if not replace:
+            if iface in self._utilities:
+                raise AlreadyImplementedError("%s is already implemented" % iface)
         self._utilities[iface] = obj
 
     def get(self, iface):
@@ -77,7 +79,7 @@ class _UtilityHandler(object):
 
         return self._utilities[iface]
 
-def provide_utility(iface, utility):
+def provide_utility(iface, utility, replace=False):
     """
     Set the utility for the named interface. If the utility is already
     set, an {AlreadyImplementedError} is raised.
@@ -86,7 +88,7 @@ def provide_utility(iface, utility):
     @param utility: utility providing the interface.
     """
     global _handler
-    _handler.provide(iface, utility)
+    _handler.provide(iface, utility, replace)
 
 def get_utility(iface):
     """
