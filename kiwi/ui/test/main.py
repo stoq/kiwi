@@ -24,7 +24,6 @@ Kiwi UI Test: command line interface
 """
 
 import optparse
-import sys
 
 from kiwi.log import set_log_level
 

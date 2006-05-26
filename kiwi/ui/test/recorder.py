@@ -34,6 +34,7 @@ back by simply executing the script through a standard python interpreter.
 """
 
 import atexit
+import sys
 
 import gobject
 from gtk import gdk
