@@ -46,7 +46,9 @@
   </glade-widget-classes>
 
   <glade-widget-group name="kiwi" title="Kiwi Widgets">
+<!-- Disabled for now, needs to have its Gazpacho interface rewritten.
     <glade-widget-class-ref name="ObjectList"/>
+-->
     <glade-widget-class-ref name="HyperLink"/>
     <glade-widget-class-ref name="ProxyEntry"/>
     <glade-widget-class-ref name="ProxyLabel"/>
