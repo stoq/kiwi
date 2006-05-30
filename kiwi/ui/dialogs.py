@@ -226,19 +226,30 @@ def yesno(text, parent=None, default=gtk.RESPONSE_YES):
                          buttons=gtk.BUTTONS_YES_NO,
                          default=default)
 
-def open(title='', parent=None, patterns=[], folder=None):
-    """Displays an open dialog."""
+def open(title='', parent=None, patterns=[], folder=None, filter=None):
+    """Displays an open dialog.
+    @param title:
+    @param parent:
+    @param patterns:
+    @param folder:
+    @param filter:
+    """
+
+    if patterns and filter:
+        raise TypeError("Can't use patterns and filter at the same time")
+
     filechooser = gtk.FileChooserDialog(title or _('Open'),
                                         parent,
                                         gtk.FILE_CHOOSER_ACTION_OPEN,
                                         (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                          gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
-    if patterns:
-        file_filter = gtk.FileFilter()
-        for pattern in patterns:
-            file_filter.add_pattern(pattern)
-        filechooser.set_filter(file_filter)
+    if patterns or filter:
+        if not filter:
+            filter = gtk.FileFilter()
+            for pattern in patterns:
+                filter.add_pattern(pattern)
+        filechooser.set_filter(filter)
     filechooser.set_default_response(gtk.RESPONSE_OK)
 
     if folder:
