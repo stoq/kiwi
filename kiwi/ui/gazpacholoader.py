@@ -336,7 +336,7 @@ def register_widgets():
 
         data_name = type_name + '::data-type'
         if editor:
-            prop_registry.override_simple(data_name, data_type, editor=editor)
+            prop_registry.override_simple(data_name, data_type, custom_editor=editor)
         else:
             prop_registry.override_simple(data_name, data_type)
 
