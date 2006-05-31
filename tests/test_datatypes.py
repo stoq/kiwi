@@ -39,11 +39,12 @@ class BoolTest(unittest.TestCase):
 
 class DateTest(unittest.TestCase):
     def setUp(self):
+        set_locale(locale.LC_TIME, 'C')
         self.date = datetime.date(1979, 2, 12)
         self.conv = converter.get_converter(datetime.date)
 
     def tearDown(self):
-        set_locale(locale.LC_ALL, 'C')
+        set_locale(locale.LC_TIME, 'C')
 
     def testFromStringES(self):
         if not set_locale(locale.LC_TIME, 'es_ES'):
@@ -79,22 +80,29 @@ class DateTest(unittest.TestCase):
 
 class CurrencyTest(unittest.TestCase):
     def setUp(self):
+        set_locale(locale.LC_MONETARY, 'C')
         self.conv = converter.get_converter(currency)
 
     def tearDown(self):
-        set_locale(locale.LC_ALL, 'C')
+        set_locale(locale.LC_MONETARY, 'C')
 
     def testFormatBR(self):
         if not set_locale(locale.LC_MONETARY, 'pt_BR'):
             return
 
         self.assertEqual(currency(100).format(), 'R$100')
-        self.assertEqual(currency('123.45').format(), 'R$123,45')
+        self.assertEqual(currency('123,45').format(), 'R$123,45')
         self.assertEqual(currency(12345).format(), 'R$12.345')
         self.assertEqual(currency(-100).format(), 'R$-100')
+        try:
+            c = currency('R$1.234.567,40')
+        except:
+            raise AssertionError("monetary separator could not be removed")
+        self.assertEqual(c, Decimal('1234567.40'))
 
         # Sometimes it works, sometimes it doesn''10,000,000.0't
         #self.assertEqual(self.conv.from_string('0,5'), currency('0.5'))
+
 
     def testFormatUS(self):
         if not set_locale(locale.LC_MONETARY, 'en_US'):
@@ -227,10 +235,11 @@ class FloatTest(unittest.TestCase):
 
 class DecimalTest(unittest.TestCase):
     def setUp(self):
+        set_locale(locale.LC_NUMERIC, 'C')
         self.conv = converter.get_converter(Decimal)
 
     def tearDown(self):
-        set_locale(locale.LC_ALL, 'C')
+        set_locale(locale.LC_NUMERIC, 'C')
 
     def testFromString(self):
         self.assertEqual(self.conv.from_string('-2.5'), Decimal('-2.5'))
@@ -264,8 +273,6 @@ class DecimalTest(unittest.TestCase):
         self.assertEqual(self.conv.as_string(Decimal('-0.123456789')), '-0,123456789')
         self.assertEqual(self.conv.as_string(Decimal('10000000')), '10000000,0')
         self.assertEqual(self.conv.as_string(Decimal('10000000.0')), '10000000,0')
-
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -452,6 +452,7 @@ class currency(Decimal):
             conv = locale.localeconv()
             currency_symbol = conv.get('currency_symbol')
             text = value.strip(currency_symbol)
+            text = filter_locale(text, monetary=True)
             value = currency._converter.from_string(text)
             if value == ValueUnset:
                 raise InvalidOperation
@@ -601,7 +602,8 @@ def format_price(value, symbol=True, precision=None):
 
     return currency(value).format(symbol, precision)
 
-def filter_locale(value):
+
+def filter_locale(value, monetary=False):
     """
     Removes the locale specific data from the value string.
     Currently we only remove the thousands separator and
@@ -609,21 +611,14 @@ def filter_locale(value):
     The returned value of this function can safely be passed to float()
 
     @param value: value to convert
+    @param monetary: if we should treat it as monetary data or not
     @returns: the value without locale specific data
     """
 
-    conv = locale.localeconv()
+    def _filter_thousands_sep(value, thousands_sep):
+        if not thousands_sep:
+            return value
 
-    # Check so we only have one decimal point
-    decimal_point = conv["decimal_point"]
-    decimal_points = value.count(decimal_point)
-    if decimal_points > 1:
-        raise ValidationError(
-            _('You have more than one decimal point ("%s") '
-              ' in your number "%s"' % (decimal_point, value)))
-
-    thousands_sep = conv["thousands_sep"]
-    if thousands_sep:
         # Check so we don't have any thousand separators to the right
         # of the decimal point
         th_sep_count = value.count(thousands_sep)
@@ -648,10 +643,28 @@ def filter_locale(value):
         for part in parts[1:]:
             if len(part) != 3:
                 raise ValidationError(_("Inproperly placed thousand "
-                                        "separators"))
+                                        "separators: %r" % (parts,)))
 
         # Remove all thousand separators
-        value = value.replace(thousands_sep, '')
+        return value.replace(thousands_sep, '')
+
+    conv = locale.localeconv()
+
+    # Check so we only have one decimal point
+    decimal_point = conv["decimal_point"]
+    decimal_points = value.count(decimal_point)
+    if decimal_points > 1:
+        raise ValidationError(
+            _('You have more than one decimal point ("%s") '
+              ' in your number "%s"' % (decimal_point, value)))
+
+    if monetary:
+        sep = conv["mon_thousands_sep"]
+    else:
+        sep = conv["thousands_sep"]
+
+    if sep and sep in value:
+        value = _filter_thousands_sep(value, sep)
 
     # Replace all decimal points with .
     if decimal_point != '.':
