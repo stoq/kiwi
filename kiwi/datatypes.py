@@ -620,7 +620,7 @@ def filter_locale(value):
     if decimal_points > 1:
         raise ValidationError(
             _('You have more than one decimal point ("%s") '
-              ' in your number "%s"') % (decimal_point, value))
+              ' in your number "%s"' % (decimal_point, value)))
 
     thousands_sep = conv["thousands_sep"]
     if thousands_sep:
