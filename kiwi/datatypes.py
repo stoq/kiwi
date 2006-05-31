@@ -651,7 +651,10 @@ def filter_locale(value, monetary=False):
     conv = locale.localeconv()
 
     # Check so we only have one decimal point
-    decimal_point = conv["decimal_point"]
+    if monetary:
+        decimal_point = conv["mon_decimal_point"]
+    else:
+        decimal_point = conv["decimal_point"]
     decimal_points = value.count(decimal_point)
     if decimal_points > 1:
         raise ValidationError(
