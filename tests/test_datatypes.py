@@ -80,14 +80,14 @@ class DateTest(unittest.TestCase):
 
 class CurrencyTest(unittest.TestCase):
     def setUp(self):
-        set_locale(locale.LC_MONETARY, 'C')
+        set_locale(locale.LC_ALL, 'C')
         self.conv = converter.get_converter(currency)
 
     def tearDown(self):
-        set_locale(locale.LC_MONETARY, 'C')
+        set_locale(locale.LC_ALL, 'C')
 
     def testFormatBR(self):
-        if not set_locale(locale.LC_MONETARY, 'pt_BR'):
+        if not set_locale(locale.LC_ALL, 'pt_BR'):
             return
 
         self.assertEqual(currency(100).format(), 'R$100')
@@ -102,7 +102,6 @@ class CurrencyTest(unittest.TestCase):
 
         # Sometimes it works, sometimes it doesn''10,000,000.0't
         #self.assertEqual(self.conv.from_string('0,5'), currency('0.5'))
-
 
     def testFormatUS(self):
         if not set_locale(locale.LC_MONETARY, 'en_US'):
