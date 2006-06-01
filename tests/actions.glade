@@ -1,97 +1,97 @@
 <?xml version="1.0" ?>
 <glade-interface>
-    <object class="GtkUIManager" id="uimanager">
+    <widget class="GtkUIManager" id="uimanager">
         <child>
-            <object class="GtkActionGroup" id="DefaultActions">
+            <widget class="GtkActionGroup" id="DefaultActions">
                 <child>
-                    <object class="GtkAction" id="FileMenu">
+                    <widget class="GtkAction" id="FileMenu">
                         <property name="label">_File</property>
                         <property name="tooltip"></property>
                         <property name="callback"></property>
                         <property name="accelerator"></property>
-                    </object>
+                    </widget>
                 </child>
                 <child>
-                    <object class="GtkAction" id="New">
+                    <widget class="GtkAction" id="New">
                         <property name="label">_New</property>
                         <property name="tooltip">Create a new file</property>
                         <property name="stock_id">gtk-new</property>
                         <property name="callback"></property>
                         <property name="accelerator">&lt;control&gt;N</property>
-                    </object>
+                    </widget>
                 </child>
                 <child>
-                    <object class="GtkAction" id="Open">
+                    <widget class="GtkAction" id="Open">
                         <property name="label">_Open</property>
                         <property name="tooltip">Open a file</property>
                         <property name="stock_id">gtk-open</property>
                         <property name="callback"></property>
                         <property name="accelerator">&lt;control&gt;O</property>
-                    </object>
+                    </widget>
                 </child>
                 <child>
-                    <object class="GtkAction" id="Save">
+                    <widget class="GtkAction" id="Save">
                         <property name="label">_Save</property>
                         <property name="tooltip">Save a file</property>
                         <property name="stock_id">gtk-save</property>
                         <property name="callback"></property>
                         <property name="accelerator">&lt;control&gt;S</property>
-                    </object>
+                    </widget>
                 </child>
                 <child>
-                    <object class="GtkAction" id="SaveAs">
+                    <widget class="GtkAction" id="SaveAs">
                         <property name="label">Save _as</property>
                         <property name="tooltip">Save with a differente name</property>
                         <property name="stock_id">gtk-save-as</property>
                         <property name="callback"></property>
                         <property name="accelerator"></property>
-                    </object>
+                    </widget>
                 </child>
                 <child>
-                    <object class="GtkAction" id="Quit">
+                    <widget class="GtkAction" id="Quit">
                         <property name="label">_Quit</property>
                         <property name="tooltip">Quit the program</property>
                         <property name="stock_id">gtk-quit</property>
                         <property name="callback"></property>
                         <property name="accelerator">&lt;control&gt;Q</property>
-                    </object>
+                    </widget>
                 </child>
                 <child>
-                    <object class="GtkAction" id="EditMenu">
+                    <widget class="GtkAction" id="EditMenu">
                         <property name="label">_Edit</property>
                         <property name="tooltip"></property>
                         <property name="callback"></property>
                         <property name="accelerator"></property>
-                    </object>
+                    </widget>
                 </child>
                 <child>
-                    <object class="GtkAction" id="Copy">
+                    <widget class="GtkAction" id="Copy">
                         <property name="label">_Copy</property>
                         <property name="tooltip">Copy selected object into the clipboard</property>
                         <property name="stock_id">gtk-copy</property>
                         <property name="callback"></property>
                         <property name="accelerator">&lt;control&gt;C</property>
-                    </object>
+                    </widget>
                 </child>
                 <child>
-                    <object class="GtkAction" id="Cut">
+                    <widget class="GtkAction" id="Cut">
                         <property name="label">C_ut</property>
                         <property name="tooltip">Cut selected object into the clipboard</property>
                         <property name="stock_id">gtk-cut</property>
                         <property name="callback"></property>
                         <property name="accelerator">&lt;control&gt;X</property>
-                    </object>
+                    </widget>
                 </child>
                 <child>
-                    <object class="GtkAction" id="Paste">
+                    <widget class="GtkAction" id="Paste">
                         <property name="label">_Paste</property>
                         <property name="tooltip">Paste object from the Clipboard</property>
                         <property name="stock_id">gtk-paste</property>
                         <property name="callback"></property>
                         <property name="accelerator">&lt;control&gt;V</property>
-                    </object>
+                    </widget>
                 </child>
-            </object>
+            </widget>
         </child>
 	<ui id="initial-state"><![CDATA[<ui>
         <menubar action="menubar1" name="menubar1">
@@ -119,7 +119,7 @@
         <toolitem action="Paste" name="Paste"/>
         </toolbar>
         </ui>]]></ui>
-    </object>
+    </widget>
     <widget class="GtkWindow" id="window1">
         <property name="title" translatable="True"></property>
         <property name="role"></property>
