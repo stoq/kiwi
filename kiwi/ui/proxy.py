@@ -137,6 +137,16 @@ class Proxy:
             IValidatableProxyWidget.providedBy(widget))
         widget.set_data('content-changed-id', connection_id)
 
+        connection_id = widget.connect(
+            'notify::visible',
+            self._on_widget__notify)
+        widget.set_data('notify-visible-id', connection_id)
+
+        connection_id = widget.connect(
+            'notify::sensitive',
+            self._on_widget__notify)
+        widget.set_data('notify-sensitive-id', connection_id)
+
         model_attributes = self._model_attributes
         # save this widget in our map
         if (attribute in model_attributes and
@@ -206,6 +216,10 @@ class Proxy:
 
         # Call global update hook
         self.proxy_updated(widget, attribute, value)
+
+    # notify::sensitive and notify::visible are connected here
+    def _on_widget__notify(self, widget, pspec):
+        widget.emit('validation-changed', widget.is_valid())
 
     # Properties
 
@@ -362,8 +376,10 @@ class Proxy:
 
         widget = self._model_attributes.pop(name)
         if IValidatableProxyWidget.providedBy(widget):
-            connection_id = widget.get_data('content-changed-id')
-            widget.disconnect(connection_id)
+            for data_name in ('content-changed-id',
+                              'notify-visible-id',
+                              'notify-sensitive-id'):
+                widget.disconnect(widget.get_data(data_name))
 
     # Backwards compatibility
 

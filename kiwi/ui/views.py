@@ -592,9 +592,9 @@ class SlaveView(gobject.GObject):
         # call slave's callback
         slave.on_attach(self)
 
-        slave.connect_object('validation-changed',
-                             self._on_child__validation_changed,
-                             name)
+        slave.connect('validation-changed',
+                      self._on_slave__validation_changed,
+                      name)
 
         for notebook in self._notebooks:
             for child in notebook.get_children():
@@ -739,9 +739,9 @@ class SlaveView(gobject.GObject):
                 continue
 
             try:
-                widget.connect_object('validation-changed',
-                                      self._on_child__validation_changed,
-                                      widget_name)
+                widget.connect('validation-changed',
+                               self._on_child__validation_changed,
+                               widget_name)
             except TypeError:
                 raise AssertionError("%r does not have a validation-changed "
                                      "signal." % widget)
@@ -754,10 +754,16 @@ class SlaveView(gobject.GObject):
     # Validation
     #
 
-    def _on_child__validation_changed(self, name, value):
+    def _on_child__validation_changed(self, child, value, name):
         # Children of the view, eg slaves or widgets are connected to
         # this signal. When validation changes of a validatable child
         # this callback is called
+        if isinstance(child, gtk.Widget):
+            # Force invisible and insensitive widgets to be valid
+            if (not child.get_property('visible') or
+                not child.get_property('sensitive')):
+                value = True
+
         self._validation[name] = value
 
         self.check_and_notify_validity()

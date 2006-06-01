@@ -202,6 +202,11 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         @returns:     validated data or ValueUnset if it failed
         """
 
+        # If we're not visible or sensitive return a blank value
+        if (not self.get_property('visible') or
+            not self.get_property('sensitive')):
+            return ValueUnset
+
         try:
             data = self.read()
             log.debug('Read %r for %s' %  (data, self.model_attribute))
