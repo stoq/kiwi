@@ -137,15 +137,16 @@ class Proxy:
             IValidatableProxyWidget.providedBy(widget))
         widget.set_data('content-changed-id', connection_id)
 
-        connection_id = widget.connect(
-            'notify::visible',
-            self._on_widget__notify)
-        widget.set_data('notify-visible-id', connection_id)
+        if IValidatableProxyWidget.providedBy(widget):
+            connection_id = widget.connect(
+                'notify::visible',
+                self._on_widget__notify)
+            widget.set_data('notify-visible-id', connection_id)
 
-        connection_id = widget.connect(
-            'notify::sensitive',
-            self._on_widget__notify)
-        widget.set_data('notify-sensitive-id', connection_id)
+            connection_id = widget.connect(
+                'notify::sensitive',
+                self._on_widget__notify)
+            widget.set_data('notify-sensitive-id', connection_id)
 
         model_attributes = self._model_attributes
         # save this widget in our map
@@ -375,9 +376,10 @@ class Proxy:
             raise TypeError("there is no widget called %s" % name)
 
         widget = self._model_attributes.pop(name)
+        widget.disconnect(widget.get_data('content-changed-id'))
+
         if IValidatableProxyWidget.providedBy(widget):
-            for data_name in ('content-changed-id',
-                              'notify-visible-id',
+            for data_name in ('notify-visible-id',
                               'notify-sensitive-id'):
                 widget.disconnect(widget.get_data(data_name))
 
