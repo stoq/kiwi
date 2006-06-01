@@ -93,6 +93,7 @@ class BaseModelTest:
         self.combo.prefill([('foo', 0),
                             ('bar', 1)])
         proxy.add_widget('attr', self.combo)
+        self.combo.show()
 
     def testSelectItemByData(self):
         self.combo.select_item_by_data(1)

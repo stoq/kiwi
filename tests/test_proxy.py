@@ -22,6 +22,7 @@ class FakeView(object):
 
         setattr(self, name, widget)
         self.widgets.append(name)
+        widget.show()
         return widget
 
     def handler_block(self, *args):
@@ -49,6 +50,7 @@ class TestProxy(unittest.TestCase):
         self.view.add('entry', str, ProxyEntry)
         self.view.add('label', str, ProxyLabel)
         self.view.add('spinbutton', int, ProxySpinButton)
+
         self.view.add('textview', str, ProxyTextView)
         self.radio_first = self.view.add('radiobutton', str, ProxyRadioButton)
         self.radio_first.set_property('data_value', 'first')
@@ -58,9 +60,11 @@ class TestProxy(unittest.TestCase):
 
         self.comboentry = self.view.add('comboentry', str, ProxyComboEntry)
         self.comboentry.prefill(['CE1','CE2','CE3'])
+        self.comboentry.show()
 
         self.combobox = self.view.add('combobox', str, ProxyComboBox)
         self.combobox.prefill(['CB1','CB2','CB3'])
+        self.combobox.show()
 
         self.model = Model()
         self.proxy = Proxy(self.view, self.model, self.view.widgets)
