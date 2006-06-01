@@ -593,7 +593,7 @@ class SlaveView(gobject.GObject):
         slave.on_attach(self)
 
         slave.connect('validation-changed',
-                      self._on_slave__validation_changed,
+                      self._on_child__validation_changed,
                       name)
 
         for notebook in self._notebooks:
