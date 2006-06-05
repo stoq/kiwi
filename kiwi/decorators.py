@@ -44,7 +44,14 @@ class deprecated(object):
             self._log.warn("%s is deprecated, use %s instead" %
                            (func.__name__, self._new))
             return func(*args, **kwargs)
-        wrapper.__name__ = func.__name__
+        try:
+            wrapper.__name__ = func.__name__
+        except TypeError, e:
+            # __name__ is readonly in Python 2.3
+            if e.args and e.args[0].find('readonly') != -1:
+                pass
+            else:
+                raise
         return wrapper
 
 class signal_block(object):
