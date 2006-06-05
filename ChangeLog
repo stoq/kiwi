@@ -1,3 +1,10 @@
+2006-06-05  Johan Dahlin  <jdahlin@async.com.br>
+
+	* tests/test_datatypes.py: Import Decimal from datatypes so the tests
+	will pass on 2.3
+
+	* kiwi/datatypes.py: Make decimal support conditional
+
 2006-06-01  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/proxy.py:

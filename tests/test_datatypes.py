@@ -1,9 +1,9 @@
-from decimal import Decimal
 import datetime
 import unittest
 import locale
 
-from kiwi.datatypes import currency, converter, ValidationError, ValueUnset
+from kiwi.datatypes import currency, converter, ValidationError, ValueUnset, \
+     Decimal
 
 import utils
 

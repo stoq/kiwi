@@ -37,7 +37,6 @@ Simple example:
 """
 
 import datetime
-from decimal import Decimal, InvalidOperation
 import gettext
 import locale
 import sys
@@ -48,6 +47,15 @@ from kiwi import ValueUnset
 __all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
 
 _ = lambda m: gettext.dgettext('kiwi', m)
+
+try:
+    from decimal import Decimal, InvalidOperation
+    HAVE_DECIMAL = True
+except:
+    HAVE_DECIMAL = False
+    class Decimal(float):
+        pass
+    InvalidOperation = ValueError
 
 number = (int, float, long, Decimal)
 
@@ -456,7 +464,7 @@ class currency(Decimal):
             value = currency._converter.from_string(text)
             if value == ValueUnset:
                 raise InvalidOperation
-        elif isinstance(value, float):
+        elif HAVE_DECIMAL and isinstance(value, float):
             print ('Warning: losing precision converting float %r to currency'
                    % value)
             value = str(value)
