@@ -293,7 +293,9 @@ class Library(Environment):
 
         # Gtk+ only supports utf-8, it makes no sense to support
         # other encodings in kiwi it self
-        gettext.bind_textdomain_codeset(domain, 'utf-8')
+        # This is not present in Python 2.3
+        if hasattr(gettext, 'bind_textdomain_codeset'):
+            gettext.bind_textdomain_codeset(domain, 'utf-8')
 
     def set_application_domain(self, domain):
         """
