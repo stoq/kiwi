@@ -105,7 +105,8 @@ class Settable:
     def __init__(self, **kw):
         self._attrs = kw.keys()
         self._attrs.sort()
-        self.__dict__.update(**kw)
+        for k, v in kw.iteritems():
+            setattr(self, k, v)
 
     def __repr__(self):
         return '<%s %s>' % (self.__class__.__name__,
