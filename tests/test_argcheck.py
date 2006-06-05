@@ -1,8 +1,8 @@
 import datetime
-from decimal import Decimal
 import unittest
 
 from kiwi.argcheck import argcheck, number, percent
+from kiwi.datatypes import Decimal
 
 class ArgTest(unittest.TestCase):
     def testOneArg(self):
