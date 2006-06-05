@@ -41,7 +41,10 @@ def create():
         full = os.path.join(uidir, filename)
 
         func = lambda self, filename=filename: test_filename(rootdir, filename)
-        func.__name__ = name
+        try:
+            func.__name__ = name
+        except TypeError:
+            pass
         tests[name] = func
 
     return type('TestUI', (unittest.TestCase,), tests)
