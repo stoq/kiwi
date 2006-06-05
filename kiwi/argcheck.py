@@ -79,7 +79,7 @@ class argcheck(object):
     def __init__(self, *types):
         for argtype in types:
             if not isinstance(argtype, (type, ClassType)):
-                raise TypeError("must be a type or class instance")
+                raise TypeError("must be a type or class instance, not %r" % argtype)
         self.types = types
 
     def enable(cls):
