@@ -27,7 +27,6 @@
 """High level wrapper for GtkTreeView"""
 
 import datetime
-from decimal import Decimal
 import gettext
 
 import gobject
@@ -35,7 +34,7 @@ import gtk
 from gtk import gdk
 
 from kiwi.accessor import kgetattr
-from kiwi.datatypes import converter, currency, number
+from kiwi.datatypes import converter, currency, number, Decimal
 from kiwi.log import Logger
 from kiwi.python import slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
