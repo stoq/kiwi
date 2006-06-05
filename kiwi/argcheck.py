@@ -174,7 +174,13 @@ class argcheck(object):
 
                 self.extra_check(arg_names, types, args, kwargs)
             return func(*args, **kwargs)
-        wrapper.__name__ = func.__name__
+
+        # Python 2.3 does not support assignments to __name__
+        try:
+            wrapper.__name__ = func.__name__
+        except TypeError:
+            pass
+
         return wrapper
 
     def extra_check(self, names, types, args, kwargs):
