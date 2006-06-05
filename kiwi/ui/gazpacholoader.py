@@ -25,7 +25,6 @@
 """Gazpacho integration: loader and extensions"""
 
 import datetime
-from decimal import Decimal
 import gettext
 import os
 import warnings
@@ -40,7 +39,7 @@ from gazpacho.properties import prop_registry, CustomProperty, StringType
 from gazpacho.widgets.base.base import ContainerAdaptor
 from gazpacho.widgets.base.box import BoxAdaptor
 
-from kiwi.datatypes import currency
+from kiwi.datatypes import currency, Decimal
 from kiwi.environ import environ
 from kiwi.log import Logger
 from kiwi.python import disabledeprecationcall
