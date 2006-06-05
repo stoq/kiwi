@@ -42,9 +42,9 @@ class ArgTest(unittest.TestCase):
         class Payment(object):
             pass
 
-        @argcheck(Payment, str)
         def pay(payment, description):
             pass
+        pay = argcheck(Payment, str)(pay)
         pay(Payment(), 'foo')
         self.assertRaises(TypeError, 'bar', 'bar')
         self.assertRaises(TypeError, Payment(), Payment())
@@ -54,22 +54,23 @@ class ArgTest(unittest.TestCase):
             pass
 
         class Test:
-            @argcheck(int, int)
             def method1(self, foo, bar):
                 return foo + bar
+            method1 = argcheck(int, int)(method1)
 
-            @argcheck(Custom, int, datetime.datetime, int, int,
-                      float, float)
             def method2(self, a, b, c, d, e, f, g=0.0):
                 return g
+            method2 = argcheck(Custom, int, datetime.datetime,
+                               int, int, float, float)(method2)
 
-            @argcheck(str, datetime.datetime, datetime.datetime)
             def method3(self, s, date=None, date2=None):
                 return
+            method3 = argcheck(str, datetime.datetime,
+                               datetime.datetime)(method3)
 
-            @argcheck(percent)
             def method4(self, n):
                 return n
+            method4 = argcheck(percent)(method4)
 
         t = Test()
         self.assertEqual(t.method1(1, 2), 3)
@@ -95,18 +96,18 @@ class ArgTest(unittest.TestCase):
         self.assertRaises(ValueError, t.method4, 101)
 
     def testNone(self):
-        @argcheck(datetime.datetime)
         def func_none(date=None):
             return date
+        func_none = argcheck(datetime.datetime)(func_none)
         func_none()
         func_none(None)
         self.assertRaises(TypeError, func_none, True)
         self.assertRaises(TypeError, func_none, date=True)
 
-        @argcheck(str, datetime.datetime, datetime.datetime)
         def func_none2(s, date=None, date2=None):
             return date
-
+        func_none2 = argcheck(str, datetime.datetime,
+                              datetime.datetime)(func_none2)
         func_none2('foo')
         func_none2('bar', None)
         func_none2('baz', None, None)
@@ -121,18 +122,18 @@ class ArgTest(unittest.TestCase):
 
 
     def testNumber(self):
-        @argcheck(number)
         def func(n):
             return n
+        func = argcheck(number)(func)
         self.assertEqual(func(0), 0)
         self.assertEqual(func(0L), 0L)
         self.assertEqual(func(0.0), 0.0)
         self.assertEqual(func(Decimal(0)), Decimal(0))
 
     def testPercent(self):
-        @argcheck(percent)
         def func(n):
             return n
+        func = argcheck(percent)(func)
         self.assertEqual(func(50), 50)
         self.assertEqual(func(50L), 50L)
         self.assertEqual(func(50.0), 50.0)
@@ -148,9 +149,9 @@ class ArgTest(unittest.TestCase):
 
     def testDisable(self):
         argcheck.disable()
-        @argcheck(str)
         def func(s):
             pass
+        func = argcheck(str)(func)
         func(10)
         argcheck.enable()
 
