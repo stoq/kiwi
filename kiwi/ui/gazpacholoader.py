@@ -31,7 +31,12 @@ import warnings
 
 import gobject
 import gtk
-from gazpacho.editor import PropertyCustomEditor
+
+try:
+    from gazpacho.propertyeditor import PropertyCustomEditor
+except ImportError:
+    from gazpacho.editor import PropertyCustomEditor
+
 from gazpacho.loader.loader import ObjectBuilder
 from gazpacho.loader.custom import Adapter, ComboBoxAdapter, \
      PythonWidgetAdapter, adapter_registry
