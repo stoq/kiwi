@@ -51,6 +51,7 @@ _ = lambda m: gettext.dgettext('kiwi', m)
 try:
     from decimal import Decimal, InvalidOperation
     HAVE_DECIMAL = True
+    Decimal, InvalidOperation # pyflakes
 except:
     HAVE_DECIMAL = False
     class Decimal(float):
