@@ -31,5 +31,4 @@ entry.prefill([('Brazil', 186),
 vbox.pack_start(entry)
 
 win.show_all()
-
 gtk.main()
