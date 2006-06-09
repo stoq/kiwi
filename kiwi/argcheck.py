@@ -169,6 +169,10 @@ class argcheck(object):
 
                 # Keyword arguments
                 for name, arg in kwargs.items():
+                    if not name in kwarg_types:
+                        raise TypeError(
+                            "%s() got an unexpected keyword argument '%s'"
+                            % (func.__name__, name))
                     self._type_check(arg, kwarg_types[name], name,
                                      kwarg_defaults[name])
 
