@@ -1,6 +1,6 @@
 import os
 import sys
-import time3
+import time
 
 try:
     import pygtk
