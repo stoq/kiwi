@@ -437,12 +437,14 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     def __init__(self, columns=[],
                  objects=None,
                  mode=gtk.SELECTION_BROWSE,
-                 sortable=False):
+                 sortable=False,
+                 model=None):
         """
         @param columns:       a list of L{Column}s
-        @param objects: a list of objects to be inserted or None
+        @param objects:       a list of objects to be inserted or None
         @param mode:          selection mode
         @param sortable:      whether the user can sort the list
+        @param model:         gtk.TreeModel to use or None to create one
         """
         # allow to specify only one column
         if isinstance(columns, Column):
@@ -474,7 +476,9 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
         self.set_shadow_type(gtk.SHADOW_ETCHED_IN)
 
-        self._model = gtk.ListStore(object)
+        if not model:
+            model = gtk.ListStore(object)
+        self._model = model
         self._model.connect('row-inserted', self._on_model__row_inserted)
         self._model.connect('row-deleted', self._on_model__row_deleted)
         self._treeview = gtk.TreeView(self._model)
@@ -1482,6 +1486,63 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self._treeview.set_headers_visible(value)
 
 type_register(ObjectList)
+
+class ObjectRow(object):
+    def __init__(self, iter):
+        self.iter = iter
+
+class ObjectTree(ObjectList):
+    def __init__(self, columns=[], objects=None, mode=gtk.SELECTION_BROWSE,
+                 sortable=False, model=None):
+        if not model:
+            model = gtk.TreeStore(object)
+        ObjectList.__init__(self, columns, objects, mode, sortable, model)
+
+    def _append_internal(self, parent, instance, select, prepend):
+        if parent is not None and not isinstance(parent, ObjectRow):
+            raise TypeError("parent must be an ObjectRow or None")
+
+        # Freeze and save original selection mode to avoid blinking
+        self._treeview.freeze_notify()
+
+        if parent:
+            parent_iter = parent.iter
+        else:
+            parent_iter = None
+
+        if prepend:
+            row_iter = self._model.prepend(parent_iter, (instance,))
+        else:
+            row_iter = self._model.append(parent_iter, (instance,))
+
+        self._iters[id(instance)] = row_iter
+
+        if self._autosize:
+            self._treeview.columns_autosize()
+
+        if select:
+            self._select_and_focus_row(row_iter)
+        self._treeview.thaw_notify()
+
+        return ObjectRow(row_iter)
+
+    def append(self, parent, instance, select=False):
+        """
+        @param parent: ObjectRow of the parent
+        @param instance: the instance to be added
+        @param select: select the row
+        """
+        return self._append_internal(parent, instance, select, prepend=False)
+
+    def prepend(self, parent, instance, select=False):
+        """
+        @param parent: ObjectRow of the parent
+        @param instance: the instance to be added
+        @param select: select the row
+        """
+        return self._append_internal(parent, instance, select, prepend=True)
+
+type_register(ObjectTree)
 
 class ListLabel(gtk.HBox):
     """I am a subclass of a GtkHBox which you can use if you want
