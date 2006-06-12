@@ -1,3 +1,15 @@
+2006-06-12  Ronaldo Maia  <romaia@async.com.br>
+	
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/framework/color/completion.py:
+	* kiwi/ui/comboentry.py:
+	* kiwi/ui/entry.py:
+	* kiwi/ui/entrycompletion.py:
+	* kiwi/ui/widgets/entry.py:
+	Add KiwiEntryCompletion, that suports custom popup window and treeview, and
+	make ComboEntry use this completion.	
+
 2006-06-05  Johan Dahlin  <jdahlin@async.com.br>
 
 	* tests/test_datatypes.py: Import Decimal from datatypes so the tests
