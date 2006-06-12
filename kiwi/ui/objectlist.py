@@ -73,8 +73,9 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('radio', bool, default=False)
     gproperty('cache', bool, default=False)
     gproperty('use-stock', bool, default=False)
+    gproperty('use-markup', bool, default=False)
     gproperty('icon-size', gtk.IconSize, default=gtk.ICON_SIZE_MENU)
-    gproperty('editable_attribute', str)
+    gproperty('editable-attribute', str)
     #gproperty('title_pixmap', str)
 
     # This can be set in subclasses, to be able to allow custom
@@ -144,6 +145,7 @@ class Column(PropertyObject, gobject.GObject):
             specified.
         @keyword editable_attribute: a string which is the attribute
             which should decide if the cell is editable or not.
+        @keyword use_markup: If true, the text will be rendered with markup
         @keyword title_pixmap: (TODO) if set to a filename a pixmap will be
             used *instead* of the title set. The title string will still be
             used to identify the column in the column selection and in a
@@ -885,7 +887,10 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                                     basestring, number,
                                     currency)):
             renderer = gtk.CellRendererText()
-            prop = 'text'
+            if column.use_markup:
+                prop = 'markup'
+            else:
+                prop = 'text'
             if column.editable:
                 renderer.set_property('editable', True)
                 renderer.connect('edited', self._on_renderer_text__edited,

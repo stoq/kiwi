@@ -1,5 +1,7 @@
 2006-06-12  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/objectlist.py: Add use-markup property on column
+
 	* examples/list/tree.py:
 	Add a new example
 	
