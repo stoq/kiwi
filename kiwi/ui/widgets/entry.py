@@ -181,7 +181,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
                 return self._from_string(text)
             except ValidationError:
                 # Do not consider masks which only displays static
-                # characters invalid, instead return an empty string
+                # characters invalid, instead return None
                 if self.get_mask() and text == self.get_empty_mask():
                     return
                 else:
