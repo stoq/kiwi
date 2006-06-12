@@ -183,7 +183,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
                 # Do not consider masks which only displays static
                 # characters invalid, instead return an empty string
                 if self.get_mask() and text == self.get_empty_mask():
-                    return ""
+                    return
                 else:
                     raise
         elif mode == ENTRY_MODE_DATA:
