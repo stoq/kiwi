@@ -283,13 +283,13 @@ def kgetattr(model,
                 obj = data1(obj)
             elif icode == FAST_TUPLE_ACCESS:
                 obj = getattr(obj, data2, default)
-                if default is _AttrUnset:
+                if obj is _AttrUnset:
                     raise AttributeError(
                         "%r object has no attribute %r" % (obj, data2))
             elif icode == TUPLE_ACCESS:
                 o = data1()
                 obj = getattr(o, data2, default)
-                if default is _AttrUnset:
+                if obj is _AttrUnset:
                     raise AttributeError(
                         "%r object has no attribute %r" % (o, data2))
             elif icode == NWR_TUPLE_ACCESS:
