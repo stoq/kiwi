@@ -664,11 +664,13 @@ def filter_locale(value, monetary=False):
         decimal_point = conv["mon_decimal_point"]
     else:
         decimal_point = conv["decimal_point"]
-    decimal_points = value.count(decimal_point)
-    if decimal_points > 1:
-        raise ValidationError(
-            _('You have more than one decimal point ("%s") '
-              ' in your number "%s"' % (decimal_point, value)))
+
+    if decimal_point != '':
+        decimal_points = value.count(decimal_point)
+        if decimal_points > 1:
+            raise ValidationError(
+                _('You have more than one decimal point ("%s") '
+                  ' in your number "%s"' % (decimal_point, value)))
 
     if monetary:
         sep = conv["mon_thousands_sep"]
@@ -679,6 +681,6 @@ def filter_locale(value, monetary=False):
         value = _filter_thousands_sep(value, sep)
 
     # Replace all decimal points with .
-    if decimal_point != '.':
+    if decimal_point != '.' and decimal_point != '':
         value = value.replace(decimal_point, '.')
     return value
