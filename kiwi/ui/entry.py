@@ -33,6 +33,7 @@ import pango
 import gtk
 
 from kiwi.ui.icon import IconEntry
+from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 
 class MaskError(Exception):
@@ -88,6 +89,8 @@ class KiwiEntry(PropertyObject, gtk.Entry):
     gproperty("mask", str, default='')
 
     def __init__(self):
+        self._completion = None
+
         gtk.Entry.__init__(self)
         PropertyObject.__init__(self)
 
@@ -150,6 +153,17 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         return ''
 
     # Public API
+    def set_text(self, text):
+        completion = self.get_completion()
+
+        if isinstance(completion, KiwiEntryCompletion):
+            self.handler_block(completion.changed_id)
+
+        gtk.Entry.set_text(self, text)
+
+        if isinstance(completion, KiwiEntryCompletion):
+            self.handler_unblock(completion.changed_id)
+
     def set_mask(self, mask):
         """
         Sets the mask of the Entry.
@@ -364,8 +378,32 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         self.set_completion(completion)
         return completion
 
+    def get_completion(self):
+        return self._completion
+
     def set_completion(self, completion):
-        gtk.Entry.set_completion(self, completion)
+        if not isinstance(completion, KiwiEntryCompletion):
+            gtk.Entry.set_completion(self, completion)
+            completion.set_model(gtk.ListStore(str, object))
+            completion.set_text_column(0)
+            self._completion = gtk.Entry.get_completion(self)
+            return
+
+        old = self.get_completion()
+        if old == completion:
+            return completion
+
+        if old and isinstance(old, KiwiEntryCompletion):
+            if old.completion_timeout:
+                gobject.source_remove(old.completion_timeout)
+                old.completion_timeout = 0
+
+            old._disconnect_completion_signals()
+
+        self._completion = completion
+
+        # First, tell the completion what entry it will complete
+        completion.set_entry(self)
         completion.set_model(gtk.ListStore(str, object))
         completion.set_text_column(0)
         self.set_exact_completion(False)
@@ -374,21 +412,21 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         self._current_object = None
         return completion
 
-    def _completion_exact_match_func(self, completion, _, iter):
+    def _completion_exact_match_func(self, completion, key, iter):
         model = completion.get_model()
         if not len(model):
             return
 
         content = model[iter][COL_TEXT]
-        return self.get_text().startswith(content)
+        return key.startswith(content)
 
-    def _completion_normal_match_func(self, completion, _, iter):
+    def _completion_normal_match_func(self, completion, key, iter):
         model = completion.get_model()
         if not len(model):
             return
 
         content = model[iter][COL_TEXT].lower()
-        return self.get_text().lower() in content
+        return key.lower() in content
 
     def _on_completion__match_selected(self, completion, model, iter):
         if not len(model):

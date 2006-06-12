@@ -27,6 +27,7 @@ import gtk
 from gtk import gdk, keysyms
 
 from kiwi.ui.entry import KiwiEntry
+from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import gsignal, type_register
 
 class _ComboEntryPopup(gtk.Window):
@@ -42,6 +43,8 @@ class _ComboEntryPopup(gtk.Window):
         # default value from other toolkits
         self._visible_rows = 10
         self._initial_text = None
+        self._popping_up = False
+        self._filter_model = None
 
         frame = gtk.Frame()
         frame.set_shadow_type(gtk.SHADOW_ETCHED_OUT)
@@ -80,16 +83,29 @@ class _ComboEntryPopup(gtk.Window):
         self.set_resizable(False)
         self.set_screen(comboentry.get_screen())
 
-    def popup(self, text=None):
+    def popup(self, text=None, filter=False):
         """
         Shows the list of options. And optionally selects an item
         @param text: text to select
+        @param filter: filter the list of options. A filter_model must be
+        set using L{set_model}()
         """
         combo = self._comboentry
         if not (combo.flags() & gtk.REALIZED):
             return
 
         treeview = self._treeview
+
+        if filter and self._filter_model:
+            model = self._filter_model
+        else:
+            model = self._model
+
+        if not len(model):
+            return
+
+        treeview.set_model(model)
+
         toplevel = combo.get_toplevel()
         if isinstance(toplevel, gtk.Window) and toplevel.group:
             toplevel.group.add_window(self)
@@ -105,14 +121,23 @@ class _ComboEntryPopup(gtk.Window):
 
         treeview.set_hover_expand(True)
         selection = treeview.get_selection()
+        selection.unselect_all()
         if text:
-            for row in treeview.get_model():
+            for row in model:
                 if text in row:
                     selection.select_iter(row.iter)
                     treeview.scroll_to_cell(row.path, use_align=True,
                                             row_align=0.5)
                     treeview.set_cursor(row.path)
                     break
+
+        self._popping_up = True
+
+        if filter:
+            # do not grab if its a completion
+            return
+
+        # Grab window
         self.grab_focus()
 
         if not (self._treeview.flags() & gtk.HAS_FOCUS):
@@ -141,6 +166,10 @@ class _ComboEntryPopup(gtk.Window):
         self._label.set_text(text)
 
     def set_model(self, model):
+        if isinstance(model, gtk.TreeModelFilter):
+            self._filter_model = model
+            model = model.get_model()
+
         self._treeview.set_model(model)
         self._model = model
 
@@ -237,7 +266,8 @@ class _ComboEntryPopup(gtk.Window):
             self._sw.set_policy(gtk.POLICY_ALWAYS, vpolicy)
             pwidth, pheight = self.size_request()
 
-        rows = len(self._model)
+        rows = len(self._treeview.get_model())
+
         if rows > self._visible_rows:
             rows = self._visible_rows
             self._sw.set_policy(hpolicy, gtk.POLICY_ALWAYS)
@@ -277,10 +307,24 @@ class _ComboEntryPopup(gtk.Window):
         return x, y, width, height
 
     def get_selected_iter(self):
-        return self._selection.get_selected()[1]
+        model, treeiter = self._selection.get_selected()
+
+        # if the model currently being used is a TreeModelFiter, convert
+        # the iter to be a TreeModel iter (witch is what the user expects)
+        if isinstance(model, gtk.TreeModelFilter) and treeiter:
+            treeiter = model.convert_iter_to_child_iter(treeiter)
+        return treeiter
 
     def set_selected_iter(self, iter):
+        model = self._treeview.get_model()
+
+        # Since the user passed a TreeModel iter, if the model currently
+        # being used is a TreeModelFiter, convert it to be a TreeModelFiter
+        # iter
+        if isinstance(model, gtk.TreeModelFilter):
+            iter = model.convert_child_iter_to_iter(iter)
         self._selection.select_iter(iter)
+
 type_register(_ComboEntryPopup)
 
 class ComboEntry(gtk.HBox):
@@ -324,7 +368,9 @@ class ComboEntry(gtk.HBox):
         self._popup.connect('hide', self._on_popup__hide)
         self._popup.set_size_request(-1, 24)
 
-        completion = gtk.EntryCompletion()
+        completion = KiwiEntryCompletion()
+        completion.set_popup_window(self._popup)
+        completion.set_treeview(self._popup._treeview)
         self.entry.set_completion(completion)
         self.set_model(completion.get_model())
 
@@ -338,7 +384,9 @@ class ComboEntry(gtk.HBox):
     def _on_entry_completion__match_selected(self, completion, model, iter):
         # the iter we receive is specific to the tree model filter used
         # In the entry completion, convert it to an iter in the real model
-        self.set_active_iter(model.convert_iter_to_child_iter(iter))
+        if isinstance(model, gtk.TreeModelFilter):
+            iter = model.convert_iter_to_child_iter(iter)
+        self.set_active_iter(iter)
 
     def _on_entry__activate(self, entry):
         self.emit('activate')
@@ -385,7 +433,7 @@ class ComboEntry(gtk.HBox):
         self._popping_down = False
 
     def _on_popup__text_selected(self, popup, text):
-        self.entry.set_text(text)
+        self.set_text(text)
         popup.popdown()
         self.entry.grab_focus()
         self.entry.set_position(len(self.entry.get_text()))
@@ -415,13 +463,13 @@ class ComboEntry(gtk.HBox):
 
     def popup(self):
         """
-        Hide the popup window
+        Show the popup window
         """
         self._popup.popup(self.entry.get_text())
 
     def popdown(self):
         """
-        Show the popup window
+        Hide the popup window
         """
         self._popup.popdown()
 

@@ -27,7 +27,6 @@
 
 import datetime
 
-import gtk
 import pango
 
 from kiwi.datatypes import ValidationError, converter, number
@@ -166,7 +165,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         # Protect content-changed from being updated and issue
         # a manual emission afterwards
         self._block_changed = True
-        gtk.Entry.set_text(self, text)
+        KiwiEntry.set_text(self, text)
         self._block_changed = False
         self.emit('content-changed')
 
