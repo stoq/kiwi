@@ -207,7 +207,7 @@ class _IntConverter(BaseConverter):
         if value == '':
             return ValueUnset
 
-        conv = locale.localeconv()
+        conv = get_localeconv()
         thousands_sep = conv["thousands_sep"]
         # Remove all thousand separators, so int() won't barf at us
         if thousands_sep and thousands_sep in value:
@@ -273,7 +273,7 @@ class _FloatConverter(BaseConverter):
             # When format is '%g', if value is an integer, the result
             # will also be formated as an integer, so we add a '.0'
 
-            conv = locale.localeconv()
+            conv = get_localeconv()
             as_str +=  conv.get('decimal_point') + '0'
 
         return as_str
@@ -458,11 +458,17 @@ class currency(Decimal):
         @type value: string or number
         """
         if isinstance(value, str):
-            conv = locale.localeconv()
+            conv = get_localeconv()
             currency_symbol = conv.get('currency_symbol')
             text = value.strip(currency_symbol)
-            text = filter_locale(text, monetary=True)
-            value = currency._converter.from_string(text)
+            # if we cannot convert it using locale information, still try to
+            # create
+            try:
+                text = filter_locale(text, monetary=True)
+                value = currency._converter.from_string(text)
+            except ValidationError:
+                pass
+                
             if value == ValueUnset:
                 raise InvalidOperation
         elif HAVE_DECIMAL and isinstance(value, float):
@@ -479,7 +485,7 @@ class currency(Decimal):
     def format(self, symbol=True, precision=None):
         value = Decimal(self)
 
-        conv = locale.localeconv()
+        conv = get_localeconv()
 
         # Grouping (eg thousand separator) of integer part
         groups = conv.get('mon_grouping', [])[:]
@@ -547,13 +553,6 @@ class currency(Decimal):
                 cs_precedes = conv.get('n_cs_precedes', 1)
                 sep_by_space = conv.get('n_sep_by_space', 1)
 
-            # Patching glibc's output
-            # See http://sources.redhat.com/bugzilla/show_bug.cgi?id=1294
-            current_locale = locale.getlocale(locale.LC_MONETARY)
-            if current_locale[0] == 'pt_BR':
-                cs_precedes = 1
-                sep_by_space = 0
-
             if sep_by_space:
                 space = ' '
             else:
@@ -611,6 +610,30 @@ def format_price(value, symbol=True, precision=None):
 
     return currency(value).format(symbol, precision)
 
+def get_localeconv():
+    conv = locale.localeconv()
+
+    monetary_locale = locale.getlocale(locale.LC_MONETARY)
+    numeric_locale = locale.getlocale(locale.LC_NUMERIC)
+    # Patching glibc's output
+    # See http://sources.redhat.com/bugzilla/show_bug.cgi?id=1294
+    if monetary_locale[0] == 'pt_BR':
+        conv['p_cs_precedes'] = 1
+        conv['p_sep_by_space'] = 1
+
+    # Since locale 'C' doesn't have any information on monetary and numeric
+    # locale, use default en_US, so we can have formated numbers
+    if not monetary_locale[0]:
+        conv["negative_sign"] = '-'
+        conv["currency_symbol"] = '$'
+        conv['mon_thousands_sep'] = ''
+        conv['mon_decimal_point'] = '.'
+        conv['p_sep_by_space'] = 0
+    
+    if not numeric_locale[0]:
+        conv['decimal_point'] = '.'
+
+    return conv
 
 def filter_locale(value, monetary=False):
     """
@@ -657,7 +680,7 @@ def filter_locale(value, monetary=False):
         # Remove all thousand separators
         return value.replace(thousands_sep, '')
 
-    conv = locale.localeconv()
+    conv = get_localeconv()
 
     # Check so we only have one decimal point
     if monetary:

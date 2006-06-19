@@ -1,11 +1,10 @@
+import cPickle
 import datetime
 import unittest
 import locale
 
 from kiwi.datatypes import currency, converter, ValidationError, ValueUnset, \
      Decimal
-
-import utils
 
 def set_locale(category, name):
     # set the date format to the spanish one
@@ -90,10 +89,10 @@ class CurrencyTest(unittest.TestCase):
         if not set_locale(locale.LC_ALL, 'pt_BR'):
             return
 
-        self.assertEqual(currency(100).format(), 'R$100')
-        self.assertEqual(currency('123,45').format(), 'R$123,45')
-        self.assertEqual(currency(12345).format(), 'R$12.345')
-        self.assertEqual(currency(-100).format(), 'R$-100')
+        self.assertEqual(currency(100).format(), 'R$ 100')
+        self.assertEqual(currency('123,45').format(), 'R$ 123,45')
+        self.assertEqual(currency(12345).format(), 'R$ 12.345')
+        self.assertEqual(currency(-100).format(), 'R$ -100')
         try:
             c = currency('R$1.234.567,40')
         except:
@@ -123,6 +122,27 @@ class CurrencyTest(unittest.TestCase):
         self.assertEqual(self.conv.as_string(currency(0)), '$0.00')
         self.assertEqual(self.conv.as_string(currency(-10)), '$-10.00')
         #self.assertEqual(ValidationError, self.conv.as_string, object)
+
+    def testPickle(self):
+        pickled_var = cPickle.dumps(currency("123.45"))
+        recoverd_var = cPickle.loads(pickled_var)    
+        self.assertEqual(recoverd_var.format(), '$123.45')
+        
+    def testPickleBR(self):
+        if not set_locale(locale.LC_ALL, 'pt_BR'):
+            return
+
+        pickled_var = cPickle.dumps(currency("123.45"))
+        recoverd_var = cPickle.loads(pickled_var)    
+        self.assertEqual(recoverd_var.format(), 'R$ 123,45')
+        
+    def testPickleUS(self):
+        if not set_locale(locale.LC_ALL, 'en_US'):
+            return
+
+        pickled_var = cPickle.dumps(currency("12123.45"))
+        recoverd_var = cPickle.loads(pickled_var)    
+        self.assertEqual(recoverd_var.format(), '$12,123.45')
 
 class UnicodeTest(unittest.TestCase):
     def setUp(self):
