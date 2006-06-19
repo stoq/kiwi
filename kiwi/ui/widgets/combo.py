@@ -213,7 +213,7 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
         ComboMixin.clear(self)
         self.entry.set_text("")
 
-class ProxyComboEntry(PropertyObject, ComboEntry,
+class ProxyComboEntry(PropertyObject, ComboEntry, ComboMixin,
                       ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyComboEntry'
 
@@ -222,6 +222,7 @@ class ProxyComboEntry(PropertyObject, ComboEntry,
     def __init__(self):
         entry = ProxyEntry()
         ComboEntry.__init__(self, entry=entry)
+        ComboMixin.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self)
         entry.connect('content-changed', self._on_entry__content_changed)

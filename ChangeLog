@@ -2,9 +2,16 @@
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/widgets/combo.py: ProxyComboEntry extend ComboMixin. 
+	Fixes #2656
+
+2006-06-19  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/datatypes.py: Changes the way localeconv is retrived, so it gets
 	checked and fixed if necessary, before using it.
-	* tests/test_datatypes.py: Add some pickling tests.
+	* tests/test_datatypes.py: Add some pickling tests. Fixes #2654
 
 2006-06-12  Johan Dahlin  <jdahlin@async.com.br>
 
