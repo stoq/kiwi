@@ -39,30 +39,32 @@ class _VariableExtender:
         install = distribution.get_command_obj('install')
         name = distribution.get_name()
 
-        # Always install to sys.prefix on win32,
-        # since install.prefix points to INSTDIR/lib/site-packages
-        if sys.platform == 'win32':
+        prefix = install.prefix
+        if not prefix:
             prefix = sys.prefix
-        else:
-            prefix = install.prefix
-            if not prefix:
-                prefix = sys.prefix
 
         # Remove trailing /
         if prefix[-1] == '/':
             prefix = prefix[:-1]
         self.prefix = prefix
 
-        self.datadir = os.path.join(self.prefix, 'share', name)
+        self.datadir = os.path.join('share', name)
         if self.prefix == '/usr':
             self.sysconfdir = '/etc'
         else:
-            self.sysconfdir = os.path.join(self.prefix, 'etc')
+            self.sysconfdir = os.path.join('etc')
 
-    def extend(self, string):
+    def extend(self, string, relative=False):
+        """
+        @param string: string to replace
+        @param relative: if True, assume the content of all variables
+          to be relative to the prefix
+        """
         for name, var in [('sysconfdir', self.sysconfdir),
                           ('datadir', self.datadir),
                           ('prefix', self.prefix)]:
+            if not relative and name != 'prefix':
+                var = os.path.join(self.prefix, var)
             string = string.replace('$' + name, var)
         return string
 
@@ -123,7 +125,7 @@ class KiwiInstallData(install_data):
         # Extend variables in all data files
         data_files = []
         for target, files in self.data_files[:]:
-            data_files.append((self.varext.extend(target), files))
+            data_files.append((self.varext.extend(target, True), files))
         self.data_files = data_files
         return install_data.run(self)
 
