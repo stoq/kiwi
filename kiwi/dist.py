@@ -38,11 +38,17 @@ class _VariableExtender:
     def __init__(self, distribution):
         install = distribution.get_command_obj('install')
         name = distribution.get_name()
-        # Remove trailing /
-        prefix = install.prefix
-        if not prefix:
-            prefix = sys.prefix
 
+        # Always install to sys.prefix on win32,
+        # since install.prefix points to INSTDIR/lib/site-packages
+        if sys.platform == 'win32':
+            prefix = sys.prefix
+        else:
+            prefix = install.prefix
+            if not prefix:
+                prefix = sys.prefix
+
+        # Remove trailing /
         if prefix[-1] == '/':
             prefix = prefix[:-1]
         self.prefix = prefix
