@@ -467,7 +467,9 @@ class currency(Decimal):
                 text = filter_locale(text, monetary=True)
                 value = currency._converter.from_string(text)
             except ValidationError:
-                pass
+                # Decimal does not accept leading and trailing spaces. See
+                # bug 1516613
+                value = text.strip()
                 
             if value == ValueUnset:
                 raise InvalidOperation
