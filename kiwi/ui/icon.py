@@ -218,6 +218,9 @@ class IconEntry(object):
 
         self.draw_pixbuf()
 
+    def get_background(self):
+        return self._entry.style.base[gtk.STATE_NORMAL]
+
     def resize_windows(self):
         if not self._pixbuf:
             return

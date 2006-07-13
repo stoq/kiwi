@@ -177,6 +177,9 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     def update_background(self, color):
         "Implement in subclass"
 
+    def get_background(self):
+        "Implement in subclass"
+
     def set_pixbuf(self, pixbuf):
         "Implement in subclass"
 
@@ -281,7 +284,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         c = SignalContainer()
         c.signal_id = self._fade.connect('done', done, c)
 
-        if self._fade.start():
+        if self._fade.start(self.get_background()):
             self.set_pixbuf(None)
 
     def set_blank(self):

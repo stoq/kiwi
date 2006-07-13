@@ -1,3 +1,16 @@
+2006-07-13  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/comboboxentry.py:
+	* kiwi/ui/comboentry.py:
+	* kiwi/ui/entry.py:
+	* kiwi/ui/gadgets.py:
+	* kiwi/ui/icon.py:
+	* kiwi/ui/proxywidget.py:
+	* kiwi/ui/widgets/spinbutton.py:
+	Fetch the right background color instead of hard coding it to white.
+	Add a get_background() method to ValidatableProxyWidgetMixin.
+	Fixes #2681 (Gustavo Barbieri)
+
 2006-07-03  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

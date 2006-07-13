@@ -489,6 +489,9 @@ class KiwiEntry(PropertyObject, gtk.Entry):
     def update_background(self, color):
         self._icon.update_background(color)
 
+    def get_background(self):
+        return self._icon.get_background()
+
     def get_icon_window(self):
         return self._icon.get_icon_window()
 

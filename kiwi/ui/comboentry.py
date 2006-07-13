@@ -582,6 +582,9 @@ class ComboEntry(gtk.HBox):
     def update_background(self, color):
         self.entry.update_background(color)
 
+    def get_background(self):
+        return self.entry.get_background()
+
     def get_icon_window(self):
         return self.entry.get_icon_window()
 

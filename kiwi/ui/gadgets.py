@@ -92,13 +92,12 @@ class FadeOut(gobject.GObject):
 
     MERGE_COLORS_DELAY = 100
 
-    # XXX: Fetch the default value from the widget instead of hard coding it.
-    GOOD_COLOR = "white"
     ERROR_COLOR = "#ffd5d5"
 
     def __init__(self, widget):
         gobject.GObject.__init__(self)
         self._widget = widget
+        self._start_color = None
         self._background_timeout_id = -1
         self._countdown_timeout_id = -1
         self._log = Logger('fade')
@@ -111,10 +110,8 @@ class FadeOut(gobject.GObject):
         """
         self._log.debug('_merge_colors: %s -> %s' % (src_color, dst_color))
 
-        gdk_src = gdk.color_parse(src_color)
-        gdk_dst = gdk.color_parse(dst_color)
-        rs, gs, bs = gdk_src.red, gdk_src.green, gdk_src.blue
-        rd, gd, bd = gdk_dst.red, gdk_dst.green, gdk_dst.blue
+        rs, gs, bs = src_color.red, src_color.green, src_color.blue
+        rd, gd, bd = dst_color.red, dst_color.green, dst_color.blue
         rinc = (rd - rs) / float(steps)
         ginc = (gd - gs) / float(steps)
         binc = (bd - bs) / float(steps)
@@ -140,14 +137,15 @@ class FadeOut(gobject.GObject):
             return
 
         self._log.debug('_start_merging: Starting')
-        func = self._merge_colors(FadeOut.GOOD_COLOR,
-                                  FadeOut.ERROR_COLOR).next
+        func = self._merge_colors(self._start_color,
+                                  gdk.color_parse(FadeOut.ERROR_COLOR)).next
         self._background_timeout_id = (
             gobject.timeout_add(FadeOut.MERGE_COLORS_DELAY, func))
         self._countdown_timeout_id = -1
 
-    def start(self):
+    def start(self, color):
         """Schedules a start of the countdown.
+        @param color: initial background color
         @returns: True if we could start, False if was already in progress
         """
         if self._background_timeout_id != -1:
@@ -160,6 +158,7 @@ class FadeOut(gobject.GObject):
             self._log.debug('start: Not running, already set')
             return False
 
+        self._start_color = color
         self._log.debug('start: Scheduling')
         self._countdown_timeout_id = gobject.timeout_add(
             FadeOut.COMPLAIN_DELAY, self._start_merging)
@@ -176,7 +175,7 @@ class FadeOut(gobject.GObject):
             gobject.source_remove(self._countdown_timeout_id)
             self._countdown_timeout_id = -1
 
-        self._widget.update_background(gdk.color_parse(FadeOut.GOOD_COLOR))
+        self._widget.update_background(self._start_color)
         self._done = False
 
 type_register(FadeOut)
