@@ -238,7 +238,7 @@ class ProxyDateEntry(PropertyObject, DateEntry, ValidatableProxyWidgetMixin):
         metrics = context.get_metrics(context.get_font_description())
         char_width =  metrics.get_approximate_char_width() / pango.SCALE
         current_width = self.entry.get_width_chars()
-        
+    
         # We add 4 pixels to the width, because of the icon borders
         icon_width = VALIDATION_ICON_WIDTH + 4
         self.entry.set_width_chars(current_width
@@ -264,8 +264,8 @@ class ProxyDateEntry(PropertyObject, DateEntry, ValidatableProxyWidgetMixin):
         self.entry.set_property('mandatory', value)
         return value
 
-    # ValidatableProxyWidgetMixin implementation
-    
+    # ValidatableProxyWidgetMixin
+
     # Since the widget that should be marked as valid/invalid is the entry,
     # we also call those methods for self.entry
     def set_valid(self):
