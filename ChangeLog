@@ -1,5 +1,14 @@
+2005-03-29  Ali Afshar <aafshar@gmail.com>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	(ValidatableProxyWidgetMixin.set_invalid): 
+	Set the background to red and set the tooltips if the fade is 
+	disabled, fixes #2685
+
 2006-07-13  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/proxywidget.py:
 	* kiwi/ui/comboboxentry.py:
 	* kiwi/ui/comboentry.py:
 	* kiwi/ui/entry.py:

@@ -260,15 +260,17 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
         self._set_valid_state(False)
 
-        if not fade:
-            return
-
         # If there is no error text, set a generic one so the error icon
         # still have a tooltip
         if not text:
             text = _("'%s' is not a valid value for this field") % self.read()
 
         self.set_tooltip(text)
+
+        if not fade:
+            self.set_pixbuf(ERROR_ICON)
+            self.update_background(gtk.gdk.color_parse(self._fade.ERROR_COLOR))
+            return
 
         # When the fading animation is finished, set the error icon
         # We don't need to check if the state is valid, since stop()
