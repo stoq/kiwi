@@ -93,7 +93,7 @@ class SignalBroker(object):
         Offers autoconnection of widget signals based on function names.
         You simply need to define your controller method in the format::
 
-            def on_widget_name__signal_name(self, widget, *args):
+            def on_widget_name__signal_name(self, widget):
 
         In other words, start the method by "on_", followed by the
         widget name, followed by two underscores ("__"), followed by the
