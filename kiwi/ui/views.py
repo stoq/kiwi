@@ -128,9 +128,8 @@ class SignalBroker(object):
                 else:
                     signal_id = widget.connect(signal, methods[fname])
             except TypeError:
-                log.warn("Widget %s doesn't provide a signal %s" % (
-                widget.__class__, signal))
-                continue
+                raise TypeError("Widget %s doesn't provide a signal %s" % (
+                                widget.__class__, signal))
             self._autoconnected.setdefault(widget, []).append((
                 signal, signal_id))
 
