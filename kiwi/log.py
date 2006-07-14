@@ -32,7 +32,11 @@ class LogError(Exception):
 
 class Formatter(logging.Formatter):
     def format(self, record):
-        frame = sys._getframe(9)
+        # 1: format
+        # 2-6: logging module
+        # 7: log (log.info/log.warn etc)
+        # 8: callsite
+        frame = sys._getframe(8)
         filename = os.path.basename(frame.f_code.co_filename)
         record.msg = '%s:%d %s' % (filename, frame.f_lineno, record.msg)
         return logging.Formatter.format(self, record)
