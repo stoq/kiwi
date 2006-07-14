@@ -48,11 +48,11 @@ class ProxySpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixi
     __gtype_name__ = 'ProxySpinButton'
     allowed_data_types = number
 
-    def __init__(self):
+    def __init__(self, data_type=int):
         # since the default data_type is str we need to set it to int
         # or float for spinbuttons
         gtk.SpinButton.__init__(self)
-        PropertyObject.__init__(self, data_type=int)
+        PropertyObject.__init__(self, data_type)
         ValidatableProxyWidgetMixin.__init__(self)
         self._icon = IconEntry(self)
         self.set_property('xalign', 1.0)
