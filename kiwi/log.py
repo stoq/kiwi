@@ -20,8 +20,9 @@
 #
 # Author(s): Adriano Monteiro <adriano@globalret.com.br>
 #            Johan Dahlin     <jdahlin@async.com.br>
-##
+#
 
+import fnmatch
 import logging
 import os
 import sys
@@ -74,6 +75,7 @@ class Logger(logging.Logger):
         self.info(message, *args, **kwargs)
 
 _log_levels = {}
+_default_level = logging.WARNING
 
 def set_log_level(name, level):
     """
@@ -88,10 +90,20 @@ def get_log_level(name):
     @param name: logging category
     @returns: the level
     """
-    global _log_levels
-    return _log_levels.get(name, logging.WARNING)
+    global _log_levels, _default_level
+
+    for category in _log_levels:
+        if fnmatch.fnmatch(name, category):
+            level = _log_levels[category]
+            break
+    else:
+        level = _default_level
+    print name, '->', level
+    return level
 
 def _read_log_level():
+    global _default_level
+
     log_levels = {}
     # bootstrap issue, cannot depend on environ
     log_level = os.environ.get('KIWI_LOG')
@@ -99,17 +111,25 @@ def _read_log_level():
         return log_levels
 
     for part in log_level.split(','):
-        if ':' in part:
-            if part.count(':') > 1:
-                raise LogError("too many : in part %s" % part)
-            name, level = part.split(':')
-            try:
-                level = int(level)
-            except ValueError:
-                raise LogError("invalid level: %s" % level)
+        if not ':' in part:
+            continue
 
-            if level < 0 or level > 5:
-                raise LogError("level must be between 0 and 5")
+        if part.count(':') > 1:
+            raise LogError("too many : in part %s" % part)
+        name, level = part.split(':')
+        try:
+            level = int(level)
+        except ValueError:
+            raise LogError("invalid level: %s" % level)
+
+        if level < 0 or level > 5:
+            raise LogError("level must be between 0 and 5")
+
+        level = 50 - (level * 10)
+
+        if name == '*':
+            _default_level = level
+            continue
         log_levels[name] = level
 
     return log_levels
