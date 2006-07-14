@@ -98,7 +98,6 @@ def get_log_level(name):
             break
     else:
         level = _default_level
-    print name, '->', level
     return level
 
 def _read_log_level():
