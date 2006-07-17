@@ -1,3 +1,10 @@
+2006-07-17  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/proxywidget.py (validate): validate widget when force is True,
+	even if not visible nor sensitive. Fixes #2682
+
 2005-03-29  Ali Afshar <aafshar@gmail.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
