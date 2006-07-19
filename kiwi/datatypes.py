@@ -470,7 +470,7 @@ class currency(Decimal):
                 # Decimal does not accept leading and trailing spaces. See
                 # bug 1516613
                 value = text.strip()
-                
+
             if value == ValueUnset:
                 raise InvalidOperation
         elif HAVE_DECIMAL and isinstance(value, float):
@@ -631,7 +631,7 @@ def get_localeconv():
         conv['mon_thousands_sep'] = ''
         conv['mon_decimal_point'] = '.'
         conv['p_sep_by_space'] = 0
-    
+
     if not numeric_locale[0]:
         conv['decimal_point'] = '.'
 
