@@ -2,13 +2,9 @@
 # LaTeX and latex2html.
 
 MKHOWTO=/opt/src/python/2.4.1/Doc/tools/mkhowto
-EPYDOC=epydoc
 
 # No user-serviceable parts below this line
 
-MODULES=../Kiwi/Views.py ../Kiwi/FrameWork.py ../Kiwi/Proxies.py \
-		../Kiwi/__init__.py ../Kiwi/List.py ../Kiwi/Menu.py      \
-		../Kiwi/Delegates.py ../Kiwi/Basic.py
 STYLE="PRE { border-left: 1px dashed blue;		\
 		  border-right: 1px dashed blue;		\
 		  border-top: 1px dashed blue;			\
@@ -44,13 +40,12 @@ howto: howto.tex
 	cp images/newsform4.png howto/img14.png
 	cp ../examples/Person/Person.glade howto/
 
-api: $(MODULES)
-	mkdir -p api
-	$(EPYDOC) -c white --no-frames -o api -u $(URL) -n $(NAME) $(MODULES) 
-	touch api
+api:
+	cd .. && tools/epyrun
+	mv ../html api
 
 apicheck: 
-	epydoc --check $(MODULES) 
+	cd .. && tools/epyrun --check
 
 clean:
 	rm -rf api/ howto/ *.log *.aux *.l2h *.dvi *.ps *.bak *~
