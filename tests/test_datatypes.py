@@ -3,8 +3,11 @@ import datetime
 import unittest
 import locale
 
+from gtk import gdk
+
 from kiwi.datatypes import currency, converter, ValidationError, ValueUnset, \
      Decimal
+from kiwi.environ import environ
 
 def set_locale(category, name):
     # set the date format to the spanish one
@@ -292,6 +295,36 @@ class DecimalTest(unittest.TestCase):
         self.assertEqual(self.conv.as_string(Decimal('-0.123456789')), '-0,123456789')
         self.assertEqual(self.conv.as_string(Decimal('10000000')), '10000000,0')
         self.assertEqual(self.conv.as_string(Decimal('10000000.0')), '10000000,0')
+
+class PixbufTest(unittest.TestCase):
+    def setUp(self):
+        self.conv = converter.get_converter(gdk.Pixbuf)
+
+    def testPNGAsString(self):
+        file_name = environ.find_resource('pixmap', 'validation-error-16.png')
+        f = file(file_name)
+        png_string = f.read()
+        f.close()
+
+        pixbuf = self.conv.from_string(png_string)
+        string = self.conv.as_string(pixbuf)
+        # XXX Not always equal. need to investigate
+        #self.assertEqual(string, png_string)
+
+        # Compare png header
+        self.assertEqual(string[0:8], '\x89\x50\x4e\x47\x0d\x0a\x1a\x0a')
+
+    def testPNGFromString(self):
+        file_name = environ.find_resource('pixmap', 'validation-error-16.png')
+        f = file(file_name)
+        png_string = f.read()
+        f.close()
+
+        pixbuf = self.conv.from_string(png_string)
+        self.assertEqual(pixbuf.get_width(), 17)
+        self.assertEqual(pixbuf.get_height(), 17)
+
+        self.assertRaises(ValidationError, self.conv.from_string, '')
 
 if __name__ == "__main__":
     unittest.main()

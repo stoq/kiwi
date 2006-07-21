@@ -42,6 +42,9 @@ import locale
 import sys
 import time
 
+import gobject
+from gtk import gdk
+
 from kiwi import ValueUnset
 
 __all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
@@ -162,6 +165,28 @@ class BaseConverter(object):
         @param value:
         @returns:
         """
+
+class _PixbufConverter(BaseConverter):
+    type = gdk.Pixbuf
+
+    def as_string(self, value, format='png'):
+        buffer = []
+        value.save_to_callback(buffer.append, format)
+        string = ''.join(buffer)
+        return string
+
+    def from_string(self, value):
+        loader = gdk.PixbufLoader()
+        try:
+            loader.write(value)
+            loader.close()
+        except gobject.GError, e:
+            raise ValidationError(_("Could not load image: %s") % e)
+
+        pixbuf = loader.get_pixbuf()
+        return pixbuf
+
+converter.add(_PixbufConverter)
 
 class _StringConverter(BaseConverter):
     type = str

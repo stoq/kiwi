@@ -1,3 +1,10 @@
+2006-07-21  Ronaldo Maia <romaia@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/datatypes.py: Add a converter for gdk.Pixmap. Fixes #2697
+	* tests/test_datatypes.py: and some tests.
+
 2006-07-17  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
