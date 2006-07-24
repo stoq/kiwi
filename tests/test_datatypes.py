@@ -340,9 +340,9 @@ class PixbufTest(unittest.TestCase):
         self.assertEqual(pixbuf.get_width(), 17)
         self.assertEqual(pixbuf.get_height(), 17)
 
-if sys.platform == 'win32':
-    PixbufTest.testPNGFromString.skip = 'FIXME ASCII/Binary conversion'
-    PixbufTest.testPNGAsString.skip = 'FIXME ASCII/Binary conversion'
+    if sys.platform == 'win32':
+        testPNGFromString.skip = 'FIXME ASCII/Binary conversion'
+        testPNGAsString.skip = 'FIXME ASCII/Binary conversion'
 
 if __name__ == "__main__":
     unittest.main()
