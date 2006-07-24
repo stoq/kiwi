@@ -1,7 +1,8 @@
 import cPickle
 import datetime
-import unittest
 import locale
+import sys
+import unittest
 
 from gtk import gdk
 
@@ -316,7 +317,11 @@ class PixbufTest(unittest.TestCase):
 
     def testPNGAsString(self):
         file_name = environ.find_resource('pixmap', 'validation-error-16.png')
-        f = file(file_name)
+        if sys.platform == 'win32':
+            f = file(file_name, 'b')
+        else:
+            f = file(file_name)
+
         png_string = f.read()
         f.close()
 
