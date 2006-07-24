@@ -55,8 +55,8 @@ class _PixbufConverter(BaseConverter):
         string = ''.join(buffer)
         return string
 
-    def from_string(self, value):
-        loader = gdk.PixbufLoader()
+    def from_string(self, value, format='png'):
+        loader = gdk.PixbufLoader(format)
         try:
             loader.write(value)
             loader.close()

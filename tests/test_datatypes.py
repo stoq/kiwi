@@ -132,23 +132,23 @@ class CurrencyTest(unittest.TestCase):
 
     def testPickle(self):
         pickled_var = cPickle.dumps(currency("123.45"))
-        recoverd_var = cPickle.loads(pickled_var)    
+        recoverd_var = cPickle.loads(pickled_var)
         self.assertEqual(recoverd_var.format(), '$123.45')
-        
+
     def testPickleBR(self):
         if not set_locale(locale.LC_ALL, 'pt_BR'):
             return
 
         pickled_var = cPickle.dumps(currency("123.45"))
-        recoverd_var = cPickle.loads(pickled_var)    
+        recoverd_var = cPickle.loads(pickled_var)
         self.assertEqual(recoverd_var.format(), 'R$ 123,45')
-        
+
     def testPickleUS(self):
         if not set_locale(locale.LC_ALL, 'en_US'):
             return
 
         pickled_var = cPickle.dumps(currency("12123.45"))
-        recoverd_var = cPickle.loads(pickled_var)    
+        recoverd_var = cPickle.loads(pickled_var)
         self.assertEqual(recoverd_var.format(), '$12,123.45')
 
 class UnicodeTest(unittest.TestCase):
@@ -278,16 +278,22 @@ class DecimalTest(unittest.TestCase):
         self.assertEqual(self.conv.as_string(Decimal('0.0')), '0.0')
         self.assertEqual(self.conv.as_string(Decimal('0.5')), '0.5')
         self.assertEqual(self.conv.as_string(Decimal('-0.5')), '-0.5')
-        self.assertEqual(self.conv.as_string(Decimal('0.123456789')), '0.123456789')
-        self.assertEqual(self.conv.as_string(Decimal('-0.123456789')), '-0.123456789')
-        self.assertEqual(self.conv.as_string(Decimal('10000000')), '10000000.0')
-        self.assertEqual(self.conv.as_string(Decimal('10000000.0')), '10000000.0')
+        self.assertEqual(self.conv.as_string(Decimal('0.123456789')),
+                         '0.123456789')
+        self.assertEqual(self.conv.as_string(Decimal('-0.123456789')),
+                         '-0.123456789')
+        self.assertEqual(self.conv.as_string(Decimal('10000000')),
+                         '10000000.0')
+        self.assertEqual(self.conv.as_string(Decimal('10000000.0')),
+                         '10000000.0')
 
     def testAsStringUS(self):
         if not set_locale(locale.LC_NUMERIC, 'en_US'):
             return
-        self.assertEqual(self.conv.as_string(Decimal('10000000')), '10,000,000.0')
-        self.assertEqual(self.conv.as_string(Decimal('10000000.0')), '10,000,000.0')
+        self.assertEqual(self.conv.as_string(Decimal('10000000')),
+                         '10,000,000.0')
+        self.assertEqual(self.conv.as_string(Decimal('10000000.0')),
+                         '10,000,000.0')
 
     def testAsStringSE(self):
         if not set_locale(locale.LC_NUMERIC, 'sv_SE'):
@@ -295,10 +301,14 @@ class DecimalTest(unittest.TestCase):
         self.assertEqual(self.conv.as_string(Decimal('0.0')), '0,0')
         self.assertEqual(self.conv.as_string(Decimal('0.5')), '0,5')
         self.assertEqual(self.conv.as_string(Decimal('-0.5')), '-0,5')
-        self.assertEqual(self.conv.as_string(Decimal('0.123456789')), '0,123456789')
-        self.assertEqual(self.conv.as_string(Decimal('-0.123456789')), '-0,123456789')
-        self.assertEqual(self.conv.as_string(Decimal('10000000')), '10000000,0')
-        self.assertEqual(self.conv.as_string(Decimal('10000000.0')), '10000000,0')
+        self.assertEqual(self.conv.as_string(Decimal('0.123456789')),
+                         '0,123456789')
+        self.assertEqual(self.conv.as_string(Decimal('-0.123456789')),
+                         '-0,123456789')
+        self.assertEqual(self.conv.as_string(Decimal('10000000')),
+                         '10000000,0')
+        self.assertEqual(self.conv.as_string(Decimal('10000000.0')),
+                         '10000000,0')
 
 class PixbufTest(unittest.TestCase):
     def setUp(self):
@@ -327,8 +337,6 @@ class PixbufTest(unittest.TestCase):
         pixbuf = self.conv.from_string(png_string)
         self.assertEqual(pixbuf.get_width(), 17)
         self.assertEqual(pixbuf.get_height(), 17)
-
-        self.assertRaises(ValidationError, self.conv.from_string, '')
 
 if __name__ == "__main__":
     unittest.main()
