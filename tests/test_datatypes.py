@@ -316,6 +316,8 @@ class PixbufTest(unittest.TestCase):
         self.conv = converter.get_converter(gdk.Pixbuf)
 
     def testPNGAsString(self):
+        if sys.platform == 'win32':
+            return
         file_name = environ.find_resource('pixmap', 'validation-error-16.png')
 
         f = file(file_name)
@@ -331,6 +333,8 @@ class PixbufTest(unittest.TestCase):
         self.assertEqual(string[0:8], '\x89\x50\x4e\x47\x0d\x0a\x1a\x0a')
 
     def testPNGFromString(self):
+        if sys.platform == 'win32':
+            return
         file_name = environ.find_resource('pixmap', 'validation-error-16.png')
         f = file(file_name)
         png_string = f.read()
@@ -339,10 +343,6 @@ class PixbufTest(unittest.TestCase):
         pixbuf = self.conv.from_string(png_string)
         self.assertEqual(pixbuf.get_width(), 17)
         self.assertEqual(pixbuf.get_height(), 17)
-
-    if sys.platform == 'win32':
-        testPNGFromString.skip = 'FIXME ASCII/Binary conversion'
-        testPNGAsString.skip = 'FIXME ASCII/Binary conversion'
 
 if __name__ == "__main__":
     unittest.main()
