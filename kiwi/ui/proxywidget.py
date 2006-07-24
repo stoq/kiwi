@@ -29,12 +29,13 @@
 
 import gettext
 
+import gobject
 import gtk
 from gtk import gdk
 
 from kiwi import ValueUnset
 from kiwi.component import implements
-from kiwi.datatypes import ValidationError, converter
+from kiwi.datatypes import ValidationError, converter, BaseConverter
 from kiwi.environ import environ
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
 from kiwi.log import Logger
@@ -44,6 +45,29 @@ from kiwi.utils import gsignal, gproperty
 log = Logger('widget proxy')
 
 _ = lambda m: gettext.dgettext('kiwi', m)
+
+class _PixbufConverter(BaseConverter):
+    type = gdk.Pixbuf
+
+    def as_string(self, value, format='png'):
+        buffer = []
+        value.save_to_callback(buffer.append, format)
+        string = ''.join(buffer)
+        return string
+
+    def from_string(self, value):
+        loader = gdk.PixbufLoader()
+        try:
+            loader.write(value)
+            loader.close()
+        except gobject.GError, e:
+            raise ValidationError(_("Could not load image: %s") % e)
+
+        pixbuf = loader.get_pixbuf()
+        return pixbuf
+
+converter.add(_PixbufConverter)
+
 
 class ProxyWidgetMixin(object):
     """This class is a mixin that provide a common interface for KiwiWidgets.

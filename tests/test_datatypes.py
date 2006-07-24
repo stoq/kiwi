@@ -9,6 +9,10 @@ from kiwi.datatypes import currency, converter, ValidationError, ValueUnset, \
      Decimal
 from kiwi.environ import environ
 
+# pixbuf converter
+from kiwi.ui import proxywidget
+proxywidget # pyflakes
+
 def set_locale(category, name):
     # set the date format to the spanish one
     try:
