@@ -167,7 +167,7 @@ def messagedialog(dialog_type, short, long=None, parent=None,
         dialog_buttons = buttons
         buttons = []
     else:
-        if type(buttons) != tuple:
+        if buttons is not None and type(buttons) != tuple:
             raise TypeError(
                 "buttons must be a GtkButtonsTypes constant or a tuple")
         dialog_buttons = gtk.BUTTONS_NONE
@@ -177,8 +177,9 @@ def messagedialog(dialog_type, short, long=None, parent=None,
 
     d = HIGAlertDialog(parent=parent, flags=gtk.DIALOG_MODAL,
                        type=dialog_type, buttons=dialog_buttons)
-    for text, response in buttons:
-        d.add_buttons(text, response)
+    if buttons:
+        for text, response in buttons:
+            d.add_buttons(text, response)
 
     d.set_primary(short)
 
@@ -221,10 +222,10 @@ def warning(short, long=None, parent=None, buttons=gtk.BUTTONS_OK, default=-1):
     return _simple(gtk.MESSAGE_WARNING, short, long, parent=parent,
                    buttons=buttons, default=default)
 
-def yesno(text, parent=None, default=gtk.RESPONSE_YES):
+def yesno(text, parent=None, default=gtk.RESPONSE_YES,
+          buttons=gtk.BUTTONS_YES_NO):
     return messagedialog(gtk.MESSAGE_WARNING, text, None, parent,
-                         buttons=gtk.BUTTONS_YES_NO,
-                         default=default)
+                         buttons=buttons, default=default)
 
 def open(title='', parent=None, patterns=[], folder=None, filter=None):
     """Displays an open dialog.
