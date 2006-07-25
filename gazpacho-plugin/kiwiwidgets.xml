@@ -34,6 +34,9 @@
     <glade-widget-class name="ProxySpinButton"
                         generic-name="kiwispinbutton"
                         title="Kiwi Spin Button"/>
+    <glade-widget-class name="ProxyButton"
+                        generic-name="kiwibutton"
+                        title="Kiwi Button"/>
     <glade-widget-class name="ProxyTextView"
                         generic-name="kiwitextview"
                         title="Kiwi TextView"/>
@@ -51,14 +54,15 @@
 -->
     <glade-widget-class-ref name="HyperLink"/>
     <glade-widget-class-ref name="ProxyEntry"/>
+    <glade-widget-class-ref name="ProxyDateEntry"/>
     <glade-widget-class-ref name="ProxyLabel"/>
     <glade-widget-class-ref name="ProxyComboBox"/>
     <glade-widget-class-ref name="ProxyComboEntry"/>
     <glade-widget-class-ref name="ProxyCheckButton"/>
     <glade-widget-class-ref name="ProxyRadioButton"/>
     <glade-widget-class-ref name="ProxySpinButton"/>
+    <glade-widget-class-ref name="ProxyButton"/>
     <glade-widget-class-ref name="ProxyTextView"/>
-    <glade-widget-class-ref name="ProxyDateEntry"/>
   </glade-widget-group>
   
 </glade-catalog>

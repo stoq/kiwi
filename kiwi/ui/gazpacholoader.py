@@ -31,9 +31,11 @@ import warnings
 
 import gobject
 import gtk
+from gtk import gdk
 
 try:
     from gazpacho.propertyeditor import PropertyCustomEditor
+    PropertyCustomEditor # pyflakes
 except ImportError:
     from gazpacho.editor import PropertyCustomEditor
 
@@ -50,6 +52,7 @@ from kiwi.log import Logger
 from kiwi.python import disabledeprecationcall
 from kiwi.ui.hyperlink import HyperLink
 from kiwi.ui.objectlist import Column, ObjectList
+from kiwi.ui.widgets.button import ProxyButton
 from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox, \
      ProxyComboBoxEntry
@@ -277,6 +280,22 @@ class LabelDataType(DataTypeAdaptor):
             (_('Currency'), currency)
             ]
 
+class ButtonDataType(DataTypeAdaptor):
+    def get_data_types(self):
+        return [
+            (_('String'), str),
+            (_('Unicode'), unicode),
+            (_('Boolean'), bool),
+            (_('Integer'), int),
+            (_('Float'), float),
+            (_('Decimal'), Decimal),
+            (_('Date'), datetime.date),
+            (_('Date and Time'), datetime.datetime),
+            (_('Time'), datetime.time),
+            (_('Currency'), currency),
+            (_('Pixbuf'), gdk.Pixbuf)
+            ]
+
 class DataType(CustomProperty, StringType):
     translatable = False
     def save(self):
@@ -326,6 +345,7 @@ def register_widgets():
     for gobj, editor, data_type in [
         (ProxyEntry, EntryDataType, DataType),
         (ProxyDateEntry, None, DateOnlyDataType),
+        (ProxyButton, ButtonDataType, DataType),
         (ProxyCheckButton, None, BoolOnlyDataType),
         (ProxyLabel, LabelDataType, DataType),
         (ProxyComboBox, ComboBoxDataType, DataType),

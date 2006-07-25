@@ -1,8 +1,14 @@
+import sys
 import unittest
 
+from gtk import gdk
+
 from kiwi import ValueUnset
+from kiwi.datatypes import converter
+from kiwi.environ import environ
 from kiwi.python import Settable
 from kiwi.ui.proxy import Proxy
+from kiwi.ui.widgets.button import ProxyButton
 from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 from kiwi.ui.widgets.entry import ProxyEntry
 from kiwi.ui.widgets.label import ProxyLabel
@@ -41,7 +47,8 @@ class Model(Settable):
                           spinbutton=100,
                           textview='sliff',
                           comboentry='CE1',
-                          combobox='CB1')
+                          combobox='CB1',
+                          button='button')
 
 class TestProxy(unittest.TestCase):
     def setUp(self):
@@ -50,6 +57,8 @@ class TestProxy(unittest.TestCase):
         self.view.add('entry', str, ProxyEntry)
         self.view.add('label', str, ProxyLabel)
         self.view.add('spinbutton', int, ProxySpinButton)
+        self.view.add('button', str, ProxyButton)
+        self.view.add('buttonpixbuf', gdk.Pixbuf, ProxyButton)
 
         self.view.add('textview', str, ProxyTextView)
         self.radio_first = self.view.add('radiobutton', str, ProxyRadioButton)
@@ -112,6 +121,28 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(self.model.combobox, 'CB1')
         self.view.combobox.select('CB2')
         self.assertEqual(self.model.combobox, 'CB2')
+
+    def testButton(self):
+        self.assertEqual(self.model.button, 'button')
+        self.view.button.update('sliff')
+        self.assertEqual(self.model.button, 'sliff')
+
+    def testButtonPixbuf(self):
+        if sys.platform == 'win32':
+            return
+
+        conv = converter.get_converter(gdk.Pixbuf)
+
+        filename = environ.find_resource('pixmap', 'validation-error-16.png')
+        pixbuf = gdk.pixbuf_new_from_file(filename)
+        self.assertEqual(self.view.buttonpixbuf.data_type, gdk.Pixbuf)
+        self.view.buttonpixbuf.update(pixbuf)
+        self.assertEqual(type(self.view.buttonpixbuf.read()), gdk.Pixbuf)
+        self.assertEqual(conv.as_string(self.model.buttonpixbuf),
+                         conv.as_string(pixbuf))
+        self.view.buttonpixbuf.update(None)
+        self.assertEqual(self.view.buttonpixbuf.read(), None)
+        self.assertEqual(self.model.buttonpixbuf, None)
 
     def testEmptyModel(self):
         self.radio_second.set_active(True)
