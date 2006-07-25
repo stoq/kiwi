@@ -253,3 +253,5 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ComboMixin,
     def set_tooltip(self, text):
         self.entry.set_tooltip(text)
 
+    def prefill(self, data, sort=False):
+        return ComboEntry.prefill(self, data, sort)

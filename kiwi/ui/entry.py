@@ -68,8 +68,9 @@ INPUT_CHAR_MAP = {
 (COL_TEXT,
  COL_OBJECT) = range(2)
 
-(ENTRY_MODE_TEXT,
- ENTRY_MODE_DATA) = range(2)
+(ENTRY_MODE_UNKNOWN,
+ ENTRY_MODE_TEXT,
+ ENTRY_MODE_DATA) = range(3)
 
 _ = lambda msg: gettext.dgettext('kiwi', msg)
 
@@ -618,6 +619,9 @@ class KiwiEntry(PropertyObject, gtk.Entry):
             # XXX: When setting the datatype to non string, automatically go to
             #      data mode
             raise TypeError("unknown Entry mode. Did you call prefill?")
+
+    def get_mode(self):
+        return self._mode
 
 type_register(KiwiEntry)
 

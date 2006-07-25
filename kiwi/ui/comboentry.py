@@ -532,6 +532,7 @@ class ComboEntry(gtk.HBox):
         """
         self._model.clear()
         self.entry.prefill(itemdata, sort)
+        self.mode = self.entry.get_mode()
 
     def select_item_by_data(self, data):
         """
