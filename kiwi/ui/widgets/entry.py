@@ -29,7 +29,8 @@ import datetime
 
 import pango
 
-from kiwi.datatypes import ValidationError, converter, number
+from kiwi.datatypes import ValidationError, converter, number, \
+     ValueUnset
 from kiwi.decorators import deprecated
 from kiwi.python import deprecationwarn
 from kiwi.ui.entry import MaskError, KiwiEntry, ENTRY_MODE_TEXT, \
@@ -192,7 +193,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
             raise AssertionError
 
     def update(self, data):
-        if data is None:
+        if data is None or data is ValueUnset:
             text = ""
         else:
             mode = self._mode

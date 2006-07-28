@@ -156,3 +156,9 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(self.view.textview.read(), '')
         self.assertEqual(self.view.comboentry.read(), None)
         self.assertEqual(self.view.combobox.read(), 'CB1')
+
+    def testValueUnset(self):
+        self.view.entry.update(ValueUnset)
+        self.assertEqual(self.view.entry.get_text(), "")
+        self.view.spinbutton.update(ValueUnset)
+        self.assertEqual(self.view.spinbutton.get_text(), "")

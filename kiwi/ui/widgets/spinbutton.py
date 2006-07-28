@@ -32,7 +32,7 @@ L{kiwi.ui.icon.IconEntry}
 
 import gtk
 
-from kiwi.datatypes import number
+from kiwi.datatypes import number, ValueUnset
 from kiwi.python import deprecationwarn
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
@@ -71,7 +71,7 @@ class ProxySpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixi
         return self._from_string(self.get_text())
 
     def update(self, data):
-        if data is None:
+        if data is None or data is ValueUnset:
             self.set_text("")
         else:
             # set_value accepts a float or int, no as_string conversion needed,
