@@ -58,7 +58,6 @@ class _UtilityHandler(object):
 
     # FIXME: How to replace a utility properly
     def provide(self, iface, obj, replace=False):
-        global _interfaces
         if not issubclass(iface, Interface):
             raise TypeError(
                 "iface must be an Interface subclass and not %r" % iface)
@@ -69,7 +68,6 @@ class _UtilityHandler(object):
         self._utilities[iface] = obj
 
     def get(self, iface):
-        global _interfaces
         if not issubclass(iface, Interface):
             raise TypeError(
                 "iface must be an Interface subclass and not %r" % iface)
@@ -87,7 +85,6 @@ def provide_utility(iface, utility, replace=False):
     @param iface: interface to set the utility for.
     @param utility: utility providing the interface.
     """
-    global _handler
     _handler.provide(iface, utility, replace)
 
 def get_utility(iface):
@@ -99,7 +96,6 @@ def get_utility(iface):
     @type iface: utility providing the interface
     """
 
-    global _handler
     return _handler.get(iface)
 
 _handler = _UtilityHandler()
