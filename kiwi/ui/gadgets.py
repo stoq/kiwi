@@ -108,6 +108,11 @@ class FadeOut(gobject.GObject):
         Change the background of widget from src_color to dst_color
         in the number of steps specified
         """
+
+        # FIXME: Find out when this happens
+        if src_color is None:
+            return
+
         self._log.debug('_merge_colors: %s -> %s' % (src_color, dst_color))
 
         rs, gs, bs = src_color.red, src_color.green, src_color.blue
