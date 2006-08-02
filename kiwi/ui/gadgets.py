@@ -111,22 +111,20 @@ class FadeOut(gobject.GObject):
 
         self._log.debug('_merge_colors: %s -> %s' % (src_color, dst_color))
 
-        # FIXME: Find out when this happens
-        if src_color is not None:
-            rs, gs, bs = src_color.red, src_color.green, src_color.blue
-            rd, gd, bd = dst_color.red, dst_color.green, dst_color.blue
-            rinc = (rd - rs) / float(steps)
-            ginc = (gd - gs) / float(steps)
-            binc = (bd - bs) / float(steps)
-            for dummy in xrange(steps):
-                rs += rinc
-                gs += ginc
-                bs += binc
-                col = gdk.color_parse("#%02X%02X%02X" % (int(rs) >> 8,
-                                                         int(gs) >> 8,
-                                                         int(bs) >> 8))
-                self.emit('color-changed', col)
-                yield True
+        rs, gs, bs = src_color.red, src_color.green, src_color.blue
+        rd, gd, bd = dst_color.red, dst_color.green, dst_color.blue
+        rinc = (rd - rs) / float(steps)
+        ginc = (gd - gs) / float(steps)
+        binc = (bd - bs) / float(steps)
+        for dummy in xrange(steps):
+            rs += rinc
+            gs += ginc
+            bs += binc
+            col = gdk.color_parse("#%02X%02X%02X" % (int(rs) >> 8,
+                                                     int(gs) >> 8,
+                                                     int(bs) >> 8))
+            self.emit('color-changed', col)
+            yield True
 
         self.emit('done')
         self._background_timeout_id = -1

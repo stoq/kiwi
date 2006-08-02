@@ -281,4 +281,7 @@ class ProxyDateEntry(PropertyObject, DateEntry, ValidatableProxyWidgetMixin):
         ValidatableProxyWidgetMixin.set_blank(self)
         self.entry.set_blank()
 
+    def get_background(self):
+        return self.entry.get_background()
+
 type_register(ProxyDateEntry)
