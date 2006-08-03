@@ -1,4 +1,3 @@
-import sys
 import datetime
 import unittest
 
@@ -9,8 +8,6 @@ class TestDateEntry(unittest.TestCase):
         self.date = datetime.date.today()
 
     def testGetSetDate(self):
-        if sys.platform == 'win32':
-            return
         entry = DateEntry()
         entry.set_date(self.date)
         self.assertEqual(entry.get_date(), self.date)

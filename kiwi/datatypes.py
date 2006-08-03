@@ -462,8 +462,8 @@ converter.add(_TimeConverter)
 class _DateTimeConverter(_BaseDateTimeConverter):
     type = datetime.datetime
     date_format = '%c'
-    def get_lang_constant(self):
-        return [LOCALE_SSHORTDATE,LOCALE_STIMEFORMAT]
+    def get_lang_constant_win32(self):
+        return [LOCALE_SSHORTDATE, LOCALE_STIMEFORMAT]
 
     def get_lang_constant(self):
         return locale.D_T_FMT
@@ -477,7 +477,7 @@ class _DateConverter(_BaseDateTimeConverter):
     type = datetime.date
     date_format = '%x'
     def get_lang_constant_win32(self):
-        return [LOCALE_SSHORTDATE]    
+        return [LOCALE_SSHORTDATE]
 
     def get_lang_constant(self):
         return locale.D_FMT
