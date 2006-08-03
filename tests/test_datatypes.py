@@ -17,7 +17,7 @@ proxywidget # pyflakes
 def set_locale(category, name):
     # set the date format to the spanish one
     try:
-        locale.setlocale(category, name)
+        rv = locale.setlocale(category, name)
     except locale.Error:
         print 'skipping %s, locale not available' % name
         return False
@@ -84,6 +84,25 @@ class DateTest(unittest.TestCase):
             return
 
         self.assertEqual(self.conv.as_string(self.date), "12-02-1979")
+
+    def testFromStringPortugueseBrazil(self):
+        if not set_locale(locale.LC_TIME, 'Portuguese_Brazil.1252'):
+            return
+
+        self.assertEqual(self.conv.from_string("12/2/1979"), self.date)
+        self.assertEqual(self.conv.from_string("12/02/1979"), self.date)
+
+        # test some invalid dates
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, "40/10/2005")
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, "30/02/2005")
+
+    def testAsStringPortugueseBrazil(self):
+        if not set_locale(locale.LC_TIME, 'Portuguese_Brazil.1252'):
+            return
+
+        self.assertEqual(self.conv.as_string(self.date), "12/02/1979")
 
 class CurrencyTest(unittest.TestCase):
     def setUp(self):

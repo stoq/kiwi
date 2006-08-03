@@ -1,3 +1,14 @@
+2006-08-02  Aaron Spike   <aaron@ekips.org>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* AUTHORS:
+	* kiwi/datatypes.py:
+	* kiwi/ui/widgets/entry.py:
+	* tests/test_datatypes.py:
+
+	Add proper entry mask support on win32, fixes #2721.
+
 2006-08-02  Ali Afshar <aafshar@gmail.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

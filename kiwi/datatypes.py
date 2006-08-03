@@ -39,14 +39,11 @@ Simple example:
 import datetime
 import gettext
 import locale
+import re
 import sys
 import time
 
 from kiwi import ValueUnset
-
-__all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
-
-_ = lambda m: gettext.dgettext('kiwi', m)
 
 try:
     from decimal import Decimal, InvalidOperation
@@ -57,6 +54,37 @@ except:
     class Decimal(float):
         pass
     InvalidOperation = ValueError
+
+if sys.platform == 'win32':
+    try:
+        import ctypes
+        def GetLocaleInfo(value):
+            s = ctypes.create_string_buffer("\000" * 255)
+            ctypes.windll.kernel32.GetLocaleInfoA(0, value, s, 255)
+            return str(s.value)
+    except ImportError:
+        def GetLocaleInfo(value):
+            raise Exception(
+                "ctypes is required for datetime types on win32")
+
+__all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
+
+_ = lambda m: gettext.dgettext('kiwi', m)
+
+# Constants for use with win32
+LOCALE_SSHORTDATE = 31
+LOCALE_STIMEFORMAT = 4099
+DATE_REPLACEMENTS_WIN32 = [
+    (re.compile('HH?'), '%H'),
+    (re.compile('hh?'), '%I'),
+    (re.compile('mm?'), '%M'),
+    (re.compile('ss?'), '%S'),
+    (re.compile('tt?'), '%p'),
+    (re.compile('dd?'), '%d'),
+    (re.compile('MM?'), '%m'),
+    (re.compile('yyyyy?'), '%Y'),
+    (re.compile('yy?'), '%y')
+    ]
 
 number = (int, float, long, Decimal)
 
@@ -325,6 +353,9 @@ class _BaseDateTimeConverter(BaseConverter):
         self._keep_am_pm = False
         self._keep_seconds = False
 
+    def get_lang_constant_win32(self):
+        raise NotImplementedError
+
     def get_lang_constant(self):
         # This is a method and not a class variable since it does not
         # exist on all supported platforms, eg win32
@@ -349,7 +380,16 @@ class _BaseDateTimeConverter(BaseConverter):
 
     def get_format(self):
         if sys.platform == 'win32':
-            format = self.date_format
+            values = []
+            for constant in self.get_lang_constant_win32():
+                value = GetLocaleInfo(constant)
+                values.append(value)
+            format = " ".join(values)
+
+            # Now replace them to strftime like masks so the logic
+            # below still applies
+            for pattern, replacement in DATE_REPLACEMENTS_WIN32:
+                format = pattern.subn(replacement, format)[0]
         else:
             format = locale.nl_langinfo(self.get_lang_constant())
 
@@ -408,6 +448,9 @@ class _BaseDateTimeConverter(BaseConverter):
 class _TimeConverter(_BaseDateTimeConverter):
     type = datetime.time
     date_format = '%X'
+    def get_lang_constant_win32(self):
+        return [LOCALE_STIMEFORMAT]
+
     def get_lang_constant(self):
         return locale.T_FMT
 
@@ -420,6 +463,9 @@ class _DateTimeConverter(_BaseDateTimeConverter):
     type = datetime.datetime
     date_format = '%c'
     def get_lang_constant(self):
+        return [LOCALE_SSHORTDATE,LOCALE_STIMEFORMAT]
+
+    def get_lang_constant(self):
         return locale.D_T_FMT
 
     def from_dateinfo(self, dateinfo):
@@ -430,6 +476,9 @@ converter.add(_DateTimeConverter)
 class _DateConverter(_BaseDateTimeConverter):
     type = datetime.date
     date_format = '%x'
+    def get_lang_constant_win32(self):
+        return [LOCALE_SSHORTDATE]    
+
     def get_lang_constant(self):
         return locale.D_FMT
 
