@@ -1,3 +1,10 @@
+2006-08-10  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/__init__.py: 
+	* kiwi/__init__.py: 
+	Move pygtk import to kiwi/__init__.py so it's called
+	before gobject is tried to be imported.
+
 2006-08-02  Aaron Spike   <aaron@ekips.org>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

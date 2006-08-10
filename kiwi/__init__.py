@@ -41,11 +41,21 @@ Kiwi includes a Framework and a set of enhanced widgets
 
 try:
     import gobject
-    gobject
+    gobject # pyflakes
 except ImportError, e:
-    raise SystemExit(
-        "PyGTK 2.8 or PyGObject 2.9.0 or higher is required by kiwi\n"
-        "Error was: %s" % e)
+    try:
+        import pygtk
+        pygtk.require('2.0')
+    except:
+        pass
+
+    try:
+        import gobject
+        gobject # pyflakes
+    except:
+        raise SystemExit(
+            "PyGTK 2.8 or PyGObject 2.9.0 or higher is required by kiwi\n"
+            "Error was: %s" % e)
 
 from kiwi.__version__ import version as kiwi_version
 from kiwi.environ import Library
