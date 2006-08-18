@@ -7,7 +7,7 @@ import sys
 from gtk import gdk
 
 from kiwi.datatypes import currency, converter, ValidationError, ValueUnset, \
-     Decimal
+     Decimal, BaseConverter
 from kiwi.environ import environ
 
 # pixbuf converter
@@ -23,9 +23,23 @@ def set_locale(category, name):
         return False
     return True
 
+fake = type('fake', (object,), {})
+class FakeConverter(BaseConverter):
+    type = fake
+
 class RegistryTest(unittest.TestCase):
     def testAdd(self):
         self.assertRaises(TypeError, converter.add, object)
+
+    def testRemove(self):
+        self.assertRaises(TypeError, converter.remove, object)
+
+    def testFake(self):
+        self.assertRaises(KeyError, converter.remove, FakeConverter)
+        converter.add(FakeConverter)
+        self.assertRaises(ValueError, converter.add, FakeConverter)
+        converter.remove(FakeConverter)
+        self.assertRaises(KeyError, converter.remove, FakeConverter)
 
 class BoolTest(unittest.TestCase):
     def setUp(self):

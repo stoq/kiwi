@@ -104,7 +104,23 @@ class ConverterRegistry:
             raise TypeError("converter_type must be a BaseConverter subclass")
 
         c = converter_type()
+        if c.type in self._converters:
+            raise ValueError(converter_type)
         self._converters[c.type] = c
+
+    def remove(self, converter_type):
+        """
+        Removes converter_type from the registry
+        @param converter_type: a L{BaseConverter} subclass
+        """
+        if not issubclass(converter_type, BaseConverter):
+            raise TypeError("converter_type must be a BaseConverter subclass")
+
+        ctype = converter_type.type
+        if not ctype in self._converters:
+            raise KeyError(converter_type)
+
+        del self._converters[ctype]
 
     def get_converter(self, converter_type):
         try:

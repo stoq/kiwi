@@ -1,5 +1,10 @@
 2006-08-18  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/datatypes.py (ConverterRegistry): add a remove method and
+	make the add method a bit more robust
+
+	* tests/test_datatypes.py: Add tests
+
 	* po/kiwi.pot: Merge in new translations
 
 	* po/sv.po: Update swedish translation
