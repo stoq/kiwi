@@ -1,3 +1,10 @@
+2006-08-18  Johan Dahlin  <jdahlin@async.com.br>
+
+	* po/kiwi.pot: Merge in new translations
+
+	* po/sv.po: Update swedish translation
+	* po/pt_BR.po: Update brazilian portuguese translation
+
 2006-08-10  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/__init__.py: 
