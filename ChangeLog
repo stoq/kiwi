@@ -1,5 +1,7 @@
 2006-08-18  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/currency.py: Refactor current to a separate file
+
 	* kiwi/datatypes.py (ConverterRegistry): add a remove method and
 	make the add method a bit more robust
 
