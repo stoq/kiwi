@@ -6,7 +6,8 @@ import sys
 
 from gtk import gdk
 
-from kiwi.datatypes import currency, converter, ValidationError, ValueUnset, \
+from kiwi.currency import currency
+from kiwi.datatypes import converter, ValidationError, ValueUnset, \
      Decimal, BaseConverter
 from kiwi.environ import environ
 

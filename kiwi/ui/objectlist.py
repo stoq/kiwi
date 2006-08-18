@@ -34,7 +34,8 @@ import gtk
 from gtk import gdk
 
 from kiwi.accessor import kgetattr
-from kiwi.datatypes import converter, currency, number, Decimal
+from kiwi.datatypes import converter, number, Decimal
+from kiwi.currency import currency # after datatypes
 from kiwi.log import Logger
 from kiwi.python import slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register

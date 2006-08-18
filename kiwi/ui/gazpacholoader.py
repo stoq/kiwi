@@ -46,7 +46,8 @@ from gazpacho.properties import prop_registry, CustomProperty, StringType
 from gazpacho.widgets.base.base import ContainerAdaptor
 from gazpacho.widgets.base.box import BoxAdaptor
 
-from kiwi.datatypes import currency, Decimal
+from kiwi.currency import currency
+from kiwi.datatypes import Decimal
 from kiwi.environ import environ
 from kiwi.log import Logger
 from kiwi.python import disabledeprecationcall
