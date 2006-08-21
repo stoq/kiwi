@@ -25,14 +25,18 @@
 
 """GtkTextView support for the Kiwi Framework"""
 
+import datetime
+
 import gtk
 
+from kiwi.datatypes import number
 from kiwi.python import deprecationwarn
 from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
 from kiwi.utils import PropertyObject, type_register
 
 class ProxyTextView(PropertyObject, gtk.TextView, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyTextView'
+    allowed_data_types = (basestring, datetime.date) + number
     def __init__(self):
         gtk.TextView.__init__(self)
         PropertyObject.__init__(self, data_type=str)

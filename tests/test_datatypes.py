@@ -42,6 +42,17 @@ class RegistryTest(unittest.TestCase):
         converter.remove(FakeConverter)
         self.assertRaises(KeyError, converter.remove, FakeConverter)
 
+    def testGetConverters(self):
+        converters = converter.get_converters((Decimal,))
+        # Curreny is a subclass of Decimal, so it should be in converters
+        conv = converter.get_converter(currency)
+        self.assertTrue(conv in converters)
+
+        converters = converter.get_converters((object,))
+        # Object is treated specially. Make sure its in the list
+        conv = converter.get_converter(object)
+        self.assertTrue(conv in converters)
+        
 class BoolTest(unittest.TestCase):
     def setUp(self):
         self.conv = converter.get_converter(bool)

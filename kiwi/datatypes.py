@@ -128,6 +128,24 @@ class ConverterRegistry:
         except KeyError:
             raise KeyError(converter_type)
 
+    def get_converters(self, base_classes=None):
+        if base_classes is None:
+            return self._converters.values()
+        
+        converters = []
+        if object in base_classes:
+            #: Ugly, but cannot remove from tuple!
+            base_classes = list(base_classes)
+            base_classes.remove(object)
+            base_classes = tuple(base_classes)
+            converters.append(self._converters[object])
+
+        for datatype in self._converters:
+            if issubclass(datatype, base_classes):
+                converters.append(self._converters[datatype])
+
+        return converters
+
     def check_supported(self, data_type):
         value = None
         for t in self._converters.values():
@@ -185,8 +203,10 @@ class BaseConverter(object):
     """
     Abstract converter used by all datatypes
     @cvar type:
+    @cvar name: The name of the datatype.
     """
     type = None
+    name = None
 
     def get_compare_function(self):
         """
@@ -209,6 +229,7 @@ class BaseConverter(object):
 
 class _StringConverter(BaseConverter):
     type = str
+    name = _('String')
 
     def as_string(self, value, format=None):
         if format is None:
@@ -222,6 +243,7 @@ converter.add(_StringConverter)
 
 class _UnicodeConverter(BaseConverter):
     type = unicode
+    name = _('Unicode')
 
     def as_string(self, value, format=None):
         if format is None:
@@ -235,6 +257,7 @@ converter.add(_UnicodeConverter)
 
 class _IntConverter(BaseConverter):
     type = int
+    name = _('Integer')
 
     def as_string(self, value, format=None):
         """Convert a float to a string"""
@@ -267,10 +290,12 @@ converter.add(_IntConverter)
 
 class _LongConverter(_IntConverter):
     type = long
+    name = _('Long')
 converter.add(_LongConverter)
 
 class _BoolConverter(BaseConverter):
     type = bool
+    name = _('Boolean')
 
     def as_string(self, value, format=None):
         return str(value)
@@ -291,6 +316,7 @@ converter.add(_BoolConverter)
 
 class _FloatConverter(BaseConverter):
     type = float
+    name = _('Float')
 
     def as_string(self, value, format=None):
         """Convert a float to a string"""
@@ -341,6 +367,7 @@ converter.add(_FloatConverter)
 
 class _DecimalConverter(_FloatConverter):
     type = Decimal
+    name = _('Decimal')
     def from_string(self, value):
         if value == '':
             return ValueUnset
@@ -463,6 +490,7 @@ class _BaseDateTimeConverter(BaseConverter):
 
 class _TimeConverter(_BaseDateTimeConverter):
     type = datetime.time
+    name = _('Time')
     date_format = '%X'
     def get_lang_constant_win32(self):
         return [LOCALE_STIMEFORMAT]
@@ -477,6 +505,7 @@ converter.add(_TimeConverter)
 
 class _DateTimeConverter(_BaseDateTimeConverter):
     type = datetime.datetime
+    name = _('Date and Time')
     date_format = '%c'
     def get_lang_constant_win32(self):
         return [LOCALE_SSHORTDATE, LOCALE_STIMEFORMAT]
@@ -491,6 +520,7 @@ converter.add(_DateTimeConverter)
 
 class _DateConverter(_BaseDateTimeConverter):
     type = datetime.date
+    name = _('Date')
     date_format = '%x'
     def get_lang_constant_win32(self):
         return [LOCALE_SSHORTDATE]
@@ -505,6 +535,7 @@ converter.add(_DateConverter)
 
 class _ObjectConverter(BaseConverter):
     type = object
+    name = _('Object')
 
     as_string = None
     from_string = None

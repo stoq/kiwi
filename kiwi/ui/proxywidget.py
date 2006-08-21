@@ -48,6 +48,7 @@ _ = lambda m: gettext.dgettext('kiwi', m)
 
 class _PixbufConverter(BaseConverter):
     type = gdk.Pixbuf
+    name = 'Pixbuf'
 
     def as_string(self, value, format='png'):
         buffer = []
@@ -88,7 +89,7 @@ class ProxyWidgetMixin(object):
     gproperty('data-type', object, blurb='Data Type')
     gproperty('model-attribute', str, blurb='Model attribute')
 
-    allowed_data_types = object,
+    allowed_data_types = ()
 
     # To be able to call the as/from_string without setting the data_type
     # property and still receiving a good warning.

@@ -1,3 +1,24 @@
+2006-08-21  Ronaldo Maia <romaia@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/currency.py:
+	* kiwi/datatypes.py:
+	* kiwi/ui/gazpacholoader.py:
+	* kiwi/ui/proxywidget.py:
+	* kiwi/ui/widgets/button.py:
+	* kiwi/ui/widgets/combo.py:
+	* kiwi/ui/widgets/entry.py:
+	* kiwi/ui/widgets/filechooser.py:
+	* kiwi/ui/widgets/fontbutton.py:
+	* kiwi/ui/widgets/label.py:
+	* kiwi/ui/widgets/radiobutton.py:
+	* kiwi/ui/widgets/textview.py:
+	* tests/test_datatypes.py:
+	Refactor datatypes and gazpacholoader:
+	Each widgets hold the allowed datatypes for itself.
+	Add name attribute for the converters.
+
 2006-08-18  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/currency.py: Refactor current to a separate file

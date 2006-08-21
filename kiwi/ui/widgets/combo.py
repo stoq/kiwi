@@ -37,6 +37,7 @@ import gtk
 from gtk import keysyms
 
 from kiwi import ValueUnset
+from kiwi.datatypes import number
 from kiwi.python import deprecationwarn
 from kiwi.ui.comboboxentry import BaseComboBoxEntry
 from kiwi.ui.comboentry import ComboEntry
@@ -49,6 +50,7 @@ from kiwi.utils import PropertyObject, gproperty
 class ProxyComboBox(PropertyObject, gtk.ComboBox, ComboMixin, ProxyWidgetMixin):
 
     __gtype_name__ = 'ProxyComboBox'
+    allowed_data_types = (basestring, object) + number
 
     def __init__(self):
         gtk.ComboBox.__init__(self)
@@ -106,6 +108,7 @@ class ProxyComboBox(PropertyObject, gtk.ComboBox, ComboMixin, ProxyWidgetMixin):
 
 class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
                          ValidatableProxyWidgetMixin):
+    allowed_data_types = (basestring, object) + number
     __gtype_name__ = 'ProxyComboBoxEntry'
     # it doesn't make sense to connect to this signal
     # because we want to monitor the entry of the combo
@@ -216,6 +219,7 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
 class ProxyComboEntry(PropertyObject, ComboEntry, ComboMixin,
                       ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyComboEntry'
+    allowed_data_types = (basestring, object) + number
 
     gproperty("list-editable", bool, True, "Editable")
 

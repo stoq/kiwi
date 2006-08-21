@@ -35,6 +35,7 @@ from kiwi.ui.proxywidget import ProxyWidgetMixin
 
 class ProxyRadioButton(PropertyObject, gtk.RadioButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyRadioButton'
+    allowed_data_types = object,
     gproperty('data-value', str, nick='Data Value')
 
     def __init__(self, group=None, label=None, use_underline=True):

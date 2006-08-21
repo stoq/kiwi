@@ -27,8 +27,11 @@
 The L{Label} is also extended to support some basic markup like
 L{Label.set_bold}"""
 
+import datetime
+
 import gtk
 
+from kiwi.datatypes import number
 from kiwi.python import deprecationwarn
 from kiwi.ui.gadgets import set_foreground
 from kiwi.ui.proxywidget import ProxyWidgetMixin
@@ -36,6 +39,9 @@ from kiwi.utils import PropertyObject, type_register
 
 class ProxyLabel(PropertyObject, gtk.Label, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyLabel'
+    allowed_data_types = (basestring, datetime.date, datetime.datetime,
+                          datetime.time) + number
+
     def __init__(self, label='', data_type=None):
         """
         @param label: initial text

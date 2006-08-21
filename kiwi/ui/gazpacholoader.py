@@ -24,14 +24,12 @@
 
 """Gazpacho integration: loader and extensions"""
 
-import datetime
 import gettext
 import os
 import warnings
 
 import gobject
 import gtk
-from gtk import gdk
 
 try:
     from gazpacho.propertyeditor import PropertyCustomEditor
@@ -46,8 +44,7 @@ from gazpacho.properties import prop_registry, CustomProperty, StringType
 from gazpacho.widgets.base.base import ContainerAdaptor
 from gazpacho.widgets.base.box import BoxAdaptor
 
-from kiwi.currency import currency
-from kiwi.datatypes import Decimal
+from kiwi.datatypes import converter
 from kiwi.environ import environ
 from kiwi.log import Logger
 from kiwi.python import disabledeprecationcall
@@ -173,6 +170,8 @@ adapter_registry.register_adapter(ObjectListAdapter)
 # Framework widgets
 
 class DataTypeAdaptor(PropertyCustomEditor):
+    widget_type = None
+
     def __init__(self):
         super(DataTypeAdaptor, self).__init__()
         self._input = self.create_editor()
@@ -180,18 +179,17 @@ class DataTypeAdaptor(PropertyCustomEditor):
     def get_editor_widget(self):
         return self._input
 
-    def get_data_types(self):
-        """
-        Subclasses should override this.
-        Expected to return a list of 2 sized tuples with
-        name of type and type, to be used in a combo box.
-        """
-        raise NotImplementedError
+    def _get_converters(self):
+        if not self.widget_type:
+            AssertionError("%r should define a widget_type" % self)
+
+        allowed = self.widget_type.allowed_data_types
+        return converter.get_converters(allowed)
 
     def create_editor(self):
         model = gtk.ListStore(str, object)
-        for datatype in self.get_data_types():
-            model.append(datatype)
+        for datatype in self._get_converters():
+            model.append((datatype.name, datatype.type))
         combo = gtk.ComboBox(model)
         renderer = gtk.CellRendererText()
         combo.pack_start(renderer)
@@ -220,82 +218,28 @@ class DataTypeAdaptor(PropertyCustomEditor):
         proxy.set_value(model[active_iter][1])
 
 class SpinBtnDataType(DataTypeAdaptor):
-    def get_data_types(self):
-        return [
-            (_('Integer'), int),
-            (_('Float'), float),
-            (_('Decimal'), Decimal),
-            (_('Currency'), currency)
-            ]
+    widget_type = ProxySpinButton
 
 class EntryDataType(DataTypeAdaptor):
-    def get_data_types(self):
-        return [
-            (_('String'), str),
-            (_('Unicode'), unicode),
-            (_('Integer'), int),
-            (_('Float'), float),
-            (_('Decimal'), Decimal),
-            (_('Currency'), currency),
-            (_('Date'), datetime.date),
-            (_('Date and Time'), datetime.datetime),
-            (_('Time'), datetime.time),
-            (_('Object'), object)
-            ]
+    widget_type = ProxyEntry
 
 class TextViewDataType(DataTypeAdaptor):
-    def get_data_types(self):
-        return [
-            (_('String'), str),
-            (_('Unicode'), unicode),
-            (_('Integer'), int),
-            (_('Float'), float),
-            (_('Decimal'), Decimal),
-            (_('Date'), datetime.date),
-            ]
+    widget_type = ProxyTextView
 
 class ComboBoxDataType(DataTypeAdaptor):
-    def get_data_types(self):
-        return [
-            (_('String'), str),
-            (_('Unicode'), unicode),
-            (_('Boolean'), bool),
-            (_('Integer'), int),
-            (_('Float'), float),
-            (_('Decimal'), Decimal),
-            (_('Object'), object)
-            ]
+    widget_type = ProxyComboBox
+
+class ComboBoxEntryDataType(DataTypeAdaptor):
+    widget_type = ProxyComboBoxEntry
+
+class ComboEntryDataType(DataTypeAdaptor):
+    widget_type = ProxyComboEntry
 
 class LabelDataType(DataTypeAdaptor):
-    def get_data_types(self):
-        return [
-            (_('String'), str),
-            (_('Unicode'), unicode),
-            (_('Boolean'), bool),
-            (_('Integer'), int),
-            (_('Float'), float),
-            (_('Decimal'), Decimal),
-            (_('Date'), datetime.date),
-            (_('Date and Time'), datetime.datetime),
-            (_('Time'), datetime.time),
-            (_('Currency'), currency)
-            ]
+    widget_type = ProxyLabel
 
 class ButtonDataType(DataTypeAdaptor):
-    def get_data_types(self):
-        return [
-            (_('String'), str),
-            (_('Unicode'), unicode),
-            (_('Boolean'), bool),
-            (_('Integer'), int),
-            (_('Float'), float),
-            (_('Decimal'), Decimal),
-            (_('Date'), datetime.date),
-            (_('Date and Time'), datetime.datetime),
-            (_('Time'), datetime.time),
-            (_('Currency'), currency),
-            (_('Pixbuf'), gdk.Pixbuf)
-            ]
+    widget_type = ProxyButton
 
 class DataType(CustomProperty, StringType):
     translatable = False
@@ -350,8 +294,8 @@ def register_widgets():
         (ProxyCheckButton, None, BoolOnlyDataType),
         (ProxyLabel, LabelDataType, DataType),
         (ProxyComboBox, ComboBoxDataType, DataType),
-        (ProxyComboBoxEntry, ComboBoxDataType, DataType),
-        (ProxyComboEntry, ComboBoxDataType, DataType),
+        (ProxyComboBoxEntry, ComboBoxEntryDataType, DataType),
+        (ProxyComboEntry, ComboEntryDataType, DataType),
         (ProxySpinButton, SpinBtnDataType, DataType),
         (ProxyRadioButton, None, BoolOnlyDataType),
         (ProxyTextView, TextViewDataType, DataType)

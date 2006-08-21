@@ -23,10 +23,13 @@
 
 """GtkButton support for the Kiwi Framework"""
 
+import datetime
+
 import gtk
 from gtk import gdk
 
 from kiwi import ValueUnset
+from kiwi.datatypes import number
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import PropertyObject
 
@@ -40,6 +43,8 @@ class ProxyButton(PropertyObject, gtk.Button, ProxyWidgetMixin):
     pixbuf and be set as a child for the Button
     """
 
+    allowed_data_types = (basestring, datetime.date, datetime.datetime,
+                          datetime.time, gdk.Pixbuf) + number
     __gtype_name__ = 'ProxyButton'
 
     def __init__(self):

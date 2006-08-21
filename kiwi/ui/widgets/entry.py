@@ -69,6 +69,9 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     how to fill these entries is displayed according to the current locale.
     """
 
+    allowed_data_types = (basestring, datetime.date, datetime.time,
+                          datetime.datetime, object) + number
+
     __gtype_name__ = 'ProxyEntry'
 
     def __init__(self, data_type=None):

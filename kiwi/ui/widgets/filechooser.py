@@ -32,7 +32,7 @@ from kiwi.utils import PropertyObject, gsignal
 class _FileChooserMixin(object):
     """Mixin to use common methods of the FileChooser interface"""
 
-    allowed_data_types = str,
+    allowed_data_types = basestring,
 
     gsignal('selection_changed', 'override')
     def do_selection_changed(self):

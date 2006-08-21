@@ -159,6 +159,7 @@ _DecimalConverter = type(converter.get_converter(Decimal))
 
 class _CurrencyConverter(_DecimalConverter):
     type = currency
+    name = _('Currency')
 
     def __init__(self):
         self.symbol = True
