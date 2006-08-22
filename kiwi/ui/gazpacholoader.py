@@ -199,7 +199,7 @@ class DataTypeAdaptor(PropertyCustomEditor):
 
     def update(self, context, kiwiwidget, proxy):
         combo = self._input
-        model = self._model()
+        model = self._model
         model.clear()
         for converter in self._get_converters():
             model.append((converter.name, converter.type))
