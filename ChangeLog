@@ -1,3 +1,10 @@
+2006-08-22  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/gazpacholoader.py: Reload the list of datatypes on every
+	update of the datatype editor, so new datatypes may appear.
+
 2006-08-21  Ronaldo Maia <romaia@async.com.br>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

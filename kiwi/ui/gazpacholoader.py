@@ -174,6 +174,7 @@ class DataTypeAdaptor(PropertyCustomEditor):
 
     def __init__(self):
         super(DataTypeAdaptor, self).__init__()
+        self._model = None
         self._input = self.create_editor()
 
     def get_editor_widget(self):
@@ -187,10 +188,8 @@ class DataTypeAdaptor(PropertyCustomEditor):
         return converter.get_converters(allowed)
 
     def create_editor(self):
-        model = gtk.ListStore(str, object)
-        for datatype in self._get_converters():
-            model.append((datatype.name, datatype.type))
-        combo = gtk.ComboBox(model)
+        self._model = gtk.ListStore(str, object)
+        combo = gtk.ComboBox(self._model)
         renderer = gtk.CellRendererText()
         combo.pack_start(renderer)
         combo.add_attribute(renderer, 'text', 0)
@@ -200,6 +199,11 @@ class DataTypeAdaptor(PropertyCustomEditor):
 
     def update(self, context, kiwiwidget, proxy):
         combo = self._input
+        model = self._model()
+        model.clear()
+        for converter in self._get_converters():
+            model.append((converter.name, converter.type))
+
         connection_id = combo.get_data('connection-id')
         if (connection_id != -1):
             combo.disconnect(connection_id)
