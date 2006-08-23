@@ -184,12 +184,12 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         @param mask: the mask to set
         """
 
-        mask = unicode(mask)
         if not mask:
             self.modify_font(pango.FontDescription("sans"))
             self._mask = mask
             return
 
+        mask = unicode(mask)
         input_length = len(mask)
         lenght = 0
         pos = 0

@@ -71,21 +71,6 @@ __all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
-# Constants for use with win32
-LOCALE_SSHORTDATE = 31
-LOCALE_STIMEFORMAT = 4099
-DATE_REPLACEMENTS_WIN32 = [
-    (re.compile('HH?'), '%H'),
-    (re.compile('hh?'), '%I'),
-    (re.compile('mm?'), '%M'),
-    (re.compile('ss?'), '%S'),
-    (re.compile('tt?'), '%p'),
-    (re.compile('dd?'), '%d'),
-    (re.compile('MM?'), '%m'),
-    (re.compile('yyyyy?'), '%Y'),
-    (re.compile('yy?'), '%y')
-    ]
-
 number = (int, float, long, Decimal)
 
 class ValidationError(Exception):
@@ -226,6 +211,12 @@ class BaseConverter(object):
         @param value:
         @returns:
         """
+
+    def get_mask(self):
+        """
+        @returns:
+        """
+        return None
 
 class _StringConverter(BaseConverter):
     type = str
@@ -384,6 +375,34 @@ class _DecimalConverter(_FloatConverter):
 
 converter.add(_DecimalConverter)
 
+# Constants for use with win32
+LOCALE_SSHORTDATE = 31
+LOCALE_STIMEFORMAT = 4099
+DATE_REPLACEMENTS_WIN32 = [
+    (re.compile('HH?'), '%H'),
+    (re.compile('hh?'), '%I'),
+    (re.compile('mm?'), '%M'),
+    (re.compile('ss?'), '%S'),
+    (re.compile('tt?'), '%p'),
+    (re.compile('dd?'), '%d'),
+    (re.compile('MM?'), '%m'),
+    (re.compile('yyyyy?'), '%Y'),
+    (re.compile('yy?'), '%y')
+    ]
+
+DATE_MASK_TABLE = {
+    '%m': '00',
+    '%y': '00',
+    '%d': '00',
+    '%Y': '0000',
+    '%H': '00',
+    '%M': '00',
+    '%S': '00',
+    '%T': '00:00:00',
+    # FIXME: locale specific
+    '%r': '00:00:00 LL',
+    }
+
 class _BaseDateTimeConverter(BaseConverter):
     """
     Abstract class for converting datatime objects to and from strings
@@ -456,6 +475,13 @@ class _BaseDateTimeConverter(BaseConverter):
             format = format[:-1]
 
         return format
+
+    def get_mask(self):
+        mask = self.get_format()
+        for format_char, mask_char in DATE_MASK_TABLE.items():
+            mask = mask.replace(format_char, mask_char)
+
+        return mask
 
     def as_string(self, value, format=None):
         "Convert a date to a string"

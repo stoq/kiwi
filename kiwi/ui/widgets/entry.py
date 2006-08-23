@@ -40,19 +40,6 @@ from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin, \
      VALIDATION_ICON_WIDTH
 from kiwi.utils import PropertyObject, gsignal, type_register
 
-DATE_MASK_TABLE = {
-    '%m': '00',
-    '%y': '00',
-    '%d': '00',
-    '%Y': '0000',
-    '%H': '00',
-    '%M': '00',
-    '%S': '00',
-    '%T': '00:00:00',
-    # FIXME: locale specific
-    '%r': '00:00:00 LL',
-    }
-
 class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     """The Kiwi Entry widget has many special features that extend the basic
     gtk entry.
@@ -91,6 +78,9 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
 
     def prop_set_data_type(self, data_type):
         data_type = super(ProxyEntry, self).prop_set_data_type(data_type)
+        # When there is no datatype, nothing needs to be done.
+        if not data_type:
+            return
 
         # Numbers and dates should be right aligned
         if data_type and issubclass(data_type, (number, datetime.date,
@@ -111,15 +101,8 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         """
         @param data_type:
         """
-
-        if not data_type in (datetime.datetime, datetime.date, datetime.time):
-            return
         conv = converter.get_converter(data_type)
-        mask = conv.get_format()
-
-        for format_char, mask_char in DATE_MASK_TABLE.items():
-            mask = mask.replace(format_char, mask_char)
-
+        mask = conv.get_mask()
         self.set_mask(mask)
 
     #@deprecated('prefill')

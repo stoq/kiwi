@@ -1,3 +1,13 @@
+2006-08-23  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/entry.py(set_mask): Check if mask is None before converting it
+	to unicode.
+	* kiwi/datatypes.py:
+	* kiwi/ui/widgets/entry.py:
+	Datatype converters should provide a get_mask method. Fixes #2758
+
 2006-08-22  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
