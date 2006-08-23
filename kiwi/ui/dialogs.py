@@ -103,6 +103,7 @@ class HIGAlertDialog(gtk.Dialog):
         hbox.show_all()
         self._expander.hide()
         self.add_buttons(*_BUTTON_TYPES[buttons])
+        self.label_vbox = vbox
 
     def set_primary(self, text):
         self._primary_label.set_markup(
@@ -317,6 +318,56 @@ def save(title='', parent=None, current_name='', folder=None):
     filechooser.destroy()
     return path
 
+def password(primary='', secondary='', parent=None):
+    """
+    Shows a password dialog and returns the password entered in the dialog
+    @param primary: primary text
+    @param secondary: secondary text
+    @param parent: a gtk.Window subclass or None
+    @returns: the password or None if none specified
+    @rtype: string or None
+    """
+    if not primary:
+        raise ValueError("primary cannot be empty")
+
+    d = HIGAlertDialog(parent=parent, flags=gtk.DIALOG_MODAL,
+                       type=gtk.MESSAGE_QUESTION,
+                       buttons=gtk.BUTTONS_OK_CANCEL)
+    d.set_default_response(gtk.RESPONSE_OK)
+
+    d.set_primary(primary + '\n')
+    if secondary:
+        secondary += '\n'
+        d.set_secondary(secondary)
+
+    hbox = gtk.HBox()
+    hbox.set_border_width(6)
+    hbox.show()
+    d.label_vbox.pack_start(hbox)
+
+    label = gtk.Label(_('Password:'))
+    label.show()
+    hbox.pack_start(label, False, False)
+
+    entry = gtk.Entry()
+    entry.set_invisible_char(u'\u2022')
+    entry.set_visibility(False)
+    entry.show()
+
+    d.add_action_widget(entry, gtk.RESPONSE_OK)
+    # FIXME: Is there another way of connecting widget::activate to a response?
+    d.action_area.remove(entry)
+    hbox.pack_start(entry, True, True, 12)
+
+    response = d.run()
+
+    if response == gtk.RESPONSE_OK:
+        password = entry.get_text()
+    else:
+        password = None
+    d.destroy()
+    return password
+
 def _test():
     yesno('Kill?', default=gtk.RESPONSE_NO)
 
@@ -333,6 +384,10 @@ def _test():
           'mount: can\'t find /media/cdrom0 in /etc/fstab or /etc/mtab')
     print open(title='Open a file', patterns=['*.py'])
     print save(title='Save a file', current_name='foobar.py')
+
+    print password('Administrator password',
+                   'To be able to continue the wizard you need to enter the '
+                   'administrator password for the database on host anthem')
 
 if __name__ == '__main__':
     _test()
