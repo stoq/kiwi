@@ -1,3 +1,30 @@
+kiwi-1.9.9: 23-august-2006
+    - KiwiEntry improvements (Johan, Patrick, Ronaldo)
+    - Win32 installation fixes for Gazpacho & Kiwi (Johan)
+    - DateEntry fixes (Ronaldo, Johan)
+    - DateEntry win32 support (Aaron Spike)
+    - Logging improvements (Johan)
+    - Datatypes refactoring and improved Gazpacho integration (Ronaldo)
+    - Add UI tests (Johan)
+    - Bugs fixes:
+      #2535: entry needs exceptions that don't fail (Patrick O'Brien)
+      #2545: DateEntry calendar popup doesn't hide correctly (Ronaldo)
+      #2562: Falha na exibição de valores do tipo "currency" (Lincoln, Ronaldo)
+      #2610: [Patch] Remove unnecessary on_column__clicked handler (Dave Cook)
+      #2611: Adding a sortable keyword to objectlist (Dave Cook)
+      #2612: [Patch] objectlist.refresh() fix and optimization (Dave Cook)
+      #2632: Problems with datatype currency when the language ... (Lincoln, Johan)
+      #2654: Decimal precision is removed when pickling (Ronaldo)
+      #2656: ComboEntry's clear() is missing (Ronaldo)
+      #2681: Kiwi doesn't respect system colors after widget ... (Johan, Gustavo Barberi)
+      #2682: Mandatory fields fails to validade if they state ... (Gustavo, Ronaldo)
+      #2685: Make it able to turn fading of invalid stateness to ... (Ali, Johan)
+      #2697: Add a pixbuf data type (Johan, Ronaldo)
+      #2698: Add a ProxyButton (Johan, Henrique)
+      #2720: DateEntry breaks when set invalid. (Ali)
+      #2721: Missing locale specific date formatting information ... (Aaron Spike, Johan)
+      #2758: Datatype converters should provide a get_mask method. (Ronaldo)
+
 kiwi-1.9.8: 25-april-2006
     - distutils.setup() replacement
     - date tests
