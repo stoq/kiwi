@@ -290,22 +290,6 @@ else:
 
 osrv = sys.argv
 sys.argv=["IGNORE"]
-im = __import__
-
-real_imp = __builtins__.__import__
-# HACK: Don't import stuff that we don't like
-# this is why we have to convert 
-def myimport(*args):
-    try: 
-        return im(*args)
-    except:
-        raise
-        mod = FakeModule(args[0], 4)
-        i = args[0].rfind('.')
-        if i != -1:
-            setattr(sys.modules[args[0][:i]], args[0][i+1:], mod)
-        return mod
-__builtins__.__import__ = myimport
 
 for name in names:
     if name.endswith(".py"):
@@ -322,9 +306,6 @@ for name in names:
             modnames.append(name)
     else: #assume it's a dir
         os.path.walk(name, addMod, None)
-
-__builtins__.__import__ = im
-sys.argv = osrv
 
 sys.argv.extend(modnames)
 
@@ -343,7 +324,7 @@ def moveFilesOut(arg, dirname, fnames):
     for fn in fnames:
         if fn.startswith('kiwi.'):
             shutil.move('%s%s%s' % (tmp_dir, os.sep, fn), old_out_dir)
-        
+
 if not document_all:
     print "Updating files in %s" % old_out_dir
     #move the right html files in to place
