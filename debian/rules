@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+  
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/python-distutils.mk
+include /usr/share/cdbs/1/rules/simple-patchsys.mk
+
+clean::
+	find . -name '*.pyc' | xargs rm -f
+
+binary-install::
+	dh_python
+	chmod ugo+x debian/tmp/usr/lib/python2.4/site-packages/site-packages/kiwi/i18n/msgfmt.py

@@ -1,0 +1,6 @@
+debian/tmp/usr/lib/python2.4/site-packages/
+debian/tmp/usr/bin/
+debian/tmp/usr/share/kiwi/glade/
+debian/tmp/usr/share/gazpacho
+debian/tmp/usr/share/kiwi/pixmaps/
+debian/tmp/usr/share/locale
