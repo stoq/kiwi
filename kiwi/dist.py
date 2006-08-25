@@ -252,6 +252,11 @@ def setup(**kwargs):
         for path, files in templates:
             install = self.distribution.get_command_obj('install')
             target = os.path.join(install.prefix, path)
+            if install.root:
+                if target[0] == '/':
+                    target = target[1:]
+                target = os.path.join(install.root, target)
+
             if not os.path.exists(target):
                 info("creating %s" % target)
                 os.makedirs(target)
