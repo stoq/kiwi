@@ -8,7 +8,7 @@ Standards-Version: 3.6.2
 
 Package: kiwi
 Architecture: all
-Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, python-gtk2 (>= 2.8)
+Depends: ${shlibs:Depends}, python-gobject (>= 2.8), python-gtk2 (>= 2.8)
 Suggests: glade | gazpacho, kiwi-examples
 Description: Framework for developing graphical applications in Python
  Kiwi is a framework composed of a set of modules, which eases Python
