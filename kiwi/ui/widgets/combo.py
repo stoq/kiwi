@@ -300,37 +300,70 @@ class ProxyComboBox(PropertyObject, gtk.ComboBox, ProxyWidgetMixin):
         self.emit('content-changed')
 
     def clear(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.clear}
+        """
         self._helper.clear()
         self.emit('content-changed')
 
     def append_item(self, label, data=None):
+        """
+        See L{kiwi.interfaces.IEasyCombo.append_item}
+        """
         self._helper.append_item(label, data)
 
     def select(self, data):
+        """
+        See L{kiwi.interfaces.IEasyCombo.select}
+        """
         self._helper.select(data)
 
     def select_item_by_position(self, pos):
+        """
+        See L{kiwi.interfaces.IEasyCombo.select}
+        """
         self._helper.select_item_by_position(pos)
 
     def select_item_by_label(self, label):
+        """
+        See L{kiwi.interfaces.IEasyCombo.select_item_by_position}
+        """
         self._helper.select_item_by_label(label)
 
     def select_item_by_data(self, data):
+        """
+        See L{kiwi.interfaces.IEasyCombo.select_item_by_label}
+        """
         self._helper.select_item_by_data(data)
 
     def get_model_strings(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.select_item_by_data}
+        """
         return self._helper.get_model_strings()
 
     def get_model_items(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.get_model_strings}
+        """
         return self._helper.get_model_items()
 
     def get_selected_label(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.get_model_items}
+        """
         return self._helper.get_selected_label()
 
     def get_selected_data(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.get_selected_label}
+        """
         return self._helper.get_selected_data()
 
     def get_selected(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.get_selected_data}
+        """
         return self._helper.get_selected()
 
 class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry,
@@ -460,37 +493,70 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry,
         self.emit('content-changed')
 
     def clear(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.clear}
+        """
         self._helper.clear()
         self.entry.set_text("")
 
     def append_item(self, label, data=None):
+        """
+        See L{kiwi.interfaces.IEasyCombo.append_item}
+        """
         self._helper.append_item(label, data)
 
     def select(self, data):
+        """
+        See L{kiwi.interfaces.IEasyCombo.select}
+        """
         self._helper.select(data)
 
     def select_item_by_position(self, pos):
+        """
+        See L{kiwi.interfaces.IEasyCombo.select}
+        """
         self._helper.select_item_by_position(pos)
 
     def select_item_by_label(self, label):
+        """
+        See L{kiwi.interfaces.IEasyCombo.select_item_by_position}
+        """
         self._helper.select_item_by_label(label)
 
     def select_item_by_data(self, data):
+        """
+        See L{kiwi.interfaces.IEasyCombo.select_item_by_label}
+        """
         self._helper.select_item_by_data(data)
 
     def get_model_strings(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.select_item_by_data}
+        """
         return self._helper.get_model_strings()
 
     def get_model_items(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.get_model_strings}
+        """
         return self._helper.get_model_items()
 
     def get_selected_label(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.get_model_items}
+        """
         return self._helper.get_selected_label()
 
     def get_selected_data(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.get_selected_label}
+        """
         return self._helper.get_selected_data()
 
     def get_selected(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.get_selected_data}
+        """
         return self._helper.get_selected()
 
     # Public API
