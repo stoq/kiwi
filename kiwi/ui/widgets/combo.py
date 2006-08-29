@@ -548,6 +548,9 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
         else:
             self.select(data)
 
+    def set_tooltip(self, text):
+        self.entry.set_tooltip(text)
+
     # IEasyCombo
 
     # FIXME: Most of these should move into ComboEntry itself, which should
@@ -573,9 +576,6 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
         return self._helper.get_selected_data()
 
     # Public API
-
-    def set_tooltip(self, text):
-        self.entry.set_tooltip(text)
 
     def get_mode(self):
         return self.mode
