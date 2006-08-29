@@ -100,10 +100,12 @@ class IEasyCombo(Interface):
         """
 
     def clear():
-        pass
+        """Removes all items from the widget"""
 
     def select(data):
-        pass
+        """
+        @param obj: data or text to select
+        """
 
     def select_item_by_position(position):
         """
@@ -122,21 +124,27 @@ class IEasyCombo(Interface):
         @param data: object to select
         """
 
+    def get_selected_label():
+        """
+        @returns: the label of the currently selected item
+        """
+
+    def get_selected_data():
+        """
+        @returns: the data of the currently selected item
+        """
+
+    def get_selected():
+        """
+        @returns: selected text or item or None if nothing
+          is selected
+        """
+
     def get_model_strings():
         pass
 
     def get_model_items():
         pass
-
-    def get_selected_label():
-        pass
-
-    def get_selected_data():
-        pass
-
-    def get_selected():
-        pass
-
 
 class AbstractGladeAdaptor(Interface):
     """Abstract class that define the functionality an class that handle

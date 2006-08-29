@@ -531,11 +531,6 @@ class ComboEntry(gtk.HBox):
         return self._popup.get_selected_iter()
 
 
-    def clear(self):
-        """Removes all items from list"""
-        self._model.clear()
-        self.entry.set_text("")
-
     def get_mode(self):
         return self.mode
 
@@ -543,6 +538,11 @@ class ComboEntry(gtk.HBox):
         self._popup.set_label_text(text)
 
     # IEasyCombo interface
+
+    def clear(self):
+        """Removes all items from list"""
+        self._model.clear()
+        self.entry.set_text("")
 
     def prefill(self, itemdata, sort=False):
         """
@@ -575,8 +575,7 @@ class ComboEntry(gtk.HBox):
 
     def get_selected(self):
         """
-        @returns: selected text or item or None if nothing
-          is selected
+        See L{kiwi.interfaces.IEasyCombo.get_selected}
         """
         treeiter = self.get_active_iter()
         if treeiter:
@@ -584,7 +583,7 @@ class ComboEntry(gtk.HBox):
 
     def get_selected_label(self):
         """
-        @returns: the label of the currently selected item
+        See L{kiwi.interfaces.IEasyCombo.get_selected_label}
         """
         treeiter = self.get_active_iter()
         if treeiter:
@@ -592,7 +591,7 @@ class ComboEntry(gtk.HBox):
 
     def get_selected_data(self):
         """
-        @returns: the data of the currently selected item
+        See L{kiwi.interfaces.IEasyCombo.get_selected_data}
         """
         treeiter = self.get_active_iter()
         if treeiter:
@@ -600,7 +599,7 @@ class ComboEntry(gtk.HBox):
 
     def select(self, obj):
         """
-        @param obj: data or text to select
+        See L{kiwi.interfaces.IEasyCombo.select}
         """
         treeiter = self.entry.get_iter_from_obj(obj)
         self.set_active_iter(treeiter)
