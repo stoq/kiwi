@@ -105,14 +105,22 @@ class IEasyCombo(Interface):
     def select(data):
         pass
 
-    def select_item_by_position(pos):
-        pass
+    def select_item_by_position(position):
+        """
+        Selects an item in the combo from a integer where 0
+        represents the first item.
+        @param position: an integer
+        """
 
-    def select_item_by_label(label):
-        pass
+    def select_item_by_label(text):
+        """
+        @param text: text to select
+        """
 
     def select_item_by_data(data):
-        pass
+        """
+        @param data: object to select
+        """
 
     def get_model_strings():
         pass

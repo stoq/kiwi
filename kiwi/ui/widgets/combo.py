@@ -537,6 +537,11 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
         # even if you select something in the popup list
         self.emit('content-changed')
 
+    # IconEntry
+
+    def set_tooltip(self, text):
+        self.entry.set_tooltip(text)
+
     # IProxyWidget
 
     def read(self):
@@ -547,9 +552,6 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
             self.entry.set_text("")
         else:
             self.select(data)
-
-    def set_tooltip(self, text):
-        self.entry.set_tooltip(text)
 
     # IEasyCombo
 
@@ -562,9 +564,6 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
 
     def append_item(self, label, data=None):
         self._helper.append_item(label, data)
-
-    def select_item_by_position(self, pos):
-        self._helper.select_item_by_position(pos)
 
     def get_model_strings(self):
         return self._helper.get_model_strings()

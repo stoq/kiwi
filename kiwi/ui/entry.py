@@ -481,6 +481,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         self.stop_emission('delete-text')
 
     # IconEntry
+
     def set_tooltip(self, text):
         self._icon.set_tooltip(text)
 
@@ -499,23 +500,10 @@ class KiwiEntry(PropertyObject, gtk.Entry):
     # IComboMixin
 
     def prefill(self, itemdata, sort=False):
-        """Fills the Combo with listitems corresponding to the itemdata
-        provided.
-
-        Parameters:
-          - itemdata is a list of strings or tuples, each item corresponding
-            to a listitem. The simple list format is as follows::
-
-            >>> [ label0, label1, label2 ]
-
-            If you require a data item to be specified for each item, use a
-            2-item tuple for each element. The format is as follows::
-
-            >>> [ ( label0, data0 ), (label1, data1), ... ]
-
-          - Sort is a boolean that specifies if the list is to be sorted by
-            label or not. By default it is not sorted
         """
+        See L{kiwi.interfaces.IEasyCombo.prefill}
+        """
+
         if not isinstance(itemdata, (list, tuple)):
             raise TypeError("'data' parameter must be a list or tuple of item "
                             "descriptions, found %s") % type(itemdata)
@@ -608,6 +596,11 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         completion = self._get_completion()
         model = completion.get_model()
         return model[treeiter][COL_TEXT]
+
+    def get_selected_data(self, treeiter):
+        completion = self._get_completion()
+        model = completion.get_model()
+        return model[treeiter][COL_OBJECT]
 
     def get_iter_from_obj(self, obj):
         mode = self._mode

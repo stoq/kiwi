@@ -489,8 +489,6 @@ class ComboEntry(gtk.HBox):
         """
         return self.entry.get_text()
 
-    # ComboMixin interface
-
     def set_model(self, model):
         """
         Set the tree model to model
@@ -528,9 +526,11 @@ class ComboEntry(gtk.HBox):
         """
         return self._popup.get_selected_iter()
 
+    # IEasyCombo interface
+
     def prefill(self, itemdata, sort=False):
         """
-        See L{kiwi.ui.widgets.entry}
+        See L{kiwi.interfaces.IEasyCombo.prefill}
         """
         self._model.clear()
         self.entry.prefill(itemdata, sort)
@@ -538,17 +538,24 @@ class ComboEntry(gtk.HBox):
 
     def select_item_by_data(self, data):
         """
-        @param data: object to select
+        See L{kiwi.interfaces.IEasyCombo.select_item_by_data}
         """
         treeiter = self.entry.get_iter_by_data(data)
         self.set_active_iter(treeiter)
 
     def select_item_by_label(self, text):
         """
-        @param text: text to select
+        See L{kiwi.interfaces.IEasyCombo.select_item_by_label}
         """
         treeiter = self.entry.get_iter_by_label(text)
         self.set_active_iter(treeiter)
+
+    def select_item_by_position(self, position):
+        """
+        See L{kiwi.interfaces.IEasyCombo.select_item_by_position}
+        """
+        row = self._model[position]
+        self.set_active_iter(row.iter)
 
     def get_selected(self):
         """
@@ -566,6 +573,14 @@ class ComboEntry(gtk.HBox):
         treeiter = self.get_active_iter()
         if treeiter:
             return self.entry.get_selected_label(treeiter)
+
+    def get_selected_data(self):
+        """
+        @returns: the data of the currently selected item
+        """
+        treeiter = self.get_active_iter()
+        if treeiter:
+            return self.entry.get_selected_data(treeiter)
 
     def select(self, obj):
         """
