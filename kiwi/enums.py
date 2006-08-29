@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2001-2006 Async Open Source
+# Copyright (C) 2006 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -18,20 +18,14 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
 #
-# Author(s): Christian Reis <kiko@async.com.br>
-#            Lorenzo Gil Sanchez <lgs@sicem.biz>
-#            Gustavo Rahal <gustavo@async.com.br>
-#            Johan Dahlin <jdahlin@async.com.br>
+# Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
-"""GtkComboBox and GtkComboBoxEntry support for the Kiwi Framework.
-backwards compatibility layer"""
+class ComboColumn:
+    (LABEL,
+     DATA) = range(2)
 
-from kiwi.ui.widgets.combo import ProxyComboBox
-from kiwi.ui.widgets.combo import ProxyComboBoxEntry
-
-class ComboBox(ProxyComboBox):
-    pass
-
-class ComboBoxEntry(ProxyComboBoxEntry):
-    pass
+class ComboMode:
+    (UNKNOWN,
+     STRING,
+     DATA) = range(3)

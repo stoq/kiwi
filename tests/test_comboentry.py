@@ -2,6 +2,7 @@ import unittest
 
 import gtk
 
+from kiwi.enums import ComboMode
 from kiwi.ui.comboentry import ComboEntry
 from kiwi.ui.widgets.combo import ProxyComboEntry
 
@@ -91,20 +92,16 @@ class TestProxyComboEntry(unittest.TestCase):
         self.assertEqual(entry.get_selected(), 2)
 
     def testDataMode(self):
-        from kiwi.ui.combomixin import (COMBO_MODE_UNKNOWN,
-                                        COMBO_MODE_DATA)
         entry = ProxyComboEntry()
-        self.assertEqual(entry.mode, COMBO_MODE_UNKNOWN)
+        self.assertEqual(entry.get_mode(), ComboMode.UNKNOWN)
         entry.prefill([('one', 1), ('two', 2)])
-        self.assertEqual(entry.mode, COMBO_MODE_DATA)
+        self.assertEqual(entry.get_mode(), ComboMode.DATA)
 
     def testStringMode(self):
-        from kiwi.ui.combomixin import (COMBO_MODE_UNKNOWN,
-                                        COMBO_MODE_STRING)
         entry = ProxyComboEntry()
-        self.assertEqual(entry.mode, COMBO_MODE_UNKNOWN)
+        self.assertEqual(entry.get_mode(), ComboMode.UNKNOWN)
         entry.prefill(['one', 'two'])
-        self.assertEqual(entry.mode,  COMBO_MODE_STRING)
+        self.assertEqual(entry.get_mode(),  ComboMode.STRING)
 
 if __name__ == '__main__':
     unittest.main()

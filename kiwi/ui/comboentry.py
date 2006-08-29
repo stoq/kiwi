@@ -26,6 +26,7 @@
 import gtk
 from gtk import gdk, keysyms
 
+from kiwi.enums import ComboMode
 from kiwi.ui.entry import KiwiEntry
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import gsignal, type_register
@@ -340,6 +341,7 @@ class ComboEntry(gtk.HBox):
         if not entry:
             entry = KiwiEntry()
 
+        self.mode = ComboMode.UNKNOWN
         self.entry = entry
         self.entry.connect('activate',
                            self._on_entry__activate)

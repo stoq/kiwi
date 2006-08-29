@@ -1,3 +1,18 @@
+2006-08-29  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/enums.py:
+	* kiwi/interfaces.py:
+	* kiwi/ui/comboentry.py:
+	* kiwi/ui/combomixin.py:
+	* kiwi/ui/test/recorder.py:
+	* kiwi/ui/widgets/combo.py:
+	* kiwi/ui/widgets/combobox.py:
+	* tests/test_comboentry.py:
+
+	Get rid of ComboMixin, use composition instead.
+	Add an IEasyCombo interface reflecting the current state of the adhook 
+	interface. Move the combo enums into kiwi.enums.
+
 2006-08-25  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/dist.py (KiwiInstallData.run_install): Take into account --root to the

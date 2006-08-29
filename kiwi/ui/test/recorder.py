@@ -42,7 +42,6 @@ import gtk
 
 from kiwi.log import Logger
 from kiwi.ui.test.common import Base
-from kiwi.ui.combomixin import ComboMixin
 from kiwi.ui.objectlist import ObjectList
 
 _events = []
@@ -322,22 +321,24 @@ class ObjectListDoubleClick(SignalEvent):
         return '%s.double_click(%s)' % (self.name, self.row)
 register_event_type(ObjectListDoubleClick)
 
-class KiwiComboBoxChangedEvent(SignalEvent):
-    """
-    This event represents a a selection of an item
-    in a L{kiwi.ui.widgets.combobox.ComboBoxEntry} or
-    L{kiwi.ui.widgets.combobox.ComboBox}.
-    """
-    signal_name = 'changed'
-    object_type = ComboMixin
-    def __init__(self, combo, name, args):
-        SignalEvent.__init__(self, combo, name, args)
-        self.label = combo.get_selected_label()
+# XXX: ComboMixin -> ???
 
-    def serialize(self):
-        return '%s.select_item_by_label("%s")' % (self.name, self.label)
+# class KiwiComboBoxChangedEvent(SignalEvent):
+#     """
+#     This event represents a a selection of an item
+#     in a L{kiwi.ui.widgets.combobox.ComboBoxEntry} or
+#     L{kiwi.ui.widgets.combobox.ComboBox}.
+#     """
+#     signal_name = 'changed'
+#     object_type = ComboMixin
+#     def __init__(self, combo, name, args):
+#         SignalEvent.__init__(self, combo, name, args)
+#         self.label = combo.get_selected_label()
 
-register_event_type(KiwiComboBoxChangedEvent)
+#     def serialize(self):
+#         return '%s.select_item_by_label("%s")' % (self.name, self.label)
+
+# register_event_type(KiwiComboBoxChangedEvent)
 
 class Recorder(Base):
     """

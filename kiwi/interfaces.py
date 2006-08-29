@@ -72,6 +72,64 @@ class IValidatableProxyWidget(IProxyWidget):
     def validate(force=False):
         pass
 
+class IEasyCombo(Interface):
+
+    def prefill(itemdata, sort=False):
+        """Fills the Combo with listitems corresponding to the itemdata
+        provided.
+
+        Parameters:
+          - itemdata is a list of strings or tuples, each item corresponding
+            to a listitem. The simple list format is as follows::
+
+            >>> [ label0, label1, label2 ]
+
+            If you require a data item to be specified for each item, use a
+            2-item tuple for each element. The format is as follows::
+
+            >>> [ ( label0, data0 ), (label1, data1), ... ]
+
+          - Sort is a boolean that specifies if the list is to be sorted by
+            label or not. By default it is not sorted
+        """
+
+    def append_item(label, data=None):
+        """ Adds a single item to the Combo. Takes:
+        - label: a string with the text to be added
+        - data: the data to be associated with that item
+        """
+
+    def clear():
+        pass
+
+    def select(data):
+        pass
+
+    def select_item_by_position(pos):
+        pass
+
+    def select_item_by_label(label):
+        pass
+
+    def select_item_by_data(data):
+        pass
+
+    def get_model_strings():
+        pass
+
+    def get_model_items():
+        pass
+
+    def get_selected_label():
+        pass
+
+    def get_selected_data():
+        pass
+
+    def get_selected():
+        pass
+
+
 class AbstractGladeAdaptor(Interface):
     """Abstract class that define the functionality an class that handle
     glade files should provide."""
