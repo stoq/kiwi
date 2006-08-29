@@ -94,9 +94,9 @@ class IEasyCombo(Interface):
         """
 
     def append_item(label, data=None):
-        """ Adds a single item to the Combo. Takes:
-        - label: a string with the text to be added
-        - data: the data to be associated with that item
+        """ Adds a single item to the Combo.
+        @param label: a string with the text to be added
+        @param data: the data to be associated with that item
         """
 
     def clear():
