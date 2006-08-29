@@ -26,7 +26,9 @@
 import gtk
 from gtk import gdk, keysyms
 
-from kiwi.enums import ComboMode
+from kiwi.component import implements
+from kiwi.interfaces import IEasyCombo
+from kiwi.enums import ComboColumn, ComboMode
 from kiwi.ui.entry import KiwiEntry
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import gsignal, type_register
@@ -329,8 +331,12 @@ class _ComboEntryPopup(gtk.Window):
 type_register(_ComboEntryPopup)
 
 class ComboEntry(gtk.HBox):
+
+    implements(IEasyCombo)
+
     gsignal('changed')
     gsignal('activate')
+
     def __init__(self, entry=None):
         """
         @param entry: a gtk.Entry subclass to use
@@ -533,6 +539,9 @@ class ComboEntry(gtk.HBox):
     def get_mode(self):
         return self.mode
 
+    def set_label_text(self, text):
+        self._popup.set_label_text(text)
+
     # IEasyCombo interface
 
     def prefill(self, itemdata, sort=False):
@@ -596,8 +605,50 @@ class ComboEntry(gtk.HBox):
         treeiter = self.entry.get_iter_from_obj(obj)
         self.set_active_iter(treeiter)
 
-    def set_label_text(self, text):
-        self._popup.set_label_text(text)
+    def append_item(self, label, data=None):
+        """
+        See L{kiwi.interfaces.IEasyCombo.append_item}
+        """
+        if not isinstance(label, basestring):
+            raise TypeError("label must be string, found %s" % label)
+
+        if self.mode == ComboMode.UNKNOWN:
+            if data is not None:
+                self.mode = ComboMode.DATA
+            else:
+                self.mode = ComboMode.STRING
+
+        model = self._model
+        if self.mode == ComboMode.STRING:
+            if data is not None:
+                raise TypeError("data can not be specified in string mode")
+            model.append((label, None))
+        elif self.mode == ComboMode.DATA:
+            if data is None:
+                raise TypeError("data must be specified in string mode")
+            model.append((label, data))
+        else:
+            raise AssertionError
+
+    def get_model_strings(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.get_model_strings}
+        """
+        return [row[ComboColumn.LABEL] for row in self._model]
+
+    def get_model_items(self):
+        """
+        See L{kiwi.interfaces.IEasyCombo.get_model_items}
+        """
+        if self.mode != ComboMode.DATA:
+            raise TypeError("get_model_items can only be used in data mode")
+
+        model = self._model
+        items = {}
+        for row in model:
+            items[row[ComboColumn.LABEL]] = row[ComboColumn.DATA]
+
+        return items
 
     # IconEntry
 

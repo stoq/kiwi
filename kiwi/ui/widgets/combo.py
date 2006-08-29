@@ -515,7 +515,6 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
         ComboEntry.__init__(self, entry=entry)
         ValidatableProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self)
-        self._helper = _EasyComboBoxHelper(self)
         entry.connect('content-changed', self._on_entry__content_changed)
 
     def __nonzero__(self):
@@ -552,17 +551,3 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
             self.entry.set_text("")
         else:
             self.select(data)
-
-    # IEasyCombo
-
-    # FIXME: Most of these should move into ComboEntry itself, which should
-    #        implement IEasyCombo
-
-    def append_item(self, label, data=None):
-        self._helper.append_item(label, data)
-
-    def get_model_strings(self):
-        return self._helper.get_model_strings()
-
-    def get_model_items(self):
-        return self._helper.get_model_items()
