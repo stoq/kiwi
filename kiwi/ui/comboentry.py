@@ -530,6 +530,9 @@ class ComboEntry(gtk.HBox):
         self._model.clear()
         self.entry.set_text("")
 
+    def get_mode(self):
+        return self.mode
+
     # IEasyCombo interface
 
     def prefill(self, itemdata, sort=False):

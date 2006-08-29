@@ -566,8 +566,3 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
 
     def get_model_items(self):
         return self._helper.get_model_items()
-
-    # Public API
-
-    def get_mode(self):
-        return self.mode
