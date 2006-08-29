@@ -96,6 +96,9 @@ class ProxyComboBox(PropertyObject, gtk.ComboBox, ComboMixin, ProxyWidgetMixin):
         self.select(data)
 
     def prefill(self, itemdata, sort=False):
+        """
+        See L{kiwi.ui.combomixin.ComboMixin.prefill}
+        """
         ComboMixin.prefill(self, itemdata, sort)
 
         # we always have something selected, by default the first item
@@ -201,6 +204,9 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry, ComboMixin,
             self.select(data)
 
     def prefill(self, itemdata, sort=False, clear_entry=False):
+        """
+        See L{kiwi.ui.combomixin.ComboMixin.prefill}
+        """
         ComboMixin.prefill(self, itemdata, sort)
         if clear_entry:
             self.entry.set_text("")
