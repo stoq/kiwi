@@ -558,10 +558,6 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
     # FIXME: Most of these should move into ComboEntry itself, which should
     #        implement IEasyCombo
 
-    def clear(self):
-        self._helper.clear()
-        self.entry.set_text("")
-
     def append_item(self, label, data=None):
         self._helper.append_item(label, data)
 
@@ -570,9 +566,6 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
 
     def get_model_items(self):
         return self._helper.get_model_items()
-
-    def get_selected_data(self):
-        return self._helper.get_selected_data()
 
     # Public API
 

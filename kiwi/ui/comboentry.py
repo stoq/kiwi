@@ -475,8 +475,6 @@ class ComboEntry(gtk.HBox):
         """
         self._popup.popdown()
 
-    # Entry interface
-
     def set_text(self, text):
         """
         @param text:
@@ -525,6 +523,12 @@ class ComboEntry(gtk.HBox):
         @rtype: gtk.TreeIter
         """
         return self._popup.get_selected_iter()
+
+
+    def clear(self):
+        """Removes all items from list"""
+        self._model.clear()
+        self.entry.set_text("")
 
     # IEasyCombo interface
 
