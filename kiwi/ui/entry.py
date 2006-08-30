@@ -97,6 +97,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
         self.connect('insert-text', self._on_insert_text)
         self.connect('delete-text', self._on_delete_text)
+        self.connect_after('grab-focus', self._after_grab_focus)
 
         self._current_object = None
         self._mode = ENTRY_MODE_TEXT
@@ -307,6 +308,15 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         completion = self._get_completion()
         completion.set_match_func(match_func)
 
+    def is_empty(self):
+        text = self.get_text()
+        if self._mask:
+            empty = self.get_empty_mask()
+        else:
+            empty = ''
+
+        return text == empty
+        
     # Private
 
     def _really_delete_text(self, start, end):
@@ -479,6 +489,12 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         self._insert_mask(start, end)
 
         self.stop_emission('delete-text')
+
+    def _after_grab_focus(self, widget):
+        # The text is selectet in grab-focus, so this needs to be done after
+        # that:
+        if self.is_empty():
+            self.set_position(0)
 
     # IconEntry
 
