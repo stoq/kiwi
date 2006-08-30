@@ -29,3 +29,7 @@ class ComboMode:
     (UNKNOWN,
      STRING,
      DATA) = range(3)
+
+class Alignment:
+    (LEFT,
+     RIGHT) = range(2)

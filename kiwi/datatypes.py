@@ -44,6 +44,7 @@ import sys
 import time
 
 from kiwi import ValueUnset
+from kiwi.enums import Alignment
 
 try:
     from decimal import Decimal, InvalidOperation
@@ -189,9 +190,12 @@ class BaseConverter(object):
     Abstract converter used by all datatypes
     @cvar type:
     @cvar name: The name of the datatype.
+    @cvar align: The alignment of the datatype. Normally right for numbers
+                 and dates, left for others. Default is left.
     """
     type = None
     name = None
+    align = Alignment.LEFT
 
     def get_compare_function(self):
         """
@@ -249,6 +253,7 @@ converter.add(_UnicodeConverter)
 class _IntConverter(BaseConverter):
     type = int
     name = _('Integer')
+    align = Alignment.RIGHT
 
     def as_string(self, value, format=None):
         """Convert a float to a string"""
@@ -308,6 +313,7 @@ converter.add(_BoolConverter)
 class _FloatConverter(BaseConverter):
     type = float
     name = _('Float')
+    align = Alignment.RIGHT
 
     def as_string(self, value, format=None):
         """Convert a float to a string"""
@@ -359,6 +365,7 @@ converter.add(_FloatConverter)
 class _DecimalConverter(_FloatConverter):
     type = Decimal
     name = _('Decimal')
+    align = Alignment.RIGHT
     def from_string(self, value):
         if value == '':
             return ValueUnset
@@ -410,6 +417,7 @@ class _BaseDateTimeConverter(BaseConverter):
     @cvar lang_constant:
     """
     date_format = None
+    align = Alignment.RIGHT
 
     def __init__(self):
         self._keep_am_pm = False

@@ -36,6 +36,7 @@ from gtk import gdk
 from kiwi.accessor import kgetattr
 from kiwi.datatypes import converter, number, Decimal
 from kiwi.currency import currency # after datatypes
+from kiwi.enums import Alignment
 from kiwi.log import Logger
 from kiwi.python import slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
@@ -172,9 +173,10 @@ class Column(PropertyObject, gobject.GObject):
         # center for bools and left align it for everything else.
         if "justify" not in kwargs:
             if data_type:
+                conv = converter.get_converter(data_type)
                 if issubclass(data_type, bool):
                     kwargs['justify'] = gtk.JUSTIFY_CENTER
-                elif issubclass(data_type, (number, currency)):
+                elif conv.align == Alignment.RIGHT:
                     kwargs['justify'] = gtk.JUSTIFY_RIGHT
 
         format_func = kwargs.get('format_func')

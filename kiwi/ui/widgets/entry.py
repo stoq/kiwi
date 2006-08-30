@@ -32,6 +32,7 @@ import pango
 from kiwi.datatypes import ValidationError, converter, number, \
      ValueUnset
 from kiwi.decorators import deprecated
+from kiwi.enums import Alignment
 from kiwi.python import deprecationwarn
 from kiwi.ui.entry import MaskError, KiwiEntry, ENTRY_MODE_TEXT, \
      ENTRY_MODE_DATA
@@ -83,8 +84,8 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
             return
 
         # Numbers and dates should be right aligned
-        if data_type and issubclass(data_type, (number, datetime.date,
-                                    datetime.time, datetime.datetime)):
+        conv = converter.get_converter(data_type)
+        if conv.align == Alignment.RIGHT:
             self.set_property('xalign', 1.0)
 
         # Apply a mask for the data types, some types like

@@ -28,6 +28,7 @@ import gettext
 from kiwi.datatypes import HAVE_DECIMAL, Decimal, InvalidOperation
 from kiwi.datatypes import ValidationError, ValueUnset
 from kiwi.datatypes import converter, get_localeconv, filter_locale
+from kiwi.enums import Alignment
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
@@ -160,6 +161,7 @@ _DecimalConverter = type(converter.get_converter(Decimal))
 class _CurrencyConverter(_DecimalConverter):
     type = currency
     name = _('Currency')
+    align = Alignment.RIGHT
 
     def __init__(self):
         self.symbol = True
