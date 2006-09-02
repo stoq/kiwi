@@ -177,7 +177,7 @@ compile and install them.
 % XXX: Add subversion checkout instructions
 You can also use SVN to check out Kiwi, by following the instructions on
 the \citetitle[http://www.async.com.br/projects/cvs.php]{Async CVS
-page}. The module name is \code{Kiwi}.
+page}. The module name is \code{kiwi}.
 \citetitle[http://svn.async.com.br/cgi-bin/viewcvs.cgi/kiwi/?view=query&dir=&file=&file_match=exact&who=&who_match=exact&querysort=date&hours=2&date=month&mindate=&maxdate=]{Async's
 ViewCVS service} can be used to check development of the kiwi module in
 real time, and there is also an
@@ -322,7 +322,7 @@ or not this is a very useful app is another matter, but let's get you
 started on it before you criticize me.)
 
 There are a number of different Views available for Kiwi, which live in
-the \module{View} module:
+the \module{kiwi.ui.views} module:
 
 \begin{itemize}
 \item \class{BaseView}, which is a View with a toplevel window, in which
@@ -885,7 +885,7 @@ combinations of View and Controller that simplify things somewhat.
 
 \subsection{UI Delegates}
 
-The UI Delegate classes, located in the \module{Delegates} module, use
+The UI Delegate classes, located in the \module{kiwi.ui.delegates} module, use
 multiple inheritance, being derived from both a View and a Controller.
 This means they combine functionality from both into a single class: not
 only does it specify the interface, it also handles the widget signals.
@@ -1594,8 +1594,7 @@ study; it is however a bit too long to include in this text.
 
 \subsubsection{Models}
 
-The \module{FrameWork} module holds the \class{Model} classes (apart
-from holding the \class{BaseController} class as well). As discussed
+The \module{kiwi.model} module \class{Model} classes. As discussed
 before, the \class{Model} class provides a mechanism for updating the
 user interface based on changed performed in the model instance.
 
