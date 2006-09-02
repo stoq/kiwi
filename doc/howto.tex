@@ -350,7 +350,7 @@ fit in (it's available in the Kiwi tarball in
 %% \includegraphics[scale=0.905]{images/london.eps}
 %% \end{center}
 
-%% \verbatiminput{../examples/framework/hey/hey.py}
+\verbatiminput{../examples/framework/hey/hey.py}
 
 So what does the example do? To start off with, it defines a view class
 that inherits from \class{BaseView}, the View with a toplevel window.
@@ -546,7 +546,7 @@ change \file{heyglade.py} to \file{heyglade2.py}:
 %% \includegraphics[scale=0.905]{images/london2.eps}
 %% \end{center}
 
-%% \verbatiminput{../examples/framework/hey/heyglade2.py}
+\verbatiminput{../examples/framework/hey/heyglade2.py}
 
 Of course, it is often useful to subclass \code{BaseView} to be able to
 customize the behavior that you want for that view. I recommend
@@ -565,7 +565,7 @@ An example of a subclassed \class{BaseView} using \code{widgets} as a
 class variable follows (in the Kiwi tarball in
 \file{Kiwi/examples/framework/hey/heyglade3.py}):
 
-%% \verbatiminput{../examples/framework/hey/heyglade3.py}
+\verbatiminput{../examples/framework/hey/heyglade3.py}
 
 \subsection{UI Composition}
 
@@ -774,7 +774,7 @@ these concepts more concrete (included in the Kiwi tarball at
 %% \includegraphics[scale=0.905]{images/faren.eps}
 %% \end{center}
 
-%% \verbatiminput{../examples/framework/faren/faren.py}
+\verbatiminput{../examples/framework/faren/faren.py}
 
 Let's have a look at the code. I define a Controller
 \class{FarenControl} that inherits from \class{BaseController}, and
@@ -905,7 +905,7 @@ which is a sign of high coupling. One good way to solve these issues is
 to provide a subclass of BaseView that does some extra setup and
 provides an API for the Controller (\file{faren2.py}):
 
-%% \verbatiminput{../examples/framework/faren/faren2.py}
+\verbatiminput{../examples/framework/faren/faren2.py}
 
 This (much longer, sure, but with a nicer division) example shows us
 using a separate View class, which presents an API for manipulating the
@@ -980,7 +980,7 @@ Delegate and GladeDelegate subclasses. As an example for using the
 GladeDelegate, below is a third version of our temperature conversion
 application, \file{examples/Faren/faren3.py}:
 
-%%     \verbatiminput{../examples/framework/faren/faren3.py}
+\verbatiminput{../examples/framework/faren/faren3.py}
 
 As you can see, using the delegates makes a lot of sense in many cases:
 the view and controller split isn't essential, and you can end up
@@ -1080,7 +1080,7 @@ example we saw a while back. I'm going to need to change the news data
 structures from tuples to instances, and create a ObjectList for
 it (see \code{news/news2.py}):
 
-%%     \verbatiminput{../examples/framework/news/news2.py}
+\verbatiminput{../examples/framework/news/news2.py}
 
 Wow! Assuming you have data in the correct format, in some 25 lines you
 defined the data for your applications, and in about 5 lines you
@@ -1148,7 +1148,7 @@ browsing application in the next example:
 %% \includegraphics[scale=0.905]{images/news3.eps}
 %% \end{center}
 
-%%     \verbatiminput{../examples/framework/news/news3.py}
+\verbatiminput{../examples/framework/news/news3.py}
 
 Let's have a quick look at the code:
 
@@ -1261,7 +1261,7 @@ the callback syntax should not include it.
 %% \includegraphics[scale=0.626]{images/newsform.eps}
 %% \end{center}
 
-%% \verbatiminput{../examples/framework/newsform/newsform.py}
+\verbatiminput{../examples/framework/newsform/newsform.py}
 
 Let's look at this simple example. First, I define a model class which
 is really just a shell class, with no methods or attributes:
@@ -1676,7 +1676,7 @@ called \class{PickledModel}. To demonstrate by example, I will revisit
 the first example we saw in this text, the Person editor from section
 \ref{person}. Let's see the code again:
 
-%% \verbatiminput{../examples/Person/person.py}
+\verbatiminput{../examples/framework/person/person.py}
 
 Looking at the code, you might notice three special issues:
 
