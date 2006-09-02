@@ -756,18 +756,9 @@ signal, you would use "clicked". The final method name would be
 Note that the widget must be attached {\it directly} to the controller's
 corresponding View; it can't be attached using this syntax to a slave of
 that view, for instance (you'll have to call \code{connect()} directly
-in that case). Note also that signal handler's parameters will vary from
-signal to signal, and the only thing that can be trusted is that the
-first parameter will be the widget which generated the signal. You can
-use a method signature like the following to avoid problems:
+in that case).
 
-\begin{verbatim}
-    def on_mybutton__clicked(self, button, *args):
-\end{verbatim}
-
-This way, args will hold as many arguments as the signal defines for
-that function (and you can connect this method explicitly to more than
-one kind of signal, if you need to). Let's see a simple example to make
+Let's see a simple example to make
 these concepts more concrete (included in the Kiwi tarball at
 \file{Kiwi/examples/framework/faren/faren.py}):
 
