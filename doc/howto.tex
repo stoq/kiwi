@@ -243,10 +243,6 @@ framework. This guide will take you gradually through the different
 classes in Kiwi, and the next section begins by describing the general
 Kiwi architecture.
 
-% ====================
-% ====== MARK ========
-% ====================
-
 \subsection{Introduction}
 
 The Kiwi framework is based loosely on two important concepts.
@@ -331,8 +327,9 @@ the \module{View} module:
 \item \class{BaseView}, which is a View with a toplevel window, in which
 you create and organize the widgets using PyGTK classes and commands.
 \item \class{BaseView}, which allows widgets to be defined using Glade
-and loaded in runtime using libglade. This allows widgets to be easily
-changed and rearranged visually, without the code needing to be changed.
+and loaded in runtime using gazpacho or libglade. This allows widgets to
+be easily changed and rearranged visually, without the code needing
+to be changed.
 \item \class{SlaveView}, which is a View with a toplevel widget that is
 not a window. SlaveViews are designed to be embedded into other Views,
 usually representing a part of an interface that must be reused in
@@ -344,7 +341,11 @@ To start off, the easiest way to demonstrate a View is to create a very
 simple one that does nothing but present a fixed label on the screen.
 This first example will use GTK+ widgets directly, just to show how they
 fit in (it's available in the Kiwi tarball in
-\file{Kiwi/examples/HeyPlanet/hey.py}).
+\file{examples/framework/hey/hey.py}).
+
+% ====================
+% ====== MARK ========
+% ====================
 
 %% \begin{center}
 %% \includegraphics[scale=0.905]{images/london.eps}
