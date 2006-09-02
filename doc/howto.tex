@@ -7,7 +7,7 @@
 % --- verbatim.perl.orig  Sat Oct 12 14:14:15 2002
 % +++ verbatim.perl       Sat Oct 12 14:14:17 2002
 % @@ -110,7 +110,7 @@
-%         $env_id .= ' CLASS="verbatim"' unless ($env_id =~
+%         $env_id .= ' CLASS="verbatim"' unless ($env_id =
 % /(^|\s)CLASS\s*\=/i);
 %         $verb_pre =~ s/>/ $env_id>/;
 %      }
@@ -29,11 +29,11 @@
 
 \title{Developing applications with Kiwi}
 
-\release{1.9.6}
+\release{1.9.9}
 
 \author{Christian Reis\\Johan Dahlin\\Async Open Source, Brazil}
 \authoraddress{kiko@async.com.br\\jdahlin@async.com.br\\http://www.async.com.br/projects/kiwi/}
-\date{February, 2006}
+\date{August, 2006}
 
 \begin{document}
 \maketitle
@@ -53,13 +53,13 @@ maintain than raw PyGTK, and just browsing through the examples in this
 guide and in the package should give you a good idea of how.
 
 {\bf Kiwi includes a framework and a set of enhanced widgets}. There is
-\citetitle[http://www.async.com.br/projects/Kiwi/api/]{complete API
+\citetitle[http://www.async.com.br/projects/kiwi/api/]{complete API
 documentation} to accompany the library, and this paper covers the
 Framework in detail, providing examples, screenshots and advice on
 designing your application.
 
-All you need to use Kiwi is Python and PyGTK. Gazpacho is a useful add-on, 
-and is strongly recommended. Kiwi's free software licensed under the LGPL 
+All you need to use Kiwi is Python and PyGTK. Gazpacho is a useful add-on,
+and is strongly recommended. Kiwi's free software licensed under the LGPL
 and can be used and embedded in any application.
 \end{abstract}
 
@@ -76,7 +76,7 @@ allows you to easily write applications that look like this:
 \begin{center}
 \includegraphics[scale=0.626]{images/diary.eps}
 
-\small{(This example application, \file{examples/Diary/diary2.py}, has
+\small{(This example application, \file{examples/framework/diary/diary2.py}, has
 65 lines, not counting the XML specification)}
 \end{center}
 
@@ -134,8 +134,8 @@ way beyond providing a basic `document plus view' schema, doing widget
 conversion, automatic signal connection, and adjusting behavior
 automatically to reduce drastically the amount of code needed to define
 the windows and dialogs for your application. Kiwi also includes native
-gazpacho support, which allows you to graphically specify (using 
-Gazpacho, the UI designer) your user interfaces and use them seamlessly 
+gazpacho support, which allows you to graphically specify (using
+Gazpacho, the UI designer) your user interfaces and use them seamlessly
 as part of the framework.
 
 The code used in Kiwi has been developed with quite a lot of care, and
@@ -145,10 +145,10 @@ customize the code to your need if you feel you don't want YAD (yet
 another dependency) for your application.
 
 Kiwi is also being actively developed and supported as a building block
-in Stoq, and over the past years has grown to become very useful. 
-We welcome feedback and have been very fast to respond to requests and 
-bug reports, so you can be sure your application will be relying a 
-library that is actively supported and that its authors have a 
+in Stoq, and over the past years has grown to become very useful.
+We welcome feedback and have been very fast to respond to requests and
+bug reports, so you can be sure your application will be relying a
+library that is actively supported and that its authors have a
 continued interest in maintaining.
 
 \subsection{Getting and Installing Kiwi}
@@ -169,25 +169,19 @@ already on your system:
   \item  \citetitle[http://gazpacho.sicem.biz]{PyGTK} 0.6.5
 \end{itemize}
 
-% ====================
-% ====== MARK ========
-% ====================
-
 Most of these packages are available on the main distributions,
-including Redhat, Debian, Conectiva and Mandrake, and might even be
+including Fedora, Ubuntu, Debian, Conectiva and Mandrake, and might even be
 preinstalled in your system. If not, you can pull the source code,
-compile and install them. Note that some distributions, notably Redhat
-8, include PyGTK-2 by default, and you will need to install PyGTK-0.6
-yourself to get around this (use at least 0.6.11, in this case).
+compile and install them.
 
-You can also use CVS to check out Kiwi, by following the instructions on
+You can also use SVN to check out Kiwi, by following the instructions on
 the \citetitle[http://www.async.com.br/projects/cvs.php]{Async CVS
 page}. The module name is \code{Kiwi}.
-\citetitle[http://bonsai.async.com.br/cvsquery.cgi?treeid=default&module=Kiwi&branch=HEAD&branchtype=match&dir=&file=&filetype=match&who=&whotype=match&sortby=Date&hours=2&date=month&mindate=&maxdate=&cvsroot=\%2Fcvs]{Async's
-Bonsai service} can be used to check development of the Kiwi module in
+\citetitle[http://svn.async.com.br/cgi-bin/viewcvs.cgi/kiwi/?view=query&dir=&file=&file_match=exact&who=&who_match=exact&querysort=date&hours=2&date=month&mindate=&maxdate=]{Async's
+ViewCVS service} can be used to check development of the kiwi module in
 real time, and there is also an
-\citetitle[http://lxr.async.com.br/source/Kiwi/]{LXR view} of the code.
-Finally, bugs in Kiwi should be reported to
+\citetitle[http://svn.async.com.br/cgi-bin/viewcvs.cgi/]{browse source} of the code.
+Finally, bugs in kiwi should be reported to
 \citetitle[http://bugs.async.com.br/]{Async's installation of Bugzilla}.
 
 Kiwi includes a fair amount of tests in the \file{tests/} directory in
@@ -204,7 +198,7 @@ you have installed the dependent packages, run (as root, normally):
 in the main directory. That's it. To test the installation, do:
 
     \begin{verbatim}
-    >>> import Kiwi
+    >>> import kiwi
     \end{verbatim}
 
 from the Python console. It should work, and if it does, everything
@@ -219,23 +213,23 @@ be showing code examples that are included in the distribution (in the
 \file{examples/} directory); just install Kiwi and you are ready to run
 them. To start off with, I'll show a very simple Kiwi application that
 saves information defined in a graphical form. This app is included in
-\file{Kiwi/examples/Person/person.py}.  Note that this app uses the
+\file{Kiwi/examples/framework/person/person.py}.  Note that this app uses the
 glade file \citetitle[Person.glade]{Person.glade}.
 
 % \begin{center}
 % \includegraphics[scale=0.905]{images/simple.eps}
 % \end{center}
 
-% \verbatiminput{../examples/Person/person.py}
+% \verbatiminput{../examples/framework/person/person.py}
 
 This application (17 lines) renders an interface to edit personal data,
 transparently saving and loading it. A quick glance at the code:
 
 \begin{enumerate}
 \item We define Person, a class to hold our application information
-\item \code{unpickle\_model()} loads (creating, if it didn't exist) a
+\item \code{Person.unpickle()} loads (creating, if it didn't exist) a
 Person instance.
-\item We create a \class{GladeProxy} instance, which loads an interface
+\item We create a \class{ProxyDelegate} instance, which loads an interface
 from a glade definition file and attaches it to the Person instance.
 \item We run the application; changes in the interface reflect
 transparently on the person instance.
@@ -249,9 +243,13 @@ framework. This guide will take you gradually through the different
 classes in Kiwi, and the next section begins by describing the general
 Kiwi architecture.
 
+% ====================
+% ====== MARK ========
+% ====================
+
 \subsection{Introduction}
 
-The Kiwi framework is based loosely on two important concepts. 
+The Kiwi framework is based loosely on two important concepts.
 
 \begin{enumerate}
 \item The first concept is Model-View-Controller (MVC), which is an
@@ -273,7 +271,7 @@ Holub's `visual proxy' concept described in his series
 \citetitle[http://www.javaworld.com/javaworld/jw-07-1999/jw-07-toolbox\_p.html]
 {Building user interfaces for object-oriented systems}. Allen's views
 are quite original and gave a lot of insight into what coupling really
-meant for graphical interfaces. 
+meant for graphical interfaces.
 
 The visual proxy is an object that represents a model, or a certain part
 of it. It is coupled to the model it represents, which isn't absurd
@@ -300,18 +298,18 @@ inherit from to take advantage of special functionality.
 \item \class{Proxies}, special types of Delegate designed to implement
 forms. Proxies attach themselves to an instance, and transparently
 modify this instance as the user interacts with the widgets in its
-interface. 
+interface.
 \end{itemize}
 
 Of these, \class{Controllers} and \class{Models} do not implement user
 interfaces themselves, and are used together with one of the different
-user interface (UI) classes. 
+user interface (UI) classes.
 
 {\bf A special note:} When using a white-box framework, it is very
 important to take care when defining names in the inherited classes to
 avoid clobbering names defined in the base classes you inherit from. It
 is useful to read through the
-\citetitle[http://www.async.com.br/projects/Kiwi/api/]{API
+\citetitle[http://www.async.com.br/projects/kiwi/api/]{API
 documentation} and check for naming conflicts, and to understand which
 hooks might be interesting to reimplement. If you find something in your
 code is behaving very strangely, this could be one of the first things
@@ -332,7 +330,7 @@ the \module{View} module:
 \begin{itemize}
 \item \class{BaseView}, which is a View with a toplevel window, in which
 you create and organize the widgets using PyGTK classes and commands.
-\item \class{GladeView}, which allows widgets to be defined using Glade
+\item \class{BaseView}, which allows widgets to be defined using Glade
 and loaded in runtime using libglade. This allows widgets to be easily
 changed and rearranged visually, without the code needing to be changed.
 \item \class{SlaveView}, which is a View with a toplevel widget that is
@@ -352,7 +350,7 @@ fit in (it's available in the Kiwi tarball in
 %% \includegraphics[scale=0.905]{images/london.eps}
 %% \end{center}
 
-%% \verbatiminput{../examples/HeyPlanet/hey.py}
+%% \verbatiminput{../examples/framework/hey/hey.py}
 
 So what does the example do? To start off with, it defines a view class
 that inherits from \class{BaseView}, the View with a toplevel window.
@@ -367,7 +365,7 @@ could be \code{Views.BaseView.\_\_init\_\_(self, win, mainquit)}.}
 \begin{itemize}
 \item \function{toplevel}, which defines which widget is the toplevel
 widget for that view. For a BaseView, this is the window you want to
-display. We pass in the GtkWindow we just created. The toplevel widget
+display. We pass in the gtk.Window we just created. The toplevel widget
 is used for setting focus and showing the View.
 \item \function{delete\_handler}, which defines which function should be
 called when the window is deleted (this happens when the almost ubiquitous "X"
@@ -409,10 +407,10 @@ let the control go back to our code (which also ends right after, at
 which time you are left staring at the console).
 
 \class{BaseView} is the most basic type of view, and it's only worth so
-much explaining. The next section describes \class{GladeView}, which is
+much explaining. The next section describes \class{BaseView}, which is
 a lot more interesting.
 
-\subsection{GladeView}
+\subsection{BaseView}
 
 Once you have written three (two?) applications using the PyGTK classes
 and commands directly, you get very bored of hand-coding the widgets and
@@ -434,24 +432,24 @@ to use Glade to revisit and tweak your interface without having to
 regenerate code is also a huge advantage.
 
 Anyway, Kiwi lets you use Glade interfaces in a {\bf very} convenient
-manner, by using the \class{GladeView} class. Let's show this off by
+manner, by using the \class{BaseView} class. Let's show this off by
 redoing the last example using glade. First thing would be running Glade
 and creating a window and putting a label into it. Name the window
 \code{hey} and turn the visible property off (using the Common tab of
 the Properties dialog). Save the file (careful with that Save dialog, it
 creates directories and is generally evil in my opinion) as
 \file{hey.glade}. And then code up \code{heyglade.py} (all this is
-available in \file{examples/HeyPlanet/}):
+available in \file{examples/framework/hey/heyglade.py}):
 
-\verbatiminput{../examples/HeyPlanet/heyglade.py}
+\verbatiminput{../examples/framework/hey/heyglade.py}
 
 Oops. Where did all that code go? Right, we are now using the glade file
 to generate the UI. So we didn't even need to subclass
-\class{GladeView}; we just passed in a parameter that told it what glade
+\class{BaseView}; we just passed in a parameter that told it what glade
 file to use, and the same delete handler. Note also that we used
 \code{show\_and\_loop()} instead of
 \code{show\_all\_and\_loop()}\footnote{ It is important to note that
-GladeView does *not* allow you to call \code{show\_all\_and\_loop()} ---
+BaseView does *not* allow you to call \code{show\_all\_and\_loop()} ---
 you must use \code{show\_and\_loop()} instead.  There is a reason for
 this. show\_all means that all widgets under the toplevel widget should
 be shown; however in glade, since most widgets are visible by default,
@@ -459,14 +457,14 @@ you only need to turn off visibility on the toplevel window to get the
 default hidden effect. This alone would not be a problem, but the fact
 is that certain widgets can be configured in glade to *require* being
 hidden (either because you want them initially hidden, or because they
-do something special, like the GtkToolbar: if you choose to use `Only
+do something special, like the gtk.Toolbar: if you choose to use `Only
 Text' or `Only Icons', glade implements this by hiding the icons or
 text, respectively). This would break with show\_all and too many bug
 reports told me it was enough reason to turn it off. You can of course
 call it manually on the window if you are really determined do so.}.
 
 The \code{gladefile} parameter indicates the file it should open. If the
-name you pass in doesn't have a \file{.glade} suffix, \class{GladeView}
+name you pass in doesn't have a \file{.glade} suffix, \class{BaseView}
 will append it and try to open it; in our cases, it will try to open the
 file \file{hey.glade}.  However, this argument does a bit more than just
 specifying the file (when using this form of the constructor, which is
@@ -478,11 +476,11 @@ to the view instance with the name \code{toplevel}.
 If you want to use another specific toplevel widget name, just use the
 extra constructor parameter \code{toplevel\_name}. This can be useful
 if you have many windows in the same Glade file; you can reuse the glade
-file by just defining multiple \code{GladeView} instances (or subclass
+file by just defining multiple \code{BaseView} instances (or subclass
 instances) with the same \code{gladefile} but specifying different
 toplevel widgets as each individual \code{toplevel\_name}.
 
-There are some common mistakes to be made when using the GladeView, and
+There are some common mistakes to be made when using the BaseView, and
 Kiwi raises special exceptions for three them.
 
 \begin{enumerate}
@@ -502,14 +500,14 @@ quickly will understand why. Kiwi prints a warning for this, as I
 don't consider it a fatal error.
 \end{enumerate}
 
-To use \class{GladeView} effectively, it's important to define the
+To use \class{BaseView} effectively, it's important to define the
 \code{widgets} list, which defines what widgets are to be attached to
 your class. This list has its own semantics, which I discuss in the next
 section.
 
 \subsection{The Widgets List}
 
-\class{GladeView}, \class{BaseView} and \class{SlaveView} provide an
+\class{BaseView}, \class{BaseView} and \class{SlaveView} provide an
 interesting feature: the widgets list specification. It is a list of
 strings, each string corresponding to the name of a widget. In a
 high-level sense, the list describes what widgets are attached to your
@@ -525,7 +523,7 @@ interface variables before running the parent class' constructor). The
 matter of widget conversion and signal callbacks is discussed further
 in the Controller section.
 
-\item For \code{GladeView}, the widgets in the list are pulled using
+\item For \code{BaseView}, the widgets in the list are pulled using
 libglade and attached as instance variables of your View. In other
 words, if you define a widget \code{foo} in your glade file, and you
 specify "foo" as a member of the widgets list, it will automatically be
@@ -548,28 +546,28 @@ change \file{heyglade.py} to \file{heyglade2.py}:
 %% \includegraphics[scale=0.905]{images/london2.eps}
 %% \end{center}
 
-%% \verbatiminput{../examples/HeyPlanet/heyglade2.py}
+%% \verbatiminput{../examples/framework/hey/heyglade2.py}
 
-Of course, it is often useful to subclass \code{GladeView} to be able to
+Of course, it is often useful to subclass \code{BaseView} to be able to
 customize the behavior that you want for that view. I recommend
 changes that are to be done to the widgets at startup time (like
 \function{set\_bold()} and \function{set\_size()} for a label) should be
 performed in the class constructor, right after
-\function{GladeView.\_\_init\_\_()}\footnote{Yes, in a way this is the
+\function{BaseView.\_\_init\_\_()}\footnote{Yes, in a way this is the
 opposite of the procedure in \class{SlaveView} and \class{BaseView}. It
-has to be this way because the parent constructor for \class{GladeView}
+has to be this way because the parent constructor for \class{BaseView}
 is who attaches the widgets to the view, whereas the constructors for the
 other Views {\it expect} them to be already attached}. If you subclass,
 you can skip passing \code{widgets} to the constructor by creating a class
 variable with the same name.
 
-An example of a subclassed \class{GladeView} using \code{widgets} as a
+An example of a subclassed \class{BaseView} using \code{widgets} as a
 class variable follows (in the Kiwi tarball in
-\file{Kiwi/examples/HeyPlanet/heyglade3.py}):
+\file{Kiwi/examples/framework/hey/heyglade3.py}):
 
-%% \verbatiminput{../examples/HeyPlanet/heyglade3.py}
+%% \verbatiminput{../examples/framework/hey/heyglade3.py}
 
-\subsection{UI Composition} 
+\subsection{UI Composition}
 
 The examples we have seen so far use a simple mapping: one View per
 window. While simple applications will use this and nothing else,
@@ -586,24 +584,24 @@ can be used as a slave) that happens to be attached to another view.
 To implement this, Kiwi uses GTK+'s really cool ``reparenting'', a
 property which allows a widget to be removed from one place in the
 widget hierarchy and placed in the other (in Kiwi terms, a View's widget
-is replaced by another View). 
+is replaced by another View).
 
 A view that will embed one or more slaves is called a Parent view
 (though there is no class with that name; read on). There are two
 important requirements for a Parent view:
 
 \begin{enumerate}
-\item {\bf The parent View must be a GladeView}. This allows us to
+\item {\bf The parent View must be a BaseView}. This allows us to
 easily find a named widget and change it for a slave. No, there is no
 ParentView class: it would be a useless, as there is nothing a
-ParentView needs to do that a GladeView doesn't do already.
+ParentView needs to do that a BaseView doesn't do already.
 \item The {\bf parent View must contain a "placeholder" widget
-identified by a name, inside an EventBox}, name being the Name: property
+identified by a name, inside an gtk.EventBox}, name being the Name: property
 defined in the Widget tab in Glade. The part about EventBox may seem a
 bit awkward, but it allows us to guarantee that the child packing of the
 substituted widget will not change. If we were to swap simply a widget
 for another, the first widget's container would loose the child packing
-information (i.e., GtkBox and GtkTable's child attributes: expand, fill,
+information (i.e., gtk.Box and gtk.Table's child attributes: expand, fill,
 padding and span).
 \end{enumerate}
 
@@ -617,30 +615,30 @@ I'll demonstrate by showing how a parent view is built in glade. Look at
 In \file{news.glade} I put together a simple dialog, and in the place where
 I want the slave to be embedded, I have added an EventBox (with any
 name) and a label (named \code{my\_placeholder}). We now write a
-small SlaveView called \class{NewsView}, using some straight PyGTK code:
+small SlaveView called \class{NewsView}:
 
 \begin{verbatim}
-import gtk
-from Kiwi import Views, mainquit
+from kiwi.ui.views import SlaveView
+from kiwi.ui.objectlist import ObjectList, Column
 
-class NewsView(Views.SlaveView):
-    widgets = ["clist"]
+class Item:
+   def __init__(self, news, author):
+       self.news, self.author = news, author
+
+class NewsView(SlaveView):
     def __init__(self):
-        clist = gtk.GtkCList(2, titles=["News", "Author"])
-        clist.set_selection_mode(gtk.SELECTION_BROWSE)
-        for item in news:
-            clist.append(item[:-1])
-        clist.columns_autosize()
-        Views.SlaveView.__init__(self, toplevel=clist)
+        news = ObjectList(Column("news", "News",),
+                           Column("author", "Author"))
+        for item in newsitems:
+            clist.append(item)
+        SlaveView.__init__(self, toplevel=news)
 
 # Some news articles borrowed from Pigdog Journal for our example
-news = [
-  ("Smallpox Vaccinations for EVERYONE",
-      "JRoyale",
-      "http://www.pigdog.org/auto/Power_Corrupts/link/2700.html"),
-  ("Is that uranium in your pocket or are you just happy to see me?",
-      "Baron Earl",
-      "http://www.pigdog.org/auto/bad_people/link/2699.html"),
+newsitems = [
+  NewsItem("Smallpox Vaccinations for EVERYONE",
+           "JRoyale"),
+  NewsItem("Is that uranium in your pocket or are you just happy to see me?",
+           "Baron Earl"),
 ]
 
 \end{verbatim}
@@ -648,7 +646,7 @@ news = [
 Now of course, this view can't display itself; it's a \code{SlaveView},
 and it lacks a toplevel window. But that doesn't matter; we want to
 attach it as a slave to a main View. We create \code{news}, an instance
-of \class{NewsView}, and a \class{GladeView} instance called
+of \class{NewsView}, and a \class{BaseView} instance called
 \code{shell}, which will be our parent View. We then call the method
 \code{attach\_slave()}, which does the actual reparenting; it takes as
 arguments the name of the widget {\it to be replaced} and the view to be
@@ -656,8 +654,9 @@ attached. At this point, we run the parent view as we would normally:
 
 \begin{verbatim}
 
+from kiwi.ui.views import BaseView
 news = NewsView()
-shell = Views.GladeView("news_shell", delete_handler=mainquit)
+shell = BaseView("news_shell", delete_handler=mainquit)
 shell.attach_slave("my_placeholder", news)
 
 news.show_all()
@@ -666,7 +665,7 @@ shell.show_and_loop()
 \end{verbatim}
 
 In summary, I gather some random news, create a \class{NewsView}
-instance, a \class{GladeView} instance (that will be the parent), call
+instance, a \class{BaseView} instance (that will be the parent), call
 the special function \code{attach\_slave()}, and that's it. (There is a
 minor detail with widget focus that is discussed in the next section;
 basically, the slave needs to be attached to the parent before trying to
@@ -688,7 +687,7 @@ detail.
 
 In GTK+, all user events are interpreted by signals that are generated
 by the widgets what are manipulated. This means obvious stuff like
-button clicks and typing text into a \class{GtkEntry}, but it also
+button clicks and typing text into a \class{gtk.Entry}, but it also
 includes less obvious events like the initial rendering of the widget
 and moving the mouse over a widget. To a signal, we can attach a
 function that is called when it is triggered, and this function is
@@ -700,7 +699,7 @@ is what makes the text that you type into an Entry actually display
 inside its white box, and what makes the checkbutton depress and change
 state when you click on it. However, there are many cases when you want
 to do something special based on a certain signal occurring. A pushbutton
-(\class{GtkButton}) is a good example: it doesn't do anything by default
+(\class{gtk.Button}) is a good example: it doesn't do anything by default
 when clicked beyond depressing, so you practically always will want to
 connect to its "clicked" signal. Developing a graphical application
 involves selecting which signals you think are important in the
@@ -727,7 +726,7 @@ methods implemented.
 The Kiwi Controller has a special feature: if you write your method
 names using a certain syntax, it "discovers" what widget and signal you
 want, and attaches the handler automatically for you. This works for any
-type of View, even GladeViews, which means no more messing around with
+type of View, even BaseViews, which means no more messing around with
 \code{signal\_autoconnect()} and that pesky signal dialog in Glade. The
 handler's method name should be written as follows:
 
@@ -736,7 +735,7 @@ handler's method name should be written as follows:
 connect before the default handler for that widget's signal; use
 \code{after\_} to connect after it. It is more common to use
 \code{on\_}\footnote{Hint: if you are connecting
-to a \class{GtkEntry}'s \code{insert\_text} signal and you want to use
+to a \class{gtk.Entry}'s \code{insert\_text} signal and you want to use
 \code{entry.get\_text()}, use \code{after\_entrywidget\_\_insert\_text}
 --- the default signal handler is responsible for inserting the text
 into the entry and you will need it to run before your handler.}.
@@ -769,13 +768,13 @@ This way, args will hold as many arguments as the signal defines for
 that function (and you can connect this method explicitly to more than
 one kind of signal, if you need to). Let's see a simple example to make
 these concepts more concrete (included in the Kiwi tarball at
-\file{Kiwi/examples/Faren/faren.py}):
+\file{Kiwi/examples/framework/faren/faren.py}):
 
 %% \begin{center}
 %% \includegraphics[scale=0.905]{images/faren.eps}
 %% \end{center}
 
-%% \verbatiminput{../examples/Faren/faren.py}
+%% \verbatiminput{../examples/framework/faren/faren.py}
 
 Let's have a look at the code. I define a Controller
 \class{FarenControl} that inherits from \class{BaseController}, and
@@ -785,7 +784,7 @@ which defines two methods that are signal handlers - one for the
 controller, and tell the view to show itself and run the event loop. Not
 much else is worth noting, apart from the fact that the signal handlers
 receive the widget as the first parameter, and that the GTK+ text
-widgets (GtkEntry, GtkLabel, GtkText) usually take and return strings,
+widgets (gtk.Entry, gtk.Label, gtk.Text) usually take and return strings,
 which makes us do conversion here and there.
 
 Thus, the event loop now has two signal handlers that will be triggered
@@ -812,7 +811,7 @@ live in the module \file{\_gtkmodule.so} - and as such can be easily
 swapped in runtime.}. This isn't terribly important except for one fact:
 the signal hander functions receive the original, unconverted PyGTK
 widget instance as their first parameter (when using a method, the
-second), and not a Kiwi instance. 
+second), and not a Kiwi instance.
 
 This happens because there is no easy way to have the callers of the
 signal handler (which live in C space) realize that the widget has been
@@ -820,10 +819,10 @@ converted in Python-space to a Kiwi widget. So you'll have to live with
 this fact and not trust widget instances that come in the callback
 parameters; access the View's instance variables instead, since they are
 guaranteed to be Kiwi instances. An example handler can explain better.
-Let's assume we have a GtkCList widget called clist which has been
+Let's assume we have a gtk.CList widget called clist which has been
 attached to the View, and converted into a Kiwi CList (by way of being
-in the \code{widgets} list for a GladeView, for instance). A signal
-handler for GtkCList's "select\_row" follows:
+in the \code{widgets} list for a BaseView, for instance). A signal
+handler for gtk.CList's "select\_row" follows:
 
 \begin{verbatim}
 class CListController(BaseController):
@@ -831,7 +830,7 @@ class CListController(BaseController):
     # ... assume a constructor, etc.
 
     def on_clist__select_row(self, clist, row, *args):
-        print type(clist)           # prints <gtk.GtkCList..
+        print type(clist)           # prints <gtk.gtk.CList..
         print type(self.view.clist) # prints <Kiwi.CList..
 
         # but they represent the same widget!
@@ -856,7 +855,7 @@ An important usability aspect of an application is having focus set by
 default to the widget where it is most useful, so the user can start
 working right away without having to tab his way through the window's
 widgets. If you pay attention, when you first start the \file{faren.py}
-example, the GtkEntry for temperature starts with the cursor focus; I've
+example, the gtk.Entry for temperature starts with the cursor focus; I've
 set the "Has focus" property to True for that widget {\it in Glade}.
 When using a version of PyGTK greater than 0.6.8,
 \code{show*\_and\_loop()} checks your interface before running; if there
@@ -865,9 +864,9 @@ is focused, it prints a warning to standard error explaining the View
 doesn't have an interactive widget focused:
 
     \begin{verbatim}
-    Kiwi warning: no widget is focused in view 
+    Kiwi warning: no widget is focused in view
         <__main__.FarenView instance at 0x8335444>
-    but you have an interactive widget in it: 
+    but you have an interactive widget in it:
         <Kiwi.Basic.Entry instance at 0x8774f14>
     \end{verbatim}
 
@@ -878,7 +877,7 @@ alternatives to set focus programatically:
 \item Call \code{grab\_focus()} on the specific widget you want to focus.
 If you are using a subclassed View, I would recommend doing this at the
 end of your View's constructor; otherwise, call it directly before
-running \code{show\_and\_loop()}. 
+running \code{show\_and\_loop()}.
 % If it's a bad idea, should we document it?
 % \item Call \code{view.focus\_toplevel()}. This causes the toplevel
 % widget to be focused, which is usually a {\bf bad} idea because it is
@@ -903,17 +902,17 @@ could use some extra niceness (deleting text from the entry does
 nothing!). Second, the controller has to invoke methods on its view's
 instance variables (\code{self.view.celsius.set\_text()} for example),
 which is a sign of high coupling. One good way to solve these issues is
-to provide a subclass of GladeView that does some extra setup and
+to provide a subclass of BaseView that does some extra setup and
 provides an API for the Controller (\file{faren2.py}):
 
-%% \verbatiminput{../examples/Faren/faren2.py}
+%% \verbatiminput{../examples/framework/faren/faren2.py}
 
 This (much longer, sure, but with a nicer division) example shows us
 using a separate View class, which presents an API for manipulating the
 View interface widgets, consisting of the following methods:
 
 \begin{itemize}
-\item \code{get\_temp()}: Gets the temperature from the GtkEntry in the
+\item \code{get\_temp()}: Gets the temperature from the gtk.Entry in the
 interface, and returns it. Returns None if the entry is empty.
 \item \code{update\_temp()}: Updates the contents of the two labels that
 represent the temperature (in farenheit and in celsius).
@@ -981,7 +980,7 @@ Delegate and GladeDelegate subclasses. As an example for using the
 GladeDelegate, below is a third version of our temperature conversion
 application, \file{examples/Faren/faren3.py}:
 
-%%     \verbatiminput{../examples/Faren/faren3.py}
+%%     \verbatiminput{../examples/framework/faren/faren3.py}
 
 As you can see, using the delegates makes a lot of sense in many cases:
 the view and controller split isn't essential, and you can end up
@@ -995,35 +994,35 @@ things.
 Note that there is also a \class{SlaveDelegate}, which works like a
 normal SlaveView with an attached Controller. The next section describes
 an important subclass of \class{SlaveDelegate}, the
-\class{CListDelegate}. 
+\class{ObjectList}.
 
-\subsubsection{The CListDelegate}
+\subsubsection{The ObjectList}
 
-There is a special type of SlaveDelegate that creates a columned list,
+There is a special gtk.TreeView subclass that accepts a columned list,
 each row of the list representing an instance. This is the first
 high-level class of the framework being described; high-level in the
 sense that it goes beyond simply organizing the UI and handler methods,
 offering functionality directed towards object-oriented development in
 Python.
 
-The CListDelegate was designed for the very common task of presenting a
-list of instance data in a GtkCList. Elaborating an example: lets say we
+The ObjectList was designed for the very common task of presenting a
+list of instance data in a gtk.TreeView. Elaborating an example: lets say we
 have a set of \class{Person} instances stored somewhere, each of these
 instances possessing the attributes \code{name}, \code{address} and
-\code{telephone}. A common problem is displaying a GtkCList with this data
+\code{telephone}. A common problem is displaying a gtk.TreeView with this data
 and performing an action when a person is selected. This is exactly the
-use case which CListDelegate supports.
+use case which ObjectList supports.
 
 Before showing an example, it's important to explain how the
-CListDelegate's constructor works, since it is rather special.   
+ObjectList's constructor works, since it is rather special.
 
     \begin{verbatim}
-    class CListDelegate:
-        def __init__(self, columns, instance_list=None, 
-                     handler=None, mode=gtk.SELECTION_BROWSE)
+    class ObjectList:
+        def __init__(self, columns, instance_list=None,
+                     mode=gtk.SELECTION_BROWSE)
     \end{verbatim}
 
-The CListDelegate takes a \code{columns} parameter, and understanding it
+The ObjectList takes a \code{columns} parameter, and understanding it
 is essential to using it correctly. \code{columns} should be a list of
 \class{Column} instances, each of these instances representing a column
 in the list (and therefore, an attribute in the instance). Let's have a
@@ -1031,9 +1030,8 @@ look at the constructor for \class{Column}:
 
     \begin{verbatim}
     class Column:
-        __init__(self, attribute, title=None, visible=1, 
-                 tooltip=None, justify=None, format=None, 
-                 width=None, sorted=0, order=0)
+        __init__(self, attribute, title=None, data_type=True,
+                 **kwargs)
     \end{verbatim}
 
 Each Column instance determines the properties of the CList's column;
@@ -1045,17 +1043,17 @@ out. To create a CList for our example above, with columns for "name",
 
     \begin{verbatim}
     my_columns = [
-        Column("name", sorted=TRUE),
+        Column("name", sorted=True),
         Column("address"),
         Column("telephone", title="Phone")
     ]
 
-    cd = ClistDelegate(my_columns)
+    cd = ObjectList(my_columns)
     \end{verbatim}
 
-This section of code would create a new CListDelegate with 3 columns,
+This section of code would create a new ObjectList with 3 columns,
 being sorted by the first one, and using "Name", "Address" and "Phone"
-as column titles. See the API reference for \class{CListDelegate} and
+as column titles. See the API reference for \class{ObjectList} and
 \class{Column} to find out all the details on them; there are many
 features, including sort ordering, tooltips, format strings and more.
 
@@ -1064,7 +1062,7 @@ running the delegate once with a simple set of columns, manipulating
 them in runtime (changing sort order and widths, hiding columns) and and
 then calling \code{dump\_columns()} on the delegate; this method creates
 a list of \class{Column} instances corresponding to the current state of
-the CList. This list can be reused in the CListDelegate constructor,
+the CList. This list can be reused in the ObjectList constructor,
 making it easy to save and restore the CList's state even between runs.
 
 The \code{instance\_list} parameter should provide a list of instances
@@ -1074,23 +1072,23 @@ the list {\bf must} offer either an accessor to the attribute specified
 -- the accessor name must be in the format \code{get\_{\it
 attribute\_name}}() -- or an attribute with the name specified (the
 delegate will do a \code{getattr()} for it). Note that you can
-instantiate a \class{CListDelegate} without a list and add it later by
-calling \code{new\_list({\it instance\_list})}. 
+instantiate a \class{ObjectList} without a list and add it later by
+calling \code{new\_list({\it instance\_list})}.
 
-To exemplify the CListDelegate, I'm going to build upon the News Browser
+To exemplify the ObjectList, I'm going to build upon the News Browser
 example we saw a while back. I'm going to need to change the news data
-structures from tuples to instances, and create a CListDelegate for
-it (see \code{News/news2.py}):
+structures from tuples to instances, and create a ObjectList for
+it (see \code{news/news2.py}):
 
-%%     \verbatiminput{../examples/News/news2.py}
+%%     \verbatiminput{../examples/framework/news/news2.py}
 
 Wow! Assuming you have data in the correct format, in some 25 lines you
 defined the data for your applications, and in about 5 lines you
-set up and created the CListDelegate.  This example, though, doesn't do
+set up and created the ObjectList.  This example, though, doesn't do
 anything (try running it - it doesn't even flash a window open, which is
 what normally happens if you create a window but don't run the mainloop)
 because {\bf a SlaveView doesn't have a toplevel window associated to
-it}. To be able to use the CListDelegate, we need to perform UI
+it}. To be able to use the ObjectList, we need to perform UI
 composition: attach it to a parent view. I'll show for now a screenshot
 of the generated widget inside a single window just so you know how it
 looks:
@@ -1111,14 +1109,14 @@ by using the columns spec.
 \item There is a popup menu in the right corner of the image. What is
 it? It's a list of the columns, allowing you to select which column is
 displayed and which is hidden. As you can see, the URL column is hidden
-(remember the FALSE we passed in the \code{my\_columns} list?) and
-Title and Author are displayed. 
+(remember the False we passed in the \code{my\_columns} list?) and
+Title and Author are displayed.
 
 Note that both features are built in to the Kiwi CList, one of the
 enhanced widgets we provide. You can use the CList independently of
-CListDelegate, of course; check the module documentation for more
+ObjectList, of course; check the module documentation for more
 information.
-\item (The CList has no window border around it. That's because I had to
+\item (The gtk.TreeView has no window border around it. That's because I had to
 do some magic to get this screenshot to display correctly. Don't worry
 about it.)
 \end{enumerate}
@@ -1131,33 +1129,33 @@ an associated controller or not. I'm not going to provide an example
 embedding views and controllers because it's not very enlightening; it
 is easy to extend the original UI Composition example to use controller
 associated to the views, and that example is much more interesting if
-adapted to a CListDelegate.
+adapted to a ObjectList.
 
 Since delegates inherit from views, it is also possible to compose
 a delegate with multiple child delegates (and even mix and match them
 with views). The requirement that the parent delegate be based on glade
 is the same, too: you should subclass \class{GladeDelegate} for your
-main window, though any kind of view can be attached to it. 
+main window, though any kind of view can be attached to it.
 
 The nice part about doing UI composition using delegates is that the
 interface and interaction is well encapsulated in a single class, and if
 you are careful when writing a child delegate, you can reuse that class
 in as many places of your applications as you like.  I'm going to use
-the CListDelegate from the last example to build a (rather fake) news
+the ObjectList from the last example to build a (rather fake) news
 browsing application in the next example:
 
 %% \begin{center}
 %% \includegraphics[scale=0.905]{images/news3.eps}
 %% \end{center}
 
-%%     \verbatiminput{../examples/News/news3.py}
+%%     \verbatiminput{../examples/framework/news/news3.py}
 
-Let's have a quick look at the code: 
+Let's have a quick look at the code:
 
 \begin{enumerate}
 \item I create a list of instances and the columns specification; I then
 define a class for the news shell, inheriting from
-\class{GladeDelegate}. 
+\class{GladeDelegate}.
 \item In the constructor I show off some cosmetic features of Kiwi (the
 "header" widget is an eventbox, in which the label is a child; look at
 the glade file for more details).
@@ -1165,7 +1163,7 @@ the glade file for more details).
 instance variable "slave", and set focus up.
 \item I define handlers for the buttons, and the simple handler
 \code{row\_selected()} for the \code{select\_row} signal, which will be
-called when a row is selected. 
+called when a row is selected.
 \item I create and run the \class{Shell}, which renders the interface.
 When the interface closes, I catch the return value \code{retval} and
 use it as input to run a browser for the selected news item (okay, so
@@ -1228,7 +1226,7 @@ functionally equivalent (and separating them showed me that I ended up
 doing was proxying calls from one to the other).} and instance}
 interchangeably to refer to a {\bf domain object}.
 \item The problem at hand is propagating changes from the UI to the
-domain objects attached to them. 
+domain objects attached to them.
 
 This is the task Proxies attempt to simplify.
 \end{itemize}
@@ -1247,7 +1245,7 @@ is done by name}: the names of the widgets determine the name of the
 accessors or attributes that will be used in the model.
 
 There are three types of Proxy classes: \class{SlaveProxy},
-\class{Proxy} and \class{GladeProxy}. Their constructors are similar to
+\class{Proxy} and \class{ProxyDelegate}. Their constructors are similar to
 their Delegate counterparts, the main difference being a new parameter,
 \code{model}, which specifies the instance that we should attach this
 proxy to. The Proxy's \code{widgets} list uses an extended syntax: the
@@ -1256,14 +1254,14 @@ by a single colon character ({\bf :}).  This prefixing should be done
 *only* in the widgets list - the name in the glade file, the model and
 the callback syntax should not include it.
 
-For the first example, let's attach a proxy to an interface specified
-in glade (\file{examples/NewsForm/newsform.py}):
+%For the first example, let's attach a proxy to an interface specified
+%in glade (\file{examples/framework/newsform/newsform.py}):
 
 %% \begin{center}
 %% \includegraphics[scale=0.626]{images/newsform.eps}
 %% \end{center}
-    
-%% \verbatiminput{../examples/NewsForm/newsform.py}
+
+%% \verbatiminput{../examples/framework/newsform/newsform.py}
 
 Let's look at this simple example. First, I define a model class which
 is really just a shell class, with no methods or attributes:
@@ -1292,19 +1290,19 @@ In our previous example, our model was defined as an instance of a
 simple Python class. If we use the complete framework, by having our
 model classes inherit from \class{FrameWork.Model}, we also get reverse
 notifications from Model to Proxy: when the model is altered, the change
-propagates to the proxy interface attached to it. 
+propagates to the proxy interface attached to it.
 
 To demonstrate, we can extend the example above to add a "reset" button
-to trigger a change of the model; we will subclass GladeProxy (which is
+to trigger a change of the model; we will subclass ProxyDelegate (which is
 also a Delegate, as stated before, and thus supports the special handler
 syntax \code{on\_*()}) to define a handler for clicking on the reset
-button (\file{examples/NewsForm/newsform2.py}):
+button (\file{examples/framework/newsform/newsform2.py}):
 
 %% \begin{center}
 %% \includegraphics[scale=0.626]{images/newsform2.eps}
 %% \end{center}
 
-%% \verbatiminput{../examples/NewsForm/newsform2.py}
+%% \verbatiminput{../examples/framework/newsform/newsform2.py}
 
 If we look at the handler for reset, \code{on\_reset\_\_clicked()}, we
 can see it alters the model directly. These changes reflect
@@ -1312,7 +1310,7 @@ automatically in the interface by means of an update mechanism present
 in \class{FrameWork.Model}. This holds true no matter what function
 triggers the change in the model: it is not limited to callbacks defined
 in Proxy itself; any handler that alters the model will trigger the
-model's update mechanism. 
+model's update mechanism.
 
 In summary: if you need to alter your model independently of the
 interface, have your model inherit from FrameWork.Model and enjoy
@@ -1364,7 +1362,7 @@ the model attached to it.
 the new value as its only parameter.
 \item If not, it manipulates the model directly by using
 \code{setattr()}, which is the equivalent of \code{model.X = value}. If
-\code{Proxies.set\_attr\_warnings(TRUE)} has been called, a warning like
+\code{Proxies.set\_attr\_warnings(True)} has been called, a warning like
 the following will be printed:
 
     \begin{verbatim}
@@ -1381,7 +1379,7 @@ The heuristics for updating the interface widget are:
 
 \begin{enumerate}
 \item On startup, the proxy queries the model for the value for
-attribute \code{X}. 
+attribute \code{X}.
 \item It tries first using an accessor method \code{get\_X()}
 (which should return a single value). If the accessor does not exist, it
 will attempt to access the model's variable directly (using
@@ -1410,7 +1408,7 @@ things work out (\file{newsform3.py}).
 
 \begin{verbatim}
     class NewsItem(FrameWork.Model):
-        """An instance representing an item of news. 
+        """An instance representing an item of news.
            Attributes: title, author, url"""
         def set_url(self, url):
             """sets the url, prefixing "http://" if missing"""
@@ -1447,7 +1445,7 @@ is a special detail that should be understood when using custom
 callbacks:
 
 \begin{quotation}
-{\bf The Proxy's internal callbacks are executed first}. 
+{\bf The Proxy's internal callbacks are executed first}.
 \end{quotation}
 
 This means that, when your \code{on\_*()} or \code{after\_*()} handler
@@ -1466,12 +1464,12 @@ entry that needs to update a label that represents a calculated field in
 the interface. You can define handlers normally, and you can take
 advantage of the special Proxy method \code{update({\it
 attribute\_name})}, which notifies the Proxy that it should refresh the
-interface representation of that attribute. 
+interface representation of that attribute.
 
-As an example, I will include here a final version of the Faren application
-that uses a Proxy (\file{Faren/faren4.py}):
+%As an example, I will include here a final version of the Faren application
+%that uses a Proxy (\file{../examples/framework/faren/faren4.py}):
 
-%% \verbatiminput{../examples/Faren/faren4.py}
+%% \verbatiminput{../examples/framework/faren/faren4.py}
 
 A step-by-step analysis of this example:
 
@@ -1526,17 +1524,17 @@ of the widgets normally used in "forms". There is a reason for
 supporting these widgets: they are easily mapped to model attributes.
 This doesn't mean that you can't use other widgets in your Proxy
 interface, but there is no automatic update mechanism for it, and you
-will have to use your own handlers for them. 
+will have to use your own handlers for them.
 
 This is a reasonable property -- it would be difficult to map what
-exactly the state of a GtkCurve means to the model, for instance -- and
+exactly the state of a gtk.Curve means to the model, for instance -- and
 the Proxy can be extended in the future to support other widgets (write
 me if you are interested in contributing). What follows is a list of
 widget types supported, details on the use of them, and details about
 setting custom handlers if you need them.
 
 \begin{itemize}
-\item {\bf GtkEntry}: the single-line entry box in gtk. Updates the
+\item {\bf gtk.Entry}: the single-line entry box in gtk. Updates the
 model on insertion or deletion of every character, which means you
 should make sure your accessors take this into account, if you use
 accessors (as opposed to \code{setattr()}). For instance, if you type in
@@ -1544,20 +1542,20 @@ accessors (as opposed to \code{setattr()}). For instance, if you type in
 called 6 times.
 
 {\bf Custom handlers}: The best signal for hooking a user handler to a
-GtkEntry is "changed", preferably by using \code{after\_{\it
+gtk.Entry is "changed", preferably by using \code{after\_{\it
 entryname}\_\_changed()}; it will be called immediately after the entry
 has text inserted or deleted. You can use the individual "insert\_text"
 or "delete\_text" signals if you want to capture one of those specific
 events.
 
-\item {\bf GtkLabel}: a read-only widget that displays text. It is
+\item {\bf gtk.Label}: a read-only widget that displays text. It is
 useful for displaying model attributes, but it doesn't generate signals
 my itself. Use \code{update()} in other widget's custom handlers to
 notify the Proxy a calculated label's value has changed.
 
-{\bf Custom handlers}: The GtkLabel doesn't generate signals.
+{\bf Custom handlers}: The gtk.Label doesn't generate signals.
 
-\item {\bf GtkOptionMenu (OM)}: the menuitem or listbox widget,
+\item {\bf gtk.OptionMenu (OM)}: the menuitem or listbox widget,
 containing a list of items. The GTK+ OM has a very evil API by default,
 but using the Proxy makes it much simpler; basically, the OM's choice
 reflects directly in the model, without extra effort. The OM items can
@@ -1585,7 +1583,7 @@ for OM for more details.
 \code{callback} parameter to specify a handler for the OptionMenu.
 There is no signal you can connect to directly in GTK+ 1.2.
 
-\item {\bf GtkRadioButton}: Handling the radiobutton is slightly more
+\item {\bf gtk.RadioButton}: Handling the radiobutton is slightly more
 complicated, because there are in reality groups of radiobuttons that
 bind to a single attribute. In other words, the multiple radiobutton
 widgets are connected to a single attribute, which assumes a different
@@ -1606,35 +1604,34 @@ associated with the button selected. Setting the model value follows the
 same rule as for OM.
 
 {\bf Custom handlers}: use the "clicked" signal, connecting after it
-(see GtkEntry above for an \code{after\_*()} example), and check the
+(see gtk.Entry above for an \code{after\_*()} example), and check the
 state of the widget if you need to check if it was selected or
 de-selected (use \code{widget['active']} to check the state in your
 callback).
 
-\item {\bf GtkCheckButton} and {\bf GtkToggleButton}: the two-state
-button widgets allow values to be set to 1 or 0 (or, if using PyGTK
-symbols, TRUE and FALSE). The value is updated every time the button's
-state changes.
+\item {\bf gtk.CheckButton} and {\bf gtk.ToggleButton}: the two-state
+button widgets allow values to be set to True and False.
+The value is updated every time the button's state changes.
 
 {\bf Custom handlers}: use the "clicked" signal, in the same manner as
-for GtkRadioButton.
+for gtk.RadioButton.
 
-\item {\bf GtkSpinButton}, {\bf GtkCombo} and {\bf GtkText}: similarly
-to the GtkEntry, these widgets are updated every time a single character
-is changed in the editable space (yes, the SpinButton contains an
-entry). There is no signal that can easily catch when a GtkCombo list
-item was selected, which is why we have to handle things this was for
-it. In practice, it should work as expected unless you rely on your
-accessor being called a specific number of times for each change, which
-you shouldn't.
+\item {\bf gtk.SpinButton}, {\bf gtk.ComboBox} and {\bf gtk.TextView}:
+similarly to the gtk.Entry, these widgets are updated every time a
+single character is changed in the editable space (yes, the SpinButton
+contains an entry). There is no signal that can easily catch when a
+gtk.ComboBox list item was selected, which is why we have to handle
+things this was for it. In practice, it should work as expected unless
+you rely on your accessor being called a specific number of times for
+each change, which you shouldn't.
 
-{\bf Custom handlers}: GtkSpinButton and GtkText are good candidates for
-the "changed" signal; use the same rules as for GtkEntry. For GtkCombo,
+{\bf Custom handlers}: gtk.SpinButton and gtk.Text are good candidates for
+the "changed" signal; use the same rules as for gtk.Entry. For gtk.Combo,
 things are not so easy, because there is no signal it offers you can
-catch\footnote{A lively discussion could ensue about GtkCombo and the
+catch\footnote{A lively discussion could ensue about gtk.Combo and the
 lack of a signal that indicates an option was selected in its list, but
 I deliberately choose to avoid it!}, and the fact that it holds two
-subobjects, a GtkEntry and a GtkButton, means that you are forced to use
+subobjects, a gtk.Entry and a gtk.Button, means that you are forced to use
 \code{connect()} on either of these to get the effect you desire. In
 practice, the following works for me (taking into account the fact that
 the handler will be called multiple times):
@@ -1661,7 +1658,7 @@ study; it is however a bit too long to include in this text.
 The \module{FrameWork} module holds the \class{Model} classes (apart
 from holding the \class{BaseController} class as well). As discussed
 before, the \class{Model} class provides a mechanism for updating the
-user interface based on changed performed in the model instance. 
+user interface based on changed performed in the model instance.
 
 This is a powerful mechanism that allows you to guarantee that the
 interface is always up-to-date with relation to an instance; it should
@@ -1694,10 +1691,10 @@ an argument.
 \class{PickledModel} offers a very cheap way to offer persistence for
 your model instances. If you are familiar with the ZODB, think of
 \class{PickledModel} as a cheapo implementation that allows you to save
-and restore an instance. To use it: 
+and restore an instance. To use it:
 
 \begin{enumerate}
-\item Have your model class inherit from PickledModel. 
+\item Have your model class inherit from PickledModel.
 
 \item Use the \code{unpickle\_model} function as a "factory" function;
 it takes the your model's class as the first parameter, and a filename
@@ -1715,7 +1712,7 @@ filename specified through the \code{set\_pickle()} method. Note that
 by calling \code{set\_pickle()} internally.
 \end{enumerate}
 
-The \file{diary3.py} example in \code{examples/Diary/} uses pickling in a
+The \file{diary3.py} example in \code{examples/diary/} uses pickling in a
 more involved manner and is recommended as a reference.
 
 \subsubsection{Multiple Proxies}
@@ -1740,7 +1737,7 @@ This example shows some of the power of multiple proxies; as you edit
 the title you can see the label update immediately. If you look at the
 lines at the bottom, two proxies are attached to \code{item} - a
 \class{NewsProxy} instance, and a \class{NewsLabels} instance, which has
-labels that display the current contents of the model. 
+labels that display the current contents of the model.
 
 This feature can be used in many different ways, and if you create small
 proxies (that represent a part of the model, instead of the whole model)
@@ -1878,15 +1875,15 @@ model attribute}.
 \item If the instance variable is set but is \code{None}, the following
 defaults are used for each widget:
     \begin{itemize}
-    \item {\bf GtkEntry, GtkLabel, GtkCombo, GtkText, GtkSpinButton}: an
+    \item {\bf gtk.Entry, gtk.Label, gtk.Combo, gtk.Text, gtk.SpinButton}: an
     empty string is set to the model, and a blank widget is presented.
-    \item {\bf GtkRadioButton}: The button set in Glade or GTK as
+    \item {\bf gtk.RadioButton}: The button set in Glade or GTK as
     initially on is selected, and if none is selected, the button that
     is most to the top and left of the Proxy interface is selected. The
     value associated with the radiobutton is set to the model attribute.
-    \item {\bf GtkOptionMenu}: the first item in the menu is selected, and
+    \item {\bf gtk.OptionMenu}: the first item in the menu is selected, and
     its value is set to the model attribute.
-    \item {\bf GtkToggleButton and GtkCheckButton}: the widgets are set
+    \item {\bf gtk.ToggleButton and gtk.CheckButton}: the widgets are set
     to unselected, and the model attribute is set to 0 (zero).
     \end{itemize}
 \end{itemize}
@@ -1913,7 +1910,7 @@ and as such are biased towards what I think is right.
 
     I wonder how it handles OptionMenu, but it does seem to. :)
 
-    In Kiwi part of this is taken care of by CListDelegate, but there
+    In Kiwi part of this is taken care of by ObjectList, but there
     are some differences. First, the CList widget is rather limited, so
     you can't have checkboxes or editables in it (which is what the
     ListView *does* allow in GTK2) - it just takes the model and
@@ -1938,7 +1935,7 @@ and as such are biased towards what I think is right.
 
 {\bf Sachin Deshpande}:
 \citetitle[http://www.cs.du.edu/~sdeshpan/comp4708/Lesson1/Part3.htm]
-    {MVC Architecture} 
+    {MVC Architecture}
 
 \begin{quotation}
 
@@ -1962,7 +1959,7 @@ and as such are biased towards what I think is right.
 
     Interesting point: the Model offers two forms of notification. A
     light-weight form, which just informs "changed", and a complete one,
-    which provides an event object that describes what changed. 
+    which provides an event object that describes what changed.
 
     Swing also has something called a Renderer. I have no idea what it
     is used for - custom cells in tables and lists?
@@ -1978,7 +1975,7 @@ Handout}
     Material for an HCI course that covers Swing, and has a bit or two
     on MVC. It reminds us that in Swing, View + Controller is called "UI
     Delegate" (which I promptly copied to Kiwi, fixing the problem with
-    "Simple"). It also goes into describing Swing. 
+    "Simple"). It also goes into describing Swing.
 
     I find it funny that a toolkit's top feature listed are "Pluggable
     look-and-feels". Oh, please. And tooltips. AWT must have *really*
@@ -2031,7 +2028,7 @@ Handout}
 {\bf Allen Holub}:
 \citetitle[http://www.javaworld.com/javaworld/jw-07-1999/jw-07-toolbox.html]
     {Building user interfaces for object-oriented systems, Part 1}
-and 
+and
 \citetitle[http://www.javaworld.com/javaworld/jw-09-1999/jw-09-toolbox.html]
     {Part 2}
 
@@ -2093,8 +2090,8 @@ and
 
 \begin{quotation}
 
-    Wow. A project that has the same aim as Kiwi's framework. 
-    
+    Wow. A project that has the same aim as Kiwi's framework.
+
     Bakery is a bit different in that it is really for "document"-based
     applications (like editors), and generates a menu by default, for
     instance. It provides some Application classes that I need to think
@@ -2114,7 +2111,7 @@ and
     Bakery *always* has a Document (our Model) attached to a View. While
     this may be good for the applications it targets, I have found this
     is not necessarily true for all apps - sometimes you have a window
-    (a launcher, for instance) that has *no* model behind it. Then what? 
+    (a launcher, for instance) that has *no* model behind it. Then what?
 
     Bakery has composite views, just like Kiwi has SlaveViews. However,
     it seems that the slaveviews all share the same document (at least
