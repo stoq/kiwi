@@ -862,11 +862,7 @@ represent the temperature.
 \end{itemize}
 
 The Controller also uses \code{changed} instead of \code{insert\_text},
-so it supports both insertion and deletion. Note that, following the
-suggestion in section \ref{handlerconvert}, we don't use the parameters
-sent to our handlers; the View's API methods are based on its widgets
-attached as instance variables (this is why we use
-\code{self.temperature}, \code{self.farenheit} and \code{self.celsius}).
+so it supports both insertion and deletion.
 
 This is basically what you need to know about the controller. While it
 is useful in a number of applications, if your interface has a number of
@@ -901,13 +897,13 @@ The \class{Delegate} class is a combination of \class{BaseView} and
 programatically and then hook up handlers to it, just like you would do
 to individual views and controllers. A very simple (yes, I too get bored
 of hand-coding PyGTK widgets) example follows, found in the distribution
-as \file{examples/Simple/simple.py}:
+as \file{examples/framework/simple.py}:
 
 %% \begin{center}
 %% \includegraphics[scale=0.905]{images/simple2.eps}
 %% \end{center}
 
-%%     \verbatiminput{../examples/Simple/simple.py}
+\verbatiminput{../examples/framework/simple.py}
 
 %% \begin{center}
 %% \includegraphics[scale=0.905]{images/simple3.eps}
@@ -939,7 +935,7 @@ an important subclass of \class{SlaveDelegate}, the
 
 \subsubsection{The ObjectList}
 
-There is a special gtk.TreeView subclass that accepts a columned list,
+There is a special gtk.TreeView wrapper that accepts a columned list,
 each row of the list representing an instance. This is the first
 high-level class of the framework being described; high-level in the
 sense that it goes beyond simply organizing the UI and handler methods,
@@ -1185,15 +1181,16 @@ manipulation of the model attributes is performed. {\bf This association
 is done by name}: the names of the widgets determine the name of the
 accessors or attributes that will be used in the model.
 
-There are three types of Proxy classes: \class{SlaveProxy},
-\class{Proxy} and \class{ProxyDelegate}. Their constructors are similar to
-their Delegate counterparts, the main difference being a new parameter,
-\code{model}, which specifies the instance that we should attach this
-proxy to. The Proxy's \code{widgets} list uses an extended syntax: the
-widget names that are to be associated to attributes should be prefixed
-by a single colon character ({\bf :}).  This prefixing should be done
-*only* in the widgets list - the name in the glade file, the model and
-the callback syntax should not include it.
+There are two types of Proxy classes: \class{Proxy} and
+\class{ProxyDelegate}. Their constructors are similar to their Delegate
+counterparts, the main difference being a new parameter, \code{model},
+which specifies the instance that we should attach this proxy to.
+%XXX: Explain about add_widgets()
+%The Proxy's \code{widgets} list uses an extended syntax: the
+%widget names that are to be associated to attributes should be prefixed
+%by a single colon character ({\bf :}).  This prefixing should be done
+%*only* in the widgets list - the name in the glade file, the model and
+%the callback syntax should not include it.
 
 %For the first example, let's attach a proxy to an interface specified
 %in glade (\file{examples/framework/newsform/newsform.py}):
