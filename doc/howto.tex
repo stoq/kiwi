@@ -350,10 +350,6 @@ fit in (it's available in the Kiwi tarball in
 
 \verbatiminput{../examples/framework/hey/hey.py}
 
-% ====================
-% ====== MARK ========
-% ====================
-
 So what does the example do? To start off with, it defines a view class
 that inherits from \class{BaseView}, the View with a toplevel window.
 BaseView should always be subclassed, since it requires you to to create
@@ -362,7 +358,7 @@ widgets in the constructor before running
 \function{BaseView.\_\_init\_\_()}. We initialize \class{BaseView} with
 two parameters\footnote{Note that I used positional parameters here just
 to make things clear; they are in the proper order and the whole call
-could be \code{Views.BaseView.\_\_init\_\_(self, win, mainquit)}.}
+could be \code{Views.BaseView.\_\_init\_\_(self, win, gtk.main_quit)}.}
 
 \begin{itemize}
 \item \function{toplevel}, which defines which widget is the toplevel
@@ -372,15 +368,16 @@ is used for setting focus and showing the View.
 \item \function{delete\_handler}, which defines which function should be
 called when the window is deleted (this happens when the almost ubiquitous "X"
 button offered by window managers is clicked, or \code{del(window)} is
-invoked). We are passing in mainquit, which breaks the mainloop we are
-running in, and allows the application to exit.
+invoked). We are passing in gtk.main.quit, which breaks the main loop we are
+running in, and allows the application to exit. Note that we're passing
+in the function object itself, instead of the result of a function call.
 
 If you didn't pass in a delete handler, closing the window would leave
 the python interpreter hung in the mainloop. What mainloop? Read on.
 \end{itemize}
 
 Right after we instantiate our view class, we call a special method in
-it: \code{show\_all\_and\_loop()}. This method calls show() on all the
+it: \code{show\_and\_loop()}. This method calls show() on all the
 widgets under the toplevel widget including it (in our cases, it will
 show the label and the window), and runs the GTK+ event loop (or
 mainloop). The mainloop is a fundamental aspect of GUI programming: when
@@ -391,12 +388,12 @@ section of
 \citetitle[http://developer.gnome.org/doc/GGAD/sec-mainloop.html]
 {GTK+/Gnome Application Development}.
 
-\code{show\_all\_and\_loop()} (and its variant \code{show\_and\_loop()})
+\code{show\_and\_loop()}
 returns a value upon exit. This return value corresponds to the View's
 \code{retval} instance variable, and you can use \code{self.retval} to
 return any value you wish. In our example the use was rather trivial,
 but \code{retval} is convenient when opening a dialog: use
-\code{show\_all\_and\_loop()} to run it; the dialog modifies its
+\code{show\_and\_loop()} to run it; the dialog modifies its
 \code{retval} variable depending on a certain event (OK button was
 pressed versus Cancel button, for instance), and the method will return
 this value to the caller (which can then make a decision based on it).
@@ -411,6 +408,10 @@ which time you are left staring at the console).
 \class{BaseView} is the most basic type of view, and it's only worth so
 much explaining. The next section describes \class{BaseView}, which is
 a lot more interesting.
+
+% ====================
+% ====== MARK ========
+% ====================
 
 \subsection{BaseView}
 
