@@ -800,56 +800,6 @@ empty labels that appear right next to the labels that {\it are written}
 "Celsius" and "Farenheit"; if you are confused look at the glade file
 \citetitle[faren.glade]{faren.glade}.
 
-\subsubsection{Signal handlers and widget conversion}
-\label{handlerconvert}
-
-The way widget conversion is done in Kiwi calls for a bit of discussion
-when thinking about signal handlers.  Technically, what is done is a
-dynamic re-instantiation of the PyGTK object into a Kiwi
-instance\footnote{This is possible mainly because PyGTK classes are
-really thin wrappers around low-level PyGTK objects coded in C - these
-live in the module \file{\_gtkmodule.so} - and as such can be easily
-swapped in runtime.}. This isn't terribly important except for one fact:
-the signal hander functions receive the original, unconverted PyGTK
-widget instance as their first parameter (when using a method, the
-second), and not a Kiwi instance.
-
-This happens because there is no easy way to have the callers of the
-signal handler (which live in C space) realize that the widget has been
-converted in Python-space to a Kiwi widget. So you'll have to live with
-this fact and not trust widget instances that come in the callback
-parameters; access the View's instance variables instead, since they are
-guaranteed to be Kiwi instances. An example handler can explain better.
-Let's assume we have a gtk.CList widget called clist which has been
-attached to the View, and converted into a Kiwi CList (by way of being
-in the \code{widgets} list for a BaseView, for instance). A signal
-handler for gtk.CList's "select\_row" follows:
-
-\begin{verbatim}
-class CListController(BaseController):
-
-    # ... assume a constructor, etc.
-
-    def on_clist__select_row(self, clist, row, *args):
-        print type(clist)           # prints <gtk.gtk.CList..
-        print type(self.view.clist) # prints <Kiwi.CList..
-
-        # but they represent the same widget!
-        print clist._o == self.view.clist._o
-
-        print len(self.view.clist)  # works fine
-
-        print len(clist)            # raises AttributeError, since
-                                    # it's a Kiwi extension
-
-\end{verbatim}
-
-In practice, this is hardly ever a problem if you stick to the rule of
-thumb of not trusting the widget parameter to the callback, and
-accessing it through the View's instance variables instead. You can use
-the parameter widget, but remember - it's a pure PyGTK class, and the
-Kiwi API will be unavailable in it!
-
 \subsubsection{Default Widget Focus}
 
 An important usability aspect of an application is having focus set by
