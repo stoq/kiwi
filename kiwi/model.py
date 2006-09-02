@@ -171,42 +171,17 @@ class PickledModel(Model):
     instance variables must be picklable, or pickle.dump() will raise
     exceptions. You can prefix variables with an underscore to make them
     non-persistent (and you can restore them accordingly by overriding
-    __setstate__, but don't forget to call PickledModel.__setstate__)"""
+    __setstate__, but don't forget to call PickledModel.__setstate__)
+    """
 
-    def save(self, file=None):
-        """
-        Saves the instance to a pickle file. If no file argument is
-        provided, will try to use the internal _file attribute that is
-        set using set_filename()"""
-        file = file or getattr(self, "_file", None)
-        if not file:
-            msg = "No pickle specified, don't know where to save myself"
-            raise AttributeError, msg
-        fh = open(file, "w")
-        try:
-            pickle.dump(self, fh)
-        except pickle.PicklingError, e:
-            fh.close()
-            msg = ("Tried to pickle an instance variable that isn't "
-                   "supported by pickle.dump(). To work around this, you "
-                   "can prefix the variable name with an underscore "
-                   " and it will be ignored by the pickle machinery "
-                   "in PickledModel. The original error "
-                   "follows:\n\n%s")
-            raise AttributeError, msg % e
-        fh.close()
-
-    def set_filename(self, filename):
-        """
-        Sets the name of the file which will be used to pickle the
-        model"""
-        self._file = filename
+    def __init__(self):
+        self._filename = None
 
     def __getstate__(self):
         """Gets the state from the instance to be pickled"""
         odict = self.__dict__
         for key in odict.keys():
-            if key[0] == "_":
+            if key.startswith("_"):
                 del odict[key]
         return odict
 
@@ -215,6 +190,41 @@ class PickledModel(Model):
         Model.__dict__["__init__"](self)
         self.__dict__.update(dict)
 
+    def save(self, filename=None):
+        """
+        Saves the instance to a pickle filename. If no filename argument is
+        provided, will try to use the internal _filename attribute that is
+        set using set_filename()
+        @param filename: optional filename to pass in
+        """
+
+        filename = filename or self._filename
+        if not filename:
+            raise AttributeError(
+                "No pickle specified, don't know where to save myself")
+
+        fh = open(filename, "w")
+        try:
+            try:
+                pickle.dump(self, fh)
+            except pickle.PicklingError, e:
+                raise AttributeError(
+                    "Tried to pickle an instance variable that isn't "
+                    "supported by pickle.dump(). To work around this, you "
+                    "can prefix the variable name with an underscore "
+                    " and it will be ignored by the pickle machinery "
+                    "in PickledModel. The original error "
+                    "follows:\n\n%s" % e)
+        finally:
+            fh.close()
+
+    def set_filename(self, filename):
+        """
+        Sets the name of the file which will be used to pickle the
+        model"""
+        self._filename = filename
+
+    #@unpickle
     def unpickle(cls, filename=None):
         """
         Loads an instance from a pickle file; if it fails for some reason,
