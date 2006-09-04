@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Setup file for Kiwi
+# Setup.py for Kiwi
 # Code by Async Open Source <http://www.async.com.br>
 # setup.py written by Christian Reis <kiko@async.com.br>
 # re-written various times by Johan Dahlin <jdahlin@async.com.br>
