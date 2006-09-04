@@ -2,14 +2,14 @@
 from utils import refresh_gui
 import unittest
 
-from kiwi.ui.delegates import Delegate
+from kiwi.ui.delegates import GladeDelegate
 
-class ActionDelegate(Delegate):
+class ActionDelegate(GladeDelegate):
     def __init__(self):
-        Delegate.__init__(self, gladefile="actions.glade",
-                          toplevel_name='window1',
-                           widgets=['New'],
-                           delete_handler=self.quit_if_last)
+        GladeDelegate.__init__(self, gladefile="actions.glade",
+                               toplevel_name='window1',
+                               widgets=['New'],
+                               delete_handler=self.quit_if_last)
         self.new_activated = False
 
     def on_New__activate(self, *args):
