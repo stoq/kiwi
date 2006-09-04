@@ -3,13 +3,13 @@ import gtk
 
 from kiwi.datatypes import ValidationError
 from kiwi.ui.widgets.combo import ProxyComboEntry
-from kiwi.ui.delegates import Delegate, SlaveDelegate
+from kiwi.ui.delegates import GladeDelegate, SlaveDelegate
 
-class Dialog(Delegate):
+class Dialog(GladeDelegate):
     def __init__(self):
-        Delegate.__init__(self, gladefile='lang',
-                          widgets=['ok_button'],
-                          delete_handler=self.quit_if_last)
+        GladeDelegate.__init__(self, gladefile='lang',
+                               widgets=['ok_button'],
+                               delete_handler=self.quit_if_last)
         self.register_validate_function(self.validity)
 
     def validity(self, data):

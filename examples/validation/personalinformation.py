@@ -7,18 +7,18 @@ import gtk
 from kiwi.environ import require_gazpacho
 require_gazpacho()
 from kiwi.datatypes import ValidationError
-from kiwi.ui.delegates import Delegate
+from kiwi.ui.delegates import GladeDelegate
 
 
 class Person:
     pass
 
-class Form(Delegate):
+class Form(GladeDelegate):
 
     def __init__(self):
-        Delegate.__init__(self,
-                          gladefile="personalinformation",
-                          delete_handler=self.quit_if_last)
+        GladeDelegate.__init__(self,
+                               gladefile="personalinformation",
+                               delete_handler=self.quit_if_last)
 
         self.nationality.prefill(['Brazilian',
                                   'Yankee',
