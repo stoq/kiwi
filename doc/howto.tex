@@ -933,134 +933,7 @@ Views, but for normal development, stick to delegates; they simplify
 things.
 
 Note that there is also a \class{SlaveDelegate}, which works like a
-normal SlaveView with an attached Controller. The next section describes
-an important subclass of \class{SlaveDelegate}, the
-\class{ObjectList}.
-
-\subsubsection{The ObjectList}
-
-There is a special gtk.TreeView wrapper that accepts a columned list,
-each row of the list representing an instance. This is the first
-high-level class of the framework being described; high-level in the
-sense that it goes beyond simply organizing the UI and handler methods,
-offering functionality directed towards object-oriented development in
-Python.
-
-The ObjectList was designed for the very common task of presenting a
-list of instance data in a gtk.TreeView. Elaborating an example: lets say we
-have a set of \class{Person} instances stored somewhere, each of these
-instances possessing the attributes \code{name}, \code{address} and
-\code{telephone}. A common problem is displaying a gtk.TreeView with this data
-and performing an action when a person is selected. This is exactly the
-use case which ObjectList supports.
-
-Before showing an example, it's important to explain how the
-ObjectList's constructor works, since it is rather special.
-
-    \begin{verbatim}
-    class ObjectList:
-        def __init__(self, columns, instance_list=None,
-                     mode=gtk.SELECTION_BROWSE)
-    \end{verbatim}
-
-The ObjectList takes a \code{columns} parameter, and understanding it
-is essential to using it correctly. \code{columns} should be a list of
-\class{Column} instances, each of these instances representing a column
-in the list (and therefore, an attribute in the instance). Let's have a
-look at the constructor for \class{Column}:
-
-    \begin{verbatim}
-    class Column:
-        __init__(self, attribute, title=None, data_type=True,
-                 **kwargs)
-    \end{verbatim}
-
-Each Column instance determines the properties of the CList's column;
-most important of these is \code{attribute}, which specifies the name of
-the instance attribute the column should hold. Note that all of these
-arguments but \code{attribute} are optional and can be safely be left
-out. To create a CList for our example above, with columns for "name",
-"address" and "telephone", we could have something like:
-
-    \begin{verbatim}
-    my_columns = [
-        Column("name", sorted=True),
-        Column("address"),
-        Column("telephone", title="Phone")
-    ]
-
-    cd = ObjectList(my_columns)
-    \end{verbatim}
-
-This section of code would create a new ObjectList with 3 columns,
-being sorted by the first one, and using "Name", "Address" and "Phone"
-as column titles. See the API reference for \class{ObjectList} and
-\class{Column} to find out all the details on them; there are many
-features, including sort ordering, tooltips, format strings and more.
-
-Note that you can produce a complete \code{column} specification by
-running the delegate once with a simple set of columns, manipulating
-them in runtime (changing sort order and widths, hiding columns) and and
-then calling \code{dump\_columns()} on the delegate; this method creates
-a list of \class{Column} instances corresponding to the current state of
-the CList. This list can be reused in the ObjectList constructor,
-making it easy to save and restore the CList's state even between runs.
-
-The \code{instance\_list} parameter should provide a list of instances
-to be inserted into the clist, and the handler is an optional callback
-that will be run when items are selected in the clist. The instances in
-the list {\bf must} offer either an accessor to the attribute specified
--- the accessor name must be in the format \code{get\_{\it
-attribute\_name}}() -- or an attribute with the name specified (the
-delegate will do a \code{getattr()} for it). Note that you can
-instantiate a \class{ObjectList} without a list and add it later by
-calling \code{new\_list({\it instance\_list})}.
-
-To exemplify the ObjectList, I'm going to build upon the News Browser
-example we saw a while back. I'm going to need to change the news data
-structures from tuples to instances, and create a ObjectList for
-it (see \code{news/news2.py}):
-
-\verbatiminput{../examples/framework/news/news2.py}
-
-Wow! Assuming you have data in the correct format, in some 25 lines you
-defined the data for your applications, and in about 5 lines you
-set up and created the ObjectList.  This example, though, doesn't do
-anything (try running it - it doesn't even flash a window open, which is
-what normally happens if you create a window but don't run the mainloop)
-because {\bf a SlaveView doesn't have a toplevel window associated to
-it}. To be able to use the ObjectList, we need to perform UI
-composition: attach it to a parent view. I'll show for now a screenshot
-of the generated widget inside a single window just so you know how it
-looks:
-
-%% \begin{center}
-%% \includegraphics[scale=0.88]{images/news2.eps}
-%% \end{center}
-
-If you look at this image, you might notice some important details:
-\begin{enumerate}
-\item There is a little arrow in the right corner of the Title column.
-What is that? A sort indicator! The titles in the first column are
-sorted ascending. The CList is set up so that you can order it's columns
-by clicking on the headers, and it even sorts numeric data properly. By
-default the sorted column is the left-most one, but you can change that
-by using the columns spec.
-
-\item There is a popup menu in the right corner of the image. What is
-it? It's a list of the columns, allowing you to select which column is
-displayed and which is hidden. As you can see, the URL column is hidden
-(remember the False we passed in the \code{my\_columns} list?) and
-Title and Author are displayed.
-
-Note that both features are built in to the Kiwi CList, one of the
-enhanced widgets we provide. You can use the CList independently of
-ObjectList, of course; check the module documentation for more
-information.
-\item (The gtk.TreeView has no window border around it. That's because I had to
-do some magic to get this screenshot to display correctly. Don't worry
-about it.)
-\end{enumerate}
+normal SlaveView with an attached Controller.
 
 \subsection{UI Composition with Delegates (or Views and Controllers)}
 
@@ -1829,6 +1702,149 @@ defaults are used for each widget:
     \end{itemize}
 \end{itemize}
 
+\section{Widgets}
+
+Besides the Framework, Kiwi also provides a set of widgets extending
+existing widgets in GTK+.
+
+% \subsection{Entries}
+
+% \subsubsection{Masks}
+
+% \subsubsection{Validation}
+
+% \subsubsection{KiwiEntry}
+
+% \subsubsection{ComboEntry}
+
+% \subsubsection{DateEntry}
+
+\subsection{ObjectList}
+
+There is a special gtk.TreeView wrapper that accepts a columned list,
+each row of the list representing an instance. This is the first
+high-level class of the framework being described; high-level in the
+sense that it goes beyond simply organizing the UI and handler methods,
+offering functionality directed towards object-oriented development in
+Python.
+
+The ObjectList was designed for the very common task of presenting a
+list of instance data in a gtk.TreeView. Elaborating an example: lets say we
+have a set of \class{Person} instances stored somewhere, each of these
+instances possessing the attributes \code{name}, \code{address} and
+\code{telephone}. A common problem is displaying a gtk.TreeView with this data
+and performing an action when a person is selected. This is exactly the
+use case which ObjectList supports.
+
+Before showing an example, it's important to explain how the
+ObjectList's constructor works, since it is rather special.
+
+    \begin{verbatim}
+    class ObjectList:
+        def __init__(self, columns, instance_list=None,
+                     mode=gtk.SELECTION_BROWSE)
+    \end{verbatim}
+
+The ObjectList takes a \code{columns} parameter, and understanding it
+is essential to using it correctly. \code{columns} should be a list of
+\class{Column} instances, each of these instances representing a column
+in the list (and therefore, an attribute in the instance). Let's have a
+look at the constructor for \class{Column}:
+
+    \begin{verbatim}
+    class Column:
+        __init__(self, attribute, title=None, data_type=True,
+                 **kwargs)
+    \end{verbatim}
+
+Each Column instance determines the properties of the CList's column;
+most important of these is \code{attribute}, which specifies the name of
+the instance attribute the column should hold. Note that all of these
+arguments but \code{attribute} are optional and can be safely be left
+out. To create a CList for our example above, with columns for "name",
+"address" and "telephone", we could have something like:
+
+    \begin{verbatim}
+    my_columns = [
+        Column("name", sorted=True),
+        Column("address"),
+        Column("telephone", title="Phone")
+    ]
+
+    cd = ObjectList(my_columns)
+    \end{verbatim}
+
+This section of code would create a new ObjectList with 3 columns,
+being sorted by the first one, and using "Name", "Address" and "Phone"
+as column titles. See the API reference for \class{ObjectList} and
+\class{Column} to find out all the details on them; there are many
+features, including sort ordering, tooltips, format strings and more.
+
+Note that you can produce a complete \code{column} specification by
+running the delegate once with a simple set of columns, manipulating
+them in runtime (changing sort order and widths, hiding columns) and and
+then calling \code{dump\_columns()} on the delegate; this method creates
+a list of \class{Column} instances corresponding to the current state of
+the CList. This list can be reused in the ObjectList constructor,
+making it easy to save and restore the CList's state even between runs.
+
+The \code{instance\_list} parameter should provide a list of instances
+to be inserted into the clist, and the handler is an optional callback
+that will be run when items are selected in the clist. The instances in
+the list {\bf must} offer either an accessor to the attribute specified
+-- the accessor name must be in the format \code{get\_{\it
+attribute\_name}}() -- or an attribute with the name specified (the
+delegate will do a \code{getattr()} for it). Note that you can
+instantiate a \class{ObjectList} without a list and add it later by
+calling \code{new\_list({\it instance\_list})}.
+
+To exemplify the ObjectList, I'm going to build upon the News Browser
+example we saw a while back. I'm going to need to change the news data
+structures from tuples to instances, and create a ObjectList for
+it (see \code{news/news2.py}):
+
+\verbatiminput{../examples/framework/news/news2.py}
+
+Wow! Assuming you have data in the correct format, in some 25 lines you
+defined the data for your applications, and in about 5 lines you
+set up and created the ObjectList.  This example, though, doesn't do
+anything (try running it - it doesn't even flash a window open, which is
+what normally happens if you create a window but don't run the mainloop)
+because {\bf a SlaveView doesn't have a toplevel window associated to
+it}. To be able to use the ObjectList, we need to perform UI
+composition: attach it to a parent view. I'll show for now a screenshot
+of the generated widget inside a single window just so you know how it
+looks:
+
+%% \begin{center}
+%% \includegraphics[scale=0.88]{images/news2.eps}
+%% \end{center}
+
+If you look at this image, you might notice some important details:
+\begin{enumerate}
+\item There is a little arrow in the right corner of the Title column.
+What is that? A sort indicator! The titles in the first column are
+sorted ascending. The CList is set up so that you can order it's columns
+by clicking on the headers, and it even sorts numeric data properly. By
+default the sorted column is the left-most one, but you can change that
+by using the columns spec.
+
+\item There is a popup menu in the right corner of the image. What is
+it? It's a list of the columns, allowing you to select which column is
+displayed and which is hidden. As you can see, the URL column is hidden
+(remember the False we passed in the \code{my\_columns} list?) and
+Title and Author are displayed.
+
+Note that both features are built in to the Kiwi CList, one of the
+enhanced widgets we provide. You can use the CList independently of
+ObjectList, of course; check the module documentation for more
+information.
+\item (The gtk.TreeView has no window border around it. That's because I had to
+do some magic to get this screenshot to display correctly. Don't worry
+about it.)
+\end{enumerate}
+
+
 \section{References}
 
 What follows in this section are references to FrameWorks and MVC that I
@@ -2075,13 +2091,3 @@ and
 %\subsection{Customizing the Kiwi FrameWork classes}
 
 %\subsection{Further changes}
-
-%\section{Widgets}
-
-%\subsection{CList}
-
-%\subsection{OptionMenu}
-
-%\subsection{Entry and Validator}
-
-%\subsection{References}
