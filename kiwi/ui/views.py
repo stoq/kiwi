@@ -105,7 +105,6 @@ class SignalBroker(object):
 
         for fname in methods.keys():
             # `on_x__y' has 7 chars and is the smallest possible handler
-            # (though illegal, of course, since the signal name x is bogus)
             if len(fname) < 7:
                 continue
             match = method_regex.match(fname)
