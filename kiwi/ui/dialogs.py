@@ -190,7 +190,8 @@ def messagedialog(dialog_type, short, long=None, parent=None,
         elif isinstance(long, basestring):
             d.set_details(long)
         else:
-            raise TypeError("long must be a gtk.Widget or a string")
+            raise TypeError(
+                "long must be a gtk.Widget or a string, not %r" % long)
 
     if default != -1:
         d.set_default_response(default)
