@@ -78,7 +78,8 @@ class KiwiInstallLib(install_lib):
             prefix = 'import sys\nprefix = sys.prefix'
         else:
             install = self.distribution.get_command_obj('install')
-            prefix = 'prefix = "%s"' % install.prefix or sys.prefix
+            # Use raw strings so UNC paths which has \\ works
+            prefix = 'prefix = r"%s"' % install.prefix or sys.prefix
 
         name = self.distribution.get_name()
         filename = os.path.join(self.install_dir, name, '__installed__.py')

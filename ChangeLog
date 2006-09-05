@@ -1,3 +1,9 @@
+2006-09-05  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/dist.py (KiwiInstallLib.generate_template): Use a raw
+	string here to allow the use of UNC paths on win32, pointed out
+	by Aaron Spike.
+
 2006-08-30  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
