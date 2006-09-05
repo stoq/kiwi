@@ -55,17 +55,15 @@ class GladeDelegate(BaseView, BaseController):
     """A class that combines view and controller functionality into a
     single package. The Delegate class possesses a top-level window.
     """
-    def __init__(self, toplevel=None, widgets=(), gladefile=None,
-                 gladename=None, toplevel_name=None, domain=None,
+    def __init__(self, gladefile=None, gladename=None, domain=None,
                  delete_handler=None, keyactions=None):
-        """Creates a new Delegate.
+        """Creates a new GladeDelegate.
         The keyactions parameter is sent to L{kiwi.controllers.BaseController},
         the rest are sent to L{kiwi.ui.views.BaseView}
         """
 
-        BaseView.__init__(self, toplevel, widgets, gladefile,
-                          gladename, toplevel_name, domain,
-                          delete_handler)
+        BaseView.__init__(self, gladefile=gladefile, gladename=gladename,
+                          domain=domain, delete_handler=delete_handler)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
 class SlaveDelegate(SlaveView, BaseController):
@@ -92,15 +90,16 @@ class GladeSlaveDelegate(SlaveView, BaseController):
     single package. It does not possess a top-level window, but is instead
     intended to be plugged in to a View or Delegate using attach_slave().
     """
-    def __init__(self, toplevel=None, widgets=(), gladefile=None,
-                 gladename=None, toplevel_name=None, domain=None,
+    def __init__(self, gladefile=None, gladename=None, domain=None,
                  keyactions=None):
         """
         The keyactions parameter is sent to L{kiwi.controllers.BaseController},
         the rest are sent to L{kiwi.ui.views.SlavseView}
         """
-        SlaveView.__init__(self, toplevel, widgets, gladefile, gladename,
-                           toplevel_name, domain)
+        SlaveView.__init__(self,
+                           gladefile=gladefile,
+                           gladename=gladename,
+                           domain=domain)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
 
