@@ -65,7 +65,6 @@ class ClickCounter(Delegate):
 class GladeClickCounter(GladeDelegate):
     def __init__(self):
         GladeDelegate.__init__(self, gladefile="simple_button",
-                               widgets=['button'],
                                delete_handler=self.quit_if_last)
 
         self.clicks = 0

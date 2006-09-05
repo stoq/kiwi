@@ -8,7 +8,6 @@ class ActionDelegate(GladeDelegate):
     def __init__(self):
         GladeDelegate.__init__(self, gladefile="actions.glade",
                                toplevel_name='window1',
-                               widgets=['New'],
                                delete_handler=self.quit_if_last)
         self.new_activated = False
 
