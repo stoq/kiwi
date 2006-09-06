@@ -4,7 +4,7 @@ import os
 
 import gtk
 
-from kiwi.ui.delegates import Delegate, SlaveDelegate
+from kiwi.ui.delegates import Delegate, GladeSlaveDelegate
 from kiwi.ui.gadgets import quit_if_last, set_background, set_foreground
 
 class NewsItem:
@@ -26,10 +26,10 @@ news = [
           "http://www.pigdog.org/auto/viva_la_musica/link/2678.html")
 ]
 
-class ListSlave(SlaveDelegate):
+class ListSlave(GladeSlaveDelegate):
     def __init__(self, parent):
         self.parent = parent
-        SlaveDelegate.__init__(self, gladefile="news_list",
+        GladeSlaveDelegate.__init__(self, gladefile="news_list",
                                toplevel_name="window_container",
                                widgets=["news_list"])
         self.news_list.add_list(news)
