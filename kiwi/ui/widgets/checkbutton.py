@@ -39,10 +39,11 @@ class ProxyCheckButton(PropertyObject, gtk.CheckButton, ProxyWidgetMixin):
     # accept bool values
     allowed_data_types = bool,
 
-    def __init__(self):
+    def __init__(self, label=None, use_underline=True):
         ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=bool)
-        gtk.CheckButton.__init__(self)
+        gtk.CheckButton.__init__(self, label=label,
+                                 use_underline=use_underline)
 
     gsignal('toggled', 'override')
     def do_toggled(self):
