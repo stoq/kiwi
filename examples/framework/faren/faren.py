@@ -10,7 +10,7 @@ class FarenControl(BaseController):
     def on_quitbutton__clicked(self, *args):
         self.view.hide_and_quit()
 
-    def after_temperature__changed(self, entry, *args):
+    def after_temperature__insert_text(self, entry, *args):
         try:
             temp = float(entry.get_text())
         except ValueError:
