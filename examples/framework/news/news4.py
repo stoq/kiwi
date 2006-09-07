@@ -4,8 +4,9 @@ import os
 
 import gtk
 
-from kiwi.ui.delegates import Delegate, GladeSlaveDelegate
+from kiwi.ui.delegates import GladeDelegate, SlaveDelegate
 from kiwi.ui.gadgets import quit_if_last, set_background, set_foreground
+from kiwi.ui.objectlist import Column, ObjectList
 
 class NewsItem:
     def __init__(self, title, author, url):
@@ -26,13 +27,17 @@ news = [
           "http://www.pigdog.org/auto/viva_la_musica/link/2678.html")
 ]
 
-class ListSlave(GladeSlaveDelegate):
+class ListSlave(SlaveDelegate):
     def __init__(self, parent):
         self.parent = parent
-        GladeSlaveDelegate.__init__(self, gladefile="news_list",
-                               toplevel_name="window_container",
-                               widgets=["news_list"])
+        self.news_list = ObjectList([
+                   Column('title', 'Title of article', str),
+                   Column('author', 'Author of article', str),
+                   Column('url', 'Address of article', str),
+                   ])
+        SlaveDelegate.__init__(self, toplevel=self.news_list)
         self.news_list.add_list(news)
+        self.news_list.select(self.news_list[0])
 
     def on_news_list__selection_changed(self, list, item):
         print "%s %s %s\n" % (item.title, item.author, item.url)
@@ -40,15 +45,14 @@ class ListSlave(GladeSlaveDelegate):
     def on_news_list__double_click(self, the_list, selected_object):
         self.parent.ok.clicked()
 
-class Shell(Delegate):
-    widgets = ["ok", "cancel", "header", "footer", "title"]
+class Shell(GladeDelegate):
     def __init__(self):
         keyactions = {
             gtk.keysyms.a: self.on_ok__clicked,
             gtk.keysyms.b: self.on_cancel__clicked,
             }
 
-        Delegate.__init__(self, gladefile="news_shell",
+        GladeDelegate.__init__(self, gladefile="news_shell",
                           delete_handler=quit_if_last, keyactions=keyactions)
 
         # paint header and footer; they are eventboxes that hold a
@@ -62,13 +66,12 @@ class Shell(Delegate):
         self.slave.show()
         self.slave.focus_toplevel() # Must be done after attach
 
-    def on_ok__clicked(self, *args):
-        objectlist = self.slave.news_list
-        item = objectlist.get_selected()
+    def on_ok__clicked(self, button):
+        item = self.slave.news_list.get_selected()
         self.emit('result', item.url)
         self.hide_and_quit()
 
-    def on_cancel__clicked(self, *args):
+    def on_cancel__clicked(self, button):
         self.hide_and_quit()
 
 url = None
