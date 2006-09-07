@@ -390,16 +390,6 @@ section of
 \citetitle[http://developer.gnome.org/doc/GGAD/sec-mainloop.html]
 {GTK+/Gnome Application Development}.
 
-\code{show\_and\_loop()}
-returns a value upon exit. This return value corresponds to the View's
-\code{retval} instance variable, and you can use \code{self.retval} to
-return any value you wish. In our example the use was rather trivial,
-but \code{retval} is convenient when opening a dialog: use
-\code{show\_and\_loop()} to run it; the dialog modifies its
-\code{retval} variable depending on a certain event (OK button was
-pressed versus Cancel button, for instance), and the method will return
-this value to the caller (which can then make a decision based on it).
-
 Right now, the relevant aspect of the mainloop is that we will need to
 break this loop when we quit our application, which for this app should
 happen when you click on "X". This is why we are passing in
@@ -547,9 +537,9 @@ Proxy yet, I'll leave this to be mentioned when we get there.
 As an example of how \code{widgets} should be specified and used, let's
 change \file{heyglade.py} to \file{heyglade2.py}:
 
-%% \begin{center}
-%% \includegraphics[scale=0.905]{images/london2.eps}
-%% \end{center}
+\begin{center}
+\includegraphics[scale=0.905]{images/london2.eps}
+\end{center}
 
 \verbatiminput{../examples/framework/hey/heyglade2.py}
 
@@ -613,9 +603,9 @@ padding and span).
 I'll demonstrate by showing how a parent view is built in glade. Look at
 \file{examples/Browser/news\_shell.glade}:
 
-%% \begin{center}
-%% \includegraphics[scale=0.905]{images/shell1.eps}
-%% \end{center}
+\begin{center}
+\includegraphics[scale=0.905]{images/shell1.eps}
+\end{center}
 
 In \file{news.glade} I put together a simple dialog, and in the place where
 I want the slave to be embedded, I have added an EventBox (with any
@@ -676,9 +666,9 @@ minor detail with widget focus that is discussed in the next section;
 basically, the slave needs to be attached to the parent before trying to
 focus its widgets).  The final result is shown below:
 
-%% \begin{center}
-%% \includegraphics[scale=0.905]{images/shell2.eps}
-%% \end{center}
+\begin{center}
+\includegraphics[scale=0.905]{images/shell2.eps}
+\end{center}
 
 Note that all the examples up to now have been very simple and static:
 there is no user interaction going on beyond closing the window (for
@@ -766,9 +756,9 @@ Let's see a simple example to make
 these concepts more concrete (included in the Kiwi tarball at
 \file{Kiwi/examples/framework/faren/faren.py}):
 
-%% \begin{center}
-%% \includegraphics[scale=0.905]{images/faren.eps}
-%% \end{center}
+\begin{center}
+\includegraphics[scale=0.905]{images/faren.eps}
+\end{center}
 
 \verbatiminput{../examples/framework/faren/faren.py}
 
@@ -903,15 +893,15 @@ to individual views and controllers. A very simple (yes, I too get bored
 of hand-coding PyGTK widgets) example follows, found in the distribution
 as \file{examples/framework/simple.py}:
 
-%% \begin{center}
-%% \includegraphics[scale=0.905]{images/simple2.eps}
-%% \end{center}
+\begin{center}
+\includegraphics[scale=0.905]{images/simple2.eps}
+\end{center}
 
 \verbatiminput{../examples/framework/simple.py}
 
-%% \begin{center}
-%% \includegraphics[scale=0.905]{images/simple3.eps}
-%% \end{center}
+\begin{center}
+\includegraphics[scale=0.905]{images/simple3.eps}
+\end{center}
 
 As you can see, the Delegate was the only class we needed to inherit
 from and instantiate. This makes the amount of infrastructure code go
@@ -958,9 +948,9 @@ in as many places of your applications as you like.  I'm going to use
 the ObjectList from the last example to build a (rather fake) news
 browsing application in the next example:
 
-%% \begin{center}
-%% \includegraphics[scale=0.905]{images/news3.eps}
-%% \end{center}
+\begin{center}
+\includegraphics[scale=0.905]{images/news3.eps}
+\end{center}
 
 \verbatiminput{../examples/framework/news/news3.py}
 
@@ -1497,7 +1487,7 @@ Looking at the code, you might notice three special issues:
 \begin{enumerate}
 \item The class our model inherits from is \class{FrameWork.PickledModel}.
 \item We actually get our model instance by making a call to
-\code{Framework.unpickle\_model()}, passing the class \class{Person} as
+\code{Person.unpickle()}, passing the class \class{Person} as
 an argument.
 \item We call \code{person.save()} at the end of the program.
 \end{enumerate}
@@ -1510,20 +1500,19 @@ and restore an instance. To use it:
 \begin{enumerate}
 \item Have your model class inherit from PickledModel.
 
-\item Use the \code{unpickle\_model} function as a "factory" function;
-it takes the your model's class as the first parameter, and a filename
-as the optional second parameter (if omitted, it uses the name of the
-class, with an extension of ".pickle"). The function will try and load
-the model state from a pickle file, and if it doesn't exist, will create
-a new model and return it to you. If the pickle file is damaged, it will
-save it with the extension ".err" (avoiding it being erased by an
-unwitting \code{save()} call).
+\item Use the \code{PickledModel.unpickle} which is a class method on 
+your model. it takes a filename as the optional second parameter (if omitted, 
+it uses the name of the class, with an extension of ".pickle"). 
+The method will try and load the model state from a pickle file, 
+and if it doesn't exist, will create a new model and return it to you. 
+If the pickle file is damaged, it will save it with the extension ".err" 
+(avoiding it being erased by an unwitting \code{save()} call).
 
 \item Use the \code{save()} method to save the pickle when you are
 ready. You may specify a filename to it; otherwise, it uses the default
-filename specified through the \code{set\_pickle()} method. Note that
-\code{unpickle\_model} makes the filename it tried to used the default
-by calling \code{set\_pickle()} internally.
+filename specified through the \code{set\_filename()} method. Note that
+\code{PickledModel.unpickle} makes the filename it tried to used the 
+default by calling \code{set\_filename()} internally.
 \end{enumerate}
 
 The \file{diary3.py} example in \code{examples/diary/} uses pickling in a
@@ -1816,9 +1805,9 @@ composition: attach it to a parent view. I'll show for now a screenshot
 of the generated widget inside a single window just so you know how it
 looks:
 
-%% \begin{center}
-%% \includegraphics[scale=0.88]{images/news2.eps}
-%% \end{center}
+\begin{center}
+\includegraphics[scale=0.88]{images/news2.eps}
+\end{center}
 
 If you look at this image, you might notice some important details:
 \begin{enumerate}

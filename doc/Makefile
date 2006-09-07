@@ -14,6 +14,7 @@ STYLE="PRE { border-left: 1px dashed blue;		\
 NAME=Kiwi
 URL=http://www.async.com.br/projects/kiwi/
 FIXIMG=perl -p -i -e 's/WIDTH=\"[0-9]+\" HEIGHT=\"[0-9]+\"//'
+WEBDIR=/mondo/htdocs/async/projects/kiwi
 
 all: api howto
 
@@ -28,18 +29,19 @@ howto: howto.tex
 	cp images/diary.png     howto/img1.png
 	cp images/simple.png    howto/img2.png
 	cp images/london.png    howto/img3.png
-# 	cp images/london2.png   howto/img4.png
-# 	cp images/shell1.png    howto/img5.png
-# 	cp images/shell2.png    howto/img6.png
-# 	cp images/faren.png     howto/img7.png
-# 	cp images/simple2.png   howto/img8.png
-# 	cp images/simple3.png   howto/img9.png
-# 	cp images/news2.png     howto/img10.png
-# 	cp images/news3.png     howto/img11.png
+	cp images/london2.png   howto/img4.png
+	cp images/shell1.png    howto/img5.png
+	cp images/shell2.png    howto/img6.png
+	cp images/faren.png     howto/img7.png
+	cp images/simple2.png   howto/img8.png
+	cp images/simple3.png   howto/img9.png
+	cp images/news2.png     howto/img10.png
+	cp images/news3.png     howto/img11.png
 # 	cp images/newsform.png  howto/img12.png
 # 	cp images/newsform2.png howto/img13.png
 # 	cp images/newsform4.png howto/img14.png
 	cp ../examples/framework/person/Person.glade howto/
+	cp ../examples/framework/faren/faren.glade howto/
 
 api:
 	cd .. && tools/epyrun
@@ -50,5 +52,13 @@ apicheck:
 
 clean:
 	rm -rf api/ howto/ *.log *.aux *.l2h *.dvi *.ps *.bak *~
+
+web: all
+	rm -fr ${WEBDIR}/api
+	cp -r api ${WEBDIR}
+	rm -fr ${WEBDIR}/howto
+	cp -r howto ${WEBDIR}
+	cd ${WEBDIR} && tar cfz howto.tar.gz howto
+	cd ${WEBDIR} && tar cfz api.tar.gz api
 
 .PHONY: apicheck clean
