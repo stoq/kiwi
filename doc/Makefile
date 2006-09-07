@@ -19,33 +19,36 @@ WEBDIR=/mondo/htdocs/async/projects/kiwi
 all: api howto
 
 howto: howto.tex
-	mkdir -p howto
-	$(MKHOWTO) -k --image-type png --a4 
-	echo $(STYLE) >> howto/howto.css
-	latex howto
-	latex howto
-	dvips howto
-	$(FIXIMG) howto/*.html
-	cp images/diary.png     howto/img1.png
-	cp images/simple.png    howto/img2.png
-	cp images/london.png    howto/img3.png
-	cp images/london2.png   howto/img4.png
-	cp images/shell1.png    howto/img5.png
-	cp images/shell2.png    howto/img6.png
-	cp images/faren.png     howto/img7.png
-	cp images/simple2.png   howto/img8.png
-	cp images/simple3.png   howto/img9.png
-	cp images/news2.png     howto/img10.png
-	cp images/news3.png     howto/img11.png
-# 	cp images/newsform.png  howto/img12.png
-# 	cp images/newsform2.png howto/img13.png
-# 	cp images/newsform4.png howto/img14.png
-	cp ../examples/framework/person/Person.glade howto/
-	cp ../examples/framework/faren/faren.glade howto/
+	@echo Creating howto
+	@mkdir -p howto
+	@$(MKHOWTO) -k --image-type png --a4 
+	@echo $(STYLE) >> howto/howto.css
+	@latex howto
+	@latex howto
+	@dvips howto
+	@$(FIXIMG) howto/*.html
+	@echo Copying examples and images
+	@cp images/diary.png     howto/img1.png
+	@cp images/simple.png    howto/img2.png
+	@cp images/london.png    howto/img3.png
+	@cp images/london2.png   howto/img4.png
+	@cp images/shell1.png    howto/img5.png
+	@cp images/shell2.png    howto/img6.png
+	@cp images/faren.png     howto/img7.png
+	@cp images/simple2.png   howto/img8.png
+	@cp images/simple3.png   howto/img9.png
+	@cp images/news2.png     howto/img10.png
+	@cp images/news3.png     howto/img11.png
+# 	@cp images/newsform.png  howto/img12.png
+# 	@cp images/newsform2.png howto/img13.png
+# 	@cp images/newsform4.png howto/img14.png
+	@cp ../examples/framework/person/Person.glade howto/
+	@cp ../examples/framework/faren/faren.glade howto/
 
 api:
-	cd .. && tools/epyrun
-	mv ../html api
+	@echo Creating API documentation
+	@cd .. && tools/epyrun
+	@mv ../html api
 
 apicheck: 
 	cd .. && tools/epyrun --check
@@ -54,11 +57,12 @@ clean:
 	rm -rf api/ howto/ *.log *.aux *.l2h *.dvi *.ps *.bak *~
 
 web: all
-	rm -fr ${WEBDIR}/api
-	cp -r api ${WEBDIR}
-	rm -fr ${WEBDIR}/howto
-	cp -r howto ${WEBDIR}
-	cd ${WEBDIR} && tar cfz howto.tar.gz howto
-	cd ${WEBDIR} && tar cfz api.tar.gz api
+	@rm -fr ${WEBDIR}/api
+	@cp -r api ${WEBDIR}
+	@rm -fr ${WEBDIR}/howto
+	@cp -r howto ${WEBDIR}
+	@cd ${WEBDIR} && tar cfz howto.tar.gz howto
+	@cd ${WEBDIR} && tar cfz api.tar.gz api
+	@echo Website updated
 
 .PHONY: apicheck clean
