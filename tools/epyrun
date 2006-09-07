@@ -35,7 +35,7 @@ class FakeModule(object):
     def __init__(self, name, level, *ignore):
         self.__level = level
         self.__name__ = name
- 
+
     def __repr__(self):
         return '<Fake %s>' % self.__name__
     __str__ = __repr__
@@ -56,10 +56,10 @@ class FakeModule(object):
             #    return lambda x: []
             elif attr == 'pygtk_version':
                 return gobject.pygtk_version
-            
+
         if (self.__name__, attr) in skipped_types:
             return _GObject
-            
+
         return FakeModule(self.__name__+'.'+attr, self.__level-1)
 
     def __cmp__(self, other):
@@ -77,7 +77,7 @@ def fakeOut(modname):
             setattr(prevmod, modpath[m], nm)
         sys.modules[mp] = nm
         prevmod = nm
-        
+
 kiwi.utils.gproperty = fakeFunction(kiwi.utils.gproperty)
 kiwi.utils.type_register = fakeFunction(kiwi.utils.type_register)
 gobject.type_is_a = lambda x: None
@@ -133,7 +133,7 @@ class TwistedHTMLFormatter(HTMLFormatter):
         # checking
         assert uid.is_module() or uid.is_class(), 'Bad UID type: %r' % (uid,)
         return uid.name() + '.html'
-        
+
     def _uid_to_uri(self, uid):
         if uid.is_module() or uid.is_class():
             return uid.name() + '.html'
@@ -156,7 +156,7 @@ class TwistedHTMLFormatter(HTMLFormatter):
 
     def write(self, directory=None, progress_callback=None):
         HTMLFormatter.write(self, directory, progress_callback)
-        
+
         # Write method redirectors
         self._write_method_redirects(directory)
 
@@ -265,7 +265,7 @@ else:
     #sanity check on names
     for i in range(len(names)):
         try:
-            j = names[i].rindex('kiwi/') 
+            j = names[i].rindex('kiwi/')
         except:
             raise SystemExit, 'You can only specify twisted modules or packages'
         else:
@@ -289,7 +289,6 @@ else:
         sys.argv[1:1] = ['-o', tmp_dir]
 
 osrv = sys.argv
-sys.argv=["IGNORE"]
 
 for name in names:
     if name.endswith(".py"):
@@ -312,7 +311,6 @@ sys.argv.extend(modnames)
 sys.argv[1:1] = ['-n', 'Kiwi %s' % '.'.join(map(str, version)),
                  '-u', 'http://www.async.com.br/projects/kiwi/',
                  '--no-private']
-
 # Make it easy to profile epyrun
 cli()
 
