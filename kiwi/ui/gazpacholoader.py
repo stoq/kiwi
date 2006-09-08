@@ -76,7 +76,7 @@ class GazpachoWidgetTree:
     """Example class of GladeAdaptor that uses Gazpacho loader to load the
     glade files
     """
-    def __init__(self, view, gladefile, widgets, gladename=None, domain=None):
+    def __init__(self, view, gladefile, widgets, domain=None):
 
         if not gladefile:
             raise ValueError("A gladefile wasn't provided.")
@@ -88,7 +88,6 @@ class GazpachoWidgetTree:
         self._view = view
         self._gladefile = environ.find_resource("glade", self._filename)
         self._widgets =  (widgets or view.widgets or [])[:]
-        self.gladename = gladename or filename
         self._showwarning = warnings.showwarning
         warnings.showwarning = self._on_load_warning
         self._tree = Builder(self._gladefile, domain=domain)

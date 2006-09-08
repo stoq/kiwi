@@ -31,7 +31,7 @@ from kiwi.log import Logger
 log = Logger('libgladeloader')
 
 class LibgladeWidgetTree(XML):
-    def __init__(self, view, gladefile, widgets, gladename=None, domain=None):
+    def __init__(self, view, gladefile, widgets, domain=None):
 
         if not gladefile:
             raise ValueError("A gladefile wasn't provided.")
@@ -43,7 +43,6 @@ class LibgladeWidgetTree(XML):
         self._view = view
         self._gladefile = environ.find_resource("glade", filename + ".glade")
         self._widgets =  (widgets or view.widgets or [])[:]
-        self.gladename = gladename or filename
         XML.__init__(self, self._gladefile, domain)
         if not self._widgets:
             self._widgets = [w.get_name() for w in self.get_widget_prefix('')]

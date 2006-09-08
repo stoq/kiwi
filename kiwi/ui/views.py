@@ -195,7 +195,6 @@ class SlaveView(gobject.GObject):
     widgets = []
     toplevel_name = None
     gladefile = None
-    gladename = None
     domain = None
 
     # This signal is emited when the view wants to return a result value
@@ -206,7 +205,7 @@ class SlaveView(gobject.GObject):
     gsignal('validation-changed', bool)
 
     def __init__(self, toplevel=None, widgets=None, gladefile=None,
-                 gladename=None, toplevel_name=None, domain=None):
+                 toplevel_name=None, domain=None):
         """ Creates a new SlaveView. Sets up self.toplevel and self.widgets
         and checks for reserved names.
         """
@@ -230,11 +229,9 @@ class SlaveView(gobject.GObject):
         self.toplevel = toplevel or klass.toplevel
         self.widgets = widgets or klass.widgets
         self.gladefile = gladefile or klass.gladefile
-        self.gladename = gladename or klass.gladename
         self.toplevel_name = (toplevel_name or
                               klass.toplevel_name or
-                              self.gladefile or
-                              self.gladename)
+                              self.gladefile)
         self.domain = domain or klass.domain
 
         self._check_reserved()
@@ -259,7 +256,7 @@ class SlaveView(gobject.GObject):
 
     def _check_reserved(self):
         for reserved in ["widgets", "toplevel", "gladefile",
-                         "gladename", "tree", "model", "controller"]:
+                         "tree", "model", "controller"]:
             # XXX: take into account widget constructor?
             if reserved in self.widgets:
                 raise AttributeError(
@@ -292,8 +289,7 @@ class SlaveView(gobject.GObject):
             return
 
         glade_adaptor = _open_glade(self, self.gladefile,
-                                    self.widgets, self.gladename,
-                                    self.domain)
+                                    self.widgets, self.domain)
 
         container_name = self.toplevel_name
         if not container_name:
@@ -826,10 +822,9 @@ class BaseView(SlaveView):
     """A view with a toplevel window."""
 
     def __init__(self, toplevel=None, widgets=None, gladefile=None,
-                 gladename=None, toplevel_name=None, domain=None,
-                 delete_handler=None):
-        SlaveView.__init__(self, toplevel, widgets, gladefile, gladename,
-                           toplevel_name, domain)
+                 toplevel_name=None, domain=None, delete_handler=None):
+        SlaveView.__init__(self, toplevel, widgets, gladefile, toplevel_name,
+                           domain)
 
         if not isinstance(self.toplevel, gtk.Window):
             raise TypeError("toplevel widget must be a Window "
@@ -847,8 +842,7 @@ class BaseView(SlaveView):
         if not self.gladefile:
             return
 
-        return _open_glade(self, self.gladefile, self.widgets,
-                           self.gladename, self.domain)
+        return _open_glade(self, self.gladefile, self.widgets, self.domain)
 
     #
     # Hook for keypress handling
@@ -948,7 +942,7 @@ class BaseView(SlaveView):
 
 WidgetTree = None
 
-def _open_glade(view, gladefile, widgets, name, domain):
+def _open_glade(view, gladefile, widgets, domain):
     global WidgetTree
     if not WidgetTree:
         try:
@@ -968,4 +962,4 @@ def _open_glade(view, gladefile, widgets, name, domain):
             from kiwi.ui.gazpacholoader import GazpachoWidgetTree as WT
             WidgetTree = WT
 
-    return WidgetTree(view, gladefile, widgets, name, domain)
+    return WidgetTree(view, gladefile, widgets, domain)

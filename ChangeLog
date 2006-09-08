@@ -1,3 +1,11 @@
+2006-09-08  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/delegates.py:
+	* kiwi/ui/gazpacholoader.py:
+	* kiwi/ui/libgladeloader.py:
+	* kiwi/ui/views.py:
+	Kill gladename in views, delegates and glade adaptors
+
 2006-09-05  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/dist.py (KiwiInstallLib.generate_template): Use a raw
