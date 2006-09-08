@@ -27,7 +27,7 @@ import gettext
 
 import gtk
 
-from kiwi.ui.delegates import Delegate
+from kiwi.ui.delegates import GladeDelegate
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
@@ -68,7 +68,7 @@ class WizardStep:
         """
         return True
 
-class PluggableWizard(Delegate):
+class PluggableWizard(GladeDelegate):
     """ Wizard controller and view class """
     gladefile = 'PluggableWizard'
     retval = None
@@ -80,9 +80,8 @@ class PluggableWizard(Delegate):
         @param size:
         @param edit_mode:
         """
-        Delegate.__init__(self, delete_handler=self.quit_if_last,
-                          gladefile=self.gladefile,
-                          widgets=self.widgets)
+        GladeDelegate.__init__(self, delete_handler=self.quit_if_last,
+                               gladefile=self.gladefile)
         if not isinstance(first_step, WizardStep):
             raise TypeError("first_step must be a WizardStep instance")
 
