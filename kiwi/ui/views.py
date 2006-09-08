@@ -266,10 +266,7 @@ class SlaveView(gobject.GObject):
     def _get_toplevel(self):
         toplevel = self.toplevel
         if not toplevel and self.toplevel_name:
-            if self._glade_adaptor:
-                toplevel = self._glade_adaptor.get_widget(self.toplevel_name)
-            else:
-                toplevel = getattr(self, self.toplevel_name, None)
+            toplevel = self.get_widget(self.toplevel_name)
 
         if not toplevel:
             raise TypeError("A View requires an instance variable "
@@ -340,7 +337,12 @@ class SlaveView(gobject.GObject):
     def get_widget(self, name):
         """Retrieves the named widget from the View"""
         name = string.replace(name, '.', '_')
-        widget = getattr(self, name, None)
+
+        if self._glade_adaptor:
+            widget = self._glade_adaptor.get_widget(name)
+        else:
+            widget = getattr(self, name, None)
+
         if widget is None:
             raise AttributeError("Widget %s not found in view %s"
                                  % (name, self))
@@ -526,12 +528,7 @@ class SlaveView(gobject.GObject):
         else: # slaveview
             new_widget = shell
 
-        # if our widgets are in a glade file get the placeholder from them
-        # or take it from the view itself otherwise
-        if self._glade_adaptor:
-            placeholder = self._glade_adaptor.get_widget(name)
-        else:
-            placeholder = getattr(self, name, None)
+        placeholder = self.get_widget(name)
 
         if not placeholder:
             raise AttributeError(
