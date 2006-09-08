@@ -288,8 +288,7 @@ class SlaveView(gobject.GObject):
         if not self.gladefile:
             return
 
-        glade_adaptor = _open_glade(self, self.gladefile,
-                                    self.widgets, self.domain)
+        glade_adaptor = _open_glade(self, self.gladefile, self.domain)
 
         container_name = self.toplevel_name
         if not container_name:
@@ -842,7 +841,7 @@ class BaseView(SlaveView):
         if not self.gladefile:
             return
 
-        return _open_glade(self, self.gladefile, self.widgets, self.domain)
+        return _open_glade(self, self.gladefile, self.domain)
 
     #
     # Hook for keypress handling
@@ -942,7 +941,7 @@ class BaseView(SlaveView):
 
 WidgetTree = None
 
-def _open_glade(view, gladefile, widgets, domain):
+def _open_glade(view, gladefile, domain):
     global WidgetTree
     if not WidgetTree:
         try:
@@ -962,4 +961,4 @@ def _open_glade(view, gladefile, widgets, domain):
             from kiwi.ui.gazpacholoader import GazpachoWidgetTree as WT
             WidgetTree = WT
 
-    return WidgetTree(view, gladefile, widgets, domain)
+    return WidgetTree(view, gladefile, domain)
