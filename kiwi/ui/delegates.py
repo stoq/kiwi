@@ -34,7 +34,7 @@ class Delegate(BaseView, BaseController):
     single package. The Delegate class possesses a top-level window.
     """
     def __init__(self, toplevel=None, widgets=(), gladefile=None,
-                 toplevel_name=None, domain=None,
+                 toplevel_name=None,
                  delete_handler=None, keyactions=None):
         """Creates a new Delegate.
         The keyactions parameter is sent to L{kiwi.controllers.BaseController},
@@ -47,8 +47,7 @@ class Delegate(BaseView, BaseController):
                 stacklevel=3)
 
         BaseView.__init__(self, toplevel, widgets, gladefile,
-                          toplevel_name, domain,
-                          delete_handler)
+                          toplevel_name, delete_handler)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
 class GladeDelegate(BaseView, BaseController):
@@ -75,8 +74,7 @@ class SlaveDelegate(SlaveView, BaseController):
     intended to be plugged in to a View or Delegate using attach_slave().
     """
     def __init__(self, toplevel=None, widgets=(), gladefile=None,
-                 toplevel_name=None, domain=None,
-                 keyactions=None):
+                 toplevel_name=None, keyactions=None):
         """
         The keyactions parameter is sent to L{kiwi.controllers.BaseController},
         the rest are sent to L{kiwi.ui.views.SlaveView}
@@ -87,7 +85,7 @@ class SlaveDelegate(SlaveView, BaseController):
                 'use GladeSlaveDelegate instead',
                 stacklevel=3)
         SlaveView.__init__(self, toplevel, widgets, gladefile,
-                           toplevel_name, domain)
+                           toplevel_name)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
 class GladeSlaveDelegate(SlaveView, BaseController):
