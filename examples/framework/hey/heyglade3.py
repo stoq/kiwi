@@ -5,7 +5,6 @@ from kiwi.ui.gadgets import quit_if_last
 from kiwi.ui.views import BaseView
 
 class MyView(BaseView):
-    widgets = ["the_label"]   # widgets list
     gladefile = "hey"
     def __init__(self):
         BaseView.__init__(self, delete_handler=quit_if_last)
