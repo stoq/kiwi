@@ -500,67 +500,70 @@ To use \class{BaseView} effectively, it's important to define the
 your class. This list has its own semantics, which I discuss in the next
 section.
 
-\subsection{The Widgets List}
+%% Bug #2828: This does not apply any longer, but what should it
+%%            be replaced with?
 
-\class{BaseView}, \class{BaseView} and \class{SlaveView} provide an
-interesting feature: the widgets list specification. It is a list of
-strings, each string corresponding to the name of a widget. In a
-high-level sense, the list describes what widgets are attached to your
-view. The list is processed in the following manner:
+%% \subsection{The Widgets List}
 
-\begin{enumerate}
-\item All the widgets specified in \code{self.widgets} are converted to
-Kiwi widgets automatically. You can use \code{Views.register\_widget()}
-to change the conversion targets. This step applies for all View
-classes. For SlaveView and BaseView, of course, the widget must already
-be an instance variable of your View (which is why you should create the
-interface variables before running the parent class' constructor). The
-matter of widget conversion and signal callbacks is discussed further
-in the Controller section.
+%% \class{BaseView}, \class{BaseView} and \class{SlaveView} provide an
+%% interesting feature: the widgets list specification. It is a list of
+%% strings, each string corresponding to the name of a widget. In a
+%% high-level sense, the list describes what widgets are attached to your
+%% view. The list is processed in the following manner:
 
-\item For \code{BaseView}, the widgets in the list are pulled using
-libglade and attached as instance variables of your View. In other
-words, if you define a widget \code{foo} in your glade file, and you
-specify "foo" as a member of the widgets list, it will automatically be
-set as \code{self.foo} (and converted to a Kiwi widget if a
-corresponding widget is registered). A caveat: since the toplevel window
-is attached to the view with the special name "toplevel" (as well as
-"win", for historical reasons, and "gladefile"), these names are
-reserved and should not be used for widgets in your glade file.
+%% \begin{enumerate}
+%% \item All the widgets specified in \code{self.widgets} are converted to
+%% Kiwi widgets automatically. You can use \code{Views.register\_widget()}
+%% to change the conversion targets. This step applies for all View
+%% classes. For SlaveView and BaseView, of course, the widget must already
+%% be an instance variable of your View (which is why you should create the
+%% interface variables before running the parent class' constructor). The
+%% matter of widget conversion and signal callbacks is discussed further
+%% in the Controller section.
 
-\item For \code{Proxy}, the widgets list has a further association,
-which is specified by prefixing the widget name by a colon in the
-widgets list (using ":foo", for instance). Since we haven't discussed
-Proxy yet, I'll leave this to be mentioned when we get there.
-\end{enumerate}
+%% \item For \code{BaseView}, the widgets in the list are pulled using
+%% libglade and attached as instance variables of your View. In other
+%% words, if you define a widget \code{foo} in your glade file, and you
+%% specify "foo" as a member of the widgets list, it will automatically be
+%% set as \code{self.foo} (and converted to a Kiwi widget if a
+%% corresponding widget is registered). A caveat: since the toplevel window
+%% is attached to the view with the special name "toplevel" (as well as
+%% "win", for historical reasons, and "gladefile"), these names are
+%% reserved and should not be used for widgets in your glade file.
 
-As an example of how \code{widgets} should be specified and used, let's
-change \file{heyglade.py} to \file{heyglade2.py}:
+%% \item For \code{Proxy}, the widgets list has a further association,
+%% which is specified by prefixing the widget name by a colon in the
+%% widgets list (using ":foo", for instance). Since we haven't discussed
+%% Proxy yet, I'll leave this to be mentioned when we get there.
+%% \end{enumerate}
 
-\begin{center}
-\includegraphics[scale=0.905]{images/london2.eps}
-\end{center}
+%% As an example of how \code{widgets} should be specified and used, let's
+%% change \file{heyglade.py} to \file{heyglade2.py}:
 
-\verbatiminput{../examples/framework/hey/heyglade2.py}
+%% \begin{center}
+%% \includegraphics[scale=0.905]{images/london2.eps}
+%% \end{center}
 
-Of course, it is often useful to subclass \code{BaseView} to be able to
-customize the behavior that you want for that view. I recommend
-changes that are to be done to the widgets at startup time (like
-\function{set\_bold()} and \function{set\_size()} for a label) should be
-performed in the class constructor, right after
-\function{BaseView.\_\_init\_\_()}\footnote{Yes, in a way this is the
-opposite of the procedure in \class{SlaveView} and \class{BaseView}. It
-has to be this way because the parent constructor for \class{BaseView}
-is who attaches the widgets to the view, whereas the constructors for the
-other Views {\it expect} them to be already attached}. If you subclass,
-you can skip passing \code{widgets} to the constructor by creating a class
-variable with the same name.
+%% \verbatiminput{../examples/framework/hey/heyglade2.py}
 
-An example of a subclassed \class{BaseView} using \code{widgets} as a
-class variable follows (in the Kiwi tarball in
-\file{Kiwi/examples/framework/hey/heyglade3.py}):
+%% Of course, it is often useful to subclass \code{BaseView} to be able to
+%% customize the behavior that you want for that view. I recommend
+%% changes that are to be done to the widgets at startup time (like
+%% \function{set\_bold()} and \function{set\_size()} for a label) should be
+%% performed in the class constructor, right after
+%% \function{BaseView.\_\_init\_\_()}\footnote{Yes, in a way this is the
+%% opposite of the procedure in \class{SlaveView} and \class{BaseView}. It
+%% has to be this way because the parent constructor for \class{BaseView}
+%% is who attaches the widgets to the view, whereas the constructors for the
+%% other Views {\it expect} them to be already attached}. If you subclass,
+%% you can skip passing \code{widgets} to the constructor by creating a class
+%% variable with the same name.
 
-\verbatiminput{../examples/framework/hey/heyglade3.py}
+%% An example of a subclassed \class{BaseView} using \code{widgets} as a
+%% class variable follows (in the Kiwi tarball in
+%% \file{Kiwi/examples/framework/hey/heyglade3.py}):
+
+%% \verbatiminput{../examples/framework/hey/heyglade3.py}
 
 \subsection{UI Composition}
 
