@@ -7,7 +7,7 @@ import gobject
 
 from kiwi import tasklet
 
- 
+
 class C(gobject.GObject):
     __gsignals__ = { 'my-signal': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
                                    (gobject.TYPE_INT,)) }
@@ -91,11 +91,11 @@ class TestIO(unittest.TestCase):
             chan.write(c)
 
         read_fd, write_fd = os.pipe()
-        
+
         read_chan = gobject.IOChannel(read_fd)
         read_chan.set_flags(gobject.IO_FLAG_NONBLOCK)
         reader = tasklet.run(pipe_reader(read_chan))
-        
+
         write_chan = gobject.IOChannel(write_fd)
         write_chan.set_flags(gobject.IO_FLAG_NONBLOCK)
         write_chan.set_encoding(None)
@@ -105,7 +105,7 @@ class TestIO(unittest.TestCase):
         mainloop = gobject.MainLoop()
         reader.add_join_callback(lambda task, retval: mainloop.quit())
         mainloop.run()
-        
+
         self.assertEqual(reader.state, tasklet.Tasklet.STATE_ZOMBIE)
         self.assertEqual(reader.return_value, chr(123))
 
@@ -132,7 +132,7 @@ class TestCallback(unittest.TestCase):
 
         mainloop = gobject.MainLoop()
         mainloop.run()
-        
+
         self.assertEqual(task.state, tasklet.Tasklet.STATE_ZOMBIE)
         args, kwargs = task.return_value
         self.assertEqual(args, (123, 456))
