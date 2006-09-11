@@ -30,14 +30,16 @@ Defines the View classes that are included in the Kiwi Framework, which
 are the base of Delegates and Proxies.
 """
 
+import os
 import re
 import string
+
 
 import gobject
 import gtk
 from gtk import gdk
 
-from kiwi.environ import is_gazpacho_required
+from kiwi.environ import environ
 from kiwi.interfaces import IValidatableProxyWidget
 from kiwi.log import Logger
 from kiwi.utils import gsignal, type_register
@@ -943,26 +945,58 @@ class BaseView(SlaveView):
         self.toplevel.hide()
         self.quit_if_last()
 
-WidgetTree = None
+def _get_gazpacho():
+    try:
+        from kiwi.ui.gazpacholoader import GazpachoWidgetTree
+    except ImportError:
+        pass
+    return GazpachoWidgetTree
+
+def _get_libglade():
+    try:
+        from kiwi.ui.libgladeloader import LibgladeWidgetTree
+    except ImportError:
+        pass
+    return LibgladeWidgetTree
 
 def _open_glade(view, gladefile, domain):
-    global WidgetTree
-    if not WidgetTree:
-        try:
-            from gazpacho.loader import loader
-            loader # pyflakes
-        except ImportError, e:
-            if is_gazpacho_required():
-                raise RuntimeError(
-                    "Gazpacho is required, but could not be found: %s" % e)
-            else:
-                try:
-                    from kiwi.ui.libgladeloader import LibgladeWidgetTree as WT
-                    WidgetTree = WT
-                except ImportError:
-                    raise RuntimeError("Could not find a glade parser library")
-        else:
-            from kiwi.ui.gazpacholoader import GazpachoWidgetTree as WT
-            WidgetTree = WT
+    if not gladefile:
+        raise ValueError("A gladefile wasn't provided.")
+    elif not isinstance(gladefile, basestring):
+        raise TypeError(
+              "gladefile should be a string, found %s" % type(gladefile))
+
+    filename = os.path.splitext(os.path.basename(gladefile))[0]
+    gladefile = environ.find_resource("glade", filename + '.glade')
+
+    fp = open(gladefile)
+    sniff = fp.read(200)
+    fp.close()
+
+    # glade-2
+    #<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+    #<!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
+
+    # glade-3
+    # <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    # <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
+    if 'glade-2.0.dtd' in sniff:
+        WidgetTree = _get_libglade()
+        loader_name = 'libglade'
+    else:
+        # gazpacho:
+        #<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+        #<!DOCTYPE glade-interface SYSTEM "http://gazpacho.sicem.biz/gazpacho-0.1.dtd">
+        if not 'gazpacho-0.1.dtd' in sniff:
+            log.warning("Could not determine type/dtd of gladefile %s" % gladefile)
+
+        WidgetTree = _get_gazpacho()
+        loader_name = 'gazpacho.loader'
+
+    # None means, failed to import
+    if WidgetTree is None:
+        raise RuntimeError(
+            "Could not find %s, it needs to be installed to "
+            "load the gladefile %s" % (loader_name, gladefile))
 
     return WidgetTree(view, gladefile, domain)
