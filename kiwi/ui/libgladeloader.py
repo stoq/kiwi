@@ -21,28 +21,17 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
-import os
-
 from gtk.glade import XML
 
-from kiwi.environ import environ
 from kiwi.log import Logger
 
 log = Logger('libgladeloader')
 
 class LibgladeWidgetTree(XML):
     def __init__(self, view, gladefile, domain=None):
-
-        if not gladefile:
-            raise ValueError("A gladefile wasn't provided.")
-        elif not isinstance(gladefile, basestring):
-            raise TypeError(
-                  "gladefile should be a string, found %s" % type(gladefile))
-        filename = os.path.splitext(os.path.basename(gladefile))[0]
-
         self._view = view
-        self._gladefile = environ.find_resource("glade", filename + ".glade")
-        XML.__init__(self, self._gladefile, domain)
+        self._gladefile = gladefile
+        XML.__init__(self, gladefile, domain)
         self._widgets = [w.get_name() for w in self.get_widget_prefix('')]
         self._attach_widgets()
 

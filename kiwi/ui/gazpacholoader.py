@@ -25,7 +25,6 @@
 """Gazpacho integration: loader and extensions"""
 
 import gettext
-import os
 import warnings
 
 import gobject
@@ -77,19 +76,11 @@ class GazpachoWidgetTree:
     glade files
     """
     def __init__(self, view, gladefile, domain=None):
-
-        if not gladefile:
-            raise ValueError("A gladefile wasn't provided.")
-        elif not isinstance(gladefile, basestring):
-            raise TypeError(
-                  "gladefile should be a string, found %s" % type(gladefile))
-        filename = os.path.splitext(os.path.basename(gladefile))[0]
-        self._filename = filename + '.glade'
         self._view = view
-        self._gladefile = environ.find_resource("glade", self._filename)
+        self._gladefile = gladefile
         self._showwarning = warnings.showwarning
         warnings.showwarning = self._on_load_warning
-        self._tree = Builder(self._gladefile, domain=domain)
+        self._tree = Builder(gladefile, domain=domain)
         warnings.showwarning = self._showwarning
         self._widgets = [w.get_data("gazpacho::object-id")
                          for w in self._tree.get_widgets()]
@@ -97,7 +88,7 @@ class GazpachoWidgetTree:
 
     def _on_load_warning(self, warning, category, file, line):
         self._showwarning('while loading glade file: %s' % warning,
-                          category, self._filename, '???')
+                          category, self._gladefile, '???')
 
     def _attach_widgets(self):
         # Attach widgets in the widgetlist to the view specified, so
