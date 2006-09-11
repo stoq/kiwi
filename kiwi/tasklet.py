@@ -265,6 +265,57 @@ class WaitCondition(object):
         raise NotImplementedError
 
 
+class WaitForCall(WaitCondition):
+    '''An object that waits until it is called.
+
+      This example demonstrates how a tasklet waits for a callback::
+        import gobject
+        from kiwi import tasklet
+
+        mainloop = gobject.MainLoop()
+
+        def my_task():
+            callback = tasklet.WaitForCall()
+            gobject.timeout_add(1000, callback)
+            yield callback
+            mainloop.quit()
+
+        tasklet.run(my_task())
+        mainloop.run()
+
+      @ivar return_value: value to return when called
+
+    '''
+    def __init__(self, return_value=None):
+        '''
+        Creates a wait condition that is actually a callable object, and waits for a call to be made on it.
+        @param return_value: value to return when called; can also be
+        modified dynamically from the tasklet as the C{return_value}
+        instance variable.
+        '''
+        WaitCondition.__init__(self)
+        self.return_value = return_value
+        self.args = None
+        self.kwargs = None
+        self._callback = None
+
+    def arm(self, tasklet):
+        '''Overrides WaitCondition.arm'''
+        self._callback = tasklet.wait_condition_fired
+
+    def disarm(self):
+        '''Overrides WaitCondition.disarm'''
+        self._callback = None
+
+    def __call__(self, *args, **kwargs):
+        self.triggered = True
+        self.args = args
+        self.kwargs = kwargs
+        retval = self._callback(self)
+        self.triggered = False
+        return self.return_value
+
+
 class WaitForIO(WaitCondition):
     '''An object that waits for IO conditions on sockets or file
     descriptors.
@@ -648,9 +699,19 @@ class WaitForMessages(WaitCondition):
 
 
 class Tasklet(object):
-    '''An object that launches and manages a tasklet.'''
+    '''An object that launches and manages a tasklet.
 
-    STATE_RUNNING, STATE_SUSPENDED, STATE_MSGSEND = range(3)
+    @ivar state: current execution state of the tasklet, one of the STATE_* contants.
+
+    @ivar return_value: the value returned by the task function, or None.
+
+    @cvar STATE_RUNNING: the tasklet function is currently executing code
+    @cvar STATE_SUSPENDED: the tasklet function is currently waiting for an event
+    @cvar STATE_MSGSEND: the tasklet function is currently sending a message
+    @cvar STATE_ZOMBIE: the tasklet function has ended
+    '''
+
+    STATE_RUNNING, STATE_SUSPENDED, STATE_MSGSEND, STATE_ZOMBIE = range(4)
 
     def __init__(self, gen=None):
         '''
@@ -668,6 +729,7 @@ class Tasklet(object):
         self._message_queue = []
         self._message_actions = {}
         self.state = Tasklet.STATE_SUSPENDED
+        self.return_value = None
         if gen is None:
             self.gen = self.run()
         else:
@@ -698,18 +760,20 @@ class Tasklet(object):
         assert _event is None
         had_event = (self._event is not None)
         _event = self._event
+        self.state = Tasklet.STATE_RUNNING
         try:
-            self.state = Tasklet.STATE_RUNNING
             gen_value = self.gen.next()
-            self.state = Tasklet.STATE_SUSPENDED
-            assert gen_value is not None
         except StopIteration, ex:
+            self.state = Tasklet.STATE_ZOMBIE
             if ex.args:
                 retval, = ex.args
             else:
                 retval = None
             self._join(retval)
             return None
+        else:
+            self.state = Tasklet.STATE_SUSPENDED
+            assert gen_value is not None            
         if __debug__:
             if had_event and _event is not None:
                 warnings.warn("Tasklet %s forgot to read an event!" % self)
@@ -728,6 +792,7 @@ class Tasklet(object):
             if isinstance(gen_value, Message):
                 msg = gen_value
                 self.state = Tasklet.STATE_MSGSEND
+                msg.sender = self
                 msg.dest.send_message(msg)
                 continue # loop because we posted a message
             elif isinstance(gen_value, tuple):
@@ -846,8 +911,11 @@ class Tasklet(object):
     def _join(self, retval):
         for cond in self.wait_list:
             cond.disarm()
+
         self.gen = None
+        self.return_value = retval
         self.wait_list = []
+
         callbacks = self._join_callbacks.values()
         self._join_callbacks.clear()
         for callback in callbacks:

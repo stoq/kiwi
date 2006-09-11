@@ -1,3 +1,20 @@
+2006-09-09  Gustavo J. A. M. Carneiro  <gjc@gnome.org>
+
+	* tests/test_tasklet.py: Add WaitForCall test.
+
+	* kiwi/tasklet.py (WaitForCall): Add a new WaitForCall wait
+	condition, for waiting for a generic callback.
+
+	* tests/test_tasklet.py: Add a few more tests.
+
+	* kiwi/tasklet.py (Tasklet): Better handling of the StopIteration
+	exception from tasklets.  Add a new STATE_ZOMBIE state to indicate
+	when a tasklet is finished.  Add a new return_value instance
+	variable to hold the (surprise!) return value.  Document the
+	public instance	variables and STATE_* constants.
+	(Tasklet._next_round): When a tasklet sends a message, set the
+	'sender' field of the message to the sending tasklet.
+
 2006-09-11  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/views.py (_open_glade): Sniff the content of the file and use libglade/gazpacho
