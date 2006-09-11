@@ -78,14 +78,14 @@ class TestMessages(unittest.TestCase):
 class TestIO(unittest.TestCase):
     def testPipe(self):
         #
-        # Disable this test for win32, because it fails and gives these GObject warnings:
+        # Disable this test for win32, because it fails and warns:
         #
         # File "tests\test_tasklet.py", line 81, in pipe_reader
         #    assert chan.get_flags() & gobject.IO_FLAG_IS_READABLE
         #
-        # test_tasklet.py:81: g_io_channel_get_flags: assertion `channel != NULL' failed
-        # test_tasklet.py:95: giowin32.c:1669: 4 is neither a file descriptor or a socket
-        # test_tasklet.py:96: g_io_channel_set_flags: assertion `channel != NULL' failed
+        # ???:81: g_io_channel_get_flags: assertion `channel != NULL' failed
+        # ???:95: giowin32.c:1669: 4 is neither a file descriptor or a socket
+        # ???:96: g_io_channel_set_flags: assertion `channel != NULL' failed
         #
         if sys.platform == 'win32':
             return
