@@ -189,25 +189,44 @@ class enum(int):
 
     @classmethod
     def __class_init__(cls, ns):
-        enums = {}
-        for key, value in ns.items():
-            if value in enums:
-                raise TypeError(
-                    "Error while setting enum value %s for %s, "
-                    "it has already been created as %s" % (
-                    value, key, enums[value]))
+        cls.names = {} # name -> enum
+        cls.values = {} # value -> enum
 
+        for key, value in ns.items():
             if isinstance(value, int):
-                setattr(cls, key, cls(value, key))
-                enums[value] = key
+                cls(value, key)
+
+    @classmethod
+    def get(cls, value):
+        """
+        Lookup an enum by value
+        @param value: the value
+        """
+        if not value in cls.values:
+            raise ValueError("There is no enum for value %d" % (value,))
+        return cls.values[value]
 
     def __new__(cls, value, name):
         """
         @param value: value of the enum
         @param name: name of the enum
         """
+        if name in cls.names:
+            raise ValueError("There is already an enum called %s" % (name,))
+
+        if value in cls.values:
+            raise ValueError(
+                "Error while creating enum %s of type %s, "
+                "it has already been created as %s" % (
+                value, cls.__name__, cls.values[value]))
+
         self = super(enum, cls).__new__(cls, value)
         self.name = name
+
+        cls.values[value] = self
+        cls.names[name] = self
+        setattr(cls, name, self)
+
         return self
 
     def __str__(self):

@@ -48,5 +48,17 @@ class EnumTest(unittest.TestCase):
         self.assertNotEquals(Color.RED, Color.GREEN)
         self.assertNotEquals(Color.GREEN, Status.OPEN)
 
+    def testGet(self):
+        self.assertEqual(Color.get(0), Color.RED)
+        self.assertRaises(ValueError, Color.get, 3)
+
+    def testNew(self):
+        yellow = Color(3, 'YELLOW')
+        self.failUnless(isinstance(yellow, Color))
+        self.assertEquals(Color.YELLOW, yellow)
+        self.assertRaises(ValueError, Color, 3, 'AGAIN')
+        self.assertRaises(ValueError, Color, 4, 'RED')
+
+
 if __name__ == '__main__':
     unittest.main()
