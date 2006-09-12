@@ -168,3 +168,49 @@ def disabledeprecationcall(func, *args, **kwargs):
     _no_deprecation = old
     return retval
 
+class enum(int):
+    """
+    enum is an enumered type implementation in python.
+
+    To use it, define an enum subclass like this:
+
+    >>> from kiwi.python import enum
+    >>>
+    >>> class Status(enum):
+    >>>     OPEN, CLOSE = range(2)
+    >>> Status.OPEN
+    '<Status value OPEN>'
+
+    All the integers defined in the class are assumed to be enums and
+    values cannot be duplicated
+    """
+
+    __metaclass__ = ClassInittableMetaType
+
+    @classmethod
+    def __class_init__(cls, ns):
+        enums = {}
+        for key, value in ns.items():
+            if value in enums:
+                raise TypeError(
+                    "Error while setting enum value %s for %s, "
+                    "it has already been created as %s" % (
+                    value, key, enums[value]))
+
+            if isinstance(value, int):
+                setattr(cls, key, cls(value, key))
+                enums[value] = key
+
+    def __new__(cls, value, name):
+        """
+        @param value: value of the enum
+        @param name: name of the enum
+        """
+        self = super(enum, cls).__new__(cls, value)
+        self.name = name
+        return self
+
+    def __str__(self):
+        return '<%s value %s>' % (
+            self.__class__.__name__, self.name)
+    __repr__ = __str__

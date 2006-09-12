@@ -1,3 +1,9 @@
+2006-09-12  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/python.py (enum): Add a new data type
+
+	* tests/test_python.py (EnumTest): and a test
+
 2006-09-09  Gustavo J. A. M. Carneiro  <gjc@gnome.org>
 
 	* tests/test_tasklet.py: Add WaitForCall test.

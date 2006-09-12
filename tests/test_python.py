@@ -1,6 +1,6 @@
 import unittest
 
-from kiwi.python import slicerange
+from kiwi.python import slicerange, enum
 
 class SliceTest(unittest.TestCase):
     def genlist(self, limit, start, stop=None, step=None):
@@ -26,3 +26,27 @@ class SliceTest(unittest.TestCase):
 
     def testStartStopStep(self):
         self.assertEqual(self.genlist(10, 0, 10, 2), range(10)[0:10:2])
+
+class Status(enum):
+    OPEN, CLOSE = range(2)
+
+class Color(enum):
+    RED, GREEN, BLUE = range(3)
+
+class EnumTest(unittest.TestCase):
+    def testEnums(self):
+        self.failUnless(issubclass(enum, int))
+        self.failUnless(isinstance(Color.RED, Color))
+        self.failUnless(isinstance(Color.RED, int))
+        self.failUnless('RED' in repr(Color.RED), repr(Color.RED))
+        self.failUnless(int(Color.RED) is not None)
+
+    def testComparision(self):
+        self.assertEquals(Color.RED, 0)
+        self.assertNotEquals(Color.RED, 1)
+        self.assertNotEquals(Color.RED, -1)
+        self.assertNotEquals(Color.RED, Color.GREEN)
+        self.assertNotEquals(Color.GREEN, Status.OPEN)
+
+if __name__ == '__main__':
+    unittest.main()
