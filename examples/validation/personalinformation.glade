@@ -1,22 +1,19 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+<!DOCTYPE glade-interface SYSTEM "http://gazpacho.sicem.biz/gazpacho-0.1.dtd">
 <glade-interface>
-    <requires lib="kiwi2"/>
     <widget class="GtkWindow" id="personalinformation">
-        <property name="title" context="True" translatable="True">Personal Information</property>
         <property name="border_width">12</property>
         <property name="role"></property>
-        <property name="events"></property>
+        <property name="title" context="yes" translatable="yes">Personal Information</property>
         <child>
             <widget class="GtkVBox" id="vbox1">
-                <property name="events"></property>
                 <property name="visible">True</property>
                 <child>
                     <widget class="GtkLabel" id="label6">
-                        <property name="ypad">8</property>
-                        <property name="label" context="True" translatable="True">&lt;b&gt;Please fill in some personal information&lt;/b&gt;</property>
+                        <property name="label" context="yes" translatable="yes">&lt;b&gt;Please fill in some personal information&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
-                        <property name="events"></property>
                         <property name="visible">True</property>
+                        <property name="ypad">8</property>
                     </widget>
                     <packing>
                         <property name="expand">False</property>
@@ -24,53 +21,23 @@
                 </child>
                 <child>
                     <widget class="GtkTable" id="table1">
-                        <property name="row_spacing">6</property>
                         <property name="column_spacing">6</property>
-                        <property name="events"></property>
-                        <property name="n_rows">8</property>
                         <property name="n_columns">2</property>
+                        <property name="n_rows">8</property>
+                        <property name="row_spacing">6</property>
                         <property name="visible">True</property>
                         <child>
-                            <widget class="GtkLabel" id="label9">
-                                <property name="label" context="True" translatable="True">Gender:</property>
-                                <property name="events"></property>
-                                <property name="xalign">1.0</property>
-                                <property name="visible">True</property>
-                            </widget>
-                            <packing>
-                                <property name="bottom_attach">7</property>
-                                <property name="top_attach">6</property>
-                            </packing>
-                        </child>
-                        <child>
-                            <widget class="ProxyComboBox" id="gender">
-                                <property name="model_attribute">gender</property>
-                                <property name="events"></property>
-                                <property name="data_type">str</property>
-                                <property name="visible">True</property>
-                            </widget>
-                            <packing>
-                                <property name="left_attach">1</property>
-                                <property name="bottom_attach">7</property>
-                                <property name="top_attach">6</property>
-                                <property name="right_attach">2</property>
-                            </packing>
-                        </child>
-                        <child>
                             <widget class="GtkLabel" id="label1">
-                                <property name="label" context="True" translatable="True">Name:</property>
-                                <property name="events"></property>
-                                <property name="xalign">1.0</property>
+                                <property name="label" context="yes" translatable="yes">Name:</property>
                                 <property name="visible">True</property>
+                                <property name="xalign">1.0</property>
                             </widget>
-                            <packing/>
                         </child>
                         <child>
                             <widget class="GtkLabel" id="label2">
-                                <property name="label" context="True" translatable="True">Age:</property>
-                                <property name="events"></property>
-                                <property name="xalign">1.0</property>
+                                <property name="label" context="yes" translatable="yes">Age:</property>
                                 <property name="visible">True</property>
+                                <property name="xalign">1.0</property>
                             </widget>
                             <packing>
                                 <property name="bottom_attach">2</property>
@@ -79,83 +46,20 @@
                         </child>
                         <child>
                             <widget class="GtkLabel" id="label3">
-                                <property name="label" context="True" translatable="True">Birthdate:</property>
-                                <property name="events"></property>
+                                <property name="label" context="yes" translatable="yes">Birthdate:</property>
+                                <property name="visible">True</property>
                                 <property name="xalign">1.0</property>
-                                <property name="visible">True</property>
                             </widget>
                             <packing>
                                 <property name="bottom_attach">3</property>
                                 <property name="top_attach">2</property>
-                            </packing>
-                        </child>
-                        <child>
-                            <widget class="kiwi+ui+widgets+entry+Entry" id="name">
-                                <property name="mandatory">True</property>
-                                <property name="model_attribute">name</property>
-                                <property name="events"></property>
-                                <property name="can_focus">True</property>
-                                <property name="data_type">unicode</property>
-                                <property name="visible">True</property>
-                            </widget>
-                            <packing>
-                                <property name="left_attach">1</property>
-                                <property name="right_attach">2</property>
-                            </packing>
-                        </child>
-                        <child>
-                            <widget class="kiwi+ui+widgets+entry+Entry" id="age">
-                                <property name="mandatory">True</property>
-                                <property name="model_attribute">age</property>
-                                <property name="events"></property>
-                                <property name="can_focus">True</property>
-                                <property name="data_type">int</property>
-                                <property name="visible">True</property>
-                            </widget>
-                            <packing>
-                                <property name="left_attach">1</property>
-                                <property name="bottom_attach">2</property>
-                                <property name="top_attach">1</property>
-                                <property name="right_attach">2</property>
-                            </packing>
-                        </child>
-                        <child>
-                            <widget class="ProxyDateEntry" id="birthdate">
-                                <property name="mandatory">True</property>
-                                <property name="model_attribute">birthdate</property>
-                                <property name="events"></property>
-                                <property name="data_type">date</property>
-                                <property name="visible">True</property>
-                            </widget>
-                            <packing>
-                                <property name="left_attach">1</property>
-                                <property name="bottom_attach">3</property>
-                                <property name="top_attach">2</property>
-                                <property name="right_attach">2</property>
-                            </packing>
-                        </child>
-                        <child>
-                            <widget class="kiwi+ui+widgets+entry+Entry" id="height">
-                                <property name="mandatory">True</property>
-                                <property name="model_attribute">height</property>
-                                <property name="events"></property>
-                                <property name="can_focus">True</property>
-                                <property name="data_type">float</property>
-                                <property name="visible">True</property>
-                            </widget>
-                            <packing>
-                                <property name="left_attach">1</property>
-                                <property name="bottom_attach">4</property>
-                                <property name="top_attach">3</property>
-                                <property name="right_attach">2</property>
                             </packing>
                         </child>
                         <child>
                             <widget class="GtkLabel" id="label4">
-                                <property name="label" context="True" translatable="True">Height:</property>
-                                <property name="events"></property>
-                                <property name="xalign">1.0</property>
+                                <property name="label" context="yes" translatable="yes">Height:</property>
                                 <property name="visible">True</property>
+                                <property name="xalign">1.0</property>
                             </widget>
                             <packing>
                                 <property name="bottom_attach">4</property>
@@ -164,55 +68,20 @@
                         </child>
                         <child>
                             <widget class="GtkLabel" id="label5">
-                                <property name="label" context="True" translatable="True">Weight:</property>
-                                <property name="events"></property>
+                                <property name="label" context="yes" translatable="yes">Weight:</property>
+                                <property name="visible">True</property>
                                 <property name="xalign">1.0</property>
-                                <property name="visible">True</property>
                             </widget>
                             <packing>
                                 <property name="bottom_attach">5</property>
                                 <property name="top_attach">4</property>
-                            </packing>
-                        </child>
-                        <child>
-                            <widget class="kiwi+ui+widgets+spinbutton+SpinButton" id="weight">
-                                <property name="mandatory">True</property>
-                                <property name="adjustment">0.000000 0.000000 100.000000 1.000000 10.000000 0.000000</property>
-                                <property name="model_attribute">weight</property>
-                                <property name="events"></property>
-                                <property name="can_focus">True</property>
-                                <property name="data_type">float</property>
-                                <property name="visible">True</property>
-                            </widget>
-                            <packing>
-                                <property name="left_attach">1</property>
-                                <property name="bottom_attach">5</property>
-                                <property name="top_attach">4</property>
-                                <property name="right_attach">2</property>
-                            </packing>
-                        </child>
-                        <child>
-                            <widget class="ProxyComboEntry" id="nationality">
-                                <property name="mandatory">True</property>
-                                <property name="model_attribute">nationality</property>
-                                <property name="events"></property>
-                                <property name="data_type">str</property>
-                                <property name="visible">True</property>
-                                <property name="list-editable">True</property>
-                            </widget>
-                            <packing>
-                                <property name="left_attach">1</property>
-                                <property name="bottom_attach">6</property>
-                                <property name="top_attach">5</property>
-                                <property name="right_attach">2</property>
                             </packing>
                         </child>
                         <child>
                             <widget class="GtkLabel" id="label8">
-                                <property name="label" context="True" translatable="True">Nationality:</property>
-                                <property name="events"></property>
-                                <property name="xalign">1.0</property>
+                                <property name="label" context="yes" translatable="yes">Nationality:</property>
                                 <property name="visible">True</property>
+                                <property name="xalign">1.0</property>
                             </widget>
                             <packing>
                                 <property name="bottom_attach">6</property>
@@ -220,12 +89,23 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="kiwi+ui+widgets+radiobutton+RadioButton" id="status">
-                                <property name="model_attribute">status</property>
-                                <property name="data_value">False</property>
-                                <property name="data_type">bool</property>
+                            <widget class="GtkLabel" id="label9">
+                                <property name="label" context="yes" translatable="yes">Gender:</property>
                                 <property name="visible">True</property>
-                                <property name="label" context="True" translatable="True">Married</property>
+                                <property name="xalign">1.0</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">7</property>
+                                <property name="top_attach">6</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="ProxyRadioButton" id="status">
+                                <property name="data_type">bool</property>
+                                <property name="data_value">False</property>
+                                <property name="label" context="yes" translatable="yes">Married</property>
+                                <property name="model_attribute">status</property>
+                                <property name="visible">True</property>
                             </widget>
                             <packing>
                                 <property name="bottom_attach">8</property>
@@ -233,19 +113,118 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="kiwi+ui+widgets+radiobutton+RadioButton" id="status_single">
-                                <property name="model_attribute">status</property>
-                                <property name="data_value">True</property>
-                                <property name="data_type">bool</property>
+                            <widget class="ProxyEntry" id="name">
+                                <property name="data_type">unicode</property>
+                                <property name="mandatory">True</property>
+                                <property name="model_attribute">name</property>
                                 <property name="visible">True</property>
-                                <property name="label" context="True" translatable="True">Single</property>
-                                <property name="group">status</property>
                             </widget>
                             <packing>
                                 <property name="left_attach">1</property>
-                                <property name="bottom_attach">8</property>
-                                <property name="top_attach">7</property>
                                 <property name="right_attach">2</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="ProxyEntry" id="age">
+                                <property name="data_type">int</property>
+                                <property name="mandatory">True</property>
+                                <property name="model_attribute">age</property>
+                                <property name="visible">True</property>
+                                <property name="xalign">1.0</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">2</property>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">1</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="ProxyDateEntry" id="birthdate">
+                                <property name="data_type">date</property>
+                                <property name="mandatory">True</property>
+                                <property name="model_attribute">birthdate</property>
+                                <property name="visible">True</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">3</property>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">2</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="ProxyEntry" id="height">
+                                <property name="data_type">float</property>
+                                <property name="mandatory">True</property>
+                                <property name="model_attribute">height</property>
+                                <property name="visible">True</property>
+                                <property name="xalign">1.0</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">4</property>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">3</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="ProxySpinButton" id="weight">
+                                <property name="adjustment">0 0 100 1 10 0</property>
+                                <property name="data_type">float</property>
+                                <property name="mandatory">True</property>
+                                <property name="model_attribute">weight</property>
+                                <property name="visible">True</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">5</property>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">4</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="ProxyComboEntry" id="nationality">
+                                <property name="data_type">str</property>
+                                <property name="mandatory">True</property>
+                                <property name="model_attribute">nationality</property>
+                                <property name="visible">True</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">6</property>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">5</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="ProxyComboBox" id="gender">
+                                <property name="data_type">str</property>
+                                <property name="model_attribute">gender</property>
+                                <property name="visible">True</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">7</property>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">6</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="ProxyRadioButton" id="status_single">
+                                <property name="active">False</property>
+                                <property name="data_type">bool</property>
+                                <property name="data_value">True</property>
+                                <property name="group">status</property>
+                                <property name="label" context="yes" translatable="yes">Single</property>
+                                <property name="model_attribute">status</property>
+                                <property name="visible">True</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">8</property>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">7</property>
                             </packing>
                         </child>
                     </widget>
@@ -255,25 +234,22 @@
                 </child>
                 <child>
                     <widget class="GtkLabel" id="label7">
-                        <property name="ypad">5</property>
-                        <property name="label" context="True" translatable="True">Tell us a little bit about yourself:</property>
-                        <property name="events"></property>
-                        <property name="xalign">0.0</property>
+                        <property name="label" context="yes" translatable="yes">Tell us a little bit about yourself:</property>
                         <property name="visible">True</property>
+                        <property name="xalign">0.0</property>
+                        <property name="ypad">5</property>
                     </widget>
                     <packing>
-                        <property name="position">2</property>
                         <property name="expand">False</property>
+                        <property name="position">2</property>
                     </packing>
                 </child>
                 <child>
-                    <widget class="kiwi+ui+widgets+textview+TextView" id="about">
+                    <widget class="ProxyTextView" id="about">
+                        <property name="border_width">10</property>
+                        <property name="data_type">str</property>
                         <property name="mandatory">True</property>
                         <property name="model_attribute">about</property>
-                        <property name="border_width">10</property>
-                        <property name="events"></property>
-                        <property name="can_focus">True</property>
-                        <property name="data_type">str</property>
                         <property name="visible">True</property>
                     </widget>
                     <packing>
@@ -282,25 +258,20 @@
                 </child>
                 <child>
                     <widget class="GtkHButtonBox" id="hbuttonbox1">
-                        <property name="events"></property>
                         <property name="layout_style">end</property>
                         <property name="visible">True</property>
                         <child>
                             <widget class="GtkButton" id="ok_btn">
-                                <property name="receives_default">True</property>
-                                <property name="events"></property>
-                                <property name="can_focus">True</property>
-                                <property name="sensitive">False</property>
-                                <property name="visible">True</property>
                                 <property name="label">gtk-ok</property>
+                                <property name="sensitive">False</property>
                                 <property name="use_stock">True</property>
+                                <property name="visible">True</property>
                             </widget>
-                            <packing/>
                         </child>
                     </widget>
                     <packing>
-                        <property name="position">4</property>
                         <property name="expand">False</property>
+                        <property name="position">4</property>
                     </packing>
                 </child>
             </widget>

@@ -1,16 +1,14 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+<!DOCTYPE glade-interface SYSTEM "http://gazpacho.sicem.biz/gazpacho-0.1.dtd">
 <glade-interface>
     <widget class="GtkWindow" id="hey">
-        <property name="default_width">200</property>
         <property name="default_height">50</property>
+        <property name="default_width">200</property>
         <property name="role"></property>
-        <property name="events">all-events-mask | button-motion-mask | button-press-mask | button-release-mask | button1-motion-mask | button2-motion-mask | button3-motion-mask | enter-notify-mask | exposure-mask | focus-change-mask | key-press-mask | key-release-mask | leave-notify-mask | pointer-motion-hint-mask | pointer-motion-mask | property-change-mask | proximity-in-mask | proximity-out-mask | scroll-mask | structure-mask | substructure-mask | visibility-notify-mask</property>
-        <property name="title" context="True" translatable="True">Anything to declare?</property>
+        <property name="title" context="yes" translatable="yes">Anything to declare?</property>
         <child>
             <widget class="GtkLabel" id="the_label">
-                <property name="pattern" context="True" translatable="True"></property>
-                <property name="label" context="True" translatable="True">Yeah. Don't go to London</property>
-                <property name="events">all-events-mask | button-motion-mask | button-press-mask | button-release-mask | button1-motion-mask | button2-motion-mask | button3-motion-mask | enter-notify-mask | exposure-mask | focus-change-mask | key-press-mask | key-release-mask | leave-notify-mask | pointer-motion-hint-mask | pointer-motion-mask | property-change-mask | proximity-in-mask | proximity-out-mask | scroll-mask | structure-mask | substructure-mask | visibility-notify-mask</property>
+                <property name="label" context="yes" translatable="yes">Yeah. Don't go to London</property>
                 <property name="visible">True</property>
             </widget>
         </child>

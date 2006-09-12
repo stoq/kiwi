@@ -1,43 +1,39 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+<!DOCTYPE glade-interface SYSTEM "http://gazpacho.sicem.biz/gazpacho-0.1.dtd">
 <glade-interface>
     <widget class="GtkWindow" id="lang">
-        <property name="resize_mode">queue</property>
-        <property name="type">toplevel</property>
         <child>
             <widget class="GtkVBox" id="vbox1">
                 <property name="visible">True</property>
                 <child>
                     <widget class="GtkFrame" id="frame1">
                         <property name="border_width">6</property>
-                        <property name="label" translatable="True">English</property>
-                        <property name="label_xalign">0.0</property>
+                        <property name="label" context="yes" translatable="yes">English</property>
                         <property name="visible">True</property>
                         <child>
                             <widget class="GtkEventBox" id="english">
                                 <property name="visible">True</property>
                                 <child>
                                     <widget class="GtkLabel" id="label1">
-                                        <property name="label" translatable="True">label</property>
+                                        <property name="label" context="yes" translatable="yes">label</property>
                                         <property name="visible">True</property>
                                     </widget>
                                 </child>
                             </widget>
                         </child>
                     </widget>
-                    <packing/>
                 </child>
                 <child>
                     <widget class="GtkFrame" id="frame2">
                         <property name="border_width">6</property>
-                        <property name="label" translatable="True">Swedish</property>
-                        <property name="label_xalign">0.0</property>
+                        <property name="label" context="yes" translatable="yes">Swedish</property>
                         <property name="visible">True</property>
                         <child>
                             <widget class="GtkEventBox" id="swedish">
                                 <property name="visible">True</property>
                                 <child>
                                     <widget class="GtkLabel" id="label2">
-                                        <property name="label" translatable="True">label</property>
+                                        <property name="label" context="yes" translatable="yes">label</property>
                                         <property name="visible">True</property>
                                     </widget>
                                 </child>
@@ -56,13 +52,10 @@
                         <property name="visible">True</property>
                         <child>
                             <widget class="GtkButton" id="ok_button">
-                                <property name="label" translatable="True">gtk-ok</property>
+                                <property name="label">gtk-ok</property>
                                 <property name="use_stock">True</property>
                                 <property name="visible">True</property>
                             </widget>
-                            <packing>
-                                <property name="position">1</property>
-                            </packing>
                         </child>
                     </widget>
                     <packing>
