@@ -21,15 +21,17 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
-class ComboColumn:
+from kiwi.python import enum
+
+class ComboColumn(enum):
     (LABEL,
      DATA) = range(2)
 
-class ComboMode:
+class ComboMode(enum):
     (UNKNOWN,
      STRING,
      DATA) = range(3)
 
-class Alignment:
+class Alignment(enum):
     (LEFT,
      RIGHT) = range(2)
