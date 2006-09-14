@@ -164,9 +164,9 @@ already on your system:
 
 \begin{itemize}
   \item  \citetitle[http://www.python.org/]{Python} 2.3 or newer
-  \item  \citetitle[http://www.gtk.org/]{GTK+} 2.6
-  \item  \citetitle[http://www.pygtk.org]{PyGTK} 2.6
-  \item  \citetitle[http://gazpacho.sicem.biz]{PyGTK} 0.6.5
+  \item  \citetitle[http://www.gtk.org/]{GTK+} 2.8
+  \item  \citetitle[http://www.pygtk.org]{PyGTK} 2.8
+  \item  \citetitle[http://gazpacho.sicem.biz]{Gazpacho} 0.6.5
 \end{itemize}
 
 Most of these packages are available on the main distributions,
@@ -626,9 +626,9 @@ class Item:
 class NewsView(SlaveView):
     def __init__(self):
         news = ObjectList(Column("news", "News",),
-                           Column("author", "Author"))
+                          Column("author", "Author"))
         for item in newsitems:
-            clist.append(item)
+            news.append(item)
         SlaveView.__init__(self, toplevel=news)
 
 # Some news articles borrowed from Pigdog Journal for our example
