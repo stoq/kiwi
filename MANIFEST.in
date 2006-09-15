@@ -2,6 +2,7 @@ recursive-include tests  *.glade *.py
 recursive-include doc Makefile howto.tex *.txt  *.tmpl *.eps *.png *.html *.dia
 recursive-include examples *
 recursive-include gazpacho-plugin *.py *.png *.xml AUTHORS COPYING
+recursive-include locale *.mo
 recursive-include glade *.glade
 recursive-include pixmaps *.png
 recursive-include po *.po kiwi.pot POTFILES.list
