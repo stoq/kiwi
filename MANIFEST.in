@@ -1,5 +1,5 @@
 recursive-include tests  *.glade *.py
-recursive-include doc *
+recursive-include doc Makefile howto.tex *.txt  *.tmpl *.eps *.png *.html *.dia
 recursive-include examples *
 recursive-include gazpacho-plugin *.py *.png *.xml AUTHORS COPYING
 recursive-include glade *.glade
