@@ -162,8 +162,12 @@ def listfiles(*dirs):
     """
 
     dir, pattern = os.path.split(os.path.join(*dirs))
+    abspath = os.path.abspath(dir)
+    if not os.path.exists(abspath):
+        # TODO: Print a warning here?
+        return []
     return [os.path.join(dir, filename)
-            for filename in os.listdir(os.path.abspath(dir))
+            for filename in os.listdir(abspath)
                 if filename[0] != '.' and fnmatch(filename, pattern)]
 
 def compile_po_files(domain, dirname='locale'):
