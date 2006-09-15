@@ -20,7 +20,7 @@
                         <property name="visible">True</property>
                         <child>
                             <widget class="ProxyRadioButton" id="male">
-                                <property name="data_type">bool</property>
+                                <property name="data_type">str</property>
                                 <property name="data_value">Male</property>
                                 <property name="label" context="yes" translatable="yes">Male</property>
                                 <property name="model_attribute">gender</property>
@@ -30,7 +30,7 @@
                         <child>
                             <widget class="ProxyRadioButton" id="female">
                                 <property name="active">False</property>
-                                <property name="data_type">bool</property>
+                                <property name="data_type">str</property>
                                 <property name="data_value">Female</property>
                                 <property name="group">male</property>
                                 <property name="label" context="yes" translatable="yes">Female</property>
@@ -44,7 +44,7 @@
                         <child>
                             <widget class="ProxyRadioButton" id="other">
                                 <property name="active">False</property>
-                                <property name="data_type">bool</property>
+                                <property name="data_type">str</property>
                                 <property name="data_value">Other</property>
                                 <property name="group">male</property>
                                 <property name="label" context="yes" translatable="yes">Other</property>

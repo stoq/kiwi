@@ -1,29 +1,27 @@
 #!/usr/bin/env python
 import gtk
 
-from kiwi.ui.delegates import GladeDelegate, GladeGladeSlaveDelegate
+from kiwi.ui.delegates import GladeDelegate, GladeSlaveDelegate
 from kiwi.ui.gadgets import quit_if_last
 
 
-class NestedSlave(GladeGladeSlaveDelegate):
+class NestedSlave(GladeSlaveDelegate):
     def __init__(self, parent):
         self.parent = parent
-        GladeGladeSlaveDelegate.__init__(self, gladefile="slave_view2",
-                                    toplevel_name="window_container",
-                                    widgets=["slave_view2"])
+        GladeSlaveDelegate.__init__(self, gladefile="slave_view2",
+                                    toplevel_name="window_container")
 
 
 # This slave will be attached to the toplevel view, and will contain another
 # slave
-class TestSlave(GladeGladeSlaveDelegate):
+class TestSlave(GladeSlaveDelegate):
     def __init__(self, parent):
         self.parent = parent
         # Be carefull that, when passing the widget list, the sizegroups
         # that you want to be merged are in the list, otherwise, they wont
         # be.
-        GladeGladeSlaveDelegate.__init__(self, gladefile="slave_view",
-                                    toplevel_name="window_container",
-                                    widgets=["slave_view", "sizegroup1"])
+        GladeSlaveDelegate.__init__(self, gladefile="slave_view",
+                                    toplevel_name="window_container")
 
         self.slave = NestedSlave(self)
         self.attach_slave("eventbox", self.slave)
