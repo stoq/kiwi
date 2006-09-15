@@ -38,6 +38,12 @@ class TestWaitForSignal(unittest.TestCase):
         self.assertEqual(task.return_value, "return-val")
 
 class TestWaitForTimeout(unittest.TestCase):
+    def time(self):
+        if sys.platform == 'win32':
+            return time.clock()
+        else:
+            return time.time()
+
     def testTimeout(self):
         def some_task():
             yield tasklet.WaitForTimeout(100)
@@ -45,11 +51,11 @@ class TestWaitForTimeout(unittest.TestCase):
             raise StopIteration("return-val")
 
         mainloop = gobject.MainLoop()
-        t1 = time.time()
+        t1 = self.time()
         task = tasklet.run(some_task())
         task.add_join_callback(lambda task, retval: mainloop.quit())
         mainloop.run()
-        t2 = time.time()
+        t2 = self.time()
         self.assertEqual(task.state, tasklet.Tasklet.STATE_ZOMBIE)
         self.assertEqual(task.return_value, "return-val")
         ## check that elapsed time aproximately 100 ms second, give or take 10 ms
