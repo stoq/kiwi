@@ -1,6 +1,6 @@
 kiwi-1.9.10: 15-september-2006
     - API reference and howto included in the tarball 
-    - Remove some exessive use of inheritence
+    - Remove some excessive of inheritance
     - A couple of new examples
     - Mask fixes; alignment and focus (Ronaldo)
     - win32 installation fixes (Aaron Spike)
