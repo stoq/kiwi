@@ -949,14 +949,14 @@ def _get_gazpacho():
     try:
         from kiwi.ui.gazpacholoader import GazpachoWidgetTree
     except ImportError:
-        pass
+        return
     return GazpachoWidgetTree
 
 def _get_libglade():
     try:
         from kiwi.ui.libgladeloader import LibgladeWidgetTree
     except ImportError:
-        pass
+        return
     return LibgladeWidgetTree
 
 def _open_glade(view, gladefile, domain):
