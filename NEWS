@@ -1,3 +1,13 @@
+kiwi-1.9.10: 15-september-2006
+    - API reference and howto included in the tarball 
+    - Remove some exessive use of inheritence
+    - A couple of new examples
+    - Mask fixes; alignment and focus (Ronaldo)
+    - win32 installation fixes (Aaron Spike)
+    - Tasklet WaitForCall support (Gustavo)
+    - Add a simple Enum implementation
+    - Add new separated delegates for glade views
+
 kiwi-1.9.9: 23-august-2006
     - KiwiEntry improvements (Johan, Patrick, Ronaldo)
     - Win32 installation fixes for Gazpacho & Kiwi (Johan)
