@@ -1,3 +1,9 @@
+kiwi (1.9.10-1) dapper; urgency=low
+
+  * New release, docs in a separate package
+
+ -- Johan Dahlin <jdahlin@async.com.br>  Mon, 18 Sep 2006 10:52:19 -0300
+
 kiwi (1.9.9-2) dapper; urgency=low
 
   * Update dependencies

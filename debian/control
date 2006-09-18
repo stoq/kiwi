@@ -33,3 +33,18 @@ Description: Framework for developing graphical applications in Python (examples
  .
  Homepage: http://www.async.com.br/projects/kiwi/
 
+
+Package: kiwi-doc
+Architecture: all
+Recommends: kiwi
+Description: Framework for developing graphical applications in Python (examples)
+ Kiwi is a framework composed of a set of modules, which eases Python
+ development using PyGTK. Kiwi makes graphical applications *much* faster
+ to code, with good architecture and more Python-like bindings; it also
+ offers extended widgets based upon the original PyGTK widgets.
+ .
+ This package installs documentation
+ /usr/share/doc/kiwi-docs/
+ .
+ Homepage: http://www.async.com.br/projects/kiwi/
+
