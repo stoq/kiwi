@@ -14,7 +14,6 @@ STYLE="PRE { border-left: 1px dashed blue;		\
 NAME=Kiwi
 URL=http://www.async.com.br/projects/kiwi/
 FIXIMG=perl -p -i -e 's/WIDTH=\"[0-9]+\" HEIGHT=\"[0-9]+\"//'
-WEBDIR=/mondo/htdocs/async/projects/kiwi
 
 all: api howto
 
@@ -55,14 +54,5 @@ apicheck:
 
 clean:
 	rm -rf api/ howto/ *.log *.aux *.l2h *.dvi *.ps *.bak *~
-
-web: all
-	@rm -fr ${WEBDIR}/api
-	@cp -r api ${WEBDIR}
-	@rm -fr ${WEBDIR}/howto
-	@cp -r howto ${WEBDIR}
-	@cd ${WEBDIR} && tar cfz howto.tar.gz howto
-	@cd ${WEBDIR} && tar cfz api.tar.gz api
-	@echo Website updated
 
 .PHONY: apicheck clean
