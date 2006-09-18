@@ -6,6 +6,8 @@ recursive-include locale *.mo
 recursive-include glade *.glade
 recursive-include pixmaps *.png
 recursive-include po *.po kiwi.pot POTFILES.list
+include debian/changelog debian/compat debian/copyright debian/control debian/rules
+include debian/*.docs debian/*.install debian/*.examples
 include AUTHORS
 include ChangeLog
 include COPYING
