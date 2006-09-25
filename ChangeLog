@@ -1,3 +1,11 @@
+2006-09-25  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/environ.py (Library.enable_translation)
+	(Library.set_application_domain): Call locale.textdomain/
+	locale.bindtextdomain aswell so libglade and other
+	applications using libcs translation functions are going
+	to work
+
 === 1.9.10 ===
 2006-09-15  Johan Dahlin  <jdahlin@async.com.br>
 
