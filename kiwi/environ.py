@@ -290,7 +290,9 @@ class Library(Environment):
             return
         directory = gettext.bindtextdomain(domain, localedir[0])
         self._check_translation(domain, directory)
-        locale.bindtextdomain(domain, localedir[0])
+        # For libglade, but only on non-win32 systems
+        if hasattr(locale, 'bindtextdomain'):
+            locale.bindtextdomain(domain, localedir[0])
 
         # Gtk+ only supports utf-8, it makes no sense to support
         # other encodings in kiwi it self
@@ -304,7 +306,9 @@ class Library(Environment):
         @param domain: the domain
         """
         gettext.textdomain(domain)
-        locale.textdomain(domain)
+        # For libglade, but only on non-win32 systems
+        if hasattr(locale, 'textdomain'):
+            locale.textdomain(domain)
 
     def add_global_resource(self, resource, path):
         """Convenience method to add a global resource.
