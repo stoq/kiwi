@@ -67,7 +67,7 @@ class Column(PropertyObject, gobject.GObject):
       - B{title}: string I{mandatory}
         - the title of the column, defaulting to the capitalized form of
           the attribute
-      - B{data-type}: object I{mandatory}
+      - B{data-type}: object I{str}
         - the type of the attribute that will be inserted into the column.
       - B{visible}: bool I{True}
         - specifying if it is initially hidden or shown.
@@ -433,10 +433,10 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     >>> banana.name = 'Banana'
     >>> banana.description = 'Monkey food'
 
-    >>> list = ObjectList([Column('name'),
-    >>>                    Column('description')])
-    >>> list.append(apple)
-    >>> list.append(banana)
+    >>> fruits = ObjectList([Column('name'),
+    >>>                      Column('description')])
+    >>> fruits.append(apple)
+    >>> fruits.append(banana)
 
     Signals
     =======
