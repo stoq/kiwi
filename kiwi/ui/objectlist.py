@@ -72,13 +72,13 @@ class Column(PropertyObject, gobject.GObject):
       - B{visible}: bool I{True}
         - specifying if it is initially hidden or shown.
       - B{justify}: gtk.Justification I{None}
-        - one of gtk.JUSTIFY_LEFT, gtk.JUSTIFY_RIGHT or gtk.JUSTIFY_CENTER or None.
-          If None, the justification will be determined by the type of the
-          attribute value of the first instance to be inserted in the
+        - one of gtk.JUSTIFY_LEFT, gtk.JUSTIFY_RIGHT or gtk.JUSTIFY_CENTER
+          or None. If None, the justification will be determined by the type
+          of the attribute value of the first instance to be inserted in the
           ObjectList (for instance numbers will be right-aligned).
       - B{format}: string I{""}
-        - a format string to be applied to the attribute value upon insertion in
-          the list.
+        - a format string to be applied to the attribute value upon insertion
+          in the list.
       - B{width}: integer I{65535}
         - the width in pixels of the column, if not set, uses the default to
           ObjectList. If no Column specifies a width, columns_autosize() will
@@ -441,21 +441,21 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     Signals
     =======
       - B{row-activated} (object):
-        Emitted when a row is "activated", eg double clicked or pressing enter.
-        See the GtkTreeView documentation for more information
+        - Emitted when a row is "activated", eg double clicked or pressing
+          enter. See the GtkTreeView documentation for more information
       - B{double-click} (object):
-        Emitted when a row is double-clicked, mostly you want to use
-        the row-activated signal instead to be able catch keyboard events.
+        - Emitted when a row is double-clicked, mostly you want to use
+          the row-activated signal instead to be able catch keyboard events.
       - B{cell-edited} (object, attribute):
-        Emitted when a cell is edited.
+        - Emitted when a cell is edited.
       - B{has-rows} (bool):
-        Emitted when the objectlist goes from an empty to a non-empty
-        state or vice verse.
+        - Emitted when the objectlist goes from an empty to a non-empty
+          state or vice verse.
 
     Properties
     ==========
-      - B{selection-mode}: gtk.SelectionMode I{gtk.SELECTION_BROWS}
-        Represents the selection-mode of a GtkTreeSelection of a GtkTreeView.
+      - B{selection-mode}: gtk.SelectionMode I{gtk.SELECTION_BROWSE}
+        - Represents the selection-mode of a GtkTreeSelection of a GtkTreeView.
     """
 
     __gtype_name__ = 'ObjectList'
