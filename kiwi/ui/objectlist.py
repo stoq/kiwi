@@ -58,7 +58,71 @@ def str2bool(value, from_string=converter.from_string):
     return from_string(bool, value)
 
 class Column(PropertyObject, gobject.GObject):
-    """Specifies a column for an L{ObjectList}"""
+    """
+    Specifies a column for an L{ObjectList}, see the ObjectList documentation
+    for a simple example.
+
+    Properties
+    ==========
+      - B{title}: string I{mandatory}
+        - the title of the column, defaulting to the capitalized form of
+          the attribute
+      - B{data-type}: object I{mandatory}
+        - the type of the attribute that will be inserted into the column.
+      - B{visible}: bool I{True}
+        - specifying if it is initially hidden or shown.
+      - B{justify}: gtk.Justification I{None}
+        - one of gtk.JUSTIFY_LEFT, gtk.JUSTIFY_RIGHT or gtk.JUSTIFY_CENTER or None.
+          If None, the justification will be determined by the type of the
+          attribute value of the first instance to be inserted in the
+          ObjectList (for instance numbers will be right-aligned).
+      - B{format}: string I{""}
+        - a format string to be applied to the attribute value upon insertion in
+          the list.
+      - B{width}: integer I{65535}
+        - the width in pixels of the column, if not set, uses the default to
+          ObjectList. If no Column specifies a width, columns_autosize() will
+          be called on the ObjectList upon append() or the first add_list().
+      - B{sorted}: bool I{False}
+        - whether or not the ObjectList is to be sorted by this column.
+          If no Columns are sorted, the ObjectList will be created unsorted.
+      - B{order}: GtkSortType I{-1}
+        - one of gtk.SORT_ASCENDING, gtk.SORT_DESCENDING or -1
+          The value -1 is mean that the column is not sorted.
+      - B{expand}: bool I{False}
+        - if set column will expand. Note: this space is shared equally amongst
+          all columns that have the expand set to True.
+      - B{tooltip}: string I{""}
+        - a string which will be used as a tooltip for the column header
+      - B{format_func}: object I{None}
+        -  a callable which will be used to format the output of a column.
+           The function will take one argument which is the value to convert
+           and is expected to return a string.
+           I{Note}: that you cannot use format and format_func at the same time,
+           if you provide a format function you'll be responsible for
+           converting the value to a string.
+      - B{editable}: bool I{False}
+        - if true the field is editable and when you modify the contents of
+          the cell the model will be updated.
+      - B{searchable}: bool I{False}
+        - if true the attribute values of the column can be searched using
+          type ahead search. Only string attributes are currently supported.
+      - B{radio}: bool I{False}
+        -  If true render the column as a radio instead of toggle.
+           Only applicable for columns with boolean data types.
+      - B{cache}: bool I{False}
+        -  If true, the value will only be fetched once, and the same value
+           will be reused for futher access.
+      - B{use_stock}: bool I{False}
+        - If true, this will be rendered as pixbuf from the value which
+          should be a stock id.
+      - B{icon_size}: gtk.IconSize I{gtk.ICON_SIZE_MENU}
+      - B{editable_attribute}: string I{""}
+        - a string which is the attribute which should decide if the
+          cell is editable or not.
+      - B{use_markup}: bool I{False}
+        - If true, the text will be rendered with markup
+    """
     gproperty('title', str)
     gproperty('data-type', object)
     gproperty('visible', bool, default=True)
@@ -104,50 +168,6 @@ class Column(PropertyObject, gobject.GObject):
         @param data_type: the type of the attribute that will be inserted
             into the column.
 
-        @keyword visible: a boolean specifying if it is initially hidden or
-            shown.
-        @keyword justify: one of gtk.JUSTIFY_LEFT, gtk.JUSTIFY_RIGHT or
-            gtk.JUSTIFY_CENTER or None. If None, the justification will be
-            determined by the type of the attribute value of the first
-            instance to be inserted in the ObjectList (numbers will be
-            right-aligned).
-        @keyword format: a format string to be applied to the attribute
-            value upon insertion in the list.
-        @keyword width: the width in pixels of the column, if not set, uses the
-            default to ObjectList. If no Column specifies a width,
-            columns_autosize() will be called on the ObjectList upon append()
-            or the first add_list().
-        @keyword sorted: whether or not the ObjectList is to be sorted by this
-            column.
-            If no Columns are sorted, the ObjectList will be created unsorted.
-        @keyword order: one of gtk.SORT_ASCENDING or gtk.SORT_DESCENDING or
-            -1. The value -1 is used internally when the column is not sorted.
-        @keyword expand: if set column will expand. Note: this space is shared
-            equally amongst all columns that have the expand set to True.
-        @keyword tooltip: a string which will be used as a tooltip for
-            the column header
-        @keyword format_func: a callable which will be used to format
-            the output of a column. The function will take one argument
-            which is the value to convert and is expected to return a string.
-            Note that you cannot use format and format_func at the same time,
-            if you provide a format function you'll be responsible for
-            converting the value to a string.
-        @keyword editable: if true the field is editable and when you modify
-            the contents of the cell the model will be updated.
-        @keyword searchable: if true the attribute values of the column can
-            be searched using type ahead search. Only string attributes are
-            currently supported.
-        @keyword radio: If true render the column as a radio instead of toggle.
-            Only applicable for columns with boolean data types.
-        @keyword cache: If true, the value will only be fetched once,
-            and the same value will be reused for futher access.
-        @keyword use_stock: If true, this will be rendered as pixbuf from the
-            value which should be a stock id.
-        @keyword icon_size: a gtk.IconSize constant, gtk.ICON_SIZE_MENU if not
-            specified.
-        @keyword editable_attribute: a string which is the attribute
-            which should decide if the cell is editable or not.
-        @keyword use_markup: If true, the text will be rendered with markup
         @keyword title_pixmap: (TODO) if set to a filename a pixmap will be
             used *instead* of the title set. The title string will still be
             used to identify the column in the column selection and in a
@@ -417,6 +437,25 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     >>>                    Column('description')])
     >>> list.append(apple)
     >>> list.append(banana)
+
+    Signals
+    =======
+      - B{row-activated} (object):
+        Emitted when a row is "activated", eg double clicked or pressing enter.
+        See the GtkTreeView documentation for more information
+      - B{double-click} (object):
+        Emitted when a row is double-clicked, mostly you want to use
+        the row-activated signal instead to be able catch keyboard events.
+      - B{cell-edited} (object, attribute):
+        Emitted when a cell is edited.
+      - B{has-rows} (bool):
+        Emitted when the objectlist goes from an empty to a non-empty
+        state or vice verse.
+
+    Properties
+    ==========
+      - B{selection-mode}: gtk.SelectionMode I{gtk.SELECTION_BROWS}
+        Represents the selection-mode of a GtkTreeSelection of a GtkTreeView.
     """
 
     __gtype_name__ = 'ObjectList'
