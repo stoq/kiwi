@@ -36,6 +36,8 @@ from kiwi.ui.icon import IconEntry
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 
+HAVE_2_6 = gtk.pygtk_version[:2] == (2, 6)
+
 class MaskError(Exception):
     pass
 
@@ -113,13 +115,23 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
     # Virtual methods
 
-    gsignal('size-allocate', 'override')
-    def do_size_allocate(self, allocation):
-        #gtk.Entry.do_size_allocate(self, allocation)
-        self.chain(allocation)
+    # PyGTK 2.6 does not support the virtual method do_size_allocate so
+    # we have to use the signal instead
+    # PyGTK 2.9.0 and later (bug #327715) does not work using the old code,
+    # so we have to make this conditionally
+    if HAVE_2_6:
+        gsignal('size-allocate', 'override')
+        def do_size_allocate(self, allocation):
+            self.chain(allocation)
 
-        if self.flags() & gtk.REALIZED:
-            self._icon.resize_windows()
+            if self.flags() & gtk.REALIZED:
+                self._icon.resize_windows()
+    else:
+        def do_size_allocate(self, allocation):
+            gtk.Entry.do_size_allocate(self, allocation)
+
+            if self.flags() & gtk.REALIZED:
+                self._icon.resize_windows()
 
     def do_expose_event(self, event):
         gtk.Entry.do_expose_event(self, event)

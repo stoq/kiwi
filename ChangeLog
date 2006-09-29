@@ -1,3 +1,8 @@
+2006-09-29  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/entry.py (KiwiEntry.__init__): Make ProxyEntries work with
+	PyGTK 2.10 again.
+
 2006-09-27  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/objectlist.py	(Column): Document properties
