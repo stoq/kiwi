@@ -143,5 +143,8 @@ class BaseController:
         for c in classes:
             for name in c.__dict__.keys():
                 # Need to use getattr() to ensure we get bound methods
-                methods[name] = getattr(self, name)
+                try:
+                    methods[name] = getattr(self, name)
+                except AttributeError:
+                    continue
         return methods
