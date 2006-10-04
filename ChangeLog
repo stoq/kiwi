@@ -1,3 +1,10 @@
+2006-10-04  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/component.py:
+	* tests/test_component.py:
+	Add remove_utility and an extra argument to get_utility which
+	is similar to dict.get. Add tests too.
+
 2006-09-29  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/entry.py (KiwiEntry.__init__): Make ProxyEntries work with

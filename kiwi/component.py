@@ -23,6 +23,8 @@
 
 import sys
 
+from kiwi import ValueUnset
+
 try:
     from zope.interface import implements, Attribute, Interface
     # pyflakes
@@ -67,7 +69,20 @@ class _UtilityHandler(object):
                 raise AlreadyImplementedError("%s is already implemented" % iface)
         self._utilities[iface] = obj
 
-    def get(self, iface):
+    def get(self, iface, default):
+        if not issubclass(iface, Interface):
+            raise TypeError(
+                "iface must be an Interface subclass and not %r" % iface)
+
+        if not iface in self._utilities:
+            if default is ValueUnset:
+                raise NotImplementedError("No utility provided for %r" % iface)
+            else:
+                return default
+
+        return self._utilities[iface]
+
+    def remove(self, iface):
         if not issubclass(iface, Interface):
             raise TypeError(
                 "iface must be an Interface subclass and not %r" % iface)
@@ -75,7 +90,7 @@ class _UtilityHandler(object):
         if not iface in self._utilities:
             raise NotImplementedError("No utility provided for %r" % iface)
 
-        return self._utilities[iface]
+        return self._utilities.pop(iface)
 
 def provide_utility(iface, utility, replace=False):
     """
@@ -87,16 +102,30 @@ def provide_utility(iface, utility, replace=False):
     """
     _handler.provide(iface, utility, replace)
 
-def get_utility(iface):
+def get_utility(iface, default=ValueUnset):
     """
     Get the utility for the named interface. If the utility is not
-    available (has not been set) a {NotImplementedError} is raised.
+    available (has not been set) a {NotImplementedError} is raised unless
+    default is set.
 
-    @param iface: interface to retrieve the utility for.
-    @type iface: utility providing the interface
+    @param iface: an interface
+    @param default: optional, if set return if a utility is not found
+    @returns: the utility
     """
 
-    return _handler.get(iface)
+    return _handler.get(iface, default)
+
+def remove_utility(iface):
+    """
+    Remove the utility provided for an interface
+    If the utility is not available (has not been set)
+    {NotImplementedError} is raised.
+
+    @param iface: the interface
+    @returns: the removed utility
+    """
+
+    return _handler.remove(iface)
 
 _handler = _UtilityHandler()
 

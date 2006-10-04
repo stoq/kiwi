@@ -1,7 +1,7 @@
 import unittest
 
 from kiwi.component import AlreadyImplementedError, Interface, \
-     get_utility, provide_utility, implements
+     get_utility, provide_utility, remove_utility, implements
 
 class IBanana(Interface):
     pass
@@ -10,29 +10,33 @@ class Obj(object): pass
 o = Obj()
 
 class TestUtilities(unittest.TestCase):
-    def _clear(self, iface):
+    def tearDown(self):
         # Yey, yey
         from kiwi.component import _handler
-        del _handler._utilities[iface]
+        _handler._utilities = {}
 
     def testGet(self):
+        self.assertEqual(None, get_utility(IBanana, None))
         provide_utility(IBanana, o)
         self.assertRaises(TypeError, get_utility, object)
         self.assertEqual(get_utility(IBanana), o)
-        self._clear(IBanana)
 
     def testProvide(self):
         self.assertRaises(NotImplementedError, get_utility, IBanana)
         provide_utility(IBanana, o)
         self.assertRaises(TypeError, provide_utility, object, o)
-        self._clear(IBanana)
+
+    def testRemove(self):
+        self.assertRaises(NotImplementedError, remove_utility, IBanana)
+        provide_utility(IBanana, o)
+        self.assertEqual(remove_utility(IBanana), o)
+        self.assertRaises(NotImplementedError, remove_utility, IBanana)
 
     def testAlreadyImplemented(self):
         self.assertRaises(NotImplementedError, get_utility, IBanana)
         provide_utility(IBanana, o)
         self.assertRaises(AlreadyImplementedError,
                           provide_utility, IBanana, o)
-        self._clear(IBanana)
 
     def testZopeInterface(self):
         try:
@@ -47,7 +51,6 @@ class TestUtilities(unittest.TestCase):
         provide_utility(IApple, o)
         self.assertRaises(AlreadyImplementedError,
                           provide_utility, IApple, o)
-        self._clear(IApple)
 
     def testImplements(self):
         class I1(Interface):
