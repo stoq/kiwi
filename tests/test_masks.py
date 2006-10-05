@@ -16,7 +16,7 @@ SPECIAL_KEYS = {
     ' ' : 'space',
 }
 
-DELAY = 0
+DELAY = 0.1
 
 def send_backspace(widget):
     event = gtk.gdk.Event(gtk.gdk.KEY_PRESS)
@@ -218,21 +218,27 @@ class TestMasks(unittest.TestCase):
         entry.grab_focus()
 
         insert_text(entry, '1234')
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(12) 34  -    ')
 
         send_backspace(entry)
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(12) 3   -    ')
 
         send_backspace(entry)
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(12)     -    ')
 
         send_backspace(entry)
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(1 )     -    ')
 
         send_backspace(entry)
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(  )     -    ')
 
         send_backspace(entry)
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(  )     -    ')
 
     def testDelete(self):
@@ -248,9 +254,11 @@ class TestMasks(unittest.TestCase):
         self.assertEqual(entry.get_position(), 1)
 
         send_delete(entry)
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(2 ) 3456-78  ')
 
         send_delete(entry)
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(  ) 3456-78  ')
 
         move(entry, RIGHT)
@@ -261,9 +269,11 @@ class TestMasks(unittest.TestCase):
 
 
         send_delete(entry)
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(  ) 356 -78  ')
 
         send_delete(entry)
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(  ) 36  -78  ')
 
 
