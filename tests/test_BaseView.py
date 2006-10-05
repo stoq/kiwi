@@ -79,12 +79,12 @@ class NotWidgetFoo(FooView, BaseController):
 class BaseViewTest(unittest.TestCase):
 
     def setUp(self):
-        self.foo = FooController(FooView())
+        self.view = FooView()
+        self.foo = FooController(self.view)
         refresh_gui()
 
     def tearDown(self):
-        for win in gtk.window_list_toplevels():
-            win.destroy()
+        self.view.win.destroy()
 
     def testFooButton(self):
         self.foo.view.foo__button.clicked()

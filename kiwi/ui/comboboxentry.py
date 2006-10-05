@@ -29,7 +29,7 @@ import gobject
 import gtk
 
 from kiwi.python import deprecationwarn
-from kiwi.ui.widgets.entry import ProxyEntry
+from kiwi.ui.entry import KiwiEntry
 
 class BaseComboBoxEntry(gtk.ComboBox):
     def __init__(self, model=None, text_column=-1):
@@ -38,7 +38,7 @@ class BaseComboBoxEntry(gtk.ComboBox):
             stacklevel=3)
 
         gtk.ComboBox.__init__(self)
-        self.entry = ProxyEntry()
+        self.entry = KiwiEntry()
         # HACK: We need to set a private variable, this seems to
         #       be the only way of doing so
         self.entry.start_editing(gtk.gdk.Event(gtk.gdk.BUTTON_PRESS))

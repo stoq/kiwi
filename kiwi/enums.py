@@ -35,3 +35,6 @@ class ComboMode(enum):
 class Alignment(enum):
     (LEFT,
      RIGHT) = range(2)
+
+class Direction(enum):
+    (LEFT, RIGHT) = (1, -1)

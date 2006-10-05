@@ -23,7 +23,7 @@
                     <widget class="GtkTable" id="table1">
                         <property name="column_spacing">6</property>
                         <property name="n_columns">2</property>
-                        <property name="n_rows">8</property>
+                        <property name="n_rows">9</property>
                         <property name="row_spacing">6</property>
                         <property name="visible">True</property>
                         <child>
@@ -56,8 +56,8 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="GtkLabel" id="label4">
-                                <property name="label" context="yes" translatable="yes">Height:</property>
+                            <widget class="GtkLabel" id="label3">
+                                <property name="label" context="yes" translatable="yes">Phone Number:</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">1.0</property>
                             </widget>
@@ -67,8 +67,8 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="GtkLabel" id="label5">
-                                <property name="label" context="yes" translatable="yes">Weight:</property>
+                            <widget class="GtkLabel" id="label4">
+                                <property name="label" context="yes" translatable="yes">Height:</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">1.0</property>
                             </widget>
@@ -78,8 +78,8 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="GtkLabel" id="label8">
-                                <property name="label" context="yes" translatable="yes">Nationality:</property>
+                            <widget class="GtkLabel" id="label5">
+                                <property name="label" context="yes" translatable="yes">Weight:</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">1.0</property>
                             </widget>
@@ -89,8 +89,8 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="GtkLabel" id="label9">
-                                <property name="label" context="yes" translatable="yes">Gender:</property>
+                            <widget class="GtkLabel" id="label8">
+                                <property name="label" context="yes" translatable="yes">Nationality:</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">1.0</property>
                             </widget>
@@ -113,8 +113,20 @@
                             </packing>
                         </child>
                         <child>
+                            <widget class="GtkLabel" id="label9">
+                                <property name="label" context="yes" translatable="yes">Gender:</property>
+                                <property name="visible">True</property>
+                                <property name="xalign">1.0</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">9</property>
+                                <property name="top_attach">8</property>
+                            </packing>
+                        </child>
+                        <child>
                             <widget class="ProxyEntry" id="name">
                                 <property name="data_type">unicode</property>
+                                <property name="is_focus">True</property>
                                 <property name="mandatory">True</property>
                                 <property name="model_attribute">name</property>
                                 <property name="visible">True</property>
@@ -154,12 +166,14 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="ProxyEntry" id="height">
-                                <property name="data_type">float</property>
+                            <widget class="ProxyEntry" id="phonenumber">
+                                <property name="data_type">str</property>
+                                <property name="is_focus">True</property>
                                 <property name="mandatory">True</property>
-                                <property name="model_attribute">height</property>
+                                <property name="mask" context="yes" translatable="yes">(00) 0000-0000</property>
+                                <property name="model_attribute">phonenumber</property>
+                                <property name="text" context="yes" translatable="yes">(  )     -    </property>
                                 <property name="visible">True</property>
-                                <property name="xalign">1.0</property>
                             </widget>
                             <packing>
                                 <property name="bottom_attach">4</property>
@@ -169,12 +183,12 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="ProxySpinButton" id="weight">
-                                <property name="adjustment">0 0 100 1 10 0</property>
+                            <widget class="ProxyEntry" id="height">
                                 <property name="data_type">float</property>
                                 <property name="mandatory">True</property>
-                                <property name="model_attribute">weight</property>
+                                <property name="model_attribute">height</property>
                                 <property name="visible">True</property>
+                                <property name="xalign">1.0</property>
                             </widget>
                             <packing>
                                 <property name="bottom_attach">5</property>
@@ -184,10 +198,12 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="ProxyComboEntry" id="nationality">
-                                <property name="data_type">str</property>
+                            <widget class="ProxySpinButton" id="weight">
+                                <property name="adjustment">0 0 100 1 10 0</property>
+                                <property name="data_type">float</property>
                                 <property name="mandatory">True</property>
-                                <property name="model_attribute">nationality</property>
+                                <property name="model_attribute">weight</property>
+                                <property name="text" context="yes" translatable="yes">0</property>
                                 <property name="visible">True</property>
                             </widget>
                             <packing>
@@ -198,9 +214,10 @@
                             </packing>
                         </child>
                         <child>
-                            <widget class="ProxyComboBox" id="gender">
+                            <widget class="ProxyComboEntry" id="nationality">
                                 <property name="data_type">str</property>
-                                <property name="model_attribute">gender</property>
+                                <property name="mandatory">True</property>
+                                <property name="model_attribute">nationality</property>
                                 <property name="visible">True</property>
                             </widget>
                             <packing>
@@ -225,6 +242,19 @@
                                 <property name="left_attach">1</property>
                                 <property name="right_attach">2</property>
                                 <property name="top_attach">7</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="ProxyComboBox" id="gender">
+                                <property name="data_type">str</property>
+                                <property name="model_attribute">gender</property>
+                                <property name="visible">True</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">9</property>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">8</property>
                             </packing>
                         </child>
                     </widget>

@@ -1,3 +1,19 @@
+2006-10-05  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/validation/personalinformation.glade: Add an example.
+	* kiwi/enums.py:
+	* kiwi/ui/comboboxentry.py: Use KiwiEntry instead of ProxyEntry
+	* kiwi/ui/entry.py: 
+	* kiwi/ui/widgets/entry.py:
+	* tests/test_BaseView.py: Fix destruction of windows.
+	* tests/test_Entry.py: 
+	* tests/test_masks.py:
+
+	Refactor mask handling in KiwiEntry. Now it supports the use of fields. 
+	Fixes #2838
+
 2006-10-04  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/component.py:
