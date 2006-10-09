@@ -34,11 +34,15 @@ import pango
 import gtk
 
 from kiwi.enums import Direction
+from kiwi.environ import environ
 from kiwi.ui.icon import IconEntry
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 
-HAVE_2_6 = gtk.pygtk_version[:2] == (2, 6)
+if not environ.epydoc:
+    HAVE_2_6 = gtk.pygtk_version[:2] == (2, 6)
+else:
+    HAVE_2_6 = True
 
 class MaskError(Exception):
     pass
