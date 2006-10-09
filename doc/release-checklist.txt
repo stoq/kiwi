@@ -18,5 +18,8 @@ make release-tag
 make upload
 Add bugzilla version:
 http://bugs/editversions.cgi?action=new&product=Kiwi&submit=Add&version=1.9.x
-Update website
+Update website:
+  make web
+  Add new version to kiwi-www/src/getit.txt
+
 Use release-anouncement.tmpl to write a new announcement
