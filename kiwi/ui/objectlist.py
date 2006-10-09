@@ -446,6 +446,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
       - B{double-click} (object):
         - Emitted when a row is double-clicked, mostly you want to use
           the row-activated signal instead to be able catch keyboard events.
+      - B{right-click} (object):
+        - Emitted when a row is clicked with the right mouse button.
       - B{cell-edited} (object, attribute):
         - Emitted when a cell is edited.
       - B{has-rows} (bool):
@@ -468,6 +470,9 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     # row double-clicked
     gsignal('double-click', object)
+
+    # row right-clicked
+    gsignal('right-click', object)
 
     # edited object, attribute name
     gsignal('cell-edited', object, str)
@@ -1028,14 +1033,24 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def _on_treeview__button_press_event(self, treeview, event):
         "Generic button-press-event handler to be able to catch double clicks"
-        if event.type == gtk.gdk._2BUTTON_PRESS:
-            selection = self._treeview.get_selection()
-            mode = selection.get_mode()
-            if mode == gtk.SELECTION_MULTIPLE:
-                item = self.get_selected_rows()
-            else:
-                item = self.get_selected()
+
+        selection = self._treeview.get_selection()
+        mode = selection.get_mode()
+        if mode == gtk.SELECTION_MULTIPLE:
+            item = self.get_selected_rows()
+        else:
+            item = self.get_selected()
+
+        if not item:
+            return
+
+        # Double left click
+        if event.type == gtk.gdk._2BUTTON_PRESS and event.button == 1:
             self.emit('double-click', item)
+
+        # Right click
+        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
+            self.emit('right-click', item)
 
     # CellRenderers
     def _cell_data_text_func(self, tree_column, renderer, model, treeiter,
