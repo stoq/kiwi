@@ -1,7 +1,10 @@
 WEBDIR=/mondo/htdocs/async/projects/kiwi
 VERSION=$(shell python -c "execfile('kiwi/__version__.py'); print '.'.join(map(str, version))")
 BUILDDIR=tmp
-TARBALL=kiwi-$(VERSION).tar.gz
+PACKAGE=kiwi
+TARBALL=$(PACKAGE)-$(VERSION).tar.gz
+DEBVERSION=$(shell dpkg-parsechangelog -ldebian/changelog |grep Version|cut -d: -f3)
+DLDIR=/mondo/htdocs/download.stoq.com.br/ubuntu
 
 clean-docs:
 	rm -fr doc/api
@@ -42,9 +45,18 @@ release: clean sdist bdist deb
 release-tag:
 	svn cp -m "Tag $(VERSION)" . svn+ssh://svn.async.com.br/pub/kiwi/tags/$(VERSION)
 
-upload: release
+upload-release: release
 	scp dist/$(TARBALL) gnome.org:
 	ssh gnome.org install-module $(TARBALL)
 	scp dist/kiwi-$(VERSION).win32.exe gnome.org:/ftp/pub/GNOME/binaries/win32/kiwi/
 
-.PHONY: docs web sdist bdist release deb
+upload:
+	cp dist/$(PACKAGE)*_$(DEBVERSION)*.deb $(DLDIR)
+	for suffix in "gz" "dsc" "build" "changes"; do \
+	  cp dist/$(PACKAGE)_$(DEBVERSION)*."$$suffix" $(DLDIR); \
+	done
+	cd $(DLDIR) && \
+	  dpkg-scanpackages . /dev/null | gzip -c > $(DLDIR)/Packages.gz && \
+	  dpkg-scansources . /dev/null | gzip -c > $(DLDIR)/Sources.gz
+
+.PHONY: docs web sdist bdist release deb upload upload-release

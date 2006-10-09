@@ -15,7 +15,7 @@ make release
 Update ChangeLog, add marker
 Commit
 make release-tag
-make upload
+make upload-release
 Add bugzilla version:
 http://bugs/editversions.cgi?action=new&product=Kiwi&submit=Add&version=1.9.x
 Update website:
