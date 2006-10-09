@@ -3,11 +3,14 @@ Go through the examples
 Run pyflakes
 Run all tests
 Check buildbot
-Bump version number
 Run epydoc, fix all problems:
   tools/epydoc
-Update translations
+Update translations:
+  bin/kiwi-i18n -pkiwi -u -c
 Update NEWS
+Bump version number:
+  kiwi/__version__.py
+  doc/howto.tex
 Update ChangeLog, add marker
 python setup.py -q sdist
 python setup.py -q bdist_wininst
