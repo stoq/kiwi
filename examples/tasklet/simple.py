@@ -29,10 +29,10 @@ class _CountSomeNumbers2(Tasklet):
 
 def _count_some_numbers1(count):
     '''Counts numbers with at fixed time spacings'''
-    timeout = WaitForTimeout(1000)
+    timeout = WaitForTimeout(500)
     for i in xrange(count):
         print "_count_some_numbers1", i
-        task2 = _CountSomeNumbers2(10, 130)
+        task2 = _CountSomeNumbers2(10, 70)
         yield timeout, task2
         event = get_event()
         if event is timeout:
@@ -48,10 +48,11 @@ def _count_some_numbers1(count):
         else:
             assert False, "strange event"
 
+    raise SystemExit
 
 def _test():
     '''a simple test/example'''
-    Tasklet(_count_some_numbers1(100))
+    Tasklet(_count_some_numbers1(5))
     gobject.MainLoop().run()
 
 
