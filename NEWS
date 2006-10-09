@@ -1,3 +1,10 @@
+kiwi-1.9.11: 09-october-2006
+    - Much improved mask handling (#2838, Ronaldo)
+    - libglade integration bugfixes
+    - Workaround for PyGTK 2.10 bug
+    - Add right-click to ObjectList (#2817, Ronaldo)
+    - raise ValueError instead of AttributeError (#1998, Sidnei)
+
 kiwi-1.9.10: 15-september-2006
     - API reference and howto included in the tarball 
     - Remove some excessive of inheritance
