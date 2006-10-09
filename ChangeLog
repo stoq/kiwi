@@ -1,4 +1,9 @@
+=== 1.9.11 ===
 2006-10-09  Johan Dahlin  <jdahlin@async.com.br>
+
+	* NEWS: 
+	* doc/howto.tex:
+	* kiwi/__version__.py: Update
 
 	* kiwi/ui/views.py (SlaveView._check_reserved): Raise
 	ValueError instead of AttributeError, fixes #1998
