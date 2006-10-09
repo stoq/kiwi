@@ -1,3 +1,10 @@
+kiwi (1.9.11-1) dapper; urgency=low
+
+  * New upstream release:
+  * Fix doc package conflict
+
+ -- Johan Dahlin <jdahlin@async.com.br>  Mon,  9 Oct 2006 15:00:52 -0300
+
 kiwi (1.9.10-1) dapper; urgency=low
 
   * New release, docs in a separate package
