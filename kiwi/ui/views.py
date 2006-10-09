@@ -261,7 +261,7 @@ class SlaveView(gobject.GObject):
                          "tree", "model", "controller"]:
             # XXX: take into account widget constructor?
             if reserved in self.widgets:
-                raise AttributeError(
+                raise ValueError(
                     "The widgets list for %s contains a widget named `%s', "
                     "which is a reserved. name""" % (self, reserved))
 

@@ -1,3 +1,9 @@
+2006-10-09  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/views.py (SlaveView._check_reserved): Raise
+	ValueError instead of AttributeError, fixes #1998
+	(Sidnei da Silva)
+
 2006-10-09  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
