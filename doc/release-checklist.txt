@@ -11,13 +11,11 @@ Update NEWS
 Bump version number:
   kiwi/__version__.py
   doc/howto.tex
+make release
 Update ChangeLog, add marker
-python setup.py -q sdist
-python setup.py -q bdist_wininst
 Commit
-Branch: svn cp svn+ssh://svn.async.com.br/pub/kiwi/trunk \
-               svn+ssh://svn.async.com.br/pub/kiwi/tags/1.9.x
-Upload tarballs and windows installer
+make release-tag
+make upload
 Add bugzilla version:
 http://bugs/editversions.cgi?action=new&product=Kiwi&submit=Add&version=1.9.x
 Update website

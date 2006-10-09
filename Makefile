@@ -39,6 +39,9 @@ deb: sdist
 
 release: clean sdist bdist deb
 
+release-tag:
+	svn cp -m "Tag $(VERSION)" . svn+ssh://svn.async.com.br/pub/kiwi/tags/$(VERSION)
+
 upload: release
 	scp dist/$(TARBALL) gnome.org:
 	ssh gnome.org install-module $(TARBALL)
