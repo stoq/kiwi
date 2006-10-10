@@ -73,6 +73,8 @@ def list_languages(root):
 def update_po(root, package):
     files = get_translatable_files(root)
     potfiles_in = os.path.join(root, 'po', 'POTFILES.in')
+    if os.path.exists(potfiles_in):
+        os.unlink(potfiles_in)
     fd = open(potfiles_in, 'w')
     for filename in files:
         fd.write(filename + '\n')
@@ -85,7 +87,9 @@ def update_po(root, package):
         raise SystemExit('ERROR: intltool-update could not be found')
 
     # POT file first
-    os.system('intltool-update --pot --gettext-package=%s' % package)
+    res = os.system('intltool-update --pot --gettext-package=%s' % package)
+    if res != 0:
+        raise SystemExit("ERROR: failed to generate pot file")
 
     for lang in list_languages(root):
         new = lang + '.new.po'
