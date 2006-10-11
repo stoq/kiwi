@@ -1,3 +1,9 @@
+kiwi (1.9.11-2) dapper; urgency=low
+
+  * Replaces: python-kiwi for debian compatibility
+
+ -- Johan Dahlin <jdahlin@async.com.br>  Wed, 11 Oct 2006 12:06:02 -0300
+
 kiwi (1.9.11-1) dapper; urgency=low
 
   * New upstream release:
