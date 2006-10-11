@@ -80,7 +80,7 @@ class _EasyComboBoxHelper(object):
     def prefill(self, itemdata, sort=False):
         if not isinstance(itemdata, (list, tuple)):
             raise TypeError("'data' parameter must be a list or tuple of item "
-                            "descriptions, found %s") % type(itemdata)
+                            "descriptions, found %s" % (type(itemdata),))
 
         self.clear()
         if len(itemdata) == 0:
@@ -107,7 +107,7 @@ class _EasyComboBoxHelper(object):
             for item in itemdata:
                 if item in values:
                     raise KeyError("Tried to insert duplicate value "
-                                   "%s into Combo!" % item)
+                                   "%s into Combo!" % (item,))
                 else:
                     values[item] = None
 
@@ -120,7 +120,7 @@ class _EasyComboBoxHelper(object):
                 text, data = item
                 if text in values:
                     raise KeyError("Tried to insert duplicate value "
-                                   "%s into Combo!" % item)
+                                   "%s into Combo!" % (item,))
                 else:
                     values[text] = None
                 model.append((text, data))
@@ -134,7 +134,7 @@ class _EasyComboBoxHelper(object):
         - data: the data to be associated with that item
         """
         if not isinstance(label, basestring):
-            raise TypeError("label must be string, found %s" % label)
+            raise TypeError("label must be string, found %s" % (label,))
 
         if self.mode == ComboMode.UNKNOWN:
             if data is not None:
