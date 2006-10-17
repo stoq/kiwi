@@ -478,7 +478,8 @@ class SlaveView(gobject.GObject):
 
         self._broker = brokerclass(self, controller)
 
-        self.toplevel.connect("key-press-event", controller.on_key_press)
+        if self.toplevel:
+            self.toplevel.connect("key-press-event", controller.on_key_press)
 
     #
     # Slave handling
