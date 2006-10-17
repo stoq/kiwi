@@ -62,7 +62,6 @@ class BaseController:
         self._keyactions = keyactions or {}
 
         self.view._attach_callbacks(self)
-
         # Call finalization hook
         self.view.on_startup()
 
@@ -79,13 +78,14 @@ class BaseController:
             method_name += 'shift_'
         if event.state & gdk.MOD1_MASK:
             method_name += 'alt_'
+
         method_name += gdk.keyval_name(event.keyval)
         func = getattr(self, method_name, None)
+        if not func and event.keyval in self._keyactions:
+            func = self._keyactions[event.keyval]
+
         if func:
             return func()
-        elif event.keyval in self._keyactions:
-            func = self._keyactions[event.keyval]
-            return func(widget, event)
 
 
     #
