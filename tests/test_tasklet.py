@@ -157,5 +157,26 @@ class TestCallback(unittest.TestCase):
         self.assertEqual(args, (123, 456))
         self.assertEqual(kwargs, dict(foo="bar"))
 
+
+class TestWaitForTasklet(unittest.TestCase):
+    def testWaitForInstantaneousTask(self):
+        """Test waiting for a tasklet that is already finished."""
+
+        def quick_task():
+            if 1:
+                raise StopIteration(123)
+            yield None
+
+        def task_waiter():
+            yield quick_task()
+            taskwait = tasklet.get_event()
+            raise StopIteration(taskwait.retval)
+
+        mainloop = gobject.MainLoop()
+        task = tasklet.run(task_waiter())
+        task.add_join_callback(lambda task, retval: mainloop.quit())
+        mainloop.run()
+        self.assertEqual(task.return_value, 123)
+
 if __name__ == '__main__':
     unittest.main()

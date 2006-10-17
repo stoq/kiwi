@@ -1,3 +1,10 @@
+2006-10-17  Gustavo J. A. M. Carneiro  <gjc@gnome.org>
+
+	* kiwi/tasklet.py:
+	* tests/test_tasklet.py:
+	When arming a WaitForTasklet check if the state is zombie and join 
+	immediately. Add tests
+
 2006-10-10  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/i18n/i18n.py (compile_po_files): Unlink the old POTFILES.in in case

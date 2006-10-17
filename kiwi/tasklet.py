@@ -474,6 +474,9 @@ class WaitForTasklet(WaitCondition):
         self._callback = tasklet.wait_condition_fired
         if self._id is None:
             self._id = self._tasklet.add_join_callback(self._join_cb)
+        ## Check if the tasklet is already finished _right now_
+        if self._tasklet.state == Tasklet.STATE_ZOMBIE:
+            self._join_cb(self._tasklet, self._tasklet.return_value)
 
     def disarm(self):
         '''See L{WaitCondition.disarm}'''
