@@ -78,9 +78,8 @@ def set_log_file(filename, mask=None):
     stoq.setFormatter(logging.Formatter(
         '%(asctime)s %(name)-18s %(levelname)-8s %(message)s',
         datefmt='%F %T'))
-    log = logging.getLogger()
-    log.addHandler(stoq)
-    log.setLevel(logging.DEBUG)
+    root = logging.getLogger()
+    root.addHandler(stoq)
 
     if mask:
         stoq.addFilter(ReversedGlobalFilter([(mask, logging.DEBUG)]))
@@ -126,7 +125,9 @@ def _create_console():
     console.setLevel(logging.DEBUG)
     console.setFormatter(logging.Formatter(
         "%(asctime)s %(message)s", datefmt='%T'))
-    logging.getLogger().addHandler(console)
+    root = logging.getLogger()
+    root.addHandler(console)
+    root.setLevel(logging.DEBUG)
 
     console_filter = ReversedGlobalFilter()
     console.addFilter(console_filter)
