@@ -478,11 +478,7 @@ class SlaveView(gobject.GObject):
 
         self._broker = brokerclass(self, controller)
 
-#    def _setup_keypress_handler(self, keypress_handler):
-#        # Only useful in BaseView and derived classes
-#        # XXX: support slaveview correctly
-#        log.warn("Tried to setup a keypress handler for %s "
-#              "but no toplevel window exists to attach to" % self)
+        self.toplevel.connect("key-press-event", controller.on_key_press)
 
     #
     # Slave handling
