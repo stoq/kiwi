@@ -82,7 +82,8 @@ def set_log_file(filename, mask=None):
     root.addHandler(file_handler)
 
     if mask:
-        file_filter = ReversedGlobalFilter([(mask, logging.DEBUG)])
+        file_filter = ReversedGlobalFilter()
+        file_filter.add_filter(mask, logging.DEBUG)
         file_handler.addFilter(file_filter)
 
 def set_log_level(name, level):
