@@ -133,6 +133,8 @@ def _create_console():
     root.setLevel(logging.DEBUG)
 
     console_filter = ReversedGlobalFilter()
+    # Always display warnings or higher on the console
+    console_filter.add_filter('*', logging.WARNING)
     console.addFilter(console_filter)
 
     _read_log_levels(console_filter)
