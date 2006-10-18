@@ -50,15 +50,15 @@ Examples::
 
     KIWI_LOG="stoq*:5"
 
-will print all the messages in a domain starting with stoq with DEBUG or higher.
+will print all the messages in a domain starting with stoq with DEBUG or higher::
 
     KIWI_LOG="kiwi*:4,stoq.*:5"
 
 will print all the messages with INFO or higher in all domains starting with kiwi,
 and all the messages in the stoq.* domains which are DEBUG or higher
 
-Inspiration for the syntax is taken from the debugging facilities of the
-GStreamer multimedia framework.
+Inspiration for the syntax is taken from the U{debugging facilities<http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstInfo.html#id2857358>} of the
+U{GStreamer<http://www.gstreamer.net>} multimedia framework.
 """
 
 import fnmatch
