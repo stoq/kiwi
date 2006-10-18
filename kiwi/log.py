@@ -21,6 +21,46 @@
 # Author(s): Johan Dahlin     <jdahlin@async.com.br>
 #
 
+"""
+Extension to the logging module
+
+This module defines a couple of extensions to the logging module included
+in the python standard distribution.
+
+It creates an additional logging handler that print log records on the
+standard output. This handler is only showing records which has a level
+set to logging.WARNING or higher by default.
+The messages printed by this handler can be modified by using the environment
+variable called KIWI_LOG.
+
+The syntax for the string which KIWI_LOG points to is the following::
+
+    domain ':' level [, domain ':', level]
+
+domain can contain wildcards such as * and ?
+level is an integer 1-5 which defines the minimal level:
+
+  - B{5}: DEBUG
+  - B{4}: INFO
+  - B{3}: WARNING
+  - B{2}: ERROR
+  - B{1}: CRITICAL
+
+Examples::
+
+    KIWI_LOG="stoq*:5"
+
+will print all the messages in a domain starting with stoq with DEBUG or higher.
+
+    KIWI_LOG="kiwi*:4,stoq.*:5"
+
+will print all the messages with INFO or higher in all domains starting with kiwi,
+and all the messages in the stoq.* domains which are DEBUG or higher
+
+Inspiration for the syntax is taken from the debugging facilities of the
+GStreamer multimedia framework.
+"""
+
 import fnmatch
 import logging
 import os
@@ -60,7 +100,7 @@ class ReversedGlobalFilter(logging.Filter):
 
     def filter(self, record):
         for f, level in self.filters:
-            if (record.levelno >= level and
+            if (record.levelno > level and
                 fnmatch.fnmatch(record.name, f)):
                 return True
 
@@ -121,7 +161,6 @@ def _create_console():
     global _filter, _console
 
     console = logging.StreamHandler()
-    console.setLevel(logging.DEBUG)
     console.setFormatter(logging.Formatter(
         "%(asctime)s %(message)s", datefmt='%T'))
     root = logging.getLogger()
