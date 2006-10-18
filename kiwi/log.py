@@ -51,13 +51,9 @@ class ReversedGlobalFilter(logging.Filter):
     is to not show the message, you need to add custom filters for all
     the records you wish to see
     """
-    def __init__(self, filters=None):
-        """
-        @param filters: a list of tuples, (name, level),
-          name can include wildcards: * or ?
-        """
+    def __init__(self):
         logging.Filter.__init__(self)
-        self.filters = filters or []
+        self.filters = []
 
     def add_filter(self, f, level=logging.DEBUG):
         self.filters.append((f, level))
