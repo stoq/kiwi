@@ -74,15 +74,16 @@ def set_log_file(filename, mask=None):
     @param filename:
     @param mask: optional
     """
-    stoq = logging.FileHandler(filename, 'w')
-    stoq.setFormatter(logging.Formatter(
+    file_handler = logging.FileHandler(filename, 'w')
+    file_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(name)-18s %(levelname)-8s %(message)s',
         datefmt='%F %T'))
     root = logging.getLogger()
-    root.addHandler(stoq)
+    root.addHandler(file_handler)
 
     if mask:
-        stoq.addFilter(ReversedGlobalFilter([(mask, logging.DEBUG)]))
+        file_filter = ReversedGlobalFilter([(mask, logging.DEBUG)])
+        file_handler.addFilter(file_filter)
 
 def set_log_level(name, level):
     """
