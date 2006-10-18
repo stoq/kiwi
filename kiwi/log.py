@@ -64,7 +64,8 @@ class ReversedGlobalFilter(logging.Filter):
 
     def filter(self, record):
         for f, level in self.filters:
-            if fnmatch.fnmatch(record.name, f):
+            if (record.levelno >= level and
+                fnmatch.fnmatch(record.name, f)):
                 return True
 
         return False
