@@ -154,7 +154,7 @@ class currency(Decimal):
         return currency
 
     def __repr__(self):
-        return '<currency %s> ' % self.format()
+        return '<currency %s>' % self.format()
 
 _DecimalConverter = type(converter.get_converter(Decimal))
 
