@@ -20,6 +20,7 @@
 #
 # Author(s): Lorenzo Gil Sanchez <lgs@sicem.biz>
 #            Johan Dahlin <jdahlin@async.com.br>
+#            Ronaldo Maia <romaia@async.com.br>
 #
 
 """Data type converters with locale and currency support.
@@ -117,7 +118,7 @@ class ConverterRegistry:
     def get_converters(self, base_classes=None):
         if base_classes is None:
             return self._converters.values()
-        
+
         converters = []
         if object in base_classes:
             #: Ugly, but cannot remove from tuple!
