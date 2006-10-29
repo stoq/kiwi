@@ -38,7 +38,7 @@ from kiwi.datatypes import converter, number, Decimal
 from kiwi.currency import currency # after datatypes
 from kiwi.enums import Alignment
 from kiwi.log import Logger
-from kiwi.python import slicerange
+from kiwi.python import enum, slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 
 _ = lambda m: gettext.dgettext('kiwi', m)
@@ -242,7 +242,8 @@ class Column(PropertyObject, gobject.GObject):
             data_type == currency or
             data_type == datetime.date or
             data_type == datetime.datetime or
-            data_type == datetime.time):
+            data_type == datetime.time or
+            issubclass(data_type, enum)):
             conv = converter.get_converter(data_type)
             text = conv.as_string(data, format=self.format or None)
         elif self.format_func:
@@ -838,6 +839,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
         if column.use_stock:
             cell_data_func = self._cell_data_pixbuf_func
+        elif issubclass(column.data_type, enum):
+            cell_data_func = self._cell_data_combo_func
         else:
             cell_data_func = self._cell_data_text_func
 
@@ -934,6 +937,25 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             prop = 'pixbuf'
             if column.editable:
                 raise TypeError("use-stock columns cannot be editable")
+        elif issubclass(data_type, enum):
+            if data_type is enum:
+                raise TypeError("data_type must be a subclass of enum")
+
+            model = gtk.ListStore(str, object)
+            items = data_type.names.items()
+            items.sort()
+            for key, value in items:
+                model.append((key.lower().capitalize(), value))
+
+            renderer =  gtk.CellRendererCombo()
+            renderer.set_property('model', model)
+            renderer.set_property('text-column', 0)
+            renderer.set_property('has-entry', True)
+            if column.editable:
+                renderer.set_property('editable', True)
+                renderer.connect('edited', self._on_renderer_combo__edited,
+                                 self._model, column.attribute, column)
+            prop = 'model'
         elif issubclass(data_type, (datetime.date, datetime.time,
                                     basestring, number,
                                     currency)):
@@ -1101,6 +1123,14 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         pixbuf = self.render_icon(data, column.icon_size)
         renderer.set_property(renderer_prop, pixbuf)
 
+    def _cell_data_combo_func(self, tree_column, renderer, model, treeiter,
+                              (column, renderer_prop)):
+        row = model[treeiter]
+        data = column.get_attribute(row[COL_MODEL],
+                                    column.attribute, None)
+        text = column.as_string(data)
+        renderer.set_property('text', text.lower().capitalize())
+
     def _on_renderer__toggled(self, renderer, path, column):
         setattr(self._model[path][COL_MODEL], column.attribute,
                 not renderer.get_active())
@@ -1144,6 +1174,22 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                                   model, attr, column, from_string):
         obj = model[path][COL_MODEL]
         value = from_string(text)
+        setattr(obj, attr, value)
+        self.emit('cell-edited', obj, attr)
+
+    def _on_renderer_combo__edited(self, renderer, path, text,
+                                  model, attr, column):
+        obj = model[path][COL_MODEL]
+        if not text:
+            return
+
+        value_model = renderer.get_property('model')
+        for row in value_model:
+            if row[0] == text:
+                value = row[1]
+                break
+        else:
+            raise AssertionError
         setattr(obj, attr, value)
         self.emit('cell-edited', obj, attr)
 

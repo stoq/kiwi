@@ -6,10 +6,11 @@ import sys
 
 from gtk import gdk
 
-from kiwi.currency import currency
 from kiwi.datatypes import converter, ValidationError, ValueUnset, \
      Decimal, BaseConverter
+from kiwi.currency import currency
 from kiwi.environ import environ
+from kiwi.python import enum
 
 # pixbuf converter
 from kiwi.ui import proxywidget
@@ -388,6 +389,21 @@ class PixbufTest(unittest.TestCase):
         pixbuf = self.conv.from_string(png_string)
         self.assertEqual(pixbuf.get_width(), 17)
         self.assertEqual(pixbuf.get_height(), 17)
+
+class EnumTest(unittest.TestCase):
+    def testSimple(self):
+        class status(enum):
+            (OPEN, CLOSE) = range(2)
+
+        conv = converter.get_converter(status)
+        self.assertEqual(conv.type, status)
+        conv2 = converter.get_converter(status)
+        self.assertEqual(conv, conv2)
+
+        self.assertEqual(conv.from_string('OPEN'), status.OPEN)
+        self.assertEqual(conv.as_string(status.CLOSE), 'CLOSE')
+        self.assertRaises(ValidationError, conv.from_string, 'FOO')
+        self.assertRaises(ValidationError, conv.as_string, object())
 
 if __name__ == "__main__":
     unittest.main()

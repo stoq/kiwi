@@ -1,3 +1,13 @@
+2006-10-29  Johan Dahlin  <johan@gnome.org>
+
+	* kiwi/datatypes.py:
+	* kiwi/ui/objectlist.py:
+	* examples/list/enumcombo.py:
+	* tests/test_datatypes.py:
+	Add support an enum data type and tests.
+	Add support for displaying an enum as a combo cell renderer in
+	the object list and example
+
 2006-10-17  Gustavo J. A. M. Carneiro  <gjc@gnome.org>
 
 	* kiwi/tasklet.py:

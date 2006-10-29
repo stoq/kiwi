@@ -46,6 +46,7 @@ import time
 
 from kiwi import ValueUnset
 from kiwi.enums import Alignment
+from kiwi.python import enum
 
 try:
     from decimal import Decimal, InvalidOperation
@@ -110,6 +111,14 @@ class ConverterRegistry:
         del self._converters[ctype]
 
     def get_converter(self, converter_type):
+        # This is a hack:
+        # If we're a subclass of enum, create a dynamic subclass on the
+        # fly and register it, it's necessary for enum.from_string to work.
+        if (issubclass(converter_type, enum) and
+            not converter_type in self._converters):
+            self.add(type(enum.__class__.__name__ + 'EnumConverter',
+                       (_EnumConverter,), dict(type=converter_type)))
+
         try:
             return self._converters[converter_type]
         except KeyError:
@@ -575,6 +584,26 @@ class _ObjectConverter(BaseConverter):
     as_string = None
     from_string = None
 converter.add(_ObjectConverter)
+
+class _EnumConverter(BaseConverter):
+    type = enum
+    name = _('Enum')
+
+    def as_string(self, value, format=None):
+        if not isinstance(value, self.type):
+            raise ValidationError(
+                "value must be an instance of %s, not %r" % (
+                self.type, value))
+        return value.name
+
+    def from_string(self, value):
+        names = self.type.names
+        if not value in names:
+            raise ValidationError(
+                "Invalid value %s for enum %s" % (value, self.type))
+        return names[value]
+
+converter.add(_EnumConverter)
 
 def lformat(format, value):
     """Like locale.format but with grouping enabled"""
