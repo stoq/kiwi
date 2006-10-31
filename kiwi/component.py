@@ -92,6 +92,9 @@ class _UtilityHandler(object):
 
         return self._utilities.pop(iface)
 
+    def clean(self):
+        self._utilities = {}
+
 def provide_utility(iface, utility, replace=False):
     """
     Set the utility for the named interface. If the utility is already
@@ -100,7 +103,7 @@ def provide_utility(iface, utility, replace=False):
     @param iface: interface to set the utility for.
     @param utility: utility providing the interface.
     """
-    _handler.provide(iface, utility, replace)
+    utilities.provide(iface, utility, replace)
 
 def get_utility(iface, default=ValueUnset):
     """
@@ -113,7 +116,7 @@ def get_utility(iface, default=ValueUnset):
     @returns: the utility
     """
 
-    return _handler.get(iface, default)
+    return utilities.get(iface, default)
 
 def remove_utility(iface):
     """
@@ -125,8 +128,8 @@ def remove_utility(iface):
     @returns: the removed utility
     """
 
-    return _handler.remove(iface)
+    return utilities.remove(iface)
 
-_handler = _UtilityHandler()
+utilities = _UtilityHandler()
 
 
