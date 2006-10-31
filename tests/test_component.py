@@ -1,7 +1,7 @@
 import unittest
 
 from kiwi.component import AlreadyImplementedError, Interface, \
-     get_utility, provide_utility, remove_utility, implements
+     get_utility, provide_utility, remove_utility, implements, utilities
 
 class IBanana(Interface):
     pass
@@ -11,9 +11,7 @@ o = Obj()
 
 class TestUtilities(unittest.TestCase):
     def tearDown(self):
-        # Yey, yey
-        from kiwi.component import _handler
-        _handler._utilities = {}
+        utilities.clean()
 
     def testGet(self):
         self.assertEqual(None, get_utility(IBanana, None))
