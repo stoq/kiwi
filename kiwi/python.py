@@ -108,6 +108,13 @@ class Settable:
         for k, v in kw.iteritems():
             setattr(self, k, v)
 
+    def getattributes(self):
+        """
+        Fetches the attributes used to create this object
+        @returns: a dictionary with attributes
+        """
+        return self._attrs
+
     def __repr__(self):
         return '<%s %s>' % (self.__class__.__name__,
                             ', '.join(

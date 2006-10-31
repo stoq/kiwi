@@ -58,9 +58,9 @@ class TestWaitForTimeout(unittest.TestCase):
         t2 = self.time()
         self.assertEqual(task.state, tasklet.Tasklet.STATE_ZOMBIE)
         self.assertEqual(task.return_value, "return-val")
-        ## check that elapsed time aproximately 100 ms second, give or take 10 ms
+        ## check that elapsed time aproximately 100 ms second, give or take 50 ms
         ## (glib doesn't guarantee precise timing)
-        self.assert_(math.fabs((t2 - t1) - 0.1) < 0.01, "elapsed time was %f, expected 0.1" % ((t2 - t1),))
+        self.assert_(math.fabs((t2 - t1) - 0.1) < 0.05, "elapsed time was %f, expected 0.1" % ((t2 - t1),))
 
 class TestMessages(unittest.TestCase):
     def testPing(self):
