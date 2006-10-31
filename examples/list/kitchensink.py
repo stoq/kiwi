@@ -29,7 +29,7 @@ class Person:
         self.bonus = random.randint(0, 1) and True or False
 
     def __repr__(self):
-        return '<Person %s>' % self._name
+        return '<Person %s>' % self.name
 
 class MyColumn(Column):
     pass
