@@ -1611,16 +1611,19 @@ class ObjectTree(ObjectList):
         ObjectList.__init__(self, columns, objects, mode, sortable, model)
 
     def _append_internal(self, parent, instance, select, prepend):
-        if parent is not None and not isinstance(parent, ObjectRow):
-            raise TypeError("parent must be an ObjectRow or None")
+        iters = self._iters
+        parent_id = id(parent)
+        if isinstance(parent, ObjectRow):
+            parent_iter = parent.iter
+        elif parent_id in iters:
+            parent_iter = iters[parent_id]
+        elif parent is None:
+            parent_iter = None
+        else:
+            raise TypeError("parent must be an Object, ObjectRow or None")
 
         # Freeze and save original selection mode to avoid blinking
         self._treeview.freeze_notify()
-
-        if parent:
-            parent_iter = parent.iter
-        else:
-            parent_iter = None
 
         if prepend:
             row_iter = self._model.prepend(parent_iter, (instance,))
@@ -1640,7 +1643,7 @@ class ObjectTree(ObjectList):
 
     def append(self, parent, instance, select=False):
         """
-        @param parent: ObjectRow of the parent
+        @param parent: Object, ObjectRow or None, representing the parent
         @param instance: the instance to be added
         @param select: select the row
         """
@@ -1648,7 +1651,7 @@ class ObjectTree(ObjectList):
 
     def prepend(self, parent, instance, select=False):
         """
-        @param parent: ObjectRow of the parent
+        @param parent: Object, ObjectRow or None, representing the parent
         @param instance: the instance to be added
         @param select: select the row
         """
