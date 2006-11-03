@@ -1599,10 +1599,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
 type_register(ObjectList)
 
-class ObjectRow(object):
-    def __init__(self, iter):
-        self.iter = iter
-
 class ObjectTree(ObjectList):
     def __init__(self, columns=[], objects=None, mode=gtk.SELECTION_BROWSE,
                  sortable=False, model=None):
@@ -1613,9 +1609,7 @@ class ObjectTree(ObjectList):
     def _append_internal(self, parent, instance, select, prepend):
         iters = self._iters
         parent_id = id(parent)
-        if isinstance(parent, ObjectRow):
-            parent_iter = parent.iter
-        elif parent_id in iters:
+        if parent_id in iters:
             parent_iter = iters[parent_id]
         elif parent is None:
             parent_iter = None
@@ -1639,21 +1633,23 @@ class ObjectTree(ObjectList):
             self._select_and_focus_row(row_iter)
         self._treeview.thaw_notify()
 
-        return ObjectRow(row_iter)
+        return instance
 
     def append(self, parent, instance, select=False):
         """
-        @param parent: Object, ObjectRow or None, representing the parent
+        @param parent: Object or None, representing the parent
         @param instance: the instance to be added
         @param select: select the row
+        @returns: the appended object
         """
         return self._append_internal(parent, instance, select, prepend=False)
 
     def prepend(self, parent, instance, select=False):
         """
-        @param parent: Object, ObjectRow or None, representing the parent
+        @param parent: Object or None, representing the parent
         @param instance: the instance to be added
         @param select: select the row
+        @returns: the prepended object
         """
         return self._append_internal(parent, instance, select, prepend=True)
 
