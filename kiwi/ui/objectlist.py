@@ -1657,6 +1657,36 @@ class ObjectTree(ObjectList):
         """
         return self._append_internal(parent, instance, select, prepend=True)
 
+    def expand(self, instance, open_all=True):
+        """
+        This method opens the row specified by path so its children
+        are visible.
+        @param instance: an instance to expand at
+        @param open_all: If True, expand all rows, otherwise just the
+        immediate children
+        """
+        objid = id(instance)
+        if not objid in self._iters:
+            raise ValueError("instance %r is not in the list" % instance)
+        treeiter = self._iters[objid]
+        
+        self.get_treeview().expand_row(
+            self._model[treeiter].path, open_all)
+        
+    def collapse(self, instance):
+        """
+        This method collapses the row specified by path
+        (hides its child rows, if they exist).
+        @param instance: an instance to collapse
+        """
+        objid = id(instance)
+        if not objid in self._iters:
+            raise ValueError("instance %r is not in the list" % instance)
+        treeiter = self._iters[objid]
+
+        self.get_treeview().collapse_row(
+            self._model[treeiter].path)
+
 type_register(ObjectTree)
 
 class ListLabel(gtk.HBox):
