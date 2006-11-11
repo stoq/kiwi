@@ -68,6 +68,8 @@ class HyperLink(PropertyObject, gtk.EventBox):
         @type text: str
         """
         gtk.EventBox.__init__(self)
+        self.set_above_child(False)
+        self.set_visible_window(False)
         PropertyObject.__init__(self)
         self._gproperties = {}
         if text is not None:
