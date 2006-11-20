@@ -1,8 +1,7 @@
 import os
-import sys
-import traceback
-import unittest
 import popen2
+import sys
+import unittest
 
 def setup(self, rootdir):
     self._dir = os.getcwd()
