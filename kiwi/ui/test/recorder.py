@@ -38,7 +38,6 @@ import atexit
 import sys
 import time
 
-import gobject
 from gtk import gdk
 import gtk
 
@@ -48,9 +47,11 @@ from kiwi.ui.objectlist import ObjectList
 
 try:
     from gobject import add_emission_hook
+    add_emission_hook # pyflakes
 except ImportError:
     try:
         from kiwi._kiwi import add_emission_hook
+        add_emission_hook # pyflakes
     except ImportError:
         add_emission_hook = None
 
@@ -369,6 +370,7 @@ class Recorder(WidgetIntrospecter):
         self._events = []
         self._listened_objects = []
         self._event_types = self._configure_event_types()
+        self._args = None
 
         # This is sort of a hack, but there are no other realiable ways
         # of actually having something executed after the application
@@ -384,6 +386,7 @@ class Recorder(WidgetIntrospecter):
 
     def execute(self, args):
         self._start_timestamp = time.time()
+        self._args = args
 
         # Run the script
         sys.argv = args
@@ -478,6 +481,8 @@ class Recorder(WidgetIntrospecter):
             fd = open(self._filename, 'w')
         except IOError:
             raise SystemExit("Could not write: %s" % self._filename)
+        fd.write("... -*- Mode: doctest -*-\n")
+        fd.write("run: %s\n" % ' '.join(self._args))
         fd.write(">>> from kiwi.ui.test.runner import runner\n")
         fd.write(">>> runner.start()\n")
 
