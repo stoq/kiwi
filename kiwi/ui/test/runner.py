@@ -200,10 +200,10 @@ def play_file(script, filename=None, args=None):
         pos = data.find('run:')
         if pos != -1:
             rest = data[pos+5:]
-
             # run: foo --arg
-            if '  ' in rest:
+            if ' ' in rest:
                 filename, args = rest.split(' ', 1)
+                args = [args]
             # run: foo
             else:
                 filename = rest
