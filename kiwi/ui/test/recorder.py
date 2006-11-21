@@ -27,7 +27,8 @@ User interface event recorder and serializer.
 This module provides an interface for creating, listening to
 and saving events.
 It uses the gobject introspection base class
-L{kiwi.ui.test.common.Base} to gather widgets, windows and other objects.
+L{kiwi.ui.test.common.WidgetIntrospecter} to gather widgets, windows and
+other objects.
 
 The user interfaces are saved in a format so they can easily be played
 back by simply executing the script through a standard python interpreter.
@@ -35,14 +36,23 @@ back by simply executing the script through a standard python interpreter.
 
 import atexit
 import sys
+import time
 
 import gobject
 from gtk import gdk
 import gtk
 
 from kiwi.log import Logger
-from kiwi.ui.test.common import Base
+from kiwi.ui.test.common import WidgetIntrospecter
 from kiwi.ui.objectlist import ObjectList
+
+try:
+    from gobject import add_emission_hook
+except ImportError:
+    try:
+        from kiwi._kiwi import add_emission_hook
+    except ImportError:
+        add_emission_hook = None
 
 _events = []
 
@@ -151,9 +161,6 @@ class WindowDeleteEvent(Event):
     This event represents a user click on the close button in the
     window manager.
     """
-
-    def serialize(self):
-        return 'delete_window("%s")' % self.name
 
 #
 # Signal Events
@@ -340,7 +347,7 @@ register_event_type(ObjectListDoubleClick)
 
 # register_event_type(KiwiComboBoxChangedEvent)
 
-class Recorder(Base):
+class Recorder(WidgetIntrospecter):
     """
     Recorder takes care of attaching events to widgets, when the appear,
     and creates the events when the user is interacting with some widgets.
@@ -349,18 +356,19 @@ class Recorder(Base):
     L{kiwi.ui.test.player.Player}.
     """
 
-    def __init__(self, filename, args):
+    def __init__(self, filename):
         """
         @param filename: name of the script
         @param args: command line used to run the script
         """
-        Base.__init__(self)
+        WidgetIntrospecter.__init__(self)
+        self.register_event_handler()
+        self.connect('window-removed', self.window_removed)
+
         self._filename = filename
-        self._args = args
         self._events = []
         self._listened_objects = []
         self._event_types = self._configure_event_types()
-        self._has_emission_hook = False
 
         # This is sort of a hack, but there are no other realiable ways
         # of actually having something executed after the application
@@ -370,10 +378,12 @@ class Recorder(Base):
         # Register a hook that is called before normal delete-events
         # because if it's connected using a normal callback it will not
         # be called if the application returns True in it's signal handler.
-        if hasattr(gobject, 'add_emission_hook'):
-            gobject.add_emission_hook(gtk.Window, 'delete-event',
-                                      self._emission_window__delete_event)
-            self._has_emission_hook = True
+        if add_emission_hook:
+            add_emission_hook(gtk.Window, 'delete-event',
+                              self._emission_window__delete_event)
+
+    def execute(self, args):
+        self._start_timestamp = time.time()
 
         # Run the script
         sys.argv = args
@@ -397,7 +407,7 @@ class Recorder(Base):
 
     def _add_event(self, event):
         log("Added event %s" % event.serialize())
-        self._events.append(event)
+        self._events.append((event, time.time()))
 
     def _listen_event(self, object, event_type):
         if not issubclass(event_type, SignalEvent):
@@ -419,15 +429,15 @@ class Recorder(Base):
                 pass
         event_type.connect(object, event_type.signal_name, on_signal)
 
-    def window_removed(self, window):
+    def window_removed(self, wi, window, name):
         # It'll already be trapped if we can use an emission hook
         # skip it here to avoid duplicates
-        if self._has_emission_hook:
+        if not add_emission_hook:
             return
         self._add_event(WindowDeleteEvent(window))
 
     def parse_one(self, toplevel, gobj):
-        Base.parse_one(self, toplevel, gobj)
+        WidgetIntrospecter.parse_one(self, toplevel, gobj)
 
         # mark the object as "listened" to ensure we'll always
         # receive unique objects
@@ -461,33 +471,42 @@ class Recorder(Base):
         finished executing.
         """
 
+        if not self._events:
+            return
+
         try:
             fd = open(self._filename, 'w')
         except IOError:
             raise SystemExit("Could not write: %s" % self._filename)
-        fd.write("from kiwi.ui.test.player import Player\n"
-                 "\n"
-                 "player = Player(%s)\n"
-                 "app = player.get_app()\n" % repr(self._args))
+        fd.write(">>> from kiwi.ui.test.runner import runner\n")
+        fd.write(">>> runner.start()\n")
 
         windows = {}
 
-        for event in self._events:
+        last = self._events[0][1]
+        fd.write('>>> runner.sleep(%2.1f)\n' % (last - self._start_timestamp,))
+
+        for event, timestamp in self._events:
             toplevel = event.toplevel_name
             if not toplevel in windows:
-                fd.write('\n'
-                         'player.wait_for_window("%s")\n' % toplevel)
+                fd.write('>>> %s = runner.waitopen("%s")\n' % (toplevel,
+                                                               toplevel))
                 windows[toplevel] = True
 
             if isinstance(event, WindowDeleteEvent):
-                fd.write("player.%s\n\n" % (event.serialize()))
+                fd.write(">>> %s.delete()\n" % (event.name,))
+                fd.write(">>> runner.waitclose('%s')\n" % (event.name,))
                 if not event.name in windows:
                     # Actually a bug
                     continue
                 del windows[event.name]
             else:
-                fd.write("app.%s.%s\n" % (toplevel,
-                                          event.serialize()))
+                fd.write(">>> %s.%s\n" % (toplevel, event.serialize()))
 
-        fd.write('player.finish()\n')
+            delta = timestamp - last
+            if delta > 0.05:
+                fd.write('>>> runner.sleep(%2.1f)\n' % (delta,))
+            last = timestamp
+
+        fd.write('>>> runner.quit()\n')
         fd.close()

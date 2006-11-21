@@ -28,23 +28,29 @@ import optparse
 from kiwi.log import set_log_level
 
 def _play(options, filename, args):
-    from kiwi.ui.test.player import play_file
+    from kiwi.ui.test.runner import play_file
 
-    play_file(filename, args)
+    play_file(filename, options.command, args)
 
 def _record(options, filename, args):
     from kiwi.ui.test.recorder import Recorder
 
-    Recorder(filename, args)
+    recorder = Recorder(filename)
+    recorder.execute(args)
 
 def main(args):
     parser = optparse.OptionParser()
+    parser.add_option('', '--command', action="store",
+                      dest="command")
     parser.add_option('', '--record', action="store",
                       dest="record")
     parser.add_option('-v', '--verbose', action="store_true",
                       dest="verbose")
     options, args = parser.parse_args(args)
 
+    if options.record and options.command:
+        raise SystemExit(
+            "You can't specify a command and recording at the same time")
     if options.record:
         if options.verbose:
             set_log_level('recorder', 5)

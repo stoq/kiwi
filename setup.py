@@ -12,8 +12,29 @@ creating Python applications using PyGTK and libglade much
 simpler.
 """
 
+import commands
+from distutils.extension import Extension
+import sys
+
 from kiwi import kiwi_version
 from kiwi.dist import setup, listfiles, listpackages, get_site_packages_dir
+
+import  gtk
+
+ext_modules = []
+
+# Build a helper module for testing on gtk+ versions lower than 2.10.
+# Don't build it on windows due to easy availability compilers and
+# the lack of pkg-config.
+if gtk.pygtk_version < (2, 10) and sys.platform != 'win32':
+    pkgs = 'gdk-2.0 gtk+-2.0 pygtk-2.0'
+    cflags = commands.getoutput('pkg-config --cflags %s' % pkgs)
+    libs = commands.getoutput('pkg-config --libs %s' % pkgs)
+    include_dirs = [part.strip() for part in cflags.split('-I') if part]
+    libraries = [part.strip() for part in libs.split('-l') if part]
+    ext_modules.append(Extension('kiwi/_kiwi', ['kiwi/_kiwi.c'],
+                                 include_dirs=include_dirs,
+                                 libraries=libraries))
 
 setup(name="kiwi",
       version=".".join(map(str, kiwi_version)),
@@ -44,6 +65,7 @@ setup(name="kiwi",
       scripts=['bin/kiwi-i18n',
                'bin/kiwi-ui-test'],
       packages=listpackages('kiwi'),
+      ext_modules=ext_modules,
       resources=dict(locale='$prefix/share/locale'),
       global_resources=dict(glade='$datadir/glade',
                             pixmap='$datadir/pixmaps'),

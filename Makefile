@@ -6,6 +6,9 @@ TARBALL=$(PACKAGE)-$(VERSION).tar.gz
 DEBVERSION=$(shell dpkg-parsechangelog -ldebian/changelog |grep Version|cut -d: -f3)
 DLDIR=/mondo/htdocs/download.stoq.com.br/ubuntu
 
+all:
+	python setup.py build_ext -i
+
 clean-docs:
 	rm -fr doc/api
 	rm -fr doc/howto
@@ -14,6 +17,7 @@ clean: clean-docs
 	debclean
 	rm -fr $(BUILDDIR)
 	rm -f MANIFEST
+	rm -fr kiwi/_kiwi.so
 
 docs:
 	make -s -C doc api howto
