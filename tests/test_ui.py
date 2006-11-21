@@ -11,9 +11,9 @@ def teardown(self):
     os.chdir(self._dir)
 
 def test_filename(rootdir, filename):
-    cmd = '%s %s %s' % (sys.executable,
-                        os.path.join(rootdir, 'bin', 'kiwi-ui-test'),
-                        os.path.join('tests', 'ui', filename))
+    cmd = '%s %s -v %s' % (sys.executable,
+                           os.path.join(rootdir, 'bin', 'kiwi-ui-test'),
+                           os.path.join('tests', 'ui', filename))
     if sys.platform == 'win32':
         status = os.system(cmd)
     else:
