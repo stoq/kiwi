@@ -194,11 +194,19 @@ def play_file(script, filename=None, args=None):
     if filename is None:
         fd = open(script)
         data = fd.readline()[:-1] + fd.readline()[:-1]
+
+        # Check for run: lines in the doctests
+        # run: ....
         pos = data.find('run:')
         if pos != -1:
-            filename, rest = data[pos+5:].split(' ', 1)
-            if rest:
-                args = rest.split(' ')
+            rest = data[pos+5:]
+
+            # run: foo --arg
+            if '  ' in rest:
+                filename, args = rest.split(' ', 1)
+            # run: foo
+            else:
+                filename = rest
     else:
         if args is None:
             args = []
