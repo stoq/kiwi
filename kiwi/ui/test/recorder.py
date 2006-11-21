@@ -482,7 +482,7 @@ class Recorder(WidgetIntrospecter):
         except IOError:
             raise SystemExit("Could not write: %s" % self._filename)
         fd.write("... -*- Mode: doctest -*-\n")
-        fd.write("run: %s\n" % ' '.join(self._args))
+        fd.write("... run: %s\n" % ' '.join(self._args))
         fd.write(">>> from kiwi.ui.test.runner import runner\n")
         fd.write(">>> runner.start()\n")
 
