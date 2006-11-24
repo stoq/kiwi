@@ -528,6 +528,7 @@ class SlaveView(gobject.GObject):
             new_widget = shell
 
         placeholder = self.get_widget(name)
+        placeholder.set_data('kiwi::slave', self)
 
         if not placeholder:
             raise AttributeError(
