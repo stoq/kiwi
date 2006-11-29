@@ -222,8 +222,11 @@ def listpackages(root, exclude=None):
     """
 
     packages = []
+    if not os.path.exists(root):
+        raise ValueError("%s does not exists" % (root,))
+
     if not os.path.isdir(root):
-        raise ValueError("root must be a directory")
+        raise ValueError("%s must be a directory" % (root,))
 
     if os.path.exists(os.path.join(root, '__init__.py')):
         packages.append(root.replace('/', '.'))
