@@ -537,6 +537,9 @@ class ComboEntry(gtk.HBox):
     def set_label_text(self, text):
         self._popup.set_label_text(text)
 
+    def set_active(self, rowno):
+        self.set_active_iter(self._model[rowno].iter)
+
     # IEasyCombo interface
 
     def clear(self):
