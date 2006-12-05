@@ -1597,6 +1597,27 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         """
         self._treeview.set_headers_visible(value)
 
+    def set_visible_rows(self, rows):
+        """
+        Sets the number of visible rows of the treeview. This is useful to use
+        instead of set_size_request() directly, since you can avoid using raw
+        pixel sizes.
+        @param rows: number of rows to show
+        """
+
+        treeview = self._treeview
+        if treeview.get_headers_visible():
+            treeview.realize()
+            header_h = self._get_header_height()
+        else:
+            header_h = 0
+
+        column = treeview.get_columns()[0]
+        h = column.cell_get_size()[-1]
+
+        focus_padding = treeview.style_get_property('focus-line-width') * 2
+        treeview.set_size_request(-1, header_h + (rows * (h + focus_padding)))
+
 type_register(ObjectList)
 
 class ObjectTree(ObjectList):

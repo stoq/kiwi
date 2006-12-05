@@ -1,3 +1,7 @@
+2006-12-05  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/objectlist.py (ObjectList.set_visible_rows): Impl.
+
 2006-11-29  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/dist.py (listpackages): Provide better error messages.
