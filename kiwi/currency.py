@@ -168,6 +168,9 @@ class _CurrencyConverter(_DecimalConverter):
         self.precision = 2
 
     def as_string(self, value, format=None):
+        if value == ValueUnset:
+            return ''
+
         if not isinstance(value, currency):
             try:
                 value = currency(value)
