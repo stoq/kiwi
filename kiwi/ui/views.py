@@ -239,10 +239,6 @@ class SlaveView(gobject.GObject):
         self._check_reserved()
         self._glade_adaptor = self.get_glade_adaptor()
         self.toplevel = self._get_toplevel()
-        if self.toplevel.flags() & gtk.VISIBLE:
-            log.warn("%s: Toplevel widget %s (%s) is visible; that's probably "
-                     "wrong" % (self.__class__.__name__, self.toplevel,
-                                self.toplevel.get_name()))
 
         # grab the accel groups
         self._accel_groups = gtk.accel_groups_from_object(self.toplevel)
