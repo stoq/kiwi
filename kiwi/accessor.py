@@ -49,8 +49,8 @@ def get_default_getter(model, attr_name, cache):
     attr_name) is returned."""
     func = getattr(model, "get_%s" % attr_name, None)
     if callable(func):
-        log.warning('kgetattr based get_%s method is deprecated, '
-                    'replace it with a property' % attr_name)
+        log.info('kgetattr based get_%s method is deprecated, '
+                 'replace it with a property' % attr_name)
         return func
     else:
         return (model, attr_name)
@@ -64,8 +64,8 @@ def get_default_setter(model, attr_name, cache):
     attr_name) is returned."""
     func = getattr(model, "set_%s" % attr_name, None)
     if callable(func):
-        log.warning('ksetattr based set_%s method is deprecated, '
-                    'replace it with a property' % attr_name)
+        log.info('ksetattr based set_%s method is deprecated, '
+                 'replace it with a property' % attr_name)
         return func
     else:
         return (model, attr_name)
@@ -216,8 +216,8 @@ def kgetattr(model,
 
                 func = getattr(obj, "get_%s" % name, None)
                 if callable(func):
-                    log.warning('kgetattr based get_%s method is deprecated, '
-                                'replace it with a property' % name)
+                    log.info('kgetattr based get_%s method is deprecated, '
+                             'replace it with a property' % name)
                     icode = FAST_METHOD_ACCESS
                     data1 = func.im_func
                     data2 = None
@@ -390,8 +390,8 @@ def ksetattr(model,
 
             func = getattr(model, "set_%s" % attr_name, None)
             if callable(func):
-                log.warning('ksetattr based set_%s method is deprecated, '
-                            'replace it with a property' % attr_name)
+                log.info('ksetattr based set_%s method is deprecated, '
+                         'replace it with a property' % attr_name)
                 icode = FAST_METHOD_ACCESS
                 data1 = func.im_func
                 data2 = None
