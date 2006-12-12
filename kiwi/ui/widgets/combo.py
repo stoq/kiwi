@@ -97,6 +97,10 @@ class _EasyComboBoxHelper(object):
                                 "be strings or tuple/list")
 
         mode = self.mode
+        if mode not in (ComboMode.STRING, ComboMode.DATA):
+            raise TypeError("Incorrect format for itemdata; see "
+                            "docstring for more information")
+
         model = self._combobox.get_model()
 
         values = {}
@@ -124,9 +128,6 @@ class _EasyComboBoxHelper(object):
                 else:
                     values[text] = None
                 model.append((text, data))
-        else:
-            raise TypeError("Incorrect format for itemdata; see "
-                            "docstring for more information")
 
     def append_item(self, label, data=None):
         """ Adds a single item to the Combo. Takes:
