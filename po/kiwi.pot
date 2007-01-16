@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-10-09 12:26-0300\n"
+"POT-Creation-Date: 2007-01-16 12:59-0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,89 +20,93 @@ msgstr ""
 msgid "Currency"
 msgstr ""
 
-#: ../kiwi/currency.py:176 ../kiwi/currency.py:187
+#: ../kiwi/currency.py:179 ../kiwi/currency.py:190
 #, python-format
 msgid "%s can not be converted to a currency"
 msgstr ""
 
-#: ../kiwi/datatypes.py:227
+#: ../kiwi/datatypes.py:237
 msgid "String"
 msgstr ""
 
-#: ../kiwi/datatypes.py:241
+#: ../kiwi/datatypes.py:251
 msgid "Unicode"
 msgstr ""
 
-#: ../kiwi/datatypes.py:255
+#: ../kiwi/datatypes.py:265
 msgid "Integer"
 msgstr ""
 
-#: ../kiwi/datatypes.py:283
+#: ../kiwi/datatypes.py:293
 #, python-format
 msgid "%s could not be converted to an integer"
 msgstr ""
 
-#: ../kiwi/datatypes.py:289
+#: ../kiwi/datatypes.py:299
 msgid "Long"
 msgstr ""
 
-#: ../kiwi/datatypes.py:294
+#: ../kiwi/datatypes.py:304
 msgid "Boolean"
 msgstr ""
 
-#: ../kiwi/datatypes.py:309
+#: ../kiwi/datatypes.py:319
 #, python-format
 msgid "'%s' can not be converted to a boolean"
 msgstr ""
 
-#: ../kiwi/datatypes.py:315
+#: ../kiwi/datatypes.py:325
 msgid "Float"
 msgstr ""
 
-#: ../kiwi/datatypes.py:358 ../kiwi/datatypes.py:378
+#: ../kiwi/datatypes.py:368 ../kiwi/datatypes.py:388
 #, python-format
 msgid "This field requires a number, not %r"
 msgstr ""
 
-#: ../kiwi/datatypes.py:367
+#: ../kiwi/datatypes.py:377
 msgid "Decimal"
 msgstr ""
 
-#: ../kiwi/datatypes.py:522
+#: ../kiwi/datatypes.py:532
 #, python-format
 msgid "This field requires a date of the format \"%s\" and not \"%s\""
 msgstr ""
 
-#: ../kiwi/datatypes.py:527
+#: ../kiwi/datatypes.py:537
 msgid "Time"
 msgstr ""
 
-#: ../kiwi/datatypes.py:542
+#: ../kiwi/datatypes.py:552
 msgid "Date and Time"
 msgstr ""
 
-#: ../kiwi/datatypes.py:557
+#: ../kiwi/datatypes.py:567
 msgid "Date"
 msgstr ""
 
-#: ../kiwi/datatypes.py:572
+#: ../kiwi/datatypes.py:582
 msgid "Object"
 msgstr ""
 
-#: ../kiwi/datatypes.py:629
+#: ../kiwi/datatypes.py:590
+msgid "Enum"
+msgstr ""
+
+#: ../kiwi/datatypes.py:659
 msgid "You have a thousand separator to the right of the decimal point"
 msgstr ""
 
-#: ../kiwi/datatypes.py:641
+#: ../kiwi/datatypes.py:671
 msgid "Inproperly placed thousands separator"
 msgstr ""
 
-#: ../kiwi/datatypes.py:646
+#: ../kiwi/datatypes.py:676
 #, python-format
 msgid "Inproperly placed thousand separators: %r"
 msgstr ""
 
-#: ../kiwi/datatypes.py:664
+#: ../kiwi/datatypes.py:694
 #, python-format
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr ""
@@ -123,12 +127,12 @@ msgstr ""
 msgid "Finish"
 msgstr ""
 
-#: ../kiwi/ui/entry.py:523
+#: ../kiwi/ui/entry.py:527
 #, python-format
 msgid "'%s' is not a valid object"
 msgstr ""
 
-#: ../kiwi/ui/objectlist.py:1723
+#: ../kiwi/ui/objectlist.py:1823
 msgid "Total:"
 msgstr ""
 

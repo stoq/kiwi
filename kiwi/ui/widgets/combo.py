@@ -48,6 +48,8 @@ from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
 from kiwi.ui.widgets.entry import ProxyEntry
 from kiwi.utils import PropertyObject, gproperty
 
+_NONE_PLACEHOLDER = '------'
+
 class _EasyComboBoxHelper(object):
 
     implements(IEasyCombo)
@@ -58,11 +60,20 @@ class _EasyComboBoxHelper(object):
             raise TypeError(
                 "combo needs to be a gtk.ComboBox or ComboEntry instance")
         self._combobox = combobox
+        self._none_allowed = False
 
         model = gtk.ListStore(str, object)
         self._combobox.set_model(model)
 
         self.mode = ComboMode.UNKNOWN
+
+    def set_none_allowed(self, none_allowed):
+        self._none_allowed = none_allowed
+
+        model = self._combobox.get_model()
+
+        if len(model) and model[0][0] != _NONE_PLACEHOLDER:
+            model.prepend((_NONE_PLACEHOLDER, None))
 
     def get_mode(self):
         return self.mode
@@ -102,6 +113,9 @@ class _EasyComboBoxHelper(object):
                             "docstring for more information")
 
         model = self._combobox.get_model()
+
+        if self._none_allowed:
+            model.append((_NONE_PLACEHOLDER, None))
 
         values = {}
         if mode == ComboMode.STRING:
@@ -238,12 +252,13 @@ class ProxyComboBox(PropertyObject, gtk.ComboBox, ProxyWidgetMixin):
 
     __gtype_name__ = 'ProxyComboBox'
     allowed_data_types = (basestring, object) + number
+    gproperty("none-allowed", bool, False, "None Allowed")
 
     def __init__(self):
         gtk.ComboBox.__init__(self)
         ProxyWidgetMixin.__init__(self)
-        PropertyObject.__init__(self)
         self._helper = _EasyComboBoxHelper(self)
+        PropertyObject.__init__(self)
         self.connect('changed', self._on__changed)
         renderer = gtk.CellRendererText()
         self.pack_start(renderer)
@@ -263,6 +278,13 @@ class ProxyComboBox(PropertyObject, gtk.ComboBox, ProxyWidgetMixin):
 
     def _on__changed(self, combo):
         self.emit('content-changed')
+
+    # Properties
+
+    def prop_set_none_allowed(self, value):
+        self._helper.set_none_allowed(value)
+
+        return value
 
     # IProxyWidget
 

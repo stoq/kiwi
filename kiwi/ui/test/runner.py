@@ -81,17 +81,17 @@ class Runner(object):
         log.info('Window added: %s' % (name,))
         self._windows[name] = MagicWindowWrapper(window, ns)
 
-        self._iterate()
+        self.iterate()
 
     def _on_wi__window_removed(self, wi, window, name):
         log.info('Window removed: %s' % (name,))
         del self._windows[name]
 
-        self._iterate()
+        self.iterate()
 
-    # Private
+    # Public API
 
-    def _iterate(self):
+    def iterate(self):
         stmts = self._stmts
         while True:
             if self._pos == len(stmts):
@@ -121,8 +121,6 @@ class Runner(object):
             log.info('Executed %r' % (ex.source[:-1],))
             self._last = time.time()
 
-    # Public API
-
     def quit(self):
         print '* Executed successfully'
         sys.exit(0)
@@ -146,7 +144,7 @@ class Runner(object):
             self._source_id = -1
 
             # Iterate, which will call us again
-            self._iterate()
+            self.iterate()
 
             return False
 
@@ -212,4 +210,9 @@ def play_file(script, filename=None, args=None):
             args = []
 
     sys.argv = [filename] + args[:]
+
+    # Do one initial iteration so we can run some setup code before
+    # creating/using the runner
+    runner.iterate()
+
     execfile(sys.argv[0], globals(), globals())
