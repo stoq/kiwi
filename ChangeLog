@@ -1,3 +1,7 @@
+2007-01-16  Johan Dahlin  <jdahlin@async.com.br>
+
+	* po/fr.po: Added French translation contributed by Benoit Myard.
+
 2006-12-06  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/log.py (ReversedGlobalFilter.filter): Use >= instead of >
