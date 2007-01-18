@@ -407,17 +407,23 @@ DATE_REPLACEMENTS_WIN32 = [
     (re.compile('yy?'), '%y')
     ]
 
+# This "table" contains, associated with each
+# key (ie. strftime "conversion specifications")
+# a tuple, which holds in the first position the
+# mask characters and in the second position
+# a "human-readable" format, used for outputting user
+# messages (see method _BaseDateTimeConverter.convert_format) 
 DATE_MASK_TABLE = {
-    '%m': '00',
-    '%y': '00',
-    '%d': '00',
-    '%Y': '0000',
-    '%H': '00',
-    '%M': '00',
-    '%S': '00',
-    '%T': '00:00:00',
+    '%m': ('00', _('mm')),
+    '%y': ('00', _('yy')),
+    '%d': ('00', _('dd')),
+    '%Y': ('0000', _('yyyy')),
+    '%H': ('00', _('hh')),
+    '%M': ('00', _('mm')),
+    '%S': ('00', _('ss')),
+    '%T': ('00:00:00', _('hh:mm:ss')),
     # FIXME: locale specific
-    '%r': '00:00:00 LL',
+    '%r': ('00:00:00 LL', _('hh:mm:ss LL')),
     }
 
 class _BaseDateTimeConverter(BaseConverter):
@@ -497,7 +503,7 @@ class _BaseDateTimeConverter(BaseConverter):
     def get_mask(self):
         mask = self.get_format()
         for format_char, mask_char in DATE_MASK_TABLE.items():
-            mask = mask.replace(format_char, mask_char)
+            mask = mask.replace(format_char, mask_char[0])
 
         return mask
 
@@ -510,6 +516,13 @@ class _BaseDateTimeConverter(BaseConverter):
             return ''
 
         return value.strftime(format)
+
+    def _convert_format(self, format):
+        "Convert the format string to a 'human-readable' format"
+        for char in DATE_MASK_TABLE.keys():
+            format = format.replace(char, DATE_MASK_TABLE[char][1])
+
+        return format
 
     def from_string(self, value):
         "Convert a string to a date"
@@ -530,7 +543,7 @@ class _BaseDateTimeConverter(BaseConverter):
         except ValueError:
             raise ValidationError(
                 _('This field requires a date of the format "%s" and '
-                  'not "%s"') % (format, value))
+                  'not "%s"') % (self._convert_format(format), value))
 
 class _TimeConverter(_BaseDateTimeConverter):
     type = datetime.time
