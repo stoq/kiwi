@@ -1,3 +1,11 @@
+2007-01-19  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/comboentry.py (_ComboEntryPopup.set_selected_iter): 
+	Try setting the full model if everything else fails.
+	Based on patch by Goedson Teixeira Paixao
+
+	Fixes #3099.
+
 2006-11-11  Marco Antonio Porcho Souza  <maporcho@gmail.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

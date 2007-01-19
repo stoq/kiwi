@@ -312,21 +312,34 @@ class _ComboEntryPopup(gtk.Window):
     def get_selected_iter(self):
         model, treeiter = self._selection.get_selected()
 
-        # if the model currently being used is a TreeModelFiter, convert
+        # if the model currently being used is a TreeModelFilter, convert
         # the iter to be a TreeModel iter (witch is what the user expects)
         if isinstance(model, gtk.TreeModelFilter) and treeiter:
             treeiter = model.convert_iter_to_child_iter(treeiter)
         return treeiter
 
-    def set_selected_iter(self, iter):
+    def set_selected_iter(self, treeiter):
+        """
+        Selects an item in the comboentry given a treeiter
+        @param treeiter: the tree iter to select
+        """
         model = self._treeview.get_model()
 
         # Since the user passed a TreeModel iter, if the model currently
-        # being used is a TreeModelFiter, convert it to be a TreeModelFiter
+        # being used is a TreeModelFilter, convert it to be a TreeModelFilter
         # iter
         if isinstance(model, gtk.TreeModelFilter):
-            iter = model.convert_child_iter_to_iter(iter)
-        self._selection.select_iter(iter)
+            # See #3099 for an explanation why this is needed and a
+            # testcase
+            tmodel = model.get_model()
+            if tmodel.iter_is_valid(treeiter):
+               # revert back to the unfiltered model so we can select
+               # the right object
+               self._treeview.set_model(tmodel)
+               self._selection = self._treeview.get_selection()
+            else:
+                treeiter = model.convert_child_iter_to_iter(treeiter)
+        self._selection.select_iter(treeiter)
 
 type_register(_ComboEntryPopup)
 
