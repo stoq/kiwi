@@ -19,14 +19,22 @@ import sys
 from kiwi import kiwi_version
 from kiwi.dist import setup, listfiles, listpackages, get_site_packages_dir
 
-import  gtk
 
 ext_modules = []
 
 # Build a helper module for testing on gtk+ versions lower than 2.10.
 # Don't build it on windows due to easy availability compilers and
 # the lack of pkg-config.
-if gtk.pygtk_version < (2, 10) and sys.platform != 'win32':
+try:
+    import gobject
+    version = gobject.pygtk_version
+except ImportError:
+    try:
+        import gtk
+        version = gtk.pygtk_version
+    except RuntimeError:
+        version = None
+if  version and (version < (2, 10) and sys.platform != 'win32'):
     pkgs = 'gdk-2.0 gtk+-2.0 pygtk-2.0'
     cflags = commands.getoutput('pkg-config --cflags %s' % pkgs)
     libs = commands.getoutput('pkg-config --libs %s' % pkgs)
