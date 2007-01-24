@@ -3,8 +3,10 @@ VERSION=$(shell python -c "execfile('kiwi/__version__.py'); print '.'.join(map(s
 BUILDDIR=tmp
 PACKAGE=kiwi
 TARBALL=$(PACKAGE)-$(VERSION).tar.gz
-DEBVERSION=$(shell dpkg-parsechangelog -ldebian/changelog |grep Version|cut -d: -f3)
+DEBVERSION=$(shell dpkg-parsechangelog -ldebian/changelog|egrep ^Version|cut -d\  -f2)
 DLDIR=/mondo/htdocs/download.stoq.com.br/ubuntu
+TARBALL_DIR=/mondo/htdocs/download.stoq.com.br/sources
+REV=$(shell LANG=C svn info .|egrep ^Revision:|cut -d\  -f2)
 
 all:
 	python setup.py build_ext -i
@@ -59,12 +61,18 @@ upload:
 	for suffix in "gz" "dsc" "build" "changes"; do \
 	  cp dist/$(PACKAGE)_$(DEBVERSION)*."$$suffix" $(DLDIR); \
 	done
-	cd $(DLDIR) && \
-	cd $(DLDIR) && \
-	  rm -f Release Release.gpg && \
-	  dpkg-scanpackages . /dev/null > $(DLDIR)/Packages && \
-	  dpkg-scansources . /dev/null > $(DLDIR)/Sources && \
-	  apt-ftparchive release . > $(DLDIR)/Release && \
-	  gpg -abs -o Release.gpg Release
+	/mondo/local/bin/update-apt-directory $(DLDIR)
+
+tags:
+	find -name \*.py|xargs ctags
+
+TAGS:
+	find -name \*.py|xargs etags
+
+nightly:
+	debchange -v${DEBVERSION}nightly$(shell date +%Y%m%d)rev${REV}.1 \
+            "Automatic rebuild against revision ${REV}"
+	debuild -us -uc -rfakeroot
+	svn revert debian/changelog
 
 .PHONY: docs web sdist bdist release deb upload upload-release
