@@ -242,3 +242,21 @@ class enum(int):
         return '<%s value %s>' % (
             self.__class__.__name__, self.name)
     __repr__ = __str__
+
+def all(seq):
+    """
+    @returns: True if all items in seq are True
+    """
+    for item in seq:
+        if not item:
+            return False
+    return True
+
+def any(seq):
+    """
+    @returns: True if any item in seq is True
+    """
+    for item in seq:
+        if item:
+            return True
+    return False
