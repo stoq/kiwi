@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-16 12:59-0200\n"
-"PO-Revision-Date: 2006-08-23 14:41-0300\n"
+"POT-Creation-Date: 2007-01-26 13:29-0200\n"
+"PO-Revision-Date: 2007-01-26 13:28-0200\n"
 "Last-Translator: Johan Dahlin <jdahlin@async.com.br>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -68,45 +68,78 @@ msgstr "Detta fältet kräver ett nummer, inte %r"
 msgid "Decimal"
 msgstr "Decimal"
 
-#: ../kiwi/datatypes.py:532
+#: ../kiwi/datatypes.py:417 ../kiwi/datatypes.py:422
+msgid "mm"
+msgstr "mm"
+
+#: ../kiwi/datatypes.py:418
+msgid "yy"
+msgstr "åå"
+
+#: ../kiwi/datatypes.py:419
+msgid "dd"
+msgstr "dd"
+
+#: ../kiwi/datatypes.py:420
+msgid "yyyy"
+msgstr "åååå"
+
+#: ../kiwi/datatypes.py:421
+msgid "hh"
+msgstr "tt"
+
+#: ../kiwi/datatypes.py:423
+msgid "ss"
+msgstr "ss"
+
+#: ../kiwi/datatypes.py:424
+msgid "hh:mm:ss"
+msgstr "tt:mm:ss"
+
+#. FIXME: locale specific
+#: ../kiwi/datatypes.py:426
+msgid "hh:mm:ss LL"
+msgstr "tt:mm:ss LL"
+
+#: ../kiwi/datatypes.py:545
 #, python-format
 msgid "This field requires a date of the format \"%s\" and not \"%s\""
 msgstr "Detta fältet kräver ett datum med formatet \"%s\" och inte \"%s\""
 
-#: ../kiwi/datatypes.py:537
+#: ../kiwi/datatypes.py:550
 msgid "Time"
 msgstr "Tid"
 
-#: ../kiwi/datatypes.py:552
+#: ../kiwi/datatypes.py:565
 msgid "Date and Time"
 msgstr "Datum och tid"
 
-#: ../kiwi/datatypes.py:567
+#: ../kiwi/datatypes.py:580
 msgid "Date"
 msgstr "Datum"
 
-#: ../kiwi/datatypes.py:582
+#: ../kiwi/datatypes.py:595
 msgid "Object"
 msgstr "Objekt"
 
-#: ../kiwi/datatypes.py:590
+#: ../kiwi/datatypes.py:603
 msgid "Enum"
-msgstr ""
+msgstr "Enum"
 
-#: ../kiwi/datatypes.py:659
+#: ../kiwi/datatypes.py:672
 msgid "You have a thousand separator to the right of the decimal point"
 msgstr "Du har en tusenseparator till höger om decimalkommat"
 
-#: ../kiwi/datatypes.py:671
+#: ../kiwi/datatypes.py:684
 msgid "Inproperly placed thousands separator"
 msgstr "Felaktigt placerad tusenseparator"
 
-#: ../kiwi/datatypes.py:676
+#: ../kiwi/datatypes.py:689
 #, python-format
 msgid "Inproperly placed thousand separators: %r"
 msgstr "Felaktigt placerade tusenseparatorer"
 
-#: ../kiwi/datatypes.py:694
+#: ../kiwi/datatypes.py:707
 #, python-format
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr "Du har mer en än decimalkomma (\"%s\") i ditt nummer \"%s\""

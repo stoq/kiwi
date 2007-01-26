@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-16 12:59-0200\n"
+"POT-Creation-Date: 2007-01-26 13:29-0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,45 +68,78 @@ msgstr ""
 msgid "Decimal"
 msgstr ""
 
-#: ../kiwi/datatypes.py:532
+#: ../kiwi/datatypes.py:417 ../kiwi/datatypes.py:422
+msgid "mm"
+msgstr ""
+
+#: ../kiwi/datatypes.py:418
+msgid "yy"
+msgstr ""
+
+#: ../kiwi/datatypes.py:419
+msgid "dd"
+msgstr ""
+
+#: ../kiwi/datatypes.py:420
+msgid "yyyy"
+msgstr ""
+
+#: ../kiwi/datatypes.py:421
+msgid "hh"
+msgstr ""
+
+#: ../kiwi/datatypes.py:423
+msgid "ss"
+msgstr ""
+
+#: ../kiwi/datatypes.py:424
+msgid "hh:mm:ss"
+msgstr ""
+
+#. FIXME: locale specific
+#: ../kiwi/datatypes.py:426
+msgid "hh:mm:ss LL"
+msgstr ""
+
+#: ../kiwi/datatypes.py:545
 #, python-format
 msgid "This field requires a date of the format \"%s\" and not \"%s\""
 msgstr ""
 
-#: ../kiwi/datatypes.py:537
+#: ../kiwi/datatypes.py:550
 msgid "Time"
 msgstr ""
 
-#: ../kiwi/datatypes.py:552
+#: ../kiwi/datatypes.py:565
 msgid "Date and Time"
 msgstr ""
 
-#: ../kiwi/datatypes.py:567
+#: ../kiwi/datatypes.py:580
 msgid "Date"
 msgstr ""
 
-#: ../kiwi/datatypes.py:582
+#: ../kiwi/datatypes.py:595
 msgid "Object"
 msgstr ""
 
-#: ../kiwi/datatypes.py:590
+#: ../kiwi/datatypes.py:603
 msgid "Enum"
 msgstr ""
 
-#: ../kiwi/datatypes.py:659
+#: ../kiwi/datatypes.py:672
 msgid "You have a thousand separator to the right of the decimal point"
 msgstr ""
 
-#: ../kiwi/datatypes.py:671
+#: ../kiwi/datatypes.py:684
 msgid "Inproperly placed thousands separator"
 msgstr ""
 
-#: ../kiwi/datatypes.py:676
+#: ../kiwi/datatypes.py:689
 #, python-format
 msgid "Inproperly placed thousand separators: %r"
 msgstr ""
 
-#: ../kiwi/datatypes.py:694
+#: ../kiwi/datatypes.py:707
 #, python-format
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr ""
