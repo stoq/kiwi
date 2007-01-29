@@ -24,3 +24,5 @@ Update website:
   Add new version to kiwi-www/src/getit.txt
 
 Use release-anouncement.tmpl to write a new announcement
+  Update Y in Subject 
+  Update X in Body
