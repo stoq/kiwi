@@ -360,7 +360,6 @@ class Recorder(WidgetIntrospecter):
     def __init__(self, filename):
         """
         @param filename: name of the script
-        @param args: command line used to run the script
         """
         WidgetIntrospecter.__init__(self)
         self.register_event_handler()
