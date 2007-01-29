@@ -25,8 +25,6 @@
 Common routines used by other parts of the ui test framework.
 """
 
-import sets
-
 import gobject
 import gtk
 from gtk import gdk
@@ -35,9 +33,11 @@ from kiwi.utils import gsignal
 
 try:
     from gtk.gdk import event_handler_set
+    event_handler_set # pyflakes
 except ImportError:
     try:
         from kiwi._kiwi import event_handler_set
+        event_handler_set # pyflakes
     except ImportError:
         event_handler_set = None
 

@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import utils
-
 import unittest
 
 from kiwi.ui.widgets.checkbutton import ProxyCheckButton

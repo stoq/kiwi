@@ -25,6 +25,10 @@ from kiwi.ui.gazpacholoader import HyperLinkAdaptor, ComboEntryAdaptor
 root_library = 'kiwi.ui.widgets'
 widget_prefix = 'Kiwi'
 
+# pyflakes
+HyperLinkAdaptor
+ComboEntryAdaptor
+
 class ColumnDefinitionsAdaptor(object):
     def __init__(self):
         self._editor = ListColumnDefinitionsEditor()
