@@ -4,13 +4,14 @@ Run pyflakes
 Run all tests
 Check buildbot
 Run epydoc, fix all problems:
-  tools/epydoc
+  tools/epyrun
 Update translations:
   bin/kiwi-i18n -pkiwi -u -c
 Update NEWS
 Bump version number:
   kiwi/__version__.py
   doc/howto.tex
+debchange -i
 make release
 Update ChangeLog, add marker
 Commit

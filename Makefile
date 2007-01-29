@@ -1,4 +1,4 @@
-WEBDIR=/mondo/htdocs/async/projects/kiwi
+cWEBDIR=/mondo/htdocs/async/projects/kiwi
 VERSION=$(shell python -c "execfile('kiwi/__version__.py'); print '.'.join(map(str, version))")
 BUILDDIR=tmp
 PACKAGE=kiwi
@@ -45,7 +45,10 @@ deb: sdist
 	mv $(BUILDDIR)/* dist
 	rm -fr $(BUILDDIR)
 
-release: clean sdist bdist deb
+release-deb:
+	debchange -v $(VERSION)-1 "New release"
+
+release: clean release-deb sdist bdist deb
 
 release-tag:
 	svn cp -m "Tag $(VERSION)" . svn+ssh://svn.async.com.br/pub/kiwi/tags/$(VERSION)

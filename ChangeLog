@@ -1,3 +1,19 @@
+=== 1.9.12 ===
+2007-01-29  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Makefile:
+	* NEWS:
+	* debian/changelog:
+	* doc/howto.tex:
+	* doc/release-checklist.txt:
+	* kiwi/__version__.py:
+	* po/fr.po:
+	* po/kiwi.pot:
+	* po/pt_BR.po:
+	* po/sv.po:
+
+	1.9.12
+
 2007-01-19  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/comboentry.py (_ComboEntryPopup.set_selected_iter): 
