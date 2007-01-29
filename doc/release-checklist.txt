@@ -18,7 +18,8 @@ Commit
 make release-tag
 make upload-release
 Add bugzilla version:
-http://bugs/editversions.cgi?action=new&product=Kiwi&submit=Add&version=1.9.x
+  Use your browser, wget won't work
+  http://bugs/editversions.cgi?action=new&product=Kiwi&submit=Add&version=1.9.x
 Update website:
   make web
   Add new version to kiwi-www/src/getit.txt
