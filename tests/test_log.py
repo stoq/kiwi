@@ -14,7 +14,10 @@ class LogTest(unittest.TestCase):
 
     def tearDown(self):
         if os.path.exists(self.filename):
-            os.unlink(self.filename)
+            try:
+                os.unlink(self.filename)
+            except OSError: # win32 permission error
+                pass
 
     def testSetLogFile(self):
         set_log_file(self.filename, 'log')
