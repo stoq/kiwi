@@ -166,8 +166,7 @@ class IconEntry(object):
             else:
                 win.show()
 
-        # Hack: This triggers a .recompute() which is private
-        entry.set_visibility(entry.get_visibility())
+        self._recompute()
         entry.queue_draw()
 
     def construct(self):
@@ -240,6 +239,7 @@ class IconEntry(object):
             #        The text jumps without this
             textw -= 2
             self._text_area.move_resize(textx, texty, textw, texth)
+            self._recompute()
         elif self._pos == gtk.POS_RIGHT:
             self._text_area.resize(textw, texth)
             iconx += textw
@@ -281,3 +281,13 @@ class IconEntry(object):
             self._pos = gtk.POS_LEFT
         else:
             self._pos = gtk.POS_RIGHT
+
+    def _recompute(self):
+        # Hack: This triggers a .recompute() which is private
+        self._entry.insert_text('')
+        # Another option would be to change the visibility:
+        #
+        # visibility = self._entry.get_visibility()
+        # self._entry.set_visibility(not visibility)
+        # self._entry.set_visibility(visibility)
+
