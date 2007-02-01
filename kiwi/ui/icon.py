@@ -95,6 +95,7 @@ class IconEntry(object):
         self._icon_win = None
         self._entry = entry
         self._tooltip = Tooltip(self)
+        self._locked = False
         entry.connect('enter-notify-event',
                       self._on_entry__enter_notify_event)
         entry.connect('leave-notify-event',
@@ -283,8 +284,14 @@ class IconEntry(object):
             self._pos = gtk.POS_RIGHT
 
     def _recompute(self):
+        # Protect against re-entrancy when inserting text, happens in DateEntry
+        if self._locked:
+            return
+
         # Hack: This triggers a .recompute() which is private
+        self._locked = True
         self._entry.insert_text('')
+        self._locked = False
         # Another option would be to change the visibility:
         #
         # visibility = self._entry.get_visibility()
