@@ -25,24 +25,17 @@ ext_modules = []
 # Build a helper module for testing on gtk+ versions lower than 2.10.
 # Don't build it on windows due to easy availability compilers and
 # the lack of pkg-config.
-try:
-    import gtk
-    version = gtk.pygtk_version
-except RuntimeError:
-    try:
-        import gobject
-        version = gobject.pygtk_version
-    except ImportError:
-        version = None
-if version and (version < (2, 10) and sys.platform != 'win32'):
-    pkgs = 'gdk-2.0 gtk+-2.0 pygtk-2.0'
-    cflags = commands.getoutput('pkg-config --cflags %s' % pkgs)
-    libs = commands.getoutput('pkg-config --libs %s' % pkgs)
-    include_dirs = [part.strip() for part in cflags.split('-I') if part]
-    libraries = [part.strip() for part in libs.split('-l') if part]
-    ext_modules.append(Extension('kiwi/_kiwi', ['kiwi/_kiwi.c'],
-                                 include_dirs=include_dirs,
-                                 libraries=libraries))
+if sys.platform != 'win32':
+    version = commands.getoutput('pkg-config pygtk-2.0 --modversion')
+    if version and map(int, version.split('.')) < [2, 10]:
+        pkgs = 'gdk-2.0 gtk+-2.0 pygtk-2.0'
+        cflags = commands.getoutput('pkg-config --cflags %s' % pkgs)
+        libs = commands.getoutput('pkg-config --libs %s' % pkgs)
+        include_dirs = [part.strip() for part in cflags.split('-I') if part]
+        libraries = [part.strip() for part in libs.split('-l') if part]
+        ext_modules.append(Extension('kiwi/_kiwi', ['kiwi/_kiwi.c'],
+                                     include_dirs=include_dirs,
+                                     libraries=libraries))
 
 setup(name="kiwi",
       version=".".join(map(str, kiwi_version)),
