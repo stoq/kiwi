@@ -29,8 +29,7 @@ import datetime
 
 import pango
 
-from kiwi.datatypes import ValidationError, converter, number, \
-     ValueUnset
+from kiwi.datatypes import converter, number, ValueUnset
 from kiwi.decorators import deprecated
 from kiwi.enums import Alignment
 from kiwi.python import deprecationwarn
@@ -155,16 +154,12 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     def read(self):
         mode = self._mode
         if mode == ENTRY_MODE_TEXT:
+            # Do not consider masks which only displays static
+            # characters invalid, instead return None
+            if self.is_empty():
+                return ''
             text = self.get_text()
-            try:
-                return self._from_string(text)
-            except ValidationError:
-                # Do not consider masks which only displays static
-                # characters invalid, instead return None
-                if self.is_empty():
-                    return
-                else:
-                    raise
+            return self._from_string(text)
         elif mode == ENTRY_MODE_DATA:
             return self._current_object
         else:
