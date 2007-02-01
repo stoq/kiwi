@@ -211,6 +211,8 @@ class IconEntry(object):
             self._icon_win = None
 
     def update_background(self, color):
+        if self._locked:
+            return
         if not self._icon_win:
             return
 

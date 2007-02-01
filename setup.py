@@ -26,15 +26,15 @@ ext_modules = []
 # Don't build it on windows due to easy availability compilers and
 # the lack of pkg-config.
 try:
-    import gobject
-    version = gobject.pygtk_version
-except ImportError:
+    import gtk
+    version = gtk.pygtk_version
+except RuntimeError:
     try:
-        import gtk
-        version = gtk.pygtk_version
-    except RuntimeError:
+        import gobject
+        version = gobject.pygtk_version
+    except ImportError:
         version = None
-if  version and (version < (2, 10) and sys.platform != 'win32'):
+if version and (version < (2, 10) and sys.platform != 'win32'):
     pkgs = 'gdk-2.0 gtk+-2.0 pygtk-2.0'
     cflags = commands.getoutput('pkg-config --cflags %s' % pkgs)
     libs = commands.getoutput('pkg-config --libs %s' % pkgs)
