@@ -1,3 +1,9 @@
+kiwi-1.9.13: 01-februaru-2007
+    - Workaround GtkEntry bug when resizing the size of its GtkWindows. 
+      (Johan, Ronaldo)
+    - Include _kiwi.c in tarball, fixes build. (Johan)
+    - Use pkg-config to find pygtk version. (Johan)
+
 kiwi-1.9.12: 29-january-2007
     - Rewritten UI Test framework, not using threads
     - Improved Date Error message (#3041, Marco Antonio Porcho Souza)
