@@ -45,6 +45,15 @@ deb: sdist
 	mv $(BUILDDIR)/* dist
 	rm -fr $(BUILDDIR)
 
+rpm:
+	rpmbuild --define="_sourcedir `pwd`/dist" \
+	         --define="_srcrpmdir `pwd`/dist" \
+	         --define="_rpmdir `pwd`/dist" \
+	         --define="_builddir `pwd`/build" \
+                 -ba kiwi.spec
+	mv dist/noarch/* dist
+	rm -fr dist/noarch
+
 release-deb:
 	debchange -v $(VERSION)-1 "New release"
 
