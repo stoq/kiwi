@@ -94,9 +94,9 @@ class EntryTest(unittest.TestCase):
 
     def testRead(self):
         entry = ProxyEntry()
-        entry.set_text('1.0')
-        entry.set_property("data-type", "float")
-        self.assertEqual(entry.read(), 1.0)
+        entry.set_text('1')
+        entry.set_property("data-type", "int")
+        self.assertEqual(entry.read(), 1)
         entry.set_text('')
         self.assertEqual(entry.read(), ValueUnset)
 
