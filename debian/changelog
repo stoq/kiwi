@@ -1,3 +1,15 @@
+kiwi (1.9.13-4) dapper; urgency=low
+
+  * Provides/Conflicts with python-kiwi. Set my mail.
+
+ -- Johan Dahlin <jdahlin@async.com.br>  Tue,  6 Feb 2007 17:54:35 -0200
+
+kiwi (1.9.13-3) dapper; urgency=low
+
+  * Don't depend on python-gobject explicitly, so the packages work on etch
+
+ -- Johan Dahlin <jdahlin@async.com.br>  Tue,  6 Feb 2007 17:11:08 -0200
+
 kiwi (1.9.13-2) dapper; urgency=low
 
   * New release.

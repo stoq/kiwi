@@ -1,16 +1,18 @@
 Source: kiwi
 Section: python
 Priority: optional
-Maintainer: Daniel Holbach <daniel.holbach@ubuntu.com>
+Maintainer: Johan Dahlin <jdahlin@async.com.br>
 Build-Depends: debhelper (>= 4.2.28)
 Build-Depends-Indep: cdbs, python-dev (>= 2.4), python-gtk2-dev (>= 2.8)
 Standards-Version: 3.6.2
 
 Package: kiwi
 Architecture: all
-Depends: ${shlibs:Depends}, python-gobject (>= 2.8), python-gtk2 (>= 2.8)
+Depends: python-gtk2 (>= 2.8)
 Suggests: glade | gazpacho, kiwi-examples
 Replaces: python-kiwi
+Provides: python-kiwi
+Conflicts: python-kiwi
 Description: Framework for developing graphical applications in Python
  Kiwi is a framework composed of a set of modules, which eases Python
  development using PyGTK. Kiwi makes graphical applications *much* faster
