@@ -236,7 +236,9 @@ class Column(PropertyObject, gobject.GObject):
 
     def as_string(self, data):
         data_type = self.data_type
-        if (self.format or
+        if data is None:
+            text = ''
+        elif (self.format or
             data_type == float or
             data_type == Decimal or
             data_type == currency or
@@ -1686,10 +1688,10 @@ class ObjectTree(ObjectList):
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
         treeiter = self._iters[objid]
-        
+
         self.get_treeview().expand_row(
             self._model[treeiter].path, open_all)
-        
+
     def collapse(self, instance):
         """
         This method collapses the row specified by path
@@ -1836,7 +1838,7 @@ class SummaryLabel(ListLabel):
         attr = column.attribute
         get_attribute = column.get_attribute
 
-        value = sum([get_attribute(obj, attr) for obj in self._klist],
+        value = sum([get_attribute(obj, attr) or 0 for obj in self._klist],
                     column.data_type('0'))
 
         self.set_value(column.as_string(value))
