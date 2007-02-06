@@ -148,7 +148,8 @@ class TestProxy(unittest.TestCase):
         self.radio_second.set_active(True)
 
         self.proxy.set_model(None)
-        self.assertEqual(self.view.entry.read(), '')
+
+        self.assertEqual(self.view.entry.read(), ValueUnset)
         self.assertEqual(self.view.checkbutton.read(), False)
         self.assertEqual(self.view.radiobutton.read(), 'first')
         self.assertEqual(self.view.label.read(), '')
