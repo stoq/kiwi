@@ -92,5 +92,13 @@ class EntryTest(unittest.TestCase):
         entry = ProxyEntry()
         self.assertEqual(gobject.type_name(entry), 'ProxyEntry')
 
+    def testRead(self):
+        entry = ProxyEntry()
+        entry.set_text('1.0')
+        entry.set_property("data-type", "float")
+        self.assertEqual(entry.read(), 1.0)
+        entry.set_text('')
+        self.assertEqual(entry.read(), ValueUnset)
+
 if __name__ == '__main__':
     unittest.main()
