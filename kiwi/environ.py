@@ -105,7 +105,7 @@ class Environment:
                     self.add_resource(resource, path)
 	        except EnvironmentError:
                     continue
-            
+
             self.add_resource(resource, path)
 
     def find_resource(self, resource, name):
