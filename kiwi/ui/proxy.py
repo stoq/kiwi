@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2002-2005 Async Open Source
+# Copyright (C) 2002-2007 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -282,8 +282,8 @@ class Proxy:
                 # safe to return here since you shouldn't need to code
                 # around the lack of a model in your callbacks if you
                 # can help it.
-                value = None 
-            else: 
+                value = None
+            else:
                 value = kgetattr(self._model, attribute, ValueUnset)
 
         widget = self._model_attributes.get(attribute, None)
