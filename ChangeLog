@@ -1,3 +1,9 @@
+2007-02-07  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/icon.py (IconEntry._recompute): Use alternative
+	methods to trigger a recompute(), fixes ComboEntry issue since
+	::change was emitted when it shouldn't be needed.
+
 2007-02-06  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/entry.py (ProxyEntry.read): 

@@ -290,13 +290,15 @@ class IconEntry(object):
         if self._locked:
             return
 
-        # Hack: This triggers a .recompute() which is private
         self._locked = True
-        self._entry.insert_text('')
-        self._locked = False
-        # Another option would be to change the visibility:
-        #
-        # visibility = self._entry.get_visibility()
-        # self._entry.set_visibility(not visibility)
-        # self._entry.set_visibility(visibility)
 
+        # Hack: This triggers a .recompute() which is private
+        visibility = self._entry.get_visibility()
+        self._entry.set_visibility(not visibility)
+        self._entry.set_visibility(visibility)
+
+        # Another option would be to call insert_text, however it
+        # emits the signal ::changed which is not desirable.
+        #self._entry.insert_text('')
+
+        self._locked = False
