@@ -1035,10 +1035,10 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     # TreeView
     def _treeview_search_equal_func(self, model, tree_column, key, treeiter, column):
-        "for searching inside the treeview"
+        "for searching inside the treeview, case-insensitive by default"
         data = column.get_attribute(model[treeiter][COL_MODEL],
                                     column.attribute, None)
-        if data.startswith(key):
+        if data.lower().startswith(key.lower()):
             return False
         return True
 

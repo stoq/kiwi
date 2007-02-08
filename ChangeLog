@@ -1,3 +1,8 @@
+2007-02-08  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/objectlist.py (ObjectList._treeview_search_equal_func): 
+	Make it case-insensitive by default.
+
 2007-02-07  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/icon.py (IconEntry._recompute): Use alternative
