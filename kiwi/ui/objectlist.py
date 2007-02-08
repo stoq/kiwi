@@ -783,12 +783,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         sorted = None
         expand = False
         for column in columns:
-            if column.searchable:
-                if searchable:
-                    raise ValueError("Can't make column %s searchable, column"
-                                     " %s is already set as searchable" % (
-                        column.attribute, searchable.attribute))
-                searchable = column.searchable
             if column.sorted:
                 if sorted:
                     raise ValueError("Can't make column %s sorted, column"
