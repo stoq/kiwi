@@ -32,7 +32,7 @@ import datetime
 import gtk
 from gtk import gdk, keysyms
 
-from kiwi.datatypes import converter, ValidationError
+from kiwi.datatypes import converter, ValueUnset, ValidationError
 from kiwi.utils import gsignal, type_register
 
 _ = lambda m: gettext.dgettext('kiwi', m)
@@ -219,7 +219,8 @@ class _DateEntryPopup(gtk.Window):
         self.move(x, y)
         self.show_all()
 
-        if date:
+        if (date is not None and
+            date is not ValueUnset):
             self.set_date(date)
         self.grab_focus()
 
