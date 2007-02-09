@@ -336,7 +336,7 @@ class DateEntry(gtk.HBox):
             date = self.get_date()
         except ValidationError:
             date = None
-            
+
         self._popup.popup(date)
 
     def _on_popup__hide(self, popup):
