@@ -32,9 +32,11 @@ try:
 except ImportError:
     class Interface(object):
         def providedBy(cls, impl):
-            for iface in getattr(impl, '__interfaces__', []):
-                if issubclass(iface, cls):
-                    return True
+            candidates = (impl,) + impl.__class__.__bases__
+            for candidate in candidates:
+                for iface in getattr(candidate, '__interfaces__', []):
+                    if issubclass(iface, cls):
+                        return True
             return False
 
         providedBy = classmethod(providedBy)
