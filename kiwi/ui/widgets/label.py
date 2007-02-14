@@ -31,7 +31,7 @@ import datetime
 
 import gtk
 
-from kiwi.datatypes import number
+from kiwi.datatypes import number, ValueUnset
 from kiwi.python import deprecationwarn
 from kiwi.ui.gadgets import set_foreground
 from kiwi.ui.proxywidget import ProxyWidgetMixin
@@ -72,7 +72,7 @@ class ProxyLabel(PropertyObject, gtk.Label, ProxyWidgetMixin):
         return self._from_string(self.get_text())
 
     def update(self, data):
-        if data is None:
+        if data is None or data is ValueUnset:
             text = ""
         else:
             text = self._as_string(data)
