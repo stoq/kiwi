@@ -25,7 +25,7 @@ ext_modules = []
 # Build a helper module for testing on gtk+ versions lower than 2.10.
 # Don't build it on windows due to easy availability compilers and
 # the lack of pkg-config.
-if sys.platform != 'win32':
+if sys.platform != 'win32' and not 'bdist_wininst' in sys.argv:
     version = commands.getoutput('pkg-config pygtk-2.0 --modversion')
     if version and map(int, version.split('.')) < [2, 10]:
         pkgs = 'gdk-2.0 gtk+-2.0 pygtk-2.0'
