@@ -104,7 +104,6 @@
                                 <property name="data_type">bool</property>
                                 <property name="data_value">False</property>
                                 <property name="label" context="yes" translatable="yes">Married</property>
-                                <property name="model_attribute">status</property>
                                 <property name="visible">True</property>
                             </widget>
                             <packing>
@@ -128,7 +127,6 @@
                                 <property name="data_type">unicode</property>
                                 <property name="is_focus">True</property>
                                 <property name="mandatory">True</property>
-                                <property name="model_attribute">name</property>
                                 <property name="visible">True</property>
                             </widget>
                             <packing>
@@ -140,7 +138,6 @@
                             <widget class="ProxyEntry" id="age">
                                 <property name="data_type">int</property>
                                 <property name="mandatory">True</property>
-                                <property name="model_attribute">age</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">1.0</property>
                             </widget>
@@ -155,7 +152,6 @@
                             <widget class="ProxyDateEntry" id="birthdate">
                                 <property name="data_type">date</property>
                                 <property name="mandatory">True</property>
-                                <property name="model_attribute">birthdate</property>
                                 <property name="visible">True</property>
                             </widget>
                             <packing>
@@ -171,7 +167,6 @@
                                 <property name="is_focus">True</property>
                                 <property name="mandatory">True</property>
                                 <property name="mask" context="yes" translatable="yes">(00) 0000-0000</property>
-                                <property name="model_attribute">phonenumber</property>
                                 <property name="text" context="yes" translatable="yes">(  )     -    </property>
                                 <property name="visible">True</property>
                             </widget>
@@ -186,7 +181,6 @@
                             <widget class="ProxyEntry" id="height">
                                 <property name="data_type">float</property>
                                 <property name="mandatory">True</property>
-                                <property name="model_attribute">height</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">1.0</property>
                             </widget>
@@ -202,7 +196,6 @@
                                 <property name="adjustment">0 0 100 1 10 0</property>
                                 <property name="data_type">float</property>
                                 <property name="mandatory">True</property>
-                                <property name="model_attribute">weight</property>
                                 <property name="text" context="yes" translatable="yes">0</property>
                                 <property name="visible">True</property>
                             </widget>
@@ -217,7 +210,6 @@
                             <widget class="ProxyComboEntry" id="nationality">
                                 <property name="data_type">str</property>
                                 <property name="mandatory">True</property>
-                                <property name="model_attribute">nationality</property>
                                 <property name="visible">True</property>
                             </widget>
                             <packing>
@@ -247,7 +239,6 @@
                         <child>
                             <widget class="ProxyComboBox" id="gender">
                                 <property name="data_type">str</property>
-                                <property name="model_attribute">gender</property>
                                 <property name="visible">True</property>
                             </widget>
                             <packing>
@@ -279,7 +270,6 @@
                         <property name="border_width">10</property>
                         <property name="data_type">str</property>
                         <property name="mandatory">True</property>
-                        <property name="model_attribute">about</property>
                         <property name="visible">True</property>
                     </widget>
                     <packing>
