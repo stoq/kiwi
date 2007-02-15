@@ -254,6 +254,19 @@ class DateOnlyDataType(CustomProperty, StringType):
 
 class ModelProperty(CustomProperty, StringType):
     translatable = False
+    has_custom_default = True
+
+    def __init__(self, gadget):
+        super(ModelProperty, self).__init__(gadget)
+        gadget.widget.connect('notify::name', self._on_widget__notify)
+
+    def _on_widget__notify(self, widget, pspec):
+        self.set(widget.get_name())
+        self.notify()
+
+    def default(self):
+        return self.gadget.widget.get_name()
+    default = property(default)
 
 class DataValueProperty(CustomProperty, StringType):
     translatable = False

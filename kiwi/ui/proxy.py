@@ -122,11 +122,8 @@ class Proxy:
 
         attribute = widget.get_property('model-attribute')
         if not attribute:
-            raise ProxyError(
-                "The widget %s (%s) in view %s is a kiwi widget but does "
-                "not have a model attribute set so it will not be "
-                "associated with the model" % (
-                widget_name, widget, self._view.__class__.__name__))
+            attribute = widget_name
+            widget.set_property('model-attribute', widget_name)
 
         # Do a isinstance here instead of in the callback,
         # as an optimization, it'll never change in runtime anyway
