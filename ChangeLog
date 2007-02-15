@@ -1,5 +1,8 @@
 2007-02-15  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/gazpacholoader.py (DataTypeAdaptor.update): Set
+	some sensible default data-types for the widgets
+
 	* kiwi/ui/gazpacholoader.py (ModelProperty._on_widget__notify): 
 	Track the name as the default model-attribute
 

@@ -159,6 +159,7 @@ adapter_registry.register_adapter(ObjectListAdapter)
 
 class DataTypeAdaptor(PropertyCustomEditor):
     widget_type = None
+    default = str
 
     def __init__(self):
         super(DataTypeAdaptor, self).__init__()
@@ -200,6 +201,8 @@ class DataTypeAdaptor(PropertyCustomEditor):
                                       proxy, model)
         combo.set_data('connection-id', connection_id)
         value = kiwiwidget.get_property('data-type')
+        if not value:
+            value = self.default
         for row in model:
             if row[1] == value:
                 combo.set_active_iter(row.iter)
@@ -211,27 +214,35 @@ class DataTypeAdaptor(PropertyCustomEditor):
 
 class SpinBtnDataType(DataTypeAdaptor):
     widget_type = ProxySpinButton
+    default = int
 
 class EntryDataType(DataTypeAdaptor):
     widget_type = ProxyEntry
+    default = str
 
 class TextViewDataType(DataTypeAdaptor):
     widget_type = ProxyTextView
+    default = str
 
 class ComboBoxDataType(DataTypeAdaptor):
     widget_type = ProxyComboBox
+    default = object
 
 class ComboBoxEntryDataType(DataTypeAdaptor):
     widget_type = ProxyComboBoxEntry
+    default = object
 
 class ComboEntryDataType(DataTypeAdaptor):
     widget_type = ProxyComboEntry
+    default = object
 
 class LabelDataType(DataTypeAdaptor):
     widget_type = ProxyLabel
+    default = str
 
 class ButtonDataType(DataTypeAdaptor):
     widget_type = ProxyButton
+    default = str
 
 class DataType(CustomProperty, StringType):
     translatable = False
