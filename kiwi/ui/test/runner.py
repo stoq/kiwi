@@ -26,8 +26,10 @@ Runner - executes recorded scripts
 """
 
 import doctest
+import os
 import sys
 import time
+from StringIO import StringIO
 
 import gobject
 from gtk import gdk
@@ -56,19 +58,44 @@ class MagicWindowWrapper(object):
             raise MissingWidget(attr)
         return self.ns[attr]
 
+# Override some StringIO methods.
+class _SpoofOut(StringIO):
+    def getvalue(self):
+        result = StringIO.getvalue(self)
+        # If anything at all was written, make sure there's a trailing
+        # newline.  There's no way for the expected output to indicate
+        # that a trailing newline is missing.
+        if result and not result.endswith("\n"):
+            result += "\n"
+        # Prevent softspace from screwing up the next test case, in
+        # case they used print with a trailing comma in an example.
+        if hasattr(self, "softspace"):
+            del self.softspace
+        return result
+
+    def truncate(self,   size=None):
+        StringIO.truncate(self, size)
+        if hasattr(self, "softspace"):
+            del self.softspace
+
 class Runner(object):
     """
     @ivar parser:
     """
     def __init__(self, filename):
+        self.parser = doctest.DocTestParser()
+        self.retval = 0
+
         self._filename = filename
         self._pos = 0
         self._windows = {}
         self._ns = {}
         self._source_id = -1
-
-        self.parser = doctest.DocTestParser()
         self._stmts = self.parser.get_examples(open(filename).read())
+        self._checker = doctest.OutputChecker()
+        # Create a fake output target for capturing doctest output.
+        self._fakeout = _SpoofOut()
+        self._options = doctest.ELLIPSIS | doctest.REPORT_ONLY_FIRST_FAILURE
 
         wi = WidgetIntrospecter()
         wi.register_event_handler()
@@ -90,6 +117,27 @@ class Runner(object):
         self._iterate()
 
     # Private
+    def _run(self, ex):
+        save_stdout = sys.stdout
+        sys.stdout = self._fakeout
+
+        try:
+            exec compile(ex.source, self._filename,
+                         'single', 0, 1) in self._ns
+        finally:
+            sys.stdout = save_stdout
+
+        if ex.want:
+            got = self._fakeout.getvalue()
+            self._fakeout.truncate(0)
+            if not self._checker.check_output(ex.want, got, self._options):
+                print >> sys.stderr, (
+                    "\nERROR at %s:%d\n"
+                    "    >>> %s\n"
+                    "Expected %s, but got %s"
+                    % (self._filename, ex.lineno, ex.source,
+                       ex.want[:-1], got[:-1]))
+                self.error()
 
     def _iterate(self):
         stmts = self._stmts
@@ -103,8 +151,7 @@ class Runner(object):
 
             log.info('will now execute %r' % (ex.source[:-1],))
             try:
-                exec compile(ex.source, self._filename,
-                             'single', 0, 1) in self._ns
+                self._run(ex)
             except NotReadyYet:
                 self._pos -= 1
                 break
@@ -116,7 +163,6 @@ class Runner(object):
             except Exception, e:
                 import traceback
                 traceback.print_exc()
-                raise SystemExit
 
             log.info('Executed %r' % (ex.source[:-1],))
             self._last = time.time()
@@ -126,6 +172,9 @@ class Runner(object):
     def quit(self):
         print '* Executed successfully'
         sys.exit(0)
+
+    def error(self):
+        os._exit(1)
 
     def start(self):
         self._last = time.time()

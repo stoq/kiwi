@@ -1,3 +1,14 @@
+2007-02-21  Johan Dahlin  <jdahlin@async.com.br>
+
+	Change the extension of all ui tests to .doctest.
+	
+	* tests/ui/diary2.doctest: Add two assertion checks.
+
+	* tests/test_ui.py (test_filename): Use subprocess instead of popen2
+
+	* kiwi/ui/test/runner.py (Runner._iterate): Add support for
+	checking the return value of a function.
+	
 2007-02-15  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/gazpacholoader.py (DataTypeAdaptor.update): Set

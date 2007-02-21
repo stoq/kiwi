@@ -26,6 +26,17 @@
 >>> Diary.evening.clicked()
 >>> Diary.evening.clicked()
 >>> Diary.afternoon.clicked()
+
+We have two dynamically updated properties called words
+and chars, make sure they are set correctly after modifying
+the text of a textbuffer.
+
+>>> Diary.text.get_buffer().set_text("Testing buffer")
+>>> Diary.words.get_text()
+'2'
+>>> Diary.chars.get_text()
+'14'
+
 >>> Diary.title.set_text("")
 >>> Diary.title.set_text("Second")
 >>> Diary.ObjectList.select_paths(['1'])

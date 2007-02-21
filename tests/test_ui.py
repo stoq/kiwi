@@ -1,5 +1,5 @@
 import os
-import popen2
+import subprocess
 import sys
 import unittest
 
@@ -14,11 +14,8 @@ def test_filename(rootdir, filename):
     cmd = '%s %s -v %s' % (sys.executable,
                            os.path.join(rootdir, 'bin', 'kiwi-ui-test'),
                            os.path.join('tests', 'ui', filename))
-    if sys.platform == 'win32':
-        status = os.system(cmd)
-    else:
-        p = popen2.Popen3(cmd)
-        status = os.waitpid(p.pid, 0)[1]
+    proc = subprocess.Popen(cmd, shell=True)
+    status = proc.wait()
 
     if status != 0:
         raise AssertionError("UI Test %s failed" % filename)
