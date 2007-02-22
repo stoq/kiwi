@@ -26,8 +26,9 @@ ext_modules = []
 # Don't build it on windows due to easy availability compilers and
 # the lack of pkg-config.
 if sys.platform != 'win32' and not 'bdist_wininst' in sys.argv:
+    exists = commands.getstatusoutput('pkg-config pygtk-2.0 --exists')[0] == 0
     version = commands.getoutput('pkg-config pygtk-2.0 --modversion')
-    if version and map(int, version.split('.')) < [2, 10]:
+    if exists and version and map(int, version.split('.')) < [2, 10]:
         pkgs = 'gdk-2.0 gtk+-2.0 pygtk-2.0'
         cflags = commands.getoutput('pkg-config --cflags %s' % pkgs)
         libs = commands.getoutput('pkg-config --libs %s' % pkgs)
