@@ -46,6 +46,6 @@ def create():
     return type('TestUI', (unittest.TestCase,), tests)
 
 # Disable UI tests on win32, they do not quite work yet.
-if sys.platform != 'win32':
-    TestUI = create()
+#if sys.platform != 'win32':
+TestUI = create()
 
