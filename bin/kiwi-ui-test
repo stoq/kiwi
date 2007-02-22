@@ -20,7 +20,7 @@ import os
 import sys
 
 # Required version of Python
-REQUIRED_VERSION = (2, 3)
+REQUIRED_VERSION = (2, 5)
 
 # Directory name, defaults to name of binary, it is relative to ..
 # a, __init__.py and main.py is expected to be found there.
@@ -33,13 +33,11 @@ APPNAME = None
 dirname = DIRNAME or os.path.split(sys.argv[0])[1]
 appname = APPNAME or dirname.capitalize()
 
-version_string = sys.version.split(' ')[0]
-majmin = tuple(map(int, version_string.split('.')))
-if majmin < REQUIRED_VERSION:
+if sys.hexversion < int('%02x%02x0000' % REQUIRED_VERSION, 16):
     raise SystemExit("ERROR: Python %s or higher is required to run %s, "
                      "%s found" % ('.'.join(map(str, REQUIRED_VERSION)),
                                    appname,
-                                   version_string))
+                                   sys.version.split(' ', 1)[0]))
 
 # Figure out the directy which is the prefix
 # path-of-current-file/..
