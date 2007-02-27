@@ -631,7 +631,15 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     def __setitem__(self, arg, item):
         "list[n] = m"
         if isinstance(arg, (int, gtk.TreeIter, str)):
-            self._model[arg] = (item,)
+            model = self._model
+            olditem = model[arg][COL_MODEL]
+            model[arg] = (item,)
+
+            # Update iterator cache
+            iters = self._iters
+            iters[id(item)] = model[arg].iter
+            del iters[id(olditem)]
+
         elif isinstance(arg, slice):
             raise NotImplementedError("slices for list are not implemented")
         else:
