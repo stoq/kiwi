@@ -595,10 +595,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def __contains__(self, instance):
         "item in list"
-        for row in self._model:
-            if row[COL_MODEL] == instance:
-                return True
-        return False
+        return bool(self._iters.get(id(instance), False))
 
     def __iter__(self):
         "for item in list"
