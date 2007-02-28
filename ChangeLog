@@ -1,3 +1,10 @@
+2007-02-28  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/objectlist.py (ObjectList.__setitem__):
+	Update the cache when replacing an object
+	(ObjectList.__contains__): Use iters cache for consitency
+	with index() and speed.
+
 2007-02-22  Johan Dahlin  <jdahlin@async.com.br>
 
 	* setup.py (ext_modules): Make sure that the pkgconfig file for
@@ -5,7 +12,7 @@
 
 2007-02-21  Johan Dahlin  <jdahlin@async.com.br>
 
-	Change the extension of all ui tests to .doctest.
+	Change the extensions of all ui tests to .doctest.
 	
 	* tests/ui/diary2.doctest: Add two assertion checks.
 
