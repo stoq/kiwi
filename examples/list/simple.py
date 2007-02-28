@@ -8,7 +8,7 @@ class Fruit:
         self.price = price
 
 fruits = ObjectList([Column('name', data_type=str),
-               Column('price', data_type=int)])
+                     Column('price', data_type=int)])
 
 for name, price in [('Apple', 4),
                     ('Pineapple', 2),
