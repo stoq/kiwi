@@ -534,7 +534,9 @@ class ComboEntry(gtk.HBox):
         @type iter: gtk.TreeIter
         """
         self._popup.set_selected_iter(iter)
-        self.set_text(self._model[iter][0])
+        text = self._model[iter][0]
+        if text is not None:
+            self.set_text(text)
 
     def get_active_iter(self):
         """
