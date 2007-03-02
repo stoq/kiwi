@@ -53,7 +53,7 @@ class RegistryTest(unittest.TestCase):
         # Object is treated specially. Make sure its in the list
         conv = converter.get_converter(object)
         self.assertTrue(conv in converters)
-        
+
 class BoolTest(unittest.TestCase):
     def setUp(self):
         self.conv = converter.get_converter(bool)
