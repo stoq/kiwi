@@ -41,12 +41,14 @@ class ListContainer(gtk.HBox):
 
     Signals
     =======
-      - B{add-item} (object):
-        - XXX
-      - B{remove-item} (object):
-        - XXX
-      - B{edit-item} (object):
-        - XXX
+      - B{add-item} (returns item):
+        - emitted when the add button is clicked, you're expected to
+          return an object here
+      - B{remove-item} (item, returns bool):
+        - emitted when removing an item,
+          you can block the removal from the list by returning True
+      - B{edit-item} (item):
+        - emitted when editing an item
 
     @ivar add_button: add button
     @type add_button: L{gtk.Button}
@@ -111,8 +113,8 @@ class ListContainer(gtk.HBox):
                 raise NotImplementedError(
                     "You need to connect to the add-item signal and "
                     "return an object")
-            elif isinstance(retval, NotImplementedError):
-                raise retval
+        elif isinstance(retval, NotImplementedError):
+            raise retval
 
         self.list.append(retval)
 
