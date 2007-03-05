@@ -301,7 +301,7 @@ class ListDialog(gtk.Dialog):
         self.listcontainer.update_item(item)
 
     def default_remove(self, item):
-        return not yesno(_('Do you want to remove %r') % (quote(repr(item)),),
+        return not yesno(_('Do you want to remove %s ?') % (quote(str(item)),),
                          parent=self,
                          default=gtk.RESPONSE_OK,
                          buttons=(
