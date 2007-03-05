@@ -20,7 +20,7 @@ import os
 import sys
 
 # Required version of Python
-REQUIRED_VERSION = (2, 5)
+REQUIRED_VERSION = (2, 3)
 
 # Directory name, defaults to name of binary, it is relative to ..
 # a, __init__.py and main.py is expected to be found there.
