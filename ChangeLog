@@ -1,3 +1,19 @@
+2007-03-05  Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/listdialog.py (MyListDialog.add_item): 
+
+	* kiwi/ui/listdialog.py (ListDialog, ListContainer): 
+	New dialog to implement 
+
+	* kiwi/enums.py (ListType): new enum
+
+	* kiwi/utils.py (quote): new function
+
+2007-03-01  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/comboentry.py (ComboEntry.set_active_iter): 
+	If object is None do not set the text of the entry
+
 2007-02-28  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/objectlist.py (ObjectList.__setitem__):

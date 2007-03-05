@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2005-2006 Async Open Source
+# Copyright (C) 2005-2007 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -361,3 +361,14 @@ def gproperty(name, ptype, default=None, nick='', blurb='',
         del frame
 
     dict[name] = (ptype, nick, blurb) + default + (flags,)
+
+def quote(msg):
+    """
+    Similar to urllib.quote but for glibs GMarkup
+    @param msg: string to quote
+    @returns: quoted string
+    """
+    msg = msg.replace('&', '&amp;')
+    msg = msg.replace('<', '&lt;')
+    msg = msg.replace('>', '&gt;')
+    return msg

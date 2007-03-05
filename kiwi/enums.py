@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2006 Async Open Source
+# Copyright (C) 2006-2007 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -38,3 +38,15 @@ class Alignment(enum):
 
 class Direction(enum):
     (LEFT, RIGHT) = (1, -1)
+
+class ListType(enum):
+    """
+    - NORMAL: Add, Remove, Edit
+    - UNEDITABLE: Add, Remove
+    - UNREMOVABLE: Add, Edit
+    - READONLY: No buttons
+    """
+    (NORMAL,
+     READONLY,
+     UNREMOVABLE,
+     UNEDITABLE) = range(4)
