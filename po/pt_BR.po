@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-29 16:25-0200\n"
+"POT-Creation-Date: 2007-03-05 16:56-0300\n"
 "PO-Revision-Date: 2007-01-26 13:28-0200\n"
 "Last-Translator: Ronaldo Maia <romaia@async.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -144,6 +144,11 @@ msgstr "Separadores de milhares colocado em posições incorretas: %r"
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr "O numero \"%s\" tem mais de um ponto decimal"
 
+#: ../kiwi/ui/listdialog.py:313
+#, python-format
+msgid "Do you want to remove %s ?"
+msgstr "Você deseja remover %s ?"
+
 #: ../kiwi/ui/dateentry.py:74
 msgid "_Today"
 msgstr "_Hoje"
@@ -165,7 +170,7 @@ msgstr "Terminar"
 msgid "'%s' is not a valid object"
 msgstr "'%s' não é um objeto válido"
 
-#: ../kiwi/ui/objectlist.py:1823
+#: ../kiwi/ui/objectlist.py:1824
 msgid "Total:"
 msgstr "Total:"
 
