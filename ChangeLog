@@ -1,6 +1,9 @@
 2007-03-05  Johan Dahlin  <jdahlin@async.com.br>
 
-	* examples/listdialog.py (MyListDialog.add_item): 
+	* kiwi/ui/listdialog.py (ListContainer): Add a return value
+	to edit-item, inverse bool for remove-item.
+
+	* examples/listdialog.py: New example
 
 	* kiwi/ui/listdialog.py (ListDialog, ListContainer): 
 	New dialog to implement 

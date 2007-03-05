@@ -46,9 +46,10 @@ class ListContainer(gtk.HBox):
           return an object here
       - B{remove-item} (item, returns bool):
         - emitted when removing an item,
-          you can block the removal from the list by returning True
+          you can block the removal from the list by returning False
       - B{edit-item} (item):
         - emitted when editing an item
+          you can block the update afterwards by returning False
 
     @ivar add_button: add button
     @type add_button: L{gtk.Button}
@@ -60,7 +61,7 @@ class ListContainer(gtk.HBox):
 
     gsignal('add-item', retval=object)
     gsignal('remove-item', object, retval=bool)
-    gsignal('edit-item', object)
+    gsignal('edit-item', object, retval=bool)
     gsignal('selection-changed', object)
 
     def __init__(self, columns):
@@ -113,19 +114,21 @@ class ListContainer(gtk.HBox):
                 raise NotImplementedError(
                     "You need to connect to the add-item signal and "
                     "return an object")
+            return
         elif isinstance(retval, NotImplementedError):
             raise retval
 
         self.list.append(retval)
 
     def _remove_item(self, item):
-        if self.emit('remove-item', item):
-            return
-        self.list.remove(item)
+        retval = self.emit('remove-item', item)
+        if retval:
+            self.list.remove(item)
 
     def _edit_item(self, item):
-        self.emit('edit-item', item)
-        self.list.update(item)
+        retval = self.emit('edit-item', item)
+        if retval:
+            self.list.update(item)
 
     # Public API
 
@@ -260,10 +263,16 @@ class ListDialog(gtk.Dialog):
             return e
 
     def _on_listcontainer__remove_item(self, listcontainer, item):
-        return self.remove_item(item)
+        retval = self.remove_item(item)
+        if type(retval) is not bool:
+            raise ValueError("remove-item must return a bool")
+        return retval
 
     def _on_listcontainer__edit_item(self, listcontainer, item):
-        self.edit_item(item)
+        retval = self.edit_item(item)
+        if type(retval) is not bool:
+            raise ValueError("edit-item must return a bool")
+        return retval
 
     def _on_listcontainer__selection_changed(self, listcontainer, selection):
         self.selection_changed(selection)
@@ -301,12 +310,12 @@ class ListDialog(gtk.Dialog):
         self.listcontainer.update_item(item)
 
     def default_remove(self, item):
-        return not yesno(_('Do you want to remove %s ?') % (quote(str(item)),),
+        response = yesno(_('Do you want to remove %s ?') % (quote(str(item)),),
                          parent=self,
                          default=gtk.RESPONSE_OK,
-                         buttons=(
-            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL),
-            (gtk.STOCK_REMOVE, gtk.RESPONSE_OK)))
+                         buttons=((gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL),
+                                  (gtk.STOCK_REMOVE, gtk.RESPONSE_OK)))
+        return response == gtk.RESPONSE_OK
 
     def add_item(self):
         """
@@ -322,7 +331,7 @@ class ListDialog(gtk.Dialog):
         A subclass can implement this to get a notification after
         an item is removed.
         If it's not implemented L{default_remove} will be called
-        @returns: True if the item should not be removed
+        @returns: False if the item should not be removed
         """
         return self.default_remove(item)
 
@@ -330,6 +339,7 @@ class ListDialog(gtk.Dialog):
         """
         A subclass must implement this if you want to support editing
         of objects.
+        @returns: False if the item should not be removed
         """
         raise NotImplementedError(
             "You need to implement edit_item in %s" %
