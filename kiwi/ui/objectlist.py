@@ -69,6 +69,9 @@ class Column(PropertyObject, gobject.GObject):
           the attribute
       - B{data-type}: object I{str}
         - the type of the attribute that will be inserted into the column.
+          Supported data types: bool, int, float, str, unicode,
+          decimal.Decimal datetime.date, datetime.time, datetime.datetime,
+          gtk.gdk.Pixbuf, L{kiwi.currency.currency}, L{kiwi.python.enum}.
       - B{visible}: bool I{True}
         - specifying if it is initially hidden or shown.
       - B{justify}: gtk.Justification I{None}

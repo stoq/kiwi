@@ -1,3 +1,8 @@
+2007-03-19  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/objectlist.py (Column): Mention the supported data types 
+	in the doc string.
+
 2007-03-05  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/listdialog.py (ListContainer): Add a return value
