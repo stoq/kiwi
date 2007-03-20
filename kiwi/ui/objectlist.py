@@ -126,6 +126,7 @@ class Column(PropertyObject, gobject.GObject):
       - B{use_markup}: bool I{False}
         - If true, the text will be rendered with markup
     """
+    __gtype_name__ = 'Column'
     gproperty('title', str)
     gproperty('data-type', object)
     gproperty('visible', bool, default=True)
@@ -1625,6 +1626,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 type_register(ObjectList)
 
 class ObjectTree(ObjectList):
+    __gtype_name__ = 'ObjectTree'
     def __init__(self, columns=[], objects=None, mode=gtk.SELECTION_BROWSE,
                  sortable=False, model=None):
         if not model:
