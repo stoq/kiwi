@@ -1,3 +1,9 @@
+2007-03-22  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/controllers.py (BaseController.on_key_press): gdk.keyval_name
+	returns None if there is no name for the key, avoid raising an
+	exception in that case, just silently ignore it.
+
 2007-03-20  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/objectlist.py: Set the __gtype_name__ on Column and ObjectTree

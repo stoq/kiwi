@@ -70,6 +70,10 @@ class BaseController:
         The keypress handler, which dispatches keypresses to the
         functions mapped to in self.keyactions"""
 
+        keyval = gdk.keyval_name(event.keyval)
+        if keyval is None:
+            return
+
         # Order is important, we want control_shift_alt_XXX
         method_name = 'key_'
         if event.state & gdk.CONTROL_MASK:
@@ -79,7 +83,8 @@ class BaseController:
         if event.state & gdk.MOD1_MASK:
             method_name += 'alt_'
 
-        method_name += gdk.keyval_name(event.keyval)
+        method_name += keyval
+
         func = getattr(self, method_name, None)
         if not func and event.keyval in self._keyactions:
             func = self._keyactions[event.keyval]
