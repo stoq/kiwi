@@ -20,7 +20,6 @@ if glade3_exists():
     pixmapdir = get_glade3_variable('pixmapdir')
     pixmaps = listfiles('..', 'gazpacho-plugin',
                         'resources', 'kiwiwidgets', '*.png')
-    print catalogdir
     setup(
         data_files=[
             (catalogdir, ['kiwiwidgets.xml']),
