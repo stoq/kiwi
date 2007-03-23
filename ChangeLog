@@ -1,3 +1,13 @@
+=== 1.9.14 ===
+2007-03-23  Johan Dahlin  <jdahlin@async.com.br>
+
+	* Makefile:
+	* NEWS:
+	* debian/changelog:
+	* doc/howto.tex:
+	* kiwi/__version__.py:
+	Release 1.9.14
+
 2007-03-23  Johan Dahlin  <jdahlin@async.com.br>
 
 	* gazpacho-plugin/kiwiwidgets.xml: Re-enable the ObjectList

@@ -1,4 +1,14 @@
-kiwi-1.9.13: 01-februaru-2007
+kiwi-1.9.14: 23-march-2007
+    - Add glade-3 plugin (Ali)
+    - Add ListDialog and ListContainer
+    - Add RPM .spec file.
+    - Fix right aligned entry validation (Johan, Ronaldo)
+    - Make the ObjectList search case insensitive by default
+    - Improve gazpacho plugin
+    - ObjectList cache fixes for index/__contains__
+    - Add assertion support for ui test
+
+kiwi-1.9.13: 01-february-2007
     - Workaround GtkEntry bug when resizing the size of its GtkWindows. 
       (Johan, Ronaldo)
     - Include _kiwi.c in tarball, fixes build. (Johan)
