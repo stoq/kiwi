@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glade-catalog name="kiwiwidgets" library="kiwiwidgets" domain="glade-3" depends="gtk+" language="python">
+  <glade-widget-classes>
+    
+    <glade-widget-class title="Hyper Link"
+                        name="HyperLink"
+                        generic-name="hyperlink">
+        <properties>
+            <property id="text"
+                      name="Text"
+                      translatable="True" />
+            <property id="visible-window"
+                      visible="False" />
+            <property id="above-child"
+                      visible="False" />
+        </properties>
+    </glade-widget-class>
+    
+    <glade-widget-class title="Object List"
+                        name="ObjectList"
+                        generic-name="objectlist"/>
+
+    <glade-widget-class title="Object Tree"
+                        name="ObjectTree"
+                        generic-name="objecttree"/>
+
+    <glade-widget-class title="Kiwi Label"
+                        name="ProxyLabel"
+                        generic-name="kiwilabel"/>
+
+    <glade-widget-class title="Kiwi ComboBox"
+                        name="ProxyComboBox"
+                        generic-name="kiwicombobox"/>
+
+    <glade-widget-class title="Kiwi ComboEntry"
+                        name="ProxyComboEntry"
+                        generic-name="kiwicomboentry"/>
+
+    <glade-widget-class title="Kiwi CheckButton"
+                        name="ProxyCheckButton"
+                        generic-name="kiwicheckbutton"/>
+
+    <glade-widget-class title="Kiwi RadioButton"
+                        name="ProxyRadioButton"
+                        generic-name="kiwiradiobutton"/>
+
+    <glade-widget-class title="Kiwi Entry"
+                        name="ProxyEntry"
+                        generic-name="kiwientry"/>
+
+    <glade-widget-class title="Kiwi DateEntry"
+                        name="ProxyDateEntry"
+                        generic-name="kiwidateentry">
+        <properties>
+            <property id="size"
+                      query="False"
+                      visible="False"
+                      save="False"
+                      default="0" />
+            <property id="spacing"
+                      visible="False" />
+            <property id="homogeneous"
+                      visible="False" />
+        </properties>
+    </glade-widget-class>
+
+    <glade-widget-class title="Kiwi SpinButton"
+                        name="ProxySpinButton"
+                        generic-name="kiwispinbutton"/>
+
+    <glade-widget-class title="Kiwi TextView"
+                        name="ProxyTextView"
+                        generic-name="kiwitextview"/>
+
+    <glade-widget-class title="Kiwi Button"
+                        name="ProxyButton"
+                        generic-name="kiwibutton"/>
+  </glade-widget-classes>
+
+  <glade-widget-group name="KiwiWidgets" title="Kiwi Widgets">
+    <glade-widget-class-ref name="HyperLink"/>
+    <glade-widget-class-ref name="ObjectList"/>
+    <glade-widget-class-ref name="ObjectTree"/>
+    <glade-widget-class-ref name="ProxyLabel"/>
+    <glade-widget-class-ref name="ProxyComboBox"/>
+    <glade-widget-class-ref name="ProxyComboEntry"/>
+    <glade-widget-class-ref name="ProxyCheckButton"/>
+    <glade-widget-class-ref name="ProxyRadioButton"/>
+    <glade-widget-class-ref name="ProxyEntry"/>
+    <glade-widget-class-ref name="ProxySpinButton"/>
+    <glade-widget-class-ref name="ProxyTextView"/>
+    <glade-widget-class-ref name="ProxyDateEntry"/>
+    <glade-widget-class-ref name="ProxyButton"/>
+  </glade-widget-group>
+</glade-catalog>
+

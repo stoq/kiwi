@@ -1,3 +1,13 @@
+2006-11-11  Johan Dahlin  <jdahlin@async.com.br>
+
+	* glade3-plugin/kiwiwidgets.py:
+	* glade3-plugin/kiwiwidgets.xml:
+	* glade3-plugin/setup.py:
+	Add Glade-3 plugin based on patch by Ali, fixes #3239
+
+	* kiwi/dist.py:
+	Do not require a name parameter to be passed in.
+
 2007-03-22  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/controllers.py (BaseController.on_key_press): gdk.keyval_name

@@ -262,7 +262,9 @@ def setup(**kwargs):
         templates = kwargs.pop('templates')
 
     def run_install(self):
-        self.data_files.extend(compile_po_files(kwargs['name']))
+        name = kwargs.get('name')
+        if name:
+           self.data_files.extend(compile_po_files(name))
         KiwiInstallData.run(self)
 
         varext = _VariableExtender(self.distribution)
