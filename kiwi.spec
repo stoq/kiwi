@@ -2,7 +2,7 @@
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           python-kiwi
-Version:        1.9.13
+Version:        1.9.14
 Release:        1%{?dist}
 Summary:        Framework for Python GUI applications
 
@@ -86,6 +86,7 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/gazpacho/widgets/*
 %{_datadir}/gazpacho/catalogs/*
 %{_datadir}/gazpacho/resources/*
+%{_datadir}/locale/*/LC_MESSAGES/kiwi.mo
 
 %files docs
 %defattr(-,root,root,-)
@@ -93,6 +94,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Feb 04 2007 Johan Dahlin <jdahlin@async.com.br> 1.9.14-1
+- Version 1.9.14
+
 * Tue Feb 04 2007 Johan Dahlin <jdahlin@async.com.br> 1.9.13-1
 - Upstream 1.9.13
 
