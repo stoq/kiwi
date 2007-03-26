@@ -4,8 +4,9 @@ BUILDDIR=tmp
 PACKAGE=kiwi
 TARBALL=$(PACKAGE)-$(VERSION).tar.gz
 DEBVERSION=$(shell dpkg-parsechangelog -ldebian/changelog|egrep ^Version|cut -d\  -f2)
-DLDIR=/mondo/htdocs/download.stoq.com.br/ubuntu
-TARBALL_DIR=/mondo/htdocs/download.stoq.com.br/sources
+DLDIR=/mondo/htdocs/stoq.com.br/download/ubuntu
+TESTDLDIR=/mondo/htdocs/stoq.com.br/download/test
+TARBALL_DIR=/mondo/htdocs/stoq.com.br/download/sources
 
 all:
 	python setup.py build_ext -i
@@ -73,6 +74,15 @@ upload:
 	  cp dist/$(PACKAGE)_$(DEBVERSION)*."$$suffix" $(DLDIR); \
 	done
 	/mondo/local/bin/update-apt-directory $(DLDIR)
+
+test-upload:
+	cp dist/$(PACKAGE)*_$(DEBVERSION)*.deb $(TESTDLDIR)/ubuntu
+	cp dist/python-kiwi-*$(VERSION)*.rpm $(TESTDLDIR)/fedora
+	for suffix in "gz" "dsc" "build" "changes"; do \
+	  cp dist/$(PACKAGE)_$(DEBVERSION)*."$$suffix" $(TESTDLDIR)/ubuntu; \
+	done
+	/mondo/local/bin/update-apt-directory $(TESTDLDIR)/ubuntu
+
 
 tags:
 	find -name \*.py|xargs ctags
