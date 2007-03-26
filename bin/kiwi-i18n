@@ -33,13 +33,11 @@ APPNAME = None
 dirname = DIRNAME or os.path.split(sys.argv[0])[1]
 appname = APPNAME or dirname.capitalize()
 
-version_string = sys.version.split(' ')[0]
-majmin = tuple(map(int, version_string.split('.')))
-if majmin < REQUIRED_VERSION:
+if sys.hexversion < int('%02x%02x0000' % REQUIRED_VERSION, 16):
     raise SystemExit("ERROR: Python %s or higher is required to run %s, "
                      "%s found" % ('.'.join(map(str, REQUIRED_VERSION)),
                                    appname,
-                                   version_string))
+                                   sys.version.split()[0]))
 
 # Figure out the directy which is the prefix
 # path-of-current-file/..
