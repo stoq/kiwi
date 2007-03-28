@@ -212,8 +212,10 @@ class Library(Environment):
             root = os.path.abspath(os.path.join(dirname, root))
         Environment.__init__(self, root=root)
 
-        sys.path.insert(0, os.path.join(root, 'lib', 'python%d.%d' %
-                                        sys.version_info[:2], 'site-packages'))
+        basedir = os.path.join(root, 'lib', 'python%d.%d' %
+                               sys.version_info[:2], 'site-packages')
+        if os.path.exists(basedir):
+            sys.path.insert(0, basedir)
         g = globals()
         l = locals()
         try:

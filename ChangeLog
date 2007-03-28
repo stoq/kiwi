@@ -1,3 +1,8 @@
+2007-03-28  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/environ.py (Library.__init__): Only add 
+	root/lib/pythonX.Y/site-packages to sys.path if it exists.
+
 === 1.9.14 ===
 2007-03-23  Johan Dahlin  <jdahlin@async.com.br>
 
