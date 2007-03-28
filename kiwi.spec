@@ -96,6 +96,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Feb 04 2007 Johan Dahlin <jdahlin@async.com.br> 1.9.14-1
 - Version 1.9.14
+- Add .mo files
 
 * Tue Feb 04 2007 Johan Dahlin <jdahlin@async.com.br> 1.9.13-1
 - Upstream 1.9.13
