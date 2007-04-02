@@ -105,6 +105,20 @@ class EntryTest(unittest.TestCase):
         entry = gobject.new(ProxyEntry)
         self.assertEqual(entry.get_property('data_type'), None)
 
+        entry = gobject.new(ProxyEntry, data_type=int)
+        entry.set_property("data-type", "str")
+        self.assertEqual(entry.get_property('data_type'), str)
+        while gtk.events_pending():
+            gtk.main_iteration()
+        self.assertEqual(entry.get_property('data_type'), str)
+
+        entry = gobject.new(ProxyEntry, data_type=int)
+        self.assertEqual(entry.get_property('data_type'), int)
+        entry.set_property("data-type", "str")
+        while gtk.events_pending():
+            gtk.main_iteration()
+        self.assertEqual(entry.get_property('data_type'), str)
+
     def testIdleAddedProperly(self):
         entry = ProxyEntry()
         entry.set_property("data-type", "int")
