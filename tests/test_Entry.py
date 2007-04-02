@@ -106,7 +106,7 @@ class EntryTest(unittest.TestCase):
         self.assertEqual(entry.get_property('data_type'), None)
 
         entry = gobject.new(ProxyEntry, data_type=int)
-        entry.set_property("data-type", "str")
+        entry.set_property("data-type", str)
         self.assertEqual(entry.get_property('data_type'), str)
         while gtk.events_pending():
             gtk.main_iteration()
@@ -114,7 +114,7 @@ class EntryTest(unittest.TestCase):
 
         entry = gobject.new(ProxyEntry, data_type=int)
         self.assertEqual(entry.get_property('data_type'), int)
-        entry.set_property("data-type", "str")
+        entry.set_property("data-type", str)
         while gtk.events_pending():
             gtk.main_iteration()
         self.assertEqual(entry.get_property('data_type'), str)
@@ -130,12 +130,12 @@ class EntryTest(unittest.TestCase):
         while gtk.events_pending():
             gtk.main_iteration()
         self.assertEqual(entry.get_property('data_type'), str)
-        entry.set_property("data-type", "int")
+        entry.set_property("data-type", int)
         self.assertEqual(entry.get_property('data_type'), int)
 
         entry = ProxyEntry(data_type=str)
         self.assertEqual(entry.get_property('data_type'), None)
-        entry.set_property("data-type", "int")
+        entry.set_property("data-type", int)
         while gtk.events_pending():
             gtk.main_iteration()
         self.assertEqual(entry.get_property('data_type'), int)
