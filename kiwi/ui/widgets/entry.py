@@ -70,7 +70,11 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         # This is a bug in pygobject, http://bugzilla.gnome.org/show_bug.cgi?id=425501
         # We cannot set properties in the constructor itself, but it works just
         # after it's called so do an idle add here.
-        gobject.idle_add(self.set_property, 'data-type', data_type)
+        if data_type:
+            def _set_data_type():
+                if not self.get_property('data-type'):
+                    self.set_property('data_type', data_type)
+            gobject.idle_add(_set_data_type)
 
     # Virtual methods
     gsignal('changed', 'override')

@@ -3,6 +3,7 @@
 import unittest
 
 import gobject
+import gtk
 
 from kiwi import ValueUnset
 from kiwi import datatypes
@@ -103,5 +104,27 @@ class EntryTest(unittest.TestCase):
     def testGobjectNew(self):
         entry = gobject.new(ProxyEntry)
         self.assertEqual(entry.get_property('data_type'), None)
+
+    def testIdleAddedProperly(self):
+        entry = ProxyEntry()
+        entry.set_property("data-type", "int")
+        while gtk.events_pending():
+            gtk.main_iteration()
+        self.assertEqual(entry.get_property('data_type'), int)
+
+        entry = ProxyEntry(data_type=str)
+        while gtk.events_pending():
+            gtk.main_iteration()
+        self.assertEqual(entry.get_property('data_type'), str)
+        entry.set_property("data-type", "int")
+        self.assertEqual(entry.get_property('data_type'), int)
+
+        entry = ProxyEntry(data_type=str)
+        self.assertEqual(entry.get_property('data_type'), None)
+        entry.set_property("data-type", "int")
+        while gtk.events_pending():
+            gtk.main_iteration()
+        self.assertEqual(entry.get_property('data_type'), int)
+
 if __name__ == '__main__':
     unittest.main()
