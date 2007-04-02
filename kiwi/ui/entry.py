@@ -21,6 +21,69 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #            Ronaldo Maia <romaia@async.com.br>
 #
+#
+# Design notes:
+#
+#   When inserting new text, supose, the entry, at some time is like this,
+#   ahd the user presses '0', for instance:
+#   --------------------------------
+#   | ( 1 2 )   3 4 5   - 6 7 8 9  |
+#   --------------------------------
+#              ^ ^     ^
+#              S P     E
+#
+#   S - start of the field (start)
+#   E - end of the field (end)
+#   P - pos - where the new text is being inserted. (pos)
+#
+#   So, the new text will be:
+#
+#     the old text, from 0 until P
+#   + the new text
+#   + the old text, from P until the end of the field, shifted to the
+#     right
+#   + the old text, from the end of the field, to the end of the text.
+#
+#   After inserting, the text will be this:
+#   --------------------------------
+#   | ( 1 2 )   3 0 4 5 - 6 7 8 9  |
+#   --------------------------------
+#              ^   ^   ^
+#              S   P   E
+#
+#
+#   When deleting some text, supose, the entry, at some time is like this:
+#   --------------------------------
+#   | ( 1 2 )   3 4 5 6 - 7 8 9 0  |
+#   --------------------------------
+#              ^ ^ ^   ^
+#              S s e   E
+#
+#   S - start of the field (_start)
+#   E - end of the field (_end)
+#   s - start of the text being deleted (start)
+#   e - end of the text being deleted (end)
+#
+#   end - start -> the number of characters being deleted.
+#
+#   So, the new text will be:
+#
+#     the old text, from 0 until the start of the text being deleted.
+#   + the old text, from the start of where the text is being deleted, until
+#     the end of the field, shifted to the left, end-start positions
+#   + the old text, from the end of the field, to the end of the text.
+#
+#   So, after the text is deleted, the entry will look like this:
+#
+#   --------------------------------
+#   | ( 1 2 )   3 5 6   - 7 8 9 0  |
+#   --------------------------------
+#                ^
+#                P
+#
+#   P = the position of the cursor after the deletion, witch is equal to
+#   start (s at the previous illustration)
+
 
 """
 An enchanced version of GtkEntry that supports icons and masks
@@ -671,34 +734,6 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
         return None
 
-#   When inserting new text, supose, the entry, at some time is like this,
-#   ahd the user presses '0', for instance:
-#   --------------------------------
-#   | ( 1 2 )   3 4 5   - 6 7 8 9  |
-#   --------------------------------
-#              ^ ^     ^
-#              S P     E
-#
-#   S - start of the field (start)
-#   E - end of the field (end)
-#   P - pos - where the new text is being inserted. (pos)
-#
-#   So, the new text will be:
-#
-#     the old text, from 0 until P
-#   + the new text
-#   + the old text, from P until the end of the field, shifted to the
-#     right
-#   + the old text, from the end of the field, to the end of the text.
-#
-#   After inserting, the text will be this:
-#   --------------------------------
-#   | ( 1 2 )   3 0 4 5 - 6 7 8 9  |
-#   --------------------------------
-#              ^   ^   ^
-#              S   P   E
-#
-
     def _insert_at_pos(self, text, new, pos):
         """
         Inserts the character at the give position in text. Note that the
@@ -759,38 +794,6 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         self._block_changed = False
 
         self._really_insert_text(text, 0)
-
-#   When deleting some text, supose, the entry, at some time is like this:
-#   --------------------------------
-#   | ( 1 2 )   3 4 5 6 - 7 8 9 0  |
-#   --------------------------------
-#              ^ ^ ^   ^
-#              S s e   E
-#
-#   S - start of the field (_start)
-#   E - end of the field (_end)
-#   s - start of the text being deleted (start)
-#   e - end of the text being deleted (end)
-#
-#   end - start -> the number of characters being deleted.
-#
-#   So, the new text will be:
-#
-#     the old text, from 0 until the start of the text being deleted.
-#   + the old text, from the start of where the text is being deleted, until
-#     the end of the field, shifted to the left, end-start positions
-#   + the old text, from the end of the field, to the end of the text.
-#
-#   So, after the text is deleted, the entry will look like this:
-#
-#   --------------------------------
-#   | ( 1 2 )   3 5 6   - 7 8 9 0  |
-#   --------------------------------
-#                ^
-#                P
-#
-#   P = the position of the cursor after the deletion, witch is equal to
-#   start (s at the previous ilustration)
 
     def _on_delete_text(self, editable, start, end):
         if not self._mask or self._block_delete:
