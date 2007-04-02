@@ -337,8 +337,10 @@ def register_widgets():
         if gobj == ProxyComboBox:
             continue
 
-        klass = type('Kiwi%sAdapter', (PythonWidgetAdapter,),
-                     dict(object_type=gobj))
+        adapter_name = 'Kiwi%sAdapter' % gobj.__name__
+        klass = type(adapter_name, (PythonWidgetAdapter,),
+                     dict(object_type=gobj,
+                          __name__=adapter_name))
         adapter_registry.register_adapter(klass)
 
 if not environ.epydoc:
