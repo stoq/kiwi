@@ -100,5 +100,8 @@ class EntryTest(unittest.TestCase):
         entry.set_text('')
         self.assertEqual(entry.read(), ValueUnset)
 
+    def testGobjectNew(self):
+        entry = gobject.new(ProxyEntry)
+        self.assertEqual(entry.get_property('data_type'), None)
 if __name__ == '__main__':
     unittest.main()

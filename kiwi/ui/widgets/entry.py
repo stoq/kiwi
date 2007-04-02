@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2006 Async Open Source
+# Copyright (C) 2006-2007 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -18,15 +18,15 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 # USA
 #
-# Author(s): Christian Reis <kiko@async.com.br>
-#            Lorenzo Gil Sanchez <lgs@sicem.biz>
-#            Gustavo Rahal <gustavo@async.com.br>
+# Author(s): Johan Dahlin <jdahlin@async.com.br>
+#            Ronaldo Maia <romaia@async.com.br>
 #
 
 """GtkEntry support for the Kiwi Framework"""
 
 import datetime
 
+import gobject
 import pango
 
 from kiwi.datatypes import converter, number, ValueUnset
@@ -65,7 +65,12 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         self._block_changed = False
         KiwiEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
-        self.set_property('data-type', data_type)
+
+        # Yikes!
+        # This is a bug in pygobject, http://bugzilla.gnome.org/show_bug.cgi?id=425501
+        # We cannot set properties in the constructor itself, but it works just
+        # after it's called so do an idle add here.
+        gobject.idle_add(self.set_property, 'data-type', data_type)
 
     # Virtual methods
     gsignal('changed', 'override')
@@ -212,7 +217,7 @@ class ProxyDateEntry(PropertyObject, DateEntry, ValidatableProxyWidgetMixin):
         metrics = context.get_metrics(context.get_font_description())
         char_width =  metrics.get_approximate_char_width() / pango.SCALE
         current_width = self.entry.get_width_chars()
-    
+
         # We add 4 pixels to the width, because of the icon borders
         icon_width = VALIDATION_ICON_WIDTH + 4
         self.entry.set_width_chars(current_width

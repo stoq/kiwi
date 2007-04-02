@@ -1,3 +1,11 @@
+2007-04-02  Johan Dahlin  <jdahlin@async.com.br>
+
+	* tests/test_Entry.py: Add a test
+
+	* kiwi/ui/widgets/entry.py (ProxyEntry.__init__): 
+	Add a workaround for http://bugzilla.gnome.org/show_bug.cgi?id=425501,
+	fixes #3259
+
 2007-03-28  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/environ.py (Library.__init__): Only add 
