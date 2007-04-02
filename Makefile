@@ -27,6 +27,8 @@ docs:
 web: clean-docs docs
 	cp -r doc/api ${WEBDIR}
 	cp -r doc/howto ${WEBDIR}
+	cp -r doc/howto.ps ${WEBDIR}
+	gzip ${WEBDIR}/howto.ps
 	cd ${WEBDIR} && tar cfz howto.tar.gz howto
 	cd ${WEBDIR} && tar cfz api.tar.gz api
 

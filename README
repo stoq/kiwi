@@ -40,9 +40,9 @@ offers extended widgets based upon the original PyGTK widgets.
         - Developer's guide: http://www.async.com.br/projects/kiwi/howto/
         - API documentation: http://www.async.com.br/projects/kiwi/api/
 
-    The developer's guide is available in PostScript format from:
+    The developer's guide is available in compressed PostScript format from:
 
-        http://www.async.com.br/projects/kiwi/howto.ps
+        http://www.async.com.br/projects/kiwi/howto.ps.gz
 
     You can regenerate all the documentation; just see doc/Makefile.
     To generate the API docs you will need:
