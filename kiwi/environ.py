@@ -96,7 +96,9 @@ class Environment:
         if not os.path.isdir(path):
             raise EnvironmentError("path %s must be a directory" % path)
 
-        self._resources.setdefault(resource, []).append(path)
+        reslist = self._resources.setdefault(resource, [])
+        if not path in reslist:
+            reslist.append(path)
 
     def add_resources(self, **kwargs):
         for resource, path in kwargs.items():

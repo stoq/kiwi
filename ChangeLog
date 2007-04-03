@@ -1,3 +1,8 @@
+2007-04-03  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/environ.py (Environment.add_resource): Do not append the same resource
+	path twice
+
 2007-04-02  Johan Dahlin  <jdahlin@async.com.br>
 
 	* tests/test_Entry.py: Add a test
