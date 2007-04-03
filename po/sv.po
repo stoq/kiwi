@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-23 15:39-0300\n"
-"PO-Revision-Date: 2007-01-26 13:44-0200\n"
+"POT-Creation-Date: 2007-04-02 12:17-0300\n"
+"PO-Revision-Date: 2007-04-03 11:23-0300\n"
 "Last-Translator: Johan Dahlin <jdahlin@async.com.br>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -137,7 +137,7 @@ msgstr "Felaktigt placerad tusenseparator"
 #: ../kiwi/datatypes.py:689
 #, python-format
 msgid "Inproperly placed thousand separators: %r"
-msgstr "Felaktigt placerade tusenseparatorer"
+msgstr "Felaktigt placerade tusenseparatorer: %r"
 
 #: ../kiwi/datatypes.py:707
 #, python-format
@@ -165,7 +165,7 @@ msgstr "_Välj"
 msgid "Finish"
 msgstr "Slutför"
 
-#: ../kiwi/ui/entry.py:527
+#: ../kiwi/ui/entry.py:590
 #, python-format
 msgid "'%s' is not a valid object"
 msgstr "'%s' är inte ett giltligt objekt"
@@ -216,7 +216,7 @@ msgstr "Lösenord:"
 #: ../kiwi/ui/proxywidget.py:65
 #, python-format
 msgid "Could not load image: %s"
-msgstr "Kunde inte öppna bilden: \"%s\""
+msgstr "Kunde inte öppna bilden: %s"
 
 #: ../kiwi/ui/proxywidget.py:292
 #, python-format
