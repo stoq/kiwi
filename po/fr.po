@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-04-02 12:17-0300\n"
-"PO-Revision-Date: 2007-01-14 00:07+0100\n"
+"PO-Revision-Date: 2007-04-03 12:41-0300\n"
 "Last-Translator: Benoit Myard <myardbenoit@gmail.com>\n"
 "Language-Team: French <myardbenoit@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -106,7 +106,7 @@ msgstr ""
 #: ../kiwi/datatypes.py:545
 #, python-format
 msgid "This field requires a date of the format \"%s\" and not \"%s\""
-msgstr "Ce champ nécessite une date de la forme \"%S\" et non pas \"%s\""
+msgstr "Ce champ nécessite une date de la forme \"%s\" et non pas \"%s\""
 
 #: ../kiwi/datatypes.py:550
 msgid "Time"
