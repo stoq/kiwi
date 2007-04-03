@@ -238,7 +238,7 @@ def gsignal(name, *args, **kwargs):
     @param args:     types for signal parameters,
       if the first one is a string 'override', the signal will be
       overridden and must therefor exists in the parent GObject.
-    @keyword flags: One of the following:
+    @keyword flags: A combination of;
       - gobject.SIGNAL_RUN_FIRST
       - gobject.SIGNAL_RUN_LAST
       - gobject.SIGNAL_RUN_CLEANUP
@@ -279,7 +279,7 @@ def _max(c):
     return 2 ** ((8 * struct.calcsize(c)) - 1) - 1
 
 _MAX_VALUES = {int : _max('i'),
-               float : _max('f'),
+               float: float(2**1024 - 2**971),
                long : _max('l') }
 _DEFAULT_VALUES = {str : '', float : 0.0, int : 0, long : 0L}
 
@@ -294,7 +294,7 @@ def gproperty(name, ptype, default=None, nick='', blurb='',
     @param default:  default value
     @param nick:     short description
     @param blurb:    long description
-    @param flags:    parameter flags, one of:
+    @param flags:    parameter flags, a combination of:
       - PARAM_READABLE
       - PARAM_READWRITE
       - PARAM_WRITABLE
