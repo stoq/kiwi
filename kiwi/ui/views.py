@@ -46,7 +46,7 @@ from kiwi.utils import gsignal, type_register
 from kiwi.ui.gadgets import quit_if_last
 from kiwi.ui.proxy import Proxy
 
-log = Logger('view')
+log = Logger('kiwi.view')
 
 _non_interactive = (
     gtk.Label,
