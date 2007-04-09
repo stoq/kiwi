@@ -134,7 +134,7 @@ class EntryTest(unittest.TestCase):
         self.assertEqual(entry.get_property('data_type'), int)
 
         entry = ProxyEntry(data_type=str)
-        self.assertEqual(entry.get_property('data_type'), None)
+        self.assertEqual(entry.get_property('data_type'), str)
         entry.set_property("data-type", int)
         while gtk.events_pending():
             gtk.main_iteration()

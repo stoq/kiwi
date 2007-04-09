@@ -135,6 +135,11 @@ class PropertyMeta(_GObjectClassInittableMetaType):
         self.__gproperties__ = {}
         self.__gsignals__ = {}
 
+    def __call__(self, *args, **kwargs):
+        rv = super(PropertyMeta, self).__call__(*args, **kwargs)
+        rv.__post_init__()
+        return rv
+
 class PropertyObject(object):
     """
     I am an object which maps GObject properties to attributes
@@ -201,6 +206,14 @@ class PropertyObject(object):
         cls._default_values.update(default_values)
 
     __class_init__ = classmethod(__class_init__)
+
+    def __post_init__(self):
+        """
+        A hook which is called after the constructor is called.
+        It's mainly here to workaround
+        http://bugzilla.gnome.org/show_bug.cgi?id=425501
+        so you can set properties at construction time
+        """
 
     def _set(self, name, value):
         func = getattr(self, 'prop_set_%s' % name, None)

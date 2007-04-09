@@ -26,7 +26,6 @@
 
 import datetime
 
-import gobject
 import pango
 
 from kiwi.datatypes import converter, number, ValueUnset
@@ -65,16 +64,10 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         self._block_changed = False
         KiwiEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
+        self._data_type = data_type
 
-        # Yikes!
-        # This is a bug in pygobject, http://bugzilla.gnome.org/show_bug.cgi?id=425501
-        # We cannot set properties in the constructor itself, but it works just
-        # after it's called so do an idle add here.
-        if data_type:
-            def _set_data_type():
-                if not self.get_property('data-type'):
-                    self.set_property('data_type', data_type)
-            gobject.idle_add(_set_data_type)
+    def __post_init__(self):
+        self.set_property('data_type', self._data_type)
 
     # Virtual methods
     gsignal('changed', 'override')

@@ -1,3 +1,11 @@
+2007-04-08  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/entry.py (ProxyEntry.__post_init__): Remove
+	dirty idle add hack and use __post_init__ instead.
+
+	* kiwi/utils.py (PropertyObject.__post_init__): Add a hook which is
+	called after the object construction is finished.
+
 2007-04-03  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/environ.py (Environment.add_resource): Do not append the same resource
