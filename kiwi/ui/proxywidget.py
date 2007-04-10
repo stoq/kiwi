@@ -153,8 +153,7 @@ class ProxyWidgetMixin(object):
         """
         conv = self._converter
         if conv is None:
-            raise AssertionError(
-                "You need to set a data type before calling _as_string")
+            conv = converter.get_converter(str)
 
         return conv.as_string(data, format=self._data_format)
 
@@ -166,8 +165,7 @@ class ProxyWidgetMixin(object):
         """
         conv = self._converter
         if conv is None:
-            raise AssertionError(
-                "You need to set a data type before calling _from_string")
+            conv = converter.get_converter(str)
 
         return conv.from_string(data)
 

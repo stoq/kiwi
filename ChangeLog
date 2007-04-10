@@ -1,3 +1,8 @@
+2007-04-10  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/proxywidget.py (ProxyWidgetMixin._as_string): Provide
+	a default (string) converter if none is set.
+
 2007-04-08  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/entry.py (ProxyEntry.__post_init__): Remove
