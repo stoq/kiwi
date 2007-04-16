@@ -10,9 +10,9 @@ class Fruit:
 fruits = ObjectList([Column('name', data_type=str, sorted=True),
                Column('price', data_type=int)])
 
-for name, price in [('Apple', 4),
+for name, price in [('Kiwi', 8),
+                    ('Apple', 4),
                     ('Pineapple', 2),
-                    ('Kiwi', 8),
                     ('Banana', 3),
                     ('Melon', 5)]:
     fruits.append(Fruit(name, price))
