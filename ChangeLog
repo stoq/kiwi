@@ -5,6 +5,9 @@
 	* kiwi/ui/objectlist.py:
 	Do not set a pixbuf if the data value is None. Fixes #3310
 
+	* kiwi/ui/objectlist.py: 
+	Set the sort columnm id so the columns end up sorted. Fixes #3032
+
 2007-04-10  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/proxywidget.py (ProxyWidgetMixin._as_string): Provide

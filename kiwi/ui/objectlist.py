@@ -826,6 +826,9 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                                       (column, column.attribute))
             treeview_column.set_sort_column_id(index)
 
+        if column.sorted:
+            self._model.set_sort_column_id(index, column.order)
+
         renderer, renderer_prop = self._guess_renderer_for_type(column)
         if column.on_attach_renderer:
             column.on_attach_renderer(renderer)
