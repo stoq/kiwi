@@ -1125,8 +1125,9 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         row = model[treeiter]
         data = column.get_attribute(row[COL_MODEL],
                                     column.attribute, None)
-        pixbuf = self.render_icon(data, column.icon_size)
-        renderer.set_property(renderer_prop, pixbuf)
+        if data is not None:
+            pixbuf = self.render_icon(data, column.icon_size)
+            renderer.set_property(renderer_prop, pixbuf)
 
     def _cell_data_combo_func(self, tree_column, renderer, model, treeiter,
                               (column, renderer_prop)):
