@@ -708,6 +708,23 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         cmp(x, y) -> -1, 0, 1"""
         raise NotImplementedError
 
+    def sort_by_attribute(self, attribute, order=gtk.SORT_ASCENDING):
+        """
+        Sort by an attribute in the object model.
+
+        @param attribute: attribute to sort on
+        @type attribute: string
+        @param order: one of gtk.SORT_ASCENDING, gtk.SORT_DESCENDING
+        @type order: gtk.SortType
+        """
+        def _sort_func(model, iter1, iter2):
+            return cmp(
+                getattr(model[iter1][0], attribute, None),
+                getattr(model[iter2][0], attribute, None))
+        unused_sort_col_id = len(self._columns)
+        self._model.set_sort_func(unused_sort_col_id, _sort_func)
+        self._model.set_sort_column_id(unused_sort_col_id, order)
+
     # Properties
 
     def prop_set_selection_mode(self, mode):
