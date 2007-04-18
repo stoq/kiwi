@@ -2,6 +2,7 @@
 
 	* kiwi/ui/dateentry.py (DateEntry.set_date): Allow None which 
 	means reset the date
+	(DateEntry.get_date): Never return ValueUnset.
 
 	* kiwi/ui/objectlist.py (ObjectList.sort_by_attribute): 
 	Add. Fixes #3311, based on patch by Ali Afshar.

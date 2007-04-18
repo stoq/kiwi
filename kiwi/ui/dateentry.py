@@ -376,6 +376,9 @@ class DateEntry(gtk.HBox):
         """
         @returns: the currently selected day
         """
-        return self.entry.read()
+        date = self.entry.read()
+        if date == ValueUnset:
+            date = None
+        return date
 
 type_register(DateEntry)
