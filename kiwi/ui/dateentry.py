@@ -361,12 +361,16 @@ class DateEntry(gtk.HBox):
 
     def set_date(self, date):
         """
-        @param date: a datetime.date instance
+        @param date: a datetime.date instance or None
         """
-        if not isinstance(date, datetime.date):
-            raise TypeError("date must be a datetime.date instance")
+        if not isinstance(date, datetime.date) and date is not None:
+            raise TypeError("date must be a datetime.date instance or None")
 
-        self.entry.set_text(date_converter.as_string(date))
+        if date is None:
+            value = ''
+        else:
+            value = date_converter.as_string(date)
+        self.entry.set_text(value)
 
     def get_date(self):
         """
