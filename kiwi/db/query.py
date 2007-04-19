@@ -70,6 +70,11 @@ class DateIntervalQueryState(QueryState):
         self.end = end
 
 class QueryExecuter(object):
+    """
+    A QueryExecuter is responsible for taking the state (as in QueryState)
+    objects from search filters and construct a query.
+    How the query is constructed is ORM/DB-layer dependent
+    """
     def __init__(self):
         self._columns = {}
 

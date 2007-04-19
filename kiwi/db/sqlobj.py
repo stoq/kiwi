@@ -39,7 +39,6 @@ class SQLObjectQueryExecuter(QueryExecuter):
         self.conn = conn
         self.table = None
         self._filter_query_callbacks = {}
-        self._query_callbacks = []
         self._query = self._default_query
 
     #
@@ -47,12 +46,18 @@ class SQLObjectQueryExecuter(QueryExecuter):
     #
 
     def set_table(self, table):
+        """
+        Sets the SQLObject table/object for this executer
+        @param table: a SQLObject subclass
+        """
         self.table = table
 
     def add_filter_query_callback(self, search_filter, callback):
         """
-        @param search_filter:
-        @param callback:
+        Adds a query callback for the filter search_filter
+
+        @param search_filter: a search filter
+        @param callback: a callable
         """
         if not ISearchFilter.providedBy(search_filter):
             raise TypeError
@@ -61,15 +66,12 @@ class SQLObjectQueryExecuter(QueryExecuter):
         l = self._filter_query_callbacks.setdefault(search_filter, [])
         l.append(callback)
 
-    def add_query_callback(self, callback):
-        """
-        @param callback:
-        """
-        if not callable(callback):
-            raise TypeError
-        self._query_callbacks.append(callback)
-
     def set_query(self, callback):
+        """
+        Overrides the default query mechanism.
+        @param callback: a callable which till take two arguments:
+          (query, connection)
+        """
         if callback is None:
             callback = self._default_query
         elif not callable(callback):
@@ -111,12 +113,6 @@ class SQLObjectQueryExecuter(QueryExecuter):
                 raise ValueError(
                     "You need to add a search column or a query callback "
                     "for filter %s" % (search_filter))
-
-        # Custom query
-        for callback in self._query_callbacks:
-            query = callback()
-            if query:
-                queries.append(query)
 
         return self._query(AND(*queries), self.conn)
 

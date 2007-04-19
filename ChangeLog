@@ -1,5 +1,19 @@
 2007-04-19  Johan Dahlin  <jdahlin@async.com.br>
 
+	* README: Mention that SQLObject is an optional dependency
+
+	* kiwi/db/__init__.py:
+	* kiwi/db/query.py:
+	* kiwi/db/sqlobj.py:
+	* kiwi/enums.py:
+	* kiwi/interfaces.py:
+	* kiwi/ui/search.py:
+
+	Add a SearchContainer plus database independent infrastructure to
+	construct queries. Include a SQLObject plugin
+
+2007-04-19  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/ui/widgets/combo.py (ProxyComboBoxEntry.insert_item)
 	(ProxyComboBox.insert_item, _EasyComboBoxHelper.insert_item): 
 	Implement insert_item.
