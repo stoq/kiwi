@@ -1,3 +1,9 @@
+2007-04-19  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/combo.py (ProxyComboBoxEntry.insert_item)
+	(ProxyComboBox.insert_item, _EasyComboBoxHelper.insert_item): 
+	Implement insert_item.
+
 2007-04-18  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/dateentry.py (DateEntry.set_date): Allow None which 

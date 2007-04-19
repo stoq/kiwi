@@ -155,6 +155,33 @@ class _EasyComboBoxHelper(object):
         else:
             raise AssertionError
 
+    def insert_item(self, position, label, data=None):
+        """ Inserts a single item at a position to the Combo.
+        @param position: position to insert the item at
+        @param label: a string with the text to be added
+        @param data: the data to be associated with that item
+        """
+        if not isinstance(label, basestring):
+            raise TypeError("label must be string, found %s" % (label,))
+
+        if self.mode == ComboMode.UNKNOWN:
+            if data is not None:
+                self.set_mode(ComboMode.DATA)
+            else:
+                self.set_mode(ComboMode.STRING)
+
+        model = self._combobox.get_model()
+        if self.mode == ComboMode.STRING:
+            if data is not None:
+                raise TypeError("data can not be specified in string mode")
+            model.insert(position, (label, None))
+        elif self.mode == ComboMode.DATA:
+            if data is None:
+                raise TypeError("data must be specified in string mode")
+            model.insert(position, (label, data))
+        else:
+            raise AssertionError
+
     def select(self, data):
         mode = self.mode
         if self.mode == ComboMode.STRING:
@@ -312,6 +339,12 @@ class ProxyComboBox(PropertyObject, gtk.ComboBox, ProxyWidgetMixin):
         See L{kiwi.interfaces.IEasyCombo.append_item}
         """
         self._helper.append_item(label, data)
+
+    def insert_item(self, position, label, data=None):
+        """
+        See L{kiwi.interfaces.IEasyCombo.insert_item}
+        """
+        self._helper.insert_item(position, label, data)
 
     def select(self, data):
         """
@@ -505,6 +538,12 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry,
         See L{kiwi.interfaces.IEasyCombo.append_item}
         """
         self._helper.append_item(label, data)
+
+    def insert_item(self, position, label, data=None):
+        """
+        See L{kiwi.interfaces.IEasyCombo.insert_item}
+        """
+        self._helper.insert_item(position, label, data)
 
     def select(self, data):
         """
