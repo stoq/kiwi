@@ -388,7 +388,7 @@ class SearchContainer(gtk.VBox):
         gtk.VBox.__init__(self)
         self._columns = columns
         self._search_filters = []
-        self._querty_executer = None
+        self._query_executer = None
 
         search_filter = StringSearchFilter(_('Search:'), chars=chars)
         self._search_filters.append(search_filter)
