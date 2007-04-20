@@ -155,12 +155,12 @@ class SQLObjectQueryExecuter(QueryExecuter):
 
     def _parse_date_state(self, state, table_field):
         if state.date:
-            return func.DATE(table_field) == func.DATE(state.date)
+            return func.DATE(table_field) == state.date
 
     def _parse_date_interval_state(self, state, table_field):
         queries = []
         if state.start:
-            queries.append(table_field >= func.DATE(state.start))
+            queries.append(table_field >= state.start)
         if state.end:
-            queries.append(table_field <= func.DATE(state.end))
+            queries.append(func.DATE(table_field) <= state.end)
         return AND(*queries)
