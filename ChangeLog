@@ -1,3 +1,10 @@
+2007-04-20  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/search.py (DateSearchFilter): Make sure that you cannot
+	select a start date after the end date and an end date before the 
+	start date. Add some comments explaning what's going on since the
+	code is not that trivial any longer.
+
 2007-04-19  Johan Dahlin  <jdahlin@async.com.br>
 
 	* README: Mention that SQLObject is an optional dependency
