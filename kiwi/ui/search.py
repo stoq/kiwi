@@ -194,8 +194,11 @@ class DateSearchFilter(object):
 
     def _update_dates(self):
         date_type = self.mode.get_selected_data()
-        if date_type not in [DateSearchFilter.Type.CUSTOM_DAY,
-                             DateSearchFilter.Type.CUSTOM_INTERVAL]:
+        if date_type == DateSearchFilter.Type.CUSTOM_DAY:
+            self.end_date.set_date(self.start_date.get_date())
+        elif date_type == DateSearchFilter.Type.CUSTOM_INTERVAL:
+            pass
+        else:
             option = self._options.get(date_type)
             start_date, end_date = option.get_interval()
             self.start_date.set_date(start_date)
@@ -223,7 +226,6 @@ class DateSearchFilter(object):
     def _on_start_date__changed(self, start_date):
         date_type = self.mode.get_selected_data()
         if date_type == DateSearchFilter.Type.CUSTOM_DAY:
-            self.start_date.set_date(start_date.get_date())
             self.end_date.set_date(start_date.get_date())
 
 
