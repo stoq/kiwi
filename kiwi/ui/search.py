@@ -117,8 +117,8 @@ class DateSearchFilter(object):
     """
     implements(ISearchFilter)
     class Type(enum):
-        (CUSTOM_DAY,
-         CUSTOM_INTERVAL) = range(100, 102)
+        (USER_DAY,
+         USER_INTERVAL) = range(100, 102)
 
     def __init__(self, name):
         """
@@ -160,8 +160,8 @@ class DateSearchFilter(object):
         self.hbox = hbox
 
         self.mode.prefill([
-            (_('Custom day'), DateSearchFilter.Type.CUSTOM_DAY),
-            (_('Custom interval'), DateSearchFilter.Type.CUSTOM_INTERVAL),
+            (_('Custom day'), DateSearchFilter.Type.USER_DAY),
+            (_('Custom interval'), DateSearchFilter.Type.USER_INTERVAL),
             ])
 
         for option in (Any, Today, Yesterday, LastWeek, LastMonth):
@@ -198,21 +198,21 @@ class DateSearchFilter(object):
         # This is called when we change mode
         date_type = self.mode.get_selected_data()
 
-        # If we switch to a custom day, make sure that
+        # If we switch to a user selectable day, make sure that
         # both dates are set to the same day
-        if date_type == DateSearchFilter.Type.CUSTOM_DAY:
+        if date_type == DateSearchFilter.Type.USER_DAY:
             start = self.start_date.get_date()
             end = self.end_date.get_date()
             if start != end:
                 self.end_date.set_date(self.start_date.get_date())
-        # And for custom interval, do the opposite, make sure
+        # And for user interval, do the opposite, make sure
         # that start and end are different
-        elif date_type == DateSearchFilter.Type.CUSTOM_INTERVAL:
+        elif date_type == DateSearchFilter.Type.USER_INTERVAL:
             start = self.start_date.get_date()
             end = self.end_date.get_date()
             if start and end and start == end:
                 self.end_date.set_date(start + datetime.timedelta(days=1))
-        # Finally for custom ones let the DateSearchOption decide what the
+        # Finally for pre-defined ones let the DateSearchOption decide what the
         # values are going to be, these dates are not user editable so
         # we don't need to do any checking.
         else:
@@ -223,12 +223,12 @@ class DateSearchFilter(object):
 
     def _update_sensitivity(self):
         date_type = self.mode.get_selected_data()
-        enabled = date_type == DateSearchFilter.Type.CUSTOM_INTERVAL
+        enabled = date_type == DateSearchFilter.Type.USER_INTERVAL
         self.to_label.set_sensitive(enabled)
         self.end_date.set_sensitive(enabled)
 
-        enabled = (date_type == DateSearchFilter.Type.CUSTOM_INTERVAL or
-                   date_type == DateSearchFilter.Type.CUSTOM_DAY)
+        enabled = (date_type == DateSearchFilter.Type.USER_INTERVAL or
+                   date_type == DateSearchFilter.Type.USER_DAY)
         self.from_label.set_sensitive(enabled)
         self.start_date.set_sensitive(enabled)
 
@@ -253,14 +253,14 @@ class DateSearchFilter(object):
     def _on_start_date__changed(self, start_date):
         date_type = self.mode.get_selected_data()
         start = start_date.get_date()
-        # For custom days, just make sure that the date entries
+        # For user days, just make sure that the date entries
         # always are in sync
-        if date_type == DateSearchFilter.Type.CUSTOM_DAY:
+        if date_type == DateSearchFilter.Type.USER_DAY:
             self._internal_set_end_date(start)
         # Make sure that we cannot select a start date after
         # the end date, be nice and increase the end date if
         # the start date happen to be the same
-        elif date_type == DateSearchFilter.Type.CUSTOM_INTERVAL:
+        elif date_type == DateSearchFilter.Type.USER_INTERVAL:
             end = self.end_date.get_date()
             if not start or not end:
                 return
@@ -269,14 +269,14 @@ class DateSearchFilter(object):
 
     def _on_end_date__changed(self, end_date):
         date_type = self.mode.get_selected_data()
-        # We don't need to do anything for custom day, since
+        # We don't need to do anything for user day, since
         # this the end date widget is disabled
-        if date_type == DateSearchFilter.Type.CUSTOM_DAY:
+        if date_type == DateSearchFilter.Type.USER_DAY:
             pass
         # Make sure that we cannot select an end date before
         # the start date, be nice and decrease the start date if
         # the end date happen to be the same
-        elif date_type == DateSearchFilter.Type.CUSTOM_INTERVAL:
+        elif date_type == DateSearchFilter.Type.USER_INTERVAL:
             start = self.start_date.get_date()
             end = end_date.get_date()
             if not start or not end:
