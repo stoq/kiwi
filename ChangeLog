@@ -1,5 +1,6 @@
 2007-04-20  Johan Dahlin  <jdahlin@async.com.br>
 
+	* examples/search.py: Add an example.
 	* kiwi/ui/search.py (DateSearchFilter): Make sure that you cannot
 	select a start date after the end date and an end date before the 
 	start date. Add some comments explaning what's going on since the
