@@ -121,6 +121,9 @@ class DateSearchFilter(object):
          CUSTOM_INTERVAL) = range(100, 102)
 
     def __init__(self, name):
+        """
+        @param name: name of the search filter
+        """
         self._options = {}
         hbox = gtk.HBox()
         hbox.set_border_width(6)
@@ -224,8 +227,17 @@ class DateSearchFilter(object):
 
 
 class ComboSearchFilter(object):
+    """
+    - a label
+    - a combo with a set of predefined item to select from
+    """
     implements(ISearchFilter)
     def __init__(self, name, values):
+        """
+        @param name: name of the search filter
+        @param values: items to put in the combo, see
+          L{kiwi.ui.widgets.combo.ProxyComboBox.prefill}
+        """
         hbox = gtk.HBox()
         label = gtk.Label(name)
         hbox.pack_start(label, False, False)
@@ -238,6 +250,13 @@ class ComboSearchFilter(object):
 
         self.hbox = hbox
 
+    def select(self, data):
+        """
+        selects an item in the combo
+        @param data: what to select
+        """
+        self.combo.select(data)
+
     def get_widget(self):
         return self.hbox
 
@@ -247,8 +266,18 @@ class ComboSearchFilter(object):
 
 
 class StringSearchFilter(object):
+    """
+    - a label
+    - an entry
+    @ivar entry: the entry
+    @ivar label: the label
+    """
     implements(ISearchFilter)
     def __init__(self, name, chars=0):
+        """
+        @param name: name of the search filter
+        @param chars: maximum number of chars used by the search entry
+        """
         hbox = gtk.HBox()
         self.label = gtk.Label(name)
         hbox.pack_start(self.label, False, False)
@@ -284,9 +313,10 @@ class SearchResults(ObjectList):
 class SearchContainer(gtk.VBox):
     """
     A search container is a widget which consists of:
-    - search entry
+    - search entry (w/ a label) (L{StringSearchFilter})
     - search button
-    - objectlist result
+    - objectlist result (L{SearchResult})
+    - a query executer (L{kiwi.db.query.QueryExecuter})
 
     Additionally you can add a number of search filters to the SearchContainer.
     You can chose if you want to add the filter in the top-left corner
@@ -382,6 +412,7 @@ class SearchContainer(gtk.VBox):
 
     def _create_ui(self):
         hbox = gtk.HBox()
+        hbox.set_border_width(6)
         self.pack_start(hbox, False, False)
         hbox.show()
         self.hbox = hbox
@@ -399,7 +430,7 @@ class SearchContainer(gtk.VBox):
         button.show()
 
         self.results = SearchResults(self._columns)
-        self.pack_end(self.results)
+        self.pack_end(self.results, True, True, 6)
         self.results.show()
 
 class SearchSlaveDelegate(SlaveDelegate):
@@ -444,11 +475,17 @@ class SearchSlaveDelegate(SlaveDelegate):
         """
         self.search.search_entry.grab_focus()
 
-    def search(self):
+    def refresh(self):
         """
-        Trigger a search again with the currently selected inputs
+        Triggers a search again with the currently selected inputs
         """
         self.search.search()
+
+    def clear(self):
+        """
+        Clears the result list
+        """
+        self.search.results.clear()
 
     #
     # Overridable
