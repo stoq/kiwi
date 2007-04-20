@@ -163,4 +163,4 @@ class SQLObjectQueryExecuter(QueryExecuter):
             queries.append(table_field >= func.DATE(state.start))
         if state.end:
             queries.append(table_field <= func.DATE(state.end))
-        return OR(*queries)
+        return AND(*queries)
