@@ -223,6 +223,7 @@ class DateSearchFilter(object):
     def _on_start_date__changed(self, start_date):
         date_type = self.mode.get_selected_data()
         if date_type == DateSearchFilter.Type.CUSTOM_DAY:
+            self.start_date.set_date(start_date.get_date())
             self.end_date.set_date(start_date.get_date())
 
 
