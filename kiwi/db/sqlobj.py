@@ -34,7 +34,7 @@ from kiwi.db.query import (NumberQueryState, StringQueryState,
 from kiwi.interfaces import ISearchFilter
 
 class SQLObjectQueryExecuter(QueryExecuter):
-    def __init__(self, conn):
+    def __init__(self, conn=None):
         QueryExecuter.__init__(self)
         self.conn = conn
         self.table = None
