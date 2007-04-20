@@ -210,7 +210,7 @@ class DateSearchFilter(object):
         elif date_type == DateSearchFilter.Type.CUSTOM_INTERVAL:
             start = self.start_date.get_date()
             end = self.end_date.get_date()
-            if start == end:
+            if start and end and start == end:
                 self.end_date.set_date(start + datetime.timedelta(days=1))
         # Finally for custom ones let the DateSearchOption decide what the
         # values are going to be, these dates are not user editable so
