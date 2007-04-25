@@ -52,14 +52,13 @@ class PurchaseViewer(gtk.Window):
         self.query.set_filter_columns(self.search.get_primary_filter(),
                                       ['description'])
 
-        date_filter = DateSearchFilter('Date:')
-        self.query.set_filter_columns(date_filter, ['date'])
-        self.search.add_filter(date_filter)
+        self.search.add_filter(DateSearchFilter('Date:'),
+                               columns=['date'])
 
     def get_columns(self):
-        return [Column('description', expand=True, title='Description'),
-                Column('price', data_type=currency,
-                       expand=True, title='Price'),
+        return [Column('description', data_type=str, title='Description',
+                       expand=True),
+                Column('price', data_type=currency, title='Price'),
                 Column('date', data_type=datetime.date)]
 
 view = PurchaseViewer()

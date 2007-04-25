@@ -1,5 +1,18 @@
 2007-04-25  Johan Dahlin  <jdahlin@async.com.br>
 
+	* examples/search.py:
+	* kiwi/db/query.py:
+	* kiwi/db/sqlobj.py:
+	* kiwi/ui/search.py:
+
+	Add auto_search mode, which is enabled by default.
+	Add optional columns, callback parameters to add_filter,
+	to make it easier to integrate with the query executer.
+	Add a generic query callback to the SQLObject executer.
+	Use new api in example.
+	
+2007-04-25  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/ui/search.py (DateSearchFilter.select): Add and reorganize
 	internals a bit to be able to select by option_type.
 

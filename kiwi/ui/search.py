@@ -28,6 +28,7 @@ Search related widgets
 import datetime
 import gettext
 
+import gobject
 import gtk
 
 from kiwi.component import implements
@@ -41,6 +42,7 @@ from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.delegates import SlaveDelegate
 from kiwi.ui.objectlist import ObjectList
 from kiwi.ui.widgets.combo import ProxyComboBox
+from kiwi.utils import gsignal
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
@@ -110,11 +112,12 @@ class LastMonth(DateSearchOption):
         return start_date, datetime.date.today()
 
 
-class DateSearchFilter(object):
+class DateSearchFilter(gobject.GObject):
     """
     A filter which helps you to search by a date interval.
     Can be customized through add_option.
     """
+    gsignal('changed')
     implements(ISearchFilter)
     class Type(enum):
         (USER_DAY,
@@ -124,6 +127,7 @@ class DateSearchFilter(object):
         """
         @param name: name of the search filter
         """
+        gobject.GObject.__init__(self)
         self._options = {}
         hbox = gtk.HBox()
         hbox.set_border_width(6)
@@ -132,8 +136,9 @@ class DateSearchFilter(object):
         label.show()
 
         self.mode = ProxyComboBox()
-        self.mode.connect('content-changed',
-                          self._on_mode__content_changed)
+        self.mode.connect(
+            'content-changed',
+            self._on_mode__content_changed)
         hbox.pack_start(self.mode, False, False, 6)
         self.mode.show()
 
@@ -256,6 +261,7 @@ class DateSearchFilter(object):
     def _on_mode__content_changed(self, mode):
         self._update_dates()
         self._update_sensitivity()
+        self.emit('changed')
 
     def _on_start_date__changed(self, start_date):
         date_type = self.mode.get_selected_data()
@@ -291,11 +297,12 @@ class DateSearchFilter(object):
             if end <= start:
                 self._internal_set_start_date(end - datetime.timedelta(days=1))
 
-class ComboSearchFilter(object):
+class ComboSearchFilter(gobject.GObject):
     """
     - a label
     - a combo with a set of predefined item to select from
     """
+    gsignal('changed')
     implements(ISearchFilter)
     def __init__(self, name, values):
         """
@@ -303,12 +310,16 @@ class ComboSearchFilter(object):
         @param values: items to put in the combo, see
           L{kiwi.ui.widgets.combo.ProxyComboBox.prefill}
         """
+        gobject.GObject.__init__(self)
         hbox = gtk.HBox()
         label = gtk.Label(name)
         hbox.pack_start(label, False, False)
         label.show()
 
         self.combo = ProxyComboBox()
+        self.combo.connect(
+            'content-changed',
+            self._on_combo__content_changed)
         self.combo.prefill(values)
         hbox.pack_start(self.combo, False, False, 6)
         self.combo.show()
@@ -329,26 +340,35 @@ class ComboSearchFilter(object):
         return NumberQueryState(filter=self,
                                 value=self.combo.get_selected_data())
 
+    #
+    # Callbacks
+    #
 
-class StringSearchFilter(object):
+    def _on_combo__content_changed(self, mode):
+        self.emit('changed')
+
+class StringSearchFilter(gobject.GObject):
     """
     - a label
     - an entry
     @ivar entry: the entry
     @ivar label: the label
     """
+    gsignal('changed')
     implements(ISearchFilter)
     def __init__(self, name, chars=0):
         """
         @param name: name of the search filter
         @param chars: maximum number of chars used by the search entry
         """
+        gobject.GObject.__init__(self)
         hbox = gtk.HBox()
         self.label = gtk.Label(name)
         hbox.pack_start(self.label, False, False)
         self.label.show()
 
         self.entry = gtk.Entry()
+        self.entry.connect('activate', self._on_entry__activate)
         if chars:
             self.entry.set_width_chars(chars)
         hbox.pack_start(self.entry, False, False, 6)
@@ -365,6 +385,13 @@ class StringSearchFilter(object):
 
     def set_label(self, label):
         self.label.set_text(label)
+
+    #
+    # Callbacks
+    #
+
+    def _on_entry__activate(self, entry):
+        self.emit('changed')
 
 
 #
@@ -396,8 +423,10 @@ class SearchContainer(gtk.VBox):
         self._columns = columns
         self._search_filters = []
         self._query_executer = None
+        self._auto_search = True
 
         search_filter = StringSearchFilter(_('Search:'), chars=chars)
+        search_filter.connect('changed', self._on_search_filter__changed)
         self._search_filters.append(search_filter)
         self._primary_filter = search_filter
 
@@ -408,14 +437,32 @@ class SearchContainer(gtk.VBox):
     # Public API
     #
 
-    def add_filter(self, search_filter, position=SearchFilterPosition.BOTTOM):
+    def add_filter(self, search_filter, position=SearchFilterPosition.BOTTOM,
+                   columns=None, callback=None):
         """
         Adds a search filter
         @param search_filter: the search filter
         @param postition: a L{SearchFilterPosition} enum
+        @param columns:
+        @param callback:
         """
+
         if not ISearchFilter.providedBy(search_filter):
             raise TypeError("search_filter must implement ISearchFilter")
+
+        if columns and callback:
+            raise TypeError("Cannot specify both column and callback")
+
+        executer = self.get_query_executer()
+        if not executer:
+            raise ValueError
+
+        if columns:
+            executer.set_filter_columns(search_filter, columns)
+        if callback:
+            if not callable(callback):
+                raise TypeError("callback must be callable")
+            executer.add_filter_query_callback(search_filter, callback)
 
         widget = search_filter.get_widget()
         assert not widget.parent
@@ -426,6 +473,7 @@ class SearchContainer(gtk.VBox):
             self.pack_start(widget, False, False)
         widget.show()
 
+        search_filter.connect('changed', self._on_search_filter__changed)
         self._search_filters.append(search_filter)
 
     def set_query_executer(self, querty_executer):
@@ -438,6 +486,14 @@ class SearchContainer(gtk.VBox):
             raise TypeError("querty_executer must be a QueryExecuter instance")
 
         self._query_executer = querty_executer
+
+    def get_query_executer(self):
+        """
+        Fetchs the QueryExecuter for the SearchContainer
+        @returns: a querty executer
+        @rtype: a L{QueryExecuter} subclass
+        """
+        return self._query_executer
 
     def get_primary_filter(self):
         """
@@ -461,15 +517,24 @@ class SearchContainer(gtk.VBox):
         self.results.clear()
         self.results.extend(results)
 
+    def set_auto_search(self, auto_search):
+        """
+        Enables/Disables auto search which means that the search result box
+        is automatically populated when a filter changes
+        @param auto_search: True to enable, False to disable
+        """
+        self._auto_search = auto_search
+
     #
     # Callbacks
     #
 
-    def _on_search_entry_activate(self, entry):
-        self.search()
-
     def _on_search_button__clicked(self, button):
         self.search()
+
+    def _on_search_filter__changed(self, search_filter):
+        if self._auto_search:
+            self.search()
 
     #
     # Private
@@ -487,7 +552,6 @@ class SearchContainer(gtk.VBox):
         widget.show()
 
         self.search_entry = self._primary_filter.entry
-        self.search_entry.connect('activate', self._on_search_entry_activate)
 
         button = gtk.Button(stock=gtk.STOCK_FIND)
         button.connect('clicked', self._on_search_button__clicked)
@@ -499,34 +563,32 @@ class SearchContainer(gtk.VBox):
         self.results.show()
 
 class SearchSlaveDelegate(SlaveDelegate):
+    """
+    @ivar results: the results list of the container
+    @ivar search: the L{SearchContainer}
+    """
     def __init__(self, columns):
         self.search = SearchContainer(columns)
         SlaveDelegate.__init__(self, toplevel=self.search)
+        self.results = self.search.results
         self.search.show()
 
     #
     # Public API
     #
 
-    def add_filter(self, search_filter, position=SearchFilterPosition.BOTTOM):
+    def add_filter(self, search_filter, position=SearchFilterPosition.BOTTOM,
+                   columns=None, callback=None):
         """
-        Adds a search filter
-        @param search_filter: the search filter
-        @param postition: a L{SearchFilterPosition} enum
+        See L{SearchSlaveDelegate.add_filter}
         """
-        self.search.add_filter(search_filter, position)
+        self.search.add_filter(search_filter, position, columns, callback)
 
     def set_query_executer(self, querty_executer):
         """
-        Ties a QueryExecuter instance to the SearchSlaveDelegate class
-        @param querty_executer: a querty executer
-        @type querty_executer: a L{QueryExecuter} subclass
+        See L{SearchSlaveDelegate.set_query_executer}
         """
-        if not isinstance(querty_executer, QueryExecuter):
-            raise TypeError("querty_executer must be a QueryExecuter instance")
-
         self.search.set_query_executer(querty_executer)
-
 
     def get_primary_filter(self):
         """

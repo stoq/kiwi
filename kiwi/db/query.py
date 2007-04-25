@@ -35,6 +35,7 @@ class QueryState(object):
         """
         self.filter = search_filter
 
+
 class NumberQueryState(QueryState):
     """
     @cvar value: number
@@ -42,6 +43,10 @@ class NumberQueryState(QueryState):
     def __init__(self, filter, value):
         QueryState.__init__(self, filter)
         self.value = value
+
+    def __repr__(self):
+        return '<NumberQueryState value=%r>' % (self.value,)
+
 
 class StringQueryState(QueryState):
     """
@@ -51,6 +56,10 @@ class StringQueryState(QueryState):
         QueryState.__init__(self, filter)
         self.text = text
 
+    def __repr__(self):
+        return '<StringQueryState text=%r>' % (self.text,)
+
+
 class DateQueryState(QueryState):
     """
     @cvar date: date
@@ -58,6 +67,10 @@ class DateQueryState(QueryState):
     def __init__(self, filter, date):
         QueryState.__init__(self, filter)
         self.date = date
+
+    def __repr__(self):
+        return '<DateQueryState date=%r>' % (self.date,)
+
 
 class DateIntervalQueryState(QueryState):
     """
@@ -68,6 +81,11 @@ class DateIntervalQueryState(QueryState):
         QueryState.__init__(self, filter)
         self.start = start
         self.end = end
+
+    def __repr__(self):
+        return '<DateIntervalQueryState start=%r, end=%r>' % (
+            self.start, self.end)
+
 
 class QueryExecuter(object):
     """

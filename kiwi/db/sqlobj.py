@@ -38,6 +38,7 @@ class SQLObjectQueryExecuter(QueryExecuter):
         QueryExecuter.__init__(self)
         self.conn = conn
         self.table = None
+        self._query_callbacks = []
         self._filter_query_callbacks = {}
         self._query = self._default_query
 
@@ -51,6 +52,16 @@ class SQLObjectQueryExecuter(QueryExecuter):
         @param table: a SQLObject subclass
         """
         self.table = table
+
+    def add_query_callback(self, callback):
+        """
+        Adds a generic query callback
+
+        @param callback: a callable
+        """
+        if not callable(callback):
+            raise TypeError
+        self._query_callbacks.append(callback)
 
     def add_filter_query_callback(self, search_filter, callback):
         """
@@ -114,7 +125,12 @@ class SQLObjectQueryExecuter(QueryExecuter):
                     "You need to add a search column or a query callback "
                     "for filter %s" % (search_filter))
 
-        return self._query(AND(*queries), self.conn)
+        for callback in self._query_callbacks:
+            query = callback(states)
+            if query:
+                queries.append(query)
+        query = AND(*queries)
+        return self._query(query, self.conn)
 
     def _default_query(self, query, conn):
         return self.table.select(query, connection=conn)
