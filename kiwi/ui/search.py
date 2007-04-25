@@ -213,17 +213,15 @@ class DateSearchFilter(gobject.GObject):
         # If we switch to a user selectable day, make sure that
         # both dates are set to the same day
         if date_type == DateSearchFilter.Type.USER_DAY:
-            start = self.start_date.get_date()
-            end = self.end_date.get_date()
-            if start != end:
-                self.end_date.set_date(self.start_date.get_date())
+            today = datetime.date.today()
+            self.start_date.set_date(today)
+            self.end_date.set_date(today)
         # And for user interval, do the opposite, make sure
         # that start and end are different
         elif date_type == DateSearchFilter.Type.USER_INTERVAL:
-            start = self.start_date.get_date()
-            end = self.end_date.get_date()
-            if start and end and start == end:
-                self.end_date.set_date(start + datetime.timedelta(days=1))
+            today = datetime.date.today()
+            self.start_date.set_date(today)
+            self.end_date.set_date(today + datetime.timedelta(days=1))
         # Finally for pre-defined ones let the DateSearchOption decide what the
         # values are going to be, these dates are not user editable so
         # we don't need to do any checking.

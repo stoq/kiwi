@@ -10,7 +10,12 @@
 	to make it easier to integrate with the query executer.
 	Add a generic query callback to the SQLObject executer.
 	Use new api in example.
-	
+
+	* kiwi/ui/search.py:
+	(DateSearchFilter._update_dates): When switching to a custom
+	day, always set both to today.
+	When switching to a custom interval, always use today and tomorrow.
+
 2007-04-25  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/search.py (DateSearchFilter.select): Add and reorganize
