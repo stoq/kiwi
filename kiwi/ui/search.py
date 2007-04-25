@@ -495,6 +495,7 @@ class SearchSlaveDelegate(SlaveDelegate):
     def __init__(self, columns):
         self.search = SearchContainer(columns)
         SlaveDelegate.__init__(self, toplevel=self.search)
+        self.search.show()
 
     #
     # Public API
