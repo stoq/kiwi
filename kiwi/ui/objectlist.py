@@ -483,7 +483,10 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     gsignal('double-click', object)
 
     # row right-clicked
-    gsignal('right-click', object)
+    gsignal('right-click', object, gtk.gdk.Event)
+
+    # row middle-clicked
+    gsignal('middle-click', object, gtk.gdk.Event)
 
     # edited object, attribute name
     gsignal('cell-edited', object, str)
@@ -1082,26 +1085,38 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         item = row[COL_MODEL]
         self.emit('row-activated', item)
 
-    def _on_treeview__button_press_event(self, treeview, event):
-        "Generic button-press-event handler to be able to catch double clicks"
-
+    def _get_selection_or_selected_rows(self):
         selection = self._treeview.get_selection()
         mode = selection.get_mode()
         if mode == gtk.SELECTION_MULTIPLE:
             item = self.get_selected_rows()
         else:
             item = self.get_selected()
+        return item
 
-        if not item:
-            return
+    def _emit_button_press_signal(self, signal_name, event):
+        item = self._get_selection_or_selected_rows()
+        if item:
+            self.emit(signal_name, item, event)
 
+    def _on_treeview__button_press_event(self, treeview, event):
+        "Generic button-press-event handler to be able to catch double clicks"
+
+        # Right and Middle click
+        if event.type == gtk.gdk.BUTTON_PRESS:
+            if event.button == 3:
+                signal_name = 'right-click'
+            elif event.button == 2:
+                signal_name = 'middle-click'
+            else:
+                return
+            gobject.idle_add(self._emit_button_press_signal, signal_name,
+                             event.copy())
         # Double left click
-        if event.type == gtk.gdk._2BUTTON_PRESS and event.button == 1:
-            self.emit('double-click', item)
-
-        # Right click
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 3:
-            self.emit('right-click', item)
+        elif event.type == gtk.gdk._2BUTTON_PRESS and event.button == 1:
+            item = self._get_selection_or_selected_rows()
+            if item:
+                self.emit('double-click', item)
 
     # CellRenderers
     def _cell_data_text_func(self, tree_column, renderer, model, treeiter,
@@ -1312,6 +1327,12 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         index = self._columns.index(column)
         tree_columns = self._treeview.get_columns()
         return tree_columns[index]
+
+    def grab_focus(self):
+        """
+        Grabs the focus of the ObjectList
+        """
+        self._treeview.grab_focus()
 
     def _clear_columns(self):
         # Reset the sort function for all model columns
