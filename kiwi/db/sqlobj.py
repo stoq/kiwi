@@ -118,12 +118,12 @@ class SQLObjectQueryExecuter(QueryExecuter):
                     query = callback(state)
                     if query:
                         queries.append(query)
-            elif self._query != self._default_query:
-                continue
             else:
-                raise ValueError(
-                    "You need to add a search column or a query callback "
-                    "for filter %s" % (search_filter))
+                if (self._query == self._default_query and
+                    not self._query_callbacks):
+                    raise ValueError(
+                        "You need to add a search column or a query callback "
+                        "for filter %s" % (search_filter))
 
         for callback in self._query_callbacks:
             query = callback(states)

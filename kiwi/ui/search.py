@@ -317,10 +317,10 @@ class ComboSearchFilter(gobject.GObject):
         label.show()
 
         self.combo = ProxyComboBox()
+        self.combo.prefill(values)
         self.combo.connect(
             'content-changed',
             self._on_combo__content_changed)
-        self.combo.prefill(values)
         hbox.pack_start(self.combo, False, False, 6)
         self.combo.show()
 
@@ -368,7 +368,6 @@ class StringSearchFilter(gobject.GObject):
         self.label.show()
 
         self.entry = gtk.Entry()
-        self.entry.connect('activate', self._on_entry__activate)
         if chars:
             self.entry.set_width_chars(chars)
         hbox.pack_start(self.entry, False, False, 6)
@@ -385,13 +384,6 @@ class StringSearchFilter(gobject.GObject):
 
     def set_label(self, label):
         self.label.set_text(label)
-
-    #
-    # Callbacks
-    #
-
-    def _on_entry__activate(self, entry):
-        self.emit('changed')
 
 
 #
@@ -525,11 +517,23 @@ class SearchContainer(gtk.VBox):
         """
         self._auto_search = auto_search
 
+    def set_text_field_columns(self, columns):
+        """
+        @param columns:
+        """
+        if not self._query_executer:
+            raise ValueError("A query executer needs to be set at this point")
+
+        self._query_executer.set_filter_columns(self._primary_filter, columns)
+
     #
     # Callbacks
     #
 
     def _on_search_button__clicked(self, button):
+        self.search()
+
+    def _on_search_entry__activate(self, button):
         self.search()
 
     def _on_search_filter__changed(self, search_filter):
@@ -552,7 +556,8 @@ class SearchContainer(gtk.VBox):
         widget.show()
 
         self.search_entry = self._primary_filter.entry
-
+        self.search_entry.connect('activate',
+                                  self._on_search_entry__activate)
         button = gtk.Button(stock=gtk.STOCK_FIND)
         button.connect('clicked', self._on_search_button__clicked)
         hbox.pack_start(button, False, False)
@@ -590,6 +595,12 @@ class SearchSlaveDelegate(SlaveDelegate):
         """
         self.search.set_query_executer(querty_executer)
 
+    def set_text_field_columns(self, columns):
+        """
+        See L{SearchSlaveDelegate.set_text_field_columns}
+        """
+        self.search.set_text_field_columns(columns)
+
     def get_primary_filter(self):
         """
         Fetches the primary filter of the SearchSlaveDelegate
@@ -614,6 +625,7 @@ class SearchSlaveDelegate(SlaveDelegate):
         Clears the result list
         """
         self.search.results.clear()
+
 
     #
     # Overridable
