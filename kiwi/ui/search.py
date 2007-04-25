@@ -177,8 +177,8 @@ class DateSearchFilter(object):
         """
         option = option_type()
         num = len(self.mode)-2
-        self.mode.insert_item(num, option.name, num)
-        self._options[num] = option
+        self.mode.insert_item(num, option.name, option_type)
+        self._options[option_type] = option
 
     def get_widget(self):
         return self.hbox
@@ -189,6 +189,13 @@ class DateSearchFilter(object):
         if start == end:
             return DateQueryState(filter=self, date=start)
         return DateIntervalQueryState(filter=self, start=start, end=end)
+
+    def select(self, data):
+        """
+        selects an item in the combo
+        @param data: what to select
+        """
+        self.mode.select(data)
 
     #
     # Private
