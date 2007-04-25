@@ -211,13 +211,12 @@ class DateSearchFilter(gobject.GObject):
         date_type = self.mode.get_selected_data()
 
         # If we switch to a user selectable day, make sure that
-        # both dates are set to the same day
+        # both dates are set to today
         if date_type == DateSearchFilter.Type.USER_DAY:
             today = datetime.date.today()
             self.start_date.set_date(today)
             self.end_date.set_date(today)
-        # And for user interval, do the opposite, make sure
-        # that start and end are different
+        # And for user interval, set start to today and to tomorrow
         elif date_type == DateSearchFilter.Type.USER_INTERVAL:
             today = datetime.date.today()
             self.start_date.set_date(today)
