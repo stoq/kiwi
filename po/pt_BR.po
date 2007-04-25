@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-04-02 12:17-0300\n"
+"POT-Creation-Date: 2007-04-25 18:12-0300\n"
 "PO-Revision-Date: 2007-04-03 11:26-0300\n"
 "Last-Translator: Ronaldo Maia <romaia@async.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -170,7 +170,7 @@ msgstr "Terminar"
 msgid "'%s' is not a valid object"
 msgstr "'%s' não é um objeto válido"
 
-#: ../kiwi/ui/objectlist.py:1829
+#: ../kiwi/ui/objectlist.py:1871
 msgid "Total:"
 msgstr "Total:"
 
@@ -218,14 +218,54 @@ msgstr "Senha:"
 msgid "Could not load image: %s"
 msgstr "Não foi possivel abrir o imagem \"%s\""
 
-#: ../kiwi/ui/proxywidget.py:292
+#: ../kiwi/ui/proxywidget.py:290
 #, python-format
 msgid "'%s' is not a valid value for this field"
 msgstr "'%s' não é um valor válido para este campo"
 
-#: ../kiwi/ui/proxywidget.py:326
+#: ../kiwi/ui/proxywidget.py:324
 msgid "This field is mandatory"
 msgstr "Esse campo é obrigatorio"
+
+#: ../kiwi/ui/search.py:64
+msgid "Any"
+msgstr "Qualquer"
+
+#: ../kiwi/ui/search.py:71
+msgid "Today"
+msgstr "Hoje"
+
+#: ../kiwi/ui/search.py:79
+msgid "Yesterday"
+msgstr "Ontem"
+
+#: ../kiwi/ui/search.py:87
+msgid "Last week"
+msgstr "Semana passada"
+
+#: ../kiwi/ui/search.py:95
+msgid "Last month"
+msgstr "Mês passado"
+
+#: ../kiwi/ui/search.py:145
+msgid "From:"
+msgstr "Para"
+
+#: ../kiwi/ui/search.py:155
+msgid "To:"
+msgstr "a:"
+
+#: ../kiwi/ui/search.py:168
+msgid "Custom day"
+msgstr "Dia"
+
+#: ../kiwi/ui/search.py:169
+msgid "Custom interval"
+msgstr "Intervalo"
+
+#: ../kiwi/ui/search.py:417
+msgid "Search:"
+msgstr "Pesquisar"
 
 #~ msgid "Pixbuf"
 #~ msgstr "Pixbuf"
