@@ -1,5 +1,7 @@
 2007-04-26  Johan Dahlin  <jdahlin@async.com.br>
 
+	* examples/entrymask.py: Add a new example
+
 	* kiwi/__init__.py: Add an explicit version check
 	and give up if the version is too old.
 
