@@ -30,7 +30,7 @@ import sys
 
 import gobject
 
-HAVE_2_6 = gobject.pygtk_version[:2] == (2, 6)
+HAVE_2_6 = gobject.pygtk_version[:2] <= (2, 6)
 
 # When we can depend on 2.8 clean this up, so ClassInittable does not
 # need to be tied to GObjectMeta, since it doesn't need to be a GObject
