@@ -24,7 +24,18 @@
 
 try:
     import gtk
-    gtk
-except ImportError:
-    raise SystemExit(
-        "PyGTK is required by kiwi.ui")
+    gtk # pyflakes
+except ImportError, e:
+    try:
+        import pygtk
+        pygtk.require('2.0')
+    except:
+        pass
+
+    try:
+        import gtk
+        gtk # pyflakes
+    except:
+        raise SystemExit(
+            "PyGTK 2.6.0 or higher is required by kiwi.ui\n"
+            "Error was: %s" % e)
