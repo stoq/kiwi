@@ -57,8 +57,14 @@ except ImportError, e:
             "PyGTK 2.8 or PyGObject 2.9.0 or higher is required by kiwi\n"
             "Error was: %s" % e)
 
+if gobject.pygtk_version[:2] <= (2, 8):
+    raise ImportError("Your PyGTK/PyGObject version is too old, found %s, "
+                      "but 2.8.0 or higher is required by kiwi" % (
+        ('.'.join(map(str, gobject.pygtk_version))),))
+
 from kiwi.__version__ import version as kiwi_version
 from kiwi.environ import Library
+
 
 assert kiwi_version # pyflakes
 

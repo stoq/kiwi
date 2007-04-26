@@ -1,3 +1,8 @@
+2007-04-26  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/__init__.py: Add an explicit version check
+	and give up if the version is too old.
+
 2007-04-25  Johan Dahlin  <jdahlin@async.com.br>
 
 	* examples/search.py:
