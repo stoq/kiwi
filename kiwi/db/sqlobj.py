@@ -28,9 +28,8 @@ SQLObject integration for Kiwi
 
 from sqlobject.sqlbuilder import func, AND, OR, LIKE
 
-from kiwi.db.query import (NumberQueryState, StringQueryState,
-                           DateQueryState, DateIntervalQueryState,
-                           QueryExecuter)
+from kiwi.db.query import NumberQueryState, StringQueryState, \
+     DateQueryState, DateIntervalQueryState, QueryExecuter
 from kiwi.interfaces import ISearchFilter
 
 class SQLObjectQueryExecuter(QueryExecuter):
