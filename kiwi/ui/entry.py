@@ -103,7 +103,7 @@ from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 
 if not environ.epydoc:
-    HAVE_2_6 = gtk.pygtk_version[:2] == (2, 6)
+    HAVE_2_6 = gtk.pygtk_version[:2] <= (2, 6)
 else:
     HAVE_2_6 = True
 
@@ -277,7 +277,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
           - 'a' alphanumeric, honors the locale
           - 'A' alphanumeric, honors the locale
 
-        This is similar to MaskedTextBox: 
+        This is similar to MaskedTextBox:
         U{http://msdn2.microsoft.com/en-us/library/system.windows.forms.maskedtextbox.mask(VS.80).aspx}
 
         Example mask for a ISO-8601 date
@@ -939,7 +939,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
     def _on_move_cursor(self, entry, step, count, extend_selection):
         self._selecting = extend_selection
 
-    def _on_button_press_event(self, entry, event ):
+    def _on_button_press_event(self, entry, event):
         if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1:
             self._selecting = True
         elif event.type == gtk.gdk.BUTTON_RELEASE and event.button == 1:
