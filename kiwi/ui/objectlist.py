@@ -125,6 +125,8 @@ class Column(PropertyObject, gobject.GObject):
           cell is editable or not.
       - B{use_markup}: bool I{False}
         - If true, the text will be rendered with markup
+      - B{expander}: bool I{False}
+        - If True, this column will be used as the tree expander column
     """
     __gtype_name__ = 'Column'
     gproperty('title', str)
@@ -146,6 +148,7 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('use-markup', bool, default=False)
     gproperty('icon-size', gtk.IconSize, default=gtk.ICON_SIZE_MENU)
     gproperty('editable-attribute', str)
+    gproperty('expander', bool, False)
     #gproperty('title_pixmap', str)
 
     # This can be set in subclasses, to be able to allow custom
@@ -911,6 +914,9 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         if column.radio:
             if not issubclass(column.data_type, bool):
                 raise TypeError("You can only use radio for boolean columns")
+
+        if column.expander:
+            self._treeview.set_expander_column(treeview_column)
 
         # typelist here may be none. It's okay; justify_columns will try
         # and use the specified justifications and if not present will

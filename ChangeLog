@@ -1,3 +1,10 @@
+2007-04-30  Ali Afshar <aafshar@gmail.com>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/objectlist.py: Add an expander property to the Column.
+	Fixes #3336
+
 2007-04-26  Johan Dahlin  <jdahlin@async.com.br>
 
 	* examples/entrymask.py: Add a new example
