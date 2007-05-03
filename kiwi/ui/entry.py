@@ -175,9 +175,13 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         self.connect('focus', self._on_focus)
         self.connect('focus-out-event', self._on_focus_out_event)
         self.connect('move-cursor', self._on_move_cursor)
-        self.connect('button-press-event', self._on_button_press_event)
-        self.connect('notify::cursor-position',
-                     self._on_notify_cursor_position)
+
+        # Ideally, this should be connected to notify::cursor-position, but
+        # there seems to be a bug in gtk that the notification is not emited
+        # when it should.
+        # TODO: investigate that and report a bug.
+        self.connect('notify::selection-bound',
+                     self._on_notify_selection_bound)
 
         self._block_changed = False
 
@@ -809,6 +813,9 @@ class KiwiEntry(PropertyObject, gtk.Entry):
             self._on_delete_text(editable, start-1, start)
             return
 
+        # we just tried to delete, stop the selection.
+        self._selecting = False
+
         field = self._get_field_at_pos(end-1)
         # Outside a field. Cannot delete.
         if field is None:
@@ -846,10 +853,8 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
         # Position the cursor on the right place.
         self.set_position(new_pos)
-
-        if self.is_empty():
-            pos = self.get_field_pos(0)
-            self.set_position(pos)
+        if pos == new_pos:
+            self._handle_position_change()
 
     def _after_grab_focus(self, widget):
         # The text is selectet in grab-focus, so this needs to be done after
@@ -890,7 +895,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
         return True
 
-    def _on_notify_cursor_position(self, widget, pspec):
+    def _on_notify_selection_bound(self, widget, pspec):
         if not self._mask:
             return
 
@@ -900,25 +905,28 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         if self._selecting:
             return
 
+        self._handle_position_change()
+
+    def _handle_position_change(self):
         pos = self.get_position()
-        field = self._get_field_at_pos(pos)
-
-        if pos == 0:
-            self.set_position(self.get_field_pos(0))
-            return
-
-        text = self.get_text()
         field = self._get_field_at_pos(pos)
 
         # Humm, the pos is not inside any field. Get the next pos inside
         # some field, depending on the direction that the cursor is
         # moving
         diff = pos - self._pos
+        # but move only one position at a time.
+        if diff:
+            diff /= abs(diff)
+
         _field = field
-        while _field is None and (len(text) > pos > 0) and diff:
-            pos += diff
-            _field = self._get_field_at_pos(pos)
-            self._pos = pos
+        if diff:
+            while _field is None and pos >= 0:
+                pos += diff
+                _field = self._get_field_at_pos(pos)
+                self._pos = pos
+            if pos < 0:
+                self._pos = self.get_field_pos(0)
 
         if field is None:
             self.set_position(self._pos)
@@ -938,12 +946,6 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
     def _on_move_cursor(self, entry, step, count, extend_selection):
         self._selecting = extend_selection
-
-    def _on_button_press_event(self, entry, event):
-        if event.type == gtk.gdk.BUTTON_PRESS and event.button == 1:
-            self._selecting = True
-        elif event.type == gtk.gdk.BUTTON_RELEASE and event.button == 1:
-            self._selecting = True
 
     # IconEntry
 

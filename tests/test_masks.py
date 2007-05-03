@@ -1,5 +1,6 @@
 from twisted.trial import unittest
 from utils import refresh_gui
+import sys
 
 import gtk
 from gtk import keysyms
@@ -60,6 +61,11 @@ def insert_text(widget, text):
 LEFT, RIGHT = -1, 1
 def move(entry, direction):
     entry.emit('move-cursor', gtk.MOVEMENT_VISUAL_POSITIONS, direction, False)
+
+def select(entry, start, end):
+    entry.set_position(start)
+    entry.emit('move-cursor', gtk.MOVEMENT_VISUAL_POSITIONS, end-start, True)
+
 
 class MasksDelegate(Delegate):
     def __init__(self):
@@ -217,7 +223,10 @@ class TestMasks(unittest.TestCase):
 
 
     # FIXME: Backspace does not work on windows
-    def _testBackspace(self):
+    def testBackspace(self):
+        if sys.platform == 'win32':
+            return
+
         entry = self.entry
         entry.set_mask('(00) 0000-0000')
         entry.grab_focus()
@@ -241,13 +250,18 @@ class TestMasks(unittest.TestCase):
         send_backspace(entry)
         refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(  )     -    ')
+        self.assertEqual(entry.get_position(), 1)
 
         send_backspace(entry)
         refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(  )     -    ')
+        self.assertEqual(entry.get_position(), 1)
 
     # FIXME: Delete does not work on windows
-    def _testDelete(self):
+    def testDelete(self):
+        if sys.platform == 'win32':
+            return
+
         entry = self.entry
         entry.set_mask('(00) 0000-0000')
         entry.grab_focus()
@@ -273,7 +287,6 @@ class TestMasks(unittest.TestCase):
         move(entry, RIGHT)
         self.assertEqual(entry.get_position(), 6)
 
-
         send_delete(entry)
         refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(  ) 356 -78  ')
@@ -282,7 +295,29 @@ class TestMasks(unittest.TestCase):
         refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(  ) 36  -78  ')
 
+    def testDeleteSelection(self):
+        if sys.platform == 'win32':
+            return
 
+        entry = self.entry
+        entry.set_mask('(00) 0000-0000')
+        entry.grab_focus()
+
+        insert_text(entry, '1')
+        self.assertEqual(entry.get_text(), '(1 )     -    ')
+
+        select(entry, 2, 0)
+        send_delete(entry)
+        self.assertEqual(entry.get_position(), 1)
+
+        insert_text(entry, '1234')
+        self.assertEqual(entry.get_text(), '(12) 34  -    ')
+
+        select(entry, 2, 0)
+        refresh_gui(2)
+        send_delete(entry)
+        refresh_gui(2)
+        self.assertEqual(entry.get_position(), 1)
 
 
 if __name__ == '__main__':

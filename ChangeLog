@@ -1,3 +1,11 @@
+2007-05-03  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/entry.py: (Masks): It was possible to move the cursor outside
+	the editable fields sometimes. Fixes #3333
+	* tests/test_masks.py: some tests for this case.
+
 2007-04-30  Ali Afshar <aafshar@gmail.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
