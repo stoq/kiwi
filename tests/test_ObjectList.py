@@ -328,6 +328,22 @@ class MethodTest(unittest.TestCase):
         self.assertEqual(self.klist.get_previous(item3), item2)
         self.assertRaises(ValueError, self.klist.get_previous, None)
 
+    def testInsert(self):
+        self.klist = ObjectList([Column('name')])
+        self.assertEqual(list(self.klist), [])
+
+        self.klist.insert(0, Settable(name='one'))
+        self.assertEqual(self.klist[0].name, 'one')
+
+        self.klist.insert(0, Settable(name='two'))
+        self.assertEqual(self.klist[0].name, 'two')
+        self.assertEqual(self.klist[1].name, 'one')
+
+        self.klist.insert(1, Settable(name='three'))
+        self.assertEqual(self.klist[0].name, 'two')
+        self.assertEqual(self.klist[1].name, 'three')
+        self.assertEqual(self.klist[2].name, 'one')
+
 class BooleanDataTests(unittest.TestCase):
     def setUp(self):
         self.list = ObjectList([Column('value', data_type=bool, radio=True,

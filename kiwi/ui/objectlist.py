@@ -694,9 +694,23 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                 count += 1
         return count
 
-    def insert(self, index, item):
-        "L.insert(index, item) -- insert object before index"
-        raise NotImplementedError
+    def insert(self, index, instance, select=False):
+        """Inserts an instance to the list
+        @param index: position to insert the instance at
+        @param instance: the instance to be added (according to the columns spec)
+        @param select: whether or not the new item should appear selected.
+        """
+        self._treeview.freeze_notify()
+
+        row_iter = self._model.insert(index, (instance,))
+        self._iters[id(instance)] = row_iter
+
+        if self._autosize:
+            self._treeview.columns_autosize()
+
+        if select:
+            self._select_and_focus_row(row_iter)
+        self._treeview.thaw_notify()
 
     def pop(self, index):
         """
@@ -1369,8 +1383,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def append(self, instance, select=False):
         """Adds an instance to the list.
-        - instance: the instance to be added (according to the columns spec)
-        - select: whether or not the new item should appear selected.
+        @param instance: the instance to be added (according to the columns spec)
+        @param select: whether or not the new item should appear selected.
         """
 
         # Freeze and save original selection mode to avoid blinking
