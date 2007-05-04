@@ -371,5 +371,22 @@ class BooleanDataTests(unittest.TestCase):
         self.assertEqual(self.list[0].value, True)
         self.assertEqual(self.list[1].value, False)
 
+
+class RadioColumnTests(unittest.TestCase):
+
+    def testRadioWithoutTrue(self):
+        olist = ObjectList(
+            [Column('foo', radio=True, data_type=bool, editable=True)])
+        column = olist.get_treeview().get_column(0)
+        renderer = column.get_cell_renderers()[0]
+
+        items = [Settable(foo=False) for i in range(5)]
+        olist.add_list(items)
+
+        self.assertEqual(items[0].foo, False)
+        renderer.emit('toggled', 0)
+        self.assertEqual(items[0].foo, True)
+
+
 if __name__ == '__main__':
     unittest.main()

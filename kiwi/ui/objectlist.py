@@ -1218,11 +1218,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                 if value == True:
                     old = obj
                     break
-            else:
-                raise TypeError("You need an initial attribute value set "
-                                "to true when using radio")
-
-        setattr(old, attr, False)
+        if old:
+            setattr(old, attr, False)
 
         # Active new and save a reference to the object of the
         # previously selected row
