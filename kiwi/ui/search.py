@@ -46,6 +46,7 @@ from kiwi.utils import gsignal
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
+
 class DateSearchOption(object):
     """
     Base class for Date search options
@@ -112,6 +113,21 @@ class LastMonth(DateSearchOption):
         return start_date, datetime.date.today()
 
 
+class FixedIntervalSearchOption(DateSearchOption):
+    start = None
+    end = None
+
+    def get_interval(self):
+        return self.start, self.end
+
+
+class FixedDateSearchOption(DateSearchOption):
+    date = None
+
+    def get_interval(self):
+        return self.date, self.date
+
+
 class DateSearchFilter(gobject.GObject):
     """
     A filter which helps you to search by a date interval.
@@ -174,16 +190,9 @@ class DateSearchFilter(gobject.GObject):
 
         self.mode.select_item_by_position(0)
 
-    def add_option(self, option_type):
-        """
-        Adds a date option
-        @param option_type: option to add
-        @type option_type: a L{DateSearchOption} subclass
-        """
-        option = option_type()
-        num = len(self.mode)-2
-        self.mode.insert_item(num, option.name, option_type)
-        self._options[option_type] = option
+    #
+    # ISearchFilter
+    #
 
     def get_widget(self):
         return self.hbox
@@ -195,12 +204,98 @@ class DateSearchFilter(gobject.GObject):
             return DateQueryState(filter=self, date=start)
         return DateIntervalQueryState(filter=self, start=start, end=end)
 
-    def select(self, data):
+    #
+    # Public API
+    #
+
+    def clear_options(self):
+        """
+        Removes all previously added options
+        """
+        self._options = {}
+        self.mode.clear()
+
+    def add_option(self, option_type, position=-2):
+        """
+        Adds a date option
+        @param option_type: option to add
+        @type option_type: a L{DateSearchOption} subclass
+        """
+        option = option_type()
+        num = len(self.mode) + position
+        self.mode.insert_item(num, option.name, option_type)
+        self._options[option_type] = option
+
+    def add_option_fixed(self, name, date, position=-2):
+        """
+        Adds a fixed option, eg one for which date is not
+        possible to modify.
+        @param name: name of the option
+        @param date: fixed data
+        @param position: position to add the option at
+        """
+        option_type = type('', (FixedDateSearchOption,),
+                           dict(name=name, date=date))
+        self.add_option(option_type, position=position)
+
+
+    def add_option_fixed_interval(self, name, start, end, position=-2):
+        """
+        Adds a fixed option interval, eg one for which the dates are not
+        possible to modify.
+        @param name: name of the option
+        @param start: start of the fixed interval
+        @param end: end of the fixed interval
+        @param position: position to add the option at
+        """
+        option_type = type('', (FixedIntervalSearchOption,),
+                           dict(name=name, start=start, end=end))
+        self.add_option(option_type, position=position)
+
+    def get_start_date(self):
+        """
+        @returns: start date
+        @rtype: datetime.date or None
+        """
+        return self.start_date.get_date()
+
+    def get_end_date(self):
+        """
+        @returns: end date
+        @rtype: datetime.date or None
+        """
+        return self.end_date.get_date()
+
+    def set_use_date_entries(self, use_date_entries):
+        """
+        Toggles the visibility of the user selectable date entries
+        @param use_date_entries:
+        """
+        self.from_label.props.visible = use_date_entries
+        self.to_label.props.visible = use_date_entries
+        self.start_date.props.visible = use_date_entries
+        self.end_date.props.visible = use_date_entries
+
+    def select(self, data=None, position=None):
         """
         selects an item in the combo
-        @param data: what to select
+        Data or position can be sent in. If nothing
+        is sent in the first item will be selected, if any
+
+        @param data: data to select
+        @param position: position of data to select
         """
-        self.mode.select(data)
+        if data is not None and position is not None:
+            raise TypeError("You can't send in both data and position")
+
+        if data is None and position is None:
+            position = 0
+
+        if position is not None:
+            if len(self.mode):
+                self.mode.select_item_by_position(position)
+        elif data:
+            self.mode.select(data)
 
     #
     # Private
@@ -209,6 +304,8 @@ class DateSearchFilter(gobject.GObject):
     def _update_dates(self):
         # This is called when we change mode
         date_type = self.mode.get_selected_data()
+        if date_type is None:
+            return
 
         # If we switch to a user selectable day, make sure that
         # both dates are set to today
@@ -226,6 +323,7 @@ class DateSearchFilter(gobject.GObject):
         # we don't need to do any checking.
         else:
             option = self._options.get(date_type)
+            assert option, (date_type, self._options)
             start_date, end_date = option.get_interval()
             self.start_date.set_date(start_date)
             self.end_date.set_date(end_date)
@@ -294,6 +392,7 @@ class DateSearchFilter(gobject.GObject):
             if end <= start:
                 self._internal_set_start_date(end - datetime.timedelta(days=1))
 
+
 class ComboSearchFilter(gobject.GObject):
     """
     - a label
@@ -344,6 +443,7 @@ class ComboSearchFilter(gobject.GObject):
     def _on_combo__content_changed(self, mode):
         self.emit('changed')
 
+
 class StringSearchFilter(gobject.GObject):
     """
     - a label
@@ -390,6 +490,7 @@ class StringSearchFilter(gobject.GObject):
 class SearchResults(ObjectList):
     def __init__(self, columns):
         ObjectList.__init__(self, columns)
+
 
 class SearchContainer(gtk.VBox):
     """
@@ -518,10 +619,22 @@ class SearchContainer(gtk.VBox):
         """
         @param columns:
         """
+        if self._primary_filter is None:
+            raise ValueError("The primary filter is disabled")
+
         if not self._query_executer:
             raise ValueError("A query executer needs to be set at this point")
 
         self._query_executer.set_filter_columns(self._primary_filter, columns)
+
+    def disable_search_entry(self):
+        """
+        Disables the search entry
+        """
+        self.search_entry.hide()
+        self._primary_filter.get_widget().hide()
+        self._search_filters.remove(self._primary_filter)
+        self._primary_filter = None
 
     #
     # Callbacks
@@ -563,6 +676,7 @@ class SearchContainer(gtk.VBox):
         self.results = SearchResults(self._columns)
         self.pack_end(self.results, True, True, 6)
         self.results.show()
+
 
 class SearchSlaveDelegate(SlaveDelegate):
     """
@@ -622,6 +736,12 @@ class SearchSlaveDelegate(SlaveDelegate):
         Clears the result list
         """
         self.search.results.clear()
+
+    def disable_search_entry(self):
+        """
+        Disables the search entry
+        """
+        self.search.disable_search_entry()
 
 
     #

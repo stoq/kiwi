@@ -1,3 +1,18 @@
+2007-05-09  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/search.py:
+	(SearchSlaveDelegate.disable_search_entry): Add a method to make it
+	possible to disable the search entry.
+	(DateSearchFilter.set_use_date_entries): New, to disable the
+	user selectable date entries
+	(DateSearchFilter.get_end_date, DateSearchFilter.get_start_date): New
+	accessors
+	(DateSearchFilter.select): Add a position argument
+	(DateSearchFilter.clear_options): New
+	(DateSearchFilter.add_option_fixed)
+	(DateSearchFilter.add_option_fixed_interval): New,	
+	added methods to make it possible to add fixed dates/interval
+
 2007-05-04  Ali Afshar <aafshar@gmail.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
