@@ -1,3 +1,9 @@
+2007-05-11  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/log.py (set_log_file): Return the file handlers stream,
+	useful when the application want to use other means to write
+	to the same file.
+
 2007-05-09  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/search.py:

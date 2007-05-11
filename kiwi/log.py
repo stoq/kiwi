@@ -123,6 +123,8 @@ def set_log_file(filename, mask=None):
         file_filter.add_filter(mask, logging.DEBUG)
         file_handler.addFilter(file_filter)
 
+    return file_handler.stream
+
 def set_log_level(name, level):
     """
     @param name: logging category
