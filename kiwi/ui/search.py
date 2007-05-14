@@ -552,6 +552,11 @@ class SearchContainer(gtk.VBox):
                 if not callable(callback):
                     raise TypeError("callback must be callable")
                 executer.add_filter_query_callback(search_filter, callback)
+        else:
+            if columns or callback:
+                raise TypeError(
+                    "You need to set an executor before calling set_filters "
+                    "with columns or callback set")
 
         widget = search_filter.get_widget()
         assert not widget.parent
