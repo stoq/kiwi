@@ -499,7 +499,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     gproperty('selection-mode', gtk.SelectionMode,
               default=gtk.SELECTION_BROWSE, nick="SelectionMode")
 
-    def __init__(self, columns=[],
+    def __init__(self, columns=None,
                  objects=None,
                  mode=gtk.SELECTION_BROWSE,
                  sortable=False,
@@ -511,6 +511,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         @param sortable:      whether the user can sort the list
         @param model:         gtk.TreeModel to use or None to create one
         """
+        if columns is None:
+            columns = []
         # allow to specify only one column
         if isinstance(columns, Column):
             columns = [columns]
@@ -540,6 +542,11 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         # menu
         self.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
         self.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        # This is required for gobject.new to work, since scrolledwindow.add
+        # requires valid adjustments and they are for some reason not
+        # properly set when using gobject.new.
+        self.set_hadjustment(gtk.Adjustment())
+        self.set_vadjustment(gtk.Adjustment())
 
         if not model:
             model = gtk.ListStore(object)

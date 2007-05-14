@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import unittest
 
+import gobject
 import gtk
 
 from kiwi.ui.objectlist import ObjectList, Column
@@ -44,6 +45,10 @@ class ColumnTests(unittest.TestCase):
 
     def testAttribute(self):
         column = Column('foo')
+        self.assertEquals(column.attribute, "foo")
+
+    def testGObjectNew(self):
+        column = gobject.new(Column, attribute='foo')
         self.assertEquals(column.attribute, "foo")
 
 class DataTests(unittest.TestCase):
@@ -232,6 +237,9 @@ class ConstructorTest(unittest.TestCase):
                      [Settable(name=None)])
         columns = klist.get_columns()
         self.assertEqual(len(columns), 1)
+
+    def testGObjectNew(self):
+        olist = gobject.new(ObjectList)
 
 class MethodTest(unittest.TestCase):
     def setUp(self):

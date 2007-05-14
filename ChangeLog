@@ -1,3 +1,11 @@
+2007-05-14  Johan Dahlin  <jdahlin@async.com.br>
+
+	* tests/test_ObjectList.py (ConstructorTest.testGObjectNew): 
+	Add a test
+
+	* kiwi/ui/objectlist.py (ObjectList.__init__): Make sure
+	gobject.new works
+
 2007-05-13  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/objectlist.py (Column): Turn attributes into a GObject 
