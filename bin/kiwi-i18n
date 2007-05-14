@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2005 by Async Open Source 
+# Copyright (C) 2005 by Async Open Source
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License
@@ -57,7 +57,7 @@ elif not os.path.exists(os.path.join(basedir, dirname)):
                      os.path.join(basedir, dirname))
 else:
     pythondir = basedir
-    
+
 sys.path.insert(0, pythondir)
 
 main_module = 'kiwi.i18n.i18n'
