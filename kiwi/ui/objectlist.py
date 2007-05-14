@@ -164,7 +164,7 @@ class Column(PropertyObject, gobject.GObject):
     # initial properties
     on_attach_renderer = None
 
-    def __init__(self, attribute, title=None, data_type=None, **kwargs):
+    def __init__(self, attribute='', title=None, data_type=None, **kwargs):
         """
         Creates a new Column, which describes how a column in a
         ObjectList should be rendered.
