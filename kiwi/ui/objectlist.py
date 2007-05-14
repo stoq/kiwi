@@ -129,8 +129,7 @@ class Column(PropertyObject, gobject.GObject):
         - If True, this column will be used as the tree expander column
     """
     __gtype_name__ = 'Column'
-    #gproperty('attribute', str, flags=(gobject.PARAM_READWRITE | gobject.PARAM_CONSTRUCT_ONLY))
-    gproperty('attribute', str)
+    gproperty('attribute', str, flags=(gobject.PARAM_READWRITE | gobject.PARAM_CONSTRUCT_ONLY))
     gproperty('title', str)
     gproperty('data-type', object)
     gproperty('visible', bool, default=True)
@@ -224,7 +223,7 @@ class Column(PropertyObject, gobject.GObject):
             kwargs['editable'] = True
 
         PropertyObject.__init__(self, **kwargs)
-        gobject.GObject.__init__(self)
+        gobject.GObject.__init__(self, attribute=attribute)
 
     # This is meant to be subclassable, we're using kgetattr, as
     # a staticmethod as an optimization, so we can avoid a function call.

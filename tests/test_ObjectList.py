@@ -42,6 +42,10 @@ class ColumnTests(unittest.TestCase):
 
         self.assertEqual(1, len(mylist.get_columns()))
 
+    def testAttribute(self):
+        column = Column('foo')
+        self.assertEquals(column.attribute, "foo")
+
 class DataTests(unittest.TestCase):
     """In all this tests we use the same configuration for a list"""
     def setUp(self):
