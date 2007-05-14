@@ -240,6 +240,8 @@ class ConstructorTest(unittest.TestCase):
 
     def testGObjectNew(self):
         olist = gobject.new(ObjectList)
+        self.assertNotEqual(olist.get_vscrollbar(), None)
+        self.assertNotEqual(olist.get_hscrollbar(), None)
 
 class MethodTest(unittest.TestCase):
     def setUp(self):
