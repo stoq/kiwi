@@ -129,7 +129,7 @@ class Column(PropertyObject, gobject.GObject):
         - If True, this column will be used as the tree expander column
     """
     __gtype_name__ = 'Column'
-    gproperty('attribute', str)
+    gproperty('attribute', str, flags=(gobject.PARAM_READWRITE | gobject.PARAM_CONSTRUCT_ONLY))
     gproperty('title', str)
     gproperty('data-type', object)
     gproperty('visible', bool, default=True)

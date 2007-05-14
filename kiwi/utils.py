@@ -360,11 +360,8 @@ def gproperty(name, ptype, default=None, nick='', blurb='',
     else:
         raise NotImplementedError("type %r" % ptype)
 
-    if flags not in (gobject.PARAM_READABLE, gobject.PARAM_READWRITE,
-                     gobject.PARAM_WRITABLE, gobject.PARAM_CONSTRUCT,
-                     gobject.PARAM_CONSTRUCT_ONLY,
-                     gobject.PARAM_LAX_VALIDATION):
-        raise TypeError("invalid flag value: %r" % flags)
+    if flags < 0 or flags > 32:
+        raise TypeError("invalid flag value: %r" % (flags,))
 
     frame = sys._getframe(1)
     try:
