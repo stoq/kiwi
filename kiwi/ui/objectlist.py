@@ -129,6 +129,7 @@ class Column(PropertyObject, gobject.GObject):
         - If True, this column will be used as the tree expander column
     """
     __gtype_name__ = 'Column'
+    gproperty('attribute', str)
     gproperty('title', str)
     gproperty('data-type', object)
     gproperty('visible', bool, default=True)
@@ -187,10 +188,10 @@ class Column(PropertyObject, gobject.GObject):
                    " not find the value in the instances: %s" % attribute)
             raise AttributeError(msg)
 
-        self.attribute = attribute
         self.compare = None
         self.from_string = None
 
+        kwargs['attribute'] = attribute
         kwargs['title'] = title or attribute.capitalize()
         if not data_type:
             data_type = str
@@ -237,9 +238,7 @@ class Column(PropertyObject, gobject.GObject):
 
     def __repr__(self):
         namespace = self.__dict__.copy()
-        attr = namespace['attribute']
-        del namespace['attribute']
-        return "<%s %s: %s>" % (self.__class__.__name__, attr, namespace)
+        return "<%s: %s>" % (self.__class__.__name__, namespace)
 
     def as_string(self, data):
         data_type = self.data_type

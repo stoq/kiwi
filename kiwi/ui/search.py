@@ -400,7 +400,7 @@ class ComboSearchFilter(gobject.GObject):
     """
     gsignal('changed')
     implements(ISearchFilter)
-    def __init__(self, name, values):
+    def __init__(self, name, values=None):
         """
         @param name: name of the search filter
         @param values: items to put in the combo, see
@@ -413,7 +413,8 @@ class ComboSearchFilter(gobject.GObject):
         label.show()
 
         self.combo = ProxyComboBox()
-        self.combo.prefill(values)
+        if values:
+            self.combo.prefill(values)
         self.combo.connect(
             'content-changed',
             self._on_combo__content_changed)
@@ -544,15 +545,13 @@ class SearchContainer(gtk.VBox):
             raise TypeError("Cannot specify both column and callback")
 
         executer = self.get_query_executer()
-        if not executer:
-            raise ValueError
-
-        if columns:
-            executer.set_filter_columns(search_filter, columns)
-        if callback:
-            if not callable(callback):
-                raise TypeError("callback must be callable")
-            executer.add_filter_query_callback(search_filter, callback)
+        if executer:
+            if columns:
+                executer.set_filter_columns(search_filter, columns)
+            if callback:
+                if not callable(callback):
+                    raise TypeError("callback must be callable")
+                executer.add_filter_query_callback(search_filter, callback)
 
         widget = search_filter.get_widget()
         assert not widget.parent

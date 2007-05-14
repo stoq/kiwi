@@ -1,3 +1,12 @@
+2007-05-13  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/objectlist.py (Column): Turn attributes into a GObject 
+	property.
+
+	* kiwi/ui/search.py (ComboSearchFilter.__init__): Make values optional
+	(SearchContainer.add_filter): Only add the executer columns if
+	we have an executer set, don't require one.
+
 2007-05-11  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/log.py (set_log_file): Return the file handlers stream,
