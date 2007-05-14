@@ -170,19 +170,7 @@ class AbstractGladeAdaptor(Interface):
 
 class ISearchFilter(Interface):
 
-    def get_widget():
-        """
-        @rtype: L{gtk.Widget} subclass
-        """
-
     def get_state():
         """
         @rtype: L{QueryState}
         """
-
-    def set_label(label):
-        """
-        @param label:
-        @type label: string
-        """
-

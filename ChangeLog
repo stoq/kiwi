@@ -1,5 +1,10 @@
 2007-05-14  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/search.py (SearchFilter): Inherit from a widget and add a 
+	filter-position child property. Add normal properties to the filter
+	and the container. Add a common base class and remove a couple of
+	methods from the interface
+
 	* tests/test_ObjectList.py (ConstructorTest.testGObjectNew): 
 	Add a test
 

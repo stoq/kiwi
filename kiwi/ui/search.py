@@ -42,7 +42,7 @@ from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.delegates import SlaveDelegate
 from kiwi.ui.objectlist import ObjectList
 from kiwi.ui.widgets.combo import ProxyComboBox
-from kiwi.utils import gsignal
+from kiwi.utils import gsignal, gproperty
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
@@ -128,57 +128,89 @@ class FixedDateSearchOption(DateSearchOption):
         return self.date, self.date
 
 
-class DateSearchFilter(gobject.GObject):
+class SearchFilter(gtk.HBox):
+    """
+    A base classed used by common search filters
+    """
+    gproperty('label', str, flags=(gobject.PARAM_READWRITE |
+                                   gobject.PARAM_CONSTRUCT_ONLY))
+    gsignal('changed')
+
+    implements(ISearchFilter)
+
+    def __init__(self, label=''):
+        self.__gobject_init__(label=label)
+        self._label = label
+
+    def do_set_property(self, pspec, value):
+        if pspec.name == 'label':
+            self._label = value
+        else:
+            raise AssertionError(pspec.name)
+
+    def do_get_property(self, child, property_id, pspec):
+        if pspec.name == 'label':
+            return self._label
+        else:
+            raise AssertionError(pspec.name)
+
+    def set_label(self, label):
+        self._label = label
+
+    def get_state(self):
+        """
+        Implement this in a subclass
+        """
+        raise NotImplementedError
+
+
+class DateSearchFilter(SearchFilter):
     """
     A filter which helps you to search by a date interval.
     Can be customized through add_option.
     """
-    gsignal('changed')
-    implements(ISearchFilter)
+    __gtype_name__ = 'DateSearchFilter'
     class Type(enum):
         (USER_DAY,
          USER_INTERVAL) = range(100, 102)
 
-    def __init__(self, name):
+    def __init__(self, label=''):
         """
-        @param name: name of the search filter
+        @param label: name of the search filter
         """
-        gobject.GObject.__init__(self)
         self._options = {}
-        hbox = gtk.HBox()
-        hbox.set_border_width(6)
-        label = gtk.Label(name)
-        hbox.pack_start(label, False, False)
+        SearchFilter.__init__(self, label=label)
+        self.set_border_width(6)
+        label = gtk.Label(label)
+        self.pack_start(label, False, False)
         label.show()
 
         self.mode = ProxyComboBox()
         self.mode.connect(
             'content-changed',
             self._on_mode__content_changed)
-        hbox.pack_start(self.mode, False, False, 6)
+        self.pack_start(self.mode, False, False, 6)
         self.mode.show()
 
         self.from_label = gtk.Label(_("From:"))
-        hbox.pack_start(self.from_label, False, False)
+        self.pack_start(self.from_label, False, False)
         self.from_label.show()
 
         self.start_date = DateEntry()
         self._start_changed_id = self.start_date.connect(
             'changed', self._on_start_date__changed)
-        hbox.pack_start(self.start_date, False, False, 6)
+        self.pack_start(self.start_date, False, False, 6)
         self.start_date.show()
 
         self.to_label = gtk.Label(_("To:"))
-        hbox.pack_start(self.to_label, False, False)
+        self.pack_start(self.to_label, False, False)
         self.to_label.show()
 
         self.end_date = DateEntry()
         self._end_changed_id = self.end_date.connect(
             'changed', self._on_end_date__changed)
-        hbox.pack_start(self.end_date, False, False, 6)
+        self.pack_start(self.end_date, False, False, 6)
         self.end_date.show()
-
-        self.hbox = hbox
 
         self.mode.prefill([
             (_('Custom day'), DateSearchFilter.Type.USER_DAY),
@@ -191,11 +223,8 @@ class DateSearchFilter(gobject.GObject):
         self.mode.select_item_by_position(0)
 
     #
-    # ISearchFilter
+    # SearchFilter
     #
-
-    def get_widget(self):
-        return self.hbox
 
     def get_state(self):
         start = self.start_date.get_date()
@@ -393,23 +422,22 @@ class DateSearchFilter(gobject.GObject):
                 self._internal_set_start_date(end - datetime.timedelta(days=1))
 
 
-class ComboSearchFilter(gobject.GObject):
+class ComboSearchFilter(SearchFilter):
     """
     - a label
     - a combo with a set of predefined item to select from
     """
-    gsignal('changed')
-    implements(ISearchFilter)
-    def __init__(self, name, values=None):
+    __gtype_name__ = 'ComboSearchFilter'
+
+    def __init__(self, label='', values=None):
         """
         @param name: name of the search filter
         @param values: items to put in the combo, see
           L{kiwi.ui.widgets.combo.ProxyComboBox.prefill}
         """
-        gobject.GObject.__init__(self)
-        hbox = gtk.HBox()
-        label = gtk.Label(name)
-        hbox.pack_start(label, False, False)
+        SearchFilter.__init__(self, label=label)
+        label = gtk.Label(label)
+        self.pack_start(label, False, False)
         label.show()
 
         self.combo = ProxyComboBox()
@@ -418,10 +446,20 @@ class ComboSearchFilter(gobject.GObject):
         self.combo.connect(
             'content-changed',
             self._on_combo__content_changed)
-        hbox.pack_start(self.combo, False, False, 6)
+        self.pack_start(self.combo, False, False, 6)
         self.combo.show()
 
-        self.hbox = hbox
+    #
+    # SearchFilter
+    #
+
+    def get_state(self):
+        return NumberQueryState(filter=self,
+                                value=self.combo.get_selected_data())
+
+    #
+    # Public API
+    #
 
     def select(self, data):
         """
@@ -429,13 +467,6 @@ class ComboSearchFilter(gobject.GObject):
         @param data: what to select
         """
         self.combo.select(data)
-
-    def get_widget(self):
-        return self.hbox
-
-    def get_state(self):
-        return NumberQueryState(filter=self,
-                                value=self.combo.get_selected_data())
 
     #
     # Callbacks
@@ -445,40 +476,40 @@ class ComboSearchFilter(gobject.GObject):
         self.emit('changed')
 
 
-class StringSearchFilter(gobject.GObject):
+class StringSearchFilter(SearchFilter):
     """
     - a label
     - an entry
     @ivar entry: the entry
     @ivar label: the label
     """
-    gsignal('changed')
-    implements(ISearchFilter)
-    def __init__(self, name, chars=0):
+    def __init__(self, label, chars=0):
         """
-        @param name: name of the search filter
+        @param label: label of the search filter
         @param chars: maximum number of chars used by the search entry
         """
-        gobject.GObject.__init__(self)
-        hbox = gtk.HBox()
-        self.label = gtk.Label(name)
-        hbox.pack_start(self.label, False, False)
+        SearchFilter.__init__(self, label=label)
+        self.label = gtk.Label(label)
+        self.pack_start(self.label, False, False)
         self.label.show()
 
         self.entry = gtk.Entry()
         if chars:
             self.entry.set_width_chars(chars)
-        hbox.pack_start(self.entry, False, False, 6)
+        self.pack_start(self.entry, False, False, 6)
         self.entry.show()
 
-        self.hbox = hbox
-
-    def get_widget(self):
-        return self.hbox
+    #
+    # SearchFilter
+    #
 
     def get_state(self):
         return StringQueryState(filter=self,
                                 text=self.entry.get_text())
+
+    #
+    # Public API
+    #
 
     def set_label(self, label):
         self.label.set_text(label)
@@ -505,6 +536,9 @@ class SearchContainer(gtk.VBox):
     You can chose if you want to add the filter in the top-left corner
     of bottom, see L{SearchFilterPosition}
     """
+    __gtype_name__ = 'SearchContainer'
+    gproperty('filter-label', str)
+
     def __init__(self, columns=None, chars=25):
         """
         @param columns: a list of L{kiwi.ui.objectlist.Column}
@@ -525,6 +559,45 @@ class SearchContainer(gtk.VBox):
 
 
     #
+    # GObject
+    #
+
+    def do_set_property(self, pspec, value):
+        if pspec.name == 'filter-label':
+            self._primary_filter.set_label(value)
+        else:
+            raise AssertionError(pspec.name)
+
+    def do_get_property(self, pspec):
+        if pspec.name == 'filter-label':
+            return self._primary_filter.get_label()
+        else:
+            raise AssertionError(pspec.name)
+
+    #
+    # GtkContainer
+    #
+
+    def do_set_child_property(self, child, property_id, value, pspec):
+        if pspec.name == 'filter-position':
+            if value == 'top':
+                pos = SearchFilterPosition.TOP
+            elif value == 'bottom':
+                pos = SearchFilterPosition.BOTTOM
+            else:
+                raise Exception(pos)
+            self.set_filter_position(child, pos)
+        else:
+            raise AssertionError(pspec.name)
+
+    def do_get_child_property(self, child, property_id, pspec):
+        if pspec.name == 'filter-position':
+            return self.get_filter_position(child)
+        else:
+            raise AssertionError(pspec.name)
+
+
+    #
     # Public API
     #
 
@@ -538,8 +611,9 @@ class SearchContainer(gtk.VBox):
         @param callback:
         """
 
-        if not ISearchFilter.providedBy(search_filter):
-            raise TypeError("search_filter must implement ISearchFilter")
+        if not isinstance(search_filter, SearchFilter):
+            raise TypeError("search_filter must be a SearchFilter subclass, "
+                            "not %r" % (search_filter,))
 
         if columns and callback:
             raise TypeError("Cannot specify both column and callback")
@@ -558,17 +632,36 @@ class SearchContainer(gtk.VBox):
                     "You need to set an executor before calling set_filters "
                     "with columns or callback set")
 
-        widget = search_filter.get_widget()
-        assert not widget.parent
-        if position == SearchFilterPosition.TOP:
-            self.hbox.pack_start(widget, False, False)
-            self.hbox.reorder_child(widget, 0)
-        elif position == SearchFilterPosition.BOTTOM:
-            self.pack_start(widget, False, False)
-        widget.show()
-
+        assert not search_filter.parent
+        self.set_filter_position(search_filter, position)
         search_filter.connect('changed', self._on_search_filter__changed)
         self._search_filters.append(search_filter)
+
+    def set_filter_position(self, search_filter, position):
+        """
+        @param search_filter:
+        @param position:
+        """
+        if search_filter.parent:
+            search_filter.parent.remove(search_filter)
+
+        if position == SearchFilterPosition.TOP:
+            self.hbox.pack_start(search_filter, False, False)
+            self.hbox.reorder_child(search_filter, 0)
+        elif position == SearchFilterPosition.BOTTOM:
+            self.pack_start(search_filter, False, False)
+        search_filter.show()
+
+    def get_filter_position(self, search_filter):
+        """
+        @param search_filter:
+        """
+        if search_filter.parent == self.hbox:
+            return SearchFilterPosition.TOP
+        elif search_filter.parent == self:
+            return SearchFilterPosition.BOTTOM
+        else:
+            raise AssertionError(search_filter)
 
     def set_query_executer(self, querty_executer):
         """
@@ -636,7 +729,7 @@ class SearchContainer(gtk.VBox):
         Disables the search entry
         """
         self.search_entry.hide()
-        self._primary_filter.get_widget().hide()
+        self._primary_filter.hide()
         self._search_filters.remove(self._primary_filter)
         self._primary_filter = None
 
@@ -665,7 +758,7 @@ class SearchContainer(gtk.VBox):
         hbox.show()
         self.hbox = hbox
 
-        widget = self._primary_filter.get_widget()
+        widget = self._primary_filter
         self.hbox.pack_start(widget, False, False)
         widget.show()
 
@@ -681,6 +774,12 @@ class SearchContainer(gtk.VBox):
         self.pack_end(self.results, True, True, 6)
         self.results.show()
 
+SearchContainer.install_child_property(
+    1, ('filter-position', str,
+        'Search Filter Position',
+        'The search filter position in the container',
+        '', gobject.PARAM_READWRITE))
+
 
 class SearchSlaveDelegate(SlaveDelegate):
     """
@@ -692,6 +791,7 @@ class SearchSlaveDelegate(SlaveDelegate):
         SlaveDelegate.__init__(self, toplevel=self.search)
         self.results = self.search.results
         self.search.show()
+
 
     #
     # Public API
@@ -759,3 +859,4 @@ class SearchSlaveDelegate(SlaveDelegate):
         @rtype: list of L{kiwi.ui.objectlist.Column}
         """
         raise NotImplementedError
+
