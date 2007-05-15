@@ -704,7 +704,8 @@ class SearchContainer(gtk.VBox):
         results = self._query_executer.search(states)
         self.results.clear()
         self.results.extend(results)
-        self._summary_label.update_total()
+        if self._summary_label:
+            self._summary_label.update_total()
 
     def set_auto_search(self, auto_search):
         """
