@@ -1,3 +1,8 @@
+2007-05-15  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/search.py (SearchSlaveDelegate.set_summary_label): 
+	Add support for setting a summary label
+
 2007-05-14  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/search.py (SearchFilter): Inherit from a widget and add a 
