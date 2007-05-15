@@ -752,7 +752,7 @@ class SearchContainer(gtk.VBox):
             raise ValueError("%s is not a valid column" % (column,))
 
         if self._summary_label:
-            raise ValueError("A summary label is already added")
+            self._summary_label.parent.remove(self._summary_label)
         self._summary_label = SummaryLabel(klist=self.results,
                                            column=column,
                                            label=label,
