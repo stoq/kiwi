@@ -1,5 +1,5 @@
 #
-# An example demonstrating the SearchSlaveDelegate
+# An example demonstrating the SearchContainer
 #
 import datetime
 
@@ -9,7 +9,7 @@ from sqlobject import connectionForURI, SQLObject, StringCol, DateCol, DecimalCo
 from kiwi.datatypes import currency
 from kiwi.db.sqlobj import SQLObjectQueryExecuter
 from kiwi.ui.objectlist import Column
-from kiwi.ui.search import SearchSlaveDelegate, DateSearchFilter
+from kiwi.ui.search import SearchContainer, DateSearchFilter
 
 __connection__ = connectionForURI('sqlite:///:memory:')
 
@@ -28,7 +28,7 @@ for description, price, date in [
     ('Ice tea',       1.25, today - datetime.timedelta(10)),
     ('Cookies',       0.85, today - datetime.timedelta(5)),
     ('Noogies',       1.45, today - datetime.timedelta(2)),
-    ('Nuts',          2.95, today)]:
+    ('Chocolate bar', 1.85, today)]:
 
     Sale(description=description,
          price=price,
@@ -38,9 +38,9 @@ class PurchaseViewer(gtk.Window):
     def __init__(self):
         gtk.Window.__init__(self)
         self.set_title('Purchases')
-        self.search = SearchSlaveDelegate(self.get_columns())
+        self.search = SearchContainer(self.get_columns())
         self.search.set_summary_label('price')
-        self.add(self.search.get_toplevel())
+        self.add(self.search)
         self._setup_searching()
         self._create_filters()
 
