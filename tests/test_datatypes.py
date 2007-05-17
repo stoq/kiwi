@@ -105,6 +105,8 @@ class DateTest(unittest.TestCase):
                           self.conv.from_string, "40-10-2005")
         self.assertRaises(ValidationError,
                           self.conv.from_string, "30-02-2005")
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, '01-01-1899')
 
     def testAsStringBR(self):
         if not set_locale(locale.LC_TIME, 'pt_BR'):
@@ -124,6 +126,7 @@ class DateTest(unittest.TestCase):
                           self.conv.from_string, "40/10/2005")
         self.assertRaises(ValidationError,
                           self.conv.from_string, "30/02/2005")
+        self.assertRaises(ValidationError, self.conv.from_string, '01/01/1899')
 
     def testAsStringPortugueseBrazil(self):
         if not set_locale(locale.LC_TIME, 'Portuguese_Brazil.1252'):
@@ -132,8 +135,8 @@ class DateTest(unittest.TestCase):
         self.assertEqual(self.conv.as_string(self.date), "12/02/1979")
 
     def testInvalid(self):
-        date = datetime.date(1899, 1, 1)
-        self.assertRaises(ValidationError, self.conv.as_string, self.date)
+        self.assertRaises(ValidationError, self.conv.as_string,
+                          datetime.date(1899, 1, 1))
 
 
 class CurrencyTest(unittest.TestCase):

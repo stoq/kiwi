@@ -515,6 +515,10 @@ class _BaseDateTimeConverter(BaseConverter):
         if value is None:
             return ''
 
+        if value.year < 1900:
+            raise ValidationError(
+                _("You cannot enter a year before 1900"))
+
         return value.strftime(format)
 
     def _convert_format(self, format):
