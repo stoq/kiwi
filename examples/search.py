@@ -39,6 +39,7 @@ class PurchaseViewer(gtk.Window):
         gtk.Window.__init__(self)
         self.set_title('Purchases')
         self.search = SearchSlaveDelegate(self.get_columns())
+        self.search.set_summary_label('price')
         self.add(self.search.get_toplevel())
         self._setup_searching()
         self._create_filters()
@@ -49,9 +50,7 @@ class PurchaseViewer(gtk.Window):
         self.query.set_table(Sale)
 
     def _create_filters(self):
-        self.query.set_filter_columns(self.search.get_primary_filter(),
-                                      ['description'])
-
+        self.search.set_text_field_columns(['description'])
         self.search.add_filter(DateSearchFilter('Date:'),
                                columns=['date'])
 
@@ -59,7 +58,7 @@ class PurchaseViewer(gtk.Window):
         return [Column('description', data_type=str, title='Description',
                        expand=True),
                 Column('price', data_type=currency, title='Price'),
-                Column('date', data_type=datetime.date)]
+                Column('date', data_type=datetime.date, width=90)]
 
 view = PurchaseViewer()
 view.set_size_request(-1, 400)
