@@ -539,11 +539,16 @@ class _BaseDateTimeConverter(BaseConverter):
             # time.strptime (python 2.4) does not support %r
             # pending SF bug #1396946
             dateinfo = time.strptime(value, format)
-            return self.from_dateinfo(dateinfo)
+            date = self.from_dateinfo(dateinfo)
         except ValueError:
             raise ValidationError(
                 _('This field requires a date of the format "%s" and '
                   'not "%s"') % (self._convert_format(format), value))
+
+        if date.year < 1900:
+            raise ValidationError(
+                _("You cannot enter a year before 1900"))
+        return date
 
 class _TimeConverter(_BaseDateTimeConverter):
     type = datetime.time

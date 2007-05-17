@@ -131,6 +131,11 @@ class DateTest(unittest.TestCase):
 
         self.assertEqual(self.conv.as_string(self.date), "12/02/1979")
 
+    def testInvalid(self):
+        date = datetime.date(1899, 1, 1)
+        self.assertRaises(ValidationError, self.conv.as_string, self.date)
+
+
 class CurrencyTest(unittest.TestCase):
     def setUp(self):
         set_locale(locale.LC_ALL, 'C')
