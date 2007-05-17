@@ -110,10 +110,6 @@ class ListContainer(gtk.HBox):
     def _add_item(self):
         retval = self.emit('add-item')
         if retval is None:
-            if self._list_type != ListType.READONLY:
-                raise NotImplementedError(
-                    "You need to connect to the add-item signal and "
-                    "return an object")
             return
         elif isinstance(retval, NotImplementedError):
             raise retval
@@ -320,7 +316,11 @@ class ListDialog(gtk.Dialog):
     def add_item(self):
         """
         This must be implemented in a subclass if you want to be able
-        to add items
+        to add items.
+
+        It should return the model you want to add to the list or None
+        if you don't want anything to be added, eg the user cancelled
+        creation of the model
         """
         raise NotImplementedError(
             "You need to implement add_item in %s" %
