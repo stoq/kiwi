@@ -13,7 +13,6 @@ include ChangeLog
 include COPYING
 include MANIFEST.in
 include README
-include tools/epyrun
 include NEWS
 include kiwi/_kiwi.c
 include kiwi.spec

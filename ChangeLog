@@ -1,5 +1,10 @@
 2007-05-21  Johan Dahlin  <jdahlin@async.com.br>
 
+	* MANIFEST.in: 
+	* doc/Makefile: 
+	* tools/epyrun: 
+	Use pydoctor instead of epydoc.
+
 	* kiwi/python.py (AttributeForwarder): Add a new class,
 	which can be used to forward attributes to another
 	object.
