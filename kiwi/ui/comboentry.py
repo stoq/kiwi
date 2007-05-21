@@ -29,9 +29,13 @@ from gtk import gdk, keysyms
 from kiwi.component import implements
 from kiwi.interfaces import IEasyCombo
 from kiwi.enums import ComboColumn, ComboMode
+from kiwi.log import Logger
 from kiwi.ui.entry import KiwiEntry
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import gsignal, type_register
+
+log = Logger('kiwi.ui.combo')
+
 
 class _ComboEntryPopup(gtk.Window):
     gsignal('text-selected', str)
@@ -619,7 +623,12 @@ class ComboEntry(gtk.HBox):
         """
         See L{kiwi.interfaces.IEasyCombo.select}
         """
-        treeiter = self.entry.get_iter_from_obj(obj)
+        try:
+            treeiter = self.entry.get_iter_from_obj(obj)
+        except KeyError:
+            log.warn("%s does not contain a %r object" % (
+                self.__class__.__name__, obj))
+            return
         self.set_active_iter(treeiter)
 
     def append_item(self, label, data=None):
