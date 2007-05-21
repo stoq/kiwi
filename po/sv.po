@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-04-25 18:12-0300\n"
+"POT-Creation-Date: 2007-05-21 18:34-0300\n"
 "PO-Revision-Date: 2007-04-03 11:23-0300\n"
 "Last-Translator: Johan Dahlin <jdahlin@async.com.br>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -101,50 +101,54 @@ msgstr "tt:mm:ss"
 msgid "hh:mm:ss LL"
 msgstr "tt:mm:ss LL"
 
-#: ../kiwi/datatypes.py:545
+#: ../kiwi/datatypes.py:521 ../kiwi/datatypes.py:555
+msgid "You cannot enter a year before 1900"
+msgstr ""
+
+#: ../kiwi/datatypes.py:550
 #, python-format
 msgid "This field requires a date of the format \"%s\" and not \"%s\""
 msgstr "Detta fältet kräver ett datum med formatet \"%s\" och inte \"%s\""
 
-#: ../kiwi/datatypes.py:550
+#: ../kiwi/datatypes.py:560
 msgid "Time"
 msgstr "Tid"
 
-#: ../kiwi/datatypes.py:565
+#: ../kiwi/datatypes.py:575
 msgid "Date and Time"
 msgstr "Datum och tid"
 
-#: ../kiwi/datatypes.py:580
+#: ../kiwi/datatypes.py:590
 msgid "Date"
 msgstr "Datum"
 
-#: ../kiwi/datatypes.py:595
+#: ../kiwi/datatypes.py:605
 msgid "Object"
 msgstr "Objekt"
 
-#: ../kiwi/datatypes.py:603
+#: ../kiwi/datatypes.py:613
 msgid "Enum"
 msgstr "Enumeration"
 
-#: ../kiwi/datatypes.py:672
+#: ../kiwi/datatypes.py:682
 msgid "You have a thousand separator to the right of the decimal point"
 msgstr "Du har en tusenseparator till höger om decimalkommat"
 
-#: ../kiwi/datatypes.py:684
+#: ../kiwi/datatypes.py:694
 msgid "Inproperly placed thousands separator"
 msgstr "Felaktigt placerad tusenseparator"
 
-#: ../kiwi/datatypes.py:689
+#: ../kiwi/datatypes.py:699
 #, python-format
 msgid "Inproperly placed thousand separators: %r"
 msgstr "Felaktigt placerade tusenseparatorer: %r"
 
-#: ../kiwi/datatypes.py:707
+#: ../kiwi/datatypes.py:717
 #, python-format
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr "Du har mer en än decimalkomma (\"%s\") i ditt nummer \"%s\""
 
-#: ../kiwi/ui/listdialog.py:313
+#: ../kiwi/ui/listdialog.py:309
 #, python-format
 msgid "Do you want to remove %s ?"
 msgstr "Will do ta bort %s ?"
@@ -165,12 +169,12 @@ msgstr "_Välj"
 msgid "Finish"
 msgstr "Slutför"
 
-#: ../kiwi/ui/entry.py:590
+#: ../kiwi/ui/entry.py:594
 #, python-format
 msgid "'%s' is not a valid object"
 msgstr "'%s' är inte ett giltligt objekt"
 
-#: ../kiwi/ui/objectlist.py:1871
+#: ../kiwi/ui/objectlist.py:1894
 msgid "Total:"
 msgstr "Total:"
 
@@ -227,45 +231,45 @@ msgstr "'%s' är inte ett giltligt värde för detta fältet"
 msgid "This field is mandatory"
 msgstr "Detta fältet är obligatoriskt"
 
-#: ../kiwi/ui/search.py:64
+#: ../kiwi/ui/search.py:65
 msgid "Any"
 msgstr ""
 
-#: ../kiwi/ui/search.py:71
+#: ../kiwi/ui/search.py:72
 #, fuzzy
 msgid "Today"
 msgstr "_Idag"
 
-#: ../kiwi/ui/search.py:79
+#: ../kiwi/ui/search.py:80
 msgid "Yesterday"
 msgstr ""
 
-#: ../kiwi/ui/search.py:87
+#: ../kiwi/ui/search.py:88
 msgid "Last week"
 msgstr ""
 
-#: ../kiwi/ui/search.py:95
+#: ../kiwi/ui/search.py:96
 msgid "Last month"
 msgstr ""
 
-#: ../kiwi/ui/search.py:145
+#: ../kiwi/ui/search.py:195
 msgid "From:"
 msgstr ""
 
-#: ../kiwi/ui/search.py:155
+#: ../kiwi/ui/search.py:205
 #, fuzzy
 msgid "To:"
 msgstr "Total:"
 
-#: ../kiwi/ui/search.py:168
+#: ../kiwi/ui/search.py:216
 msgid "Custom day"
 msgstr ""
 
-#: ../kiwi/ui/search.py:169
+#: ../kiwi/ui/search.py:217
 msgid "Custom interval"
 msgstr ""
 
-#: ../kiwi/ui/search.py:417
+#: ../kiwi/ui/search.py:554
 msgid "Search:"
 msgstr ""
 
