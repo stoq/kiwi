@@ -3,8 +3,6 @@ Go through the examples
 Run pyflakes
 Run all tests
 Check buildbot
-Run epydoc, fix all problems:
-  tools/epyrun
 Update translations:
   bin/kiwi-i18n -pkiwi -u -c
 Update NEWS

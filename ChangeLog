@@ -1,3 +1,13 @@
+=== 1.9.15 ===
+2007-05-21  Johan Dahlin  <jdahlin@async.com.br>
+
+	* NEWS:
+	* debian/changelog:
+	* doc/howto.tex:
+	* doc/release-checklist.txt:
+	* kiwi/__version__.py:
+	Release 1.9.15
+
 2007-05-21  Johan Dahlin  <jdahlin@async.com.br>
 
 	* MANIFEST.in: 

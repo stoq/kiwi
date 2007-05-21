@@ -1,3 +1,22 @@
+kiwi-1.9.15 21-may-2007
+    - New simple DB API layer to integrate with SQLObject
+    - Add SearchContainer/SearchGladeDelegate, simple and flexible
+      widgets for search and display results from a database.
+    - Entry mask bugfix to workaround PyGObject bug
+    - Improved Glade-3 integration, ObjectList should work.
+    - Sort column fix (Ali, fixes #3032)
+    - Pixbuf column None fix (Ali, fixes #3310)
+    - Add ObjectList.sort_by_attribute (Ali, fixes #3311)
+    - Add ObjectList.grab_focus (Ali, fixes #3326)
+    - Add expander property to Column (Ali, #3336)
+    - Don't allow the user to move outside of fields in
+      the entry masks (Ronaldo, fixes #3333)
+    - At least one radio column should be True (Ali, #3339)
+    - Make sure GObject.new works for ObjectList (#3343)
+    - Don't allow year before 1900 ( fixes #3364)
+    - Generate pydoctor documentation instead of epydoc.
+    - Many other bug fixes
+
 kiwi-1.9.14: 23-march-2007
     - Add glade-3 plugin (Ali)
     - Add ListDialog and ListContainer
