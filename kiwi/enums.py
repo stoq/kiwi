@@ -54,10 +54,10 @@ class ListType(enum):
 class SearchFilterPosition(enum):
     """
     An enum used to indicate where a search filter should be added to
-    a SearchContainer.
+    a SearchContainer::
 
-    - TOP: top left corner
-    - BOTTOM: bottom
+      - TOP: top left corner
+      - BOTTOM: bottom
     """
     (TOP,
      BOTTOM) = range(2)
