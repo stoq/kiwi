@@ -1,3 +1,9 @@
+2007-05-21  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/python.py (AttributeForwarder): Add a new class,
+	which can be used to forward attributes to another
+	object.
+
 2007-05-17  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/datatypes.py (_BaseDateTimeConverter.from_string): 

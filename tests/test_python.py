@@ -1,6 +1,6 @@
 import unittest
 
-from kiwi.python import slicerange, enum
+from kiwi.python import AttributeForwarder, slicerange, enum
 
 class SliceTest(unittest.TestCase):
     def genlist(self, limit, start, stop=None, step=None):
@@ -59,6 +59,22 @@ class EnumTest(unittest.TestCase):
         self.assertRaises(ValueError, Color, 3, 'AGAIN')
         self.assertRaises(ValueError, Color, 4, 'RED')
 
+
+class AttributeForwarderTest(unittest.TestCase):
+    def testForward(self):
+        class FW(AttributeForwarder):
+            attributes = ['forward']
+
+        class Target(object):
+            forward = 'foo'
+
+        target = Target()
+        f = FW(target)
+        self.assertEqual(f.target, target)
+        self.assertEqual(f.forward, 'foo')
+        f.forward = 'bar'
+        self.assertEqual(target.forward, 'bar')
+        self.assertEqual(f.forward, 'bar')
 
 if __name__ == '__main__':
     unittest.main()

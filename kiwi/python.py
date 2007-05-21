@@ -57,6 +57,57 @@ class ClassInittableObject(object):
         """
     __class_init__ = classmethod(__class_init__)
 
+
+class _ForwardedProperty(object):
+    def __init__(self, attribute):
+        self._attribute = attribute
+
+    def __get__(self, instance, klass):
+        if instance is None:
+            return self
+
+        return getattr(instance.target, self._attribute)
+
+    def __set__(self, instance, value):
+        if instance is None:
+            raise TypeError
+
+        setattr(instance.target, self._attribute, value)
+
+
+class AttributeForwarder(ClassInittableObject):
+    """
+    AttributeForwarder is an object which is used to forward certain
+    attributes to another object.
+
+    @cvar attributes: list of attributes to be forwarded
+    @ivar target: forwarded object
+    """
+    attributes = None
+
+    def __class_init__(cls, ns):
+        if cls.__bases__ == (ClassInittableObject,):
+            return
+
+        if not 'attributes' in ns:
+            raise TypeError(
+                "the class variable attributes needs to be set for %s" % (
+                cls.__name__))
+        if "target" in ns['attributes']:
+            raise TypeError("'target' is a reserved attribute")
+
+        for attribute in ns['attributes']:
+            setattr(cls, attribute,  _ForwardedProperty(attribute))
+
+    __class_init__ = classmethod(__class_init__)
+
+    def __init__(self, target):
+        """
+        @param target: object to forward attributes to
+        """
+        self.target = target
+
+
 # copied from twisted/python/reflect.py
 def namedAny(name):
     """Get a fully named package, module, module-global object, or attribute.
