@@ -240,6 +240,7 @@ class Library(Environment):
                                  "global_resources attribute" % name)
             self.add_resources(**module.resources)
             self.add_global_resources(**module.global_resources)
+            self.prefix = module.prefix
 
         self.uninstalled = uninstalled
 

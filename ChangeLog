@@ -1,3 +1,8 @@
+2007-05-22  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/environ.py (Library.__init__): Save the
+	prefix
+
 === 1.9.15 ===
 2007-05-21  Johan Dahlin  <jdahlin@async.com.br>
 
