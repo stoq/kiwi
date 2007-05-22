@@ -1,4 +1,11 @@
-kiwi (1.9.15) feisty; urgency=low
+kiwi (1.9.15-5) feisty; urgency=low
+
+  * Save the prefix from the module and use it to find the
+    externals when we're in uninstalled mode.
+
+ -- Johan Dahlin <jdahlin@async.com.br>  Tue, 22 May 2007 16:25:06 -0300
+
+kiwi (1.9.15-4) feisty; urgency=low
 
   * Redo for feisty
 

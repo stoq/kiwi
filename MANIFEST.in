@@ -7,7 +7,7 @@ recursive-include glade *.glade
 recursive-include pixmaps *.png
 recursive-include po *.po kiwi.pot POTFILES.list
 include debian/changelog debian/compat debian/copyright debian/control debian/rules debian/pyversions
-include debian/preinst debian/pycompat debian/watch
+include debian/pycompat debian/watch
 include debian/*.docs debian/*.install debian/*.examples debian/*.api debian/patches/*.diff
 include AUTHORS
 include ChangeLog
