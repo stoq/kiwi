@@ -1,0 +1,11 @@
+--- doc/Makefile.old	2006-08-24 21:43:21.000000000 -0300
++++ doc/Makefile	2006-08-26 15:30:15.000000000 -0300
+@@ -14,7 +14,7 @@
+ NAME=Kiwi
+ URL=http://www.async.com.br/projects/kiwi/
+ 
+-all: api howto
++all: api # howto (not working for now)
+ 
+ howto: howto.tex
+ 	mkdir -p howto

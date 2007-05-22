@@ -1,0 +1,11 @@
+Document: kiwiapi
+Title: Kiwi API Reference
+Author: Christian Reis <kiko@async.com.br>, Johan Dahlin <jdahlin@async.com.br>
+Abstract: Kiwi is a framework and a set of enhanced PyGTK widgets designed to
+ make building programs with graphical interfaces both easy to write
+ and easy to maintain.
+Section: Apps/Programming
+
+Format: HTML
+Index: /usr/share/doc/python-kiwi/api/index.html
+Files: /usr/share/doc/python-kiwi/api/*.html

@@ -43,7 +43,7 @@ deb: sdist
 	rm -fr $(BUILDDIR)
 	mkdir $(BUILDDIR)
 	cd $(BUILDDIR) && tar xfz ../dist/$(TARBALL)
-	cd $(BUILDDIR)/kiwi-$(VERSION) && debuild
+	cd $(BUILDDIR)/kiwi-$(VERSION) && debuild -S
 	rm -fr $(BUILDDIR)/kiwi-$(VERSION)
 	mv $(BUILDDIR)/* dist
 	rm -fr $(BUILDDIR)

@@ -1,0 +1,12 @@
+--- kiwi/dist.py~	2006-04-25 12:08:54.000000000 -0300
++++ kiwi/dist.py	2006-05-06 19:29:41.000000000 -0300
+@@ -25,7 +25,8 @@
+ 
+ from distutils.command.install_data import install_data
+ from distutils.command.install_lib import install_lib
+-from distutils.core import setup as DS_setup
++#from distutils.core import setup as DS_setup
++from setuptools import setup as DS_setup
+ from distutils.dep_util import newer
+ from distutils.log import info, warn
+ from distutils.sysconfig import get_python_lib

@@ -1,95 +1,147 @@
-kiwi (1.9.15-1) dapper; urgency=low
+kiwi (1.9.15) feisty; urgency=low
 
-  * New release
+  * Redo for feisty
 
- -- Johan Dahlin <jdahlin@async.com.br>  Mon, 21 May 2007 18:42:49 -0300
+ -- Johan Dahlin <jdahlin@async.com.br>  Tue, 22 May 2007 09:49:28 -0300
 
-kiwi (1.9.14-1) dapper; urgency=low
-
-  * New release
-
- -- Johan Dahlin <jdahlin@async.com.br>  Fri, 23 Mar 2007 15:56:48 -0300
-
-kiwi (1.9.13-4) dapper; urgency=low
-
-  * Provides/Conflicts with python-kiwi. Set my mail.
-
- -- Johan Dahlin <jdahlin@async.com.br>  Tue,  6 Feb 2007 17:54:35 -0200
-
-kiwi (1.9.13-3) dapper; urgency=low
-
-  * Don't depend on python-gobject explicitly, so the packages work on etch
-
- -- Johan Dahlin <jdahlin@async.com.br>  Tue,  6 Feb 2007 17:11:08 -0200
-
-kiwi (1.9.13-2) dapper; urgency=low
-
-  * New release.
-
- -- Johan Dahlin <jdahlin@async.com.br>  Thu,  1 Feb 2007 15:19:13 -0200
-
-kiwi (1.9.12-1) dapper; urgency=low
-
-  * New release.
-
- -- Johan Dahlin <jdahlin@async.com.br>  Mon, 29 Jan 2007 16:40:12 -0200
-
-kiwi (1.9.11-2) dapper; urgency=low
-
-  * Replaces: python-kiwi for debian compatibility
-
- -- Johan Dahlin <jdahlin@async.com.br>  Wed, 11 Oct 2006 12:06:02 -0300
-
-kiwi (1.9.11-1) dapper; urgency=low
+kiwi (1.9.13-0ubuntu1) feisty; urgency=low
 
   * New upstream release:
-  * Fix doc package conflict
-
- -- Johan Dahlin <jdahlin@async.com.br>  Mon,  9 Oct 2006 15:00:52 -0300
-
-kiwi (1.9.10-1) dapper; urgency=low
-
-  * New release, docs in a separate package
-
- -- Johan Dahlin <jdahlin@async.com.br>  Mon, 18 Sep 2006 10:52:19 -0300
-
-kiwi (1.9.9-2) dapper; urgency=low
-
-  * Update dependencies
-
- -- Johan Dahlin <jdahlin@async.com.br>  Mon, 28 Aug 2006 12:22:36 -0300
-
-kiwi (1.9.9-1) dapper; urgency=low
-
-   * New upstream release.
-
- -- Johan Dahlin <jdahlin@async.com.br>  Fri, 25 Aug 2006 16:43:01 -0300
-
-kiwi (1.9.8-0ubuntu1) dapper; urgency=low
-
-  * New upstream release.
-  * debian/kiwi.install:
+    - Workaround GtkEntry bug when resizing the size of its GtkWindows. 
+    - Include _kiwi.c in tarball, fixes build.
+    - Use pkg-config to find pygtk version.
+  * debian/control:
+    - added pkg-config to Build-Depends.
+  * debian/patches/02_avoid_version_checking.diff:
     - updated.
 
- -- Daniel Holbach <daniel.holbach@ubuntu.com>  Tue, 25 Apr 2006 22:16:02 +0200
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Tue,  6 Feb 2007 09:42:28 +0100
 
-kiwi (1.9.3-0ubuntu1) dapper; urgency=low
+kiwi (1.9.12-0ubuntu1) feisty; urgency=low
 
-  * New upstream release:
-    - UI Test framework
-    - Add a hyperlink widget (Ali Afshar)
-    - Add a selectable box
-    - Currency datatype
-    - Simple dialogs
-    - Logging helpers
-    - Validation improvements
-    - Documentation improvemnets
+  * New upstream release.
+  * debian/patches/03_epyrun_use_local_modules.patch:
+    - updated.
+  * debian/control:
+    - moved python-support from Build-Depends to Build-Depends-Indep.
 
- -- Daniel Holbach <daniel.holbach@ubuntu.com>  Thu, 15 Dec 2005 23:06:04 +0100
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Tue, 30 Jan 2007 09:52:28 +0100
 
-kiwi (1.9.2-0ubuntu1) dapper; urgency=low
+kiwi (1.9.9-2ubuntu1) feisty; urgency=low
 
-  * Initial release.
+  * debian/control:
+    - Replaces: kiwi.
 
- -- Daniel Holbach <daniel.holbach@ubuntu.com>  Thu, 01 Dec 2005 17:55:17 +0100
+ -- Daniel Holbach <daniel.holbach@ubuntu.com>  Wed, 20 Dec 2006 13:00:09 +0100
+
+kiwi (1.9.9-2) unstable; urgency=high
+
+  * debian/control:
+  - also need to build-dep-indep on python-glade2 (because the doc
+    generation wants it) and xfonts-base (Xvfb needs this one because of
+    the 'fixed' font); will need a way of import'ing gtk without a
+    DISPLAY; anyone? (Closes: #393874)
+  * urgency high because it fixes a RC bug
+
+ -- Gustavo Noronha Silva <kov@debian.org>  Thu, 19 Oct 2006 00:12:34 -0300
+
+kiwi (1.9.9-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/watch:
+  - updated watch file for the new download location
+  * debian/control:
+  - add XS-Python-Version, since vorlon convinced me of its
+    importance
+  * debian/control, debian/rules, debian/patches/01_avoid_building_howto.diff,
+    debian/patches/03_epyrun_use_local_modules.diff,
+    debian/python-kiwi.docs, debian/python-kiwi.examples:
+  - enable building the API docs and instlaling the examples; the howto is
+    not fully buildable from the tarball's contents plus tools
+    (Closes: #384159)
+  * debian/control, debian/rules:
+  - make the API building process run inside a virtual X server, for it
+    needs to import GTK+, which really wants a DISPLAY;
+  - we need to build-depend on xvfb and xbase-clients for that to work
+  * debian/python-kiwi.doc-base.api
+  - register API docs in the doc-base system
+
+ -- Gustavo Noronha Silva <kov@debian.org>  Sat, 26 Aug 2006 17:26:19 -0300
+
+kiwi (1.9.8-7) unstable; urgency=high
+
+  * debian/preinst:
+  - really fix the upgrade problem (Closes: #379359)
+
+ -- Gustavo Noronha Silva <kov@debian.org>  Mon, 31 Jul 2006 23:45:42 -0300
+
+kiwi (1.9.8-6) unstable; urgency=medium
+
+  * debian/preinst:
+  - added to handle problems in upgrade caused by -4 and earlier being
+    built with a python-support version which was buggy when handling
+    "outside" modules (Closes: #379359)
+  * debian/rules:
+  - cleaning up; removing commented code that is not needed anymore
+    and remove the code that sed's the python version, for that is done
+    by the tools now
+  * urgency medium to get the buggy version out of testing soon
+
+ -- Gustavo Noronha Silva <kov@debian.org>  Mon, 31 Jul 2006 23:22:58 -0300
+
+kiwi (1.9.8-5) unstable; urgency=low
+
+  * debian/01_python2.3_install.diff:
+  - removed; no longer needed
+  * debian/control, debian/rules, debian/pyversions, debian/pycompat:
+  - use python-support 0.3 and newer cdbs, that builds using the
+    minor version required by the package; also make the build system
+    more robust (Closes: #375270)
+
+ -- Gustavo Noronha Silva <kov@debian.org>  Mon, 19 Jun 2006 23:37:54 -0300
+
+kiwi (1.9.8-4) unstable; urgency=low
+
+  * debian/patches/02_avoid_version_checking.diff:
+  - don't try to parse the sys.version string; there's no need to check
+    for versions inside the script; that's the packaging system's job,
+    so simply disabling (Closes: #372660)
+  * debian/control, debian/rules:
+  - support the new Python Policy (Closes: #373560)
+  - update build-deps and deps to have already new-policy-compliant
+    packages for python-setuptools and python-gtk2 (Closes: #374505)
+  * debian/python-kiwi.{postinst,prerm}, debian/python-support.version:
+  - removed; will be created automatically from now on
+  * debian/rules:
+  - make sure the shebang is modified before the install target is run,
+    so dh_python will have python:Depends right
+
+ -- Gustavo Noronha Silva <kov@debian.org>  Thu, 15 Jun 2006 20:55:10 -0300
+
+kiwi (1.9.8-3) unstable; urgency=low
+
+  * debian/control:
+  - added dependency on python2.4-setuptools
+  * debian/rules:
+  - rename the egg-info directory to remove the python version
+
+ -- Gustavo Noronha Silva <kov@debian.org>  Sat, 10 Jun 2006 19:05:25 -0300
+
+kiwi (1.9.8-2) unstable; urgency=low
+
+  * debian/control:
+  - added dependency on python2.4-gtk2
+  - updated Standards-Version to 3.7.2, no changes
+  * debian/patches/00_eggify.diff:
+  - updated; no need to include ez_setup
+  * debian/watch:
+  - adding new upstream versions monitoring
+
+ -- Gustavo Noronha Silva <kov@debian.org>  Sun,  4 Jun 2006 23:57:18 -0300
+
+kiwi (1.9.8-1) unstable; urgency=low
+
+  * Initial Release (Closes: #171950)
+
+ -- Gustavo Noronha Silva <kov@debian.org>  Sat,  6 May 2006 19:22:50 -0300
 
