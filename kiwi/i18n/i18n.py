@@ -22,7 +22,7 @@
 """Internationalization utilities. Requires intltool and gettext"""
 
 from distutils.dep_util import newer
-from distutils.filelist import FileList
+from distutils.filelist import FileList, findall
 from optparse import OptionParser
 import os
 from shutil import copyfile
@@ -75,10 +75,14 @@ def update_po(root, package):
     potfiles_in = os.path.join(root, 'po', 'POTFILES.in')
     if os.path.exists(potfiles_in):
         os.unlink(potfiles_in)
+
+    rml_files = _extract_rml_files(root)
+
     fd = open(potfiles_in, 'w')
-    for filename in files:
+    for filename in files + rml_files:
         fd.write(filename + '\n')
     fd.close()
+
 
     old = os.getcwd()
     os.chdir(os.path.join(root, 'po'))
@@ -103,7 +107,48 @@ def update_po(root, package):
 
     os.chdir(old)
 
+    for f in rml_files:
+        os.unlink(f)
+
     os.unlink(potfiles_in)
+
+def _clean_rml(data):
+    fixed = ''
+    while data:
+        start_pos = data.find('<%')
+        if start_pos == -1:
+            break
+
+        fixed += data[:start_pos]
+        data = data[start_pos:]
+        end_pos = data.find('%>')
+        if end_pos == -1:
+            end_pos = data.find('/>')
+            assert end_pos != -1
+        data = data[end_pos+2:]
+    return fixed
+
+def _extract_rml_files(root):
+    files = []
+    for rml_file in findall(root):
+        if not rml_file.endswith('.rml'):
+            continue
+        data = open(rml_file).read()
+        data = _clean_rml(data)
+        if not len(data):
+            continue
+        extracted = rml_file + '.extracted'
+        if os.path.exists(extracted):
+            os.unlink(extracted)
+        open(extracted, 'w').write(data)
+        extracted = extracted[len(root)+1:]
+        cmd = 'intltool-extract --type=gettext/xml %s' % extracted
+        res = os.system(cmd)
+        if res != 0:
+            raise SystemExit("ERROR: failed to generate pot file")
+        os.unlink(extracted)
+        files.append(extracted + '.h')
+    return files
 
 def compile_po_files(root, package):
     if os.system('msgfmt 2> /dev/null') != 256:
