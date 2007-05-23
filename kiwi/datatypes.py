@@ -550,10 +550,12 @@ class _BaseDateTimeConverter(BaseConverter):
                 _('This field requires a date of the format "%s" and '
                   'not "%s"') % (self._convert_format(format), value))
 
-        if date.year < 1900:
-            raise ValidationError(
-                _("You cannot enter a year before 1900"))
+        if isinstance(date, (datetime.date, datetime.datetime)):
+            if date.year < 1900:
+                raise ValidationError(
+                    _("You cannot enter a year before 1900"))
         return date
+
 
 class _TimeConverter(_BaseDateTimeConverter):
     type = datetime.time
