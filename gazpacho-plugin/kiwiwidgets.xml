@@ -4,6 +4,9 @@
     <glade-widget-class name="ObjectList"
                         generic-name="objectlist"
                         title="Object List" />
+    <glade-widget-class name="ObjectTree"
+                        generic-name="objecttree"
+                        title="Object Tree" />
     <glade-widget-class name="HyperLink"
                         generic-name="hyperlink"
                         title="Hyper Link" 
@@ -51,6 +54,7 @@
   <glade-widget-group name="kiwi" title="Kiwi Widgets">
 
     <glade-widget-class-ref name="ObjectList"/>
+    <glade-widget-class-ref name="ObjectTree"/>
     <glade-widget-class-ref name="HyperLink"/>
     <glade-widget-class-ref name="ProxyEntry"/>
     <glade-widget-class-ref name="ProxyDateEntry"/>

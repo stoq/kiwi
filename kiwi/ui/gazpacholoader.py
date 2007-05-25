@@ -48,7 +48,7 @@ from kiwi.environ import environ
 from kiwi.log import Logger
 from kiwi.python import disabledeprecationcall
 from kiwi.ui.hyperlink import HyperLink
-from kiwi.ui.objectlist import Column, ObjectList
+from kiwi.ui.objectlist import Column, ObjectList, ObjectTree
 from kiwi.ui.widgets.button import ProxyButton
 from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox, \
@@ -154,6 +154,10 @@ class ObjectListAdapter(PythonWidgetAdapter):
         return super(ObjectListAdapter, self).construct(name, gtype,
                                                         properties)
 adapter_registry.register_adapter(ObjectListAdapter)
+
+class ObjectTreeAdapter(PythonWidgetAdapter):
+    object_type = ObjectTree
+adapter_registry.register_adapter(ObjectTreeAdapter)
 
 # Framework widgets
 
