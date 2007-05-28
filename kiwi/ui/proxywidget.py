@@ -100,6 +100,7 @@ class ProxyWidgetMixin(object):
             raise TypeError("%s.allowed_data_types must be a tuple" % (
                 self.allowed_data_types))
         self._data_format = None
+        self._converter_options = {}
 
     # Properties
 
@@ -131,6 +132,20 @@ class ProxyWidgetMixin(object):
     def set_data_format(self, format):
         self._data_format = format
 
+    def set_options_for_datatype(self, datatype, **options):
+        """Set some options to be passed to the datatype converter.
+        Any additional parameter will be passed the the converter when
+        converting an object to a string, for displaying in the widget. Note
+        that the converter.as_string method should be able to handle such
+        parameters.
+
+        @param datatype: the datatype.
+        """
+        if not options:
+            raise ValueError
+
+        self._converter_options[datatype] = options
+
     def read(self):
         """Get the content of the widget.
         The type of the return value
@@ -155,7 +170,8 @@ class ProxyWidgetMixin(object):
         if conv is None:
             conv = converter.get_converter(str)
 
-        return conv.as_string(data, format=self._data_format)
+        return conv.as_string(data, format=self._data_format,
+                              **self._converter_options.get(conv.type,{}))
 
     def _from_string(self, data):
         """Convert a string to the data type of the widget

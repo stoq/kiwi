@@ -28,7 +28,7 @@ import datetime
 
 import pango
 
-from kiwi.datatypes import converter, number, ValueUnset
+from kiwi.datatypes import converter, number, ValueUnset, currency
 from kiwi.decorators import deprecated
 from kiwi.enums import Alignment
 from kiwi.python import deprecationwarn
@@ -65,6 +65,9 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         KiwiEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
         self._data_type = data_type
+
+        # Hide currency symbol from the entry.
+        self.set_options_for_datatype(currency, symbol=False)
 
     def __post_init__(self):
         self.set_property('data_type', self._data_type)

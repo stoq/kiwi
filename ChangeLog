@@ -1,3 +1,13 @@
+2007-05-28  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/currency.py:
+	* kiwi/ui/proxywidget.py: Allow proxy widgets to pass paramenters to the
+	datatype converter.
+	* kiwi/ui/widgets/entry.py: Never show the currency symbol on currency
+	entries. Fixes #3398
+
 2007-05-25  Ali Afshar <aafshar@gmail.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

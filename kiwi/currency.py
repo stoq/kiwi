@@ -167,7 +167,7 @@ class _CurrencyConverter(_DecimalConverter):
         self.symbol = True
         self.precision = 2
 
-    def as_string(self, value, format=None):
+    def as_string(self, value, format=None, symbol=None, precision=None):
         if value == ValueUnset:
             return ''
 
@@ -178,7 +178,13 @@ class _CurrencyConverter(_DecimalConverter):
                 raise ValidationError(
                     _("%s can not be converted to a currency") % value)
 
-        return value.format(self.symbol, self.precision)
+        if symbol is None:
+            symbol = self.symbol
+
+        if precision is None:
+            precision = self.precision
+
+        return value.format(symbol, precision)
 
     def from_string(self, value):
         if value == '':
