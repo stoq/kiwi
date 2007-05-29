@@ -1,5 +1,7 @@
 2007-05-29  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/db/sqlobj.py: Add support for full text indexes under postgres.
+
 	* kiwi/ui/gaxmlloader.py:
 	* kiwi/ui/views.py:
 	Add support for loading GAXML files
