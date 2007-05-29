@@ -129,14 +129,15 @@ class SQLObjectQueryExecuter(QueryExecuter):
             if query:
                 queries.append(query)
         query = AND(*queries)
-        return self._query(query, self.conn)
-
-    def _default_query(self, query, conn):
-        return self.table.select(query, connection=conn)
+        result = self._query(query, self.conn)
+        return result.limit(self.get_limit())
 
     #
     # Private
     #
+
+    def _default_query(self, query, conn):
+        return self.table.select(query, connection=conn)
 
     def _construct_state_query(self, table, state, columns):
         queries = []

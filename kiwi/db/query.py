@@ -92,9 +92,14 @@ class QueryExecuter(object):
     A QueryExecuter is responsible for taking the state (as in QueryState)
     objects from search filters and construct a query.
     How the query is constructed is ORM/DB-layer dependent
+
+    @cvar default_search_limit: The default search limit
     """
+    default_search_limit = 1000
+
     def __init__(self):
         self._columns = {}
+        self._limit = self.default_search_limit
 
     #
     # Public API
@@ -119,3 +124,11 @@ class QueryExecuter(object):
         """
         raise NotImplementedError
 
+    def set_limit(self, limit):
+        """
+        @param limit:
+        """
+        self._limit = limit
+
+    def get_limit(self):
+        return self._limit
