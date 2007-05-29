@@ -993,7 +993,7 @@ def _open_glade(view, gladefile, domain):
     if 'glade-2.0.dtd' in sniff:
         WidgetTree = _get_libglade()
         loader_name = 'libglade'
-    if 'gaxml-0.1.dtd' in sniff:
+    elif 'gaxml-0.1.dtd' in sniff:
         WidgetTree = _get_gaxml()
         loader_name = 'gaxml'
     else:
