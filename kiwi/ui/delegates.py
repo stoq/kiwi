@@ -46,8 +46,12 @@ class Delegate(BaseView, BaseController):
                 'use GladeDelegate instead',
                 stacklevel=3)
 
-        BaseView.__init__(self, toplevel, widgets, gladefile,
-                          toplevel_name, delete_handler)
+        BaseView.__init__(self,
+                          toplevel=toplevel,
+                          widgets=widgets,
+                          gladefile=gladefile,
+                          toplevel_name=toplevel_name,
+                          delete_handler=delete_handler)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
 class GladeDelegate(BaseView, BaseController):
