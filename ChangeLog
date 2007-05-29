@@ -1,3 +1,9 @@
+2007-05-29  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/gaxmlloader.py:
+	* kiwi/ui/views.py:
+	Add support for loading GAXML files
+
 2007-05-28  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

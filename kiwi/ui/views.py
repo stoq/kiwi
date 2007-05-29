@@ -42,6 +42,7 @@ from gtk import gdk
 from kiwi.environ import environ
 from kiwi.interfaces import IValidatableProxyWidget
 from kiwi.log import Logger
+from kiwi.python import namedAny
 from kiwi.utils import gsignal, type_register
 from kiwi.ui.gadgets import quit_if_last
 from kiwi.ui.proxy import Proxy
@@ -957,6 +958,13 @@ def _get_libglade():
         return
     return LibgladeWidgetTree
 
+def _get_gaxml():
+    try:
+        from kiwi.ui.gaxmlloader import GAXMLWidgetTree
+    except ImportError:
+        return
+    return GAXMLWidgetTree
+
 def _open_glade(view, gladefile, domain):
     if not gladefile:
         raise ValueError("A gladefile wasn't provided.")
@@ -964,8 +972,14 @@ def _open_glade(view, gladefile, domain):
         raise TypeError(
               "gladefile should be a string, found %s" % type(gladefile))
 
-    filename = os.path.splitext(os.path.basename(gladefile))[0]
-    gladefile = environ.find_resource("glade", filename + '.glade')
+    if gladefile.endswith('.glade'):
+        filename = os.path.splitext(os.path.basename(gladefile))[0]
+        gladefile = environ.find_resource("glade", filename + '.glade')
+    elif gladefile.endswith('.ui'):
+        directory = os.path.dirname(namedAny(view.__module__).__file__)
+        gladefile = os.path.join(directory, gladefile)
+    else:
+        raise AssertionError
 
     fp = open(gladefile)
     sniff = fp.read(200)
@@ -981,6 +995,9 @@ def _open_glade(view, gladefile, domain):
     if 'glade-2.0.dtd' in sniff:
         WidgetTree = _get_libglade()
         loader_name = 'libglade'
+    if 'gaxml-0.1.dtd' in sniff:
+        WidgetTree = _get_gaxml()
+        loader_name = 'gaxml'
     else:
         # gazpacho:
         #<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
