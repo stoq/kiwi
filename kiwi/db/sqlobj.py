@@ -26,11 +26,17 @@
 SQLObject integration for Kiwi
 """
 
-from sqlobject.sqlbuilder import func, AND, OR, LIKE
+from sqlobject.sqlbuilder import func, AND, OR, LIKE, SQLExpression
 
 from kiwi.db.query import NumberQueryState, StringQueryState, \
      DateQueryState, DateIntervalQueryState, QueryExecuter
 from kiwi.interfaces import ISearchFilter
+
+class _FTI(SQLExpression):
+    def __init__(self, q):
+        self.q = q
+    def __sqlrepr__(self, db):
+        return self.q
 
 class SQLObjectQueryExecuter(QueryExecuter):
     def __init__(self, conn=None):
@@ -40,6 +46,7 @@ class SQLObjectQueryExecuter(QueryExecuter):
         self._query_callbacks = []
         self._filter_query_callbacks = {}
         self._query = self._default_query
+        self._full_text_indexes = []
 
     #
     # Public API
@@ -160,12 +167,45 @@ class SQLObjectQueryExecuter(QueryExecuter):
 
         return OR(*queries)
 
+    def _postgres_has_fti_index(self, table_name, column_name):
+        # Assume that the PostgreSQL full text index columns are
+        # named xxx_fti where xxx is the name of the column
+        res = self.conn.queryOne(
+            """SELECT 1
+            FROM information_schema.columns
+            WHERE table_name = %s AND
+                  column_name = %s AND
+                  udt_name = 'tsvector';""" % (
+            self.conn.sqlrepr(table_name),
+            self.conn.sqlrepr(column_name)))
+        return bool(res)
+
+    def _check_has_fulltext_index(self, table_name, field_name):
+        fullname = table_name + field_name
+        if fullname in self._full_text_indexes:
+            return self._full_text_indexes[fullname]
+        else:
+            value = False
+            if 'postgres' in self.conn.__class__.__module__:
+                value = self._postgres_has_fti_index(field_name + '_fti')
+            self._full_text_indexes[fullname] = value
+        return value
+
     def _parse_number_state(self, state, table_field):
         if state.value is not None:
             return table_field == state.value
 
     def _parse_string_state(self, state, table_field):
-        if state.text:
+        if not state.text:
+            return
+
+        if self._check_has_fulltext_index(table_field.tableName,
+                                          table_field.fieldName):
+            return _FTI("%s.%s_fti @@ %s::tsquery" % (
+                table_field.tableName,
+                table_field.fieldName,
+                self.conn.sqlrepr(state.text.lower())))
+        else:
             text = '%%%s%%' % state.text.lower()
             return LIKE(func.LOWER(table_field), text)
 
