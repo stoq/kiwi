@@ -972,14 +972,12 @@ def _open_glade(view, gladefile, domain):
         raise TypeError(
               "gladefile should be a string, found %s" % type(gladefile))
 
-    if gladefile.endswith('.glade'):
-        filename = os.path.splitext(os.path.basename(gladefile))[0]
-        gladefile = environ.find_resource("glade", filename + '.glade')
-    elif gladefile.endswith('.ui'):
+    if gladefile.endswith('.ui'):
         directory = os.path.dirname(namedAny(view.__module__).__file__)
         gladefile = os.path.join(directory, gladefile)
     else:
-        raise AssertionError
+        filename = os.path.splitext(os.path.basename(gladefile))[0]
+        gladefile = environ.find_resource("glade", filename + '.glade')
 
     fp = open(gladefile)
     sniff = fp.read(200)
