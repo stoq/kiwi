@@ -46,7 +46,7 @@ class SQLObjectQueryExecuter(QueryExecuter):
         self._query_callbacks = []
         self._filter_query_callbacks = {}
         self._query = self._default_query
-        self._full_text_indexes = []
+        self._full_text_indexes = {}
 
     #
     # Public API
@@ -187,7 +187,8 @@ class SQLObjectQueryExecuter(QueryExecuter):
         else:
             value = False
             if 'postgres' in self.conn.__class__.__module__:
-                value = self._postgres_has_fti_index(field_name + '_fti')
+                value = self._postgres_has_fti_index(table_name,
+                                                     field_name + '_fti')
             self._full_text_indexes[fullname] = value
         return value
 
