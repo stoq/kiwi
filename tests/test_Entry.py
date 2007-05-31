@@ -140,5 +140,10 @@ class EntryTest(unittest.TestCase):
             gtk.main_iteration()
         self.assertEqual(entry.get_property('data_type'), int)
 
+    def testCorrectlySetsEmptyString(self):
+        entry = ProxyEntry()
+        entry.update('')
+        self.assertEqual(entry.read(), '')
+
 if __name__ == '__main__':
     unittest.main()

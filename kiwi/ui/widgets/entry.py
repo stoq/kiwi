@@ -62,6 +62,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
 
     def __init__(self, data_type=None):
         self._block_changed = False
+        self._has_been_updated = False
         KiwiEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
         self._data_type = data_type
@@ -142,6 +143,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         @param text:
         """
 
+        self._has_been_updated = True
         self._update_current_object(text)
 
         # If content isn't empty set_text emitts changed twice.
@@ -161,7 +163,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         if mode == ENTRY_MODE_TEXT:
             # Do not consider masks which only displays static
             # characters invalid, instead return None
-            if self.is_empty():
+            if not self._has_been_updated:
                 return ValueUnset
             text = self.get_text()
             return self._from_string(text)
@@ -172,7 +174,8 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
 
     def update(self, data):
         if data is None or data is ValueUnset:
-            text = ""
+            self.set_text("")
+            self._has_been_updated = False
         else:
             mode = self._mode
             if mode == ENTRY_MODE_DATA:
@@ -182,8 +185,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
                 text = new
             elif mode == ENTRY_MODE_TEXT:
                 text = self._as_string(data)
-
-        self.set_text(text)
+            self.set_text(text)
 
 type_register(ProxyEntry)
 
