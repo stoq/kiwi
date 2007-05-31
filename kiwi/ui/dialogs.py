@@ -69,7 +69,10 @@ class HIGAlertDialog(gtk.Dialog):
         self.set_title(" ")
         self.set_skip_taskbar_hint(True)
         self.vbox.set_spacing(14)
-        self.get_accessible().set_role(atk.ROLE_ALERT)
+
+        # It seems like get_accessible is not available on windows, go figure
+        if hasattr(self, 'get_accessible'):
+            self.get_accessible().set_role(atk.ROLE_ALERT)
 
         self._primary_label = gtk.Label()
         self._secondary_label = gtk.Label()
