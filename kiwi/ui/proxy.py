@@ -279,7 +279,7 @@ class Proxy:
                 # safe to return here since you shouldn't need to code
                 # around the lack of a model in your callbacks if you
                 # can help it.
-                value = None
+                value = ValueUnset
             else:
                 value = kgetattr(self._model, attribute, ValueUnset)
 

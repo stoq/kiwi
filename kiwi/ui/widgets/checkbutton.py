@@ -28,6 +28,7 @@
 
 import gtk
 
+from kiwi import ValueUnset
 from kiwi.python import deprecationwarn
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import PropertyObject, gsignal, type_register
@@ -54,7 +55,7 @@ class ProxyCheckButton(PropertyObject, gtk.CheckButton, ProxyWidgetMixin):
         return self.get_active()
 
     def update(self, data):
-        if data is None:
+        if data is None or data is ValueUnset:
             self.set_active(False);
             return
 

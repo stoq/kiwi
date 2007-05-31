@@ -307,7 +307,7 @@ class ProxyComboBox(PropertyObject, gtk.ComboBox, ProxyWidgetMixin):
         # We dont need validation because the user always
         # choose a valid value
 
-        if data is None:
+        if data is None or data is ValueUnset:
             return
 
         if self._helper.get_mode() == ComboMode.STRING:
