@@ -378,7 +378,10 @@ class DateEntry(gtk.HBox):
         """
         @returns: the currently selected day
         """
-        date = self.entry.read()
+        try:
+            date = self.entry.read()
+        except ValidationError:
+            date = None
         if date == ValueUnset:
             date = None
         return date

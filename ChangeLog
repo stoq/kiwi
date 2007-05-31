@@ -1,3 +1,8 @@
+2007-05-31  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/dateentry.py (DateEntry.get_date): Catch ValidationError
+	and ignore it.
+
 2007-05-29  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/db/sqlobj.py: Add support for full text indexes under postgres.
