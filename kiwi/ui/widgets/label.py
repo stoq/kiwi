@@ -41,6 +41,7 @@ class ProxyLabel(PropertyObject, gtk.Label, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyLabel'
     allowed_data_types = (basestring, datetime.date, datetime.datetime,
                           datetime.time) + number
+    _label_replacements = {}
 
     def __init__(self, label='', data_type=None):
         """
@@ -61,8 +62,26 @@ class ProxyLabel(PropertyObject, gtk.Label, ProxyWidgetMixin):
                            'xx-large')
 
         self.connect("notify::label", self._on_label_changed)
+        self._block_notify_label = False
+
+    #@classmethod
+    def replace(cls, markup, value):
+        cls._label_replacements[markup] = value
+    replace = classmethod(replace)
 
     def _on_label_changed(self, label, param):
+        if self._block_notify_label:
+            self._block_notify_label = False
+            return
+
+        text = self.get_property('label')
+        for rep in self._label_replacements.keys():
+            if rep in text:
+                text = text.replace(rep, self._label_replacements[rep])
+
+        self._block_notify_label = True
+        self.set_property('label', text)
+
         # Since most of the time labels do not have a model attached to it
         # we should just emit a signal if a model is defined
         if self.model_attribute:
