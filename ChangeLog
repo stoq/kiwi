@@ -1,5 +1,8 @@
 2007-06-09  Gustavo J. A. M. Carneiro  <gjc@gnome.org>
 
+	* tests/test_tasklet.py: Disable the emission hook test if
+	pygobject doens't support it.
+
 	* kiwi/tasklet.py: Misc. pylint fixes and code cleanup.
 
 	* kiwi/tasklet.py (Tasklet.add_join_callback): Allow passing extra
