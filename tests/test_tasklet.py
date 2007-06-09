@@ -37,6 +37,20 @@ class TestWaitForSignal(unittest.TestCase):
         self.assertEqual(task.state, tasklet.Tasklet.STATE_ZOMBIE)
         self.assertEqual(task.return_value, "return-val")
 
+    def testEmissionHook(self):
+        obj = C()
+
+        def some_task():
+            yield tasklet.WaitForSignal(C, 'my-signal')
+            tasklet.get_event()
+            raise StopIteration("return-val")
+
+        task = tasklet.run(some_task())
+        obj.emit("my-signal", 1)
+        self.assertEqual(task.state, tasklet.Tasklet.STATE_ZOMBIE)
+        self.assertEqual(task.return_value, "return-val")
+
+
 class TestWaitForTimeout(unittest.TestCase):
     def time(self):
         if sys.platform == 'win32':

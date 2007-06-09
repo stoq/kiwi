@@ -1,3 +1,20 @@
+2007-06-09  Gustavo J. A. M. Carneiro  <gjc@gnome.org>
+
+	* kiwi/tasklet.py: Misc. pylint fixes and code cleanup.
+
+	* kiwi/tasklet.py (Tasklet.add_join_callback): Allow passing extra
+	user arguments to the callback.
+	(Tasklet.start): New start() method to bootstrap the tasklet.
+	(Tasklet.__init__): Add parameter to allow constructing tasklets
+	without starting them.
+
+	* tests/test_tasklet.py (TestWaitForSignal.testEmissionHook): Tesk
+	emission hooks.
+
+	* kiwi/tasklet.py (WaitForSignal): Add support for signal emission
+	hooks by allowing the programmer to pass a GObject class instead
+	of instance.
+
 2007-06-06  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

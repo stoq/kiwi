@@ -311,7 +311,7 @@ class WaitForCall(WaitCondition):
         self.triggered = True
         self.args = args
         self.kwargs = kwargs
-        retval = self._callback(self)
+        self._callback(self)
         self.triggered = False
         return self.return_value
 
@@ -509,7 +509,7 @@ class WaitForSignal(WaitCondition):
     '''An object that waits for a signal emission'''
 
     def __init__(self, obj, signal):
-        '''Waits for a signal to be emitted on a specific GObject instance.
+        '''Waits for a signal to be emitted on a specific GObject instance or class.
 
         @param obj: object monitor for the signal
         @type obj: gobject.GObject
@@ -517,12 +517,19 @@ class WaitForSignal(WaitCondition):
         @type signal: str
         '''
         WaitCondition.__init__(self)
-        if not isinstance(obj, gobject.GObject):
-            raise TypeError("obj must be a GObject instance")
+        if isinstance(obj, type):
+            if not issubclass(obj, gobject.GObject):
+                raise TypeError("obj must be a GObject instance or class")
+            self.object = None
+            self.class_ = obj
+        else:
+            if not isinstance(obj, gobject.GObject):
+                raise TypeError("obj must be a GObject instance or class")
+            self.object = obj
+            self.class_ = None
         if not gobject.signal_lookup(signal, obj):
             raise ValueError("gobject %r does not have a signal called %r" %
                              (obj, signal))
-        self.object = obj
         self.signal = signal
         self._callback = None
         self._id = None
@@ -533,12 +540,15 @@ class WaitForSignal(WaitCondition):
         '''See L{WaitCondition.arm}'''
         if self._id is None:
             self._callback = tasklet.wait_condition_fired
-            self._id = self.object.connect(self.signal, self._signal_cb)
-            if gobject.signal_lookup("destroy", self.object):
-                self._destroy_id = self.object.connect("destroy",
-                                                       self._object_destroyed)
+            if self.class_ is not None:
+                self._id = gobject.add_emission_hook(self.class_, self.signal, self._signal_cb)
+            else:
+                self._id = self.object.connect(self.signal, self._signal_cb)
+                if gobject.signal_lookup("destroy", self.object):
+                    self._destroy_id = self.object.connect("destroy",
+                                                           self._object_destroyed)
 
-    def _object_destroyed(self, obj):
+    def _object_destroyed(self, dummy_obj):
         self.object = None
         self._id = None
         self._destroy_id = None
@@ -547,7 +557,10 @@ class WaitForSignal(WaitCondition):
     def disarm(self):
         '''See WaitCondition.disarm'''
         if self._id is not None:
-            self.object.disconnect(self._id)
+            if self.class_ is not None:
+                gobject.remove_emission_hook(self.class_, self.signal, self._id)
+            else:
+                self.object.disconnect(self._id)
             self._id = None
             self._callback = None
         if self._destroy_id is not None:
@@ -555,8 +568,13 @@ class WaitForSignal(WaitCondition):
             self._destroy_id = None
 
     def _signal_cb(self, obj, *args):
-        assert obj is self.object
+        if __debug__:
+            if self.class_ is not None:
+                assert isinstance(obj, self.class_)
+            else:
+                assert obj is self.object
         self.triggered = True
+        self.object = obj
         self.signal_args = args
         retval = self._callback(self)
         self.triggered = False
@@ -716,11 +734,12 @@ class Tasklet(object):
 
     STATE_RUNNING, STATE_SUSPENDED, STATE_MSGSEND, STATE_ZOMBIE = range(4)
 
-    def __init__(self, gen=None):
+    def __init__(self, gen=None, start=True):
         '''
         Launch a generator tasklet.
 
         @param gen: a generator object that implements the tasklet main body
+        @param start: whether to automatically start running the tasklet in the constructor
 
         If `gen` is omitted or None, L{run} should be overridden in a
         subclass.
@@ -738,7 +757,14 @@ class Tasklet(object):
         else:
             assert isinstance(gen, types.GeneratorType)
             self.gen = gen
-        self._next_round() # bootstrap
+        if start:
+            self._next_round() # bootstrap
+
+    def start(self):
+        """Starts the execution of the task, for use with tasklets
+        created with start=False"""
+        assert self.state == Tasklet.STATE_SUSPENDED
+        self._next_round()
 
     def get_message_actions(self):
         """Dictionary mapping message names to actions ('accept' or
@@ -754,9 +780,14 @@ class Tasklet(object):
         Method that executes the task.
 
         Should be overridden in a subclass if no generator is passed
-        into the constructor."""
-        raise ValueError("Should be overridden in a subclass "
-                         "if no generator is passed into the constructor")
+        into the constructor.
+
+        @warning: do NOT call this method directly; it is meant to be called by
+        the tasklet framework.
+        """
+        raise NotImplementedError(
+            "Should be overridden in a subclass "
+            "if no generator is passed into the constructor")
 
     def _invoke(self):
         global _event
@@ -848,16 +879,14 @@ class Tasklet(object):
         else:
             ## slightly more efficient version of the above
             self._message_queue = [msg for msg in self._message_queue
-                if (self._message_actions.getdefault(msg.name, Message.DISCARD)
+                if (self._message_actions.get(msg.name, Message.DISCARD)
                     != Message.DISCARD)]
 
         ## find next ACCEPT-able message from queue, and pop it out
         for idx, msg in enumerate(self._message_queue):
             if self._message_actions[msg.name] == Message.ACCEPT:
-                break
-        else:
-            return None
-        return self._message_queue.pop(idx)
+                return self._message_queue.pop(idx)
+        return None
 
 
     def _update_wait_conditions(self, old_wait_list):
@@ -885,14 +914,14 @@ class Tasklet(object):
         else:
             return (triggered_cond in self.wait_list)
 
-    def add_join_callback(self, callback):
+    def add_join_callback(self, callback, *extra_args):
         '''
         Add a callable to be invoked when the tasklet finishes.
         Return a connection handle that can be used in
         remove_join_callback()
 
         The callback will be called like this::
-              callback(tasklet, retval)
+              callback(tasklet, retval, *extra_args)
         where tasklet is the tasklet that finished, and retval its
         return value (or None).
 
@@ -904,7 +933,7 @@ class Tasklet(object):
         handle = hash(callback)
         while handle in self._join_callbacks: # handle collisions
             handle += 1
-        self._join_callbacks[handle] = callback
+        self._join_callbacks[handle] = callback, extra_args
         return handle
 
     def remove_join_callback(self, handle):
@@ -921,8 +950,8 @@ class Tasklet(object):
 
         callbacks = self._join_callbacks.values()
         self._join_callbacks.clear()
-        for callback in callbacks:
-            callback(self, retval)
+        for callback, args in callbacks:
+            callback(self, retval, *args)
 
     def send_message(self, message):
         """Send a message to be received by the tasklet as an event.
