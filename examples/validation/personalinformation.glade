@@ -23,7 +23,7 @@
                     <widget class="GtkTable" id="table1">
                         <property name="column_spacing">6</property>
                         <property name="n_columns">2</property>
-                        <property name="n_rows">9</property>
+                        <property name="n_rows">10</property>
                         <property name="row_spacing">6</property>
                         <property name="visible">True</property>
                         <child>
@@ -104,6 +104,7 @@
                                 <property name="data_type">bool</property>
                                 <property name="data_value">False</property>
                                 <property name="label" context="yes" translatable="yes">Married</property>
+                                <property name="model_attribute"></property>
                                 <property name="visible">True</property>
                             </widget>
                             <packing>
@@ -123,10 +124,22 @@
                             </packing>
                         </child>
                         <child>
+                            <widget class="GtkLabel" id="label10">
+                                <property name="label" context="yes" translatable="yes">Salary:</property>
+                                <property name="visible">True</property>
+                                <property name="xalign">1.0</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">10</property>
+                                <property name="top_attach">9</property>
+                            </packing>
+                        </child>
+                        <child>
                             <widget class="ProxyEntry" id="name">
                                 <property name="data_type">unicode</property>
                                 <property name="is_focus">True</property>
                                 <property name="mandatory">True</property>
+                                <property name="model_attribute"></property>
                                 <property name="visible">True</property>
                             </widget>
                             <packing>
@@ -138,6 +151,7 @@
                             <widget class="ProxyEntry" id="age">
                                 <property name="data_type">int</property>
                                 <property name="mandatory">True</property>
+                                <property name="model_attribute"></property>
                                 <property name="visible">True</property>
                                 <property name="xalign">1.0</property>
                             </widget>
@@ -152,6 +166,7 @@
                             <widget class="ProxyDateEntry" id="birthdate">
                                 <property name="data_type">date</property>
                                 <property name="mandatory">True</property>
+                                <property name="model_attribute"></property>
                                 <property name="visible">True</property>
                             </widget>
                             <packing>
@@ -167,6 +182,7 @@
                                 <property name="is_focus">True</property>
                                 <property name="mandatory">True</property>
                                 <property name="mask" context="yes" translatable="yes">(00) 0000-0000</property>
+                                <property name="model_attribute"></property>
                                 <property name="text" context="yes" translatable="yes">(  )     -    </property>
                                 <property name="visible">True</property>
                             </widget>
@@ -181,6 +197,7 @@
                             <widget class="ProxyEntry" id="height">
                                 <property name="data_type">float</property>
                                 <property name="mandatory">True</property>
+                                <property name="model_attribute">height</property>
                                 <property name="visible">True</property>
                                 <property name="xalign">1.0</property>
                             </widget>
@@ -196,6 +213,7 @@
                                 <property name="adjustment">0 0 100 1 10 0</property>
                                 <property name="data_type">float</property>
                                 <property name="mandatory">True</property>
+                                <property name="model_attribute"></property>
                                 <property name="text" context="yes" translatable="yes">0</property>
                                 <property name="visible">True</property>
                             </widget>
@@ -210,6 +228,7 @@
                             <widget class="ProxyComboEntry" id="nationality">
                                 <property name="data_type">str</property>
                                 <property name="mandatory">True</property>
+                                <property name="model_attribute"></property>
                                 <property name="visible">True</property>
                             </widget>
                             <packing>
@@ -239,6 +258,7 @@
                         <child>
                             <widget class="ProxyComboBox" id="gender">
                                 <property name="data_type">str</property>
+                                <property name="model_attribute"></property>
                                 <property name="visible">True</property>
                             </widget>
                             <packing>
@@ -246,6 +266,19 @@
                                 <property name="left_attach">1</property>
                                 <property name="right_attach">2</property>
                                 <property name="top_attach">8</property>
+                            </packing>
+                        </child>
+                        <child>
+                            <widget class="ProxyLabel" id="salary">
+                                <property name="data_type">currency</property>
+                                <property name="model_attribute">salary</property>
+                                <property name="visible">True</property>
+                            </widget>
+                            <packing>
+                                <property name="bottom_attach">10</property>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">9</property>
                             </packing>
                         </child>
                     </widget>
@@ -270,6 +303,7 @@
                         <property name="border_width">10</property>
                         <property name="data_type">str</property>
                         <property name="mandatory">True</property>
+                        <property name="model_attribute"></property>
                         <property name="visible">True</property>
                     </widget>
                     <packing>

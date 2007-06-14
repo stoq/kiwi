@@ -31,7 +31,8 @@ import datetime
 
 import gtk
 
-from kiwi.datatypes import number, ValueUnset
+from kiwi.datatypes import number, ValueUnset, converter
+from kiwi.enums import Alignment
 from kiwi.python import deprecationwarn
 from kiwi.ui.gadgets import set_foreground
 from kiwi.ui.proxywidget import ProxyWidgetMixin
@@ -63,6 +64,17 @@ class ProxyLabel(PropertyObject, gtk.Label, ProxyWidgetMixin):
 
         self.connect("notify::label", self._on_label_changed)
         self._block_notify_label = False
+
+    def prop_set_data_type(self, data_type):
+        data_type = super(ProxyLabel, self).prop_set_data_type(data_type)
+        if not data_type:
+            return
+
+        conv = converter.get_converter(data_type)
+        if conv.align == Alignment.RIGHT:
+            self.set_property('xalign', 1.0)
+
+        return data_type
 
     #@classmethod
     def replace(cls, markup, value):

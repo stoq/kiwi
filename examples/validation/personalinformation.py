@@ -9,7 +9,7 @@ import gtk
 
 from kiwi.environ import require_gazpacho
 require_gazpacho()
-from kiwi.datatypes import ValidationError
+from kiwi.datatypes import ValidationError, currency
 from kiwi.ui.delegates import GladeDelegate
 
 
@@ -78,11 +78,12 @@ person.nationality = 'Yankee'
 person.about = 'Kinda fat'
 person.status = True
 person.gender = 'Female'
+person.salary = currency(1234)
 
 form = Form()
 proxy = form.add_proxy(person, ['name', 'age', 'birthdate',
                                 'height', 'weight', 'about',
-                                'nationality', 'status', 'gender'])
+                                'nationality', 'status', 'gender', 'salary'])
 form.show_all()
 
 def on_ok_btn_clicked(widget):
