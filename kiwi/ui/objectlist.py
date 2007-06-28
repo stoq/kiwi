@@ -449,21 +449,21 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     Signals
     =======
-      - B{row-activated} (object):
+      - B{row-activated} (list, object):
         - Emitted when a row is "activated", eg double clicked or pressing
           enter. See the GtkTreeView documentation for more information
-      - B{selection-changed} (object):
+      - B{selection-changed} (list, object):
         - Emitted when the selection changes for the ObjectList
           enter. See the documentation on GtkTreeSelection::changed
           for more information
-      - B{double-click} (object):
+      - B{double-click} (list, object):
         - Emitted when a row is double-clicked, mostly you want to use
           the row-activated signal instead to be able catch keyboard events.
-      - B{right-click} (object):
+      - B{right-click} (list, object):
         - Emitted when a row is clicked with the right mouse button.
-      - B{cell-edited} (object, attribute):
+      - B{cell-edited} (list, object, attribute):
         - Emitted when a cell is edited.
-      - B{has-rows} (bool):
+      - B{has-rows} (list, bool):
         - Emitted when the objectlist goes from an empty to a non-empty
           state or vice verse.
 
