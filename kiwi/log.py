@@ -164,7 +164,7 @@ def _create_console():
 
     console = logging.StreamHandler()
     console.setFormatter(logging.Formatter(
-        "%(asctime)s %(message)s", datefmt='%T'))
+        "%(asctime)s %(name)-20s %(message)s", datefmt='%T'))
     root = logging.getLogger()
     root.addHandler(console)
     root.setLevel(logging.DEBUG)
