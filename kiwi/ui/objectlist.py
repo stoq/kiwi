@@ -1691,12 +1691,23 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 type_register(ObjectList)
 
 class ObjectTree(ObjectList):
+    """
+    Signals
+    =======
+      - B{row-expanded} (list, object):
+        - Emitted when a row is "expanded", eg the littler arrow to the left
+          is opened. See the GtkTreeView documentation for more information.
+    """
     __gtype_name__ = 'ObjectTree'
+
+    gsignal('row-expanded', object)
+
     def __init__(self, columns=[], objects=None, mode=gtk.SELECTION_BROWSE,
                  sortable=False, model=None):
         if not model:
             model = gtk.TreeStore(object)
         ObjectList.__init__(self, columns, objects, mode, sortable, model)
+        self.get_treeview().connect('row-expanded', self._on_treeview__row_expanded)
 
     def _append_internal(self, parent, instance, select, prepend):
         iters = self._iters
@@ -1774,6 +1785,9 @@ class ObjectTree(ObjectList):
 
         self.get_treeview().collapse_row(
             self._model[treeiter].path)
+
+    def _on_treeview__row_expanded(self, treeview, treeiter, treepath):
+        self.emit('row-expanded', self.get_model()[treeiter][COL_MODEL])
 
 type_register(ObjectTree)
 
