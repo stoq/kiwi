@@ -1,5 +1,8 @@
 2007-07-02  Johan Dahlin  <jdahlin@async.com.br>
 
+	* glade3-plugin/setup.py (glade3_exists): Check for
+	gladeui-1.0 instead of libgladeui-1.0, fixes #3461
+
 	* kiwi/ui/objectlist.py (ObjectTree): Add a row-expanded signal.
 	Based on patch by Ali Afshar, fixes #3460
 

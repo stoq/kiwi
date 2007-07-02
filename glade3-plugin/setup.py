@@ -3,7 +3,7 @@ import os
 
 from kiwi.dist import listfiles, setup
 
-GLADELIB = 'libgladeui-1.0'
+GLADELIB = 'gladeui-1.0'
 
 def glade3_exists():
     status, output = commands.getstatusoutput('pkg-config --exists %s' %
