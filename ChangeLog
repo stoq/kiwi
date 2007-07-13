@@ -1,3 +1,10 @@
+2007-07-13  Fabio Morbec  <fabio@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/comboentry.py (ComboEntry._on_entry__scroll_event):
+	If don't have data in the model just return
+
 2007-07-02  Johan Dahlin  <jdahlin@async.com.br>
 
 	* glade3-plugin/setup.py (glade3_exists): Check for

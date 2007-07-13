@@ -421,6 +421,8 @@ class ComboEntry(gtk.HBox):
 
     def _on_entry__scroll_event(self, entry, event):
         model = self.get_model()
+        if not len(model):
+            return
         treeiter = self._popup.get_selected_iter()
         # If nothing is selected, select the first one
         if not treeiter:
