@@ -107,7 +107,8 @@ class QueryExecuter(object):
 
     def set_filter_columns(self, search_filter, columns):
         if not ISearchFilter.providedBy(search_filter):
-            raise TypeError("search_filter must implement ISearchFilter")
+            pass
+            #raise TypeError("search_filter must implement ISearchFilter")
 
         assert not search_filter in self._columns
         self._columns[search_filter] = columns
