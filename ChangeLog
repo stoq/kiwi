@@ -1,5 +1,7 @@
 2007-07-16  Johan Dahlin  <jdahlin@async.com.br>
 
+	* po/pl.po: Add polish translation (Jarek Zgoda)
+
 	* kiwi/ui/entry.py: Sometimes the entry completion breaks,
 	#2901, patch by Ali Afshar.
 
