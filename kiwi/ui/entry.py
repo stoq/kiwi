@@ -664,9 +664,11 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         model = completion.get_model()
         if not len(model):
             return
-
-        content = model[iter][COL_TEXT].lower()
-        return key.lower() in content
+        raw_content = model[iter][COL_TEXT]
+        if raw_content is not None:
+            return key.lower() in raw_content.lower()
+        else:
+            return False
 
     def _on_completion__match_selected(self, completion, model, iter):
         if not len(model):
