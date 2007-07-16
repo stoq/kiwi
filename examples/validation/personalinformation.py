@@ -1,8 +1,5 @@
 # This example illustrates the use of entries with validations
 
-import pygtk
-pygtk.require('2.0')
-
 import datetime
 
 import gtk
