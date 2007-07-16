@@ -1,3 +1,12 @@
+=== 1.9.16 ===
+2007-05-21  Johan Dahlin  <jdahlin@async.com.br>
+
+	* NEWS:
+	* debian/changelog:
+	* doc/howto.tex:
+	* kiwi/__version__.py:
+	Release 1.9.16
+
 2007-07-16  Johan Dahlin  <jdahlin@async.com.br>
 
 	* po/pl.po: Add polish translation (Jarek Zgoda)
@@ -32,7 +41,6 @@
 
 	* tests/test_tasklet.py: Disable the emission hook test if
 	pygobject doens't support it.
-
 	* kiwi/tasklet.py: Misc. pylint fixes and code cleanup.
 
 	* kiwi/tasklet.py (Tasklet.add_join_callback): Allow passing extra

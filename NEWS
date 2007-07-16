@@ -1,3 +1,17 @@
+kiwi-1.9.16 16-july-2007
+    - Polish translation (Jarek Zgoda)
+    - ObjectList updates
+    - Support for currency marker in KiwiLabel (#3389, Ronaldo Maia)
+    - Improvements to glade-3 plugin (Ali, #3461)
+    - ObjectList::row-expanded signal (Ali, #3460)
+    - Kiwi completion fixes/workaround (Ali, #2901)
+    - Tasklet updates (Gustavo)
+    - ValueUnset and KiwiEntry  (Ali, #3408)
+    - Gaxml support in loader
+    - Gazpacho support for ObjectList (Ali, #3389)
+    - Rml translation support
+    - SQLObject full text index support
+
 kiwi-1.9.15 21-may-2007
     - New simple DB API layer to integrate with SQLObject
     - Add SearchContainer/SearchGladeDelegate, simple and flexible
