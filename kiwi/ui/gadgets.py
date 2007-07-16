@@ -111,6 +111,9 @@ class FadeOut(gobject.GObject):
 
         self._log.debug('_merge_colors: %s -> %s' % (src_color, dst_color))
 
+        if not src_color:
+            yield False
+
         rs, gs, bs = src_color.red, src_color.green, src_color.blue
         rd, gd, bd = dst_color.red, dst_color.green, dst_color.blue
         rinc = (rd - rs) / float(steps)
