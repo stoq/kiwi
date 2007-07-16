@@ -24,15 +24,14 @@ def create():
     testdir = os.path.dirname(__file__)
     uidir = os.path.join(testdir, 'ui')
     rootdir = os.path.dirname(testdir)
-
     tests = {}
     tests['setUp'] = lambda self, rootdir=rootdir: setup(self, rootdir)
     tests['tearDown'] = lambda self, rootdir=rootdir: teardown(self)
 
     for filename in os.listdir(uidir):
-        if not filename.endswith('.py'):
+        if not filename.endswith('.doctest'):
             continue
-        name = 'test_' + filename[:-3]
+        name = 'test_' + filename[:-7]
 
         full = os.path.join(uidir, filename)
 
@@ -42,7 +41,6 @@ def create():
         except TypeError:
             pass
         tests[name] = func
-
     return type('TestUI', (unittest.TestCase,), tests)
 
 # Disable UI tests on win32, they do not quite work yet.
