@@ -2,7 +2,7 @@
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           python-kiwi
-Version:        1.9.14
+Version:        1.9.16
 Release:        1%{?dist}
 Summary:        Framework for Python GUI applications
 
@@ -94,6 +94,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jul 07 2007 Johan Dahlin <jdahlin@async.com.br> 1.9.16-1
+- Upstream 1.9.13
+
 * Tue Feb 04 2007 Johan Dahlin <jdahlin@async.com.br> 1.9.14-1
 - Version 1.9.14
 - Add .mo files
