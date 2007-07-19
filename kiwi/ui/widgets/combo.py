@@ -508,7 +508,7 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry,
 
     # IEasyCombo
 
-    def prefill(self, itemdata, sort=False, clear_entry=False):
+    def prefill(self, itemdata, sort=False, clear_entry=True):
         """
         See L{kiwi.interfaces.IEasyCombo.prefill}
         """
