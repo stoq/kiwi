@@ -183,7 +183,7 @@ class PluggableWizard(GladeDelegate):
 
     def disable_next(self):
         """
-        Enables the next button in the wizard.
+        Disables the next button in the wizard.
         """
         self.next_button.set_sensitive(False)
 
@@ -195,7 +195,7 @@ class PluggableWizard(GladeDelegate):
 
     def disable_back(self):
         """
-        Enables the back button in the wizard.
+        Disables the back button in the wizard.
         """
         self.previous_button.set_sensitive(False)
 
