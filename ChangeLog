@@ -1,3 +1,9 @@
+2007-07-24  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/objectlist.py (Column): Add ellipsize and font-desc 
+	properties. Handle list without selection. Add a font-desc
+	parameter to ListLabel/SummaryLabel
+
 2007-07-19 Fabio Morbec  <fabio@async.com.br>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
@@ -5,7 +11,6 @@
 	* kiwi/ui/widgets/combo.py (ProxyComboBoxEntry.prefill):
 	Changed clear_entry param to True
 
-=== 1.9.16 ===
 2007-05-21  Johan Dahlin  <jdahlin@async.com.br>
 
 	* NEWS:

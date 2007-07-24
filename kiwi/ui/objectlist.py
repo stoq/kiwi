@@ -30,6 +30,7 @@ import datetime
 import gettext
 
 import gobject
+import pango
 import gtk
 from gtk import gdk
 
@@ -127,6 +128,13 @@ class Column(PropertyObject, gobject.GObject):
         - If true, the text will be rendered with markup
       - B{expander}: bool I{False}
         - If True, this column will be used as the tree expander column
+      - B{ellipsize}: pango.EllipsizeMode I{pango.ELLIPSIZE_NONE}
+        - One of pango.ELLIPSIZE_{NONE, START, MIDDLE_END}, it describes
+          where characters should be removed in case ellipsization
+          (where to put the ...) is needed.
+      - B{font-desc}: str I{""}
+        - A string passed to pango.FontDescription, for instance "Sans" or
+          "Monospace 28".
     """
     __gtype_name__ = 'Column'
     gproperty('attribute', str, flags=(gobject.PARAM_READWRITE | gobject.PARAM_CONSTRUCT_ONLY))
@@ -150,6 +158,8 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('icon-size', gtk.IconSize, default=gtk.ICON_SIZE_MENU)
     gproperty('editable-attribute', str)
     gproperty('expander', bool, False)
+    gproperty('ellipsize', pango.EllipsizeMode, default=pango.ELLIPSIZE_NONE)
+    gproperty('font-desc', str)
     #gproperty('title_pixmap', str)
 
     # This can be set in subclasses, to be able to allow custom
@@ -888,6 +898,11 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         renderer.set_property("xalign", xalign)
         treeview_column.set_property("alignment", xalign)
 
+        if column.ellipsize:
+            renderer.set_property('ellipsize', column.ellipsize)
+        if column.font_desc:
+            renderer.set_property('font-desc',
+                                  pango.FontDescription(column.font_desc))
         if column.use_stock:
             cell_data_func = self._cell_data_pixbuf_func
         elif issubclass(column.data_type, enum):
@@ -1116,6 +1131,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         mode = selection.get_mode()
         if mode == gtk.SELECTION_MULTIPLE:
             item = self.get_selected_rows()
+        elif mode == gtk.SELECTION_NONE:
+            return
         else:
             item = self.get_selected()
         return item
@@ -1796,7 +1813,8 @@ class ListLabel(gtk.HBox):
     to vertically align a label with a column
     """
 
-    def __init__(self, klist, column, label='', value_format='%s'):
+    def __init__(self, klist, column, label='', value_format='%s',
+                 font_desc=None):
         """
         @param klist:        list to follow
         @type klist:         kiwi.ui.objectlist.ObjectList
@@ -1822,6 +1840,10 @@ class ListLabel(gtk.HBox):
         gtk.HBox.__init__(self)
 
         self._create_ui()
+
+        if font_desc:
+            self._value_widget.modify_font(font_desc)
+            self._label_widget.modify_font(font_desc)
 
     # Public API
 
@@ -1905,8 +1927,9 @@ class SummaryLabel(ListLabel):
     Please note that I only know how to handle number column
     data types and I will complain if you give me something else."""
 
-    def __init__(self, klist, column, label=_('Total:'), value_format='%s'):
-        ListLabel.__init__(self, klist, column, label, value_format)
+    def __init__(self, klist, column, label=_('Total:'), value_format='%s',
+                 font_desc=None):
+        ListLabel.__init__(self, klist, column, label, value_format, font_desc)
         if not issubclass(self._column.data_type, number):
             raise TypeError("data_type of column must be a number, not %r",
                             self._column.data_type)
