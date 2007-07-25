@@ -91,6 +91,10 @@ An enchanced version of GtkEntry that supports icons and masks
 
 import gettext
 import string
+try:
+    set
+except AttributeError:
+    from sets import Set as set
 
 import gobject
 import pango
@@ -991,7 +995,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         else:
             mode = self._mode
 
-        values = {}
+        values = set()
         if mode == ENTRY_MODE_TEXT:
             if sort:
                 itemdata.sort()
@@ -1001,7 +1005,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
                     raise KeyError("Tried to insert duplicate value "
                                    "%r into the entry" % item)
                 else:
-                    values[item] = None
+                    values.add(item)
 
                 model.append((item, None))
         elif mode == ENTRY_MODE_DATA:
@@ -1010,11 +1014,14 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
             for item in itemdata:
                 text, data = item
-                if text in values:
-                    raise KeyError("Tried to insert duplicate value "
-                                   "%r into the entry" % text)
-                else:
-                    values[text] = None
+                # Add (n) to the end in case of duplicates
+                count = 1
+                orig = text
+                while text in values:
+                    text = orig + ' (%d)' % count
+                    count += 1
+
+                values.add(text)
                 model.append((text, data))
         else:
             raise TypeError("Incorrect format for itemdata; see "
