@@ -1,5 +1,10 @@
 2007-07-25  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/entry.py (KiwiEntry.prefill): Handle duplicate entries
+	by adding (n) to the end of the name
+
+2007-07-25  Johan Dahlin  <jdahlin@async.com.br>
+
 	* kiwi/ui/objectlist.py (Column.as_string): Call format_func before
 	checking the format and the datatype, it should override everything.
 
