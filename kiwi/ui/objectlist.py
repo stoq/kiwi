@@ -254,6 +254,8 @@ class Column(PropertyObject, gobject.GObject):
         data_type = self.data_type
         if data is None:
             text = ''
+        elif self.format_func:
+            text = self.format_func(data)
         elif (self.format or
             data_type == float or
             data_type == Decimal or
@@ -264,8 +266,6 @@ class Column(PropertyObject, gobject.GObject):
             issubclass(data_type, enum)):
             conv = converter.get_converter(data_type)
             text = conv.as_string(data, format=self.format or None)
-        elif self.format_func:
-            text = self.format_func(data)
         else:
             text = data
 

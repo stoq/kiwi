@@ -1,3 +1,8 @@
+2007-07-25  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/objectlist.py (Column.as_string): Call format_func before
+	checking the format and the datatype, it should override everything.
+
 2007-07-24  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/dialogs.py (selectfolder): New function based
