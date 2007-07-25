@@ -202,10 +202,15 @@ class SQLObjectQueryExecuter(QueryExecuter):
 
         if self._check_has_fulltext_index(table_field.tableName,
                                           table_field.fieldName):
+            value = state.text.lower()
+            # FTI operators:
+            #  & = AND
+            #  | = OR
+            value = value.replace(' ', ' & ')
             return _FTI("%s.%s_fti @@ %s::tsquery" % (
                 table_field.tableName,
                 table_field.fieldName,
-                self.conn.sqlrepr(state.text.lower())))
+                self.conn.sqlrepr(value)))
         else:
             text = '%%%s%%' % state.text.lower()
             return LIKE(func.LOWER(table_field), text)
