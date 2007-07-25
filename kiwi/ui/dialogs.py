@@ -232,16 +232,17 @@ def yesno(text, parent=None, default=gtk.RESPONSE_YES,
     return messagedialog(gtk.MESSAGE_WARNING, text, None, parent,
                          buttons=buttons, default=default)
 
-def open(title='', parent=None, patterns=[], folder=None, filter=None):
+def open(title='', parent=None, patterns=None, folder=None, filter=None):
     """Displays an open dialog.
-    @param title:
-    @param parent:
-    @param patterns:
-    @param folder:
-    @param filter:
+    @param title: the title of the folder, defaults to 'Select folder'
+    @param parent: parent gtk.Window or None
+    @param patterns: a list of pattern strings ['*.py', '*.pl'] or None
+    @param folder: initial folder or None
+    @param filter: a filter to use or None, is incompatible with patterns
     """
 
-    if patterns and filter:
+    ffilter = filter
+    if patterns and ffilter:
         raise TypeError("Can't use patterns and filter at the same time")
 
     filechooser = gtk.FileChooserDialog(title or _('Open'),
@@ -250,12 +251,12 @@ def open(title='', parent=None, patterns=[], folder=None, filter=None):
                                         (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                          gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
-    if patterns or filter:
-        if not filter:
-            filter = gtk.FileFilter()
+    if patterns or ffilter:
+        if not ffilter:
+            ffilter = gtk.FileFilter()
             for pattern in patterns:
-                filter.add_pattern(pattern)
-        filechooser.set_filter(filter)
+                ffilter.add_pattern(pattern)
+        filechooser.set_filter(ffilter)
     filechooser.set_default_response(gtk.RESPONSE_OK)
 
     if folder:
@@ -278,7 +279,45 @@ def open(title='', parent=None, patterns=[], folder=None, filter=None):
             'Permission denied.') %  abspath)
 
     filechooser.destroy()
-    return path
+    return
+
+def selectfolder(title='', parent=None, folder=None):
+    """Displays a select folder dialog.
+    @param title: the title of the folder, defaults to 'Select folder'
+    @param parent: parent gtk.Window or None
+    @param folder: initial folder or None
+    """
+
+    filechooser = gtk.FileChooserDialog(
+        title or _('Select folder'),
+        parent,
+        gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
+        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+         gtk.STOCK_OK, gtk.RESPONSE_OK))
+
+    if folder:
+        filechooser.set_current_folder(folder)
+
+    filechooser.set_default_response(gtk.RESPONSE_OK)
+
+    response = filechooser.run()
+    if response != gtk.RESPONSE_OK:
+        filechooser.destroy()
+        return
+
+    path = filechooser.get_filename()
+    if path and os.access(path, os.R_OK | os.X_OK):
+        filechooser.destroy()
+        return path
+
+    abspath = os.path.abspath(path)
+
+    error(_('Could not select folder "%s"') % abspath,
+          _('The folder "%s" could not be selected. '
+            'Permission denied.') %  abspath)
+
+    filechooser.destroy()
+    return
 
 def ask_overwrite(filename, parent=None):
     submsg1 = _('A file named "%s" already exists') % os.path.abspath(filename)
@@ -392,6 +431,7 @@ def _test():
     print password('Administrator password',
                    'To be able to continue the wizard you need to enter the '
                    'administrator password for the database on host anthem')
+    print selectfolder()
 
 if __name__ == '__main__':
     _test()

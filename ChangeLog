@@ -1,5 +1,9 @@
 2007-07-24  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/ui/dialogs.py (selectfolder): New function based
+	around gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER. Based on patch
+	by Paul Eipper (#3490)
+
 	* kiwi/ui/objectlist.py (Column): Add ellipsize and font-desc 
 	properties. Handle list without selection. Add a font-desc
 	parameter to ListLabel/SummaryLabel
