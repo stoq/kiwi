@@ -527,10 +527,12 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         if isinstance(columns, Column):
             columns = [columns]
         elif not isinstance(columns, list):
-            raise TypeError("columns must be a list or a Column")
+            raise TypeError(
+                "columns must be a list or a Column, not %r" % (columns,))
 
         if not isinstance(mode, gtk.SelectionMode):
-            raise TypeError("mode must be an gtk.SelectionMode enum")
+            raise TypeError(
+                "mode must be an gtk.SelectionMode enum, not %r" % (mode,))
         # gtk.SELECTION_EXTENDED & gtk.SELECTION_MULTIPLE are both 3.
         # so we can't do this check.
         #elif mode == gtk.SELECTION_EXTENDED:
