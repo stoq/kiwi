@@ -32,6 +32,11 @@ The GtkComboBox and GtkComboBoxEntry classes here are also slightly extended
 they contain methods to easily insert and retrieve data from combos.
 """
 
+try:
+    set
+except AttributeError:
+    from sets import Set as set
+
 import gobject
 import gtk
 from gtk import keysyms
@@ -103,7 +108,7 @@ class _EasyComboBoxHelper(object):
 
         model = self._combobox.get_model()
 
-        values = {}
+        values = set()
         if mode == ComboMode.STRING:
             if sort:
                 itemdata.sort()
@@ -112,8 +117,7 @@ class _EasyComboBoxHelper(object):
                 if item in values:
                     raise KeyError("Tried to insert duplicate value "
                                    "%s into Combo!" % (item,))
-                else:
-                    values[item] = None
+                values.add(item)
 
                 model.append((item, None))
         elif mode == ComboMode.DATA:
@@ -122,11 +126,12 @@ class _EasyComboBoxHelper(object):
 
             for item in itemdata:
                 text, data = item
-                if text in values:
-                    raise KeyError("Tried to insert duplicate value "
-                                   "%s into Combo!" % (item,))
-                else:
-                    values[text] = None
+                orig = text
+                count = 1
+                while text in values:
+                    text = orig + ' (%d)' % count
+                    count += 1
+                values.add(text)
                 model.append((text, data))
 
     def append_item(self, label, data=None):
