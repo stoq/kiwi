@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-07-16 10:52-0300\n"
+"POT-Creation-Date: 2007-07-31 17:26-0300\n"
 "PO-Revision-Date: 2007-07-15 21:16+0100\n"
 "Last-Translator: Jarek Zgoda <jarek.zgoda@gmail.com>\n"
 "Language-Team: Polish\n"
@@ -171,12 +171,12 @@ msgstr "_Wybierz"
 msgid "Finish"
 msgstr "Zakończ"
 
-#: ../kiwi/ui/entry.py:594
+#: ../kiwi/ui/entry.py:598
 #, python-format
 msgid "'%s' is not a valid object"
 msgstr "'%s' nie jest poprawnym obiektem"
 
-#: ../kiwi/ui/objectlist.py:1908
+#: ../kiwi/ui/objectlist.py:1932
 msgid "Total:"
 msgstr "Ogółem:"
 
@@ -184,38 +184,53 @@ msgstr "Ogółem:"
 msgid "Show more _details"
 msgstr "Pokaż więcej _szczegółów"
 
-#: ../kiwi/ui/dialogs.py:247
+#: ../kiwi/ui/dialogs.py:248
 msgid "Open"
 msgstr "Otwórz"
 
-#: ../kiwi/ui/dialogs.py:276
+#: ../kiwi/ui/dialogs.py:277
 #, python-format
 msgid "Could not open file \"%s\""
 msgstr "Nie można otworzyć pliku \"%s\""
 
-#: ../kiwi/ui/dialogs.py:277
+#: ../kiwi/ui/dialogs.py:278
 #, python-format
 msgid "The file \"%s\" could not be opened. Permission denied."
 msgstr "Nie udało się otworzyć pliku \"%s\". Brak wystarczających uprawnień."
 
-#: ../kiwi/ui/dialogs.py:284
+#: ../kiwi/ui/dialogs.py:292
+#, fuzzy
+msgid "Select folder"
+msgstr "_Wybierz"
+
+#: ../kiwi/ui/dialogs.py:315
+#, fuzzy, python-format
+msgid "Could not select folder \"%s\""
+msgstr "Nie można otworzyć pliku \"%s\""
+
+#: ../kiwi/ui/dialogs.py:316
+#, fuzzy, python-format
+msgid "The folder \"%s\" could not be selected. Permission denied."
+msgstr "Nie udało się otworzyć pliku \"%s\". Brak wystarczających uprawnień."
+
+#: ../kiwi/ui/dialogs.py:323
 #, python-format
 msgid "A file named \"%s\" already exists"
 msgstr "Plik o nazwie \"%s\" już istnieje"
 
-#: ../kiwi/ui/dialogs.py:285
+#: ../kiwi/ui/dialogs.py:324
 msgid "Do you wish to replace it with the current one?"
 msgstr "Czy chcesz go zastąpić bieżącym?"
 
-#: ../kiwi/ui/dialogs.py:291
+#: ../kiwi/ui/dialogs.py:330
 msgid "Replace"
 msgstr "Zastąp"
 
-#: ../kiwi/ui/dialogs.py:297
+#: ../kiwi/ui/dialogs.py:336
 msgid "Save"
 msgstr "Zapisz"
 
-#: ../kiwi/ui/dialogs.py:352
+#: ../kiwi/ui/dialogs.py:391
 msgid "Password:"
 msgstr "Hasło:"
 

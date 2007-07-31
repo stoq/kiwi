@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-07-16 10:49-0300\n"
+"POT-Creation-Date: 2007-07-31 17:26-0300\n"
 "PO-Revision-Date: 2007-07-16 10:51-0300\n"
 "Last-Translator: Johan Dahlin <jdahlin@async.com.br>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -169,12 +169,12 @@ msgstr "_Välj"
 msgid "Finish"
 msgstr "Slutför"
 
-#: ../kiwi/ui/entry.py:594
+#: ../kiwi/ui/entry.py:598
 #, python-format
 msgid "'%s' is not a valid object"
 msgstr "'%s' är inte ett giltligt objekt"
 
-#: ../kiwi/ui/objectlist.py:1908
+#: ../kiwi/ui/objectlist.py:1932
 msgid "Total:"
 msgstr "Total:"
 
@@ -182,38 +182,53 @@ msgstr "Total:"
 msgid "Show more _details"
 msgstr "Visa mer _detaljer"
 
-#: ../kiwi/ui/dialogs.py:247
+#: ../kiwi/ui/dialogs.py:248
 msgid "Open"
 msgstr "Öppna"
 
-#: ../kiwi/ui/dialogs.py:276
+#: ../kiwi/ui/dialogs.py:277
 #, python-format
 msgid "Could not open file \"%s\""
 msgstr "Kunde inte öppna filen \"%s\""
 
-#: ../kiwi/ui/dialogs.py:277
+#: ../kiwi/ui/dialogs.py:278
 #, python-format
 msgid "The file \"%s\" could not be opened. Permission denied."
 msgstr "Filen \"%s\" kunde inte öppnas. Rättigheter saknas."
 
-#: ../kiwi/ui/dialogs.py:284
+#: ../kiwi/ui/dialogs.py:292
+#, fuzzy
+msgid "Select folder"
+msgstr "_Välj"
+
+#: ../kiwi/ui/dialogs.py:315
+#, fuzzy, python-format
+msgid "Could not select folder \"%s\""
+msgstr "Kunde inte öppna filen \"%s\""
+
+#: ../kiwi/ui/dialogs.py:316
+#, fuzzy, python-format
+msgid "The folder \"%s\" could not be selected. Permission denied."
+msgstr "Filen \"%s\" kunde inte öppnas. Rättigheter saknas."
+
+#: ../kiwi/ui/dialogs.py:323
 #, python-format
 msgid "A file named \"%s\" already exists"
 msgstr "En fil kallad \"%s\" existerar redan"
 
-#: ../kiwi/ui/dialogs.py:285
+#: ../kiwi/ui/dialogs.py:324
 msgid "Do you wish to replace it with the current one?"
 msgstr "Vill du verkligen ersätta den med den nuvarande?"
 
-#: ../kiwi/ui/dialogs.py:291
+#: ../kiwi/ui/dialogs.py:330
 msgid "Replace"
 msgstr "Ersätt"
 
-#: ../kiwi/ui/dialogs.py:297
+#: ../kiwi/ui/dialogs.py:336
 msgid "Save"
 msgstr "Spara"
 
-#: ../kiwi/ui/dialogs.py:352
+#: ../kiwi/ui/dialogs.py:391
 msgid "Password:"
 msgstr "Lösenord:"
 
