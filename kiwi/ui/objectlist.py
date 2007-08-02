@@ -28,6 +28,7 @@
 
 import datetime
 import gettext
+import pickle
 
 import gobject
 import pango
@@ -45,8 +46,6 @@ from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
 _ = lambda m: gettext.dgettext('kiwi', m)
 
 log = Logger('objectlist')
-
-str2type = converter.str_to_type
 
 def str2enum(value_name, enum_class):
     "converts a string to a enum"
@@ -1163,6 +1162,12 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             if item:
                 self.emit('double-click', item)
 
+
+    def _on_treeview__source_drag_data_get(self, treeview, context,
+                                           selection, info, timestamp):
+        item = self.get_selected()
+        selection.set('OBJECTLIST_ROW', 8, pickle.dumps(item))
+
     # CellRenderers
     def _cell_data_text_func(self, tree_column, renderer, model, treeiter,
                              (column, renderer_prop)):
@@ -1707,7 +1712,26 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         focus_padding = treeview.style_get_property('focus-line-width') * 2
         treeview.set_size_request(-1, header_h + (rows * (h + focus_padding)))
 
+    def enable_dnd(self):
+        """
+        Enables Drag and Drop from this object list
+        """
+        self._treeview.connect('drag-data-get',
+                               self._on_treeview__source_drag_data_get)
+        self._treeview.drag_source_set(
+            gtk.gdk.BUTTON1_MASK, self.get_dnd_targets(),
+            gtk.gdk.ACTION_LINK)
+
+    def get_dnd_targets(self):
+        """
+        @returns: a list of dnd targets ObjectList supports
+        """
+        return [
+            ('OBJECTLIST_ROW', 0, 10),
+            ]
+
 type_register(ObjectList)
+
 
 class ObjectTree(ObjectList):
     """
