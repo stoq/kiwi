@@ -38,7 +38,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
         self._popup_completion = True
         self._entry = None
         self._completion_timeout = 0
-        self._match_function = None 
+        self._match_function = None
         self._match_function_data = None
         self._key = None
         self.changed_id = 0
@@ -70,7 +70,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
 
         entry_text = self._entry.get_text()
         return value.lower().startswith(entry_text.lower())
-    
+
     def _connect_completion_signals(self):
         if self._popup_completion:
             self.changed_id = self._entry.connect('changed',
@@ -200,7 +200,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
     def complete(self):
         if not self._filter_model:
             return
-    
+
         self._key = self._entry.get_text()
         self._filter_model.refilter()
         self._treeview.set_model(self._filter_model)
