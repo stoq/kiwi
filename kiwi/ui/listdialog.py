@@ -82,6 +82,8 @@ class ListContainer(gtk.HBox):
         self.list = ObjectList(columns)
         self.list.connect('selection-changed',
                           self._on_list__selection_changed)
+        self.list.connect('row-activated',
+                          self._on_list__row_activated)
         self.pack_start(self.list)
         self.list.show()
 
@@ -190,6 +192,11 @@ class ListContainer(gtk.HBox):
         self.remove_button.set_sensitive(object_selected)
         self.edit_button.set_sensitive(object_selected)
         self.emit('selection-changed', selection)
+
+    def _on_list__row_activated(self, list, item):
+        if (self._list_type != ListType.READONLY and
+            self._list_type != ListType.UNEDITABLE):
+            self._edit_item(item)
 
     def _on_add_button__clicked(self, button):
         self._add_item()

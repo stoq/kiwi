@@ -1,3 +1,8 @@
+2007-08-22  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/listdialog.py (ListContainer._on_list__row_activated): 
+	If we're editable open fire up edit signal when double clicking
+
 2007-08-02  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/objectlist.py: Add basic DND support
