@@ -135,7 +135,11 @@ class SQLObjectQueryExecuter(QueryExecuter):
             query = callback(states)
             if query:
                 queries.append(query)
-        query = AND(*queries)
+
+        if queries:
+            query = AND(*queries)
+        else:
+            query = None
         result = self._query(query, self.conn)
         return result.limit(self.get_limit())
 
@@ -165,7 +169,8 @@ class SQLObjectQueryExecuter(QueryExecuter):
             if query:
                 queries.append(query)
 
-        return OR(*queries)
+        if queries:
+            return OR(*queries)
 
     def _postgres_has_fti_index(self, table_name, column_name):
         # Assume that the PostgreSQL full text index columns are
@@ -225,4 +230,5 @@ class SQLObjectQueryExecuter(QueryExecuter):
             queries.append(table_field >= state.start)
         if state.end:
             queries.append(func.DATE(table_field) <= state.end)
-        return AND(*queries)
+        if queries:
+            return AND(*queries)
