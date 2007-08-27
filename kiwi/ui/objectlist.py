@@ -327,7 +327,6 @@ class Column(PropertyObject, gobject.GObject):
         in the renderer.
         """
 
-        # TODO: Move to column
         data_type = self.data_type
         if data_type is bool:
             renderer = gtk.CellRendererToggle()
