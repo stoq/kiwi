@@ -1358,6 +1358,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def get_treeview_column(self, column):
         """
+        Get the treeview column given an objectlist column
         @param column: a @Column
         """
         if not isinstance(column, Column):
@@ -1366,9 +1367,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         if not column in self._columns:
             raise ValueError
 
-        index = self._columns.index(column)
-        tree_columns = self._treeview.get_columns()
-        return tree_columns[index]
+        return column.treeview_column
 
     def grab_focus(self):
         """
