@@ -1,3 +1,8 @@
+2007-08-26  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/objectlist.py (Column, ObjectList): Remove the cache
+	property.
+
 2007-08-22  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/listdialog.py (ListContainer._on_list__row_activated): 

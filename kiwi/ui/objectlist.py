@@ -113,9 +113,6 @@ class Column(PropertyObject, gobject.GObject):
       - B{radio}: bool I{False}
         -  If true render the column as a radio instead of toggle.
            Only applicable for columns with boolean data types.
-      - B{cache}: bool I{False}
-        -  If true, the value will only be fetched once, and the same value
-           will be reused for futher access.
       - B{use_stock}: bool I{False}
         - If true, this will be rendered as pixbuf from the value which
           should be a stock id.
@@ -151,7 +148,6 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('editable', bool, default=False)
     gproperty('searchable', bool, default=False)
     gproperty('radio', bool, default=False)
-    gproperty('cache', bool, default=False)
     gproperty('use-stock', bool, default=False)
     gproperty('use-markup', bool, default=False)
     gproperty('icon-size', gtk.IconSize, default=gtk.ICON_SIZE_MENU)
@@ -542,7 +538,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self._columns = []
         # Mapping of instance id -> treeiter
         self._iters = {}
-        self._cell_data_caches = {}
         self._autosize = True
         self._vscrollbar = None
 
@@ -913,8 +908,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
         if column.cell_data_func:
             cell_data_func = column.cell_data_func
-        elif column.cache:
-            self._cell_data_caches[column.attribute] = {}
 
         treeview_column.pack_start(renderer)
         treeview_column.set_cell_data_func(renderer, cell_data_func,
@@ -1184,18 +1177,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             else:
                 raise AssertionError
 
-        if column.cache:
-            cache = self._cell_data_caches[column.attribute]
-            path = row.path[0]
-            if path in cache:
-                data = cache[path]
-            else:
-                data = column.get_attribute(row[COL_MODEL],
-                                            column.attribute, None)
-                cache[path] = data
-        else:
-            data = column.get_attribute(row[COL_MODEL],
-                                        column.attribute, None)
+        data = column.get_attribute(row[COL_MODEL],
+                                    column.attribute, None)
 
         text = column.as_string(data)
 
@@ -1433,20 +1416,10 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         if not treeiter:
             return False
 
-        # Remove any references to this path
-        self._clear_cache_for_iter(treeiter)
-
         # All references to the iter gone, now it can be removed
         self._model.remove(treeiter)
 
         return True
-
-    def _clear_cache_for_iter(self, treeiter):
-        # Not as inefficent as it looks
-        path = self._model[treeiter].path[0]
-        for cache in self._cell_data_caches.values():
-            if path in cache:
-                del cache[path]
 
     def remove(self, instance, select=False):
         """Remove an instance from the list.
@@ -1477,7 +1450,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
         treeiter = self._iters[objid]
-        self._clear_cache_for_iter(treeiter)
         self._model.row_changed(self._model[treeiter].path, treeiter)
 
     def refresh(self, view_only=False):
@@ -1607,11 +1579,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         """Removes all the instances of the list"""
         self._model.clear()
         self._iters = {}
-
-        # Don't clear the whole cache, just the
-        # individual column caches
-        for key in self._cell_data_caches:
-            self._cell_data_caches[key] = {}
 
     def get_next(self, instance):
         """
