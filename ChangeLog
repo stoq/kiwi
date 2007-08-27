@@ -2,6 +2,8 @@
 
 	* kiwi/ui/objectlist.py (Column, ObjectList): Remove the cache
 	property.
+	(ObjectList): Refactor column and renderer handling to the
+	Column
 
 2007-08-22  Johan Dahlin  <jdahlin@async.com.br>
 

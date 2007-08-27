@@ -186,13 +186,13 @@ class Column(PropertyObject, gobject.GObject):
             used to identify the column in the column selection and in a
             tooltip, if a tooltip is not set.
         """
-
         # XXX: filter function?
         if ' ' in attribute:
             msg = ("The attribute can not contain spaces, otherwise I can"
                    " not find the value in the instances: %s" % attribute)
             raise AttributeError(msg)
 
+        self._objectlist = None
         self.compare = None
         self.from_string = None
 
@@ -230,9 +230,9 @@ class Column(PropertyObject, gobject.GObject):
         PropertyObject.__init__(self, **kwargs)
         gobject.GObject.__init__(self, attribute=attribute)
 
-    # This is meant to be subclassable, we're using kgetattr, as
-    # a staticmethod as an optimization, so we can avoid a function call.
-    get_attribute = staticmethod(kgetattr)
+    def __repr__(self):
+        namespace = self.__dict__.copy()
+        return "<%s: %s>" % (self.__class__.__name__, namespace)
 
     def prop_set_data_type(self, data):
         if data is not None:
@@ -241,9 +241,267 @@ class Column(PropertyObject, gobject.GObject):
             self.from_string = conv.from_string
         return data
 
-    def __repr__(self):
-        namespace = self.__dict__.copy()
-        return "<%s: %s>" % (self.__class__.__name__, namespace)
+    def attach(self, objectlist):
+        if self._objectlist:
+            raise TypeError("%r is already attached to %r" % (objectlist,))
+        self._objectlist = objectlist
+
+        model = objectlist.get_model()
+        # You can't subclass bool, so this is okay
+        if (self.data_type is bool and self.format):
+            raise TypeError("format is not supported for boolean columns")
+
+        treeview_column = gtk.TreeViewColumn()
+
+        renderer, renderer_prop = self._guess_renderer_for_type(model)
+        if self.on_attach_renderer:
+            self.on_attach_renderer(renderer)
+        justify = self.justify
+        if justify == gtk.JUSTIFY_RIGHT:
+            xalign = 1.0
+        elif justify == gtk.JUSTIFY_CENTER:
+            xalign = 0.5
+        elif justify in (gtk.JUSTIFY_LEFT,
+                         gtk.JUSTIFY_FILL):
+            xalign = 0.0
+        else:
+            raise AssertionError
+        renderer.set_property("xalign", xalign)
+        treeview_column.set_property("alignment", xalign)
+
+        if self.ellipsize:
+            renderer.set_property('ellipsize', self.ellipsize)
+        if self.font_desc:
+            renderer.set_property('font-desc',
+                                  pango.FontDescription(self.font_desc))
+        if self.use_stock:
+            cell_data_func = self._cell_data_pixbuf_func
+        elif issubclass(self.data_type, enum):
+            cell_data_func = self._cell_data_combo_func
+        else:
+            cell_data_func = self._cell_data_text_func
+
+        if self.cell_data_func:
+            cell_data_func = self.cell_data_func
+
+        treeview_column.pack_start(renderer)
+        treeview_column.set_cell_data_func(renderer, cell_data_func,
+                                           (self, renderer_prop))
+        treeview_column.set_visible(self.visible)
+
+        if self.width:
+            treeview_column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+            treeview_column.set_fixed_width(self.width)
+
+        if self.expand:
+            # Default is False
+            treeview_column.set_expand(True)
+
+        if self.sorted:
+            treeview_column.set_sort_indicator(True)
+
+        if self.width:
+            self._autosize = False
+
+        if self.radio:
+            if not issubclass(self.data_type, bool):
+                raise TypeError("You can only use radio for boolean columns")
+
+        if self.expander:
+            self._treeview.set_expander_column(treeview_column)
+
+        # typelist here may be none. It's okay; justify_columns will try
+        # and use the specified justifications and if not present will
+        # not touch the column. When typelist is not set,
+        # append/add_list have a chance to fix up the remaining
+        # justification by looking at the first instance's data.
+#        self._justify_columns(columns, typelist)
+
+        self.treeview_column = treeview_column
+
+        return treeview_column
+
+    def _guess_renderer_for_type(self, model):
+        """Gusses which CellRenderer we should use for a given type.
+        It also set the property of the renderer that depends on the model,
+        in the renderer.
+        """
+
+        # TODO: Move to column
+        data_type = self.data_type
+        if data_type is bool:
+            renderer = gtk.CellRendererToggle()
+            if self.editable:
+                renderer.set_property('activatable', True)
+                # Boolean can be either a radio or a checkbox.
+                # Changes are handled by the toggled callback, which
+                # should only be connected if the column is editable.
+                if self.radio:
+                    renderer.set_radio(True)
+                    cb = self._on_renderer_toggle_radio__toggled
+                else:
+                    cb = self._on_renderer_toggle_check__toggled
+                renderer.connect('toggled', cb, model, self.attribute)
+            prop = 'active'
+        elif self.use_stock or data_type == gdk.Pixbuf:
+            renderer = gtk.CellRendererPixbuf()
+            prop = 'pixbuf'
+            if self.editable:
+                raise TypeError("use-stock columns cannot be editable")
+        elif issubclass(data_type, enum):
+            if data_type is enum:
+                raise TypeError("data_type must be a subclass of enum")
+
+            enum_model = gtk.ListStore(str, object)
+            items = data_type.names.items()
+            items.sort()
+            for key, value in items:
+                enum_model.append((key.lower().capitalize(), value))
+
+            renderer =  gtk.CellRendererCombo()
+            renderer.set_property('model', enum_model)
+            renderer.set_property('text-column', 0)
+            renderer.set_property('has-entry', True)
+            if self.editable:
+                renderer.set_property('editable', True)
+                renderer.connect('edited', self._on_renderer_combo__edited,
+                                 model, self.attribute, self)
+            prop = 'model'
+        elif issubclass(data_type, (datetime.date, datetime.time,
+                                    basestring, number,
+                                    currency)):
+            renderer = gtk.CellRendererText()
+            if self.use_markup:
+                prop = 'markup'
+            else:
+                prop = 'text'
+            if self.editable:
+                renderer.set_property('editable', True)
+                renderer.connect('edited', self._on_renderer_text__edited,
+                                 model, self.attribute, self,
+                                 self.from_string)
+
+        else:
+            raise ValueError("the type %s is not supported yet" % data_type)
+
+        return renderer, prop
+
+    # CellRenderers
+    def _cell_data_text_func(self, tree_column, renderer, model, treeiter,
+                             (column, renderer_prop)):
+        "To render the data of a cell renderer text"
+        row = model[treeiter]
+        if column.editable_attribute:
+            data = column.get_attribute(row[COL_MODEL],
+                                        column.editable_attribute, None)
+            data_type = column.data_type
+            if isinstance(renderer, gtk.CellRendererToggle):
+                renderer.set_property('activatable', data)
+            elif isinstance(renderer, gtk.CellRendererText):
+                renderer.set_property('editable', data)
+            else:
+                raise AssertionError
+
+        data = column.get_attribute(row[COL_MODEL],
+                                    column.attribute, None)
+
+        text = column.as_string(data)
+
+        renderer.set_property(renderer_prop, text)
+
+        if column.renderer_func:
+            column.renderer_func(renderer, data)
+
+    def _cell_data_pixbuf_func(self, tree_column, renderer, model, treeiter,
+                               (column, renderer_prop)):
+        "To render the data of a cell renderer pixbuf"
+        row = model[treeiter]
+        data = column.get_attribute(row[COL_MODEL],
+                                    column.attribute, None)
+        if data is not None:
+            pixbuf = self._objectlist.render_icon(data, column.icon_size)
+            renderer.set_property(renderer_prop, pixbuf)
+
+    def _cell_data_combo_func(self, tree_column, renderer, model, treeiter,
+                              (column, renderer_prop)):
+        row = model[treeiter]
+        data = column.get_attribute(row[COL_MODEL],
+                                    column.attribute, None)
+        text = column.as_string(data)
+        renderer.set_property('text', text.lower().capitalize())
+
+    def _on_renderer__toggled(self, renderer, path, column):
+        setattr(self._model[path][COL_MODEL], column.attribute,
+                not renderer.get_active())
+
+    def _on_renderer_toggle_check__toggled(self, renderer, path, model, attr):
+        obj = model[path][COL_MODEL]
+        value = not getattr(obj, attr, None)
+        setattr(obj, attr, value)
+        self._objectlist.emit('cell-edited', obj, attr)
+
+    def _on_renderer_toggle_radio__toggled(self, renderer, path, model, attr):
+        # Deactive old one
+        old = renderer.get_data('kiwilist::radio-active')
+
+        # If we don't have the radio-active set it means we're doing
+        # This for the first time, so scan and see which one is currently
+        # active, so we can deselect it
+        if not old:
+            # XXX: Handle multiple values set to True, this
+            #      algorithm just takes the first one it finds
+            for row in model:
+                obj = row[COL_MODEL]
+                value = getattr(obj, attr)
+                if value == True:
+                    old = obj
+                    break
+        if old:
+            setattr(old, attr, False)
+
+        # Active new and save a reference to the object of the
+        # previously selected row
+        new = model[path][COL_MODEL]
+        setattr(new, attr, True)
+        renderer.set_data('kiwilist::radio-active', new)
+        self._objectlist.emit('cell-edited', new, attr)
+
+    def _on_renderer_text__edited(self, renderer, path, text,
+                                  model, attr, column, from_string):
+        obj = model[path][COL_MODEL]
+        value = from_string(text)
+        setattr(obj, attr, value)
+        self._objectlist.emit('cell-edited', obj, attr)
+
+    def _on_renderer_combo__edited(self, renderer, path, text,
+                                   model, attr, column):
+        obj = model[path][COL_MODEL]
+        if not text:
+            return
+
+        value_model = renderer.get_property('model')
+        for row in value_model:
+            if row[0] == text:
+                value = row[1]
+                break
+        else:
+            raise AssertionError
+        setattr(obj, attr, value)
+        self._objectlist.emit('cell-edited', obj, attr)
+
+    def _on_renderer__edited(self, renderer, path, value, column):
+        data_type = column.data_type
+        if data_type in number:
+            value = data_type(value)
+
+        # XXX convert new_text to the proper data type
+        setattr(self._model[path][COL_MODEL], column.attribute, value)
+
+    # Public API
+
+    # This is meant to be subclassable, we're using kgetattr, as
+    # a staticmethod as an optimization, so we can avoid a function call.
+    get_attribute = staticmethod(kgetattr)
 
     def as_string(self, data):
         data_type = self.data_type
@@ -265,6 +523,7 @@ class Column(PropertyObject, gobject.GObject):
             text = data
 
         return text
+
 
 class SequentialColumn(Column):
     """I am a column which will display a sequence of numbers, which
@@ -853,109 +1112,14 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self._sortable = self._sortable or sorted
 
         for column in columns:
-            self._setup_column(column)
+            self._attach_column(column)
 
         if not expand:
             column = gtk.TreeViewColumn()
             self._treeview.append_column(column)
 
-    def _setup_column(self, column):
-        # You can't subclass bool, so this is okay
-        if (column.data_type is bool and column.format):
-            raise TypeError("format is not supported for boolean columns")
-
-        index = self._columns.index(column)
-        treeview_column = self._treeview.get_column(index)
-        if treeview_column is None:
-            treeview_column = self._create_column(column)
-
-        if self._sortable:
-            self._model.set_sort_func(index,
-                                      self._model_sort_func,
-                                      (column, column.attribute))
-            treeview_column.set_sort_column_id(index)
-
-        if column.sorted:
-            self._model.set_sort_column_id(index, column.order)
-
-        renderer, renderer_prop = self._guess_renderer_for_type(column)
-        if column.on_attach_renderer:
-            column.on_attach_renderer(renderer)
-        justify = column.justify
-        if justify == gtk.JUSTIFY_RIGHT:
-            xalign = 1.0
-        elif justify == gtk.JUSTIFY_CENTER:
-            xalign = 0.5
-        elif justify in (gtk.JUSTIFY_LEFT,
-                         gtk.JUSTIFY_FILL):
-            xalign = 0.0
-        else:
-            raise AssertionError
-        renderer.set_property("xalign", xalign)
-        treeview_column.set_property("alignment", xalign)
-
-        if column.ellipsize:
-            renderer.set_property('ellipsize', column.ellipsize)
-        if column.font_desc:
-            renderer.set_property('font-desc',
-                                  pango.FontDescription(column.font_desc))
-        if column.use_stock:
-            cell_data_func = self._cell_data_pixbuf_func
-        elif issubclass(column.data_type, enum):
-            cell_data_func = self._cell_data_combo_func
-        else:
-            cell_data_func = self._cell_data_text_func
-
-        if column.cell_data_func:
-            cell_data_func = column.cell_data_func
-
-        treeview_column.pack_start(renderer)
-        treeview_column.set_cell_data_func(renderer, cell_data_func,
-                                           (column, renderer_prop))
-        treeview_column.set_visible(column.visible)
-
-        if column.width:
-            treeview_column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
-            treeview_column.set_fixed_width(column.width)
-        if column.tooltip:
-            widget = self._get_column_button(treeview_column)
-            if widget is not None:
-                self._tooltips.set_tip(widget, column.tooltip)
-
-        if column.expand:
-            # Default is False
-            treeview_column.set_expand(True)
-
-        if column.sorted:
-            treeview_column.set_sort_indicator(True)
-
-        if column.width:
-            self._autosize = False
-
-        if column.searchable:
-            if not issubclass(column.data_type, basestring):
-                raise TypeError("Unsupported data type for "
-                                "searchable column: %s" % column.data_type)
-            self._treeview.set_search_column(index)
-            self._treeview.set_search_equal_func(self._treeview_search_equal_func,
-                                                 column)
-
-        if column.radio:
-            if not issubclass(column.data_type, bool):
-                raise TypeError("You can only use radio for boolean columns")
-
-        if column.expander:
-            self._treeview.set_expander_column(treeview_column)
-
-        # typelist here may be none. It's okay; justify_columns will try
-        # and use the specified justifications and if not present will
-        # not touch the column. When typelist is not set,
-        # append/add_list have a chance to fix up the remaining
-        # justification by looking at the first instance's data.
-#        self._justify_columns(columns, typelist)
-
-    def _create_column(self, column):
-        treeview_column = gtk.TreeViewColumn()
+    def _attach_column(self, column):
+        treeview_column = column.attach(self)
         # we need to set our own widget because otherwise
         # __get_column_button won't work
 
@@ -971,72 +1135,32 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         button = self._get_column_button(treeview_column)
         button.connect('button-release-event',
                        self._on_treeview_header__button_release_event)
-        return treeview_column
 
-    def _guess_renderer_for_type(self, column):
-        """Gusses which CellRenderer we should use for a given type.
-        It also set the property of the renderer that depends on the model,
-        in the renderer.
-        """
+        index = self._columns.index(column)
+        if self._sortable:
+            self._model.set_sort_func(index,
+                                      self._model_sort_func,
+                                      (column, column.attribute))
+            treeview_column.set_sort_column_id(index)
 
-        # TODO: Move to column
-        data_type = column.data_type
-        if data_type is bool:
-            renderer = gtk.CellRendererToggle()
-            if column.editable:
-                renderer.set_property('activatable', True)
-                # Boolean can be either a radio or a checkbox.
-                # Changes are handled by the toggled callback, which
-                # should only be connected if the column is editable.
-                if column.radio:
-                    renderer.set_radio(True)
-                    cb = self._on_renderer_toggle_radio__toggled
-                else:
-                    cb = self._on_renderer_toggle_check__toggled
-                renderer.connect('toggled', cb, self._model, column.attribute)
-            prop = 'active'
-        elif column.use_stock or data_type == gdk.Pixbuf:
-            renderer = gtk.CellRendererPixbuf()
-            prop = 'pixbuf'
-            if column.editable:
-                raise TypeError("use-stock columns cannot be editable")
-        elif issubclass(data_type, enum):
-            if data_type is enum:
-                raise TypeError("data_type must be a subclass of enum")
+        if column.sorted:
+            self._model.set_sort_column_id(index, column.order)
 
-            model = gtk.ListStore(str, object)
-            items = data_type.names.items()
-            items.sort()
-            for key, value in items:
-                model.append((key.lower().capitalize(), value))
+        if column.searchable:
+            if not issubclass(column.data_type, basestring):
+                raise TypeError("Unsupported data type for "
+                                "searchable column: %s" % column.data_type)
+            self._treeview.set_search_column(index)
+            self._treeview.set_search_equal_func(
+                self._treeview_search_equal_func, column)
 
-            renderer =  gtk.CellRendererCombo()
-            renderer.set_property('model', model)
-            renderer.set_property('text-column', 0)
-            renderer.set_property('has-entry', True)
-            if column.editable:
-                renderer.set_property('editable', True)
-                renderer.connect('edited', self._on_renderer_combo__edited,
-                                 self._model, column.attribute, column)
-            prop = 'model'
-        elif issubclass(data_type, (datetime.date, datetime.time,
-                                    basestring, number,
-                                    currency)):
-            renderer = gtk.CellRendererText()
-            if column.use_markup:
-                prop = 'markup'
-            else:
-                prop = 'text'
-            if column.editable:
-                renderer.set_property('editable', True)
-                renderer.connect('edited', self._on_renderer_text__edited,
-                                 self._model, column.attribute, column,
-                                 column.from_string)
+        if column.expander:
+            self._treeview.set_expander_column(treeview_column)
 
-        else:
-            raise ValueError("the type %s is not supported yet" % data_type)
-
-        return renderer, prop
+        if column.tooltip:
+            widget = self._get_column_button(treeview_column)
+            if widget is not None:
+                self._tooltips.set_tip(widget, column.tooltip)
 
     # selection methods
     def _select_and_focus_row(self, row_iter):
@@ -1160,117 +1284,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                                            selection, info, timestamp):
         item = self.get_selected()
         selection.set('OBJECTLIST_ROW', 8, pickle.dumps(item))
-
-    # CellRenderers
-    def _cell_data_text_func(self, tree_column, renderer, model, treeiter,
-                             (column, renderer_prop)):
-        "To render the data of a cell renderer text"
-        row = model[treeiter]
-        if column.editable_attribute:
-            data = column.get_attribute(row[COL_MODEL],
-                                        column.editable_attribute, None)
-            data_type = column.data_type
-            if isinstance(renderer, gtk.CellRendererToggle):
-                renderer.set_property('activatable', data)
-            elif isinstance(renderer, gtk.CellRendererText):
-                renderer.set_property('editable', data)
-            else:
-                raise AssertionError
-
-        data = column.get_attribute(row[COL_MODEL],
-                                    column.attribute, None)
-
-        text = column.as_string(data)
-
-        renderer.set_property(renderer_prop, text)
-
-        if column.renderer_func:
-            column.renderer_func(renderer, data)
-
-    def _cell_data_pixbuf_func(self, tree_column, renderer, model, treeiter,
-                               (column, renderer_prop)):
-        "To render the data of a cell renderer pixbuf"
-        row = model[treeiter]
-        data = column.get_attribute(row[COL_MODEL],
-                                    column.attribute, None)
-        if data is not None:
-            pixbuf = self.render_icon(data, column.icon_size)
-            renderer.set_property(renderer_prop, pixbuf)
-
-    def _cell_data_combo_func(self, tree_column, renderer, model, treeiter,
-                              (column, renderer_prop)):
-        row = model[treeiter]
-        data = column.get_attribute(row[COL_MODEL],
-                                    column.attribute, None)
-        text = column.as_string(data)
-        renderer.set_property('text', text.lower().capitalize())
-
-    def _on_renderer__toggled(self, renderer, path, column):
-        setattr(self._model[path][COL_MODEL], column.attribute,
-                not renderer.get_active())
-
-    def _on_renderer_toggle_check__toggled(self, renderer, path, model, attr):
-        obj = model[path][COL_MODEL]
-        value = not getattr(obj, attr, None)
-        setattr(obj, attr, value)
-        self.emit('cell-edited', obj, attr)
-
-    def _on_renderer_toggle_radio__toggled(self, renderer, path, model, attr):
-        # Deactive old one
-        old = renderer.get_data('kiwilist::radio-active')
-
-        # If we don't have the radio-active set it means we're doing
-        # This for the first time, so scan and see which one is currently
-        # active, so we can deselect it
-        if not old:
-            # XXX: Handle multiple values set to True, this
-            #      algorithm just takes the first one it finds
-            for row in self._model:
-                obj = row[COL_MODEL]
-                value = getattr(obj, attr)
-                if value == True:
-                    old = obj
-                    break
-        if old:
-            setattr(old, attr, False)
-
-        # Active new and save a reference to the object of the
-        # previously selected row
-        new = model[path][COL_MODEL]
-        setattr(new, attr, True)
-        renderer.set_data('kiwilist::radio-active', new)
-        self.emit('cell-edited', new, attr)
-
-    def _on_renderer_text__edited(self, renderer, path, text,
-                                  model, attr, column, from_string):
-        obj = model[path][COL_MODEL]
-        value = from_string(text)
-        setattr(obj, attr, value)
-        self.emit('cell-edited', obj, attr)
-
-    def _on_renderer_combo__edited(self, renderer, path, text,
-                                  model, attr, column):
-        obj = model[path][COL_MODEL]
-        if not text:
-            return
-
-        value_model = renderer.get_property('model')
-        for row in value_model:
-            if row[0] == text:
-                value = row[1]
-                break
-        else:
-            raise AssertionError
-        setattr(obj, attr, value)
-        self.emit('cell-edited', obj, attr)
-
-    def _on_renderer__edited(self, renderer, path, value, column):
-        data_type = column.data_type
-        if data_type in number:
-            value = data_type(value)
-
-        # XXX convert new_text to the proper data type
-        setattr(self._model[path][COL_MODEL], column.attribute, value)
 
     # hacks
     def _get_column_button(self, column):
