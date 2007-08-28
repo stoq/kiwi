@@ -1713,7 +1713,7 @@ existing widgets in GTK+.
 
 \subsection{ObjectList}
 
-There is a special gtk.TreeView wrapper that accepts a columned list,
+There is a special gtk.TreeView wrapper that accepts a list of columns,
 each row of the list representing an instance. This is the first
 high-level class of the framework being described; high-level in the
 sense that it goes beyond simply organizing the UI and handler methods,
@@ -1734,7 +1734,7 @@ ObjectList's constructor works, since it is rather special.
     \begin{verbatim}
     class ObjectList:
         def __init__(self, columns, instance_list=None,
-                     mode=gtk.SELECTION_BROWSE)
+                     mode=gtk.SELECTION\_BROWSE)
     \end{verbatim}
 
 The ObjectList takes a \code{columns} parameter, and understanding it
@@ -1763,7 +1763,7 @@ out. To create a ObjectList for our example above, with columns for "name",
         Column("telephone", title="Phone")
     ]
 
-    cd = ObjectList(my_columns)
+    objects = ObjectList(my_columns)
     \end{verbatim}
 
 This section of code would create a new ObjectList with 3 columns,
