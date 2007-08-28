@@ -1,3 +1,12 @@
+2007-08-28  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/gazpacholoader.py:
+	* gazpacho-plugin/kiwiwidgets.xml: Add gazpacho support for scale 
+	widgets too.
+
+	* kiwi/ui/widgets/scale.py: Add HScale/VScale, based on patch by
+	Mauricio B. C. Vieira.
+
 2007-08-26  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/objectlist.py (Column, ObjectList): Remove the cache

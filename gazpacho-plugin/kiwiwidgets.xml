@@ -43,6 +43,12 @@
     <glade-widget-class name="ProxyTextView"
                         generic-name="kiwitextview"
                         title="Kiwi TextView"/>
+    <glade-widget-class name="ProxyHScale"
+                        generic-name="kiwihscale"
+                        title="Kiwi HScale"/>
+    <glade-widget-class name="ProxyVScale"
+                        generic-name="kiwivscale"
+                        title="Kiwi VScale"/>
 
     <!-- Deprecated, but kept for compatibility -->
     <glade-widget-class name="ProxyComboBoxEntry"
@@ -66,6 +72,8 @@
     <glade-widget-class-ref name="ProxySpinButton"/>
     <glade-widget-class-ref name="ProxyButton"/>
     <glade-widget-class-ref name="ProxyTextView"/>
+    <glade-widget-class-ref name="ProxyHScale"/>
+    <glade-widget-class-ref name="ProxyVScale"/>
   </glade-widget-group>
   
 </glade-catalog>

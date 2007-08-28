@@ -56,6 +56,7 @@ from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox, \
 from kiwi.ui.widgets.entry import ProxyDateEntry, ProxyEntry
 from kiwi.ui.widgets.label import ProxyLabel
 from kiwi.ui.widgets.radiobutton import ProxyRadioButton
+from kiwi.ui.widgets.scale import ProxyHScale, ProxyVScale
 from kiwi.ui.widgets.spinbutton import ProxySpinButton
 from kiwi.ui.widgets.textview import ProxyTextView
 
@@ -218,6 +219,14 @@ class DataTypeAdaptor(PropertyCustomEditor):
 
 class SpinBtnDataType(DataTypeAdaptor):
     widget_type = ProxySpinButton
+    default = float
+
+class HScaleDataType(DataTypeAdaptor):
+    widget_type = ProxyHScale
+    default = float
+
+class VScaleDataType(DataTypeAdaptor):
+    widget_type = ProxyVScale
     default = int
 
 class EntryDataType(DataTypeAdaptor):
@@ -317,6 +326,8 @@ def register_widgets():
         (ProxyComboBoxEntry, ComboBoxEntryDataType, DataType),
         (ProxyComboEntry, ComboEntryDataType, DataType),
         (ProxySpinButton, SpinBtnDataType, DataType),
+        (ProxyHScale, HScaleDataType, DataType),
+        (ProxyVScale, VScaleDataType, DataType),
         (ProxyRadioButton, None, BoolOnlyDataType),
         (ProxyTextView, TextViewDataType, DataType)
         ]:
