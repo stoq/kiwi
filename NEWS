@@ -1,3 +1,18 @@
+kiwi-1.9.17 29-agust-2007
+    - Gazpacho:
+      - Add gazpacho support for a scale widgets too.
+      - Add HScale/VScale (based on patch by Mauricio B. C. Vieira.)
+    - ObjectList:
+      - Remove the cache property.
+      - Refactor column and renderer handling to the Column.
+      - Add basic DND support.
+      - Call format_func before checking the format and the datatype.
+      - Add ellipsize and font-desc properties.
+      - Handle list without selection.
+      - Add a font-desc parameter to ListLabel/SummaryLabel.
+    - Prefill::Handle duplicate entries by adding (n) to the end of the name
+    - Dialogs: New function based around gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER.
+               (Based on patch by Paul Eipper (#3490))
 kiwi-1.9.16 16-july-2007
     - Polish translation (Jarek Zgoda)
     - ObjectList updates

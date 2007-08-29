@@ -50,7 +50,8 @@
 	* kiwi/ui/widgets/combo.py (ProxyComboBoxEntry.prefill):
 	Changed clear_entry param to True
 
-2007-05-21  Johan Dahlin  <jdahlin@async.com.br>
+=== 1.9.16 ===
+2007-07-16  Johan Dahlin  <jdahlin@async.com.br>
 
 	* NEWS:
 	* debian/changelog:

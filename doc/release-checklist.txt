@@ -1,5 +1,6 @@
 Check bugzilla
 Go through the examples
+  find examples/ -name \*.py|xargs -n1 python
 Run pyflakes
 Run all tests
 Check buildbot
@@ -14,13 +15,16 @@ Update ChangeLog, add marker
 Commit
 make release-tag
 make upload-release
+  Ask Johan, he must do this
 Add bugzilla version:
   Use your browser, wget won't work
   http://bugs/editversions.cgi?action=new&product=Kiwi&submit=Add&version=1.9.x
+  Ask Kiko or Johan
+
 Update website:
   make web
   Add new version to kiwi-www/src/getit.txt
 
 Use release-anouncement.tmpl to write a new announcement
-  Update Y in Subject 
+  Update Y in Subject
   Update X in Body
