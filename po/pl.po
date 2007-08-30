@@ -174,19 +174,18 @@ msgid "The file \"%s\" could not be opened. Permission denied."
 msgstr "Nie udało się otworzyć pliku \"%s\". Brak wystarczających uprawnień."
 
 #: ../kiwi/ui/dialogs.py:292
-#, fuzzy
 msgid "Select folder"
-msgstr "_Wybierz"
+msgstr "Wybierz katalog"
 
 #: ../kiwi/ui/dialogs.py:315
-#, fuzzy, python-format
+#, python-format
 msgid "Could not select folder \"%s\""
-msgstr "Nie można otworzyć pliku \"%s\""
+msgstr "Nie można otworzyć katalogu \"%s\""
 
 #: ../kiwi/ui/dialogs.py:316
-#, fuzzy, python-format
+#, python-format
 msgid "The folder \"%s\" could not be selected. Permission denied."
-msgstr "Nie udało się otworzyć pliku \"%s\". Brak wystarczających uprawnień."
+msgstr "Nie udało się otworzyć katalogu \"%s\". Brak wystarczających uprawnień."
 
 #: ../kiwi/ui/dialogs.py:323
 #, python-format
