@@ -1,3 +1,22 @@
+kiwi (1.9.17-1) feisty; urgency=low
+
+    - Gazpacho:
+      - Add gazpacho support for a scale widgets too.
+      - Add HScale/VScale (based on patch by Mauricio B. C. Vieira.)
+    - ObjectList:
+      - Remove the cache property.
+      - Refactor column and renderer handling to the Column.
+      - Add basic DND support.
+      - Call format_func before checking the format and the datatype.
+      - Add ellipsize and font-desc properties.
+      - Handle list without selection.
+      - Add a font-desc parameter to ListLabel/SummaryLabel.
+    - Prefill::Handle duplicate entries by adding (n) to the end of the name
+    - Dialogs: New function based around gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER.
+               (Based on patch by Paul Eipper (#3490))
+
+ -- Fabio Morbec <fabio@async.com.br>  Mon, 29 Aug 2007 19:21:57 -0300
+
 kiwi (1.9.16-1) feisty; urgency=low
 
   * New release
@@ -26,7 +45,7 @@ kiwi (1.9.15-4) feisty; urgency=low
 kiwi (1.9.13-0ubuntu1) feisty; urgency=low
 
   * New upstream release:
-    - Workaround GtkEntry bug when resizing the size of its GtkWindows. 
+    - Workaround GtkEntry bug when resizing the size of its GtkWindows.
     - Include _kiwi.c in tarball, fixes build.
     - Use pkg-config to find pygtk version.
   * debian/control:

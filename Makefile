@@ -1,5 +1,6 @@
 VERSION=$(shell python -c "execfile('kiwi/__version__.py'); print '.'.join(map(str, version))")
 PACKAGE=kiwi
+DEBPACKAGE=python-kiwi
 WEBDIR=/mondo/htdocs/async/projects/kiwi
 TARBALL_DIR=/mondo/htdocs/stoq.com.br/download/sources
 
