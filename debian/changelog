@@ -1,3 +1,9 @@
+kiwi (1.9.17-2) feisty; urgency=low
+
+  * Fix in ObjectList
+
+ -- Fabio Morbec <fabio@async.com.br>  Thu, 30 Aug 2007 21:55:04 -0300
+
 kiwi (1.9.17-1) feisty; urgency=low
 
     - Gazpacho:
