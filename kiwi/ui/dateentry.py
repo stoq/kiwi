@@ -270,6 +270,7 @@ class DateEntry(gtk.HBox):
         from kiwi.ui.widgets.entry import ProxyEntry
         self.entry = ProxyEntry()
         self.entry.connect('changed', self._on_entry__changed)
+        self.entry.connect('activate', self._on_entry__activate)
         self.entry.set_property('data-type', datetime.date)
         mask = self.entry.get_mask()
         if mask:
