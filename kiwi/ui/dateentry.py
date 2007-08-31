@@ -129,7 +129,7 @@ class _DateEntryPopup(gtk.Window):
         elif keyval == keysyms.Tab:
             self.popdown()
             # XXX: private member of dateentry
-            self._comboentry._button.grab_focus()
+            self._dateentry._button.grab_focus()
             return True
         elif (keyval == keysyms.Return or
               keyval == keysyms.space or
