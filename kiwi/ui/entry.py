@@ -638,11 +638,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
             return completion
 
         if old and isinstance(old, KiwiEntryCompletion):
-            if old.completion_timeout:
-                gobject.source_remove(old.completion_timeout)
-                old.completion_timeout = 0
-
-            old._disconnect_completion_signals()
+            old.disconnect_completion_signals()
 
         self._completion = completion
 
@@ -875,16 +871,14 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         if not self._mask:
             return
 
+        field = self._current_field
         if (direction == gtk.DIR_TAB_FORWARD or
             direction == gtk.DIR_DOWN):
-            inc = 1
-        if (direction == gtk.DIR_TAB_BACKWARD or
-            direction == gtk.DIR_UP):
-            inc = -1
+            field += 1
+        elif (direction == gtk.DIR_TAB_BACKWARD or
+              direction == gtk.DIR_UP):
+            field = -1
 
-        field = self._current_field
-
-        field += inc
         # Leaving the entry
         if field == len(self._mask_fields) or field == -1:
             self.select_region(0, 0)
