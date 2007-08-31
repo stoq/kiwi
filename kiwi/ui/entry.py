@@ -872,6 +872,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
             return
 
         field = self._current_field
+
         if (direction == gtk.DIR_TAB_FORWARD or
             direction == gtk.DIR_DOWN):
             field += 1
@@ -931,7 +932,8 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         if field is None:
             self.set_position(self._pos)
         else:
-            self._current_field = field
+            if self._current_field != -1:
+                self._current_field = field
             self._pos = pos
 
     def _on_changed(self, widget):
