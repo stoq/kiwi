@@ -242,8 +242,6 @@ class Column(PropertyObject, gobject.GObject):
         return data
 
     def attach(self, objectlist):
-        if self._objectlist:
-            raise TypeError("%r is already attached to %r" % (objectlist,))
         self._objectlist = objectlist
 
         model = objectlist.get_model()
