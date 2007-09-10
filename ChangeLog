@@ -1,3 +1,12 @@
+=== 1.9.17 ===
+2007-07-31 Fabio Morbec  <fabio@async.com.br>
+
+	* NEWS:
+	* debian/changelog:
+	* doc/howto.tex:
+	* kiwi/__version__.py:
+	Release 1.9.17
+
 2007-08-28  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/gazpacholoader.py:
