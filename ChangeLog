@@ -1,3 +1,12 @@
+=== 1.9.18 ===
+2007-09-11 Fabio Morbec <fabio@async.com.br>
+	* NEWS:
+	* debian/changelog:
+	* doc/howto.tex:
+	* kiwi/__version__.py
+	* kiwi.spec
+	Release 1.9.18
+
 === 1.9.17 ===
 2007-07-31 Fabio Morbec  <fabio@async.com.br>
 
