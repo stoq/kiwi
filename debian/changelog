@@ -1,3 +1,9 @@
+kiwi (1.9.17-3) feisty; urgency=low
+
+  * Added VScale and HScale
+
+ -- Fabio Morbec <fabio@async.com.br>  Thu, 11 Sep 2007 11:13:12 -0300
+
 kiwi (1.9.17-2) feisty; urgency=low
 
   * Fix in ObjectList
