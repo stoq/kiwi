@@ -1,6 +1,10 @@
 kiwi-1.9.18 11-september-2007
     - Polish translation updated
-    - bug fix
+    - Added scale.py file (VScale and HScale support).
+    - DateEntry::Activate to the callback.
+    - KiwiEntry::Focus simplified.
+    - Bug fix:
+      #2597: Kiwi comboentries should allow duplicated strings in the list.
 kiwi-1.9.17 29-agust-2007
     - Gazpacho:
       - Add gazpacho support for a scale widgets too.
@@ -59,7 +63,7 @@ kiwi-1.9.14: 23-march-2007
     - Add assertion support for ui test
 
 kiwi-1.9.13: 01-february-2007
-    - Workaround GtkEntry bug when resizing the size of its GtkWindows. 
+    - Workaround GtkEntry bug when resizing the size of its GtkWindows.
       (Johan, Ronaldo)
     - Include _kiwi.c in tarball, fixes build. (Johan)
     - Use pkg-config to find pygtk version. (Johan)
@@ -84,7 +88,7 @@ kiwi-1.9.11: 09-october-2006
     - raise ValueError instead of AttributeError (#1998, Sidnei)
 
 kiwi-1.9.10: 15-september-2006
-    - API reference and howto included in the tarball 
+    - API reference and howto included in the tarball
     - Remove some excessive of inheritance
     - A couple of new examples
     - Mask fixes; alignment and focus (Ronaldo)
