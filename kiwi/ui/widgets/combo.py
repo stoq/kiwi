@@ -263,8 +263,9 @@ class _EasyComboBoxHelper(object):
             return self.get_selected_label()
         elif mode == ComboMode.DATA:
             return self.get_selected_data()
-        else:
-            raise AssertionError("No mode selected")
+
+        return None
+
 
 class ProxyComboBox(PropertyObject, gtk.ComboBox, ProxyWidgetMixin):
 
