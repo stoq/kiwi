@@ -1946,7 +1946,7 @@ class SummaryLabel(ListLabel):
         attr = column.attribute
         get_attribute = column.get_attribute
 
-        value = sum([get_attribute(obj, attr, 0) for obj in self._klist],
+        value = sum([get_attribute(obj, attr, 0) or 0 for obj in self._klist],
                     column.data_type('0'))
 
         self.set_value(column.as_string(value))
