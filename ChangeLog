@@ -1,3 +1,11 @@
+2007-10-04  Fabio Morbec  <fabio@async.com.br>
+
+	reviewed by: Christian Reis  <kiko@async.com.br>
+
+	* kiwi/ui/objectlist.py (SummaryLabel.update_total): An error occur
+	in SummaryLabel when update_total try to sum Decimal with None.
+	Fixes #3557
+
 2007-09-14  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/combo.py (_EasyComboBoxHelper.get_selected): Return 
