@@ -57,6 +57,18 @@ class MixinTest(unittest.TestCase):
         self.failUnless(hasattr(o, 'mixin_prop'))
         self.assertEqual(o.mixin_prop, 'foo')
 
+    def testHScale(self):
+        from kiwi.ui.widgets.scale import ProxyHScale
+        s = ProxyHScale()
+        self.failUnless(hasattr(s, 'data_type'))
+        self.assertEqual(s.data_type, float)
+
+    def testVScale(self):
+        from kiwi.ui.widgets.scale import ProxyVScale
+        s = ProxyVScale()
+        self.failUnless(hasattr(s, 'data_type'))
+        self.assertEqual(s.data_type, float)
+
     def testSpinButton(self):
         from kiwi.ui.widgets.spinbutton import ProxySpinButton
         s = ProxySpinButton()

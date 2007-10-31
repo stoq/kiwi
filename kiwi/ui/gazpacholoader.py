@@ -227,7 +227,7 @@ class HScaleDataType(DataTypeAdaptor):
 
 class VScaleDataType(DataTypeAdaptor):
     widget_type = ProxyVScale
-    default = int
+    default = float
 
 class EntryDataType(DataTypeAdaptor):
     widget_type = ProxyEntry

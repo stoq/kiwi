@@ -26,6 +26,7 @@
 
 import gtk
 
+from kiwi import ValueUnset
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import PropertyObject, gsignal, type_register
 
@@ -44,7 +45,10 @@ class _ProxyScale:
         return self.get_value()
 
     def update(self, data):
-        self.set_value(data)
+        if data is None or data is ValueUnset:
+            self.set_value(0.)
+        else:
+            self.set_value(data)
 
 
 class ProxyHScale(_ProxyScale, PropertyObject, ProxyWidgetMixin, gtk.HScale):
@@ -61,7 +65,7 @@ type_register(ProxyHScale)
 class ProxyVScale(_ProxyScale, PropertyObject, ProxyWidgetMixin, gtk.VScale):
     __gtype_name__ = 'ProxyVScale'
 
-    def __init__(self, adjustment=None):
+    def __init__(self):
         ProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self, data_type=float)
         gtk.VScale.__init__(self)

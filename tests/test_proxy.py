@@ -13,6 +13,7 @@ from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 from kiwi.ui.widgets.entry import ProxyEntry
 from kiwi.ui.widgets.label import ProxyLabel
 from kiwi.ui.widgets.radiobutton import ProxyRadioButton
+from kiwi.ui.widgets.scale import ProxyHScale, ProxyVScale
 from kiwi.ui.widgets.spinbutton import ProxySpinButton
 from kiwi.ui.widgets.textview import ProxyTextView
 from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox
@@ -45,6 +46,8 @@ class Model(Settable):
                           radiobutton='first',
                           label='label',
                           spinbutton=100,
+                          hscale=100.0,
+                          vscale=100.0,
                           textview='sliff',
                           comboentry='CE1',
                           combobox='CB1',
@@ -57,6 +60,8 @@ class TestProxy(unittest.TestCase):
         self.view.add('entry', str, ProxyEntry)
         self.view.add('label', str, ProxyLabel)
         self.view.add('spinbutton', int, ProxySpinButton)
+        self.view.add('hscale', float, ProxyHScale)
+        self.view.add('vscale', float, ProxyVScale)
         self.view.add('button', str, ProxyButton)
         self.view.add('buttonpixbuf', gdk.Pixbuf, ProxyButton)
 
@@ -66,6 +71,9 @@ class TestProxy(unittest.TestCase):
         self.radio_second = ProxyRadioButton()
         self.radio_second.set_group(self.radio_first)
         self.radio_second.set_property('data_value', 'second')
+
+        self.view.hscale.get_adjustment().upper = 200
+        self.view.vscale.get_adjustment().upper = 250
 
         self.comboentry = self.view.add('comboentry', str, ProxyComboEntry)
         self.comboentry.prefill(['CE1','CE2','CE3'])
@@ -99,6 +107,16 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(self.model.radiobutton, 'second')
         self.radio_first.set_active(True)
         self.assertEqual(self.model.radiobutton, 'first')
+
+    def testHScale(self):
+        self.assertEqual(self.model.vscale, 100)
+        self.view.vscale.set_value(220)
+        self.assertEqual(self.model.vscale, 220)
+
+    def testVScale(self):
+        self.assertEqual(self.model.vscale, 100)
+        self.view.vscale.set_value(200)
+        self.assertEqual(self.model.vscale, 200)
 
     def testSpinButton(self):
         self.assertEqual(self.model.spinbutton, 100)
