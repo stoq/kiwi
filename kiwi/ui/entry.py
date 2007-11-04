@@ -93,7 +93,7 @@ import gettext
 import string
 try:
     set
-except AttributeError:
+except NameError:
     from sets import Set as set
 
 import gobject
