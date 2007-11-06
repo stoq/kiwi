@@ -80,6 +80,7 @@ class _SpoofOut(StringIO):
 
 class Runner(object):
     """
+    Create a new Runner object.
     @ivar parser:
     """
     def __init__(self, filename):
@@ -180,9 +181,6 @@ class Runner(object):
         self._last = time.time()
 
     def sleep(self, duration):
-        """
-        @param duration:
-        """
         # We don't want to block the interface here which means that
         # we cannot use time.sleep.
         # Instead we schedule another execute iteration in the future
@@ -213,6 +211,7 @@ class Runner(object):
 
     def waitopen(self, window_name):
         """
+        Wait to open an window.
         @param window_name:
         """
         if not window_name in self._windows:
@@ -221,6 +220,7 @@ class Runner(object):
 
     def waitclose(self, window_name):
         """
+        Wait to close an window.
         @param window_name:
         """
         if window_name in self._windows:
@@ -230,6 +230,7 @@ runner = None
 
 def play_file(script, filename=None, args=None):
     """
+    Run an script.
     @param script:
     @param filename:
     @param args:

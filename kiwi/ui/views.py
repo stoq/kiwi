@@ -604,7 +604,7 @@ class SlaveView(gobject.GObject):
 
     def get_sizegroups(self):
         """
-        @returns: a list of sizegroups for the current view.
+        Get a list of sizegroups for the current view.
         """
         if not self._glade_adaptor:
             return []

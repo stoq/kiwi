@@ -156,6 +156,7 @@ class ProxyWidgetMixin(object):
 
     def update(self, value):
         """
+        Update the content value of the widget.
         @param value:
         """
         raise NotImplementedError
@@ -232,6 +233,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
     def is_valid(self):
         """
+        Verify the widget state.
         @returns: True if the widget is in validated state
         """
         return self._valid

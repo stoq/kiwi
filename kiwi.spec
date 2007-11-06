@@ -2,6 +2,11 @@
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           python-kiwi
+Version:        1.9.19
+Release:        1%{?dist}
+Summary:        Framework for Python GUI applications
+
+Name:           python-kiwi
 Version:        1.9.18
 Release:        1%{?dist}
 Summary:        Framework for Python GUI applications

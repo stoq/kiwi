@@ -66,6 +66,7 @@ class ListContainer(gtk.HBox):
 
     def __init__(self, columns):
         """
+        Create a new ListContainer object.
         @param columns: columns for the L{kiwi.ui.objectlist.ObjectList}
         @type columns: a list of L{kiwi.ui.objectlist.Columns}
         """
@@ -162,6 +163,7 @@ class ListContainer(gtk.HBox):
 
     def set_list_type(self, list_type):
         """
+        Sets the kind of list type.
         @param list_type:
         """
         if not isinstance(list_type, ListType):
@@ -284,30 +286,35 @@ class ListDialog(gtk.Dialog):
 
     def set_list_type(self, list_type):
         """
+        Set list type.
         @see: L{Listcontainer.set_list_type}
         """
         self.listcontainer.set_list_type(list_type)
 
     def add_list_item(self, item):
         """
+        Add item to list.
         @see: L{Listcontainer.add_item}
         """
         self.listcontainer.add_item(item)
 
     def add_list_items(self, item):
         """
+        Add items to list.
         @see: L{Listcontainer.add_items}
         """
         self.listcontainer.add_items(item)
 
     def remove_list_item(self, item):
         """
+        Remove item from list.
         @see: L{Listcontainer.remove_item}
         """
         self.listcontainer.remove_item(item)
 
     def update_list_item(self, item):
         """
+        Update item in list.
         @see: L{Listcontainer.edit_item}
         """
         self.listcontainer.update_item(item)

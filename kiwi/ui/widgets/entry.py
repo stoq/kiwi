@@ -105,6 +105,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
 
     def set_mask_for_data_type(self, data_type):
         """
+        Set a mask for the parameter data_type.
         @param data_type:
         """
         conv = converter.get_converter(data_type)

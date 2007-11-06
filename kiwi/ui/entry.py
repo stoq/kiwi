@@ -333,6 +333,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
     def get_mask(self):
         """
+        Get the mask.
         @returns: the mask
         """
         return self._mask

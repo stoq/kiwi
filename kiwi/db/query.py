@@ -30,6 +30,7 @@ from kiwi.interfaces import ISearchFilter
 class QueryState(object):
     def __init__(self, search_filter):
         """
+        Create a new QueryState object.
         @param search_filter: search filter this query state is associated with
         @type search_filter: L{SearchFilter}
         """
@@ -38,6 +39,7 @@ class QueryState(object):
 
 class NumberQueryState(QueryState):
     """
+    Create a new NumberQueryState object.
     @cvar value: number
     """
     def __init__(self, filter, value):
@@ -50,6 +52,7 @@ class NumberQueryState(QueryState):
 
 class StringQueryState(QueryState):
     """
+    Create a new StringQueryState object.
     @cvar text: string
     """
     def __init__(self, filter, text):
@@ -62,6 +65,7 @@ class StringQueryState(QueryState):
 
 class DateQueryState(QueryState):
     """
+    Create a new DateQueryState object.
     @cvar date: date
     """
     def __init__(self, filter, date):
@@ -74,6 +78,7 @@ class DateQueryState(QueryState):
 
 class DateIntervalQueryState(QueryState):
     """
+    Create a new DateIntervalQueryState object.
     @cvar start: start of interval
     @cvar end: end of interval
     """
@@ -91,9 +96,9 @@ class QueryExecuter(object):
     """
     A QueryExecuter is responsible for taking the state (as in QueryState)
     objects from search filters and construct a query.
-    How the query is constructed is ORM/DB-layer dependent
+    How the query is constructed is ORM/DB-layer dependent.
 
-    @cvar default_search_limit: The default search limit
+    @cvar default_search_limit: The default search limit.
     """
     default_search_limit = 1000
 
@@ -119,6 +124,7 @@ class QueryExecuter(object):
 
     def search(self, states):
         """
+        Execute a search.
         @param states:
         @type states: list of L{QueryStates}
         @returns: list of objects matching query
@@ -127,6 +133,7 @@ class QueryExecuter(object):
 
     def set_limit(self, limit):
         """
+        Set the maximum number of result items to return in a search query.
         @param limit:
         """
         self._limit = limit

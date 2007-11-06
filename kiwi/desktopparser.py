@@ -82,6 +82,8 @@ class DesktopParser(ConfigParser):
 
     def set_locale(self, section, option, locale, value):
         """
+        Set locale.
+
         @param section: section name
         @param option: an option
         @param locale: a locale
@@ -91,6 +93,8 @@ class DesktopParser(ConfigParser):
 
     def get_locale(self, section, option, locale):
         """
+        Get locale.
+
         @param section: section name
         @param option: an option
         @param locale: a locale
@@ -99,6 +103,8 @@ class DesktopParser(ConfigParser):
 
     def get_string_list(self, section, option):
         """
+        Get a list as string.
+
         @param section: section name
         @param option: an option
         """
@@ -106,6 +112,8 @@ class DesktopParser(ConfigParser):
 
     def set_string_list(self, section, option, values):
         """
+        Set a list of string values.
+
         @param section: section name
         @param option: an option
         @param values: list of string values
@@ -115,6 +123,8 @@ class DesktopParser(ConfigParser):
 
     def get_integer_list(self, section, option):
         """
+        Get a list of integers as string.
+
         @param section: section name
         @param option: an option
         """
@@ -122,6 +132,8 @@ class DesktopParser(ConfigParser):
 
     def set_integer_list(self, section, option, values):
         """
+        Set a list with integer values.
+
         @param section: section name
         @param option: an option
         @param values: list of integer values
@@ -130,6 +142,8 @@ class DesktopParser(ConfigParser):
 
     def get_boolean_list(self, section, option):
         """
+        Get a boolean list.
+
         @param section: section name
         @param option: an option
         """
@@ -137,6 +151,8 @@ class DesktopParser(ConfigParser):
 
     def set_boolean_list(self, section, option, values):
         """
+        Set an list wiht boolena values.
+
         @param section: section name
         @param option: an option
         @param values: list of boolean values
@@ -145,6 +161,8 @@ class DesktopParser(ConfigParser):
 
     def set_string_list_locale(self, section, option, locale, values):
         """
+        Set string list with locale values.
+
         @param section: section name
         @param option: an option
         @param locale: a locale
@@ -154,6 +172,8 @@ class DesktopParser(ConfigParser):
 
     def get_string_list_locale(self, section, option, locale):
         """
+        Get list locale as an string.
+
         @param section: section name
         @param option: an option
         @param locale: a locale

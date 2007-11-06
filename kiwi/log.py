@@ -108,6 +108,8 @@ class ReversedGlobalFilter(logging.Filter):
 
 def set_log_file(filename, mask=None):
     """
+    Set the filename used for logging.
+
     @param filename:
     @param mask: optional
     """
@@ -127,6 +129,8 @@ def set_log_file(filename, mask=None):
 
 def set_log_level(name, level):
     """
+    Set the log level.
+
     @param name: logging category
     @param level: level
     """

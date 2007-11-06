@@ -140,6 +140,7 @@ class ProxyDelegate(Delegate):
 
     def set_model(self, model):
         """
+        Set model.
         @param model:
         """
         self.proxy.set_model(model)

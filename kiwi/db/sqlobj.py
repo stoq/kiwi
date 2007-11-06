@@ -102,6 +102,7 @@ class SQLObjectQueryExecuter(QueryExecuter):
 
     def search(self, states):
         """
+        Execute a search.
         @param states:
         """
         if self.table is None:

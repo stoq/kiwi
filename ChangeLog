@@ -1,3 +1,13 @@
+=== 1.9.19 ===
+2007-11-06 Fabio Morbec <fabio@async.com.br>
+	* NEWS:
+	* debian/changelog:
+	* doc/howto.tex:
+	* doc/release-checklist.txt:
+	* kiwi/__version__.py
+	* kiwi.spec
+	Release 1.9.19
+
 2007-11-04  Johan Dahlin  <johan@gnome.org>
 
 	* kiwi/ui/entry.py: catch NameError instead of AttributeError,

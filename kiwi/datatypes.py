@@ -209,12 +209,15 @@ class BaseConverter(object):
 
     def get_compare_function(self):
         """
-        @returns:
+        This can be overriden by a subclass to provide a custom comparison
+        function.
+        @returns: cmp
         """
         return cmp
 
     def as_string(self, value, format):
         """
+        Convert the value to a string using the specificed format.
         @param value:
         @param format:
         @returns:
@@ -222,13 +225,15 @@ class BaseConverter(object):
 
     def from_string(self, value):
         """
+        Convert a value from a string.
         @param value:
         @returns:
         """
 
     def get_mask(self):
         """
-        @returns:
+        Returns the mask of the entry or None if not specified.
+        @returns: the mask or None.
         """
         return None
 

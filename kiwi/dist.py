@@ -56,9 +56,10 @@ class _VariableExtender:
 
     def extend(self, string, relative=False):
         """
-        @param string: string to replace
+        Expand a variable.
+        @param string: string to replace.
         @param relative: if True, assume the content of all variables
-          to be relative to the prefix
+            to be relative to the prefix.
         """
         for name, var in [('sysconfdir', self.sysconfdir),
                           ('datadir', self.datadir),
@@ -247,9 +248,9 @@ def setup(**kwargs):
     """
     A drop in replacement for distutils.core.setup which
     integrates nicely with kiwi.environ
-    @kwarg resources:
-    @kwarg global_resources:
-    @kwarg templates: List of templates to install
+    @var resources:
+    @var global_resources:
+    @var templates: List of templates to install
     """
     resources = {}
     global_resources = {}

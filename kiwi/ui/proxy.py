@@ -66,6 +66,7 @@ class Proxy:
 
     def __init__(self, view, model=None, widgets=()):
         """
+        Create a new Proxy object.
         @param view:    view attched to the slave
         @type  view:    a L{kiwi.ui.views.BaseView} subclass
         @param model:   model attached to proxy

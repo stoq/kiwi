@@ -57,6 +57,7 @@ class DateSearchOption(object):
 
     def get_interval(self):
         """
+        Get start and end date.
         @returns: start date, end date
         @rtype: datetime.date tuple
         """
@@ -176,6 +177,7 @@ class DateSearchFilter(SearchFilter):
 
     def __init__(self, label=''):
         """
+        Create a new DateSearchFilter object.
         @param label: name of the search filter
         """
         self._options = {}
@@ -283,6 +285,7 @@ class DateSearchFilter(SearchFilter):
 
     def get_start_date(self):
         """
+        Get the start date.
         @returns: start date
         @rtype: datetime.date or None
         """
@@ -290,6 +293,7 @@ class DateSearchFilter(SearchFilter):
 
     def get_end_date(self):
         """
+        Get the end date.
         @returns: end date
         @rtype: datetime.date or None
         """
@@ -431,9 +435,10 @@ class ComboSearchFilter(SearchFilter):
 
     def __init__(self, label='', values=None):
         """
+        Create a new ComboSearchFilter object.
         @param name: name of the search filter
         @param values: items to put in the combo, see
-          L{kiwi.ui.widgets.combo.ProxyComboBox.prefill}
+            L{kiwi.ui.widgets.combo.ProxyComboBox.prefill}
         """
         SearchFilter.__init__(self, label=label)
         label = gtk.Label(label)
@@ -485,6 +490,7 @@ class StringSearchFilter(SearchFilter):
     """
     def __init__(self, label, chars=0):
         """
+        Create a new StringSearchFilter object.
         @param label: label of the search filter
         @param chars: maximum number of chars used by the search entry
         """
@@ -541,6 +547,7 @@ class SearchContainer(gtk.VBox):
 
     def __init__(self, columns=None, chars=25):
         """
+        Create a new SearchContainer object.
         @param columns: a list of L{kiwi.ui.objectlist.Column}
         @param chars: maximum number of chars used by the search entry
         """
@@ -640,6 +647,7 @@ class SearchContainer(gtk.VBox):
 
     def set_filter_position(self, search_filter, position):
         """
+        Set the the filter position.
         @param search_filter:
         @param position:
         """
@@ -655,6 +663,7 @@ class SearchContainer(gtk.VBox):
 
     def get_filter_position(self, search_filter):
         """
+        Get filter by position.
         @param search_filter:
         """
         if search_filter.parent == self.hbox:
@@ -716,9 +725,6 @@ class SearchContainer(gtk.VBox):
         self._auto_search = auto_search
 
     def set_text_field_columns(self, columns):
-        """
-        @param columns:
-        """
         if self._primary_filter is None:
             raise ValueError("The primary filter is disabled")
 
@@ -813,11 +819,12 @@ if hasattr(gtk.Container, 'install_child_property'):
 
 
 class SearchSlaveDelegate(SlaveDelegate):
-    """
-    @ivar results: the results list of the container
-    @ivar search: the L{SearchContainer}
-    """
     def __init__(self, columns):
+        """
+        Create a new SearchSlaveDelegate object.
+        @ivar results: the results list of the container
+        @ivar search: the L{SearchContainer}
+        """
         self.search = SearchContainer(columns)
         SlaveDelegate.__init__(self, toplevel=self.search)
         self.results = self.search.results

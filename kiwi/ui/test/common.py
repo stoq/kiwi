@@ -147,11 +147,6 @@ class WidgetIntrospecter(gobject.GObject):
         event_handler_set(self._event_handler)
 
     def parse_one(self, toplevel, gobj):
-        """
-        @param toplevel:
-        @param gobj:
-        """
-
         if not isinstance(gobj, gobject.GObject):
             raise TypeError
 

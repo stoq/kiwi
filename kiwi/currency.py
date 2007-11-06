@@ -41,6 +41,7 @@ class currency(Decimal):
 
     def __new__(cls, value):
         """
+        Convert value to currency.
         @param value: value to convert
         @type value: string or number
         """

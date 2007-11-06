@@ -181,7 +181,7 @@ class Column(PropertyObject, gobject.GObject):
         @param data_type: the type of the attribute that will be inserted
             into the column.
 
-        @keyword title_pixmap: (TODO) if set to a filename a pixmap will be
+        @note: title_pixmap: (TODO) if set to a filename a pixmap will be
             used *instead* of the title set. The title string will still be
             used to identify the column in the column selection and in a
             tooltip, if a tooltip is not set.
@@ -766,6 +766,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                  sortable=False,
                  model=None):
         """
+        Create a new ObjectList object.
         @param columns:       a list of L{Column}s
         @param objects:       a list of objects to be inserted or None
         @param mode:          selection mode
@@ -1390,6 +1391,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def set_columns(self, columns):
         """
+        Set columns.
         @param columns: a sequence of L{Column} objects.
         """
 
@@ -1636,7 +1638,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def get_selected_row_number(self):
         """
-        @returns: the selected row number or None if no rows were selected
+        Get the selected row number or None if no rows were selected
         """
         selection = self._treeview.get_selection()
         if selection.get_mode() == gtk.SELECTION_MULTIPLE:
@@ -1663,6 +1665,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def set_headers_visible(self, value):
         """
+        Show or hide the headers.
         @param value: if true, shows the headers, if false hide then
         """
         self._treeview.set_headers_visible(value)
@@ -1700,7 +1703,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def get_dnd_targets(self):
         """
-        @returns: a list of dnd targets ObjectList supports
+        Get a list of dnd targets ObjectList supports
         """
         return [
             ('OBJECTLIST_ROW', 0, 10),
@@ -1759,6 +1762,7 @@ class ObjectTree(ObjectList):
 
     def append(self, parent, instance, select=False):
         """
+        Append the selected row in an instance.
         @param parent: Object or None, representing the parent
         @param instance: the instance to be added
         @param select: select the row
@@ -1768,6 +1772,7 @@ class ObjectTree(ObjectList):
 
     def prepend(self, parent, instance, select=False):
         """
+        Prepend the selected row in an instance.
         @param parent: Object or None, representing the parent
         @param instance: the instance to be added
         @param select: select the row
@@ -1818,6 +1823,7 @@ class ListLabel(gtk.HBox):
     def __init__(self, klist, column, label='', value_format='%s',
                  font_desc=None):
         """
+        Constructor.
         @param klist:        list to follow
         @type klist:         kiwi.ui.objectlist.ObjectList
         @param column:       name of a column in a klist

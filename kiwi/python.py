@@ -103,6 +103,8 @@ class AttributeForwarder(ClassInittableObject):
 
     def __init__(self, target):
         """
+        Create a new AttributeForwarder object.
+
         @param target: object to forward attributes to
         """
         self.target = target
@@ -173,6 +175,9 @@ class Settable:
 
 def qual(klass):
     """
+    Convert a class to a string representation, which is the name of the module
+    plut a dot plus the name of the class.
+
     @returns: fully qualified module and class name
     """
     return klass.__module__ + '.' + klass.__name__
@@ -268,6 +273,8 @@ class enum(int):
 
     def __new__(cls, value, name):
         """
+        Create a new Enum.
+
         @param value: value of the enum
         @param name: name of the enum
         """
@@ -296,6 +303,7 @@ class enum(int):
 
 def all(seq):
     """
+    Predict used to check if all items in a seq are True.
     @returns: True if all items in seq are True
     """
     for item in seq:
@@ -305,6 +313,7 @@ def all(seq):
 
 def any(seq):
     """
+    Predict used to check if any item in a seq are True.
     @returns: True if any item in seq is True
     """
     for item in seq:

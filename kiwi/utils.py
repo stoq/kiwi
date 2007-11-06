@@ -245,13 +245,13 @@ def gsignal(name, *args, **kwargs):
     """
     Add a GObject signal to the current object.
     It current supports the following types:
-      - str, int, float, long, object, enum
-    @param name:     name of the signal
-    @type name:      string
-    @param args:     types for signal parameters,
-      if the first one is a string 'override', the signal will be
-      overridden and must therefor exists in the parent GObject.
-    @keyword flags: A combination of;
+        - str, int, float, long, object, enum
+    @param name: name of the signal
+    @type name: string
+    @param args: types for signal parameters,
+        if the first one is a string 'override', the signal will be
+        overridden and must therefor exists in the parent GObject.
+    @note: flags: A combination of;
       - gobject.SIGNAL_RUN_FIRST
       - gobject.SIGNAL_RUN_LAST
       - gobject.SIGNAL_RUN_CLEANUP
@@ -259,7 +259,7 @@ def gsignal(name, *args, **kwargs):
       - gobject.SIGNAL_DETAILED
       - gobject.SIGNAL_ACTION
       - gobject.SIGNAL_NO_HOOKS
-    @keyword retval: return value in signal callback
+    @note: retval: return value in signal callback
     """
 
     frame = sys._getframe(1)
@@ -315,8 +315,8 @@ def gproperty(name, ptype, default=None, nick='', blurb='',
       - PARAM_CONSTRUCT_ONLY
       - PARAM_LAX_VALIDATION
     Optional, only for int, float, long types:
-    @keyword minimum:  minimum allowed value
-    @keyword maximum:  maximum allowed value
+    @note: minimum: minimum allowed value
+    @note: maximum: maximum allowed value
     """
 
     # General type checking

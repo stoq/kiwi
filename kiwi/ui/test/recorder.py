@@ -89,6 +89,7 @@ class Event(object):
     object_type = None
     def __init__(self, object, name=None):
         """
+        Create a new Event object.
         @param object: a gobject subclass
         @param name: name of the object, if None, the
           method get_name() will be called
@@ -135,6 +136,7 @@ class SignalEvent(Event):
     signal_name = None
     def __init__(self, object, name, args):
         """
+        Create a new SignalEvent object.
         @param object:
         @param name:
         @param args:
@@ -359,6 +361,7 @@ class Recorder(WidgetIntrospecter):
 
     def __init__(self, filename):
         """
+        Create a new Recorder object.
         @param filename: name of the script
         """
         WidgetIntrospecter.__init__(self)

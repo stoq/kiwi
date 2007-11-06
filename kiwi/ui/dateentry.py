@@ -362,6 +362,7 @@ class DateEntry(gtk.HBox):
 
     def set_date(self, date):
         """
+        Set date.
         @param date: a datetime.date instance or None
         """
         if not isinstance(date, datetime.date) and date is not None:
@@ -377,7 +378,8 @@ class DateEntry(gtk.HBox):
 
     def get_date(self):
         """
-        @returns: the currently selected day
+        Get the currently selected day.
+        @returns: the date.
         """
         try:
             date = self.entry.read()

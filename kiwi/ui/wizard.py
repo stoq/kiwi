@@ -75,6 +75,7 @@ class PluggableWizard(GladeDelegate):
 
     def __init__(self, title, first_step, size=None, edit_mode=False):
         """
+        Create a new PluggableWizard object.
         @param title:
         @param first_step:
         @param size:
@@ -220,6 +221,7 @@ class PluggableWizard(GladeDelegate):
 
     def set_message(self, message):
         """
+        Set message for nofitication.
         @param message:
         """
         self.notification_lbl.set_text(message)

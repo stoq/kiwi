@@ -204,7 +204,7 @@ def get_event():
     """
     Return the last event that caused the current tasklet to regain control.
 
-    @warning: this function should be called exactly once after each
+    @note: this function should be called exactly once after each
     yield that includes a wait condition.
 
     """
@@ -217,7 +217,7 @@ def get_event():
 def run(gen):
     """Start running a generator as a L{Tasklet}.
 
-    @parameter gen: generator object that implements the tasklet body.
+    @param gen: generator object that implements the tasklet body.
     @return: a new L{Tasklet} instance, already running.
 
     @note: this is strictly equivalent to calling C{Tasklet(gen)}.
@@ -249,9 +249,9 @@ class WaitCondition(object):
         WaitCondition object must "rearm" itself (continue to monitor
         events), otherwise it should disarm.
 
-        @parameter tasklet: the tasklet instance the wait condition is
+        @param tasklet: the tasklet instance the wait condition is
           to be associated with.
-        @attention: this method normally should not be called directly
+        @note: this method normally should not be called directly
           by the programmer.
 
         '''
@@ -260,7 +260,7 @@ class WaitCondition(object):
     def disarm(self):
         '''Stop the wait condition from receiving events.
 
-        @attention: this method normally should not be called by the
+        @note: this method normally should not be called by the
         programmer.'''
         raise NotImplementedError
 
@@ -323,10 +323,12 @@ class WaitForIO(WaitCondition):
     def __init__(self, filedes, condition=gobject.IO_IN,
                  priority=gobject.PRIORITY_DEFAULT):
         '''
+        Create a new WaitForIO object.
+
         @param filedes: object to monitor for IO
         @type filedes: int file descriptor, or a
-        gobject.IOChannel, or an object with a C{fileno()}
-        method, such as socket or unix file.
+            gobject.IOChannel, or an object with a C{fileno()}
+            method, such as socket or unix file.
 
         @param condition: IO event mask
         @type condition: a set of C{gobject.IO_*} flags ORed together
@@ -587,9 +589,9 @@ class WaitForProcess(WaitCondition):
     '''An object that waits for a process to end'''
     def __init__(self, pid):
         '''
-        Creates an object that waits for a subprocess
+        Creates an object that waits for a subprocess.
 
-        @parameter pid: Process identifier
+        @param pid: Process identifier
         @type pid: int
         '''
         WaitCondition.__init__(self)
@@ -629,6 +631,8 @@ class Message(object):
 
     def __init__(self, name, dest=None, value=None, sender=None):
         '''
+        Create a new Message object.
+
         @param name: name of message
         @type name: str
         @param dest: destination tasklet for this message
@@ -681,7 +685,7 @@ class WaitForMessages(WaitCondition):
         '''Creates an object that waits for a set of messages to
         arrive.
 
-        @warning: unlike other wait conditions, when a message
+        @note: unlike other wait conditions, when a message
           is received, a L{Message} instance is returned by L{get_event()},
           not the L{WaitForMessages} instance.
         @param accept: message name or names to accept (receive) in
@@ -782,7 +786,7 @@ class Tasklet(object):
         Should be overridden in a subclass if no generator is passed
         into the constructor.
 
-        @warning: do NOT call this method directly; it is meant to be called by
+        @note: do NOT call this method directly; it is meant to be called by
         the tasklet framework.
         """
         raise NotImplementedError(
@@ -956,7 +960,7 @@ class Tasklet(object):
     def send_message(self, message):
         """Send a message to be received by the tasklet as an event.
 
-        @warning: Don't call this from another tasklet, only from the
+        @note: Don't call this from another tasklet, only from the
         main loop!  To send a message from another tasklet, yield a
         L{Message} with a correctly set 'dest' parameter.
 

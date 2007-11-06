@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-11 15:13-0300\n"
+"POT-Creation-Date: 2007-11-06 13:11-0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,139 +16,139 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../kiwi/currency.py:163
+#: ../kiwi/currency.py:164
 msgid "Currency"
 msgstr ""
 
-#: ../kiwi/currency.py:179 ../kiwi/currency.py:196
+#: ../kiwi/currency.py:180 ../kiwi/currency.py:197
 #, python-format
 msgid "%s can not be converted to a currency"
 msgstr ""
 
-#: ../kiwi/datatypes.py:237
+#: ../kiwi/datatypes.py:242
 msgid "String"
 msgstr ""
 
-#: ../kiwi/datatypes.py:251
+#: ../kiwi/datatypes.py:256
 msgid "Unicode"
 msgstr ""
 
-#: ../kiwi/datatypes.py:265
+#: ../kiwi/datatypes.py:270
 msgid "Integer"
 msgstr ""
 
-#: ../kiwi/datatypes.py:293
+#: ../kiwi/datatypes.py:298
 #, python-format
 msgid "%s could not be converted to an integer"
 msgstr ""
 
-#: ../kiwi/datatypes.py:299
+#: ../kiwi/datatypes.py:304
 msgid "Long"
 msgstr ""
 
-#: ../kiwi/datatypes.py:304
+#: ../kiwi/datatypes.py:309
 msgid "Boolean"
 msgstr ""
 
-#: ../kiwi/datatypes.py:319
+#: ../kiwi/datatypes.py:324
 #, python-format
 msgid "'%s' can not be converted to a boolean"
 msgstr ""
 
-#: ../kiwi/datatypes.py:325
+#: ../kiwi/datatypes.py:330
 msgid "Float"
 msgstr ""
 
-#: ../kiwi/datatypes.py:368 ../kiwi/datatypes.py:388
+#: ../kiwi/datatypes.py:373 ../kiwi/datatypes.py:393
 #, python-format
 msgid "This field requires a number, not %r"
 msgstr ""
 
-#: ../kiwi/datatypes.py:377
+#: ../kiwi/datatypes.py:382
 msgid "Decimal"
 msgstr ""
 
-#: ../kiwi/datatypes.py:417 ../kiwi/datatypes.py:422
+#: ../kiwi/datatypes.py:422 ../kiwi/datatypes.py:427
 msgid "mm"
 msgstr ""
 
-#: ../kiwi/datatypes.py:418
+#: ../kiwi/datatypes.py:423
 msgid "yy"
 msgstr ""
 
-#: ../kiwi/datatypes.py:419
+#: ../kiwi/datatypes.py:424
 msgid "dd"
 msgstr ""
 
-#: ../kiwi/datatypes.py:420
+#: ../kiwi/datatypes.py:425
 msgid "yyyy"
 msgstr ""
 
-#: ../kiwi/datatypes.py:421
+#: ../kiwi/datatypes.py:426
 msgid "hh"
 msgstr ""
 
-#: ../kiwi/datatypes.py:423
+#: ../kiwi/datatypes.py:428
 msgid "ss"
 msgstr ""
 
-#: ../kiwi/datatypes.py:424
+#: ../kiwi/datatypes.py:429
 msgid "hh:mm:ss"
 msgstr ""
 
 #. FIXME: locale specific
-#: ../kiwi/datatypes.py:426
+#: ../kiwi/datatypes.py:431
 msgid "hh:mm:ss LL"
 msgstr ""
 
-#: ../kiwi/datatypes.py:521 ../kiwi/datatypes.py:556
+#: ../kiwi/datatypes.py:526 ../kiwi/datatypes.py:561
 msgid "You cannot enter a year before 1900"
 msgstr ""
 
-#: ../kiwi/datatypes.py:550
+#: ../kiwi/datatypes.py:555
 #, python-format
 msgid "This field requires a date of the format \"%s\" and not \"%s\""
 msgstr ""
 
-#: ../kiwi/datatypes.py:562
+#: ../kiwi/datatypes.py:567
 msgid "Time"
 msgstr ""
 
-#: ../kiwi/datatypes.py:577
+#: ../kiwi/datatypes.py:582
 msgid "Date and Time"
 msgstr ""
 
-#: ../kiwi/datatypes.py:592
+#: ../kiwi/datatypes.py:597
 msgid "Date"
 msgstr ""
 
-#: ../kiwi/datatypes.py:607
+#: ../kiwi/datatypes.py:612
 msgid "Object"
 msgstr ""
 
-#: ../kiwi/datatypes.py:615
+#: ../kiwi/datatypes.py:620
 msgid "Enum"
 msgstr ""
 
-#: ../kiwi/datatypes.py:684
+#: ../kiwi/datatypes.py:689
 msgid "You have a thousand separator to the right of the decimal point"
 msgstr ""
 
-#: ../kiwi/datatypes.py:696
+#: ../kiwi/datatypes.py:701
 msgid "Inproperly placed thousands separator"
 msgstr ""
 
-#: ../kiwi/datatypes.py:701
+#: ../kiwi/datatypes.py:706
 #, python-format
 msgid "Inproperly placed thousand separators: %r"
 msgstr ""
 
-#: ../kiwi/datatypes.py:719
+#: ../kiwi/datatypes.py:724
 #, python-format
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr ""
 
-#: ../kiwi/ui/objectlist.py:1932
+#: ../kiwi/ui/objectlist.py:1938
 msgid "Total:"
 msgstr ""
 
@@ -205,52 +205,52 @@ msgstr ""
 msgid "Password:"
 msgstr ""
 
-#: ../kiwi/ui/wizard.py:210
+#: ../kiwi/ui/wizard.py:211
 msgid "Finish"
 msgstr ""
 
-#: ../kiwi/ui/listdialog.py:316
+#: ../kiwi/ui/listdialog.py:323
 #, python-format
 msgid "Do you want to remove %s ?"
 msgstr ""
 
-#: ../kiwi/ui/search.py:65
+#: ../kiwi/ui/search.py:66
 msgid "Any"
 msgstr ""
 
-#: ../kiwi/ui/search.py:72
+#: ../kiwi/ui/search.py:73
 msgid "Today"
 msgstr ""
 
-#: ../kiwi/ui/search.py:80
+#: ../kiwi/ui/search.py:81
 msgid "Yesterday"
 msgstr ""
 
-#: ../kiwi/ui/search.py:88
+#: ../kiwi/ui/search.py:89
 msgid "Last week"
 msgstr ""
 
-#: ../kiwi/ui/search.py:96
+#: ../kiwi/ui/search.py:97
 msgid "Last month"
 msgstr ""
 
-#: ../kiwi/ui/search.py:195
+#: ../kiwi/ui/search.py:197
 msgid "From:"
 msgstr ""
 
-#: ../kiwi/ui/search.py:205
+#: ../kiwi/ui/search.py:207
 msgid "To:"
 msgstr ""
 
-#: ../kiwi/ui/search.py:216
+#: ../kiwi/ui/search.py:218
 msgid "Custom day"
 msgstr ""
 
-#: ../kiwi/ui/search.py:217
+#: ../kiwi/ui/search.py:219
 msgid "Custom interval"
 msgstr ""
 
-#: ../kiwi/ui/search.py:554
+#: ../kiwi/ui/search.py:561
 msgid "Search:"
 msgstr ""
 
@@ -271,16 +271,16 @@ msgstr ""
 msgid "Could not load image: %s"
 msgstr ""
 
-#: ../kiwi/ui/proxywidget.py:306
+#: ../kiwi/ui/proxywidget.py:308
 #, python-format
 msgid "'%s' is not a valid value for this field"
 msgstr ""
 
-#: ../kiwi/ui/proxywidget.py:340
+#: ../kiwi/ui/proxywidget.py:342
 msgid "This field is mandatory"
 msgstr ""
 
-#: ../kiwi/ui/entry.py:598
+#: ../kiwi/ui/entry.py:599
 #, python-format
 msgid "'%s' is not a valid object"
 msgstr ""

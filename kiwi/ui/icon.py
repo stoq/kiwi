@@ -128,6 +128,7 @@ class IconEntry(object):
 
     def set_pixbuf(self, pixbuf):
         """
+        Sets a pixbuf or None to reset.
         @param pixbuf: a gdk.Pixbuf or None
         """
         entry = self._entry

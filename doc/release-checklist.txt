@@ -10,6 +10,8 @@ Update NEWS
 Bump version number:
   kiwi/__version__.py
   doc/howto.tex
+  kiwi.spec
+make docs
 make release
 Update ChangeLog, add marker
 Commit

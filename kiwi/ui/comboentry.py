@@ -356,6 +356,7 @@ class ComboEntry(gtk.HBox):
 
     def __init__(self, entry=None):
         """
+        Create a new ComboEntry object.
         @param entry: a gtk.Entry subclass to use
         """
         gtk.HBox.__init__(self)
@@ -502,13 +503,15 @@ class ComboEntry(gtk.HBox):
 
     def set_text(self, text):
         """
+        Sets the text.
         @param text:
         """
         self.entry.set_text(text)
 
     def get_text(self):
         """
-        @returns: current text
+        Gets the current text.
+        @returns: the text.
         """
         return self.entry.get_text()
 
@@ -529,13 +532,15 @@ class ComboEntry(gtk.HBox):
 
     def get_model(self):
         """
-        @returns: our model
+        Gets our model.
+        @returns: model
         @rtype: gtk.TreeModel
         """
         return self._model
 
     def set_active_iter(self, iter):
         """
+        Set the iter selected.
         @param iter: iter to select
         @type iter: gtk.TreeIter
         """
@@ -546,7 +551,8 @@ class ComboEntry(gtk.HBox):
 
     def get_active_iter(self):
         """
-        @returns: the selected iter
+        Gets the selected iter.
+        @returns: iter selected.
         @rtype: gtk.TreeIter
         """
         return self._popup.get_selected_iter()

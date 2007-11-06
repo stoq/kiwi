@@ -46,6 +46,7 @@ class ProxyLabel(PropertyObject, gtk.Label, ProxyWidgetMixin):
 
     def __init__(self, label='', data_type=None):
         """
+        Create a new ProxyLabel object.
         @param label: initial text
         @param data_type: data type of label
         """

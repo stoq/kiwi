@@ -32,9 +32,12 @@ class deprecated(object):
     """
     def __init__(self, new, log=None):
         """
+        Create a new deprecated object.
+
         @param new: the name of the new function replacing the old
-          deprecated one
-        @type new: string
+            deprecated one.
+        @type new: string.
+        @param log: the lob object to use, optional.
         """
         self._new = new
         self._log = log or kiwi_log
