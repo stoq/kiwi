@@ -1,3 +1,8 @@
+2007-11-13  Johan Dahlin  <johan@gnome.org>
+
+	* po/it.po: Add italian translation, fixes #3582 
+	(Sandro Bonazzola)
+
 === 1.9.19 ===
 2007-11-06 Fabio Morbec <fabio@async.com.br>
 	* NEWS:
