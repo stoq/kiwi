@@ -8,9 +8,9 @@ class Fruit:
         self.name = name
 
 fruits = ObjectList([Column('icon', use_stock=True,
-                      justify=gtk.JUSTIFY_CENTER,
-                      icon_size=gtk.ICON_SIZE_LARGE_TOOLBAR),
-               Column('name')])
+                            justify=gtk.JUSTIFY_CENTER,
+                            icon_size=gtk.ICON_SIZE_LARGE_TOOLBAR),
+                     Column('name', column='icon')])
 
 for icon, name in [(gtk.STOCK_OK, 'Apple'),
                    (gtk.STOCK_CANCEL, 'Pineapple'),

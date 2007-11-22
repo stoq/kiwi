@@ -1,3 +1,17 @@
+2007-11-22  Johan Dahlin  <johan@gnome.org>
+
+	* examples/list/stockicon.py (Fruit.__init__):
+	Add an example of this.
+
+	* kiwi/ui/objectlist.py (Column): Add a new property
+	column which references to another column to be able to
+	pack two cell renderers into the same column
+
+2007-11-20  Johan Dahlin  <johan@gnome.org>
+
+	* kiwi/ui/objectlist.py: Only call column.set_expander_column
+	once, and on the right instance. Found by George.
+
 2007-11-13  Ali Afshar <aafshar@gmail.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

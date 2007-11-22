@@ -130,7 +130,9 @@ class Column(PropertyObject, gobject.GObject):
           (where to put the ...) is needed.
       - B{font-desc}: str I{""}
         - A string passed to pango.FontDescription, for instance "Sans" or
-          "Monospace 28".
+      - B{column}: str None
+        - A string referencing to another column. If this is set a new column
+          will not be created and the column will be packed into the other.
     """
     __gtype_name__ = 'Column'
     gproperty('attribute', str, flags=(gobject.PARAM_READWRITE | gobject.PARAM_CONSTRUCT_ONLY))
@@ -155,6 +157,7 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('expander', bool, False)
     gproperty('ellipsize', pango.EllipsizeMode, default=pango.ELLIPSIZE_NONE)
     gproperty('font-desc', str)
+    gproperty('column', str)
     #gproperty('title_pixmap', str)
 
     # This can be set in subclasses, to be able to allow custom
@@ -249,7 +252,11 @@ class Column(PropertyObject, gobject.GObject):
         if (self.data_type is bool and self.format):
             raise TypeError("format is not supported for boolean columns")
 
-        treeview_column = gtk.TreeViewColumn()
+        if not self.column:
+            treeview_column = gtk.TreeViewColumn()
+        else:
+            other_column = objectlist.get_column_by_name(self.column)
+            treeview_column = objectlist.get_treeview_column(other_column)
 
         renderer, renderer_prop = self._guess_renderer_for_type(model)
         if self.on_attach_renderer:
@@ -283,6 +290,7 @@ class Column(PropertyObject, gobject.GObject):
             cell_data_func = self.cell_data_func
 
         treeview_column.pack_start(renderer)
+
         treeview_column.set_cell_data_func(renderer, cell_data_func,
                                            (self, renderer_prop))
         treeview_column.set_visible(self.visible)
@@ -1118,6 +1126,9 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def _attach_column(self, column):
         treeview_column = column.attach(self)
+        if column.column:
+            return
+
         # we need to set our own widget because otherwise
         # __get_column_button won't work
 
@@ -1151,9 +1162,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             self._treeview.set_search_column(index)
             self._treeview.set_search_equal_func(
                 self._treeview_search_equal_func, column)
-
-        if column.expander:
-            self._treeview.set_expander_column(treeview_column)
 
         if column.tooltip:
             widget = self._get_column_button(treeview_column)
