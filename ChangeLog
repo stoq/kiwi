@@ -1,3 +1,10 @@
+2007-12-04  Johan Dahlin  <johan@gnome.org>
+
+	* AUTHORS (Maintainers): Add Brad.
+
+	* kiwi/ui/delegates.py (ProxySlaveDelegate): Add. Patch by
+	Brad Crittenden
+
 2007-11-22  Johan Dahlin  <johan@gnome.org>
 
 	* examples/list/stockicon.py (Fruit.__init__):

@@ -152,3 +152,44 @@ class ProxyDelegate(Delegate):
 
     def update(self, attribute):
         self.proxy.update(attribute)
+
+
+class ProxySlaveDelegate(GladeSlaveDelegate):
+    """A class that combines view, controller and proxy functionality into a
+    single package. It does not possess a top-level window, but is instead
+    intended to be plugged in to a View or Delegate using attach_slave()
+
+    @ivar model: the model
+    @ivar proxy: the proxy
+    """
+    def __init__(self, model, proxy_widgets=None, gladefile=None,
+                 toplevel_name=None, domain=None, keyactions=None):
+        """Creates a new Delegate.
+        @param model: instance to be attached
+        @param proxy_widgets:
+        The keyactions parameter is sent to L{kiwi.controllers.BaseController},
+        the rest are sent to L{kiwi.ui.views.BaseView}
+        """
+
+        GladeSlaveDelegate.__init__(self, gladefile, toplevel_name,
+                                    domain, keyactions)
+        self.model = model
+        self.proxy = self.add_proxy(model, proxy_widgets)
+        self.proxy.proxy_updated = self.proxy_updated
+
+    def set_model(self, model):
+        """
+        Set model.
+        @param model:
+        """
+        self.proxy.set_model(model)
+        self.model = model
+
+    def proxy_updated(self, widget, attribute, value):
+        # Can be overriden in subclasses
+        pass
+
+    def update(self, attribute):
+        self.proxy.update(attribute)
+
+
