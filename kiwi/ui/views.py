@@ -127,7 +127,7 @@ class SignalBroker(object):
             try:
                 if on_after == 'on':
                     signal_id = widget.connect(signal, methods[fname])
-                elif on_after == 'on':
+                elif on_after == 'after':
                     signal_id = widget.connect_after(signal, methods[fname])
                 else:
                     raise AssertionError
