@@ -1,3 +1,10 @@
+2008-01-17  Johan Dahlin  <johan@gnome.org>
+
+	* kiwi/ui/views.py (SignalBroker.on_widget_name__signal_name): 
+	After was broken, all signals were connected using after instead of
+	on by default. on -> connect, after -> connect_after now, really.
+	Based on patch by Arek Korbik
+
 2007-12-04  Johan Dahlin  <johan@gnome.org>
 
 	* AUTHORS (Maintainers): Add Brad.

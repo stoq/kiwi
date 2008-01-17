@@ -113,7 +113,7 @@ class SignalBroker(object):
             match = method_regex.match(fname)
             if match is None:
                 continue
-            after, w_name, signal = match.groups()
+            on_after, w_name, signal = match.groups()
             widget = getattr(view, w_name, None)
             if widget is None:
                 raise AttributeError("couldn't find widget %s in %s"
@@ -125,11 +125,13 @@ class SignalBroker(object):
             # Must use getattr; using the class method ends up with it
             # being called unbound and lacking, thus, "self".
             try:
-                if after:
+                if on_after == 'on':
+                    signal_id = widget.connect(signal, methods[fname])
+                elif on_after == 'on':
                     signal_id = widget.connect_after(signal, methods[fname])
                 else:
-                    signal_id = widget.connect(signal, methods[fname])
-            except TypeError:
+                    raise AssertionError
+            except TypeError, e:
                 raise TypeError("Widget %s doesn't provide a signal %s" % (
                                 widget.__class__, signal))
             self._autoconnected.setdefault(widget, []).append((
