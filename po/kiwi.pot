@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-06 13:11-0200\n"
+"POT-Creation-Date: 2008-01-31 10:49-0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -148,7 +148,7 @@ msgstr ""
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr ""
 
-#: ../kiwi/ui/objectlist.py:1938
+#: ../kiwi/ui/objectlist.py:1946
 msgid "Total:"
 msgstr ""
 

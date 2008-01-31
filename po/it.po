@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-06 13:11-0200\n"
+"POT-Creation-Date: 2008-01-31 10:49-0200\n"
 "PO-Revision-Date: 2007-11-11 11:11+0100\n"
 "Last-Translator: Sandro Bonazzola <sandrobonazzola@users.sourceforge.net>\n"
 "Language-Team: Sandro Bonazzola <sandrobonazzola@users.sourceforge.net>\n"
@@ -23,8 +23,7 @@ msgstr ""
 msgid "Currency"
 msgstr "Valuta"
 
-#: ../kiwi/currency.py:180
-#: ../kiwi/currency.py:197
+#: ../kiwi/currency.py:180 ../kiwi/currency.py:197
 #, python-format
 msgid "%s can not be converted to a currency"
 msgstr "%s non può essere convertito in una valuta"
@@ -63,8 +62,7 @@ msgstr "'%s' non può essere convertito in un booleano"
 msgid "Float"
 msgstr "Float"
 
-#: ../kiwi/datatypes.py:373
-#: ../kiwi/datatypes.py:393
+#: ../kiwi/datatypes.py:373 ../kiwi/datatypes.py:393
 #, python-format
 msgid "This field requires a number, not %r"
 msgstr "Questo campo richiede un numero, non %r"
@@ -73,8 +71,7 @@ msgstr "Questo campo richiede un numero, non %r"
 msgid "Decimal"
 msgstr "Decimale"
 
-#: ../kiwi/datatypes.py:422
-#: ../kiwi/datatypes.py:427
+#: ../kiwi/datatypes.py:422 ../kiwi/datatypes.py:427
 msgid "mm"
 msgstr "mm"
 
@@ -107,8 +104,7 @@ msgstr "hh:mm:ss"
 msgid "hh:mm:ss LL"
 msgstr "hh:mm:ss LL"
 
-#: ../kiwi/datatypes.py:526
-#: ../kiwi/datatypes.py:561
+#: ../kiwi/datatypes.py:526 ../kiwi/datatypes.py:561
 msgid "You cannot enter a year before 1900"
 msgstr "Non è possibile inserire un anno anteriore a 1900"
 
@@ -155,7 +151,7 @@ msgstr "Separatori di migliaia posizionati impropriamente: %r"
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr "Hai più di un punto decimale (\"%s\") nel tuo numero \"%s\""
 
-#: ../kiwi/ui/objectlist.py:1938
+#: ../kiwi/ui/objectlist.py:1946
 msgid "Total:"
 msgstr "Totale:"
 
@@ -291,4 +287,3 @@ msgstr "Questo campo è obbligatorio."
 #, python-format
 msgid "'%s' is not a valid object"
 msgstr "'%s' non è un oggetto valido"
-

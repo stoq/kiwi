@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-06 14:08-0200\n"
+"POT-Creation-Date: 2008-01-31 10:49-0200\n"
 "PO-Revision-Date: 2007-07-15 21:16+0100\n"
 "Last-Translator: Jarek Zgoda <jarek.zgoda@gmail.com>\n"
 "Language-Team: Polish\n"
@@ -150,7 +150,7 @@ msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr ""
 "Występuje więcej niż jeden separator dziesiętny (\"%s\") w liczbie \"%s\""
 
-#: ../kiwi/ui/objectlist.py:1938
+#: ../kiwi/ui/objectlist.py:1946
 msgid "Total:"
 msgstr "Ogółem:"
 

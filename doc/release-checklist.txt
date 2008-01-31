@@ -11,6 +11,7 @@ Bump version number:
   kiwi/__version__.py
   doc/howto.tex
   kiwi.spec
+  debian/changelog
 make docs
 make release
 Update ChangeLog, add marker

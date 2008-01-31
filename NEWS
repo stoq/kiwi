@@ -1,3 +1,10 @@
+kiwi-1.9.20 31-january-2008
+    - Italian Translation (Sandro Bonazolla, #3582).
+    - Added suport for Storm (Ali Afshar, #3408).
+    - Column:: Added new property column.
+    - ProxySlaveDelegate:: added. (Brad Crittenden).
+    - SignalBroker:: After was broken, all signals were connected using after
+      instead of on by default (basead on patch by Arek Korbik).
 kiwi-1.9.19 05-november-2007
     - _EasyComboBoxHelper:: method get_selected return None instead of
       raising AssertionError.
