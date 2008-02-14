@@ -5,6 +5,7 @@ kiwi-1.9.20 31-january-2008
     - ProxySlaveDelegate:: added. (Brad Crittenden).
     - SignalBroker:: After was broken, all signals were connected using after
       instead of on by default (basead on patch by Arek Korbik).
+
 kiwi-1.9.19 05-november-2007
     - _EasyComboBoxHelper:: method get_selected return None instead of
       raising AssertionError.
@@ -15,6 +16,7 @@ kiwi-1.9.19 05-november-2007
              try to sum Decimal with None.
       #3578: Add support for Proxy scale widget
              (Basead on patch by Mauricio Vieira)
+
 kiwi-1.9.18 11-september-2007
     - Polish translation updated
     - Added scale.py file (VScale and HScale support).
@@ -22,6 +24,7 @@ kiwi-1.9.18 11-september-2007
     - KiwiEntry::Focus simplified.
     - Bug fix:
       #2597: Kiwi comboentries should allow duplicated strings in the list.
+
 kiwi-1.9.17 29-agust-2007
     - Gazpacho:
       - Add gazpacho support for a scale widgets too.
@@ -36,6 +39,7 @@ kiwi-1.9.17 29-agust-2007
     - Prefill::Handle duplicate entries by adding (n) to the end of the name
     - Dialogs: New function based around gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER.
                (Based on patch by Paul Eipper (#3490))
+
 kiwi-1.9.16 16-july-2007
     - Polish translation (Jarek Zgoda)
     - ObjectList updates
