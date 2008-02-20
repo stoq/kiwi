@@ -1,3 +1,7 @@
+2008-02-20  Johan Dahlin  <johan@gnome.org>
+
+	* kiwi/ui/listdialog.py: PEP-8ify
+
 2008-02-13  Johan Dahlin  <johan@gnome.org>
 
 	* po/pl.po:

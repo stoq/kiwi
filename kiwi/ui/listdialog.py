@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 by Async Open Source
+# Copyright (C) 2007-2008 by Async Open Source
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License
@@ -17,8 +17,7 @@
 #
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
-"""
-A dialog to manipulate a sequence of objects
+"""A dialog to manipulate a sequence of objects
 """
 import gettext
 
@@ -32,9 +31,9 @@ from kiwi.utils import gsignal, quote
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
+
 class ListContainer(gtk.HBox):
-    """
-    A ListContainer is an L{ObjectList} with buttons to be able
+    """A ListContainer is an L{ObjectList} with buttons to be able
     to modify the content of the list.
     Depending on the list_mode, @see L{set_list_mode} you will
     have add, remove and edit buttons.
@@ -132,38 +131,33 @@ class ListContainer(gtk.HBox):
     # Public API
 
     def add_item(self, item):
-        """
-        Appends an item to the list
+        """Appends an item to the list
         @param item: item to append
         """
         self.list.append(item)
 
     def add_items(self, items):
-        """
-        Appends a list of items to the list
+        """Appends a list of items to the list
         @param items: items to add
         @type items: a sequence of items
         """
         self.list.extend(items)
 
     def remove_item(self, item):
-        """
-        Removes an item from the list
+        """Removes an item from the list
         @param item: item to remove
         """
         self.list.remove(item)
 
     def update_item(self, item):
-        """
-        Updates an item in the list.
+        """Updates an item in the list.
         You should call this if you change the object
         @param item: item to update
         """
         self.list.update(item)
 
     def set_list_type(self, list_type):
-        """
-        Sets the kind of list type.
+        """Sets the kind of list type.
         @param list_type:
         """
         if not isinstance(list_type, ListType):
@@ -211,9 +205,9 @@ class ListContainer(gtk.HBox):
 
 gobject.type_register(ListContainer)
 
+
 class ListDialog(gtk.Dialog):
-    """
-    A ListDialog implements a L{ListContainer} in a L{gtk.Dialog} with
+    """A ListDialog implements a L{ListContainer} in a L{gtk.Dialog} with
     a close button.
 
     It's a simple Base class which needs to be subclassed to provide interesting
@@ -285,36 +279,31 @@ class ListDialog(gtk.Dialog):
     # Public API
 
     def set_list_type(self, list_type):
-        """
-        Set list type.
+        """Set list type.
         @see: L{Listcontainer.set_list_type}
         """
         self.listcontainer.set_list_type(list_type)
 
     def add_list_item(self, item):
-        """
-        Add item to list.
+        """Add item to list.
         @see: L{Listcontainer.add_item}
         """
         self.listcontainer.add_item(item)
 
     def add_list_items(self, item):
-        """
-        Add items to list.
+        """Add items to list.
         @see: L{Listcontainer.add_items}
         """
         self.listcontainer.add_items(item)
 
     def remove_list_item(self, item):
-        """
-        Remove item from list.
+        """Remove item from list.
         @see: L{Listcontainer.remove_item}
         """
         self.listcontainer.remove_item(item)
 
     def update_list_item(self, item):
-        """
-        Update item in list.
+        """Update item in list.
         @see: L{Listcontainer.edit_item}
         """
         self.listcontainer.update_item(item)
@@ -328,8 +317,7 @@ class ListDialog(gtk.Dialog):
         return response == gtk.RESPONSE_OK
 
     def add_item(self):
-        """
-        This must be implemented in a subclass if you want to be able
+        """This must be implemented in a subclass if you want to be able
         to add items.
 
         It should return the model you want to add to the list or None
@@ -341,8 +329,7 @@ class ListDialog(gtk.Dialog):
             (type(self).__name__))
 
     def remove_item(self, item):
-        """
-        A subclass can implement this to get a notification after
+        """A subclass can implement this to get a notification after
         an item is removed.
         If it's not implemented L{default_remove} will be called
         @returns: False if the item should not be removed
@@ -350,8 +337,7 @@ class ListDialog(gtk.Dialog):
         return self.default_remove(item)
 
     def edit_item(self, item):
-        """
-        A subclass must implement this if you want to support editing
+        """A subclass must implement this if you want to support editing
         of objects.
         @returns: False if the item should not be removed
         """
@@ -360,13 +346,11 @@ class ListDialog(gtk.Dialog):
             (type(self).__name__))
 
     def selection_changed(self, selection):
-        """
-        This will be called when the selection changes in the ListDialog
+        """This will be called when the selection changes in the ListDialog
         @param selection: selected object or None if nothing is selected
         """
     def populate(self):
-        """
-        This will be called once after the user interface construction is done.
+        """This will be called once after the user interface construction is done.
         It should return a list of objects which will initially be inserted
         @returns: object to insert
         @rtype: sequence of objects
