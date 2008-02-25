@@ -313,9 +313,6 @@ class Column(PropertyObject, gobject.GObject):
             if not issubclass(self.data_type, bool):
                 raise TypeError("You can only use radio for boolean columns")
 
-        if self.expander:
-            self._treeview.set_expander_column(treeview_column)
-
         # typelist here may be none. It's okay; justify_columns will try
         # and use the specified justifications and if not present will
         # not touch the column. When typelist is not set,
@@ -1167,6 +1164,9 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             widget = self._get_column_button(treeview_column)
             if widget is not None:
                 self._tooltips.set_tip(widget, column.tooltip)
+
+        if column.expander:
+            self._treeview.set_expander_column(treeview_column)
 
     # selection methods
     def _select_and_focus_row(self, row_iter):
