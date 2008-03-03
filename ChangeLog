@@ -1,3 +1,8 @@
+2008-03-03  Johan Dahlin  <johan@gnome.org>
+
+	* po/es_ES: Added Spanish translation by
+	(Jose Martin)
+
 2008-02-20  Johan Dahlin  <johan@gnome.org>
 
 	* kiwi/ui/listdialog.py: PEP-8ify
