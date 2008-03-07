@@ -23,6 +23,7 @@
 
 import gobject
 import gtk
+from gtk import gdk
 from gtk import keysyms
 
 from kiwi.utils import gsignal, type_register
@@ -78,6 +79,19 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
 
             self._entry.connect('key-press-event',
                                 self._on_completion_key_press)
+
+            self._entry.connect('button-press-event', self._on_button_press_event)
+
+    def _on_button_press_event(self, window, event):
+        # If we're clicking outside of the window, close the popup
+        if not self._popup_window:
+            return
+
+        if (event.window != self._popup_window.window or
+            (tuple(self._popup_window.allocation.intersect(
+                   gdk.Rectangle(x=int(event.x), y=int(event.y),
+                                 width=1, height=1)))) == (0, 0, 0, 0)):
+            self.popdown()
 
     def _on_completion_timeout(self):
         if self._completion_timeout:
@@ -196,6 +210,25 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
 
         return False
 
+    def _popup_grab_window(self):
+        activate_time = 0L
+        if gdk.pointer_grab(self._entry.window, True,
+                            (gdk.BUTTON_PRESS_MASK |
+                             gdk.BUTTON_RELEASE_MASK |
+                             gdk.POINTER_MOTION_MASK),
+                             None, None, activate_time) == 0:
+            if gdk.keyboard_grab(self._entry.window, True, activate_time) == 0:
+                return True
+            else:
+                self._entry.window.get_display().pointer_ungrab(activate_time);
+                return False
+        return False
+
+    def _popup_ungrab_window(self):
+        activate_time = 0L
+        self._entry.window.get_display().pointer_ungrab(activate_time);
+        self._entry.window.get_display().keyboard_ungrab(activate_time);
+
     # Public API
     def complete(self):
         if not self._filter_model:
@@ -225,12 +258,14 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
             return
 
         self._popup_window.popup(text=None, filter=True)
+        self._popup_grab_window()
 
     def popdown(self):
         if not self._popup_window:
             return
 
         self._popup_window.popdown()
+        self._popup_ungrab_window()
 
     def set_model(self, model):
         if not model:

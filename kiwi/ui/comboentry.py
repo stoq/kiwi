@@ -375,6 +375,9 @@ class ComboEntry(gtk.HBox):
                            self._on_entry__scroll_event)
         self.entry.connect('key-press-event',
                            self._on_entry__key_press_event)
+        self.entry.connect('focus-out-event',
+                           self._on_entry__focus_out_event)
+
         self.pack_start(self.entry, True, True)
         self.entry.show()
 
@@ -406,6 +409,12 @@ class ComboEntry(gtk.HBox):
         self.entry.grab_focus()
 
     # Callbacks
+    def _on_entry__focus_out_event(self, widget, event):
+        # The popup window should be hidden if the entry loses the focus,
+        # unless we have a combo entry and the user clicked the toggle button
+        # to show the popup window
+        if not self._button.get_active():
+            self.popdown()
 
     def _on_entry_completion__match_selected(self, completion, model, iter):
         # the iter we receive is specific to the tree model filter used
