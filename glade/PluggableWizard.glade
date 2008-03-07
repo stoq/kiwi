@@ -14,8 +14,10 @@
                     <widget class="GtkVBox" id="vbox1">
                         <property name="visible">True</property>
                         <child>
-                            <widget class="kiwi+ui+widgets+label+Label" id="header_lbl">
+                            <widget class="ProxyLabel" id="header_lbl">
                                 <property name="data_type">str</property>
+                                <property name="model_attribute"></property>
+                                <property name="visible">True</property>
                             </widget>
                             <packing>
                                 <property name="expand">False</property>
@@ -33,12 +35,23 @@
                             </packing>
                         </child>
                         <child>
+                            <widget class="ProxyLabel" id="notification_lbl">
+                                <property name="data_type">str</property>
+                                <property name="model_attribute"></property>
+                                <property name="visible">True</property>
+                            </widget>
+                            <packing>
+                                <property name="expand">False</property>
+                                <property name="position">3</property>
+                            </packing>
+                        </child>
+                        <child>
                             <widget class="GtkHBox" id="hbox1">
-                                <property name="border_width">5</property>
-                                <property name="spacing">5</property>
                                 <property name="visible">True</property>
                                 <child>
                                     <widget class="GtkHButtonBox" id="buttonbox">
+                                        <property name="border_width">6</property>
+                                        <property name="spacing">6</property>
                                         <property name="visible">True</property>
                                         <child>
                                             <widget class="GtkButton" id="cancel_button">
@@ -50,14 +63,6 @@
                                             </widget>
                                         </child>
                                         <child>
-                                            <widget class="GtkFixed" id="fixed1">
-                                                <property name="visible">True</property>
-                                            </widget>
-                                            <packing>
-                                                <property name="position">1</property>
-                                            </packing>
-                                        </child>
-                                        <child>
                                             <widget class="GtkButton" id="previous_button">
                                                 <property name="is_focus">True</property>
                                                 <property name="label">gtk-go-back</property>
@@ -66,7 +71,7 @@
                                                 <property name="width_request">90</property>
                                             </widget>
                                             <packing>
-                                                <property name="position">2</property>
+                                                <property name="position">1</property>
                                             </packing>
                                         </child>
                                         <child>
@@ -78,34 +83,31 @@
                                                 <property name="width_request">90</property>
                                             </widget>
                                             <packing>
-                                                <property name="position">3</property>
+                                                <property name="position">2</property>
                                             </packing>
                                         </child>
                                         <child>
                                             <widget class="GtkButton" id="ok_button">
+                                                <property name="is_focus">True</property>
                                                 <property name="label">gtk-ok</property>
                                                 <property name="use_stock">True</property>
+                                                <property name="visible">True</property>
                                             </widget>
                                             <packing>
-                                                <property name="position">4</property>
+                                                <property name="position">3</property>
                                             </packing>
                                         </child>
                                     </widget>
+                                    <packing>
+                                        <property name="expand">False</property>
+                                        <property name="pack_type">end</property>
+                                    </packing>
                                 </child>
                             </widget>
                             <packing>
                                 <property name="expand">False</property>
-                                <property name="pack-type">end</property>
+                                <property name="pack_type">end</property>
                                 <property name="position">2</property>
-                            </packing>
-                        </child>
-                        <child>
-                            <widget class="kiwi+ui+widgets+label+Label" id="notification_lbl">
-                                <property name="data_type">str</property>
-                            </widget>
-                            <packing>
-                                <property name="expand">False</property>
-                                <property name="position">3</property>
                             </packing>
                         </child>
                     </widget>
