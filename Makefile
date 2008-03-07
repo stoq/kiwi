@@ -34,7 +34,7 @@ bdist:
 	python setup.py -q bdist_wininst
 
 release-tag:
-	svn cp -m "Tag $(VERSION)" . svn+ssh://svn.async.com.br/pub/kiwi/tags/$(VERSION)
+	svn cp -m "Tag $(VERSION)" . svn+ssh://async.com.br/pub/kiwi/tags/$(VERSION)
 
 upload-release: sdist bdist
 	scp dist/$(TARBALL) gnome.org:

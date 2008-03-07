@@ -1,3 +1,6 @@
+2008-03-07  Fabio Morbec  <fabio@async.com.br>
+	* Makefile: Correcting the svn address
+
 2008-03-07  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
