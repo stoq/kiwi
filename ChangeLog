@@ -1,3 +1,13 @@
+=== 1.9.21 ===
+2008-03-17 George Y. Kussumoto <george@async.com.br>
+	* NEWS:
+	* debian/changelog:
+	* doc/howto.tex:
+	* doc/release-checklist.txt:
+	* kiwi/__version__.py:
+	* kiwi.spec:
+	Release 1.9.21 
+
 2008-03-07  Fabio Morbec  <fabio@async.com.br>
 	* Makefile: Correcting the svn address
 

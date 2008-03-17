@@ -11,8 +11,8 @@ DEB_COMPRESS_EXCLUDE += .py .glade .gladep
 DEB_PYTHON_INSTALL_ARGS_ALL += --single-version-externally-managed
 
 binary-post-install/python-kiwi::
-	mv debian/python-kiwi/usr/share/python-support/python-kiwi/kiwi-${DEB_UPSTREAM_VERSION}-py*.egg-info \
-		debian/python-kiwi/usr/share/python-support/python-kiwi/kiwi-${DEB_UPSTREAM_VERSION}.egg-info
+#	mv debian/python-kiwi/usr/share/python-support/python-kiwi/kiwi-${DEB_UPSTREAM_VERSION}-py*.egg-info \
+#		debian/python-kiwi/usr/share/python-support/python-kiwi/kiwi-${DEB_UPSTREAM_VERSION}.egg-info
 
 build/python-kiwi::
 	cd doc && $(MAKE)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-31 10:49-0200\n"
+"POT-Creation-Date: 2008-03-17 13:28-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -148,8 +148,74 @@ msgstr ""
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr ""
 
+#: ../kiwi/ui/listdialog.py:312
+#, python-format
+msgid "Do you want to remove %s ?"
+msgstr ""
+
+#: ../kiwi/ui/dateentry.py:74
+msgid "_Today"
+msgstr ""
+
+#: ../kiwi/ui/dateentry.py:75
+msgid "_Cancel"
+msgstr ""
+
+#: ../kiwi/ui/dateentry.py:76
+msgid "_Select"
+msgstr ""
+
+#: ../kiwi/ui/wizard.py:211
+msgid "Finish"
+msgstr ""
+
+#: ../kiwi/ui/entry.py:599
+#, python-format
+msgid "'%s' is not a valid object"
+msgstr ""
+
 #: ../kiwi/ui/objectlist.py:1946
 msgid "Total:"
+msgstr ""
+
+#: ../kiwi/ui/search.py:66
+msgid "Any"
+msgstr ""
+
+#: ../kiwi/ui/search.py:73
+msgid "Today"
+msgstr ""
+
+#: ../kiwi/ui/search.py:81
+msgid "Yesterday"
+msgstr ""
+
+#: ../kiwi/ui/search.py:89
+msgid "Last week"
+msgstr ""
+
+#: ../kiwi/ui/search.py:97
+msgid "Last month"
+msgstr ""
+
+#: ../kiwi/ui/search.py:197
+msgid "From:"
+msgstr ""
+
+#: ../kiwi/ui/search.py:207
+msgid "To:"
+msgstr ""
+
+#: ../kiwi/ui/search.py:218
+msgid "Custom day"
+msgstr ""
+
+#: ../kiwi/ui/search.py:219
+msgid "Custom interval"
+msgstr ""
+
+#: ../kiwi/ui/search.py:561
+msgid "Search:"
 msgstr ""
 
 #: ../kiwi/ui/dialogs.py:101
@@ -205,67 +271,6 @@ msgstr ""
 msgid "Password:"
 msgstr ""
 
-#: ../kiwi/ui/wizard.py:211
-msgid "Finish"
-msgstr ""
-
-#: ../kiwi/ui/listdialog.py:323
-#, python-format
-msgid "Do you want to remove %s ?"
-msgstr ""
-
-#: ../kiwi/ui/search.py:66
-msgid "Any"
-msgstr ""
-
-#: ../kiwi/ui/search.py:73
-msgid "Today"
-msgstr ""
-
-#: ../kiwi/ui/search.py:81
-msgid "Yesterday"
-msgstr ""
-
-#: ../kiwi/ui/search.py:89
-msgid "Last week"
-msgstr ""
-
-#: ../kiwi/ui/search.py:97
-msgid "Last month"
-msgstr ""
-
-#: ../kiwi/ui/search.py:197
-msgid "From:"
-msgstr ""
-
-#: ../kiwi/ui/search.py:207
-msgid "To:"
-msgstr ""
-
-#: ../kiwi/ui/search.py:218
-msgid "Custom day"
-msgstr ""
-
-#: ../kiwi/ui/search.py:219
-msgid "Custom interval"
-msgstr ""
-
-#: ../kiwi/ui/search.py:561
-msgid "Search:"
-msgstr ""
-
-#: ../kiwi/ui/dateentry.py:74
-msgid "_Today"
-msgstr ""
-
-#: ../kiwi/ui/dateentry.py:75
-msgid "_Cancel"
-msgstr ""
-
-#: ../kiwi/ui/dateentry.py:76
-msgid "_Select"
-msgstr ""
-
 #: ../kiwi/ui/proxywidget.py:65
 #, python-format
 msgid "Could not load image: %s"
@@ -278,9 +283,4 @@ msgstr ""
 
 #: ../kiwi/ui/proxywidget.py:342
 msgid "This field is mandatory"
-msgstr ""
-
-#: ../kiwi/ui/entry.py:599
-#, python-format
-msgid "'%s' is not a valid object"
 msgstr ""
