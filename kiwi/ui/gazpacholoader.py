@@ -215,7 +215,8 @@ class DataTypeAdaptor(PropertyCustomEditor):
 
     def _editor_edit(self, combo, proxy, model):
         active_iter = combo.get_active_iter()
-        proxy.set_value(model[active_iter][1])
+	if active_iter:
+            proxy.set_value(model[active_iter][1])
 
 class SpinBtnDataType(DataTypeAdaptor):
     widget_type = ProxySpinButton

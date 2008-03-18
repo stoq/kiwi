@@ -1,3 +1,11 @@
+2008-03-18  Johan Dahlin  <johan@gnome.org>
+
+	* kiwi/ui/gazpacholoader.py:
+	Speculative fix for:
+	File kiwi/ui/gazpacholoader.py, line 218, in _editor_edit
+	    proxy.set_value(model[active_iter][1])
+	TypeError: could not parse subscript as a tree path
+
 === 1.9.21 ===
 2008-03-17 George Y. Kussumoto <george@async.com.br>
 	* NEWS:
