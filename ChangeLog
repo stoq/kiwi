@@ -1,3 +1,9 @@
+2008-04-08  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/listdialog.py:
+	Rename ListDialog to ListSlave and add subclass
+	which joins a gtk.Dialog and a ListSlave
+
 2008-03-18  Johan Dahlin  <johan@gnome.org>
 
 	* kiwi/ui/gazpacholoader.py:

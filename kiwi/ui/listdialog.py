@@ -25,6 +25,7 @@ import gobject
 import gtk
 
 from kiwi.enums import ListType
+from kiwi.ui.delegates import SlaveDelegate
 from kiwi.ui.dialogs import yesno
 from kiwi.ui.objectlist import ObjectList
 from kiwi.utils import gsignal, quote
@@ -206,28 +207,7 @@ class ListContainer(gtk.HBox):
 gobject.type_register(ListContainer)
 
 
-class ListDialog(gtk.Dialog):
-    """A ListDialog implements a L{ListContainer} in a L{gtk.Dialog} with
-    a close button.
-
-    It's a simple Base class which needs to be subclassed to provide interesting
-    functionality.
-
-    Example:
-    >>> class MyListDialog(ListDialog):
-    ...
-    ...     columns = [Column('name')]
-    ...     list_type = ListType.UNEDITABLE
-    ...
-    ...     def populate(self):
-    ...         return [Settable(name='test')]
-    ...
-    ...     def add_item(self):
-    ...         return Settable(name="added")
-
-    >>> dialog = MyListDialog()
-    >>> dialog.run()
-    """
+class ListSlave(SlaveDelegate):
     columns = None
     list_type = ListType.NORMAL
 
@@ -236,8 +216,6 @@ class ListDialog(gtk.Dialog):
         if not columns:
             raise ValueError("columns cannot be empty")
 
-        gtk.Dialog.__init__(self)
-        self.add_button(gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE)
         self.listcontainer = ListContainer(columns)
         self.listcontainer.connect(
             'add-item', self._on_listcontainer__add_item)
@@ -249,10 +227,11 @@ class ListDialog(gtk.Dialog):
             'selection-changed', self._on_listcontainer__selection_changed)
 
         self.listcontainer.set_border_width(6)
-        self.vbox.pack_start(self.listcontainer)
         self.listcontainer.show()
 
         self.listcontainer.add_items(self.populate())
+
+        SlaveDelegate.__init__(self, toplevel=self.listcontainer)
 
     def _on_listcontainer__add_item(self, listcontainer):
         try:
@@ -356,3 +335,33 @@ class ListDialog(gtk.Dialog):
         @rtype: sequence of objects
         """
         return []
+
+
+class ListDialog(gtk.Dialog, ListSlave):
+    """A ListDialog implements a L{ListContainer} in a L{gtk.Dialog} with
+    a close button.
+
+    It's a simple Base class which needs to be subclassed to provide interesting
+    functionality.
+
+    Example:
+    >>> class MyListDialog(ListDialog):
+    ...
+    ...     columns = [Column('name')]
+    ...     list_type = ListType.UNEDITABLE
+    ...
+    ...     def populate(self):
+    ...         return [Settable(name='test')]
+    ...
+    ...     def add_item(self):
+    ...         return Settable(name="added")
+
+    >>> dialog = MyListDialog()
+    >>> dialog.run()
+    """
+    def __init__(self, columns=None):
+        gtk.Dialog.__init__(self)
+        self.add_button(gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE)
+
+        ListSlave.__init__(self, columns)
+        self.vbox.pack_start(self.listcontainer)
