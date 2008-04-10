@@ -290,7 +290,14 @@ class Column(PropertyObject, gobject.GObject):
         if self.cell_data_func:
             cell_data_func = self.cell_data_func
 
-        treeview_column.pack_start(renderer)
+        # This is a bit hackish, we should probably
+        # add a proper api to determine the expanding of
+        # individual cells.
+        if self.data_type == gtk.gdk.Pixbuf:
+            expand = False
+        else:
+            expand = True
+        treeview_column.pack_start(renderer, expand)
 
         treeview_column.set_cell_data_func(renderer, cell_data_func,
                                            (self, renderer_prop))

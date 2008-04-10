@@ -1,3 +1,8 @@
+2008-04-10  Johan Dahlin  <johan@gnome.org>
+
+	* kiwi/ui/objectlist.py (Column.attach): Set expand to False
+	for pixbuf columns.
+
 2008-04-10  Ali Afshar <aafshar@gmail.com>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
