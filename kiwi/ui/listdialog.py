@@ -182,6 +182,10 @@ class ListContainer(gtk.HBox):
                                gtk.PACK_START)
         self._list_type = list_type
 
+    def clear(self):
+        """Removes all the items in the list"""
+        self.list.clear()
+
     # Callbacks
 
     def _on_list__selection_changed(self, list, selection):
@@ -229,7 +233,7 @@ class ListSlave(SlaveDelegate):
         self.listcontainer.set_border_width(6)
         self.listcontainer.show()
 
-        self.listcontainer.add_items(self.populate())
+        self.refresh()
 
         SlaveDelegate.__init__(self, toplevel=self.listcontainer)
 
@@ -286,6 +290,15 @@ class ListSlave(SlaveDelegate):
         @see: L{Listcontainer.edit_item}
         """
         self.listcontainer.update_item(item)
+
+    def refresh(self):
+        """Updates all the items in the list.
+        Clears the list and calls "populate()"
+        """
+        self.listcontainer.clear()
+        self.listcontainer.add_items(self.populate())
+
+    # Overridables
 
     def default_remove(self, item):
         response = yesno(_('Do you want to remove %s ?') % (quote(str(item)),),

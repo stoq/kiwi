@@ -1,5 +1,8 @@
 2008-04-09  Johan Dahlin  <johan@gnome.org>
 
+	* kiwi/ui/listdialog.py (ListSlave.__init__): 
+	Add refresh() and clear() methods.
+
 	* kiwi/ui/objectlist.py (ObjectList._setup_columns): Fix error message
 	so it actually shows something useful.
 	Set context header menu text to the capitalized attribute name if the
