@@ -1107,12 +1107,12 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                 if sorted:
                     raise ValueError("Can't make column %s sorted, column"
                                      " %s is already set as sortable" % (
-                        column.attribute, sorted.attribute))
-                sorted = column.sorted
+                        column.attribute, sorted))
+                sorted = column.attribute
             if column.expand:
                 expand = True
 
-        self._sortable = self._sortable or sorted
+        self._sortable = self._sortable or bool(sorted)
 
         for column in columns:
             self._attach_column(column)
