@@ -1,8 +1,10 @@
 2008-04-09  Johan Dahlin  <johan@gnome.org>
 
 	* kiwi/ui/objectlist.py (ObjectList._setup_columns): Fix error message
-	so it actually shows something useful
-
+	so it actually shows something useful.
+	Set context header menu text to the capitalized attribute name if the
+	the normal title is empty.
+	
 2008-04-08  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/listdialog.py:

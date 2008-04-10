@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2001-2007 Async Open Source
+# Copyright (C) 2001-2008 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -258,6 +258,7 @@ class Column(PropertyObject, gobject.GObject):
             other_column = objectlist.get_column_by_name(self.column)
             treeview_column = objectlist.get_treeview_column(other_column)
 
+        treeview_column.attribute = self.attribute
         renderer, renderer_prop = self._guess_renderer_for_type(model)
         if self.on_attach_renderer:
             self.on_attach_renderer(renderer)
@@ -507,7 +508,7 @@ class Column(PropertyObject, gobject.GObject):
 
     def as_string(self, data):
         data_type = self.data_type
-        if data is None:
+        if data is None and data_type != gdk.Pixbuf:
             text = ''
         elif self.format_func:
             text = self.format_func(data)
@@ -641,6 +642,8 @@ class _ContextMenu(gtk.Menu):
             if not header_widget:
                 continue
             title = header_widget.get_text()
+            if not title.strip():
+                title = column.attribute.capitalize()
 
             menuitem = gtk.CheckMenuItem(title)
             menuitem.set_active(column.get_visible())
