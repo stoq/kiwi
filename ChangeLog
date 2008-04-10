@@ -1,3 +1,11 @@
+2008-04-10  Ali Afshar <aafshar@gmail.com>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/search_sqlalch.py:
+	* kiwi/db/sqlalch.py:
+	Add SQLAlchemy support in the search interface. Fixes #3668
+
 2008-04-10  Johan Dahlin  <jdahlin@async.com.br>
 
 	* gazpacho-plugin/kiwiwidgets.xml:
