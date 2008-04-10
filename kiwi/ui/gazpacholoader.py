@@ -51,6 +51,7 @@ from kiwi.ui.hyperlink import HyperLink
 from kiwi.ui.objectlist import Column, ObjectList, ObjectTree
 from kiwi.ui.widgets.button import ProxyButton
 from kiwi.ui.widgets.checkbutton import ProxyCheckButton
+from kiwi.ui.widgets.colorbutton import ProxyColorButton
 from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox, \
      ProxyComboBoxEntry
 from kiwi.ui.widgets.entry import ProxyDateEntry, ProxyEntry
@@ -321,6 +322,7 @@ def register_widgets():
         (ProxyEntry, EntryDataType, DataType),
         (ProxyDateEntry, None, DateOnlyDataType),
         (ProxyButton, ButtonDataType, DataType),
+        (ProxyColorButton, ButtonDataType, DataType),
         (ProxyCheckButton, None, BoolOnlyDataType),
         (ProxyLabel, LabelDataType, DataType),
         (ProxyComboBox, ComboBoxDataType, DataType),
