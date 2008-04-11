@@ -1,3 +1,8 @@
+2008-04-11  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/widgets/colorbutton.py:
+	Store colors as strings instead of gdk.Color instances in the model.
+
 2008-04-10  Johan Dahlin  <johan@gnome.org>
 
 	* kiwi/ui/objectlist.py (Column.attach): Set expand to False

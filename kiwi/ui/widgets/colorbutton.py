@@ -17,6 +17,7 @@
 
 import gtk
 
+from kiwi.datatypes import ValueUnset
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import PropertyObject, gsignal, type_register
 
@@ -24,11 +25,11 @@ from kiwi.utils import PropertyObject, gsignal, type_register
 class ProxyColorButton(PropertyObject, gtk.ColorButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyColorButton'
 
-    allowed_data_types = object,
+    allowed_data_types = str,
 
     def __init__(self, color=gtk.gdk.Color(0, 0, 0)):
         ProxyWidgetMixin.__init__(self)
-        PropertyObject.__init__(self, data_type=object)
+        PropertyObject.__init__(self, data_type=str)
         gtk.ColorButton.__init__(self, color)
 
     gsignal('color-set', 'override')
@@ -37,10 +38,16 @@ class ProxyColorButton(PropertyObject, gtk.ColorButton, ProxyWidgetMixin):
         self.chain()
 
     def read(self):
-        return self.get_color()
+        color = self.get_color()
+        return '#%02x%02x%02x' % (color.red / 256,
+                                  color.green / 256,
+                                  color.blue / 256)
 
     def update(self, data):
-        self.set_color(data)
+        if data is ValueUnset or data is None:
+            data = 'black'
+        color = gtk.gdk.color_parse(data)
+        self.set_color(color)
 
 
 type_register(ProxyColorButton)
