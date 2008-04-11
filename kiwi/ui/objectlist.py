@@ -321,13 +321,6 @@ class Column(PropertyObject, gobject.GObject):
             if not issubclass(self.data_type, bool):
                 raise TypeError("You can only use radio for boolean columns")
 
-        # typelist here may be none. It's okay; justify_columns will try
-        # and use the specified justifications and if not present will
-        # not touch the column. When typelist is not set,
-        # append/add_list have a chance to fix up the remaining
-        # justification by looking at the first instance's data.
-#        self._justify_columns(columns, typelist)
-
         self.treeview_column = treeview_column
 
         return treeview_column
