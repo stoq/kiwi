@@ -1,3 +1,7 @@
+2008-04-14  Johan Dahlin  <johan@gnome.org>
+
+	* kiwi/ui/objectlist.py (Column.attach): Do not expand stock columns.
+
 2008-04-11  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/widgets/colorbutton.py:

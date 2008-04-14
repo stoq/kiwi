@@ -293,7 +293,7 @@ class Column(PropertyObject, gobject.GObject):
         # This is a bit hackish, we should probably
         # add a proper api to determine the expanding of
         # individual cells.
-        if self.data_type == gtk.gdk.Pixbuf:
+        if self.data_type == gtk.gdk.Pixbuf or self.use_stock:
             expand = False
         else:
             expand = True
