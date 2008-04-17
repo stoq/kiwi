@@ -1,3 +1,12 @@
+2008-04-17  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/listdialog.py:
+	* kiwi/ui/objectlist.py:
+	* kiwi/ui/widgets/contextmenu.py:
+	Add support for context menus in objectlist
+
 2008-04-14  Johan Dahlin  <johan@gnome.org>
 
 	* kiwi/ui/objectlist.py (Column.attach): Do not expand stock columns.

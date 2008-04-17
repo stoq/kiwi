@@ -42,6 +42,7 @@ from kiwi.enums import Alignment
 from kiwi.log import Logger
 from kiwi.python import enum, slicerange
 from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
+from kiwi.ui.widgets.contextmenu import ContextMenu
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
@@ -56,6 +57,7 @@ def str2enum(value_name, enum_class):
 def str2bool(value, from_string=converter.from_string):
     "converts a boolean to a enum"
     return from_string(bool, value)
+
 
 class Column(PropertyObject, gobject.GObject):
     """
@@ -857,6 +859,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         PropertyObject.__init__(self)
 
         self.set_selection_mode(mode)
+        self._context_menu = None
 
     # Python list object implementation
     # These methods makes the kiwi list behave more or less
@@ -1021,6 +1024,16 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         unused_sort_col_id = len(self._columns)
         self._model.set_sort_func(unused_sort_col_id, _sort_func)
         self._model.set_sort_column_id(unused_sort_col_id, order)
+
+    def set_context_menu(self, menu):
+        """Sets a context-menu (eg, when you right click) for the list.
+        @param menu: context menu
+        @type menu: ContextMenu
+        """
+
+        if not isinstance(menu, ContextMenu):
+            raise TypeError
+        self._context_menu = menu
 
     # Properties
 
@@ -1276,6 +1289,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         if event.type == gtk.gdk.BUTTON_PRESS:
             if event.button == 3:
                 signal_name = 'right-click'
+                if self._context_menu:
+                    self._context_menu.popup(event.button, event.time)
             elif event.button == 2:
                 signal_name = 'middle-click'
             else:
