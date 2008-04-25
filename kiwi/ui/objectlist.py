@@ -36,7 +36,7 @@ import gtk
 from gtk import gdk
 
 from kiwi.accessor import kgetattr
-from kiwi.datatypes import converter, number, Decimal
+from kiwi.datatypes import converter, number, Decimal, ValidationError
 from kiwi.currency import currency # after datatypes
 from kiwi.enums import Alignment
 from kiwi.log import Logger
@@ -115,6 +115,9 @@ class Column(PropertyObject, gobject.GObject):
       - B{radio}: bool I{False}
         -  If true render the column as a radio instead of toggle.
            Only applicable for columns with boolean data types.
+      - B{spin_adjustment}: gtk.Adjustment I{None}
+        -  A gtk.Adjustment instance. If set, render the column cell as
+           a spinbutton.
       - B{use_stock}: bool I{False}
         - If true, this will be rendered as pixbuf from the value which
           should be a stock id.
@@ -152,6 +155,7 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('editable', bool, default=False)
     gproperty('searchable', bool, default=False)
     gproperty('radio', bool, default=False)
+    gproperty('spin_adjustment', object)
     gproperty('use-stock', bool, default=False)
     gproperty('use-markup', bool, default=False)
     gproperty('icon-size', gtk.IconSize, default=gtk.ICON_SIZE_MENU)
@@ -232,6 +236,12 @@ class Column(PropertyObject, gobject.GObject):
                     "editable cannot be disabled when using editable_attribute")
             kwargs['editable'] = True
 
+        if 'spin_adjustment' in kwargs:
+            adjustment = kwargs.get('spin_adjustment')
+            if not isinstance(adjustment, gtk.Adjustment):
+                raise TypeError(
+                    "spin_adjustment must be a gtk.Adjustment instance")
+
         PropertyObject.__init__(self, **kwargs)
         gobject.GObject.__init__(self, attribute=attribute)
 
@@ -286,6 +296,8 @@ class Column(PropertyObject, gobject.GObject):
             cell_data_func = self._cell_data_pixbuf_func
         elif issubclass(self.data_type, enum):
             cell_data_func = self._cell_data_combo_func
+        elif issubclass(self.data_type, number) and self.spin_adjustment:
+            cell_data_func = self._cell_data_spin_func
         else:
             cell_data_func = self._cell_data_text_func
 
@@ -322,6 +334,11 @@ class Column(PropertyObject, gobject.GObject):
         if self.radio:
             if not issubclass(self.data_type, bool):
                 raise TypeError("You can only use radio for boolean columns")
+
+        if self.spin_adjustment:
+            if not issubclass(self.data_type, number):
+                raise TypeError("You can only use spin_adjustment for "
+                                "number datatypes")
 
         self.treeview_column = treeview_column
 
@@ -372,6 +389,16 @@ class Column(PropertyObject, gobject.GObject):
                 renderer.connect('edited', self._on_renderer_combo__edited,
                                  model, self.attribute, self)
             prop = 'model'
+        elif issubclass(data_type, number) and self.spin_adjustment:
+            renderer = gtk.CellRendererSpin()
+            if not self.editable:
+                raise TypeError("spin_adjustment columns must be editable")
+
+            renderer.set_property('editable', True)
+            renderer.set_property('adjustment', self.spin_adjustment)
+            renderer.connect('edited', self._on_renderer_spin__edited,
+                             model, self.attribute, self, self.from_string)
+            prop = 'text'
         elif issubclass(data_type, (datetime.date, datetime.time,
                                     basestring, number,
                                     currency)):
@@ -435,6 +462,15 @@ class Column(PropertyObject, gobject.GObject):
         text = column.as_string(data)
         renderer.set_property('text', text.lower().capitalize())
 
+    def _cell_data_spin_func(self, tree_column, renderer, model, treeiter,
+                             (column, renderer_prop)):
+        "To render the data of a cell renderer spin"
+        row = model[treeiter]
+        data = column.get_attribute(row[COL_MODEL],
+                                    column.attribute, None)
+        text = column.as_string(data)
+        renderer.set_property(renderer_prop, text)
+
     def _on_renderer__toggled(self, renderer, path, column):
         setattr(self._model[path][COL_MODEL], column.attribute,
                 not renderer.get_active())
@@ -476,6 +512,17 @@ class Column(PropertyObject, gobject.GObject):
         obj = model[path][COL_MODEL]
         value = from_string(text)
         setattr(obj, attr, value)
+        self._objectlist.emit('cell-edited', obj, attr)
+
+    def _on_renderer_spin__edited(self, renderer, path, value,
+                                  model, attr, column, from_string):
+        obj = model[path][COL_MODEL]
+        try:
+            value_model = from_string(value)
+        except ValidationError:
+            return
+
+        setattr(obj, attr, value_model)
         self._objectlist.emit('cell-edited', obj, attr)
 
     def _on_renderer_combo__edited(self, renderer, path, text,
@@ -528,6 +575,26 @@ class Column(PropertyObject, gobject.GObject):
             text = data
 
         return text
+
+    def set_spinbutton_precision_digits(self, digits):
+        """Set the number of precision digits to be shown in the
+        spinbutton.
+
+        @param digits: the number of precision digits to be set in
+        spinbutton
+        @type digits: int
+        """
+        if not self.spin_adjustment:
+            raise TypeError("You can not set spinbutton precision "
+                            "digits for a column without a spinbutton")
+        if not isinstance(digits, int):
+            raise TypeError("The number of precision digits to be set in "
+                            "the spinbutton must be an integer, %s "
+                            "found" % type(digits))
+
+        renderer = self.treeview_column.get_cell_renderers()[0]
+        renderer.set_property('digits', digits)
+
 
 
 class SequentialColumn(Column):
@@ -1393,6 +1460,18 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             raise ValueError
 
         return column.treeview_column
+
+    def set_spinbutton_digits(self, column_name, digits):
+        """Set the number of precision digits used by the spinbutton in
+        a column.
+
+        @param column_name: the column name which has the spinbutton
+        @type column_name: str
+        @param digits: a number specifying the precision digits
+        @type digits: int
+        """
+        column = self.get_column_by_name(column_name)
+        column.set_spinbutton_precision_digits(digits)
 
     def grab_focus(self):
         """
