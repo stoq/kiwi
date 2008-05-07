@@ -1915,6 +1915,42 @@ class ObjectTree(ObjectList):
         self.get_treeview().collapse_row(
             self._model[treeiter].path)
 
+    def get_root(self, instance):
+        """
+        This method returns the root object of a certain instance. If
+        the instance is the root, then returns the given instance.
+        @param instance: an instance which we want the root object
+        """
+        objid = id(instance)
+        if not objid in self._iters:
+            raise ValueError("instance %r is not in the list" % instance)
+
+        instance_iter = self._iters[objid]
+        if self._model.iter_depth(instance_iter) == 0:
+            return self._model[instance_iter][COL_MODEL]
+
+        for iter in self._iters.values():
+            if self._model.is_ancestor(iter, instance_iter):
+                return self.get_root(self._model[iter][COL_MODEL])
+
+    def get_descendants(self, root_instance):
+        """
+        This method returns the descendants objects of a certain instance.
+        If the given instance is a leaf, then return an empty sequence.
+        @param root_instance: an instance which we want the descendants
+        @returns: a sequence of descendants objects
+        """
+        objid = id(root_instance)
+        if not objid in self._iters:
+            raise ValueError("instance %r is not in the list" % root_instance)
+
+        root_instance_iter = self._iters[objid]
+        children = []
+        for iter in self._iters.values():
+            if self._model.is_ancestor(root_instance_iter, iter):
+                children.append(self._model[iter][COL_MODEL])
+        return children
+
     def _on_treeview__row_expanded(self, treeview, treeiter, treepath):
         self.emit('row-expanded', self.get_model()[treeiter][COL_MODEL])
 

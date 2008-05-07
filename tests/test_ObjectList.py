@@ -4,7 +4,7 @@ import unittest
 import gobject
 import gtk
 
-from kiwi.ui.objectlist import ObjectList, Column
+from kiwi.ui.objectlist import ObjectList, ObjectTree, Column
 from kiwi.python import Settable
 
 from utils import refresh_gui
@@ -172,6 +172,50 @@ class DataTests(unittest.TestCase):
 
         self.list.remove(first)
         self.assertRaises(ValueError, self.list.select, first)
+
+class TreeDataTests(unittest.TestCase):
+    def setUp(self):
+        self.win = gtk.Window()
+        self.win.set_default_size(400, 400)
+        self.tree = ObjectTree([Column('name'), Column('age')])
+        self.win.add(self.tree)
+        refresh_gui()
+
+    def tearDown(self):
+        self.win.destroy()
+        del self.win
+
+    def testGetRoot(self):
+        root = Person('Big Kahuna', 7000)
+        child1 = Person('Craf Kahuna', 200)
+        child2 = Person('Sorcerer Kahuna', 150)
+
+        self.tree.append(None, root)
+        self.tree.append(root, child1)
+        self.tree.append(root, child2)
+
+        test_root = self.tree.get_root(child1)
+        self.assertEqual(test_root, root)
+        test_root = self.tree.get_root(child2)
+        self.assertEqual(test_root, root)
+        test_root = self.tree.get_root(root)
+        self.assertEqual(test_root, root)
+
+    def testGetDescendants(self):
+        root = Person('Big Kahuna', 7000)
+        child1 = Person('Craf Kahuna', 200)
+        child2 = Person('Sorcerer Kahuna', 150)
+
+        self.tree.append(None, root)
+        self.tree.append(root, child1)
+        self.tree.append(child1, child2)
+
+        test_descendants = self.tree.get_descendants(root)
+        self.assertEqual(test_descendants, [child1, child2])
+        test_descendants = self.tree.get_descendants(child1)
+        self.assertEqual(test_descendants, [child2])
+        test_descendants = self.tree.get_descendants(child2)
+        self.assertEqual(test_descendants, [])
 
 class TestSignals(unittest.TestCase):
     def setUp(self):
