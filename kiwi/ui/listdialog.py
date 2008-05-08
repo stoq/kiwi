@@ -136,7 +136,7 @@ class ListContainer(gtk.HBox):
     def _set_child_packing(self, padding):
         expand = self._orientation == gtk.ORIENTATION_HORIZONTAL
 
-        self.set_child_packing(self._vbox, expand, False, padding,
+        self.set_child_packing(self._vbox, expand, True, padding,
                                gtk.PACK_START)
 
     def _add_item(self):
@@ -187,6 +187,10 @@ class ListContainer(gtk.HBox):
         self.list.update(item)
 
     def default_remove(self, item):
+        """Asks the user confirmation for removal of an item.
+        @param item: a description of the item that will be removed
+        @returns: True if the user confirm the removal, False otherwise
+        """
         response = yesno(_('Do you want to remove %s ?') % (quote(str(item)),),
                          parent=None,
                          default=gtk.RESPONSE_OK,
