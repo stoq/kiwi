@@ -16,6 +16,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
+#            George Kussumoto <george@async.com.br>
 #
 """A dialog to manipulate a sequence of objects
 """
@@ -64,15 +65,21 @@ class ListContainer(gtk.HBox):
     gsignal('edit-item', object, retval=bool)
     gsignal('selection-changed', object)
 
-    def __init__(self, columns):
+    def __init__(self, columns, orientation=gtk.ORIENTATION_VERTICAL):
         """
         Create a new ListContainer object.
         @param columns: columns for the L{kiwi.ui.objectlist.ObjectList}
         @type columns: a list of L{kiwi.ui.objectlist.Columns}
+        @param orientation: the position where the buttons will be
+            placed: at the right (vertically) or at the bottom (horizontally)
+            of the list. Defaults to the right of the list.
+        @type: gtk.ORIENTATION_HORIZONTAL or gtk.ORIENTATION_VERTICAL
         """
         self._list_type = None
 
         gtk.HBox.__init__(self)
+
+        self._orientation = orientation
 
         self._create_ui(columns)
         self.set_list_type(ListType.NORMAL)
@@ -85,30 +92,52 @@ class ListContainer(gtk.HBox):
                           self._on_list__selection_changed)
         self.list.connect('row-activated',
                           self._on_list__row_activated)
-        self.pack_start(self.list)
-        self.list.show()
 
-        vbox = gtk.VBox(spacing=6)
-        self.pack_start(vbox, expand=False, padding=6)
-        vbox.show()
-        self._vbox = vbox
+        self.add_button = gtk.Button(stock=gtk.STOCK_ADD)
+        self.add_button.connect('clicked', self._on_add_button__clicked)
 
-        add_button = gtk.Button(stock=gtk.STOCK_ADD)
-        add_button.connect('clicked', self._on_add_button__clicked)
-        vbox.pack_start(add_button, expand=False)
-        self.add_button = add_button
+        self.remove_button = gtk.Button(stock=gtk.STOCK_REMOVE)
+        self.remove_button.set_sensitive(False)
+        self.remove_button.connect('clicked', self._on_remove_button__clicked)
 
-        remove_button = gtk.Button(stock=gtk.STOCK_REMOVE)
-        remove_button.set_sensitive(False)
-        remove_button.connect('clicked', self._on_remove_button__clicked)
-        vbox.pack_start(remove_button, expand=False)
-        self.remove_button = remove_button
+        self.edit_button = gtk.Button(stock=gtk.STOCK_EDIT)
+        self.edit_button.set_sensitive(False)
+        self.edit_button.connect('clicked', self._on_edit_button__clicked)
 
-        edit_button = gtk.Button(stock=gtk.STOCK_EDIT)
-        edit_button.set_sensitive(False)
-        edit_button.connect('clicked', self._on_edit_button__clicked)
-        vbox.pack_start(edit_button, expand=False)
-        self.edit_button = edit_button
+        self._vbox = gtk.VBox(spacing=6)
+
+        if self._orientation == gtk.ORIENTATION_VERTICAL:
+            self.pack_start(self.list)
+            self.list.show()
+            self._add_buttons_to_box(self._vbox)
+            self._pack_vbox()
+        elif self._orientation == gtk.ORIENTATION_HORIZONTAL:
+            self._vbox.pack_start(self.list)
+            self.list.show()
+            hbox = gtk.HBox(spacing=6)
+            self._add_buttons_to_box(hbox)
+            self._vbox.pack_start(hbox, expand=False)
+            hbox.show()
+            self._pack_vbox()
+        else:
+            raise TypeError(
+                "buttons_orientation must be gtk.ORIENTATION_VERTICAL "
+                " or gtk.ORIENTATION_HORIZONTAL")
+
+    def _add_buttons_to_box(self, box):
+        box.pack_start(self.add_button, expand=False)
+        box.pack_start(self.remove_button, expand=False)
+        box.pack_start(self.edit_button, expand=False)
+
+    def _pack_vbox(self):
+        self.pack_start(self._vbox, expand=False, padding=6)
+        self._vbox.show()
+
+    def _set_child_packing(self, padding):
+        expand = self._orientation == gtk.ORIENTATION_HORIZONTAL
+
+        self.set_child_packing(self._vbox, expand, False, padding,
+                               gtk.PACK_START)
 
     def _add_item(self):
         retval = self.emit('add-item')
@@ -157,6 +186,14 @@ class ListContainer(gtk.HBox):
         """
         self.list.update(item)
 
+    def default_remove(self, item):
+        response = yesno(_('Do you want to remove %s ?') % (quote(str(item)),),
+                         parent=None,
+                         default=gtk.RESPONSE_OK,
+                         buttons=((gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL),
+                                  (gtk.STOCK_REMOVE, gtk.RESPONSE_OK)))
+        return response == gtk.RESPONSE_OK
+
     def set_list_type(self, list_type):
         """Sets the kind of list type.
         @param list_type:
@@ -165,7 +202,10 @@ class ListContainer(gtk.HBox):
             raise TypeError("list_type must be a ListType enum")
 
         self.add_button.set_property(
-            'visible', list_type != ListType.READONLY)
+            'visible',
+            (list_type != ListType.READONLY and
+             list_type != ListType.REMOVEONLY and
+             list_type != ListType.UNADDABLE))
         self.remove_button.set_property(
             'visible',
             (list_type != ListType.READONLY and
@@ -173,13 +213,13 @@ class ListContainer(gtk.HBox):
         self.edit_button.set_property(
             'visible',
             (list_type != ListType.READONLY and
-             list_type != ListType.UNEDITABLE))
-        if list_type == ListType.READONLY:
+             list_type != ListType.UNEDITABLE and
+             list_type != ListType.REMOVEONLY))
+        if list_type in [ListType.READONLY, ListType.REMOVEONLY]:
             padding = 0
         else:
             padding = 6
-        self.set_child_packing(self._vbox, False, False, padding,
-                               gtk.PACK_START)
+        self._set_child_packing(padding)
         self._list_type = list_type
 
     def clear(self):
@@ -215,12 +255,12 @@ class ListSlave(SlaveDelegate):
     columns = None
     list_type = ListType.NORMAL
 
-    def __init__(self, columns=None):
+    def __init__(self, columns=None, orientation=gtk.ORIENTATION_VERTICAL):
         columns = columns or self.columns
         if not columns:
             raise ValueError("columns cannot be empty")
 
-        self.listcontainer = ListContainer(columns)
+        self.listcontainer = ListContainer(columns, orientation)
         self.listcontainer.connect(
             'add-item', self._on_listcontainer__add_item)
         self.listcontainer.connect(
@@ -300,14 +340,6 @@ class ListSlave(SlaveDelegate):
 
     # Overridables
 
-    def default_remove(self, item):
-        response = yesno(_('Do you want to remove %s ?') % (quote(str(item)),),
-                         parent=self,
-                         default=gtk.RESPONSE_OK,
-                         buttons=((gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL),
-                                  (gtk.STOCK_REMOVE, gtk.RESPONSE_OK)))
-        return response == gtk.RESPONSE_OK
-
     def add_item(self):
         """This must be implemented in a subclass if you want to be able
         to add items.
@@ -323,10 +355,10 @@ class ListSlave(SlaveDelegate):
     def remove_item(self, item):
         """A subclass can implement this to get a notification after
         an item is removed.
-        If it's not implemented L{default_remove} will be called
+        If it's not implemented L{ListContainer.default_remove} will be called
         @returns: False if the item should not be removed
         """
-        return self.default_remove(item)
+        return self.listcontainer.default_remove(item)
 
     def edit_item(self, item):
         """A subclass must implement this if you want to support editing

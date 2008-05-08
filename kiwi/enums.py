@@ -42,14 +42,18 @@ class Direction(enum):
 class ListType(enum):
     """
     - NORMAL: Add, Remove, Edit
+    - REMOVEOLY: Remove
+    - UNADDABLE: Remove, Edit
     - UNEDITABLE: Add, Remove
     - UNREMOVABLE: Add, Edit
     - READONLY: No buttons
     """
     (NORMAL,
      READONLY,
+     REMOVEONLY,
      UNREMOVABLE,
-     UNEDITABLE) = range(4)
+     UNADDABLE,
+     UNEDITABLE) = range(6)
 
 class SearchFilterPosition(enum):
     """
