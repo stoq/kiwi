@@ -211,6 +211,7 @@ class TreeDataTests(unittest.TestCase):
         self.tree.append(child1, child2)
 
         test_descendants = self.tree.get_descendants(root)
+        test_descendants.sort()
         self.assertEqual(test_descendants, [child1, child2])
         test_descendants = self.tree.get_descendants(child1)
         self.assertEqual(test_descendants, [child2])
