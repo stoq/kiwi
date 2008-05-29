@@ -6,15 +6,24 @@ Run all tests
 Check buildbot
 Update translations:
   bin/kiwi-i18n -pkiwi -u -c
-Update NEWS
 Bump version number:
   kiwi/__version__.py
   doc/howto.tex
+#  doc/release-announcement.tmpl
   kiwi.spec
-  debian/changelog
+---
+Before you use make, read common/async.mk and Makefile
+---
 make docs
 make release
-Update ChangeLog, add marker
+make Changelog
+  Add a release mark in debian/changelog (dch -v newversion)
+Update NEWS
+make deb
+    Fix the lintian errors, the output is very verbose, so check the
+    lines starting with an "E:" or "W:".
+    Also, you might test the package to see if it's OK. In dist/ you
+    will find the tarball and the .deb.
 Commit
 make release-tag
 make upload-release
@@ -31,3 +40,4 @@ Update website:
 Use release-anouncement.tmpl to write a new announcement
   Update Y in Subject
   Update X in Body
+  Use the NEWS file to update the NEWS section of the announcement

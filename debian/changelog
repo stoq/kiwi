@@ -1,3 +1,9 @@
+kiwi (1.9.22) intrepid; urgency=low
+
+  * New Release
+
+ -- George Y. Kussumoto <george@async.com.br>  Thu, 29 May 2008 14:44:01 -0300
+
 kiwi (1.9.21) gutsy; urgency=low
 
   * Non maintainer upload

@@ -1,3 +1,11 @@
+kiwi-1.9.22 29-may-2008
+    - Added support for context menus in objectlist (Ronaldo Maia)
+    - Added support for SQLAlchemy (Ali Afshar, #3668)
+    - Added the initial support for GtkColorButtton (Johan Dahlin)
+    - Added support for buttons orientation in ListContainer
+      (George Y. Kussumoto)
+    - Several improvements in the documentation and small bug fixes
+
 kiwi-1.9.21 17-march-2008
     - Handle case when entry completion is poping up and the entry loses
       focus (Ronaldo Maia, #3639)
