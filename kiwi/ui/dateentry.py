@@ -234,6 +234,7 @@ class _DateEntryPopup(gtk.Window):
         self.grab_add()
 
     def popdown(self):
+        """Hides the list of options"""
         combo = self._dateentry
         if not (combo.flags() & gtk.REALIZED):
             return
@@ -246,10 +247,18 @@ class _DateEntryPopup(gtk.Window):
     # So convert between them
 
     def get_date(self):
+        """Gets the date of the date entry
+        @returns: date of the entry
+        @rtype date: datetime.date
+        """
         y, m, d = self.calendar.get_date()
         return datetime.date(y, m + 1, d)
 
     def set_date(self, date):
+        """Sets the date of the date entry
+        @param date: date to set
+        @type date: datetime.date
+        """
         self.calendar.select_month(date.month - 1, date.year)
         self.calendar.select_day(date.day)
         # FIXME: Only mark the day in the current month?
@@ -257,6 +266,11 @@ class _DateEntryPopup(gtk.Window):
         self.calendar.mark_day(date.day)
 
 class DateEntry(gtk.HBox):
+    """I am an entry which you can input a date on.
+    In addition to an gtk.Entry I also contain a button
+    with an arrow you can click to get popup window with a gtk.Calendar
+    for which you can use to select the date
+    """
     gsignal('changed')
     gsignal('activate')
     def __init__(self):
@@ -361,9 +375,9 @@ class DateEntry(gtk.HBox):
     # Public API
 
     def set_date(self, date):
-        """
-        Set date.
-        @param date: a datetime.date instance or None
+        """Sets the date.
+        @param date: date to set
+        @type date: a datetime.date instance or None
         """
         if not isinstance(date, datetime.date) and date is not None:
             raise TypeError(
@@ -377,9 +391,9 @@ class DateEntry(gtk.HBox):
         self.entry.set_text(value)
 
     def get_date(self):
-        """
-        Get the currently selected day.
+        """Get the selected date
         @returns: the date.
+        @rtype: datetime.date or None
         """
         try:
             date = self.entry.read()
