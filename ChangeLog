@@ -1,4 +1,12 @@
-2008-06-05  Johan Dahlin  <johan@flumotion.com>
+2008-06-05  Johan Dahlin  <jdahlin@async.com.br>
+
+	* glade3-plugin/kiwiwidgets.py:
+	* glade3-plugin/kiwiwidgets.xml:
+	* glade3-plugin/setup.py:
+	Update the glade3 plugin to Juan's latest revival
+	of catalog support in glade3
+
+2008-06-05  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/gazpacholoader.py:
 	Remove duplicate converters

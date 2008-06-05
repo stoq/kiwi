@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<glade-catalog name="kiwiwidgets" library="kiwiwidgets" domain="glade-3" depends="gtk+" language="python">
+<glade-catalog name="kiwiwidgets"
+               library="gladepython"
+               domain="glade-3"
+               depends="gtk+"
+               icon-prefix="kiwi">
+  <init-function>glade_python_init</init-function>
   <glade-widget-classes>
     
     <glade-widget-class title="Hyper Link"
@@ -46,7 +51,16 @@
 
     <glade-widget-class title="Kiwi Entry"
                         name="ProxyEntry"
-                        generic-name="kiwientry"/>
+                        generic-name="kiwientry">
+        <properties>
+            <property id="model-attribute"
+                      name="Model Attribute"
+                      translatable="False" />
+            <property id="data-type"
+                      name="Data Type"
+                      visible="True" />
+        </properties>
+    </glade-widget-class>
 
     <glade-widget-class title="Kiwi DateEntry"
                         name="ProxyDateEntry"
