@@ -86,7 +86,7 @@ class ProxyWidgetMixin(object):
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
 
-    gproperty('data-type', object, blurb='Data Type')
+    gproperty('data-type', str, blurb='Data Type')
     gproperty('model-attribute', str, blurb='Model attribute')
 
     allowed_data_types = ()
@@ -113,20 +113,14 @@ class ProxyWidgetMixin(object):
         """
         if data_type is None:
             return data_type
+        elif data_type == '':
+            return None
 
         # This may convert from string to type,
         # A type object will always be returned
         data_type = converter.check_supported(data_type)
-
-        if not issubclass(data_type, self.allowed_data_types):
-            raise TypeError(
-                "%s only accept %s types, not %r"
-                % (self,
-                   ' or '.join([t.__name__ for t in self.allowed_data_types]),
-                   data_type))
-
         self._converter = converter.get_converter(data_type)
-        return data_type
+        return self._converter.type.__name__
 
     # Public API
     def set_data_format(self, format):

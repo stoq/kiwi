@@ -53,7 +53,7 @@ class ProxyButton(PropertyObject, gtk.Button, ProxyWidgetMixin):
         gtk.Button.__init__(self)
 
     def read(self):
-        if issubclass(self.data_type, gdk.Pixbuf):
+        if self.data_type == 'Pixbuf':
             image = self.get_image()
             if not image:
                 return
@@ -68,7 +68,7 @@ class ProxyButton(PropertyObject, gtk.Button, ProxyWidgetMixin):
             return self._from_string(self.get_label())
 
     def update(self, data):
-        if issubclass(self.data_type, gdk.Pixbuf):
+        if self.data_type == 'Pixbuf':
             if data == ValueUnset:
                 data = None
 

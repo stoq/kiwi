@@ -153,7 +153,7 @@ class TestProxy(unittest.TestCase):
 
         filename = environ.find_resource('pixmap', 'validation-error-16.png')
         pixbuf = gdk.pixbuf_new_from_file(filename)
-        self.assertEqual(self.view.buttonpixbuf.data_type, gdk.Pixbuf)
+        self.assertEqual(self.view.buttonpixbuf.data_type, 'Pixbuf')
         self.view.buttonpixbuf.update(pixbuf)
         self.assertEqual(type(self.view.buttonpixbuf.read()), gdk.Pixbuf)
         self.assertEqual(conv.as_string(self.model.buttonpixbuf),

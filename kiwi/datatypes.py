@@ -94,8 +94,11 @@ class ConverterRegistry:
         c = converter_type()
         if c.type in self._converters:
             raise ValueError(converter_type)
+        # bool, <type 'bool'>, 'bool'
         self._converters[c.type] = c
-
+        self._converters[str(c.type)] = c
+        self._converters[c.type.__name__] = c
+        
     def remove(self, converter_type):
         """
         Removes converter_type from the registry
@@ -111,18 +114,20 @@ class ConverterRegistry:
         del self._converters[ctype]
 
     def get_converter(self, converter_type):
-        # This is a hack:
-        # If we're a subclass of enum, create a dynamic subclass on the
-        # fly and register it, it's necessary for enum.from_string to work.
-        if (issubclass(converter_type, enum) and
-            not converter_type in self._converters):
-            self.add(type(enum.__class__.__name__ + 'EnumConverter',
-                       (_EnumConverter,), dict(type=converter_type)))
-
         try:
-            return self._converters[converter_type]
+            converter = self._converters[converter_type]
         except KeyError:
+            # This is a hack:
+            # If we're a subclass of enum, create a dynamic subclass on the
+            # fly and register it, it's necessary for enum.from_string to work.
+            if (issubclass(converter_type, enum) and
+                not converter_type in self._converters):
+                return self.add(
+                    type(enum.__class__.__name__ + 'EnumConverter',
+                         (_EnumConverter,), dict(type=converter_type)))
             raise KeyError(converter_type)
+
+        return converter
 
     def get_converters(self, base_classes=None):
         if base_classes is None:
@@ -136,27 +141,21 @@ class ConverterRegistry:
             base_classes = tuple(base_classes)
             converters.append(self._converters[object])
 
-        for datatype in self._converters:
-            if issubclass(datatype, base_classes):
-                converters.append(self._converters[datatype])
+        for converter in self._converters.values():
+            if issubclass(converter.type, base_classes):
+                converters.append(converter)
 
         return converters
 
     def check_supported(self, data_type):
-        value = None
-        for t in self._converters.values():
-            if t.type == data_type or t.type.__name__ == data_type:
-                value = t.type
-                break
+        converter = self._converters.get(data_type)
+        if converter is None:
+            supported = ', '.join(map(str, self._converters.keys()))
+            raise TypeError(
+                "%s is not supported. Supported types are: %s"
+                % (data_type, supported))
 
-        assert not isinstance(value, str), value
-
-        if not value:
-            type_names = [t.type.__name__ for t in self._converters.values()]
-            raise TypeError("%s is not supported. Supported types are: %s"
-                            % (data_type, ', '.join(type_names)))
-
-        return value
+        return converter.type
 
     def as_string(self, converter_type, value, format=None):
         """
@@ -321,7 +320,8 @@ class _BoolConverter(BaseConverter):
         elif value.upper() in ('FALSE', '0'):
             return False
 
-        return ValidationError(_("'%s' can not be converted to a boolean") % value)
+        return ValidationError(
+            _("'%s' can not be converted to a boolean") % value)
 
 converter.add(_BoolConverter)
 

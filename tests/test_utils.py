@@ -61,19 +61,19 @@ class MixinTest(unittest.TestCase):
         from kiwi.ui.widgets.scale import ProxyHScale
         s = ProxyHScale()
         self.failUnless(hasattr(s, 'data_type'))
-        self.assertEqual(s.data_type, float)
+        self.assertEqual(s.data_type, 'float')
 
     def testVScale(self):
         from kiwi.ui.widgets.scale import ProxyVScale
         s = ProxyVScale()
         self.failUnless(hasattr(s, 'data_type'))
-        self.assertEqual(s.data_type, float)
+        self.assertEqual(s.data_type, 'float')
 
     def testSpinButton(self):
         from kiwi.ui.widgets.spinbutton import ProxySpinButton
         s = ProxySpinButton()
         self.failUnless(hasattr(s, 'data_type'))
-        self.assertEqual(s.data_type, int)
+        self.assertEqual(s.data_type, 'int')
 
     def testTypeName(self):
         class Object(gobject.GObject, PropertyObject):

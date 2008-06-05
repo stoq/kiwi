@@ -1,3 +1,40 @@
+2008-06-05  Johan Dahlin  <johan@flumotion.com>
+
+	* kiwi/ui/gazpacholoader.py:
+	Remove duplicate converters
+
+	* kiwi/datatypes.py:
+	* kiwi/ui/proxy.py:
+	* kiwi/ui/proxywidget.py:
+	* kiwi/ui/widgets/button.py:
+	* tests/test_CheckButton.py:
+	* tests/test_Entry.py:
+	* tests/test_Scale.py:
+	* tests/test_SpinButton.py:
+	* tests/test_proxy.py:
+	* tests/test_utils.py:
+	Change data_type property from object to string and update tests
+	and callsites.
+
+2008-06-05  Johan Dahlin  <jdahlin@async.com.br>
+
+	reviewed by: <delete if not using a buddy>
+
+	* debian/changelog:
+	* glade3-plugin/kiwiwidgets.py:
+	* glade3-plugin/kiwiwidgets.xml:
+	* glade3-plugin/setup.py:
+	* kiwi/datatypes.py:
+	* kiwi/ui/proxy.py:
+	* kiwi/ui/proxywidget.py:
+	* kiwi/ui/widgets/button.py:
+	* tests/test_CheckButton.py:
+	* tests/test_Entry.py:
+	* tests/test_Scale.py:
+	* tests/test_SpinButton.py:
+	* tests/test_proxy.py:
+	* tests/test_utils.py:
+
 === 1.9.22 ===
 2008-05-29 George Y. Kussumoto <george@async.com.br>
 	* NEWS:

@@ -196,7 +196,7 @@ class DataTypeAdaptor(PropertyCustomEditor):
         combo = self._input
         model = self._model
         model.clear()
-        for converter in self._get_converters():
+        for converter in set(self._get_converters()):
             model.append((converter.name, converter.type))
 
         connection_id = combo.get_data('connection-id')
