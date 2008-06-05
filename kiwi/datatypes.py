@@ -98,7 +98,8 @@ class ConverterRegistry:
         self._converters[c.type] = c
         self._converters[str(c.type)] = c
         self._converters[c.type.__name__] = c
-        
+        return c
+    
     def remove(self, converter_type):
         """
         Removes converter_type from the registry

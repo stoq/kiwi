@@ -1,5 +1,10 @@
 2008-06-05  Johan Dahlin  <jdahlin@async.com.br>
 
+	* kiwi/datatypes.py:
+	Make Mr Buildbot a happy camper
+
+2008-06-05  Johan Dahlin  <jdahlin@async.com.br>
+
 	* glade3-plugin/kiwiwidgets.py:
 	* glade3-plugin/kiwiwidgets.xml:
 	* glade3-plugin/setup.py:
