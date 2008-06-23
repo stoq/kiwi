@@ -488,11 +488,13 @@ class SlaveView(gobject.GObject):
     # Slave handling
     #
 
-    def attach_slave(self, name, slave):
+    def attach_slave(self, name, slave, placeholder_widget=None):
         """Attaches a slaveview to the current view, substituting the
-        widget specified by name.  the widget specified *must* be a
-        eventbox; its child widget will be removed and substituted for
-        the specified slaveview's toplevel widget::
+        widget specified by placeholder_widget. If placeholder_widget is not
+        specified, an widget with the name specified must exist.
+
+        The widget specified *must* be a eventbox; its child widget will be
+        removed and substituted for the specified slaveview's toplevel widget::
 
          .-----------------------. the widget that is indicated in the diagram
          |window/view (self.view)| as placeholder will be substituted for the
@@ -530,7 +532,7 @@ class SlaveView(gobject.GObject):
         else: # slaveview
             new_widget = shell
 
-        placeholder = self.get_widget(name)
+        placeholder = placeholder_widget or self.get_widget(name)
         placeholder.set_data('kiwi::slave', self)
 
         if not placeholder:

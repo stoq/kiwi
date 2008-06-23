@@ -1,3 +1,10 @@
+2008-06-23  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: Christian Reis  <kiko@async.com.br>
+
+	* kiwi/ui/views.py:
+	Allow user to specify the widget directly when attaching a slave.
+
 2008-06-05  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/datatypes.py:
