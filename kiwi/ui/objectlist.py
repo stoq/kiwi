@@ -650,7 +650,10 @@ class ColoredColumn(Column):
         if not callable(data_func):
             raise TypeError("data func must be callable")
 
-        self._color = gdk.color_parse(color)
+        self._color = None
+        if color:
+            self._color = gdk.color_parse(color)
+
         self._color_normal = None
 
         self._data_func = data_func
@@ -662,8 +665,11 @@ class ColoredColumn(Column):
         self._color_normal = renderer.get_property('foreground-gdk')
 
     def renderer_func(self, renderer, data):
-        if self._data_func(data):
+        ret = self._data_func(data)
+        if ret and self._color:
             color = self._color
+        elif isinstance(ret, gdk.Color):
+            color = ret
         else:
             color = self._color_normal
 
