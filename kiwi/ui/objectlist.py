@@ -442,7 +442,7 @@ class Column(PropertyObject, gobject.GObject):
         renderer.set_property(renderer_prop, text)
 
         if column.renderer_func:
-            column.renderer_func(renderer, data)
+            column.renderer_func(renderer, row[COL_MODEL])
 
     def _cell_data_pixbuf_func(self, tree_column, renderer, model, treeiter,
                                (column, renderer_prop)):
@@ -466,10 +466,18 @@ class Column(PropertyObject, gobject.GObject):
                              (column, renderer_prop)):
         "To render the data of a cell renderer spin"
         row = model[treeiter]
+        if column.editable_attribute:
+            data = column.get_attribute(row[COL_MODEL],
+                                        column.editable_attribute, None)
+            renderer.set_property('editable', data)
+
         data = column.get_attribute(row[COL_MODEL],
                                     column.attribute, None)
         text = column.as_string(data)
         renderer.set_property(renderer_prop, text)
+
+        if column.renderer_func:
+            column.renderer_func(renderer, row[COL_MODEL])
 
     def _on_renderer__toggled(self, renderer, path, column):
         setattr(self._model[path][COL_MODEL], column.attribute,
@@ -644,7 +652,7 @@ class ColoredColumn(Column):
     """
 
     def __init__(self, attribute, title=None, data_type=None,
-                 color=None, data_func=None, **kwargs):
+                 color=None, data_func=None, use_data_model=False, **kwargs):
         if not issubclass(data_type, number):
             raise TypeError("data type must be a number")
         if not callable(data_func):
@@ -657,6 +665,7 @@ class ColoredColumn(Column):
         self._color_normal = None
 
         self._data_func = data_func
+        self._use_data_model = use_data_model
 
         Column.__init__(self, attribute, title, data_type, **kwargs)
 
@@ -665,7 +674,12 @@ class ColoredColumn(Column):
         self._color_normal = renderer.get_property('foreground-gdk')
 
     def renderer_func(self, renderer, data):
-        ret = self._data_func(data)
+        if self._use_data_model:
+            ret = self._data_func(data)
+        else:
+            attr_data = self.get_attribute(data, self.attribute, None)
+            ret = self._data_func(attr_data)
+
         if ret and self._color:
             color = self._color
         elif isinstance(ret, gdk.Color):

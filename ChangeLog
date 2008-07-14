@@ -1,3 +1,10 @@
+2008-07-14  George Y. Kussumoto  <george@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/objectlist.py: ColoredColumn - data_func should receive the model
+							 object instead of the attribute value.
+
 2008-07-11  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
