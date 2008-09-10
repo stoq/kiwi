@@ -337,9 +337,6 @@ class MethodTest(unittest.TestCase):
         self.klist.clear()
         self.assertEqual(self.klist.count(item), 0)
 
-    def testInsert(self):
-        self.assertRaises(NotImplementedError, self.klist.insert, 1, 2)
-
     def testPop(self):
         self.assertRaises(NotImplementedError, self.klist.pop, None)
 
