@@ -1,3 +1,8 @@
+kiwi-1.9.22 03-sep-2008
+    - Added support for multiple colors in ColoredColumn (Ronaldo Maia)
+    - Fixed glade-3 plugin (Johan Dahlin)
+    - Minor bug fixes
+
 kiwi-1.9.22 29-may-2008
     - Added support for context menus in objectlist (Ronaldo Maia)
     - Added support for SQLAlchemy (Ali Afshar, #3668)

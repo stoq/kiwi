@@ -19,6 +19,7 @@ make release
 make Changelog
   Add a release mark in debian/changelog (dch -v newversion)
 Update NEWS
+Add a release mark in Changelog
 make deb
     Fix the lintian errors, the output is very verbose, so check the
     lines starting with an "E:" or "W:".
@@ -35,9 +36,10 @@ Add bugzilla version:
 
 Update website:
   make web
-  Add new version to kiwi-www/src/getit.txt
+  Add new version to htdocs/async/kiwi/src/getit.txt
 
 Use release-anouncement.tmpl to write a new announcement
   Update Y in Subject
   Update X in Body
   Use the NEWS file to update the NEWS section of the announcement
+  send to the kiwi mailing list
