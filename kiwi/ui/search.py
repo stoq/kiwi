@@ -55,6 +55,9 @@ class DateSearchOption(object):
     """
     name = None
 
+    def get_today_date(self):
+        return datetime.date.today()
+
     def get_interval(self):
         """
         Get start and end date.
@@ -73,7 +76,7 @@ class Today(DateSearchOption):
     name = _('Today')
 
     def get_interval(self):
-        today = datetime.date.today()
+        today = self.get_today_date()
         return today, today
 
 
@@ -81,7 +84,7 @@ class Yesterday(DateSearchOption):
     name = _('Yesterday')
 
     def get_interval(self):
-        yesterday = datetime.date.today() - datetime.timedelta(days=1)
+        yesterday = self.get_today_date() - datetime.timedelta(days=1)
         return yesterday, yesterday
 
 
@@ -89,7 +92,7 @@ class LastWeek(DateSearchOption):
     name = _('Last week')
 
     def get_interval(self):
-        today = datetime.date.today()
+        today = self.get_today_date()
         return (today - datetime.timedelta(days=7), today)
 
 
@@ -97,7 +100,7 @@ class LastMonth(DateSearchOption):
     name = _('Last month')
 
     def get_interval(self):
-        today = datetime.date.today()
+        today = self.get_today_date()
         year = today.year
         month = today.month - 1
         if not month:
@@ -111,7 +114,7 @@ class LastMonth(DateSearchOption):
                 break
             except ValueError:
                 day -= 1
-        return start_date, datetime.date.today()
+        return start_date, self.get_today_date()
 
 
 class FixedIntervalSearchOption(DateSearchOption):
@@ -214,10 +217,7 @@ class DateSearchFilter(SearchFilter):
         self.pack_start(self.end_date, False, False, 6)
         self.end_date.show()
 
-        self.mode.prefill([
-            (_('Custom day'), DateSearchFilter.Type.USER_DAY),
-            (_('Custom interval'), DateSearchFilter.Type.USER_INTERVAL),
-            ])
+        self.add_custom_options()
 
         for option in (Any, Today, Yesterday, LastWeek, LastMonth):
             self.add_option(option)
@@ -282,6 +282,18 @@ class DateSearchFilter(SearchFilter):
         option_type = type('', (FixedIntervalSearchOption,),
                            dict(name=name, start=start, end=end))
         self.add_option(option_type, position=position)
+
+    def add_custom_options(self):
+        """Adds the custom options 'Custom day' and 'Custom interval' which
+        let the user define its own interval dates.
+        """
+        pos = len(self.mode) + 1
+        for name, option_type in [
+            (_('Custom day'), DateSearchFilter.Type.USER_DAY),
+            (_('Custom interval'), DateSearchFilter.Type.USER_INTERVAL)]:
+
+            self.mode.insert_item(pos, name, option_type)
+            pos += 1
 
     def get_start_date(self):
         """
