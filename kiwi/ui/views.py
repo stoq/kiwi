@@ -34,7 +34,6 @@ import os
 import re
 import string
 
-
 import gobject
 import gtk
 from gtk import gdk
@@ -969,6 +968,13 @@ def _get_gaxml():
         return
     return GAXMLWidgetTree
 
+def _get_builder():
+    try:
+        from kiwi.ui.builderloader import BuilderWidgetTree
+    except ImportError:
+        return
+    return BuilderWidgetTree
+
 def _open_glade(view, gladefile, domain):
     if not gladefile:
         raise ValueError("A gladefile wasn't provided.")
@@ -994,7 +1000,13 @@ def _open_glade(view, gladefile, domain):
     # glade-3
     # <?xml version="1.0" encoding="UTF-8" standalone="no"?>
     # <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-    if 'glade-2.0.dtd' in sniff:
+    if '<interface' in sniff:
+        if not hasattr(gtk, 'Builder'):
+            raise AssertionError(
+                "PyGTK 2.12 or higher is required for builder support")
+        WidgetTree = _get_builder()
+        loader_name = 'builder'
+    elif 'glade-2.0.dtd' in sniff:
         WidgetTree = _get_libglade()
         loader_name = 'libglade'
     elif 'gaxml-0.1.dtd' in sniff:

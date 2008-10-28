@@ -1,5 +1,12 @@
+2008-10-28  Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/ui/builderloader.py:
+	* kiwi/ui/views.py:
+	Add initial support for loading GtkBuilder files
+
 === 1.9.23 ===
 2008-09-10 George Y. Kussumoto <george@async.com.br>
+
 	Release 1.9.23
 
 2008-07-14  George Y. Kussumoto  <george@async.com.br>
