@@ -264,7 +264,7 @@ class DataType(CustomProperty, StringType):
     def save(self):
         value = self.get()
         if value is not None:
-            return value.__name__
+            return value
 
 class BoolOnlyDataType(CustomProperty, StringType):
     translatable = False
