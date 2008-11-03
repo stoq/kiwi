@@ -284,7 +284,7 @@ class _ComboEntryPopup(gtk.Window):
         height = (cell_height + focus_padding) * rows
 
         screen = self._comboentry.get_screen()
-        monitor_num = screen.get_monitor_at_window(sample.window)
+        monitor_num = screen.get_monitor_at_window(sample.entry.window)
         monitor = screen.get_monitor_geometry(monitor_num)
 
         if x < monitor.x:
@@ -292,13 +292,13 @@ class _ComboEntryPopup(gtk.Window):
         elif x + width > monitor.x + monitor.width:
             x = monitor.x + monitor.width - width
 
-        if y + sample.allocation.height + height <= monitor.y + monitor.height:
-            y += sample.allocation.height
+        if y + sample.entry.allocation.height + height <= monitor.y + monitor.height:
+            y += sample.entry.allocation.height
         elif y - height >= monitor.y:
             y -= height
-        elif (monitor.y + monitor.height - (y + sample.allocation.height) >
+        elif (monitor.y + monitor.height - (y + sample.entry.allocation.height) >
               y - monitor.y):
-            y += sample.allocation.height
+            y += sample.entry.allocation.height
             height = monitor.y + monitor.height - y
         else :
             height = y - monitor.y
@@ -347,7 +347,7 @@ class _ComboEntryPopup(gtk.Window):
 
 type_register(_ComboEntryPopup)
 
-class ComboEntry(gtk.HBox):
+class ComboEntry(gtk.VBox):
 
     implements(IEasyCombo)
 
@@ -359,11 +359,16 @@ class ComboEntry(gtk.HBox):
         Create a new ComboEntry object.
         @param entry: a gtk.Entry subclass to use
         """
-        gtk.HBox.__init__(self)
+        gtk.VBox.__init__(self)
         self._popping_down = False
 
         if not entry:
             entry = KiwiEntry()
+
+        self.hbox = gtk.HBox()
+        self.pack_start(gtk.EventBox())
+        self.pack_start(self.hbox, expand=False)
+        self.pack_start(gtk.EventBox())
 
         self.mode = ComboMode.UNKNOWN
         self.entry = entry
@@ -378,14 +383,14 @@ class ComboEntry(gtk.HBox):
         self.entry.connect('focus-out-event',
                            self._on_entry__focus_out_event)
 
-        self.pack_start(self.entry, True, True)
+        self.hbox.pack_start(self.entry, True, True)
         self.entry.show()
 
         self._button = gtk.ToggleButton()
         self._button.connect('scroll-event', self._on_entry__scroll_event)
         self._button.connect('toggled', self._on_button__toggled)
         self._button.set_focus_on_click(False)
-        self.pack_end(self._button, False, False)
+        self.hbox.pack_end(self._button, False, False)
         self._button.show()
 
         arrow = gtk.Arrow(gtk.ARROW_DOWN, gtk.SHADOW_NONE)

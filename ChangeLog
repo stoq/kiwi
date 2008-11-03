@@ -1,3 +1,9 @@
+2008-11-03  Ronaldo Maia  <romaia@async.com.br>
+
+	* kiwi/ui/comboentry.py: Keep the toggle button the same size as the
+							 entry and position the popup correctly. Fixes
+							 3841
+
 2008-10-28  Johan Dahlin  <jdahlin@async.com.br>
 
 	* kiwi/ui/builderloader.py:
