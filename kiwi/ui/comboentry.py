@@ -384,7 +384,7 @@ class ComboEntry(gtk.VBox):
                            self._on_entry__focus_out_event)
 
         self.hbox.pack_start(self.entry, True, True)
-        self.entry.show()
+        self.hbox.show_all()
 
         self._button = gtk.ToggleButton()
         self._button.connect('scroll-event', self._on_entry__scroll_event)
