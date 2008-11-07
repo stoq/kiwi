@@ -1,3 +1,13 @@
+2008-11-07  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* examples/awesomecombo.py:
+	* kiwi/ui/cellrenderer.py:
+	* kiwi/ui/comboentry.py:
+	Enable multi-line ComboEntry options, similar to firefox's toolbar.
+	Fixes 3843.
+
 2008-11-03  Ronaldo Maia  <romaia@async.com.br>
 
 	* kiwi/ui/comboentry.py: Keep the toggle button the same size as the

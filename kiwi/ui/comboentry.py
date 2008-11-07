@@ -34,6 +34,8 @@ from kiwi.ui.entry import KiwiEntry
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import gsignal, type_register
 
+from kiwi.ui.cellrenderer import ComboDetailsCellRenderer
+
 log = Logger('kiwi.ui.combo')
 
 
@@ -77,9 +79,10 @@ class _ComboEntryPopup(gtk.Window):
         self._treeview.add_events(gdk.BUTTON_PRESS_MASK)
         self._selection = self._treeview.get_selection()
         self._selection.set_mode(gtk.SELECTION_BROWSE)
+        self._renderer = ComboDetailsCellRenderer()
         self._treeview.append_column(
-            gtk.TreeViewColumn('Foo', gtk.CellRendererText(),
-                               text=0))
+            gtk.TreeViewColumn('Foo', self._renderer,
+                               label=0, data=1))
         self._treeview.set_headers_visible(False)
         self._sw.add(self._treeview)
         self._treeview.show()
@@ -279,9 +282,8 @@ class _ComboEntryPopup(gtk.Window):
             rows = self._visible_rows
             self._sw.set_policy(hpolicy, gtk.POLICY_ALWAYS)
 
-        focus_padding = treeview.style_get_property('focus-line-width') * 2
-        cell_height = treeview.get_column(0).cell_get_size()[4]
-        height = (cell_height + focus_padding) * rows
+        cell_height = treeview.get_cell_area(0, treeview.get_column(0)).height
+        height = cell_height * rows
 
         screen = self._comboentry.get_screen()
         monitor_num = screen.get_monitor_at_window(sample.entry.window)
@@ -344,6 +346,9 @@ class _ComboEntryPopup(gtk.Window):
             else:
                 treeiter = model.convert_child_iter_to_iter(treeiter)
         self._selection.select_iter(treeiter)
+
+    def set_details_callback(self, callable):
+        self._renderer.set_details_callback(callable)
 
 type_register(_ComboEntryPopup)
 
@@ -580,6 +585,14 @@ class ComboEntry(gtk.VBox):
 
     def set_active(self, rowno):
         self.set_active_iter(self._model[rowno].iter)
+
+    def set_details_callback(self, callable):
+        """Display some details as a second line on each entry
+
+        @param callable: a callable that expects an object and returns a
+                         string
+        """
+        self._popup.set_details_callback(callable)
 
     # IEasyCombo interface
 
