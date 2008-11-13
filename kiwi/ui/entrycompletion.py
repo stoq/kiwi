@@ -253,6 +253,9 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
     def set_treeview(self, treeview):
         self._treeview = treeview
 
+    def get_treeview(self):
+        return self._treeview
+
     def popup(self):
         if not self._popup_window:
             return

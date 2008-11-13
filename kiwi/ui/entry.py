@@ -589,19 +589,30 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         if self._mode != ENTRY_MODE_DATA:
             return
 
+        self._current_object = None
         for row in self.get_completion().get_model():
             if row[COL_TEXT] == text:
                 self._current_object = row[COL_OBJECT]
                 break
-        else:
-            # Customized validation
-            if text:
-                self.set_invalid(_("'%s' is not a valid object" % text))
-            elif self.mandatory:
-                self.set_blank()
-            else:
-                self.set_valid()
-            self._current_object = None
+
+        treeview = self.get_completion().get_treeview()
+        model = treeview.get_model()
+        selection = treeview.get_selection()
+        if self._current_object:
+            treeiter = row.iter
+
+            if isinstance(model, gtk.TreeModelFilter) and treeiter:
+                treeiter = model.convert_child_iter_to_iter(treeiter)
+
+            selection.select_iter(treeiter)
+
+            self.set_valid()
+        elif text:
+            selection.unselect_all()
+            self.set_invalid(_("'%s' is not a valid object" % text))
+        elif self.mandatory:
+            selection.unselect_all()
+            self.set_blank()
 
     def _get_text_from_object(self, obj):
         if self._mode != ENTRY_MODE_DATA:
