@@ -61,7 +61,7 @@ class ComboDetailsCellRenderer(gtk.GenericCellRenderer, PropertyObject):
 
         # Draws label
         widget.style.paint_layout(window,
-                                 gtk.STATE_ACTIVE,  True,
+                                 gtk.STATE_ACTIVE, False,
                                  cell_area, widget, "",
                                  cell_area.x + x_offset,
                                  cell_area.y + y_offset,
