@@ -1,3 +1,11 @@
+2009-01-15  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: Johan Dahlin  <jdahlin@async.com.br>
+
+	* kiwi/currency.py:
+	* tests/test_datatypes.py:
+	currency is formating the value wrong. Fixes bug 3855
+
 2008-11-13  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: Johan Dahlin  <jdahlin@async.com.br>

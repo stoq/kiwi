@@ -147,6 +147,15 @@ class CurrencyTest(unittest.TestCase):
     def tearDown(self):
         set_locale(locale.LC_ALL, 'C')
 
+    def testFormat(self):
+        self.assertEqual(currency('100').format(), '$100')
+        self.assertEqual(currency('199').format(), '$199')
+
+        self.assertEqual(currency('1.99').format(), '$1.99')
+        self.assertEqual(currency('1.994').format(), '$1.99')
+        self.assertEqual(currency('1.995').format(), '$1.99')
+        self.assertEqual(currency('1.996').format(), '$1.99')
+
     def testFormatBR(self):
         if not set_locale(locale.LC_ALL, 'pt_BR'):
             return
