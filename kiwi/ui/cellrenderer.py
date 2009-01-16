@@ -23,7 +23,7 @@
 import gtk
 import gobject
 
-from kiwi.utils import gproperty, PropertyObject
+from kiwi.utils import gproperty, PropertyObject, quote
 from kiwi.ui.gadgets import gdk_color_to_string
 
 class ComboDetailsCellRenderer(gtk.GenericCellRenderer, PropertyObject):
@@ -79,7 +79,7 @@ class ComboDetailsCellRenderer(gtk.GenericCellRenderer, PropertyObject):
                                  )
 
     def on_get_size(self, widget, cell_area):
-        text = self.label
+        text = quote(self.label)
 
         if self._details_callback:
             details = self._details_callback(self.data)
