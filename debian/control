@@ -2,13 +2,13 @@ Source: kiwi
 Section: python
 Priority: optional
 Maintainer: George Y. Kussumoto <george@async.com.br>
-Build-Depends: cdbs (>= 0.4.43), debhelper (>= 5.0.37.2), python, python-setuptools (>= 0.6b3-1), python-support (>= 0.3)
-Build-Depends-Indep: python-all-dev (>= 2.3.5-10), python-glade2 (>= 2.8.6-1), python-gtk2 (>= 2.8.2-3.1), python-epydoc (>= 2.1-11), python-twisted-core (>= 2.4.0-1), xvfb, xbase-clients, xfonts-base, pkg-config
+Build-Depends: cdbs (>= 0.4.43), debhelper (>= 5.0.37.2), python, python-setuptools (>= 0.6b3-1~), python-support (>= 0.3)
+Build-Depends-Indep: python-all-dev (>= 2.3.5-10), python-glade2 (>= 2.8.6-1~), python-gtk2 (>= 2.8.2-3.1), python-epydoc (>= 2.1-11), python-twisted-core (>= 2.4.0-1~), xvfb, xfonts-base, pkg-config
 Standards-Version: 3.8.0
 
 Package: python-kiwi
 Architecture: all
-Depends: ${python:Depends}, python-gtk2 (>= 2.8.2-3.1), python-setuptools (>= 0.6b3-1)
+Depends: ${python:Depends}, ${misc:Depends}, python-gtk2 (>= 2.8.2-3.1), python-setuptools (>= 0.6b3-1)
 Enhances: gazpacho
 Replaces: kiwi
 Description: a graphical framework to construct simple UI

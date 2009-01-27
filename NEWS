@@ -1,3 +1,11 @@
+kiwi-1.9.24 27-jan-2009
+    - Fixed currency formating (Ronaldo Maia)
+    - Fixed ComboEntry value updating (Ronaldo Maia, #3673)
+    - Added multi-line capability example (Ronaldo Maia)
+    - Added multi-line capability in ComboEntry options (Ronaldo Maia, #3843)
+    - Fixed ComboEntry toggle button and popup position (Ronaldo Maia, #3841)
+    - Added initial support for loading GtkBuilder files (Johan Dahlin)
+
 kiwi-1.9.23 10-sep-2008
     - Added support for multiple colors in ColoredColumn (Ronaldo Maia)
     - Fixed glade-3 plugin (Johan Dahlin)

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-09-09 18:13-0300\n"
+"POT-Creation-Date: 2009-01-27 13:40-0200\n"
 "PO-Revision-Date: 2007-04-03 12:41-0300\n"
 "Last-Translator: Benoit Myard <myardbenoit@gmail.com>\n"
 "Language-Team: French <myardbenoit@gmail.com>\n"
@@ -171,7 +171,7 @@ msgstr "_Séléctionner"
 msgid "Finish"
 msgstr "Terminer"
 
-#: ../kiwi/ui/entry.py:599
+#: ../kiwi/ui/entry.py:612
 #, python-format
 msgid "'%s' is not a valid object"
 msgstr "'%s' n'est pas un objet valide"
@@ -180,45 +180,45 @@ msgstr "'%s' n'est pas un objet valide"
 msgid "Total:"
 msgstr "Total :"
 
-#: ../kiwi/ui/search.py:66
+#: ../kiwi/ui/search.py:69
 msgid "Any"
 msgstr ""
 
-#: ../kiwi/ui/search.py:73
+#: ../kiwi/ui/search.py:76
 #, fuzzy
 msgid "Today"
 msgstr "_Aujourd'hui"
 
-#: ../kiwi/ui/search.py:81
+#: ../kiwi/ui/search.py:84
 msgid "Yesterday"
 msgstr ""
 
-#: ../kiwi/ui/search.py:89
+#: ../kiwi/ui/search.py:92
 msgid "Last week"
 msgstr ""
 
-#: ../kiwi/ui/search.py:97
+#: ../kiwi/ui/search.py:100
 msgid "Last month"
 msgstr ""
 
-#: ../kiwi/ui/search.py:197
+#: ../kiwi/ui/search.py:200
 msgid "From:"
 msgstr ""
 
-#: ../kiwi/ui/search.py:207
+#: ../kiwi/ui/search.py:210
 #, fuzzy
 msgid "To:"
 msgstr "Total :"
 
-#: ../kiwi/ui/search.py:218
+#: ../kiwi/ui/search.py:292
 msgid "Custom day"
 msgstr ""
 
-#: ../kiwi/ui/search.py:219
+#: ../kiwi/ui/search.py:293
 msgid "Custom interval"
 msgstr ""
 
-#: ../kiwi/ui/search.py:561
+#: ../kiwi/ui/search.py:573
 msgid "Search:"
 msgstr ""
 
