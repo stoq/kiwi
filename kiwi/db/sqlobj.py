@@ -29,7 +29,8 @@ SQLObject integration for Kiwi
 from sqlobject.sqlbuilder import func, AND, OR, LIKE, SQLExpression
 
 from kiwi.db.query import NumberQueryState, StringQueryState, \
-     DateQueryState, DateIntervalQueryState, QueryExecuter
+     DateQueryState, DateIntervalQueryState, QueryExecuter, \
+     NumberIntervalQueryState
 from kiwi.interfaces import ISearchFilter
 
 class _FTI(SQLExpression):
@@ -109,6 +110,7 @@ class SQLObjectQueryExecuter(QueryExecuter):
             raise ValueError("table cannot be None")
         table = self.table
         queries = []
+        self._having = []
         for state in states:
             search_filter = state.filter
             assert state.filter
@@ -141,23 +143,40 @@ class SQLObjectQueryExecuter(QueryExecuter):
             query = AND(*queries)
         else:
             query = None
-        result = self._query(query, self.conn)
+
+        having = None
+        if self._having:
+            having = AND(self._having)
+
+        result = self._query(query, having, self.conn)
         return result.limit(self.get_limit())
 
     #
     # Private
     #
 
-    def _default_query(self, query, conn):
-        return self.table.select(query, connection=conn)
+    def _add_having(self, clause):
+        self._having.append(clause)
+
+    def _default_query(self, query, having, conn):
+        return self.table.select(query, having=having, connection=conn)
 
     def _construct_state_query(self, table, state, columns):
         queries = []
+        having_queries = []
+
         for column in columns:
             query = None
             table_field = getattr(table.q, column)
+
+            # If the field has an aggregate function (sum, avg, etc..), then
+            # this clause should be in the HAVING part of the query.
+            use_having = table_field.hasSQLCall()
+
             if isinstance(state, NumberQueryState):
                 query = self._parse_number_state(state, table_field)
+            elif isinstance(state, NumberIntervalQueryState):
+                query = self._parse_number_interval_state(state, table_field)
             elif isinstance(state, StringQueryState):
                 query = self._parse_string_state(state, table_field)
             elif isinstance(state, DateQueryState):
@@ -167,8 +186,15 @@ class SQLObjectQueryExecuter(QueryExecuter):
             else:
                 raise NotImplementedError(state.__class__.__name__)
 
+            if query and use_having:
+                having_queries.append(query)
+                query = None
+
             if query:
                 queries.append(query)
+
+        if having_queries:
+            self._add_having(OR(*having_queries))
 
         if queries:
             return OR(*queries)
@@ -201,6 +227,15 @@ class SQLObjectQueryExecuter(QueryExecuter):
     def _parse_number_state(self, state, table_field):
         if state.value is not None:
             return table_field == state.value
+
+    def _parse_number_interval_state(self, state, table_field):
+        queries = []
+        if state.start is not None:
+            queries.append(table_field >= state.start)
+        if state.end is not None:
+            queries.append(table_field <= state.end)
+        if queries:
+            return AND(*queries)
 
     def _parse_string_state(self, state, table_field):
         if not state.text:

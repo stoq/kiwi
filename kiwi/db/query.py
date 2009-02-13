@@ -50,6 +50,21 @@ class NumberQueryState(QueryState):
         return '<NumberQueryState value=%r>' % (self.value,)
 
 
+class NumberIntervalQueryState(QueryState):
+    """
+    Create a new NumberIntervalQueryState object.
+    @cvar start: number
+    @cvar end: number
+    """
+    def __init__(self, filter, start, end):
+        QueryState.__init__(self, filter)
+        self.start = start
+        self.end = end
+
+    def __repr__(self):
+        return '<NumberIntervalQueryState start=%r end=%r>' % (self.start, self.end)
+
+
 class StringQueryState(QueryState):
     """
     Create a new StringQueryState object.

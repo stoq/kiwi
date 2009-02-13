@@ -30,7 +30,8 @@ Storm integration for Kiwi
 from storm.expr import And, Or, Like
 
 from kiwi.db.query import NumberQueryState, StringQueryState, \
-     DateQueryState, DateIntervalQueryState, QueryExecuter
+     DateQueryState, DateIntervalQueryState, QueryExecuter, \
+     NumberIntervalQueryState
 
 
 class StormQueryExecuter(QueryExecuter):
@@ -71,6 +72,8 @@ class StormQueryExecuter(QueryExecuter):
             table_field = getattr(table, column)
             if isinstance(state, NumberQueryState):
                 query = self._parse_number_state(state, table_field)
+            elif isinstance(state, NumberIntervalQueryState):
+                query = self._parse_number_interval_state(state, table_field)
             elif isinstance(state, StringQueryState):
                 query = self._parse_string_state(state, table_field)
             elif isinstance(state, DateQueryState):
@@ -87,6 +90,15 @@ class StormQueryExecuter(QueryExecuter):
     def _parse_number_state(self, state, table_field):
         if state.value is not None:
             return table_field == state.value
+
+    def _parse_number_interval_state(self, state, table_field):
+        queries = []
+        if state.start:
+            queries.append(table_field >= state.start)
+        if state.end:
+            queries.append(table_field <= state.end)
+        if queries:
+            return And(*queries)
 
     def _parse_string_state(self, state, table_field):
         if not state.text:

@@ -26,26 +26,34 @@ Search related widgets
 """
 
 import datetime
+from decimal import Decimal
 import gettext
+import sys
 
 import gobject
 import gtk
 
 from kiwi.component import implements
+from kiwi.datatypes import currency
 from kiwi.db.query import (NumberQueryState, StringQueryState,
                            DateQueryState, DateIntervalQueryState,
-                           QueryExecuter)
+                           NumberIntervalQueryState, QueryExecuter)
 from kiwi.enums import SearchFilterPosition
 from kiwi.interfaces import ISearchFilter
 from kiwi.python import enum
 from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.delegates import SlaveDelegate
-from kiwi.ui.objectlist import ObjectList, SummaryLabel
+from kiwi.ui.objectlist import ObjectList, SummaryLabel, SearchColumn
 from kiwi.ui.widgets.combo import ProxyComboBox
+from kiwi.ui.widgets.spinbutton import ProxySpinButton
 from kiwi.utils import gsignal, gproperty
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
+
+#
+# Date Search Options
+#
 
 class DateSearchOption(object):
     """
@@ -132,6 +140,62 @@ class FixedDateSearchOption(DateSearchOption):
         return self.date, self.date
 
 
+#
+#   Number Search Options
+#
+
+class NumberSearchOption(object):
+    """
+    Base class for Number search options
+    A number search option is an interval of numbers
+    @cvar name: name of the search option
+    @cvar numbers: how many numbers must the user input: 0, 1 or 2
+    """
+    name = None
+    numbers = 0
+
+    def get_interval(self, start, end):
+        """
+        Get start and end interval.
+        @returns: start, end
+        """
+
+class Between(NumberSearchOption):
+    name = _('Between')
+    numbers = 2
+
+    def get_interval(self, start, end):
+        return (start, end)
+
+
+class EqualsTo(NumberSearchOption):
+    name = _('Equals to')
+    numbers = 1
+
+    def get_interval(self, start, end):
+        return (start, start)
+
+
+class GreaterThan(NumberSearchOption):
+    name = _('Greater or Equal')
+    numbers = 1
+
+    def get_interval(self, start, end):
+        return (start, None)
+
+
+class LowerThan(NumberSearchOption):
+    name = _('Lower or Equal')
+    numbers = 1
+
+    def get_interval(self, start, end):
+        return (None, start)
+
+
+#
+# Search Filters
+#
+
 class SearchFilter(gtk.HBox):
     """
     A base classed used by common search filters
@@ -139,12 +203,21 @@ class SearchFilter(gtk.HBox):
     gproperty('label', str, flags=(gobject.PARAM_READWRITE |
                                    gobject.PARAM_CONSTRUCT_ONLY))
     gsignal('changed')
+    gsignal('removed')
 
     implements(ISearchFilter)
 
     def __init__(self, label=''):
         self.__gobject_init__(label=label)
         self._label = label
+        self.remove_button = SearchFilterButton(stock=gtk.STOCK_REMOVE)
+        self.remove_button.set_relief(gtk.RELIEF_NONE)
+        self.remove_button.set_label_visible(False)
+        self.remove_button.connect('clicked', self._on_remove_clicked)
+        self.pack_start(self.remove_button, False, False)
+
+    def _on_remove_clicked(self, button):
+        self.emit('removed')
 
     def do_set_property(self, pspec, value):
         if pspec.name == 'label':
@@ -167,6 +240,15 @@ class SearchFilter(gtk.HBox):
         """
         raise NotImplementedError
 
+    def get_title_label(self):
+        raise NotImplementedError
+
+    def get_mode_combo(self):
+        raise NotImplementedError
+
+    def set_removable(self):
+        self.remove_button.show()
+
 
 class DateSearchFilter(SearchFilter):
     """
@@ -185,10 +267,9 @@ class DateSearchFilter(SearchFilter):
         """
         self._options = {}
         SearchFilter.__init__(self, label=label)
-        self.set_border_width(6)
-        label = gtk.Label(label)
-        self.pack_start(label, False, False)
-        label.show()
+        self.title_label = gtk.Label(label)
+        self.pack_start(self.title_label, False, False)
+        self.title_label.show()
 
         self.mode = ProxyComboBox()
         self.mode.connect(
@@ -234,6 +315,12 @@ class DateSearchFilter(SearchFilter):
         if start == end:
             return DateQueryState(filter=self, date=start)
         return DateIntervalQueryState(filter=self, start=start, end=end)
+
+    def get_title_label(self):
+        return self.title_label
+
+    def get_mode_combo(self):
+        return self.mode
 
     #
     # Public API
@@ -456,13 +543,12 @@ class ComboSearchFilter(SearchFilter):
         label = gtk.Label(label)
         self.pack_start(label, False, False)
         label.show()
+        self.title_label = label
 
         self.combo = ProxyComboBox()
         if values:
             self.combo.prefill(values)
-        self.combo.connect(
-            'content-changed',
-            self._on_combo__content_changed)
+        self.combo.connect('content-changed', self._on_combo__content_changed)
         self.pack_start(self.combo, False, False, 6)
         self.combo.show()
 
@@ -473,6 +559,12 @@ class ComboSearchFilter(SearchFilter):
     def get_state(self):
         return NumberQueryState(filter=self,
                                 value=self.combo.get_selected_data())
+
+    def get_title_label(self):
+        return self.title_label
+
+    def get_mode_combo(self):
+        return self.combo
 
     #
     # Public API
@@ -507,9 +599,9 @@ class StringSearchFilter(SearchFilter):
         @param chars: maximum number of chars used by the search entry
         """
         SearchFilter.__init__(self, label=label)
-        self.label = gtk.Label(label)
-        self.pack_start(self.label, False, False)
-        self.label.show()
+        self.title_label = gtk.Label(label)
+        self.pack_start(self.title_label, False, False)
+        self.title_label.show()
 
         self.entry = gtk.Entry()
         if chars:
@@ -525,17 +617,144 @@ class StringSearchFilter(SearchFilter):
         return StringQueryState(filter=self,
                                 text=self.entry.get_text())
 
+    def get_title_label(self):
+        return self.title_label
+
+    def get_mode_combo(self):
+        return None
+
     #
     # Public API
     #
 
     def set_label(self, label):
-        self.label.set_text(label)
+        self.title_label.set_text(label)
+
+
+class NumberSearchFilter(SearchFilter):
+    """
+    A filter which helps you to search by a number interval.
+    """
+    __gtype_name__ = 'NumberSearchFilter'
+
+    def __init__(self, label=''):
+        """
+        @param label: name of the search filter
+        """
+
+        self._options = {}
+
+        SearchFilter.__init__(self, label=label)
+        self.title_label = gtk.Label(label)
+        self.title_label.set_alignment(1.0, 0.5)
+        self.pack_start(self.title_label, False, False)
+        self.title_label.show()
+
+        self.mode = ProxyComboBox()
+        self.mode.connect('content-changed', self._on_mode__content_changed)
+        self.pack_start(self.mode, False, False, 6)
+        self.mode.show()
+
+        self.start = gtk.SpinButton(climb_rate=1.0)
+        self.start.get_adjustment().step_increment = 1.0
+        self.start.set_range(-sys.maxint-1, sys.maxint)
+        self.pack_start(self.start, False, False, 6)
+        self.start.show()
+
+        self.and_label = gtk.Label(_("And"))
+        self.pack_start(self.and_label, False, False)
+        self.and_label.show()
+
+        self.end = gtk.SpinButton(climb_rate=1.0)
+        self.end.get_adjustment().step_increment = 1.0
+        self.end.set_range(-sys.maxint-1, sys.maxint)
+        self.pack_start(self.end, False, False, 6)
+        self.end.show()
+
+        for option in (LowerThan, EqualsTo, GreaterThan, Between):
+            self.add_option(option)
+
+        self.mode.select_item_by_position(0)
+
+    #
+    #   Private
+    #
+
+    def _update_visibility(self):
+        option = self.mode.get_selected_data()
+        numbers = option.numbers
+        if numbers == 0:
+            self.start.hide()
+            self.and_label.hide()
+            self.end.hide()
+        elif numbers == 1:
+            self.start.show()
+            self.and_label.hide()
+            self.end.hide()
+        elif numbers == 2:
+            self.start.show()
+            self.and_label.show()
+            self.end.show()
+
+
+    #
+    #   Callbacks
+    #
+
+    def _on_mode__content_changed(self, combo):
+        self._update_visibility()
+
+    #
+    #   SearchFilter
+    #
+
+    def get_state(self):
+        start_value = self.start.get_value_as_int()
+        end_value = self.end.get_value_as_int()
+        option = self.mode.get_selected_data()
+
+        start, end = option().get_interval(start_value, end_value)
+        return NumberIntervalQueryState(filter=self, start=start, end=end)
+
+    def get_title_label(self):
+        return self.title_label
+
+    def get_mode_combo(self):
+        return self.mode
+
+
+    #
+    #   Public API
+    #
+
+    def add_option(self, option_type, position=-2):
+        """
+        Adds a date option
+        @param option_type: option to add
+        @type option_type: a L{NumberSearchOption} subclass
+        """
+        option = option_type()
+        num = len(self.mode) + position
+        self.mode.insert_item(num, option.name, option_type)
+        self._options[option_type] = option
 
 
 #
 # Other UI pieces
 #
+
+class SearchFilterButton(gtk.Button):
+    def __init__(self, *args, **kargs):
+        gtk.Button.__init__(self, *args, **kargs)
+        self.set_icon_size(gtk.ICON_SIZE_MENU)
+
+    def set_label_visible(self, visible):
+        self.get_children()[0].get_child().get_children()[1].hide()
+
+    def set_icon_size(self, icon_size):
+        icon = self.get_children()[0].get_child().get_children()[0]
+        icon.set_property('icon-size', icon_size)
+
 
 class SearchResults(ObjectList):
     def __init__(self, columns):
@@ -655,7 +874,16 @@ class SearchContainer(gtk.VBox):
         assert not search_filter.parent
         self.set_filter_position(search_filter, position)
         search_filter.connect('changed', self._on_search_filter__changed)
+        search_filter.connect('removed', self._on_search_filter__remove)
         self._search_filters.append(search_filter)
+
+    def remove_filter(self, filter):
+        self.filters_box.remove(filter)
+        self._search_filters.remove(filter)
+        filter.destroy()
+
+        if self._auto_search:
+            self.search()
 
     def set_filter_position(self, search_filter, position):
         """
@@ -670,7 +898,7 @@ class SearchContainer(gtk.VBox):
             self.hbox.pack_start(search_filter, False, False)
             self.hbox.reorder_child(search_filter, 0)
         elif position == SearchFilterPosition.BOTTOM:
-            self.pack_start(search_filter, False, False)
+            self.filters_box.pack_start(search_filter, False, False)
         search_filter.show()
 
     def get_filter_position(self, search_filter):
@@ -779,6 +1007,9 @@ class SearchContainer(gtk.VBox):
         self.reorder_child(self._summary_label, 1)
         self._summary_label.show()
 
+    def enable_advanced_search(self):
+        self._create_advanced_search()
+
     #
     # Callbacks
     #
@@ -789,6 +1020,9 @@ class SearchContainer(gtk.VBox):
     def _on_search_entry__activate(self, button):
         self.search()
 
+    def _on_search_filter__remove(self, filter):
+        self.remove_filter(filter)
+
     def _on_search_filter__changed(self, search_filter):
         if self._auto_search:
             self.search()
@@ -798,9 +1032,20 @@ class SearchContainer(gtk.VBox):
     #
 
     def _create_ui(self):
+        self._create_basic_search()
+
+        self.results = SearchResults(self._columns)
+        self.pack_end(self.results, True, True, 6)
+        self.results.show()
+
+    def _create_basic_search(self):
+        filters_box = gtk.VBox()
+        filters_box.show()
+        self.pack_start(filters_box, expand=False)
+
         hbox = gtk.HBox()
-        hbox.set_border_width(6)
-        self.pack_start(hbox, False, False)
+        hbox.set_border_width(3)
+        filters_box.pack_start(hbox, False, False)
         hbox.show()
         self.hbox = hbox
 
@@ -811,14 +1056,84 @@ class SearchContainer(gtk.VBox):
         self.search_entry = self._primary_filter.entry
         self.search_entry.connect('activate',
                                   self._on_search_entry__activate)
-        button = gtk.Button(stock=gtk.STOCK_FIND)
+
+        button = SearchFilterButton(stock=gtk.STOCK_FIND)
         button.connect('clicked', self._on_search_button__clicked)
         hbox.pack_start(button, False, False)
         button.show()
 
-        self.results = SearchResults(self._columns)
-        self.pack_end(self.results, True, True, 6)
-        self.results.show()
+        self.filters_box = filters_box
+
+    def _create_advanced_search(self):
+        self.label_group = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        self.combo_group = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+
+        add = SearchFilterButton(stock=gtk.STOCK_ADD)
+        add.set_relief(gtk.RELIEF_NONE)
+        add.set_label_visible(False)
+        add.connect('clicked', self._on_add_field_clicked)
+        add.show()
+        self.hbox.pack_end(add, False, False, 0)
+
+        combo = ProxyComboBox()
+        options = [(_('More options'), None)]
+        for column in self._columns:
+            if not isinstance(column, SearchColumn):
+                continue
+
+            if column.data_type not in (datetime.date, Decimal, int, currency,
+                                        str):
+                continue
+
+            title = column.long_title or column.title
+
+            options.append((title, column))
+
+        combo.prefill(options)
+        combo.show()
+        self.hbox.pack_end(combo, False, False, 0)
+
+        self.fields_combo = combo
+
+        if len(options) == 1:
+            combo.set_sensitive(False)
+            add.set_sensitive(False)
+
+    def _on_add_field_clicked(self, button):
+        column = self.fields_combo.read()
+
+        if column is None:
+            return
+
+        title = (column.long_title or column.title) + ':'
+
+        if column.data_type == datetime.date:
+            filter = DateSearchFilter(title)
+        elif (column.data_type == Decimal or
+              column.data_type == int or
+              column.data_type == currency):
+            filter = NumberSearchFilter(title)
+        elif column.data_type == str:
+            if column.valid_values:
+                filter = ComboSearchFilter(title, column.valid_values)
+            else:
+                filter = StringSearchFilter(title)
+        else:
+            # TODO: Boolean
+            raise NotImplementedError
+
+        filter.set_removable()
+        attr = column.search_attribute or column.attribute
+        self.add_filter(filter, columns=[attr])
+
+        label = filter.get_title_label()
+        label.set_alignment(1.0, 0.5)
+        self.label_group.add_widget(label)
+        combo = filter.get_mode_combo()
+        if combo:
+            self.combo_group.add_widget(combo)
+        self.fields_combo.select_item_by_position(0)
+
 
 # This is not quite a requirement at this point, only
 # do it if install_child_property is available, eg pygtk >= 2.10
@@ -902,6 +1217,12 @@ class SearchSlaveDelegate(SlaveDelegate):
         See L{SearchContainer.set_summary_label}
         """
         self.search.set_summary_label(column, label, format)
+
+    def enable_advanced_search(self):
+        """
+        See L{SearchContainer.enable_advanced_search}
+        """
+        self.search.enable_advanced_search()
 
     #
     # Overridable

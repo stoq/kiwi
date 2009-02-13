@@ -1,3 +1,15 @@
+2009-02-13  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: george@async.com.br
+
+	* kiwi/db/query.py:
+	* kiwi/db/sqlalch.py:
+	* kiwi/db/sqlobj.py:
+	* kiwi/db/stormintegration.py:
+	* kiwi/ui/objectlist.py:
+	* kiwi/ui/search.py:
+	Add an advanced search, disabled by default
+
 === 1.9.24 ===
 2009-01-27 George Y. Kussumoto <george@async.com.br>
 

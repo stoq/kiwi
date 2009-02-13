@@ -636,6 +636,36 @@ class SequentialColumn(Column):
             raise TypeError("%r does not support parameter %s" %
                             (renderer, renderer_prop))
 
+class SearchColumn(Column):
+    """
+    I am a column that should be used in conjunction with
+    L{kiwi.ui.search.SearchSlaveDelegate}
+
+    @param long_title: The title to display in the combo for this field.
+                       This is usefull if you need to display a small
+                       description on the column header, but still want a full
+                       description on the advanced search.
+    @param valid_values: This should be a list of touples (display value, db
+                         value). If provided, then a combo with only this
+                         values will be shown, instead of a free text entry.
+    @param search_attribute: Use this if the name of the db column that should
+                             be searched is different than the attribute of
+                             the model.
+    """
+
+    def __init__(self, attribute, title=None, data_type=None,
+                 long_title=None, valid_values=None, search_attribute=None,
+                 **kwargs):
+        """
+        """
+        self.long_title = long_title
+        self.valid_values = valid_values
+        self.search_attribute = search_attribute
+        self.sensitive = True
+        Column.__init__(self, attribute, title, data_type, **kwargs)
+
+
+
 class ColoredColumn(Column):
     """
     I am a column which can colorize the text of columns under
