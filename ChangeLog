@@ -1,3 +1,9 @@
+2009-02-19  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: george@async.com.br
+
+	* kiwi/ui/search.py: Refactor advanced search interface to use less space.
+
 2009-02-13  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: george@async.com.br

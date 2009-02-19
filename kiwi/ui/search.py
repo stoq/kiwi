@@ -744,9 +744,14 @@ class NumberSearchFilter(SearchFilter):
 #
 
 class SearchFilterButton(gtk.Button):
-    def __init__(self, *args, **kargs):
-        gtk.Button.__init__(self, *args, **kargs)
+    def __init__(self, label=None, stock=None, use_underline=True):
+        gtk.Button.__init__(self, label, stock, use_underline)
         self.set_icon_size(gtk.ICON_SIZE_MENU)
+        if label != stock and label:
+            self._set_label(label)
+
+    def _set_label(self, label):
+        self.get_children()[0].get_child().get_children()[1].set_label(label)
 
     def set_label_visible(self, visible):
         self.get_children()[0].get_child().get_children()[1].hide()
@@ -1068,15 +1073,14 @@ class SearchContainer(gtk.VBox):
         self.label_group = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
         self.combo_group = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
 
-        add = SearchFilterButton(stock=gtk.STOCK_ADD)
-        add.set_relief(gtk.RELIEF_NONE)
-        add.set_label_visible(False)
+        add = SearchFilterButton(label=_('Filter'), stock=gtk.STOCK_ADD)
         add.connect('clicked', self._on_add_field_clicked)
         add.show()
         self.hbox.pack_end(add, False, False, 0)
 
-        combo = ProxyComboBox()
-        options = [(_('More options'), None)]
+        self.add_filter_button = add
+
+        self.menu = gtk.Menu()
         for column in self._columns:
             if not isinstance(column, SearchColumn):
                 continue
@@ -1087,20 +1091,26 @@ class SearchContainer(gtk.VBox):
 
             title = column.long_title or column.title
 
-            options.append((title, column))
+            menu_item = gtk.MenuItem(title)
+            menu_item.set_data('column', column)
+            menu_item.show()
+            menu_item.connect('activate', self._on_menu_item_activate)
+            self.menu.append(menu_item)
 
-        combo.prefill(options)
-        combo.show()
-        self.hbox.pack_end(combo, False, False, 0)
+        if not len(self.menu):
+            self.add_filter_button.hide()
 
-        self.fields_combo = combo
+    def _position_filter_menu(self, data):
+        alloc = self.add_filter_button.get_allocation()
+        x, y = self.add_filter_button.window.get_origin()
 
-        if len(options) == 1:
-            combo.set_sensitive(False)
-            add.set_sensitive(False)
+        return (x + alloc.x, y + alloc.y + alloc.height, True)
 
     def _on_add_field_clicked(self, button):
-        column = self.fields_combo.read()
+        self.menu.popup(None, None, self._position_filter_menu, 0, 0L)
+
+    def _on_menu_item_activate(self, item):
+        column = item.get_data('column')
 
         if column is None:
             return
@@ -1109,6 +1119,13 @@ class SearchContainer(gtk.VBox):
 
         if column.data_type == datetime.date:
             filter = DateSearchFilter(title)
+            if column.valid_values:
+                filter.clear_options()
+                filter.add_custom_options()
+                for opt in column.valid_values:
+                    filter.add_option(opt)
+                filter.select(column.valid_values[0])
+
         elif (column.data_type == Decimal or
               column.data_type == int or
               column.data_type == currency):
@@ -1132,7 +1149,6 @@ class SearchContainer(gtk.VBox):
         combo = filter.get_mode_combo()
         if combo:
             self.combo_group.add_widget(combo)
-        self.fields_combo.select_item_by_position(0)
 
 
 # This is not quite a requirement at this point, only
