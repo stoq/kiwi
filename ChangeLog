@@ -1,3 +1,9 @@
+2009-02-27 George Y. Kussumoto <george@async.com.br>
+	reviewed by: romaia@async.com.br
+
+	* kiwi/ui/search.py: Added SearchFilter get_description method for each
+	subclass and an accessor for all search filters in a SearchContainer.
+
 2009-02-19  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: george@async.com.br

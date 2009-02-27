@@ -246,6 +246,12 @@ class SearchFilter(gtk.HBox):
     def get_mode_combo(self):
         raise NotImplementedError
 
+    def get_description(self):
+        """Returns a description of the search filter.
+        @returns: a string describing the search filter.
+        """
+        raise NotImplementedError
+
     def set_removable(self):
         self.remove_button.show()
 
@@ -321,6 +327,20 @@ class DateSearchFilter(SearchFilter):
 
     def get_mode_combo(self):
         return self.mode
+
+    def get_description(self):
+        desc = ''
+        start_date = self.start_date.get_date()
+        end_date = self.end_date.get_date()
+        if start_date:
+            if end_date and start_date != end_date:
+                desc += ' %s %s %s %s' % (_(u'from'), start_date.strftime('%x'),
+                                          _(u'to'), end_date.strftime('%x'),)
+
+            else:
+                 desc += start_date.strftime('%x')
+        if desc:
+            return '%s %s' % (self.get_title_label().get_text(), desc,)
 
     #
     # Public API
@@ -566,6 +586,13 @@ class ComboSearchFilter(SearchFilter):
     def get_mode_combo(self):
         return self.combo
 
+    def get_description(self):
+        desc = ''
+        data = self.combo.get_selected_data()
+        if data is not None:
+            desc += self.combo.get_selected_label()
+            return '%s %s' % (self.title_label.get_text(), desc,)
+
     #
     # Public API
     #
@@ -622,6 +649,11 @@ class StringSearchFilter(SearchFilter):
 
     def get_mode_combo(self):
         return None
+
+    def get_description(self):
+        desc = self.entry.get_text()
+        if desc:
+            return '%s %s' % (self.title_label.get_text(), desc,)
 
     #
     # Public API
@@ -722,6 +754,20 @@ class NumberSearchFilter(SearchFilter):
     def get_mode_combo(self):
         return self.mode
 
+    def get_description(self):
+        desc = ''
+        option = self.mode.get_selected_data()
+        if option is not None:
+            desc += option.name
+            if option.numbers > 0:
+                start = self.start.get_value_as_int()
+                if option.numbers == 1:
+                    desc += ' %d' % start
+                elif option.numbers == 2:
+                    end = self.end.get_value_as_int()
+                    desc += ' %d %s %d' % (start, self.and_label.get_text(), end,)
+        if desc:
+            return '%s %s' % (self.get_title_label().get_text(), desc)
 
     #
     #   Public API
@@ -889,6 +935,9 @@ class SearchContainer(gtk.VBox):
 
         if self._auto_search:
             self.search()
+
+    def get_search_filters(self):
+        return self._search_filters
 
     def set_filter_position(self, search_filter, position):
         """
@@ -1240,6 +1289,9 @@ class SearchSlaveDelegate(SlaveDelegate):
         """
         self.search.enable_advanced_search()
 
+    def get_search_filters(self):
+        return self.search.get_search_filters()
+
     #
     # Overridable
     #
@@ -1251,4 +1303,3 @@ class SearchSlaveDelegate(SlaveDelegate):
         @rtype: list of L{kiwi.ui.objectlist.Column}
         """
         raise NotImplementedError
-
