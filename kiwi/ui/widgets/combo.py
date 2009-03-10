@@ -663,3 +663,9 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
             self.entry.set_text("")
         else:
             self.select(data)
+
+    #FIXME: This is really an ugly workaround. But for some dark and
+    #       misterious force, we need to override this method because
+    #       the method in superclass fails to retrieve the selected data.
+    def get_selected_data(self):
+        return self.entry.read()

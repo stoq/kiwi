@@ -1,3 +1,9 @@
+2009-03-10 George Y. Kussumoto <george@async.com.br>
+	reviewed by: romaia@async.com.br
+
+	* kiwi/ui/widgets/combo.py: Added get_selected_data method in
+	ProxyComboEntry class, in order to fix some issues with completetion.
+
 2009-02-27 George Y. Kussumoto <george@async.com.br>
 	reviewed by: romaia@async.com.br
 
