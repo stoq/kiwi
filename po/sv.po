@@ -8,22 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-27 13:40-0200\n"
+"POT-Creation-Date: 2009-03-25 16:35-0300\n"
 "PO-Revision-Date: 2007-07-16 10:51-0300\n"
 "Last-Translator: Johan Dahlin <jdahlin@async.com.br>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: ../kiwi/currency.py:164
-msgid "Currency"
-msgstr "Valuta"
-
-#: ../kiwi/currency.py:180 ../kiwi/currency.py:197
-#, python-format
-msgid "%s can not be converted to a currency"
-msgstr "%s kunde inte konverteras till en valuta"
 
 #: ../kiwi/datatypes.py:242
 msgid "String"
@@ -148,75 +139,14 @@ msgstr "Felaktigt placerade tusenseparatorer: %r"
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr "Du har mer en än decimalkomma (\"%s\") i ditt nummer \"%s\""
 
-#: ../kiwi/ui/listdialog.py:194
+#: ../kiwi/currency.py:164
+msgid "Currency"
+msgstr "Valuta"
+
+#: ../kiwi/currency.py:180 ../kiwi/currency.py:197
 #, python-format
-msgid "Do you want to remove %s ?"
-msgstr "Will do ta bort %s ?"
-
-#: ../kiwi/ui/dateentry.py:74
-msgid "_Today"
-msgstr "_Idag"
-
-#: ../kiwi/ui/dateentry.py:75
-msgid "_Cancel"
-msgstr "_Avbryt"
-
-#: ../kiwi/ui/dateentry.py:76
-msgid "_Select"
-msgstr "_Välj"
-
-#: ../kiwi/ui/wizard.py:211
-msgid "Finish"
-msgstr "Slutför"
-
-#: ../kiwi/ui/entry.py:612
-#, python-format
-msgid "'%s' is not a valid object"
-msgstr "'%s' är inte ett giltligt objekt"
-
-#: ../kiwi/ui/objectlist.py:2099
-msgid "Total:"
-msgstr "Total:"
-
-#: ../kiwi/ui/search.py:69
-msgid "Any"
-msgstr "Alla"
-
-#: ../kiwi/ui/search.py:76
-msgid "Today"
-msgstr "Idag"
-
-#: ../kiwi/ui/search.py:84
-msgid "Yesterday"
-msgstr "Igår"
-
-#: ../kiwi/ui/search.py:92
-msgid "Last week"
-msgstr "Förra veckan"
-
-#: ../kiwi/ui/search.py:100
-msgid "Last month"
-msgstr "Förra månaden"
-
-#: ../kiwi/ui/search.py:200
-msgid "From:"
-msgstr "Från:"
-
-#: ../kiwi/ui/search.py:210
-msgid "To:"
-msgstr "Till:"
-
-#: ../kiwi/ui/search.py:292
-msgid "Custom day"
-msgstr "Dag"
-
-#: ../kiwi/ui/search.py:293
-msgid "Custom interval"
-msgstr "Intervall"
-
-#: ../kiwi/ui/search.py:573
-msgid "Search:"
-msgstr "Sök:"
+msgid "%s can not be converted to a currency"
+msgstr "%s kunde inte konverteras till en valuta"
 
 #: ../kiwi/ui/dialogs.py:101
 msgid "Show more _details"
@@ -272,6 +202,89 @@ msgstr "Spara"
 msgid "Password:"
 msgstr "Lösenord:"
 
+#: ../kiwi/ui/search.py:77
+msgid "Any"
+msgstr "Alla"
+
+#: ../kiwi/ui/search.py:84
+msgid "Today"
+msgstr "Idag"
+
+#: ../kiwi/ui/search.py:92
+msgid "Yesterday"
+msgstr "Igår"
+
+#: ../kiwi/ui/search.py:100
+msgid "Last week"
+msgstr "Förra veckan"
+
+#: ../kiwi/ui/search.py:108
+msgid "Last month"
+msgstr "Förra månaden"
+
+#: ../kiwi/ui/search.py:164
+msgid "Between"
+msgstr ""
+
+#: ../kiwi/ui/search.py:172
+msgid "Equals to"
+msgstr ""
+
+#: ../kiwi/ui/search.py:180
+msgid "Greater or Equal"
+msgstr ""
+
+#: ../kiwi/ui/search.py:188
+msgid "Lower or Equal"
+msgstr ""
+
+#: ../kiwi/ui/search.py:287
+msgid "From:"
+msgstr "Från:"
+
+#: ../kiwi/ui/search.py:297
+msgid "To:"
+msgstr "Till:"
+
+#: ../kiwi/ui/search.py:337
+#, fuzzy
+msgid "from"
+msgstr "Från:"
+
+#: ../kiwi/ui/search.py:338
+msgid "to"
+msgstr ""
+
+#: ../kiwi/ui/search.py:399
+msgid "Custom day"
+msgstr "Dag"
+
+#: ../kiwi/ui/search.py:400
+msgid "Custom interval"
+msgstr "Intervall"
+
+#: ../kiwi/ui/search.py:696
+#, fuzzy
+msgid "And"
+msgstr "Alla"
+
+#: ../kiwi/ui/search.py:843
+msgid "Search:"
+msgstr "Sök:"
+
+#: ../kiwi/ui/search.py:1125
+msgid "Filter"
+msgstr ""
+
+#: ../kiwi/ui/listdialog.py:194
+#, python-format
+msgid "Do you want to remove %s ?"
+msgstr "Will do ta bort %s ?"
+
+#: ../kiwi/ui/wizard.py:211
+msgid "Finish"
+msgstr "Slutför"
+
 #: ../kiwi/ui/proxywidget.py:65
 #, python-format
 msgid "Could not load image: %s"
@@ -285,6 +298,27 @@ msgstr "'%s' är inte ett giltligt värde för detta fältet"
 #: ../kiwi/ui/proxywidget.py:336
 msgid "This field is mandatory"
 msgstr "Detta fältet är obligatoriskt"
+
+#: ../kiwi/ui/dateentry.py:74
+msgid "_Today"
+msgstr "_Idag"
+
+#: ../kiwi/ui/dateentry.py:75
+msgid "_Cancel"
+msgstr "_Avbryt"
+
+#: ../kiwi/ui/dateentry.py:76
+msgid "_Select"
+msgstr "_Välj"
+
+#: ../kiwi/ui/entry.py:612
+#, python-format
+msgid "'%s' is not a valid object"
+msgstr "'%s' är inte ett giltligt objekt"
+
+#: ../kiwi/ui/objectlist.py:2129
+msgid "Total:"
+msgstr "Total:"
 
 #~ msgid "Pixbuf"
 #~ msgstr "Pixbuf"

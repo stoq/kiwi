@@ -8,22 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.9.20\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-27 13:40-0200\n"
+"POT-Creation-Date: 2009-03-25 16:35-0300\n"
 "PO-Revision-Date: 2008-03-03 10:07+0100\n"
 "Last-Translator: Jose A. Martin <j.martin.bejarano@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: ../kiwi/currency.py:164
-msgid "Currency"
-msgstr "Divisa"
-
-#: ../kiwi/currency.py:180 ../kiwi/currency.py:197
-#, python-format
-msgid "%s can not be converted to a currency"
-msgstr "%s no se puede convertir a una divisa"
 
 #: ../kiwi/datatypes.py:242
 msgid "String"
@@ -148,75 +139,14 @@ msgstr "Separador de miles incorrectamente situado: %r"
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr "Hay más de un punto decimal (\"%s\") en el número \"%s\""
 
-#: ../kiwi/ui/listdialog.py:194
+#: ../kiwi/currency.py:164
+msgid "Currency"
+msgstr "Divisa"
+
+#: ../kiwi/currency.py:180 ../kiwi/currency.py:197
 #, python-format
-msgid "Do you want to remove %s ?"
-msgstr "¿Desea borrar %s ?"
-
-#: ../kiwi/ui/dateentry.py:74
-msgid "_Today"
-msgstr "_Hoy"
-
-#: ../kiwi/ui/dateentry.py:75
-msgid "_Cancel"
-msgstr "_Cancelar"
-
-#: ../kiwi/ui/dateentry.py:76
-msgid "_Select"
-msgstr "Seleccionar"
-
-#: ../kiwi/ui/wizard.py:211
-msgid "Finish"
-msgstr "Finalizar"
-
-#: ../kiwi/ui/entry.py:612
-#, python-format
-msgid "'%s' is not a valid object"
-msgstr "'%s' no es un objeto válido"
-
-#: ../kiwi/ui/objectlist.py:2099
-msgid "Total:"
-msgstr "Total:"
-
-#: ../kiwi/ui/search.py:69
-msgid "Any"
-msgstr "Cualquiera"
-
-#: ../kiwi/ui/search.py:76
-msgid "Today"
-msgstr "Hoy"
-
-#: ../kiwi/ui/search.py:84
-msgid "Yesterday"
-msgstr "Ayer"
-
-#: ../kiwi/ui/search.py:92
-msgid "Last week"
-msgstr "La semana pasada"
-
-#: ../kiwi/ui/search.py:100
-msgid "Last month"
-msgstr "El mes pasado"
-
-#: ../kiwi/ui/search.py:200
-msgid "From:"
-msgstr "Desde:"
-
-#: ../kiwi/ui/search.py:210
-msgid "To:"
-msgstr "Para:"
-
-#: ../kiwi/ui/search.py:292
-msgid "Custom day"
-msgstr "Día de encargo"
-
-#: ../kiwi/ui/search.py:293
-msgid "Custom interval"
-msgstr "Intervalo de encargo"
-
-#: ../kiwi/ui/search.py:573
-msgid "Search:"
-msgstr "Búsqueda"
+msgid "%s can not be converted to a currency"
+msgstr "%s no se puede convertir a una divisa"
 
 #: ../kiwi/ui/dialogs.py:101
 msgid "Show more _details"
@@ -271,6 +201,89 @@ msgstr "Guardar"
 msgid "Password:"
 msgstr "Contraseña"
 
+#: ../kiwi/ui/search.py:77
+msgid "Any"
+msgstr "Cualquiera"
+
+#: ../kiwi/ui/search.py:84
+msgid "Today"
+msgstr "Hoy"
+
+#: ../kiwi/ui/search.py:92
+msgid "Yesterday"
+msgstr "Ayer"
+
+#: ../kiwi/ui/search.py:100
+msgid "Last week"
+msgstr "La semana pasada"
+
+#: ../kiwi/ui/search.py:108
+msgid "Last month"
+msgstr "El mes pasado"
+
+#: ../kiwi/ui/search.py:164
+msgid "Between"
+msgstr ""
+
+#: ../kiwi/ui/search.py:172
+msgid "Equals to"
+msgstr ""
+
+#: ../kiwi/ui/search.py:180
+msgid "Greater or Equal"
+msgstr ""
+
+#: ../kiwi/ui/search.py:188
+msgid "Lower or Equal"
+msgstr ""
+
+#: ../kiwi/ui/search.py:287
+msgid "From:"
+msgstr "Desde:"
+
+#: ../kiwi/ui/search.py:297
+msgid "To:"
+msgstr "Para:"
+
+#: ../kiwi/ui/search.py:337
+#, fuzzy
+msgid "from"
+msgstr "Desde:"
+
+#: ../kiwi/ui/search.py:338
+msgid "to"
+msgstr ""
+
+#: ../kiwi/ui/search.py:399
+msgid "Custom day"
+msgstr "Día de encargo"
+
+#: ../kiwi/ui/search.py:400
+msgid "Custom interval"
+msgstr "Intervalo de encargo"
+
+#: ../kiwi/ui/search.py:696
+#, fuzzy
+msgid "And"
+msgstr "Cualquiera"
+
+#: ../kiwi/ui/search.py:843
+msgid "Search:"
+msgstr "Búsqueda"
+
+#: ../kiwi/ui/search.py:1125
+msgid "Filter"
+msgstr ""
+
+#: ../kiwi/ui/listdialog.py:194
+#, python-format
+msgid "Do you want to remove %s ?"
+msgstr "¿Desea borrar %s ?"
+
+#: ../kiwi/ui/wizard.py:211
+msgid "Finish"
+msgstr "Finalizar"
+
 #: ../kiwi/ui/proxywidget.py:65
 #, python-format
 msgid "Could not load image: %s"
@@ -284,3 +297,24 @@ msgstr "'%s' no es un valor válido para este campo"
 #: ../kiwi/ui/proxywidget.py:336
 msgid "This field is mandatory"
 msgstr "Este campo es obligatorio"
+
+#: ../kiwi/ui/dateentry.py:74
+msgid "_Today"
+msgstr "_Hoy"
+
+#: ../kiwi/ui/dateentry.py:75
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+#: ../kiwi/ui/dateentry.py:76
+msgid "_Select"
+msgstr "Seleccionar"
+
+#: ../kiwi/ui/entry.py:612
+#, python-format
+msgid "'%s' is not a valid object"
+msgstr "'%s' no es un objeto válido"
+
+#: ../kiwi/ui/objectlist.py:2129
+msgid "Total:"
+msgstr "Total:"
