@@ -41,10 +41,10 @@ from kiwi.db.query import (NumberQueryState, StringQueryState,
 from kiwi.enums import SearchFilterPosition
 from kiwi.interfaces import ISearchFilter
 from kiwi.python import enum
-from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.delegates import SlaveDelegate
 from kiwi.ui.objectlist import ObjectList, SummaryLabel, SearchColumn
 from kiwi.ui.widgets.combo import ProxyComboBox
+from kiwi.ui.widgets.entry import ProxyDateEntry
 from kiwi.ui.widgets.spinbutton import ProxySpinButton
 from kiwi.utils import gsignal, gproperty
 
@@ -288,9 +288,9 @@ class DateSearchFilter(SearchFilter):
         self.pack_start(self.from_label, False, False)
         self.from_label.show()
 
-        self.start_date = DateEntry()
+        self.start_date = ProxyDateEntry()
         self._start_changed_id = self.start_date.connect(
-            'changed', self._on_start_date__changed)
+            'content-changed', self._on_start_date__changed)
         self.pack_start(self.start_date, False, False, 6)
         self.start_date.show()
 
@@ -298,9 +298,9 @@ class DateSearchFilter(SearchFilter):
         self.pack_start(self.to_label, False, False)
         self.to_label.show()
 
-        self.end_date = DateEntry()
+        self.end_date = ProxyDateEntry()
         self._end_changed_id = self.end_date.connect(
-            'changed', self._on_end_date__changed)
+            'content-changed', self._on_end_date__changed)
         self.pack_start(self.end_date, False, False, 6)
         self.end_date.show()
 
@@ -501,6 +501,10 @@ class DateSearchFilter(SearchFilter):
         self.end_date.set_date(date)
         self.end_date.handler_unblock(self._end_changed_id)
 
+    def _restore_date_validation(self):
+        self.start_date.set_valid()
+        self.end_date.set_valid()
+
     #
     # Callbacks
     #
@@ -508,6 +512,7 @@ class DateSearchFilter(SearchFilter):
     def _on_mode__content_changed(self, mode):
         self._update_dates()
         self._update_sensitivity()
+        self._restore_date_validation()
         self.emit('changed')
 
     def _on_start_date__changed(self, start_date):
@@ -516,16 +521,23 @@ class DateSearchFilter(SearchFilter):
         # For user days, just make sure that the date entries
         # always are in sync
         if date_type == DateSearchFilter.Type.USER_DAY:
-            self._internal_set_end_date(start)
+            if start is None:
+                self.start_date.set_invalid(_(u'Invalid date'))
+            else:
+                self.start_date.set_valid()
+                self._internal_set_end_date(start)
         # Make sure that we cannot select a start date after
         # the end date, be nice and increase the end date if
         # the start date happen to be the same
         elif date_type == DateSearchFilter.Type.USER_INTERVAL:
             end = self.end_date.get_date()
-            if not start or not end:
+            if start is None:
+                self.start_date.set_invalid(_(u'Invalid date'))
                 return
-            if start >= end:
+            if end and start >= end:
                 self._internal_set_end_date(start + datetime.timedelta(days=1))
+
+            self.start_date.set_valid()
 
     def _on_end_date__changed(self, end_date):
         date_type = self.mode.get_selected_data()
@@ -539,9 +551,12 @@ class DateSearchFilter(SearchFilter):
         elif date_type == DateSearchFilter.Type.USER_INTERVAL:
             start = self.start_date.get_date()
             end = end_date.get_date()
-            if not start or not end:
-                return
-            if end <= start:
+            if end is None:
+                self.end_date.set_invalid(_(u'Invalid date'))
+            else:
+                self.end_date.set_valid()
+
+            if start and end and end <= start:
                 self._internal_set_start_date(end - datetime.timedelta(days=1))
 
 
