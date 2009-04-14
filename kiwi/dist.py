@@ -304,7 +304,7 @@ def setup(**kwargs):
     InstallLib = new.classobj('InstallLib', (KiwiInstallLib,),
                               dict(resources=resources,
                                    global_resources=global_resources))
-    kwargs['cmdclass'] = dict(install_data=InstallData,
-                              install_lib=InstallLib)
+    cmdclass = dict(install_data=InstallData, install_lib=InstallLib)
+    kwargs.setdefault('cmdclass', cmdclass).update(cmdclass)
 
     DS_setup(**kwargs)
