@@ -1,3 +1,13 @@
+=== 1.9.25 ===
+2009-04-15 George Y. Kussumoto <george@async.com.br>
+
+	Release 1.9.25
+
+2009-04-14: Severin Heiniger <severinheiniger@gmail.com>
+	reviewed by: jdahlin@async.com.br
+
+	* kiwi/dist.py: Do not overwrite custom cmdclass entries.
+
 2009-03-10 George Y. Kussumoto <george@async.com.br>
 	reviewed by: romaia@async.com.br
 

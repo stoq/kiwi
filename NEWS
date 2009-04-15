@@ -1,3 +1,8 @@
+kiwi-1.9.25 15-april-2009
+    - Added Advanced Search in search dialogs. (Romaia Maia)
+    - Fixed overwriting of custom cmdclass (Severin Heiniger, #3781)
+    - Minor bugfixes
+
 kiwi-1.9.24 27-jan-2009
     - Fixed currency formating (Ronaldo Maia)
     - Fixed ComboEntry value updating (Ronaldo Maia, #3673)
