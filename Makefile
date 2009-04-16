@@ -36,7 +36,7 @@ bdist:
 release-tag:
 	svn cp -m "Tag $(VERSION)" . svn+ssh://async.com.br/pub/kiwi/tags/$(VERSION)
 
-upload-release: sdist bdist
+upload-release:
 	scp dist/$(TARBALL) johan@gnome.org:
 	ssh gnome.org install-module $(TARBALL)
 	scp dist/kiwi-$(VERSION).win32.exe gnome.org:/ftp/pub/GNOME/binaries/win32/kiwi/
