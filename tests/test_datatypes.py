@@ -319,8 +319,8 @@ class FloatTest(unittest.TestCase):
         self.assertEqual(self.conv.as_string(-0.5), '-0,5')
         self.assertEqual(self.conv.as_string(0.123456789), '0,123456789')
         self.assertEqual(self.conv.as_string(-0.123456789), '-0,123456789')
-        self.assertEqual(self.conv.as_string(10000000), '10000000,0')
-        self.assertEqual(self.conv.as_string(10000000.0), '10000000,0')
+        self.assertEqual(self.conv.as_string(10000000), '10 000 000,0')
+        self.assertEqual(self.conv.as_string(10000000.0), '10 000 000,0')
 
 
 class DecimalTest(unittest.TestCase):
@@ -370,9 +370,9 @@ class DecimalTest(unittest.TestCase):
         self.assertEqual(self.conv.as_string(Decimal('-0.123456789')),
                          '-0,123456789')
         self.assertEqual(self.conv.as_string(Decimal('10000000')),
-                         '10000000,0')
+                         '10 000 000,0')
         self.assertEqual(self.conv.as_string(Decimal('10000000.0')),
-                         '10000000,0')
+                         '10 000 000,0')
 
 class PixbufTest(unittest.TestCase):
     def setUp(self):
