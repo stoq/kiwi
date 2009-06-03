@@ -55,7 +55,8 @@ class StormQueryExecuter(QueryExecuter):
                     self.table, state, self._columns[search_filter])
                 if query:
                     queries.append(query)
-        return self.store.find(self.table, queries)
+        # Storm will unpack those values.
+        return self.store.find(self.table, *queries)
 
     def set_table(self, table):
         """
