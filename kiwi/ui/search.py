@@ -210,11 +210,14 @@ class SearchFilter(gtk.HBox):
     def __init__(self, label=''):
         self.__gobject_init__(label=label)
         self._label = label
-        self.remove_button = SearchFilterButton(stock=gtk.STOCK_REMOVE)
-        self.remove_button.set_relief(gtk.RELIEF_NONE)
-        self.remove_button.set_label_visible(False)
-        self.remove_button.connect('clicked', self._on_remove_clicked)
-        self.pack_start(self.remove_button, False, False)
+        self._remove_button = None
+
+    def _add_remove_button(self):
+        self._remove_button = SearchFilterButton(stock=gtk.STOCK_REMOVE)
+        self._remove_button.set_relief(gtk.RELIEF_NONE)
+        self._remove_button.set_label_visible(False)
+        self._remove_button.connect('clicked', self._on_remove_clicked)
+        self.pack_start(self._remove_button, False, False)
 
     def _on_remove_clicked(self, button):
         self.emit('removed')
@@ -253,6 +256,8 @@ class SearchFilter(gtk.HBox):
         raise NotImplementedError
 
     def set_removable(self):
+        if self._remove_button is None:
+            self._add_remove_button()
         self.remove_button.show()
 
 
