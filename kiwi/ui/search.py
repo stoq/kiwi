@@ -217,6 +217,7 @@ class SearchFilter(gtk.HBox):
         self._remove_button.set_relief(gtk.RELIEF_NONE)
         self._remove_button.set_label_visible(False)
         self._remove_button.connect('clicked', self._on_remove_clicked)
+        self._remove_button.show()
         self.pack_start(self._remove_button, False, False)
 
     def _on_remove_clicked(self, button):
@@ -258,7 +259,6 @@ class SearchFilter(gtk.HBox):
     def set_removable(self):
         if self._remove_button is None:
             self._add_remove_button()
-        self.remove_button.show()
 
 
 class DateSearchFilter(SearchFilter):
