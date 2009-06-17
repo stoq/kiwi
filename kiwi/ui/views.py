@@ -338,6 +338,14 @@ class SlaveView(gobject.GObject):
         """Returns the toplevel widget in the view"""
         return self.toplevel
 
+    def enable_window_controls(self):
+        """Enables the dialog to have the same controls as a window (eg
+        minimize, maximize and close buttons in its title bar).
+        This method should be called before the window becomes visible.
+        """
+        toplevel = self.get_toplevel()
+        toplevel.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_NORMAL)
+
     def get_widget(self, name):
         """Retrieves the named widget from the View"""
         name = string.replace(name, '.', '_')

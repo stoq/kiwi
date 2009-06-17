@@ -1,3 +1,17 @@
+2009-06-17 George Y. Kussumoto <george@async.com.br>
+	reviewed by: romaia@async.com.br
+
+	* kiwi/ui/views.py: Added enable_window_controls in SlaveView. (#3866:
+	Possibilitar a maximização das telas no processo de compras).
+
+2009-06-05  Ronaldo Maia  <romaia@async.com.br>
+
+	* kiwi/ui/search.py: Fix: update callsite after bugfix 3981.
+
+2009-06-01  Ronaldo Maia  <romaia@async.com.br>
+
+	* kiwi/test/test_datatypes.py: Fix sv_SE thousand separators.
+
 === 1.9.25 ===
 2009-04-15 George Y. Kussumoto <george@async.com.br>
 
