@@ -24,7 +24,7 @@
 SQLAlchemy integration for Kiwi
 """
 
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, not_
 
 from kiwi.db.query import NumberQueryState, StringQueryState, \
      DateQueryState, DateIntervalQueryState, QueryExecuter, \
@@ -185,7 +185,11 @@ class SQLAlchemyQueryExecuter(QueryExecuter):
     def _parse_string_state(self, state, table_field):
         if state.text is not None:
             text = '%%%s%%' % state.text.lower()
-            return table_field.like(text)
+            retval = table_field.like(text)
+        if state.mode = StringQueryState.NOT_CONTAINS:
+            retval = not_(retval)
+
+        return retval
 
     def _parse_date_state(self, state, table_field):
         if state.date:

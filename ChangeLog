@@ -1,3 +1,10 @@
+2009-06-19  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: george@async.com.br
+
+	* kiwi/ui/search.py: Update search if entry activates and enable decimal
+                         digits for number searching.
+
 2009-06-17 George Y. Kussumoto <george@async.com.br>
 	reviewed by: romaia@async.com.br
 

@@ -27,7 +27,7 @@
 Storm integration for Kiwi
 """
 
-from storm.expr import And, Or, Like
+from storm.expr import And, Or, Like, Not
 
 from kiwi.db.query import NumberQueryState, StringQueryState, \
      DateQueryState, DateIntervalQueryState, QueryExecuter, \
@@ -105,7 +105,11 @@ class StormQueryExecuter(QueryExecuter):
         if not state.text:
             return
         text = '%%%s%%' % state.text.lower()
-        return Like(table_field, text)
+        retval = Like(table_field, text)
+        if state.mode == StringQueryState.NOT_CONTAINS:
+            retval = Not(retval)
+
+        return retval
 
     def _parse_date_state(self, state, table_field):
         if state.date:

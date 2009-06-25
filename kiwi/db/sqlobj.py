@@ -26,7 +26,7 @@
 SQLObject integration for Kiwi
 """
 
-from sqlobject.sqlbuilder import func, AND, OR, LIKE, SQLExpression
+from sqlobject.sqlbuilder import func, AND, OR, LIKE, SQLExpression, NOT
 
 from kiwi.db.query import NumberQueryState, StringQueryState, \
      DateQueryState, DateIntervalQueryState, QueryExecuter, \
@@ -248,13 +248,18 @@ class SQLObjectQueryExecuter(QueryExecuter):
             #  & = AND
             #  | = OR
             value = value.replace(' ', ' & ')
-            return _FTI("%s.%s_fti @@ %s::tsquery" % (
+            retval = _FTI("%s.%s_fti @@ %s::tsquery" % (
                 table_field.tableName,
                 table_field.fieldName,
                 self.conn.sqlrepr(value)))
         else:
             text = '%%%s%%' % state.text.lower()
-            return LIKE(func.LOWER(table_field), text)
+            retval = LIKE(func.LOWER(table_field), text)
+
+        if state.mode == StringQueryState.NOT_CONTAINS:
+            retval = NOT(retval)
+
+        return retval
 
     def _parse_date_state(self, state, table_field):
         if state.date:

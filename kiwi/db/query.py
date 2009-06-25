@@ -70,8 +70,12 @@ class StringQueryState(QueryState):
     Create a new StringQueryState object.
     @cvar text: string
     """
-    def __init__(self, filter, text):
+    (CONTAINS,
+     NOT_CONTAINS) = range(2)
+
+    def __init__(self, filter, text, mode=CONTAINS):
         QueryState.__init__(self, filter)
+        self.mode = mode
         self.text = text
 
     def __repr__(self):

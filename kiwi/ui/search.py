@@ -193,6 +193,24 @@ class LowerThan(NumberSearchOption):
 
 
 #
+#   String Search Options
+#
+
+class StringSearchOption(object):
+    pass
+
+
+class Contains(StringSearchOption):
+    name = _('Contains')
+    mode = StringQueryState.CONTAINS
+
+
+class DoesNotContain(StringSearchOption):
+    name = _('Does Not Contain')
+    mode = StringQueryState.NOT_CONTAINS
+
+
+#
 # Search Filters
 #
 
@@ -650,34 +668,66 @@ class StringSearchFilter(SearchFilter):
         self.pack_start(self.title_label, False, False)
         self.title_label.show()
 
+        self._options = {}
+        self.mode = ProxyComboBox()
+        self.mode.connect('content-changed', self._on_mode__content_changed)
+        self.pack_start(self.mode, False, False, 6)
+
         self.entry = gtk.Entry()
+        self.entry.connect('activate', self._on_entry__activate)
         if chars:
             self.entry.set_width_chars(chars)
         self.pack_start(self.entry, False, False, 6)
         self.entry.show()
+
+        for option in (Contains, DoesNotContain):
+            self._add_option(option)
+        self.mode.select_item_by_position(0)
+
+    def _add_option(self, option_type, position=-2):
+        option = option_type()
+        num = len(self.mode) + position
+        self.mode.insert_item(num, option.name, option_type)
+        self._options[option_type] = option
+
+    #
+    # Callbacks
+    #
+
+    def _on_mode__content_changed(self, combo):
+        self.emit('changed')
+
+    def _on_entry__activate(self, entry):
+        self.emit('changed')
 
     #
     # SearchFilter
     #
 
     def get_state(self):
+        option = self.mode.get_selected_data()
         return StringQueryState(filter=self,
-                                text=self.entry.get_text())
+                                text=self.entry.get_text(),
+                                mode=option.mode)
 
     def get_title_label(self):
         return self.title_label
 
     def get_mode_combo(self):
-        return None
+        return self.mode
 
     def get_description(self):
         desc = self.entry.get_text()
         if desc:
-            return '%s %s' % (self.title_label.get_text(), desc,)
+            mode = self.mode.get_selected_label()
+            return '%s %s "%s"' % (self.title_label.get_text(), mode, desc,)
 
     #
     # Public API
     #
+
+    def enable_advaced(self):
+        self.mode.show()
 
     def set_label(self, label):
         self.title_label.set_text(label)
@@ -708,10 +758,12 @@ class NumberSearchFilter(SearchFilter):
         self.mode.show()
 
         self.start = gtk.SpinButton(climb_rate=1.0)
+        self.start.set_digits(2)
         self.start.get_adjustment().step_increment = 1.0
         self.start.set_range(-sys.maxint-1, sys.maxint)
         self.pack_start(self.start, False, False, 6)
         self.start.show()
+        self.start.connect_after('activate', self._on_entry__activate)
 
         self.and_label = gtk.Label(_("And"))
         self.pack_start(self.and_label, False, False)
@@ -722,6 +774,7 @@ class NumberSearchFilter(SearchFilter):
         self.end.set_range(-sys.maxint-1, sys.maxint)
         self.pack_start(self.end, False, False, 6)
         self.end.show()
+        self.end.connect_after('activate', self._on_entry__activate)
 
         for option in (LowerThan, EqualsTo, GreaterThan, Between):
             self.add_option(option)
@@ -753,16 +806,21 @@ class NumberSearchFilter(SearchFilter):
     #   Callbacks
     #
 
+    def _on_entry__activate(self, entry):
+        self.emit('changed')
+
     def _on_mode__content_changed(self, combo):
         self._update_visibility()
+        self.emit('changed')
 
     #
     #   SearchFilter
     #
 
     def get_state(self):
-        start_value = self.start.get_value_as_int()
-        end_value = self.end.get_value_as_int()
+        # Using Decimals for better precision.
+        start_value = Decimal("%.2f" % self.start.get_value())
+        end_value = Decimal("%.2f" % self.end.get_value())
         option = self.mode.get_selected_data()
 
         start, end = option().get_interval(start_value, end_value)
@@ -1204,6 +1262,7 @@ class SearchContainer(gtk.VBox):
                 filter = ComboSearchFilter(title, column.valid_values)
             else:
                 filter = StringSearchFilter(title)
+                filter.enable_advaced()
         else:
             # TODO: Boolean
             raise NotImplementedError
