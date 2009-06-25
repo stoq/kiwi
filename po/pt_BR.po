@@ -8,13 +8,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-15 15:09-0300\n"
+"POT-Creation-Date: 2009-06-25 10:48-0300\n"
 "PO-Revision-Date: 2007-07-20 17:57-0300\n"
 "Last-Translator: Ronaldo Maia <romaia@async.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: ../kiwi/currency.py:164
+msgid "Currency"
+msgstr "Monetário"
+
+#: ../kiwi/currency.py:180 ../kiwi/currency.py:197
+#, python-format
+msgid "%s can not be converted to a currency"
+msgstr "%s não pode ser convertido para valor monetário"
 
 #: ../kiwi/datatypes.py:242
 msgid "String"
@@ -139,29 +148,6 @@ msgstr "Separadores de milhares colocado em posições incorretas: %r"
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr "Você tem mais de um ponto decimal (\"%s\") em seu número \"%s\""
 
-#: ../kiwi/currency.py:164
-msgid "Currency"
-msgstr "Monetário"
-
-#: ../kiwi/currency.py:180 ../kiwi/currency.py:197
-#, python-format
-msgid "%s can not be converted to a currency"
-msgstr "%s não pode ser convertido para valor monetário"
-
-#: ../kiwi/ui/proxywidget.py:65
-#, python-format
-msgid "Could not load image: %s"
-msgstr "Não foi possivel abrir o imagem \"%s\""
-
-#: ../kiwi/ui/proxywidget.py:302
-#, python-format
-msgid "'%s' is not a valid value for this field"
-msgstr "'%s' não é um valor válido para este campo"
-
-#: ../kiwi/ui/proxywidget.py:336
-msgid "This field is mandatory"
-msgstr "Esse campo é obrigatorio"
-
 #: ../kiwi/ui/dialogs.py:101
 msgid "Show more _details"
 msgstr "Exibir mais _detalhes"
@@ -215,26 +201,33 @@ msgstr "Salvar"
 msgid "Password:"
 msgstr "Senha:"
 
-#: ../kiwi/ui/dateentry.py:74
-msgid "_Today"
-msgstr "_Hoje"
+#: ../kiwi/ui/objectlist.py:2129
+msgid "Total:"
+msgstr "Total:"
 
-#: ../kiwi/ui/dateentry.py:75
-msgid "_Cancel"
-msgstr "_Cancelar"
+#: ../kiwi/ui/listdialog.py:194
+#, python-format
+msgid "Do you want to remove %s ?"
+msgstr "Você deseja remover %s ?"
 
-#: ../kiwi/ui/dateentry.py:76
-msgid "_Select"
-msgstr "_Selecionar"
+#: ../kiwi/ui/proxywidget.py:65
+#, python-format
+msgid "Could not load image: %s"
+msgstr "Não foi possivel abrir o imagem \"%s\""
+
+#: ../kiwi/ui/proxywidget.py:302
+#, python-format
+msgid "'%s' is not a valid value for this field"
+msgstr "'%s' não é um valor válido para este campo"
+
+#: ../kiwi/ui/proxywidget.py:336
+msgid "This field is mandatory"
+msgstr "Esse campo é obrigatorio"
 
 #: ../kiwi/ui/entry.py:612
 #, python-format
 msgid "'%s' is not a valid object"
 msgstr "'%s' não é um objeto válido"
-
-#: ../kiwi/ui/objectlist.py:2129
-msgid "Total:"
-msgstr "Total:"
 
 #: ../kiwi/ui/search.py:77
 msgid "Any"
@@ -272,54 +265,69 @@ msgstr "Maior ou Igual"
 msgid "Lower or Equal"
 msgstr "Menor ou Igual"
 
-#: ../kiwi/ui/search.py:287
+#: ../kiwi/ui/search.py:204
+msgid "Contains"
+msgstr "Contém"
+
+#: ../kiwi/ui/search.py:209
+msgid "Does Not Contain"
+msgstr "Não Contém"
+
+#: ../kiwi/ui/search.py:310
 msgid "From:"
-msgstr "Para"
+msgstr "De:"
 
-#: ../kiwi/ui/search.py:297
+#: ../kiwi/ui/search.py:320
 msgid "To:"
-msgstr "a:"
+msgstr "Para:"
 
-#: ../kiwi/ui/search.py:337
+#: ../kiwi/ui/search.py:360
 msgid "from"
 msgstr "de"
 
-#: ../kiwi/ui/search.py:338
+#: ../kiwi/ui/search.py:361
 msgid "to"
 msgstr "para"
 
-#: ../kiwi/ui/search.py:399
+#: ../kiwi/ui/search.py:422
 msgid "Custom day"
 msgstr "Dia"
 
-#: ../kiwi/ui/search.py:400
+#: ../kiwi/ui/search.py:423
 msgid "Custom interval"
 msgstr "Intervalo"
 
-#: ../kiwi/ui/search.py:525 ../kiwi/ui/search.py:535 ../kiwi/ui/search.py:555
+#: ../kiwi/ui/search.py:548 ../kiwi/ui/search.py:558 ../kiwi/ui/search.py:578
 msgid "Invalid date"
 msgstr "Data inválida"
 
-#: ../kiwi/ui/search.py:711
+#: ../kiwi/ui/search.py:768
 msgid "And"
 msgstr "E"
 
-#: ../kiwi/ui/search.py:858
+#: ../kiwi/ui/search.py:921
 msgid "Search:"
 msgstr "Pesquisar:"
 
-#: ../kiwi/ui/search.py:1140
+#: ../kiwi/ui/search.py:1203
 msgid "Filter"
 msgstr "Filtro"
-
-#: ../kiwi/ui/listdialog.py:194
-#, python-format
-msgid "Do you want to remove %s ?"
-msgstr "Você deseja remover %s ?"
 
 #: ../kiwi/ui/wizard.py:211
 msgid "Finish"
 msgstr "Terminar"
+
+#: ../kiwi/ui/dateentry.py:74
+msgid "_Today"
+msgstr "_Hoje"
+
+#: ../kiwi/ui/dateentry.py:75
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+#: ../kiwi/ui/dateentry.py:76
+msgid "_Select"
+msgstr "_Selecionar"
 
 #~ msgid "Pixbuf"
 #~ msgstr "Pixbuf"

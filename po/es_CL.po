@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.9.20\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-15 14:28-0300\n"
+"POT-Creation-Date: 2009-06-25 10:48-0300\n"
 "PO-Revision-Date: 2008-03-06 01:07-0300\n"
 "Last-Translator: Gabriel Felipe Cornejo Salas <gnomeusr@gmail.com>\n"
 "Language-Team: Español/Chile <es@li.org>\n"
@@ -147,114 +147,6 @@ msgstr "Separador de miles incorrectamente colocado: %r"
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr "Hay más de un punto decimal (\"%s\") en el número \"%s\""
 
-#: ../kiwi/ui/listdialog.py:194
-#, python-format
-msgid "Do you want to remove %s ?"
-msgstr "¿Desea borrar %s ?"
-
-#: ../kiwi/ui/dateentry.py:74
-msgid "_Today"
-msgstr "_Hoy"
-
-#: ../kiwi/ui/dateentry.py:75
-msgid "_Cancel"
-msgstr "_Cancelar"
-
-#: ../kiwi/ui/dateentry.py:76
-msgid "_Select"
-msgstr "_Seleccionar"
-
-#: ../kiwi/ui/wizard.py:211
-msgid "Finish"
-msgstr "Finalizar"
-
-#: ../kiwi/ui/entry.py:612
-#, python-format
-msgid "'%s' is not a valid object"
-msgstr "'%s' no es un objeto válido"
-
-#: ../kiwi/ui/objectlist.py:2129
-msgid "Total:"
-msgstr "Total:"
-
-#: ../kiwi/ui/search.py:77
-msgid "Any"
-msgstr "Cualquiera"
-
-#: ../kiwi/ui/search.py:84
-msgid "Today"
-msgstr "Hoy"
-
-#: ../kiwi/ui/search.py:92
-msgid "Yesterday"
-msgstr "Ayer"
-
-#: ../kiwi/ui/search.py:100
-msgid "Last week"
-msgstr "La semana pasada"
-
-#: ../kiwi/ui/search.py:108
-msgid "Last month"
-msgstr "El mes pasado"
-
-#: ../kiwi/ui/search.py:164
-msgid "Between"
-msgstr ""
-
-#: ../kiwi/ui/search.py:172
-msgid "Equals to"
-msgstr ""
-
-#: ../kiwi/ui/search.py:180
-msgid "Greater or Equal"
-msgstr ""
-
-#: ../kiwi/ui/search.py:188
-msgid "Lower or Equal"
-msgstr ""
-
-#: ../kiwi/ui/search.py:287
-msgid "From:"
-msgstr "Desde:"
-
-#: ../kiwi/ui/search.py:297
-msgid "To:"
-msgstr "Para:"
-
-#: ../kiwi/ui/search.py:337
-#, fuzzy
-msgid "from"
-msgstr "Desde:"
-
-#: ../kiwi/ui/search.py:338
-msgid "to"
-msgstr ""
-
-#: ../kiwi/ui/search.py:399
-msgid "Custom day"
-msgstr "Día de encargo"
-
-#: ../kiwi/ui/search.py:400
-msgid "Custom interval"
-msgstr "Intervalo de encargo"
-
-#: ../kiwi/ui/search.py:525 ../kiwi/ui/search.py:535 ../kiwi/ui/search.py:555
-msgid "Invalid date"
-msgstr ""
-
-#: ../kiwi/ui/search.py:711
-#, fuzzy
-msgid "And"
-msgstr "Cualquiera"
-
-#: ../kiwi/ui/search.py:858
-msgid "Search:"
-msgstr "Búsqueda:"
-
-#: ../kiwi/ui/search.py:1140
-msgid "Filter"
-msgstr ""
-
 #: ../kiwi/ui/dialogs.py:101
 msgid "Show more _details"
 msgstr "Muestra más _detalles"
@@ -308,6 +200,15 @@ msgstr "Guardar"
 msgid "Password:"
 msgstr "Contraseña:"
 
+#: ../kiwi/ui/objectlist.py:2129
+msgid "Total:"
+msgstr "Total:"
+
+#: ../kiwi/ui/listdialog.py:194
+#, python-format
+msgid "Do you want to remove %s ?"
+msgstr "¿Desea borrar %s ?"
+
 #: ../kiwi/ui/proxywidget.py:65
 #, python-format
 msgid "Could not load image: %s"
@@ -321,3 +222,110 @@ msgstr "'%s' no es un valor válido para este campo"
 #: ../kiwi/ui/proxywidget.py:336
 msgid "This field is mandatory"
 msgstr "Este campo es obligatorio"
+
+#: ../kiwi/ui/entry.py:612
+#, python-format
+msgid "'%s' is not a valid object"
+msgstr "'%s' no es un objeto válido"
+
+#: ../kiwi/ui/search.py:77
+msgid "Any"
+msgstr "Cualquiera"
+
+#: ../kiwi/ui/search.py:84
+msgid "Today"
+msgstr "Hoy"
+
+#: ../kiwi/ui/search.py:92
+msgid "Yesterday"
+msgstr "Ayer"
+
+#: ../kiwi/ui/search.py:100
+msgid "Last week"
+msgstr "La semana pasada"
+
+#: ../kiwi/ui/search.py:108
+msgid "Last month"
+msgstr "El mes pasado"
+
+#: ../kiwi/ui/search.py:164
+msgid "Between"
+msgstr ""
+
+#: ../kiwi/ui/search.py:172
+msgid "Equals to"
+msgstr ""
+
+#: ../kiwi/ui/search.py:180
+msgid "Greater or Equal"
+msgstr ""
+
+#: ../kiwi/ui/search.py:188
+msgid "Lower or Equal"
+msgstr ""
+
+#: ../kiwi/ui/search.py:204
+msgid "Contains"
+msgstr ""
+
+#: ../kiwi/ui/search.py:209
+msgid "Does Not Contain"
+msgstr ""
+
+#: ../kiwi/ui/search.py:310
+msgid "From:"
+msgstr "Desde:"
+
+#: ../kiwi/ui/search.py:320
+msgid "To:"
+msgstr "Para:"
+
+#: ../kiwi/ui/search.py:360
+#, fuzzy
+msgid "from"
+msgstr "Desde:"
+
+#: ../kiwi/ui/search.py:361
+msgid "to"
+msgstr ""
+
+#: ../kiwi/ui/search.py:422
+msgid "Custom day"
+msgstr "Día de encargo"
+
+#: ../kiwi/ui/search.py:423
+msgid "Custom interval"
+msgstr "Intervalo de encargo"
+
+#: ../kiwi/ui/search.py:548 ../kiwi/ui/search.py:558 ../kiwi/ui/search.py:578
+msgid "Invalid date"
+msgstr ""
+
+#: ../kiwi/ui/search.py:768
+#, fuzzy
+msgid "And"
+msgstr "Cualquiera"
+
+#: ../kiwi/ui/search.py:921
+msgid "Search:"
+msgstr "Búsqueda:"
+
+#: ../kiwi/ui/search.py:1203
+msgid "Filter"
+msgstr ""
+
+#: ../kiwi/ui/wizard.py:211
+msgid "Finish"
+msgstr "Finalizar"
+
+#: ../kiwi/ui/dateentry.py:74
+msgid "_Today"
+msgstr "_Hoy"
+
+#: ../kiwi/ui/dateentry.py:75
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+#: ../kiwi/ui/dateentry.py:76
+msgid "_Select"
+msgstr "_Seleccionar"
