@@ -1,3 +1,9 @@
+2009-07-01  Ronaldo Maia  <romaia@async.com.br>
+
+	reviewed by: george@async.com.br
+
+	* kiwi/ui/objectlist.py: Enable custom sort_func for objectlists
+
 2009-06-19  Ronaldo Maia  <romaia@async.com.br>
 
 	reviewed by: george@async.com.br

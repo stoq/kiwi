@@ -138,6 +138,10 @@ class Column(PropertyObject, gobject.GObject):
       - B{column}: str None
         - A string referencing to another column. If this is set a new column
           will not be created and the column will be packed into the other.
+      - B{sort_func}: object I{None}
+        -  a callable which will be used to sort the contents of the column.
+           The function will take two values (x and y) from the column and
+           should return negative if x<y, zero if x==y, positive if x>y.
     """
     __gtype_name__ = 'Column'
     gproperty('attribute', str, flags=(gobject.PARAM_READWRITE | gobject.PARAM_CONSTRUCT_ONLY))
@@ -164,6 +168,7 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('ellipsize', pango.EllipsizeMode, default=pango.ELLIPSIZE_NONE)
     gproperty('font-desc', str)
     gproperty('column', str)
+    gproperty('sort_func', object, default=None)
     #gproperty('title_pixmap', str)
 
     # This can be set in subclasses, to be able to allow custom
@@ -242,6 +247,11 @@ class Column(PropertyObject, gobject.GObject):
                 raise TypeError(
                     "spin_adjustment must be a gtk.Adjustment instance")
 
+        if 'sort_func' in kwargs:
+            if not callable(format_func):
+                raise TypeError("sort_func must be callable")
+            self.compare = kwargs['sort_func']
+
         PropertyObject.__init__(self, **kwargs)
         gobject.GObject.__init__(self, attribute=attribute)
 
@@ -252,7 +262,7 @@ class Column(PropertyObject, gobject.GObject):
     def prop_set_data_type(self, data):
         if data is not None:
             conv = converter.get_converter(data)
-            self.compare = conv.get_compare_function()
+            self.compare = self.compare or conv.get_compare_function()
             self.from_string = conv.from_string
         return data
 
