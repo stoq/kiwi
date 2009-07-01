@@ -247,10 +247,11 @@ class Column(PropertyObject, gobject.GObject):
                 raise TypeError(
                     "spin_adjustment must be a gtk.Adjustment instance")
 
-        if 'sort_func' in kwargs:
-            if not callable(format_func):
+        sort_func = kwargs.get('sort_func')
+        if sort_func:
+            if not callable(sort_func):
                 raise TypeError("sort_func must be callable")
-            self.compare = kwargs['sort_func']
+            self.compare = sort_func
 
         PropertyObject.__init__(self, **kwargs)
         gobject.GObject.__init__(self, attribute=attribute)
