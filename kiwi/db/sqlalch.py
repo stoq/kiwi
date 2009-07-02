@@ -186,7 +186,7 @@ class SQLAlchemyQueryExecuter(QueryExecuter):
         if state.text is not None:
             text = '%%%s%%' % state.text.lower()
             retval = table_field.like(text)
-        if state.mode = StringQueryState.NOT_CONTAINS:
+        if state.mode == StringQueryState.NOT_CONTAINS:
             retval = not_(retval)
 
         return retval
