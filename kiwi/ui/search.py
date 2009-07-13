@@ -45,7 +45,6 @@ from kiwi.ui.delegates import SlaveDelegate
 from kiwi.ui.objectlist import ObjectList, SummaryLabel, SearchColumn
 from kiwi.ui.widgets.combo import ProxyComboBox
 from kiwi.ui.widgets.entry import ProxyDateEntry
-from kiwi.ui.widgets.spinbutton import ProxySpinButton
 from kiwi.utils import gsignal, gproperty
 
 _ = lambda m: gettext.dgettext('kiwi', m)
