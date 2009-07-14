@@ -1,34 +1,42 @@
 Check bugzilla
+    Look for pending patches or updates
 Go through the examples
   find examples/ -name \*.py|xargs -n1 python
 Run pyflakes
+    find  -name \*.py|xargs -n1 pyflakes
 Run all tests
+    trial test kiwi
 Check buildbot
+
 Update translations:
   bin/kiwi-i18n -pkiwi -u -c
+
 Bump version number:
   kiwi/__version__.py
   doc/howto.tex
-#  doc/release-announcement.tmpl
-  kiwi.spec
+
 ---
 Before you use make, read common/async.mk and Makefile
 ---
 make docs
 make release
-make Changelog
+  Add a release mark in Changelog
   Add a release mark in debian/changelog (dch -v newversion)
-Update NEWS
-Add a release mark in Changelog
+Update NEWS (look in the Changelog)
 make deb
     Fix the lintian errors, the output is very verbose, so check the
     lines starting with an "E:" or "W:".
     Also, you might test the package to see if it's OK. In dist/ you
     will find the tarball and the .deb.
-Commit
+Commit changes
 make release-tag
+make upload
+
 make upload-release
-  Ask Johan, he must do this
+  Ask Johan, he must do this (gnome.org package)
+
+Publish the new version in gnomefiles.org too.
+
 Add bugzilla version:
   Use your browser, wget won't work
   http://bugs/editversions.cgi?action=new&product=Kiwi&submit=Add&version=1.9.x
@@ -37,6 +45,7 @@ Add bugzilla version:
 Update website:
   make web
   Add new version to htdocs/async/kiwi/src/getit.txt
+  The packages should be available at this time
 
 Use release-anouncement.tmpl to write a new announcement
   Update Y in Subject

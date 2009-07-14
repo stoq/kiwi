@@ -19,4 +19,4 @@
 # USA
 #
 
-version = (1, 9, 25)
+version = (1, 9, 26)

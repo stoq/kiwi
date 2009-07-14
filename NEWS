@@ -1,3 +1,9 @@
+kiwi-1.9.26 14-july-2009
+    - Added custom sort function for objectlists. (Ronaldo Maia)
+    - Added decimal digits searching in Advanced Search.  (Ronaldo Maia)
+    - Fixed sv_SE thousand separators. (Ronaldo Maia)
+    - Minor bugfixes
+
 kiwi-1.9.25 15-april-2009
     - Added Advanced Search in search dialogs. (Romaia Maia)
     - Fixed overwriting of custom cmdclass (Severin Heiniger, #3781)
