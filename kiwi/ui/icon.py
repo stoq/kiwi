@@ -242,7 +242,12 @@ class IconEntry(object):
             # FIXME: Why is this needed. Focus padding?
             #        The text jumps without this
             textw -= 2
-            self._text_area.move_resize(textx, texty, textw, texth)
+
+            # FIXME: This stoped working properly with pygtk 2.14.1. Only
+            # calling this for versions prior to that, until we figure the
+            # real problem. See bug 4026
+            if gtk.pygtk_version < (2, 14):
+                self._text_area.move_resize(textx, texty, textw, texth)
             self._recompute()
         elif self._pos == gtk.POS_RIGHT:
             self._text_area.resize(textw, texth)
