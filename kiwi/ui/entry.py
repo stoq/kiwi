@@ -110,12 +110,13 @@ if not environ.epydoc:
     HAVE_2_6 = gtk.pygtk_version[:2] <= (2, 6)
 else:
     HAVE_2_6 = True
+
 # In gtk+ 2.18 they refactored gtk.Entry to use gtk.EntryBuffer, so we need to
 # track the gtk version here for later use.
 if gtk.gtk_version >= (2, 18):
-    HAVE_2_18 = True
+    GTK_2_18 = True
 else:
-    HAVE_2_18 = False
+    GTK_2_18 = False
 
 
 class MaskError(Exception):
@@ -276,7 +277,8 @@ class KiwiEntry(PropertyObject, gtk.Entry):
             self.handler_block(completion.changed_id)
 
         gtk.Entry.set_text(self, text)
-        if HAVE_2_18:
+
+        if GTK_2_18:
             self._do_2_18_workaround(text)
 
         if isinstance(completion, KiwiEntryCompletion):
@@ -288,6 +290,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         # feature). My guess is that the signal 'insert-text' have not been
         # emitted when calling gtk_entry_set_text method (but the signal is
         # emitted in gtk_entry_insert_text method, see gtkentry.c in gtk+).
+
         self._really_delete_text(0, -1)
         if not self._mask:
             new_text = text
@@ -314,9 +317,10 @@ class KiwiEntry(PropertyObject, gtk.Entry):
                     break
 
             if self._confirms_to_mask(pos, t):
-                to_insert[i] = pos
+                to_insert[pos] = t
 
         self._really_insert_text(''.join(to_insert), 0)
+        self.set_position(pos+1)
 
     # Mask & Fields
 
