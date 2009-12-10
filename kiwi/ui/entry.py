@@ -110,6 +110,13 @@ if not environ.epydoc:
     HAVE_2_6 = gtk.pygtk_version[:2] <= (2, 6)
 else:
     HAVE_2_6 = True
+# In gtk+ 2.18 they refactored gtk.Entry to use gtk.EntryBuffer, so we need to
+# track the gtk version here for later use.
+if gtk.gtk_version >= (2, 18):
+    HAVE_2_18 = True
+else:
+    HAVE_2_18 = False
+
 
 class MaskError(Exception):
     pass
@@ -269,9 +276,47 @@ class KiwiEntry(PropertyObject, gtk.Entry):
             self.handler_block(completion.changed_id)
 
         gtk.Entry.set_text(self, text)
+        if HAVE_2_18:
+            self._do_2_18_workaround(text)
 
         if isinstance(completion, KiwiEntryCompletion):
             self.handler_unblock(completion.changed_id)
+
+    def _do_2_18_workaround(self, text):
+        # FIXME: When using gtk 2.18 and pygtk 2.16 our set_text method is
+        # broken because we edit the text that will stay in the entry (mask
+        # feature). My guess is that the signal 'insert-text' have not been
+        # emitted when calling gtk_entry_set_text method (but the signal is
+        # emitted in gtk_entry_insert_text method, see gtkentry.c in gtk+).
+        self._really_delete_text(0, -1)
+        if not self._mask:
+            new_text = text
+            self._really_insert_text(text, 0)
+            return
+
+        if not text:
+            # set_text used to clean the entry, but the mask must stay there.
+            self._really_insert_text(self.get_empty_mask(), 0)
+            return
+
+        to_insert = []
+        for i in self._mask_validators:
+            if isinstance(i, int):
+                # mark available positions with an empty string
+                to_insert.append('')
+            else:
+                to_insert.append(i)
+
+        for t in unicode(text):
+            # find the next position available for insertion
+            for pos, k in enumerate(to_insert):
+                if k == '':
+                    break
+
+            if self._confirms_to_mask(pos, t):
+                to_insert[i] = pos
+
+        self._really_insert_text(''.join(to_insert), 0)
 
     # Mask & Fields
 
