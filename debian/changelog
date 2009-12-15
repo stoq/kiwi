@@ -1,3 +1,9 @@
+kiwi (1.9.26.2) karmic; urgency=low
+
+  * Bugfix Release
+
+ -- George Y. Kussumoto <george@async.com.br>  Tue, 15 Dec 2009 11:16:32 -0200
+
 kiwi (1.9.26) karmic; urgency=low
 
   * New Release

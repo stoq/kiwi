@@ -8,22 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-14 14:06-0300\n"
+"POT-Creation-Date: 2009-12-15 10:01-0200\n"
 "PO-Revision-Date: 2007-07-20 17:57-0300\n"
 "Last-Translator: Ronaldo Maia <romaia@async.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: ../kiwi/currency.py:164
-msgid "Currency"
-msgstr "Monetário"
-
-#: ../kiwi/currency.py:180 ../kiwi/currency.py:197
-#, python-format
-msgid "%s can not be converted to a currency"
-msgstr "%s não pode ser convertido para valor monetário"
 
 #: ../kiwi/datatypes.py:242
 msgid "String"
@@ -148,31 +139,14 @@ msgstr "Separadores de milhares colocado em posições incorretas: %r"
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr "Você tem mais de um ponto decimal (\"%s\") em seu número \"%s\""
 
-#: ../kiwi/ui/listdialog.py:194
+#: ../kiwi/currency.py:164
+msgid "Currency"
+msgstr "Monetário"
+
+#: ../kiwi/currency.py:180 ../kiwi/currency.py:197
 #, python-format
-msgid "Do you want to remove %s ?"
-msgstr "Você deseja remover %s ?"
-
-#: ../kiwi/ui/dateentry.py:74
-msgid "_Today"
-msgstr "_Hoje"
-
-#: ../kiwi/ui/dateentry.py:75
-msgid "_Cancel"
-msgstr "_Cancelar"
-
-#: ../kiwi/ui/dateentry.py:76
-msgid "_Select"
-msgstr "_Selecionar"
-
-#: ../kiwi/ui/wizard.py:211
-msgid "Finish"
-msgstr "Terminar"
-
-#: ../kiwi/ui/entry.py:612
-#, python-format
-msgid "'%s' is not a valid object"
-msgstr "'%s' não é um objeto válido"
+msgid "%s can not be converted to a currency"
+msgstr "%s não pode ser convertido para valor monetário"
 
 #: ../kiwi/ui/objectlist.py:2140
 msgid "Total:"
@@ -315,6 +289,10 @@ msgstr "Salvar"
 msgid "Password:"
 msgstr "Senha:"
 
+#: ../kiwi/ui/wizard.py:211
+msgid "Finish"
+msgstr "Terminar"
+
 #: ../kiwi/ui/proxywidget.py:65
 #, python-format
 msgid "Could not load image: %s"
@@ -328,6 +306,28 @@ msgstr "'%s' não é um valor válido para este campo"
 #: ../kiwi/ui/proxywidget.py:336
 msgid "This field is mandatory"
 msgstr "Esse campo é obrigatorio"
+
+#: ../kiwi/ui/dateentry.py:74
+msgid "_Today"
+msgstr "_Hoje"
+
+#: ../kiwi/ui/dateentry.py:75
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+#: ../kiwi/ui/dateentry.py:76
+msgid "_Select"
+msgstr "_Selecionar"
+
+#: ../kiwi/ui/entry.py:661
+#, python-format
+msgid "'%s' is not a valid object"
+msgstr "'%s' não é um objeto válido"
+
+#: ../kiwi/ui/listdialog.py:194
+#, python-format
+msgid "Do you want to remove %s ?"
+msgstr "Você deseja remover %s ?"
 
 #~ msgid "Pixbuf"
 #~ msgstr "Pixbuf"

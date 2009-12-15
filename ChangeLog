@@ -1,3 +1,8 @@
+=== 1.9.26-2 ===
+2009-12-15 George Y. Kussumoto <george@async.com.br>
+
+	Bugfix Release 1.9.26-2
+
 2009-12-11 George Y. Kussumoto <george@async.com.br>
 
 	* kiwi/ui/entry.py: Added a workaround for set_text method in KiwiEntry
