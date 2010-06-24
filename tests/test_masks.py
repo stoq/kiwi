@@ -78,11 +78,11 @@ class MasksDelegate(Delegate):
 
 
 class TestMasks(unittest.TestCase):
-    def setUpClass(self):
+    def setUp(self):
         self.delegate = MasksDelegate()
         self.entry = self.delegate.entry
 
-    def tearDownClass(self):
+    def tearDown(self):
         self.delegate.win.destroy()
 
     def testSetMask(self):
