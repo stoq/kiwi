@@ -1,3 +1,7 @@
+2010-07-22  Ronaldo Maia  <romaia@async.com.br>
+
+	* kiwi/ui/objectlist.py: Remove obsolete gtk.Tooltips
+
 === 1.9.26-2 ===
 2009-12-15 George Y. Kussumoto <george@async.com.br>
 

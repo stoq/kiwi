@@ -963,9 +963,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self._treeview.show()
         self.add(self._treeview)
 
-        # these tooltips are used for the columns
-        self._tooltips = gtk.Tooltips()
-
         # create a popup menu for showing or hiding columns
         self._popup = _ContextMenu(self._treeview)
 
@@ -1307,7 +1304,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         if column.tooltip:
             widget = self._get_column_button(treeview_column)
             if widget is not None:
-                self._tooltips.set_tip(widget, column.tooltip)
+                widget.set_tooltip_text(column.tooltip)
 
         if column.expander:
             self._treeview.set_expander_column(treeview_column)
