@@ -1,3 +1,11 @@
+2010-07-27 Gabriel Gerga <gerga@async.com.br>
+
+    reviewed by: romaia@async.com.br
+
+    * kiwi/ui/search.py: Create method set_digits that control number
+    of decimal places in the NumberSearchFilter. Display 2 digits for
+    Decimal and currency, and 0 for int.
+
 2010-07-22  Ronaldo Maia  <romaia@async.com.br>
 
 	* kiwi/ui/objectlist.py: Remove obsolete gtk.Tooltips

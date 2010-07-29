@@ -757,7 +757,6 @@ class NumberSearchFilter(SearchFilter):
         self.mode.show()
 
         self.start = gtk.SpinButton(climb_rate=1.0)
-        self.start.set_digits(2)
         self.start.get_adjustment().step_increment = 1.0
         self.start.set_range(-sys.maxint-1, sys.maxint)
         self.pack_start(self.start, False, False, 6)
@@ -779,6 +778,14 @@ class NumberSearchFilter(SearchFilter):
             self.add_option(option)
 
         self.mode.select_item_by_position(0)
+
+    def set_digits(self, digits):
+        """
+        Number of decimal place to be displayed
+        @param digits: number of decimal places
+        """
+        self.start.set_digits(digits)
+        self.end.set_digits(digits)
 
     #
     #   Private
@@ -1256,6 +1263,8 @@ class SearchContainer(gtk.VBox):
               column.data_type == int or
               column.data_type == currency):
             filter = NumberSearchFilter(title)
+            if column.data_type != int:
+                filter.set_digits(2)
         elif column.data_type == str:
             if column.valid_values:
                 filter = ComboSearchFilter(title, column.valid_values)
