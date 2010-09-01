@@ -740,6 +740,7 @@ class NumberSearchFilter(SearchFilter):
 
     def __init__(self, label=''):
         """
+        Create a new NumberSearchFilter object.
         @param label: name of the search filter
         """
 

@@ -1,3 +1,8 @@
+kiwi-1.9.27 01-september-2010
+    - Remove use of obsolete gtk.Tooltips (Ronaldo Maia)
+    - Add api to set the number of digits in NumberSearchFilter (Gabriel
+      Gerga)
+
 kiwi-1.9.26-2 15-december-2009
     - Added workaround for set_text method in KiwiEntry when using gtk > 2.18.
       (George Kussumoto).
