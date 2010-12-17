@@ -995,7 +995,11 @@ def _open_glade(view, gladefile, domain):
         gladefile = os.path.join(directory, gladefile)
     else:
         filename = os.path.splitext(os.path.basename(gladefile))[0]
-        gladefile = environ.find_resource("glade", filename + '.glade')
+        try:
+            gladefile = environ.find_resource("glade", filename + '.glade')
+        except EnvironmentError:
+            gladefile = environ.find_resource("glade", filename + '.ui')
+
 
     fp = open(gladefile)
     sniff = fp.read(200)
