@@ -70,15 +70,9 @@ class BuilderWidgetTree:
         # widgets = [label1, button1] -> view.label1, view.button1
 
         for obj in self._builder.get_objects():
-            if not isinstance(obj, gtk.Buildable):
-                continue
-
-            w = gtk.Buildable.get_name(obj)
-            widget = self._builder.get_object(w)
-            if widget is not None:
-                setattr(self._view, w, widget)
-            else:
-                log.warn("Widget %s was not found in glade widget tree." % w)
+            if isinstance(obj, gtk.Buildable):
+                object_name = gtk.Buildable.get_name(obj)
+                setattr(self._view, object_name, obj)
 
     def get_widget(self, name):
         """Retrieves the named widget from the View (or glade tree)"""
