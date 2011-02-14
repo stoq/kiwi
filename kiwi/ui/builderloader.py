@@ -25,6 +25,33 @@ import gtk
 
 from kiwi.log import Logger
 
+from kiwi.ui.hyperlink import HyperLink
+from kiwi.ui.objectlist import ObjectList, ObjectTree
+from kiwi.ui.widgets.label import ProxyLabel
+from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox
+from kiwi.ui.widgets.checkbutton import ProxyCheckButton
+from kiwi.ui.widgets.radiobutton import ProxyRadioButton
+from kiwi.ui.widgets.entry import ProxyEntry, ProxyDateEntry
+from kiwi.ui.widgets.spinbutton import ProxySpinButton
+from kiwi.ui.widgets.textview import ProxyTextView
+from kiwi.ui.widgets.button import ProxyButton
+
+# pyflakes
+HyperLink
+ObjectList
+ObjectTree
+ProxyLabel
+ProxyComboEntry
+ProxyComboBox
+ProxyCheckButton
+ProxyRadioButton
+ProxyEntry
+ProxyDateEntry
+ProxySpinButton
+ProxyTextView
+ProxyButton
+
+
 log = Logger('builderloader')
 
 class BuilderWidgetTree:
@@ -35,18 +62,17 @@ class BuilderWidgetTree:
         self._builder.add_from_file(gladefile)
         if domain is not None:
             self._builder.set_translation_domain(domain)
-        self._widgets = [obj.get_name() for obj in self._builder.get_objects()]
+
         self._attach_widgets()
 
     def _attach_widgets(self):
         # Attach widgets in the widgetlist to the view specified, so
         # widgets = [label1, button1] -> view.label1, view.button1
-        for w in self._widgets:
-            widget = self._builder.get_object(w)
-            if widget is not None:
-                setattr(self._view, w, widget)
-            else:
-                log.warn("Widget %s was not found in glade widget tree." % w)
+
+        for obj in self._builder.get_objects():
+            if isinstance(obj, gtk.Buildable):
+                object_name = gtk.Buildable.get_name(obj)
+                setattr(self._view, object_name, obj)
 
     def get_widget(self, name):
         """Retrieves the named widget from the View (or glade tree)"""

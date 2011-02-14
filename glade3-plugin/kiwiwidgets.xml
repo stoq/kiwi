@@ -6,7 +6,7 @@
                icon-prefix="kiwi">
   <init-function>glade_python_init</init-function>
   <glade-widget-classes>
-    
+
     <glade-widget-class title="Hyper Link"
                         name="HyperLink"
                         generic-name="hyperlink">
@@ -20,7 +20,7 @@
                       visible="False" />
         </properties>
     </glade-widget-class>
-    
+
     <glade-widget-class title="Object List"
                         name="ObjectList"
                         generic-name="objectlist"/>

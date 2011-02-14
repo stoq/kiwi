@@ -38,7 +38,7 @@ def _get_icon_path():
         icondir = os.path.join(dirname, '..', 'gazpacho-plugin',
                                'resources', 'kiwiwidgets')
     return os.path.abspath(icondir)
-    
+
 def _register_icons():
     icondir = _get_icon_path()
     for filename in glob.glob(os.path.join(icondir, '*.png')):

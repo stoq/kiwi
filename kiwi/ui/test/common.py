@@ -175,7 +175,11 @@ class WidgetIntrospecter(gobject.GObject):
         """
         Called when a GtkWidget is about to be traversed
         """
-        self._add_widget(toplevel, widget, widget.get_name())
+        # Workaround to support gtkbuilder and gazpacho
+        name = gtk.Buildable.get_name(widget)
+        if not name:
+            name = widget.get_name()
+        self._add_widget(toplevel, widget, name)
 
     def GtkContainer(self, toplevel, container):
         """
