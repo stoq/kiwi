@@ -722,7 +722,4 @@ class ComboEntry(gtk.VBox):
     def get_background(self):
         return self.entry.get_background()
 
-    def get_icon_window(self):
-        return self.entry.get_icon_window()
-
 type_register(ComboEntry)

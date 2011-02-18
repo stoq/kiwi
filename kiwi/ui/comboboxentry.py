@@ -108,9 +108,6 @@ class BaseComboBoxEntry(gtk.ComboBox):
     def get_background(self):
         return self.entry.get_background()
 
-    def get_icon_window(self):
-        return self.entry.get_icon_window()
-
 gobject.type_register(BaseComboBoxEntry)
 
 def test():

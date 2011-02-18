@@ -217,9 +217,6 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     def set_pixbuf(self, pixbuf):
         "Implement in subclass"
 
-    def get_icon_window(self):
-        "Implement in subclass"
-
     def set_tooltip(self, text):
         "Implement in subclass"
 
@@ -301,8 +298,6 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         if not text:
             text = _("'%s' is not a valid value for this field") % self.read()
 
-        self.set_tooltip(text)
-
         if not fade:
             self.set_pixbuf(ERROR_ICON)
             self.update_background(gtk.gdk.color_parse(self._fade.ERROR_COLOR))
@@ -324,6 +319,10 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
         if self._fade.start(self.get_background()):
             self.set_pixbuf(None)
+
+        # If you try to set the tooltip before the icon in gtk.Entry, a
+        # segfault happens.
+        self.set_tooltip(text)
 
     def set_blank(self):
         """Changes the validation state to blank state, this only applies

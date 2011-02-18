@@ -101,15 +101,8 @@ import pango
 import gtk
 
 from kiwi.enums import Direction
-from kiwi.environ import environ
-from kiwi.ui.icon import IconEntry
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
-from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
-
-if not environ.epydoc:
-    HAVE_2_6 = gtk.pygtk_version[:2] <= (2, 6)
-else:
-    HAVE_2_6 = True
+from kiwi.utils import PropertyObject, gproperty, type_register
 
 # In gtk+ 2.18 they refactored gtk.Entry to use gtk.EntryBuffer, so we need to
 # track the gtk version here for later use.
@@ -161,7 +154,6 @@ class KiwiEntry(PropertyObject, gtk.Entry):
     """
     The KiwiEntry is a Entry subclass with the following additions:
 
-      - IconEntry, allows you to have an icon inside the entry
       - Mask, force the input to meet certain requirements
       - IComboMixin: Allows you work with objects instead of strings
         Adds a number of convenience methods such as L{prefill}().
@@ -177,6 +169,7 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
         gtk.Entry.__init__(self)
         PropertyObject.__init__(self)
+        self._update_position()
 
         self.connect('insert-text', self._on_insert_text)
         self.connect('delete-text', self._on_delete_text)
@@ -194,12 +187,12 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         # TODO: investigate that and report a bug.
         self.connect('notify::selection-bound',
                      self._on_notify_selection_bound)
+        self.connect('notify::xalign', self._on_notify_xalign)
 
         self._block_changed = False
 
         self._current_object = None
         self._mode = ENTRY_MODE_TEXT
-        self._icon = IconEntry(self)
 
         # List of validators
         #  str -> static characters
@@ -216,39 +209,6 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
         self._block_insert = False
         self._block_delete = False
-
-    # Virtual methods
-    # PyGTK 2.6 does not support the virtual method do_size_allocate so
-    # we have to use the signal instead
-    # PyGTK 2.9.0 and later (bug #327715) does not work using the old code,
-    # so we have to make this conditionally
-    if HAVE_2_6:
-        gsignal('size-allocate', 'override')
-        def do_size_allocate(self, allocation):
-            self.chain(allocation)
-
-            if self.flags() & gtk.REALIZED:
-                self._icon.resize_windows()
-    else:
-        def do_size_allocate(self, allocation):
-            gtk.Entry.do_size_allocate(self, allocation)
-
-            if self.flags() & gtk.REALIZED:
-                self._icon.resize_windows()
-
-    def do_expose_event(self, event):
-        gtk.Entry.do_expose_event(self, event)
-
-        if event.window == self.window:
-            self._icon.draw_pixbuf()
-
-    def do_realize(self):
-        gtk.Entry.do_realize(self)
-        self._icon.construct()
-
-    def do_unrealize(self):
-        self._icon.deconstruct()
-        gtk.Entry.do_unrealize(self)
 
     # Properties
 
@@ -837,6 +797,21 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
         return new_pos, new_text
 
+    def _update_position(self):
+        if self.get_property('xalign') > 0.5:
+            self._icon_pos = gtk.POS_LEFT
+        else:
+            self._icon_pos = gtk.POS_RIGHT
+
+        # If the text is right to left, we have to use the oposite side
+        RTL = gtk.widget_get_default_direction() == gtk.TEXT_DIR_RTL
+        if RTL:
+            if self._icon_pos == gtk.POS_LEFT:
+                self._icon_pos = gtk.POS_RIGHT
+            else:
+                self._icon_pos = gtk.POS_LEFT
+
+
     # Callbacks
     def _on_insert_text(self, editable, new, length, position):
         if not self._mask or self._block_insert:
@@ -969,6 +944,9 @@ class KiwiEntry(PropertyObject, gtk.Entry):
 
         self._handle_position_change()
 
+    def _on_notify_xalign(self, entry, pspec):
+        self._update_position()
+
     def _handle_position_change(self):
         pos = self.get_position()
         field = self._get_field_at_pos(pos)
@@ -1010,22 +988,27 @@ class KiwiEntry(PropertyObject, gtk.Entry):
     def _on_move_cursor(self, entry, step, count, extend_selection):
         self._selecting = extend_selection
 
-    # IconEntry
+    # Old IconEntry API
 
     def set_tooltip(self, text):
-        self._icon.set_tooltip(text)
+        if self._icon_pos == gtk.POS_LEFT:
+            icon = 'primary-icon-tooltip-text'
+        else:
+            icon = 'secondary-icon-tooltip-text'
+        self.set_property(icon, text)
 
     def set_pixbuf(self, pixbuf):
-        self._icon.set_pixbuf(pixbuf)
+        if self._icon_pos == gtk.POS_LEFT:
+            icon = 'primary-icon-pixbuf'
+        else:
+            icon = 'secondary-icon-pixbuf'
+        self.set_property(icon, pixbuf)
 
     def update_background(self, color):
-        self._icon.update_background(color)
+        self.modify_base(gtk.STATE_NORMAL, color)
 
     def get_background(self):
-        return self._icon.get_background()
-
-    def get_icon_window(self):
-        return self._icon.get_icon_window()
+        return self.style.base[gtk.STATE_NORMAL]
 
     # IComboMixin
 

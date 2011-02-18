@@ -26,15 +26,12 @@
 
 """GtkSpinButton support for the Kiwi Framework
 
-L{SpinButton} is also enhanced to display an icon using
-L{kiwi.ui.icon.IconEntry}
 """
 
 import gtk
 
 from kiwi.datatypes import number, ValueUnset
 from kiwi.python import deprecationwarn
-from kiwi.ui.icon import IconEntry
 from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
 from kiwi.utils import PropertyObject, gsignal, type_register
 
@@ -54,7 +51,6 @@ class ProxySpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixi
         gtk.SpinButton.__init__(self)
         PropertyObject.__init__(self, data_type=data_type)
         ValidatableProxyWidgetMixin.__init__(self)
-        self._icon = IconEntry(self)
         self.set_property('xalign', 1.0)
 
     gsignal('changed', 'override')
@@ -78,45 +74,21 @@ class ProxySpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixi
             # and since we accept only int and float just send it in.
             self.set_value(data)
 
-    def do_expose_event(self, event):
-        # This gets called when any of our three windows needs to be redrawn
-        gtk.SpinButton.do_expose_event(self, event)
-
-        if event.window == self.window:
-            self._icon.draw_pixbuf()
-
-    gsignal('size-allocate', 'override')
-    def do_size_allocate(self, allocation):
-
-        self.chain(allocation)
-
-        if self.flags() & gtk.REALIZED:
-            self._icon.resize_windows()
-
-    def do_realize(self):
-        gtk.SpinButton.do_realize(self)
-        self._icon.construct()
-
-    def do_unrealize(self):
-        self._icon.deconstruct()
-        gtk.SpinButton.do_unrealize(self)
-
-    # IconEntry
+    # Old IconEntry API
 
     def set_tooltip(self, text):
-        self._icon.set_tooltip(text)
+        self.set_property('primary-icon-tooltip-text', text)
 
     def set_pixbuf(self, pixbuf):
-        self._icon.set_pixbuf(pixbuf)
+        # Spinbuttons are always right aligned
+        self.set_property('primary-icon-pixbuf', pixbuf)
 
     def update_background(self, color):
-        self._icon.update_background(color)
+        self.modify_base(gtk.STATE_NORMAL, color)
 
     def get_background(self):
-        return self._icon.get_background()
+        return self.style.base[gtk.STATE_NORMAL]
 
-    def get_icon_window(self):
-        return self._icon.get_icon_window()
 
 class SpinButton(ProxySpinButton):
     def __init__(self):
