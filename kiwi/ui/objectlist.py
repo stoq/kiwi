@@ -1979,6 +1979,9 @@ class ObjectTree(ObjectList):
         the instance is the root, then returns the given instance.
         @param instance: an instance which we want the root object
         """
+        # Short-cut for simplified logic for callsites
+        if instance is None:
+            return None
         objid = id(instance)
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
