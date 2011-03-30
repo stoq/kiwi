@@ -142,6 +142,9 @@ class Column(PropertyObject, gobject.GObject):
         -  a callable which will be used to sort the contents of the column.
            The function will take two values (x and y) from the column and
            should return negative if x<y, zero if x==y, positive if x>y.
+      - B{pack_end}: bool I{False}
+        - If set it will pack the renderer to the end of the column instead
+          of the beginning.
     """
     __gtype_name__ = 'Column'
     gproperty('attribute', str, flags=(gobject.PARAM_READWRITE | gobject.PARAM_CONSTRUCT_ONLY))
@@ -169,6 +172,7 @@ class Column(PropertyObject, gobject.GObject):
     gproperty('font-desc', str)
     gproperty('column', str)
     gproperty('sort_func', object, default=None)
+    gproperty('pack_end', bool, default=False)
     #gproperty('title_pixmap', str)
 
     # This can be set in subclasses, to be able to allow custom
@@ -322,7 +326,11 @@ class Column(PropertyObject, gobject.GObject):
             expand = False
         else:
             expand = True
-        treeview_column.pack_start(renderer, expand)
+
+        if self.pack_end:
+            treeview_column.pack_end(renderer, expand)
+        else:
+            treeview_column.pack_start(renderer, expand)
 
         treeview_column.set_cell_data_func(renderer, cell_data_func,
                                            (self, renderer_prop))
