@@ -256,7 +256,7 @@ def open(title='', parent=None, patterns=None, folder=None, filter=None):
             ffilter = gtk.FileFilter()
             for pattern in patterns:
                 ffilter.add_pattern(pattern)
-        filechooser.set_filter(ffilter)
+        filechooser.add_filter(ffilter)
     filechooser.set_default_response(gtk.RESPONSE_OK)
 
     if folder:
