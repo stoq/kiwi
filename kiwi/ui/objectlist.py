@@ -130,7 +130,7 @@ class Column(PropertyObject, gobject.GObject):
       - B{expander}: bool I{False}
         - If True, this column will be used as the tree expander column
       - B{ellipsize}: pango.EllipsizeMode I{pango.ELLIPSIZE_NONE}
-        - One of pango.ELLIPSIZE_{NONE, START, MIDDLE_END}, it describes
+        - One of pango.ELLIPSIZE_{NONE, START, MIDDLE or END}, it describes
           where characters should be removed in case ellipsization
           (where to put the ...) is needed.
       - B{font-desc}: str I{""}
@@ -259,6 +259,12 @@ class Column(PropertyObject, gobject.GObject):
 
         PropertyObject.__init__(self, **kwargs)
         gobject.GObject.__init__(self, attribute=attribute)
+
+        # It makes sense to set the default ellipsize to end if we have
+        # a column which expands so it doesn't end up using more space
+        # than there is available
+        if not 'ellipsize' in kwargs and self.expand:
+            self.ellipsize = pango.ELLIPSIZE_END
 
     def __repr__(self):
         namespace = self.__dict__.copy()
