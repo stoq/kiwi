@@ -2027,6 +2027,16 @@ class ObjectTree(ObjectList):
     def _on_treeview__row_expanded(self, treeview, treeiter, treepath):
         self.emit('row-expanded', self.get_model()[treeiter][COL_MODEL])
 
+    def flush(self):
+        """Update all iterators"""
+        def flattern(row):
+            self._iters[row[COL_MODEL]] = row.iter
+            for child_row in row.iterchildren():
+                flattern(child_row)
+
+        for row in self._model:
+            flattern(row)
+
 type_register(ObjectTree)
 
 class ListLabel(gtk.HBox):
