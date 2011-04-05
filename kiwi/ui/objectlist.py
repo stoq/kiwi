@@ -1484,6 +1484,13 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     # end of the popup button hack
 
+    def _expand_parents(self, treeiter):
+        # We need to expand all parent rows before selecting
+        row = self._model[treeiter]
+        while row.parent:
+            self._treeview.expand_row(row.parent.path, True)
+            row = row.parent
+
     #
     # Public API
     #
@@ -1671,6 +1678,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
         selection.unselect_all()
         for path in paths:
+            self._expand_parents(self._model[path].iter)
             selection.select_path(path)
 
     def select(self, instance, scroll=True):
@@ -1682,6 +1690,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             raise ValueError("instance %s is not in the list" % repr(instance))
 
         treeiter = self._iters[instance]
+        self._expand_parents(treeiter)
         selection.select_iter(treeiter)
 
         if scroll:
