@@ -1028,21 +1028,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def __iter__(self):
         "for item in list"
-        class ModelIterator:
-            def __init__(self):
-                self._index = -1
-
-            def __iter__(self):
-                return self
-
-            def next(self, model=self._model):
-                try:
-                    self._index += 1
-                    return model[self._index][COL_MODEL]
-                except IndexError:
-                    raise StopIteration
-
-        return ModelIterator()
+        return self._iter.iterkeys()
 
     def __getitem__(self, arg):
         "list[n]"
