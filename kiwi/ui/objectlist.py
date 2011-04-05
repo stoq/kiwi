@@ -1024,7 +1024,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def __contains__(self, instance):
         "item in list"
-        return bool(self._iters.get(id(instance), False))
+        return bool(self._iters.get(instance, False))
 
     def __iter__(self):
         "for item in list"
@@ -1066,8 +1066,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
             # Update iterator cache
             iters = self._iters
-            iters[id(item)] = model[arg].iter
-            del iters[id(olditem)]
+            iters[item] = model[arg].iter
+            del iters[olditem]
 
         elif isinstance(arg, slice):
             raise NotImplementedError("slices for list are not implemented")
@@ -1098,7 +1098,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         if start is not None or stop is not None:
             raise NotImplementedError("start and stop")
 
-        treeiter = self._iters.get(id(item), _marker)
+        treeiter = self._iters.get(item, _marker)
         if treeiter is _marker:
             raise ValueError("item %r is not in the list" % item)
 
@@ -1122,7 +1122,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self._treeview.freeze_notify()
 
         row_iter = self._model.insert(index, (instance,))
-        self._iters[id(instance)] = row_iter
+        self._iters[instance] = row_iter
 
         if self._autosize:
             self._treeview.columns_autosize()
@@ -1214,7 +1214,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         # items
         if clear:
             for instance in iter(instances):
-                objid = id(instance)
+                objid = instance
                 # If the instance is not in the list insert it after
                 # the previous inserted object
                 if not objid in iters:
@@ -1230,19 +1230,19 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
             # nor restore selection
             if old_instances:
                 # Remove
-                objids = [id(instance) for instance in instances]
+                objids = [instance for instance in instances]
                 for instance in old_instances:
-                    objid = id(instance)
+                    objid = instance
                     if objid in objids:
                         continue
                     self._remove(objid)
         else:
             for instance in iter(instances):
-                iters[id(instance)] = model.append((instance,))
+                iters[instance] = model.append((instance,))
 
         # Restore selection
         for instance in selected_instances:
-            objid = id(instance)
+            objid = instance
             if objid in iters:
                 selection.select_iter(iters[objid])
 
@@ -1589,7 +1589,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self._treeview.freeze_notify()
 
         row_iter = self._model.append((instance,))
-        self._iters[id(instance)] = row_iter
+        self._iters[instance] = row_iter
 
         if self._autosize:
             self._treeview.columns_autosize()
@@ -1619,7 +1619,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
           if there is one.
         """
 
-        objid = id(instance)
+        objid = instance
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
 
@@ -1634,7 +1634,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         return rv
 
     def update(self, instance):
-        objid = id(instance)
+        objid = instance
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
         treeiter = self._iters[objid]
@@ -1692,12 +1692,10 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         if selection.get_mode() == gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed")
 
-        objid = id(instance)
-        if not objid in self._iters:
+        if not instance in self._iters:
             raise ValueError("instance %s is not in the list" % repr(instance))
 
-        treeiter = self._iters[objid]
-
+        treeiter = self._iters[instance]
         selection.select_iter(treeiter)
 
         if scroll:
@@ -1777,7 +1775,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         @param instance: the instance
         """
 
-        objid = id(instance)
+        objid = instance
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
 
@@ -1800,7 +1798,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         @param instance: the instance
         """
 
-        objid = id(instance)
+        objid = instance
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
         treeiter = self._iters[objid]
@@ -1910,13 +1908,14 @@ class ObjectTree(ObjectList):
 
     def _append_internal(self, parent, instance, select, prepend):
         iters = self._iters
-        parent_id = id(parent)
+        parent_id = parent
         if parent_id in iters:
             parent_iter = iters[parent_id]
         elif parent is None:
             parent_iter = None
         else:
-            raise TypeError("parent must be an Object, ObjectRow or None")
+            raise TypeError(
+                "parent must be an Object, ObjectRow or None")
 
         # Freeze and save original selection mode to avoid blinking
         self._treeview.freeze_notify()
@@ -1926,7 +1925,7 @@ class ObjectTree(ObjectList):
         else:
             row_iter = self._model.append(parent_iter, (instance,))
 
-        self._iters[id(instance)] = row_iter
+        self._iters[instance] = row_iter
 
         if self._autosize:
             self._treeview.columns_autosize()
@@ -1934,7 +1933,6 @@ class ObjectTree(ObjectList):
         if select:
             self._select_and_focus_row(row_iter)
         self._treeview.thaw_notify()
-
         return instance
 
     def append(self, parent, instance, select=False):
@@ -1965,7 +1963,7 @@ class ObjectTree(ObjectList):
         @param open_all: If True, expand all rows, otherwise just the
         immediate children
         """
-        objid = id(instance)
+        objid = instance
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
         treeiter = self._iters[objid]
@@ -1979,7 +1977,7 @@ class ObjectTree(ObjectList):
         (hides its child rows, if they exist).
         @param instance: an instance to collapse
         """
-        objid = id(instance)
+        objid = instance
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
         treeiter = self._iters[objid]
@@ -1996,7 +1994,7 @@ class ObjectTree(ObjectList):
         # Short-cut for simplified logic for callsites
         if instance is None:
             return None
-        objid = id(instance)
+        objid = instance
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
 
@@ -2015,7 +2013,7 @@ class ObjectTree(ObjectList):
         @param root_instance: an instance which we want the descendants
         @returns: a sequence of descendants objects
         """
-        objid = id(root_instance)
+        objid = root_instance
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % root_instance)
 
