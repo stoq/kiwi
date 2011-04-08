@@ -1028,7 +1028,7 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def __iter__(self):
         "for item in list"
-        return self._iter.iterkeys()
+        return self._iters.iterkeys()
 
     def __getitem__(self, arg):
         "list[n]"
