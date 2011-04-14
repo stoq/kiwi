@@ -116,7 +116,7 @@ def set_log_file(filename, mask=None):
     file_handler = logging.FileHandler(filename, 'w')
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(name)-18s %(levelname)-8s %(message)s',
-        datefmt='%F %T'))
+        datefmt='%Y-%m-%d %H:%M:%S'))
     root = logging.getLogger()
     root.addHandler(file_handler)
 
