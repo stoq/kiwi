@@ -194,7 +194,7 @@ def compile_po_files(domain, dirname='locale'):
     @param dirname: base directory
     @returns: a list of po files
     """
-    if os.system('msgfmt 2> /dev/null') != 256:
+    if os.system('msgfmt 2> /dev/null') not in [1, 256]:
         warn('msgfmt is missing, not installing translations')
         return []
 
