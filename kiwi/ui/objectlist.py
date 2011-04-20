@@ -1028,7 +1028,21 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     def __iter__(self):
         "for item in list"
-        return self._iters.iterkeys()
+        class ModelIterator:
+            def __init__(self):
+                self._index = -1
+
+            def __iter__(self):
+                return self
+
+            def next(self, model=self._model):
+                try:
+                    self._index += 1
+                    return model[self._index][COL_MODEL]
+                except IndexError:
+                    raise StopIteration
+
+        return ModelIterator()
 
     def __getitem__(self, arg):
         "list[n]"
@@ -1900,6 +1914,10 @@ class ObjectTree(ObjectList):
             model = gtk.TreeStore(object)
         ObjectList.__init__(self, columns, objects, mode, sortable, model)
         self.get_treeview().connect('row-expanded', self._on_treeview__row_expanded)
+
+    def __iter__(self):
+        # FIXME: This should be sorted in the order the objects are displayed
+        return self._iters.iterkeys()
 
     def _append_internal(self, parent, instance, select, prepend):
         iters = self._iters
