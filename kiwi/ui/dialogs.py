@@ -108,9 +108,10 @@ class HIGAlertDialog(gtk.Dialog):
         self.add_buttons(*_BUTTON_TYPES[buttons])
         self.label_vbox = vbox
 
-    def set_primary(self, text):
-        self._primary_label.set_markup(
-            "<span weight=\"bold\" size=\"larger\">%s</span>" % text)
+    def set_primary(self, text, bold=True):
+        if bold:
+            text = "<span weight=\"bold\" size=\"larger\">%s</span>" % text
+        self._primary_label.set_markup(text)
 
     def set_secondary(self, text):
         self._secondary_label.set_markup(text)
