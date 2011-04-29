@@ -285,12 +285,7 @@ class _IntConverter(BaseConverter):
         if value == '':
             return ValueUnset
 
-        conv = get_localeconv()
-        thousands_sep = conv["thousands_sep"]
-        # Remove all thousand separators, so int() won't barf at us
-        if thousands_sep and thousands_sep in value:
-            value = value.replace(thousands_sep, '')
-
+        value = filter_locale(value)
         try:
             return self.type(value)
         except ValueError:
