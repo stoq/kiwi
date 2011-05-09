@@ -68,14 +68,14 @@ from kiwi.environ import Library
 
 assert kiwi_version # pyflakes
 
-lib = Library('kiwi')
-if lib.uninstalled:
-    lib.add_global_resource('glade', 'glade')
-    lib.add_global_resource('pixmap', 'pixmaps')
-lib.enable_translation()
+library = Library('kiwi')
+if library.uninstalled:
+    library.add_global_resource('glade', 'glade')
+    library.add_global_resource('pixmap', 'pixmaps')
+library.enable_translation()
 
 # Be careful to not export too much
-del Library, lib, gobject
+del Library, gobject
 
 class ValueUnset:
     """To differentiate from places where None is a valid default. Used

@@ -23,6 +23,7 @@
 
 """Environment helpers: path mangling and resource management"""
 
+import errno
 import gettext
 import imp
 import locale
@@ -243,6 +244,7 @@ class Library(Environment):
             self.prefix = module.prefix
 
         self.uninstalled = uninstalled
+        self.module = module
 
     def _check_translation(self, domain, directory):
         loc = locale.getlocale()[0]
@@ -325,6 +327,20 @@ class Library(Environment):
     def add_global_resources(self, **kwargs):
         for resource, path in kwargs.items():
             self.add_global_resource(resource, path)
+
+    def get_revision(self):
+        if self.uninstalled:
+            revision = os.path.join(
+                self._root, '.bzr', 'branch', 'last-revision')
+            try:
+                fp = open(revision)
+            except IOError, e:
+                if e.errno != errno.ENOENT:
+                     raise
+            else:
+                return fp.read().split()[0]
+        else:
+            return self.module.revision
 
 class Application(Library):
     """Application extends a L{Library}. It's meant to be used
