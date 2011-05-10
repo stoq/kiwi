@@ -2,7 +2,7 @@
 # vi:si:et:sw=4:sts=4:ts=4
 
 ##
-## Copyright (C) 2007 Async Open Source
+## Copyright (C) 2007-2011 Async Open Source
 ##
 ## This program is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU Lesser General Public License
@@ -32,31 +32,69 @@ from storm.expr import And, Or, Like, Not
 from kiwi.db.query import NumberQueryState, StringQueryState, \
      DateQueryState, DateIntervalQueryState, QueryExecuter, \
      NumberIntervalQueryState
+from kiwi.interfaces import ISearchFilter
 
-
+# FIXME: make this usable outside of stoqlib 
 class StormQueryExecuter(QueryExecuter):
     """Execute queries from a storm database"""
 
-    def __init__(self, store=None):
+    def __init__(self, conn):
         QueryExecuter.__init__(self)
-        self.store = store
+        self.conn = conn
         self.table = None
+        self._query_callbacks = []
+        self._filter_query_callbacks = {}
+        self._query = self._default_query
 
     def search(self, states):
         """
-        Build and execute a query for the search states
+        Execute a search.
+        @param states:
         """
+        if self.table is None:
+            raise ValueError("table cannot be None")
+        table = self.table
         queries = []
+        self._having = []
         for state in states:
             search_filter = state.filter
             assert state.filter
+
+            # Column query
             if search_filter in self._columns:
                 query = self._construct_state_query(
-                    self.table, state, self._columns[search_filter])
+                    table, state, self._columns[search_filter])
                 if query:
                     queries.append(query)
-        # Storm will unpack those values.
-        return self.store.find(self.table, *queries)
+            # Custom per filter/state query.
+            elif search_filter in self._filter_query_callbacks:
+                for callback in self._filter_query_callbacks[search_filter]:
+                    query = callback(state)
+                    if query:
+                        queries.append(query)
+            else:
+                if (self._query == self._default_query and
+                    not self._query_callbacks):
+                    raise ValueError(
+                        "You need to add a search column or a query callback "
+                        "for filter %s" % (search_filter))
+
+        for callback in self._query_callbacks:
+            query = callback(states)
+            if query:
+                queries.append(query)
+
+        if queries:
+            query = And(*queries)
+        else:
+            query = None
+
+        having = None
+        if self._having:
+            having = And(self._having)
+
+        result = self._query(query, having, self.conn)
+        return result.config(limit=self.get_limit())
 
     def set_table(self, table):
         """
@@ -65,7 +103,48 @@ class StormQueryExecuter(QueryExecuter):
         """
         self.table = table
 
+    def add_query_callback(self, callback):
+        """
+        Adds a generic query callback
+
+        @param callback: a callable
+        """
+        if not callable(callback):
+            raise TypeError
+        self._query_callbacks.append(callback)
+
+    def add_filter_query_callback(self, search_filter, callback):
+        """
+        Adds a query callback for the filter search_filter
+
+        @param search_filter: a search filter
+        @param callback: a callable
+        """
+        if not ISearchFilter.providedBy(search_filter):
+            raise TypeError
+        if not callable(callback):
+            raise TypeError
+        l = self._filter_query_callbacks.setdefault(search_filter, [])
+        l.append(callback)
+
+    def set_query(self, callback):
+        """
+        Overrides the default query mechanism.
+        @param callback: a callable which till take two arguments:
+          (query, connection)
+        """
+        if callback is None:
+            callback = self._default_query
+        elif not callable(callback):
+            raise TypeError
+
+        self._query = callback
+
     # Basically stolen from sqlobject integration
+    def _default_query(self, query, having, conn):
+        # FIXME: work outside of sqlobject emulation layer
+        return self.table.select(query, having=having, connection=conn)
+
     def _construct_state_query(self, table, state, columns):
         queries = []
         for column in columns:
