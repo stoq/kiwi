@@ -627,6 +627,8 @@ class SlaveView(gobject.GObject):
         # Actually, no merging is being done, since the old group is preserved
 
         name = other_sizegroup.get_data('gazpacho::object-id')
+        if name is None:
+            return
         sizegroup = getattr(self, name, None)
         if not sizegroup:
             return
