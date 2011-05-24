@@ -233,7 +233,8 @@ def yesno(text, parent=None, default=gtk.RESPONSE_YES,
     return messagedialog(gtk.MESSAGE_WARNING, text, None, parent,
                          buttons=buttons, default=default)
 
-def open(title='', parent=None, patterns=None, folder=None, filter=None):
+def open(title='', parent=None, patterns=None, folder=None, filter=None,
+         with_file_chooser=False):
     """Displays an open dialog.
     @param title: the title of the folder, defaults to 'Select folder'
     @param parent: parent gtk.Window or None
@@ -257,7 +258,10 @@ def open(title='', parent=None, patterns=None, folder=None, filter=None):
             ffilter = gtk.FileFilter()
             for pattern in patterns:
                 ffilter.add_pattern(pattern)
-        filechooser.add_filter(ffilter)
+        if type(ffilter) != list:
+            ffilter = [ffilter]
+        for f in ffilter:
+            filechooser.add_filter(f)
     filechooser.set_default_response(gtk.RESPONSE_OK)
 
     if folder:
@@ -265,11 +269,15 @@ def open(title='', parent=None, patterns=None, folder=None, filter=None):
 
     response = filechooser.run()
     if response != gtk.RESPONSE_OK:
+        if with_file_chooser:
+            return None, filechooser
         filechooser.destroy()
         return
 
     path = filechooser.get_filename()
     if path and os.access(path, os.R_OK):
+        if with_file_chooser:
+            return path, filechooser
         filechooser.destroy()
         return path
 
@@ -279,6 +287,8 @@ def open(title='', parent=None, patterns=None, folder=None, filter=None):
           _('The file "%s" could not be opened. '
             'Permission denied.') %  abspath)
 
+    if with_file_chooser:
+        return None, filechooser
     filechooser.destroy()
     return
 
