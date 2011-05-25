@@ -909,6 +909,9 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     # emitted when empty or non-empty status changes
     gsignal('has-rows', bool)
 
+    # emitted when the user sorts a column
+    gsignal('sorting-changed', object, gtk.SortType)
+
     gproperty('selection-mode', gtk.SelectionMode,
               default=gtk.SELECTION_BROWSE, nick="SelectionMode")
 
@@ -1290,6 +1293,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         treeview_column.set_resizable(True)
         treeview_column.set_clickable(True)
         treeview_column.set_reorderable(True)
+        treeview_column.connect('clicked', self._after_treeview_column__clicked,
+                                column)
         self._treeview.append_column(treeview_column)
 
         # setup the button to show the popup menu
@@ -1447,6 +1452,10 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
                                            selection, info, timestamp):
         item = self.get_selected()
         selection.set('OBJECTLIST_ROW', 8, pickle.dumps(item))
+
+    def _after_treeview_column__clicked(self, treeview_column, column):
+        self.emit('sorting-changed', column.attribute,
+                  treeview_column.get_sort_order())
 
     # hacks
     def _get_column_button(self, column):
