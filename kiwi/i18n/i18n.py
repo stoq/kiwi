@@ -80,6 +80,10 @@ def update_po(root, package):
 
     fd = open(potfiles_in, 'w')
     for filename in files + rml_files:
+        # FIXME: workaround for bug
+        # https://bugzilla.redhat.com/show_bug.cgi?id=504483
+        if filename.endswith('.ui'):
+            filename = '[type: gettext/glade]' + filename
         fd.write(filename + '\n')
     fd.close()
 
