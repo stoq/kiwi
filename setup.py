@@ -38,6 +38,7 @@ if sys.platform != 'win32' and not 'bdist_wininst' in sys.argv:
                                      include_dirs=include_dirs,
                                      libraries=libraries))
 
+pixmaps = listfiles('gazpacho-plugin', 'resources', 'kiwiwidgets', '*.png')
 setup(name="kiwi",
       version=".".join(map(str, kiwi_version)),
       description="A framework and a set of enhanced widgets based on PyGTK",
@@ -50,13 +51,17 @@ setup(name="kiwi",
                    listfiles('glade', '*.glade') + listfiles('glade', '*.ui')),
                   ('$datadir/pixmaps',
                    listfiles('pixmaps', '*.png')),
+                  # Gazpacho
                   ('share/gazpacho/catalogs',
                    listfiles('gazpacho-plugin', 'kiwiwidgets.xml')),
-                  ('share/gazpacho/resources/kiwiwidgets',
-                   listfiles('gazpacho-plugin', 'resources',
-                             'kiwiwidgets', '*.png')),
+                  ('share/gazpacho/resources/kiwiwidgets', pixmaps),
                   (get_site_packages_dir('gazpacho', 'widgets'),
                    listfiles('gazpacho-plugin', 'kiwiwidgets.py')),
+                  # Glade3
+                  ('share/glade3/catalogs', ['kiwiwidgets.xml']),
+                  ('$libdir/glade3/modules', ['kiwiwidgets.py']),
+                  ('share/glade3/pixmaps', pixmaps),
+                  # Documentation
                   ('share/doc/kiwi',
                    ('AUTHORS', 'ChangeLog', 'NEWS', 'README')),
                   ('share/doc/kiwi/howto',
