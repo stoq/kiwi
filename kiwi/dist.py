@@ -55,6 +55,10 @@ class _VariableExtender:
         else:
             self.sysconfdir = os.path.join('etc')
 
+        pylib = get_python_lib()
+        pylib = pylib.replace(sys.prefix + '/', '')
+        self.libdir = os.path.dirname(os.path.dirname(pylib))
+
     def extend(self, string, relative=False):
         """
         Expand a variable.
@@ -64,7 +68,8 @@ class _VariableExtender:
         """
         for name, var in [('sysconfdir', self.sysconfdir),
                           ('datadir', self.datadir),
-                          ('prefix', self.prefix)]:
+                          ('prefix', self.prefix),
+                          ('libdir', self.libdir)]:
             if not relative and name != 'prefix':
                 var = os.path.join(self.prefix, var)
             string = string.replace('$' + name, var)
