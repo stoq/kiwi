@@ -23,6 +23,7 @@
 
 """Distutils extensions and utilities"""
 
+from distutils.command.clean import clean
 from distutils.command.install_data import install_data
 from distutils.command.install_lib import install_lib
 from distutils.core import setup as DS_setup
@@ -31,6 +32,7 @@ from distutils.log import info, warn
 from distutils.sysconfig import get_python_lib
 import errno
 from fnmatch import fnmatch
+from shutil import copyfile
 import os
 import new
 import sys
@@ -88,6 +90,17 @@ class KiwiInstallLib(install_lib):
     def _get_revision(self):
         top_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
         last_revision = os.path.join(top_dir, '.bzr', 'branch', 'last-revision')
+
+        # If the file does not exist, we may be building a ppa recipe.
+        # Workaround this by adding a recipe line:
+        # run cp .bzr/branch/last-revision last-revision
+        # This happens because dpkg-source is run with -i -I, and that
+        # causes .bzr files to be removed.
+        if not os.path.exists(last_revision):
+            last_revision = os.path.join(top_dir, 'last-revision')
+            if not os.path.exists(last_revision):
+                return 0
+
         try:
             fp = open(last_revision)
         except OSError, e:
@@ -159,6 +172,21 @@ class KiwiInstallData(install_data):
             data_files.append((self.varext.extend(target, True), files))
         self.data_files = data_files
         return install_data.run(self)
+
+# This is so ulgy, but its the only way I found out to include bzr
+# last-revision when building a source with debuild -S -i -I.
+# FIXME: Figure out a better way to do this.
+class KiwiClean(clean):
+    def run(self):
+        retval = clean.run(self)
+
+        info("Coping revision file")
+        top_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+        src = os.path.join(top_dir, '.bzr', 'branch', 'last-revision')
+        dest = os.path.join(top_dir, 'last-revision')
+        copyfile(src, dest)
+        return retval
+
 
 def get_site_packages_dir(*dirs):
     """
@@ -327,7 +355,8 @@ def setup(**kwargs):
     InstallLib = new.classobj('InstallLib', (KiwiInstallLib,),
                               dict(resources=resources,
                                    global_resources=global_resources))
-    cmdclass = dict(install_data=InstallData, install_lib=InstallLib)
+    cmdclass = dict(install_data=InstallData, install_lib=InstallLib,
+                    clean=KiwiClean)
     kwargs.setdefault('cmdclass', cmdclass).update(cmdclass)
 
     DS_setup(**kwargs)
