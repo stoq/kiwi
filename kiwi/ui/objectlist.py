@@ -2007,6 +2007,24 @@ class ObjectTree(ObjectList):
         self.get_treeview().collapse_row(
             self._model[treeiter].path)
 
+    def get_parent(self, instance):
+        """
+        This method returns the parent of the specified instance
+        are visible.
+        @returns: the parent of the instance or None
+        """
+        if instance is None:
+            return None
+        objid = instance
+        if not objid in self._iters:
+            raise ValueError("instance %r is not in the list" % instance)
+        treeiter = self._iters[objid]
+        parentiter = self._model.iter_parent(treeiter)
+        if not parentiter:
+            return None
+
+        return self._model[parentiter][COL_MODEL]
+
     def get_root(self, instance):
         """
         This method returns the root object of a certain instance. If
