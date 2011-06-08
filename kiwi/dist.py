@@ -41,7 +41,6 @@ class _VariableExtender:
     def __init__(self, distribution):
         install = distribution.get_command_obj('install')
         name = distribution.get_name()
-
         prefix = install.prefix
         if not prefix:
             prefix = sys.prefix
@@ -61,6 +60,8 @@ class _VariableExtender:
         pylib = pylib.replace(sys.prefix + '/', '')
         self.libdir = os.path.dirname(os.path.dirname(pylib))
 
+        self.version = distribution.get_version()
+
     def extend(self, string, relative=False):
         """
         Expand a variable.
@@ -71,8 +72,9 @@ class _VariableExtender:
         for name, var in [('sysconfdir', self.sysconfdir),
                           ('datadir', self.datadir),
                           ('prefix', self.prefix),
-                          ('libdir', self.libdir)]:
-            if not relative and name != 'prefix':
+                          ('libdir', self.libdir),
+                          ('version', self.version)]:
+            if not relative and name not in ['prefix', 'version']:
                 var = os.path.join(self.prefix, var)
             string = string.replace('$' + name, var)
         return string
