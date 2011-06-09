@@ -336,7 +336,7 @@ def setup(**kwargs):
             for filename in files:
                 data = open(filename).read()
                 data = varext.extend(data)
-                target_file = os.path.join(target, filename)
+                target_file = os.path.join(target, os.path.basename(filename))
                 info('installing template %s' % target_file)
                 open(target_file, 'w').write(data)
 
