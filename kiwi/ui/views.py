@@ -781,6 +781,9 @@ class SlaveView(gobject.GObject):
 
     def _on_notebook_slave__validation_changed(self, slave, value, name,
                                                label):
+        if not label:
+            return
+
         validation = self._notebook_validation[label]
         validation[name] = value
 
