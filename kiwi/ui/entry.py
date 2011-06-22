@@ -611,7 +611,14 @@ class KiwiEntry(PropertyObject, gtk.Entry):
             treeiter = row.iter
 
             if isinstance(model, gtk.TreeModelFilter) and treeiter:
-                treeiter = model.convert_child_iter_to_iter(treeiter)
+                # Just like we do in comboentry.py, convert iter between
+                # models. See #3099 for mor information
+                tmodel = model.get_model()
+                if tmodel.iter_is_valid(treeiter):
+                    treeview.set_model(tmodel)
+                    selection = treeview.get_selection()
+                else:
+                    treeiter = model.convert_child_iter_to_iter(treeiter)
 
             selection.select_iter(treeiter)
 

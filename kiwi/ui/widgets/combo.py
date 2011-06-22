@@ -628,6 +628,8 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
         ValidatableProxyWidgetMixin.__init__(self)
         PropertyObject.__init__(self)
         entry.connect('content-changed', self._on_entry__content_changed)
+        entry.connect('validation-changed',
+                       self._on_entry__validation_changed)
 
     def __nonzero__(self):
         return True
@@ -647,6 +649,10 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
         # We only need to listen for changes in the entry, it's updated
         # even if you select something in the popup list
         self.emit('content-changed')
+
+    def _on_entry__validation_changed(self, entry, value):
+        # Propagate entry's validity state
+        self.emit('validation-changed', value)
 
     # IconEntry
 

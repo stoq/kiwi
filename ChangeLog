@@ -1,3 +1,12 @@
+2011-06-22  Ronaldo Maia  <romaia@async.com.br>
+
+    * kiwi/ui/comboentry.py: Emit changed signal when interacting with
+                             keyborad.
+    * kiwi/ui/entry.py: Convert from TreeModelFilter to TreeModel when
+                        selecting from an entry completion. See bug 3099 and
+                        4424.
+    * kiwi/ui/widgets/combo.py: Propagate entry's validity state.
+
 2011-02-18  Ronaldo Maia  <romaia@async.com.br>
 
 	* kiwi/ui/icon.py:

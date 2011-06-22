@@ -526,6 +526,7 @@ class ComboEntry(gtk.VBox):
         @param text:
         """
         self.entry.set_text(text)
+        self.emit('changed')
 
     def get_text(self):
         """
