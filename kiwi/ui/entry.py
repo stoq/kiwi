@@ -200,7 +200,7 @@ class KiwiEntry(gtk.Entry):
         self._current_field = -1
         self._pos = 0
         self._selecting = False
-        self._completion = False
+        self._prop_completion = False
         self._exact_completion = False
         self._block_insert = False
         self._block_delete = False
@@ -217,15 +217,15 @@ class KiwiEntry(gtk.Entry):
                                         setter=_set_exact_completion,
                                         type=bool, default=False)
 
-    def _get_completion(self):
-        return self._completion
+    def _prop_get_completion(self):
+        return self._prop_completion
 
-    def _set_completion(self, value):
+    def _prop_set_completion(self, value):
         if not self.get_completion():
             self.set_completion(gtk.EntryCompletion())
-        self._completion = value
-    completion = gobject.property(getter=_get_completion,
-                                  setter=_set_completion,
+        self._prop_completion = value
+    completion = gobject.property(getter=_prop_get_completion,
+                                  setter=_prop_set_completion,
                                   type=bool, default=False)
 
     def _get_mask(self):
@@ -560,7 +560,7 @@ class KiwiEntry(gtk.Entry):
             match_func = self._completion_exact_match_func
         else:
             match_func = self._completion_normal_match_func
-        completion = self._get_completion()
+        completion = self._get_entry_completion()
         completion.set_match_func(match_func)
 
     def is_empty(self):
@@ -650,7 +650,7 @@ class KiwiEntry(gtk.Entry):
             if row[COL_OBJECT] == obj:
                 return row[COL_TEXT]
 
-    def _get_completion(self):
+    def _get_entry_completion(self):
         # Check so we have completion enabled, not this does not
         # depend on the property, the user can manually override it,
         # as long as there is a completion object set
@@ -1040,7 +1040,7 @@ class KiwiEntry(gtk.Entry):
             raise TypeError("'data' parameter must be a list or tuple of item "
                             "descriptions, found %s") % type(itemdata)
 
-        completion = self._get_completion()
+        completion = self._get_entry_completion()
         model = completion.get_model()
 
         if len(itemdata) == 0:
@@ -1091,7 +1091,7 @@ class KiwiEntry(gtk.Entry):
             raise TypeError(
                 "select_item_by_data can only be used in data mode")
 
-        completion = self._get_completion()
+        completion = self._get_entry_completion()
         model = completion.get_model()
 
         for row in model:
@@ -1103,7 +1103,7 @@ class KiwiEntry(gtk.Entry):
                            % (data, self.name))
 
     def get_iter_by_label(self, label):
-        completion = self._get_completion()
+        completion = self._get_entry_completion()
         model = completion.get_model()
         for row in model:
             if row[COL_TEXT] == label:
@@ -1113,7 +1113,7 @@ class KiwiEntry(gtk.Entry):
                            % (label, self.name))
 
     def get_selected_by_iter(self, treeiter):
-        completion = self._get_completion()
+        completion = self._get_entry_completion()
         model = completion.get_model()
         mode = self._mode
         text = model[treeiter][COL_TEXT]
@@ -1128,12 +1128,12 @@ class KiwiEntry(gtk.Entry):
             raise AssertionError
 
     def get_selected_label(self, treeiter):
-        completion = self._get_completion()
+        completion = self._get_entry_completion()
         model = completion.get_model()
         return model[treeiter][COL_TEXT]
 
     def get_selected_data(self, treeiter):
-        completion = self._get_completion()
+        completion = self._get_entry_completion()
         model = completion.get_model()
         return model[treeiter][COL_OBJECT]
 

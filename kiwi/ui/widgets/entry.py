@@ -63,7 +63,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     how to fill these entries is displayed according to the current locale.
     """
 
-    __metaclass__ = ProxyEntryMeta
+    __class__ = ProxyEntryMeta
 
     allowed_data_types = (basestring, datetime.date, datetime.time,
                           datetime.datetime, object) + number
@@ -142,7 +142,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         @type  values: list of values
         """
 
-        completion = self._get_completion()
+        completion = self._get_entry_completion()
         model = completion.get_model()
         model.clear()
 
