@@ -81,7 +81,11 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         KiwiEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
         self._entry_data_type = data_type
-
+        # XXX: Sales -> New Loan Item requires this, figure out why
+        try:
+            self.props.data_type = data_type
+        except (AttributeError, TypeError):
+            pass
         # Hide currency symbol from the entry.
         self.set_options_for_datatype(currency, symbol=False)
 
