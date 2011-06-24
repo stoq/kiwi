@@ -51,12 +51,6 @@ setup(name="kiwi",
                    listfiles('glade', '*.glade') + listfiles('glade', '*.ui')),
                   ('$datadir/pixmaps',
                    listfiles('pixmaps', '*.png')),
-                  # Gazpacho
-                  ('share/gazpacho/catalogs',
-                   listfiles('gazpacho-plugin', 'kiwiwidgets.xml')),
-                  ('share/gazpacho/resources/kiwiwidgets', pixmaps),
-                  (get_site_packages_dir('gazpacho', 'widgets'),
-                   listfiles('gazpacho-plugin', 'kiwiwidgets.py')),
                   # Glade3
                   ('share/glade3/catalogs', ['kiwiwidgets.xml']),
                   ('$libdir/glade3/modules', ['kiwiwidgets.py']),
