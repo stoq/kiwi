@@ -102,7 +102,7 @@ import gtk
 
 from kiwi.enums import Direction
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
-from kiwi.utils import PropertyObject, gproperty, type_register
+from kiwi.utils import type_register
 
 # In gtk+ 2.18 they refactored gtk.Entry to use gtk.EntryBuffer, so we need to
 # track the gtk version here for later use.
@@ -150,7 +150,7 @@ INPUT_CHAR_MAP = {
 
 _ = lambda msg: gettext.dgettext('kiwi', msg)
 
-class KiwiEntry(PropertyObject, gtk.Entry):
+class KiwiEntry(gtk.Entry):
     """
     The KiwiEntry is a Entry subclass with the following additions:
 
@@ -160,17 +160,11 @@ class KiwiEntry(PropertyObject, gtk.Entry):
     """
     __gtype_name__ = 'KiwiEntry'
 
-    gproperty("completion", bool, False)
-    gproperty('exact-completion', bool, default=False)
-    gproperty("mask", str, default='')
-
     def __init__(self):
         self._completion = None
 
         gtk.Entry.__init__(self)
-        PropertyObject.__init__(self)
         self._update_position()
-
         self.connect('insert-text', self._on_insert_text)
         self.connect('delete-text', self._on_delete_text)
         self.connect_after('grab-focus', self._after_grab_focus)
@@ -206,28 +200,46 @@ class KiwiEntry(PropertyObject, gtk.Entry):
         self._current_field = -1
         self._pos = 0
         self._selecting = False
-
+        self._completion = False
+        self._exact_completion = False
         self._block_insert = False
         self._block_delete = False
 
     # Properties
 
-    def prop_set_exact_completion(self, value):
-        self.set_exact_completion(value)
-        return value
+    def _get_exact_completion(self):
+        return self._exact_completion
 
-    def prop_set_completion(self, value):
+    def _set_exact_completion(self, value):
+        self.set_exact_completion(value)
+        self._exact_completion = value
+    exact_completion = gobject.property(getter=_get_exact_completion,
+                                        setter=_set_exact_completion,
+                                        type=bool, default=False)
+
+    def _get_completion(self):
+        return self._completion
+
+    def _set_completion(self, value):
         if not self.get_completion():
             self.set_completion(gtk.EntryCompletion())
-        return value
+        self._completion = value
+    completion = gobject.property(getter=_get_completion,
+                                  setter=_set_completion,
+                                  type=bool, default=False)
 
-    def prop_set_mask(self, value):
+    def _get_mask(self):
+        return self._mask
+
+    def _set_mask(self, value):
         try:
             self.set_mask(value)
             return self.get_mask()
         except MaskError, e:
             pass
-        return ''
+    mask = gobject.property(getter=_get_mask,
+                            setter=_set_mask,
+                            type=str, default='')
 
     # Public API
     def set_text(self, text):

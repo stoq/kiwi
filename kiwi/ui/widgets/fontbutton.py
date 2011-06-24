@@ -18,18 +18,18 @@
 import gtk
 
 from kiwi.ui.proxywidget import ProxyWidgetMixin
-from kiwi.utils import PropertyObject, gsignal, type_register
+from kiwi.utils import gsignal, type_register
 
 
-class ProxyFontButton(PropertyObject, gtk.FontButton, ProxyWidgetMixin):
+class ProxyFontButton(gtk.FontButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFontButton'
 
     allowed_data_types = basestring,
 
     def __init__(self, fontname=None):
         ProxyWidgetMixin.__init__(self)
-        PropertyObject.__init__(self, data_type=str)
         gtk.FontButton.__init__(self, fontname)
+        self.props.data_type = str
 
     gsignal('font-set', 'override')
     def do_font_set(self):
@@ -41,7 +41,6 @@ class ProxyFontButton(PropertyObject, gtk.FontButton, ProxyWidgetMixin):
 
     def update(self, data):
         self.set_font_name(data)
-
 
 type_register(ProxyFontButton)
 

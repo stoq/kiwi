@@ -30,9 +30,11 @@ from cgi import escape
 
 import gtk
 
-from kiwi.utils import gsignal, gproperty, PropertyObject, type_register
+from kiwi.utils import gsignal, type_register
 
-class HyperLink(PropertyObject, gtk.EventBox):
+import gobject
+
+class HyperLink(gtk.EventBox):
     __gtype_name__ = 'HyperLink'
     """
     A hyperlink widget.
@@ -46,16 +48,16 @@ class HyperLink(PropertyObject, gtk.EventBox):
     right clicks the hyperlink.
     """
 
-    gproperty('text', str, '')
-    gproperty('normal-color', str, '#0000c0')
-    gproperty('normal-underline', bool, False)
-    gproperty('normal-bold', bool, False)
-    gproperty('hover-color', str, '#0000c0')
-    gproperty('hover-underline', bool, True)
-    gproperty('hover-bold', bool, False)
-    gproperty('active-color', str, '#c00000')
-    gproperty('active-underline', bool, True)
-    gproperty('active-bold', bool, False)
+    text = gobject.property(type=str, default='')
+    normal_color = gobject.property(type=str, default='#0000c0')
+    normal_underline = gobject.property(type=bool, default=False)
+    normal_bold = gobject.property(type=bool, default=False)
+    hover_color = gobject.property(type=str, default='#0000c0')
+    hover_underline = gobject.property(type=bool, default=True)
+    hover_bold = gobject.property(type=bool, default=False)
+    active_color = gobject.property(type=str, default='#c00000')
+    active_underline = gobject.property(type=bool, default=True)
+    active_bold = gobject.property(type=bool, default=False)
 
     gsignal('clicked')
     gsignal('right-clicked')
@@ -70,7 +72,6 @@ class HyperLink(PropertyObject, gtk.EventBox):
         gtk.EventBox.__init__(self)
         self.set_above_child(False)
         self.set_visible_window(False)
-        PropertyObject.__init__(self)
         self._gproperties = {}
         if text is not None:
             self.set_property('text', text)

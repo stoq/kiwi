@@ -26,25 +26,35 @@
 
 """GtkCheckButton support for the Kiwi Framework"""
 
+import gobject
 import gtk
 
 from kiwi import ValueUnset
 from kiwi.python import deprecationwarn
 from kiwi.ui.proxywidget import ProxyWidgetMixin
-from kiwi.utils import PropertyObject, gsignal, type_register
+from kiwi.utils import gsignal, type_register
 
-class ProxyCheckButton(PropertyObject, gtk.CheckButton, ProxyWidgetMixin):
+class ProxyCheckButton(gtk.CheckButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyCheckButton'
+
+    data_type = gobject.property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=ProxyWidgetMixin.set_data_type,
+        type=str, blurb='Data Type')
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
 
     # changed allowed data types because checkbuttons can only
     # accept bool values
     allowed_data_types = bool,
 
     def __init__(self, label=None, use_underline=True):
-        ProxyWidgetMixin.__init__(self)
-        PropertyObject.__init__(self, data_type=bool)
         gtk.CheckButton.__init__(self, label=label,
                                  use_underline=use_underline)
+        ProxyWidgetMixin.__init__(self)
+        self.props.data_type = bool
 
     gsignal('toggled', 'override')
     def do_toggled(self):

@@ -29,6 +29,7 @@ L{Label.set_bold}"""
 
 import datetime
 
+import gobject
 import gtk
 
 from kiwi.datatypes import number, ValueUnset, converter
@@ -36,10 +37,15 @@ from kiwi.enums import Alignment
 from kiwi.python import deprecationwarn
 from kiwi.ui.gadgets import set_foreground
 from kiwi.ui.proxywidget import ProxyWidgetMixin
-from kiwi.utils import PropertyObject, type_register
+from kiwi.utils import gsignal, type_register
 
-class ProxyLabel(PropertyObject, gtk.Label, ProxyWidgetMixin):
+class ProxyLabel(gtk.Label, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyLabel'
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
+
     allowed_data_types = (basestring, datetime.date, datetime.datetime,
                           datetime.time) + number
     _label_replacements = {}
@@ -51,13 +57,13 @@ class ProxyLabel(PropertyObject, gtk.Label, ProxyWidgetMixin):
         @param data_type: data type of label
         """
         gtk.Label.__init__(self, label)
-        PropertyObject.__init__(self, data_type=data_type)
         ProxyWidgetMixin.__init__(self)
+        self.props.data_type = data_type
         self.set_use_markup(True)
         self._attr_dic = { "style": None,
                            "weight": None,
                            "size": None,
-                           "underline": None}
+                           "underline": None }
         self._size_list = ('xx-small', 'x-small',
                            'small', 'medium',
                            'large', 'x-large',
@@ -66,16 +72,18 @@ class ProxyLabel(PropertyObject, gtk.Label, ProxyWidgetMixin):
         self.connect("notify::label", self._on_label_changed)
         self._block_notify_label = False
 
-    def prop_set_data_type(self, data_type):
-        data_type = super(ProxyLabel, self).prop_set_data_type(data_type)
-        if not data_type:
+    def _set_data_type(self, data_type):
+        if not ProxyWidgetMixin.set_data_type(self, data_type):
             return
 
         conv = converter.get_converter(data_type)
         if conv.align == Alignment.RIGHT:
             self.set_property('xalign', 1.0)
 
-        return data_type
+    data_type = gobject.property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=_set_data_type,
+        type=str, blurb='Data Type')
 
     #@classmethod
     def replace(cls, markup, value):

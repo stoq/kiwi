@@ -41,7 +41,7 @@ from kiwi.currency import currency # after datatypes
 from kiwi.enums import Alignment
 from kiwi.log import Logger
 from kiwi.python import enum, slicerange
-from kiwi.utils import PropertyObject, gsignal, gproperty, type_register
+from kiwi.utils import gsignal, type_register
 from kiwi.ui.widgets.contextmenu import ContextMenu
 
 _ = lambda m: gettext.dgettext('kiwi', m)
@@ -59,7 +59,7 @@ def str2bool(value, from_string=converter.from_string):
     return from_string(bool, value)
 
 
-class Column(PropertyObject, gobject.GObject):
+class Column(gobject.GObject):
     """
     Specifies a column for an L{ObjectList}, see the ObjectList documentation
     for a simple example.
@@ -147,33 +147,33 @@ class Column(PropertyObject, gobject.GObject):
           of the beginning.
     """
     __gtype_name__ = 'Column'
-    gproperty('attribute', str, flags=(gobject.PARAM_READWRITE | gobject.PARAM_CONSTRUCT_ONLY))
-    gproperty('title', str)
-    gproperty('data-type', object)
-    gproperty('visible', bool, default=True)
-    gproperty('justify', gtk.Justification, default=gtk.JUSTIFY_LEFT)
-    gproperty('format', str)
-    gproperty('width', int, maximum=2**16)
-    gproperty('sorted', bool, default=False)
-    gproperty('order', gtk.SortType, default=gtk.SORT_ASCENDING)
-    gproperty('expand', bool, default=False)
-    gproperty('tooltip', str)
-    gproperty('format_func', object)
-    gproperty('editable', bool, default=False)
-    gproperty('searchable', bool, default=False)
-    gproperty('radio', bool, default=False)
-    gproperty('spin_adjustment', object)
-    gproperty('use-stock', bool, default=False)
-    gproperty('use-markup', bool, default=False)
-    gproperty('icon-size', gtk.IconSize, default=gtk.ICON_SIZE_MENU)
-    gproperty('editable-attribute', str)
-    gproperty('expander', bool, False)
-    gproperty('ellipsize', pango.EllipsizeMode, default=pango.ELLIPSIZE_NONE)
-    gproperty('font-desc', str)
-    gproperty('column', str)
-    gproperty('sort_func', object, default=None)
-    gproperty('pack_end', bool, default=False)
-    #gproperty('title_pixmap', str)
+    attribute = gobject.property(type=str,
+                                 flags=(gobject.PARAM_READWRITE |
+                                        gobject.PARAM_CONSTRUCT_ONLY))
+    title = gobject.property(type=str)
+    visible = gobject.property(type=bool, default=True)
+    justify = gobject.property(type=int, default=gtk.JUSTIFY_LEFT)
+    format = gobject.property(type=str)
+    width = gobject.property(type=int, maximum=2**16)
+    sorted = gobject.property(type=bool, default=False)
+    order = gobject.property(type=int, default=gtk.SORT_ASCENDING)
+    expand = gobject.property(type=bool, default=False)
+    tooltip = gobject.property(type=str)
+    format_func = gobject.property(type=object)
+    editable = gobject.property(type=bool, default=False)
+    searchable = gobject.property(type=bool, default=False)
+    radio = gobject.property(type=bool, default=False)
+    spin_adjustment = gobject.property(type=object)
+    use_stock = gobject.property(type=bool, default=False)
+    use_markup = gobject.property(type=bool, default=False)
+    icon_size = gobject.property(type=int, default=gtk.ICON_SIZE_MENU)
+    editable_attribute = gobject.property(type=str)
+    expander = gobject.property(type=bool, default=False)
+    ellipsize = gobject.property(type=int, default=pango.ELLIPSIZE_NONE)
+    font_desc = gobject.property(type=str)
+    column = gobject.property(type=str)
+    sort_func = gobject.property(type=object, default=None)
+    pack_end = gobject.property(type=bool, default=False)
 
     # This can be set in subclasses, to be able to allow custom
     # cell_data_functions, used by SequentialColumn
@@ -257,8 +257,7 @@ class Column(PropertyObject, gobject.GObject):
                 raise TypeError("sort_func must be callable")
             self.compare = sort_func
 
-        PropertyObject.__init__(self, **kwargs)
-        gobject.GObject.__init__(self, attribute=attribute)
+        gobject.GObject.__init__(self, **kwargs)
 
         # It makes sense to set the default ellipsize to end if we have
         # a column which expands so it doesn't end up using more space
@@ -270,12 +269,18 @@ class Column(PropertyObject, gobject.GObject):
         namespace = self.__dict__.copy()
         return "<%s: %s>" % (self.__class__.__name__, namespace)
 
-    def prop_set_data_type(self, data):
+    def _get_data_type(self):
+        return self._data_type
+
+    def _set_data_type(self, data):
         if data is not None:
             conv = converter.get_converter(data)
             self.compare = self.compare or conv.get_compare_function()
             self.from_string = conv.from_string
-        return data
+        self._data_type = data
+    data_type = gobject.property(getter=_get_data_type,
+                                 setter=_set_data_type,
+                                 type=object)
 
     def attach(self, objectlist):
         self._objectlist = objectlist
@@ -833,7 +838,7 @@ COL_MODEL = 0
 
 _marker = object()
 
-class ObjectList(PropertyObject, gtk.ScrolledWindow):
+class ObjectList(gtk.ScrolledWindow):
     """
     An enhanced version of GtkTreeView, which provides pythonic wrappers
     for accessing rows, and optional facilities for column sorting (with
@@ -912,9 +917,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
     # emitted when the user sorts a column
     gsignal('sorting-changed', object, gtk.SortType)
 
-    gproperty('selection-mode', gtk.SelectionMode,
-              default=gtk.SELECTION_BROWSE, nick="SelectionMode")
-
     def __init__(self, columns=None,
                  objects=None,
                  mode=gtk.SELECTION_BROWSE,
@@ -971,7 +973,8 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         self._model = model
         self._model.connect('row-inserted', self._on_model__row_inserted)
         self._model.connect('row-deleted', self._on_model__row_deleted)
-        self._treeview = gtk.TreeView(self._model)
+        self._treeview = gtk.TreeView()
+        self._treeview.set_model(model)
         self._treeview.connect('button-press-event',
                                self._on_treeview__button_press_event)
         self._treeview.connect_after('row-activated',
@@ -996,9 +999,6 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
         # Select the first item if no items are selected
         if mode != gtk.SELECTION_NONE and objects:
             selection.select_iter(self._model[COL_MODEL].iter)
-
-        # Depends on treeview and selection being set up
-        PropertyObject.__init__(self)
 
         self.set_selection_mode(mode)
         self._context_menu = None
@@ -1179,11 +1179,17 @@ class ObjectList(PropertyObject, gtk.ScrolledWindow):
 
     # Properties
 
-    def prop_set_selection_mode(self, mode):
-        self.set_selection_mode(mode)
-
-    def prop_get_selection_mode(self):
+    def _get_selection_mode(self):
         return self.get_selection_mode()
+
+    def _set_selection_mode(self, mode):
+        self.set_selection_mode(mode)
+    selection_mode = gobject.property(getter=_get_selection_mode,
+                                      setter=_set_selection_mode,
+                                      type=int,
+                                      default=gtk.SELECTION_BROWSE,
+                                      nick="SelectionMode")
+
 
     # Columns handling
 

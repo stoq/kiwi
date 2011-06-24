@@ -25,15 +25,16 @@
 
 import datetime
 
+import gobject
 import gtk
 from gtk import gdk
 
 from kiwi import ValueUnset
 from kiwi.datatypes import number
 from kiwi.ui.proxywidget import ProxyWidgetMixin
-from kiwi.utils import PropertyObject
+from kiwi.utils import gsignal
 
-class ProxyButton(PropertyObject, gtk.Button, ProxyWidgetMixin):
+class ProxyButton(gtk.Button, ProxyWidgetMixin):
     """
     A ProxyButton is a Button subclass which is implementing the features
     required to be used inside the kiwi framework.
@@ -47,10 +48,19 @@ class ProxyButton(PropertyObject, gtk.Button, ProxyWidgetMixin):
                           datetime.time, gdk.Pixbuf) + number
     __gtype_name__ = 'ProxyButton'
 
+    data_type = gobject.property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=ProxyWidgetMixin.set_data_type,
+        type=str, blurb='Data Type')
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
+
     def __init__(self):
-        ProxyWidgetMixin.__init__(self)
-        PropertyObject.__init__(self, data_type=str)
         gtk.Button.__init__(self)
+        ProxyWidgetMixin.__init__(self)
+        self.props.data_type = str
 
     def read(self):
         if self.data_type == 'Pixbuf':

@@ -40,7 +40,6 @@ from kiwi.environ import environ
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
 from kiwi.log import Logger
 from kiwi.ui.gadgets import FadeOut
-from kiwi.utils import gsignal, gproperty
 
 log = Logger('widget proxy')
 
@@ -51,6 +50,8 @@ class _PixbufConverter(BaseConverter):
     name = 'Pixbuf'
 
     def as_string(self, value, format='png'):
+        if value is ValueUnset:
+            return ''
         buffer = []
         value.save_to_callback(buffer.append, format)
         string = ''.join(buffer)
@@ -82,13 +83,6 @@ class ProxyWidgetMixin(object):
 
     implements(IProxyWidget)
 
-    gsignal('content-changed')
-    gsignal('validation-changed', bool)
-    gsignal('validate', object, retval=object)
-
-    gproperty('data-type', str, blurb='Data Type')
-    gproperty('model-attribute', str, blurb='Model attribute')
-
     allowed_data_types = ()
 
     # To be able to call the as/from_string without setting the data_type
@@ -101,10 +95,14 @@ class ProxyWidgetMixin(object):
                 self.allowed_data_types))
         self._data_format = None
         self._converter_options = {}
+        self._data_type = None
 
     # Properties
 
-    def prop_set_data_type(self, data_type):
+    def get_data_type(self):
+        return self._data_type
+
+    def set_data_type(self, data_type):
         """Set the data type for the widget
 
         @param data_type: can be None, a type object or a string with the
@@ -120,6 +118,7 @@ class ProxyWidgetMixin(object):
         # A type object will always be returned
         data_type = converter.check_supported(data_type)
         self._converter = converter.get_converter(data_type)
+        self._data_type = self._converter.type.__name__
         return self._converter.type.__name__
 
     # Public API
@@ -196,8 +195,6 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     """
 
     implements(IValidatableProxyWidget)
-
-    gproperty('mandatory', bool, default=False)
 
     def __init__(self, widget=None):
         ProxyWidgetMixin.__init__(self)

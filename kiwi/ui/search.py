@@ -45,7 +45,7 @@ from kiwi.ui.delegates import SlaveDelegate
 from kiwi.ui.objectlist import ObjectList, SummaryLabel, SearchColumn
 from kiwi.ui.widgets.combo import ProxyComboBox
 from kiwi.ui.widgets.entry import ProxyDateEntry
-from kiwi.utils import gsignal, gproperty
+from kiwi.utils import gsignal
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
@@ -217,8 +217,8 @@ class SearchFilter(gtk.HBox):
     """
     A base classed used by common search filters
     """
-    gproperty('label', str, flags=(gobject.PARAM_READWRITE |
-                                   gobject.PARAM_CONSTRUCT_ONLY))
+    label = gobject.property(type=str, flags=(gobject.PARAM_READWRITE |
+                                              gobject.PARAM_CONSTRUCT_ONLY))
     gsignal('changed')
     gsignal('removed')
 
@@ -910,7 +910,7 @@ class SearchContainer(gtk.VBox):
     of bottom, see L{SearchFilterPosition}
     """
     __gtype_name__ = 'SearchContainer'
-    gproperty('filter-label', str)
+    filter_label = gobject.property(type=str)
 
     def __init__(self, columns=None, chars=25):
         """

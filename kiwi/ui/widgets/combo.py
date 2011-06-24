@@ -51,7 +51,7 @@ from kiwi.ui.comboboxentry import BaseComboBoxEntry
 from kiwi.ui.comboentry import ComboEntry
 from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
 from kiwi.ui.widgets.entry import ProxyEntry
-from kiwi.utils import PropertyObject, gproperty
+from kiwi.utils import gsignal
 
 class _EasyComboBoxHelper(object):
 
@@ -267,15 +267,23 @@ class _EasyComboBoxHelper(object):
         return None
 
 
-class ProxyComboBox(PropertyObject, gtk.ComboBox, ProxyWidgetMixin):
+class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
 
     __gtype_name__ = 'ProxyComboBox'
     allowed_data_types = (basestring, object) + number
 
+    data_type = gobject.property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=ProxyWidgetMixin.set_data_type,
+        type=str, blurb='Data Type')
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
+
     def __init__(self):
         gtk.ComboBox.__init__(self)
         ProxyWidgetMixin.__init__(self)
-        PropertyObject.__init__(self)
         self._helper = _EasyComboBoxHelper(self)
         self.connect('changed', self._on__changed)
         renderer = gtk.CellRendererText()
@@ -406,15 +414,23 @@ class ProxyComboBox(PropertyObject, gtk.ComboBox, ProxyWidgetMixin):
         """
         return self._helper.get_selected()
 
-class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry,
+class ProxyComboBoxEntry(BaseComboBoxEntry,
                          ValidatableProxyWidgetMixin):
     allowed_data_types = (basestring, object) + number
     __gtype_name__ = 'ProxyComboBoxEntry'
+    data_type = gobject.property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=ProxyWidgetMixin.set_data_type,
+        type=str, blurb='Data Type')
+    mandatory = gobject.property(type=bool, default=False)
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
+
     # it doesn't make sense to connect to this signal
     # because we want to monitor the entry of the combo
     # not the combo box itself.
-
-    gproperty("list-editable", bool, True, "Editable")
 
     def __init__(self, **kwargs):
         deprecationwarn(
@@ -424,11 +440,9 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry,
         BaseComboBoxEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self, widget=self.entry)
 
-        # We need to create the helper before PropertyObject, since we
-        # need to access the helper in prop_set_list_editable, which
-        # PropertyObject might call
         self._helper = _EasyComboBoxHelper(self)
-        PropertyObject.__init__(self, **kwargs)
+        for key, value in kwargs.items():
+            setattr(self.props, key, value)
 
         self.set_text_column(ComboColumn.LABEL)
 
@@ -451,13 +465,21 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry,
 
     # Properties
 
-    def prop_set_list_editable(self, value):
+    def _get_list_editable(self):
         if self._helper.get_mode() == ComboMode.DATA:
-            return
+            return False
 
-        self.entry.set_editable(value)
+        return self.entry.get_editable()
 
-        return value
+    def _set_list_editable(self, value):
+        if self._helper.get_mode() != ComboMode.DATA:
+            self.entry.set_editable(value)
+
+    list_editable = gobject.property(getter=_get_list_editable,
+                                     setter=_set_list_editable,
+                                     type=bool, default=True,
+                                     nick="Editable")
+
 
     # Private
 
@@ -616,17 +638,24 @@ class ProxyComboBoxEntry(PropertyObject, BaseComboBoxEntry,
 
         self._helper.set_mode(self, mode)
 
-class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
+class ProxyComboEntry(ComboEntry, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyComboEntry'
     allowed_data_types = (basestring, object) + number
 
-    gproperty("list-editable", bool, True, "Editable")
+    data_type = gobject.property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=ProxyWidgetMixin.set_data_type,
+        type=str, blurb='Data Type')
+    mandatory = gobject.property(type=bool, default=False)
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
 
     def __init__(self):
         entry = ProxyEntry()
         ComboEntry.__init__(self, entry=entry)
         ValidatableProxyWidgetMixin.__init__(self)
-        PropertyObject.__init__(self)
         entry.connect('content-changed', self._on_entry__content_changed)
         entry.connect('validation-changed',
                        self._on_entry__validation_changed)
@@ -639,9 +668,15 @@ class ProxyComboEntry(PropertyObject, ComboEntry, ValidatableProxyWidgetMixin):
 
     # Properties
 
-    def prop_set_list_editable(self, value):
+    def _get_list_editable(self):
+        return self.entry.get_editable()
+
+    def _set_list_editable(self, value):
         self.entry.set_editable(value)
-        return value
+    list_editable = gobject.property(getter=_get_list_editable,
+                                     setter=_set_list_editable,
+                                     type=bool, default=True,
+                                     nick="Editable")
 
     # Callbacks
 

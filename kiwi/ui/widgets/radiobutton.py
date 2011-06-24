@@ -26,24 +26,32 @@
 
 """GtkRadioButton support for the Kiwi Framework"""
 
+import gobject
 import gtk
 
 from kiwi import ValueUnset
 from kiwi.python import deprecationwarn
-from kiwi.utils import PropertyObject, gproperty, type_register
+from kiwi.utils import gsignal, type_register
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 
-class ProxyRadioButton(PropertyObject, gtk.RadioButton, ProxyWidgetMixin):
+class ProxyRadioButton(gtk.RadioButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyRadioButton'
     allowed_data_types = object,
-    gproperty('data-value', str, nick='Data Value')
+    data_value = gobject.property(type=str, nick='Data Value')
+    data_type = gobject.property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=ProxyWidgetMixin.set_data_type,
+        type=str, blurb='Data Type')
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
 
     def __init__(self, group=None, label=None, use_underline=True):
         gtk.RadioButton.__init__(self, None, label, use_underline)
         if group:
             self.set_group(group)
         ProxyWidgetMixin.__init__(self)
-        PropertyObject.__init__(self)
         self.connect('group-changed', self._on_group_changed)
 
     def _on_radio__toggled(self, radio):

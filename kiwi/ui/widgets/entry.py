@@ -26,18 +26,26 @@
 
 import datetime
 
+import gobject
 import pango
 
 from kiwi.datatypes import converter, number, ValueUnset, currency
 from kiwi.decorators import deprecated
 from kiwi.enums import Alignment
+from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.python import deprecationwarn
 from kiwi.ui.entry import MaskError, KiwiEntry, ENTRY_MODE_TEXT, \
      ENTRY_MODE_DATA
 from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin, \
      VALIDATION_ICON_WIDTH
-from kiwi.utils import PropertyObject, gsignal, type_register
+from kiwi.utils import gsignal, type_register
+
+class ProxyEntryMeta(gobject.GObjectMeta):
+    def __call__(self, *args, **kwargs):
+        rv = super(ProxyEntryMeta, self).__call__(*args, **kwargs)
+        rv.__post_init__()
+        return rv
 
 class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     """The Kiwi Entry widget has many special features that extend the basic
@@ -55,23 +63,30 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     how to fill these entries is displayed according to the current locale.
     """
 
+    __metaclass__ = ProxyEntryMeta
+
     allowed_data_types = (basestring, datetime.date, datetime.time,
                           datetime.datetime, object) + number
 
     __gtype_name__ = 'ProxyEntry'
+    mandatory = gobject.property(type=bool, default=False)
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
 
     def __init__(self, data_type=None):
         self._block_changed = False
         self._has_been_updated = False
         KiwiEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
-        self._data_type = data_type
+        self._entry_data_type = data_type
 
         # Hide currency symbol from the entry.
         self.set_options_for_datatype(currency, symbol=False)
 
     def __post_init__(self):
-        self.set_property('data_type', self._data_type)
+        self.props.data_type = self._entry_data_type
 
     # Virtual methods
     gsignal('changed', 'override')
@@ -82,10 +97,8 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         self._update_current_object(self.get_text())
         self.emit('content-changed')
 
-    def prop_set_data_type(self, data_type):
-        data_type = super(ProxyEntry, self).prop_set_data_type(data_type)
-        # When there is no datatype, nothing needs to be done.
-        if not data_type:
+    def _set_data_type(self, data_type):
+        if not ProxyWidgetMixin.set_data_type(self, data_type):
             return
 
         # Numbers and dates should be right aligned
@@ -99,7 +112,11 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
             self.set_mask_for_data_type(data_type)
         except MaskError:
             pass
-        return data_type
+
+    data_type = gobject.property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=_set_data_type,
+        type=str, blurb='Data Type')
 
     # Public API
 
@@ -199,17 +216,25 @@ class Entry(ProxyEntry):
         ProxyEntry.__init__(self, data_type)
 type_register(Entry)
 
-class ProxyDateEntry(PropertyObject, DateEntry, ValidatableProxyWidgetMixin):
+class ProxyDateEntry(DateEntry, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyDateEntry'
 
     # changed allowed data types because checkbuttons can only
     # accept bool values
     allowed_data_types = datetime.date,
 
+    data_type = gobject.property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=ProxyWidgetMixin.set_data_type,
+        type=str, blurb='Data Type')
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
+
     def __init__(self):
         DateEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
-        PropertyObject.__init__(self)
 
         # Add some space to the entry, so it has rom for the icon, in case
         # of a validation error.
@@ -244,9 +269,14 @@ class ProxyDateEntry(PropertyObject, DateEntry, ValidatableProxyWidgetMixin):
         else:
             self.set_date(data)
 
-    def prop_set_mandatory(self, value):
-        self.entry.set_property('mandatory', value)
-        return value
+    def _get_mandatory(self):
+        return self.entry.props.mandatory
+
+    def _set_mandatory(self, value):
+        self.entry.props.mandatory = value
+    mandatory = gobject.property(getter=_get_mandatory,
+                                 setter=_set_mandatory,
+                                 type=bool, default=False)
 
     # ValidatableProxyWidgetMixin
 

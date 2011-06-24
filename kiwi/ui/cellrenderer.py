@@ -23,10 +23,10 @@
 import gtk
 import gobject
 
-from kiwi.utils import gproperty, PropertyObject, quote
+from kiwi.utils import quote
 from kiwi.ui.gadgets import gdk_color_to_string
 
-class ComboDetailsCellRenderer(gtk.GenericCellRenderer, PropertyObject):
+class ComboDetailsCellRenderer(gtk.GenericCellRenderer):
     """A Cell Renderer for ComboEntry inspired by firefox's awesome bar
 
     To show some details on each entry of the popup, you should call the method
@@ -37,8 +37,8 @@ class ComboDetailsCellRenderer(gtk.GenericCellRenderer, PropertyObject):
     don't make sense).
     """
 
-    gproperty('label', str, default="")
-    gproperty('data', object)
+    label = gobject.property(type=str, default="")
+    data = gobject.property(type=object)
 
     def __init__(self):
         label = gtk.Label()
@@ -46,7 +46,6 @@ class ComboDetailsCellRenderer(gtk.GenericCellRenderer, PropertyObject):
         self._details_callback = None
 
         gtk.GenericCellRenderer.__init__(self)
-        PropertyObject.__init__(self)
 
     def set_details_callback(self, callable):
         self._details_callback = callable

@@ -28,14 +28,15 @@
 
 """
 
+import gobject
 import gtk
 
 from kiwi.datatypes import number, ValueUnset
 from kiwi.python import deprecationwarn
-from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
-from kiwi.utils import PropertyObject, gsignal, type_register
+from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
+from kiwi.utils import gsignal, type_register
 
-class ProxySpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixin):
+class ProxySpinButton(gtk.SpinButton, ValidatableProxyWidgetMixin):
     """
     A SpinButton subclass which adds supports for the Kiwi Framework.
     This widget supports validation
@@ -43,14 +44,25 @@ class ProxySpinButton(PropertyObject, gtk.SpinButton, ValidatableProxyWidgetMixi
 
     """
     __gtype_name__ = 'ProxySpinButton'
+
+    data_type = gobject.property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=ProxyWidgetMixin.set_data_type,
+        type=str, blurb='Data Type')
+    mandatory = gobject.property(type=bool, default=False)
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
+
     allowed_data_types = number
 
     def __init__(self, data_type=int):
         # since the default data_type is str we need to set it to int
         # or float for spinbuttons
         gtk.SpinButton.__init__(self)
-        PropertyObject.__init__(self, data_type=data_type)
         ValidatableProxyWidgetMixin.__init__(self)
+        self.props.data_type = data_type
         self.set_property('xalign', 1.0)
 
     gsignal('changed', 'override')

@@ -149,13 +149,12 @@ class TestProxy(unittest.TestCase):
         if sys.platform == 'win32':
             return
 
-        conv = converter.get_converter(gdk.Pixbuf)
-
         filename = environ.find_resource('pixmap', 'validation-error-16.png')
         pixbuf = gdk.pixbuf_new_from_file(filename)
-        self.assertEqual(self.view.buttonpixbuf.data_type, 'Pixbuf')
+        #self.assertEqual(self.view.buttonpixbuf.data_type, 'Pixbuf')
         self.view.buttonpixbuf.update(pixbuf)
         self.assertEqual(type(self.view.buttonpixbuf.read()), gdk.Pixbuf)
+        conv = converter.get_converter(gdk.Pixbuf)
         self.assertEqual(conv.as_string(self.model.buttonpixbuf),
                          conv.as_string(pixbuf))
         self.view.buttonpixbuf.update(None)

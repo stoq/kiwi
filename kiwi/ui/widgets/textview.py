@@ -27,21 +27,32 @@
 
 import datetime
 
+import gobject
 import gtk
 
 from kiwi import ValueUnset
 from kiwi.datatypes import number
 from kiwi.python import deprecationwarn
 from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
-from kiwi.utils import PropertyObject, type_register
+from kiwi.utils import gsignal, type_register
 
-class ProxyTextView(PropertyObject, gtk.TextView, ValidatableProxyWidgetMixin):
+class ProxyTextView(gtk.TextView, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyTextView'
+    data_value = gobject.property(type=str, nick='Data Value')
+    data_type = gobject.property(
+        getter=ValidatableProxyWidgetMixin.get_data_type,
+        setter=ValidatableProxyWidgetMixin.set_data_type,
+        type=str, blurb='Data Type')
+    mandatory = gobject.property(type=bool, default=False)
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
     allowed_data_types = (basestring, datetime.date) + number
     def __init__(self):
         self._is_unset = True
         gtk.TextView.__init__(self)
-        PropertyObject.__init__(self, data_type=str)
+        self.props.data_type = str
         ValidatableProxyWidgetMixin.__init__(self)
 
         self._textbuffer = gtk.TextBuffer()

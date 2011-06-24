@@ -24,11 +24,12 @@
 
 """GtkHScale and GtkVScale support for the Kiwi Framework"""
 
+import gobject
 import gtk
 
 from kiwi import ValueUnset
 from kiwi.ui.proxywidget import ProxyWidgetMixin
-from kiwi.utils import PropertyObject, gsignal, type_register
+from kiwi.utils import gsignal, type_register
 
 class _ProxyScale:
 
@@ -51,23 +52,39 @@ class _ProxyScale:
             self.set_value(data)
 
 
-class ProxyHScale(_ProxyScale, PropertyObject, ProxyWidgetMixin, gtk.HScale):
+class ProxyHScale(_ProxyScale, ProxyWidgetMixin, gtk.HScale):
     __gtype_name__ = 'ProxyHScale'
+    data_type = gobject.property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=ProxyWidgetMixin.set_data_type,
+        type=str, blurb='Data Type')
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
 
     def __init__(self):
-        ProxyWidgetMixin.__init__(self)
-        PropertyObject.__init__(self, data_type=float)
         gtk.HScale.__init__(self)
+        ProxyWidgetMixin.__init__(self)
+        self.props.data_type = float
 
 type_register(ProxyHScale)
 
 
-class ProxyVScale(_ProxyScale, PropertyObject, ProxyWidgetMixin, gtk.VScale):
+class ProxyVScale(_ProxyScale, ProxyWidgetMixin, gtk.VScale):
     __gtype_name__ = 'ProxyVScale'
+    data_type = gobject.property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=ProxyWidgetMixin.set_data_type,
+        type=str, blurb='Data Type')
+    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
 
     def __init__(self):
-        ProxyWidgetMixin.__init__(self)
-        PropertyObject.__init__(self, data_type=float)
         gtk.VScale.__init__(self)
+        ProxyWidgetMixin.__init__(self)
+        self.props.data_type = float
 
 type_register(ProxyVScale)
