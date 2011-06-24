@@ -28,6 +28,7 @@ from kiwi.log import Logger
 from kiwi.ui.hyperlink import HyperLink
 from kiwi.ui.objectlist import ObjectList, ObjectTree
 from kiwi.ui.widgets.label import ProxyLabel
+from kiwi.ui.widgets.colorbutton import ProxyColorButton
 from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox
 from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 from kiwi.ui.widgets.radiobutton import ProxyRadioButton
@@ -44,6 +45,7 @@ ProxyLabel
 ProxyComboEntry
 ProxyComboBox
 ProxyCheckButton
+ProxyColorButton
 ProxyRadioButton
 ProxyEntry
 ProxyDateEntry
