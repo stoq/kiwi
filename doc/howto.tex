@@ -134,9 +134,8 @@ way beyond providing a basic `document plus view' schema, doing widget
 conversion, automatic signal connection, and adjusting behavior
 automatically to reduce drastically the amount of code needed to define
 the windows and dialogs for your application. Kiwi also includes native
-gazpacho support, which allows you to graphically specify (using
-Gazpacho, the UI designer) your user interfaces and use them seamlessly
-as part of the framework.
+gtkbuilder support, which allows you to graphically specify (using glade)
+your user interfaces and use them seamlessly as part of the framework.
 
 The code used in Kiwi has been developed with quite a lot of care, and
 though it is complex in parts (even crufty in a few spots), we consider
@@ -166,7 +165,6 @@ already on your system:
   \item  \citetitle[http://www.python.org/]{Python} 2.3 or newer
   \item  \citetitle[http://www.gtk.org/]{GTK+} 2.8
   \item  \citetitle[http://www.pygtk.org]{PyGTK} 2.8
-  \item  \citetitle[http://gazpacho.sicem.biz]{Gazpacho} 0.6.5
 \end{itemize}
 
 Most of these packages are available on the main distributions,
@@ -330,7 +328,7 @@ the \module{kiwi.ui.views} module:
 \item \class{BaseView}, which is a View with a toplevel window, in which
 you create and organize the widgets using PyGTK classes and commands.
 \item \class{BaseView}, which allows widgets to be defined using Glade
-and loaded in runtime using gazpacho or libglade. This allows widgets to
+and loaded in runtime using gtkbuilder or libglade. This allows widgets to
 be easily changed and rearranged visually, without the code needing
 to be changed.
 \item \class{SlaveView}, which is a View with a toplevel widget that is

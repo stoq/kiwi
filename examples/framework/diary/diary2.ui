@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--*- mode: xml -*-->
-<interface domain="gazpacho">
+<interface>
   <object class="GtkWindow" id="diary2">
     <property name="default_height">400</property>
     <property name="default_width">600</property>

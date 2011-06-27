@@ -4,8 +4,6 @@ import datetime
 
 import gtk
 
-from kiwi.environ import require_gazpacho
-require_gazpacho()
 from kiwi.datatypes import ValidationError, currency
 from kiwi.ui.delegates import GladeDelegate
 

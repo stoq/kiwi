@@ -1,6 +1,5 @@
 var/lib/python-support
 usr/bin/
 usr/share/kiwi/glade/
-usr/share/gazpacho
 usr/share/kiwi/pixmaps/
 usr/share/locale

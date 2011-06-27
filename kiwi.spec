@@ -65,16 +65,6 @@ practical way to build forms, windows and widgets that transparently
 access and display your object data.
 
 
-%package gazpacho
-Group:          Development/Libraries
-Summary:        Gazpacho integration for kiwi
-Requires:       gazpacho >= 0.6.6, %{name} = %{version}-%{release}
-
-%description gazpacho
-This package contains additional files necessary for integration with
-Gazpacho glade editor.
-
-
 %package docs
 Group:          Documentation
 Summary:        Documentation related to python-kiwi
@@ -99,13 +89,6 @@ rm -rf $RPM_BUILD_ROOT
 %{__python} setup.py install -O1 --skip-build --root $RPM_BUILD_ROOT
 rm -rf $RPM_BUILD_ROOT%{_defaultdocdir}
 
-# The install script mis-guesses where gazpacho is installed on 
-# non-x86 platforms
-if [ "%{python_sitearch}" != "%{python_sitelib}" ]; then
-    mv $RPM_BUILD_ROOT%{python_sitearch}/gazpacho \
-        $RPM_BUILD_ROOT%{python_sitelib}/
-fi
-
 %{find_lang} kiwi
 
 
@@ -119,14 +102,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/*
 %{_datadir}/kiwi
 %{python_sitelib}/kiwi
-
-%files gazpacho
-%defattr(-,root,root,-)
-%doc COPYING
-%{python_sitelib}/gazpacho/widgets/*
-%{_datadir}/gazpacho/catalogs/*
-%{_datadir}/gazpacho/resources/*
-%{_datadir}/locale/*/LC_MESSAGES/kiwi.mo
 
 %files docs
 %defattr(-,root,root,-)

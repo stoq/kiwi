@@ -33,8 +33,7 @@ import sys
 from kiwi.log import Logger
 from kiwi.python import namedAny
 
-__all__ = ['Application', 'Library', 'app', 'environ', 'require_gazpacho',
-           'is_gazpacho_required']
+__all__ = ['Application', 'Library', 'app', 'environ']
 
 log = Logger('environ')
 
@@ -407,16 +406,6 @@ class Application(Library):
             sys.exit(main(sys.argv))
         except KeyboardInterrupt:
             raise SystemExit
-
-_require_gazpacho_loader = False
-
-def require_gazpacho():
-    global _require_gazpacho_loader
-    _require_gazpacho_loader = True
-
-def is_gazpacho_required():
-    global _require_gazpacho_loader
-    return _require_gazpacho_loader
 
 # Global variables
 environ = Environment()

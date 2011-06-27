@@ -13,9 +13,6 @@ examples/
 kiwi/ 
   Source code goes in here
 
-gazpacho-plugin/
-  Gazpacho integration, also look at kiwi/ui/gazpacholoader.py  
-  
 glade/
   Glade files used by kiwi itself
 

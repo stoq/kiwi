@@ -9,7 +9,6 @@ Standards-Version: 3.8.3
 Package: python-kiwi
 Architecture: all
 Depends: ${python:Depends}, ${misc:Depends}, python-gtk2 (>= 2.8.2-3.1), python-setuptools (>= 0.6b3-1)
-Enhances: gazpacho
 Replaces: kiwi
 Description: a graphical framework to construct simple UI
  Kiwi is a framework and a set of enhanced PyGTK widgets designed to

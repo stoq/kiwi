@@ -13,8 +13,6 @@ sys.path.insert(0, os.path.join(testdir, '..'))
 
 print 'Running tests on', testdir
 
-from kiwi.environ import require_gazpacho
-require_gazpacho()
 suite = unittest.TestSuite()
 
 for file in glob.glob(os.path.join(testdir, 'test_*.py')):
