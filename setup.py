@@ -38,7 +38,7 @@ if sys.platform != 'win32' and not 'bdist_wininst' in sys.argv:
                                      include_dirs=include_dirs,
                                      libraries=libraries))
 
-pixmaps = listfiles('gazpacho-plugin', 'resources', 'kiwiwidgets', '*.png')
+pixmaps = listfiles('glade-plugin', 'resources', 'kiwiwidgets', '*.png')
 setup(name="kiwi",
       version=".".join(map(str, kiwi_version)),
       description="A framework and a set of enhanced widgets based on PyGTK",
