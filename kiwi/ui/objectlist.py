@@ -152,11 +152,11 @@ class Column(gobject.GObject):
                                         gobject.PARAM_CONSTRUCT_ONLY))
     title = gobject.property(type=str)
     visible = gobject.property(type=bool, default=True)
-    justify = gobject.property(type=int, default=gtk.JUSTIFY_LEFT)
+    justify = gobject.property(type=gtk.Justification, default=gtk.JUSTIFY_LEFT)
     format = gobject.property(type=str)
     width = gobject.property(type=int, maximum=2**16)
     sorted = gobject.property(type=bool, default=False)
-    order = gobject.property(type=int, default=gtk.SORT_ASCENDING)
+    order = gobject.property(type=gtk.SortType, default=gtk.SORT_ASCENDING)
     expand = gobject.property(type=bool, default=False)
     tooltip = gobject.property(type=str)
     format_func = gobject.property(type=object)
@@ -166,10 +166,10 @@ class Column(gobject.GObject):
     spin_adjustment = gobject.property(type=object)
     use_stock = gobject.property(type=bool, default=False)
     use_markup = gobject.property(type=bool, default=False)
-    icon_size = gobject.property(type=int, default=gtk.ICON_SIZE_MENU)
+    icon_size = gobject.property(type=gtk.IconSize, default=gtk.ICON_SIZE_MENU)
     editable_attribute = gobject.property(type=str)
     expander = gobject.property(type=bool, default=False)
-    ellipsize = gobject.property(type=int, default=pango.ELLIPSIZE_NONE)
+    ellipsize = gobject.property(type=pango.EllipsizeMode, default=pango.ELLIPSIZE_NONE)
     font_desc = gobject.property(type=str)
     column = gobject.property(type=str)
     sort_func = gobject.property(type=object, default=None)
@@ -1186,7 +1186,7 @@ class ObjectList(gtk.ScrolledWindow):
         self.set_selection_mode(mode)
     selection_mode = gobject.property(getter=_get_selection_mode,
                                       setter=_set_selection_mode,
-                                      type=int,
+                                      type=gtk.SelectionMode,
                                       default=gtk.SELECTION_BROWSE,
                                       nick="SelectionMode")
 

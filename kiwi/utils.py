@@ -28,6 +28,26 @@ import sys
 
 import gobject
 
+# Monkey patch gobject to support enum properties
+import gobject.propertyhelper
+
+gprop = gobject.propertyhelper.property
+parent_type_from_parent = gprop._type_from_python
+def _type_from_python(self, type_):
+    if issubclass(type_, gobject.GEnum):
+        return type_.__gtype__
+    else:
+        return parent_type_from_parent(self, type_)
+gprop._type_from_python = _type_from_python
+
+parent_get_pspec_args = gprop.get_pspec_args
+def _get_pspec_args(self):
+    if gobject.type_is_a(self.type, gobject.GEnum):
+        return (self.type, self.nick, self.blurb, self.default, self.flags)
+    else:
+        return parent_get_pspec_args(self)
+gprop.get_pspec_args = _get_pspec_args
+
 def list_properties(gtype, parent=True):
     """
     Return a list of all properties for GType gtype, excluding
