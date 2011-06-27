@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<!--*- mode: xml -*-->
+<interface>
+  <object class="GtkWindow" id="faren">
+    <property name="role"/>
+    <property context="yes" name="title" translatable="yes">Temperature converter</property>
+    <child>
+      <object class="GtkVBox" id="vbox1">
+        <property name="spacing">6</property>
+        <property name="visible">True</property>
+        <child>
+          <object class="GtkLabel" id="label1">
+            <property context="yes" name="label" translatable="yes">Temperature converter</property>
+            <property name="visible">True</property>
+            <property name="xalign">0.0</property>
+            <property name="xpad">6</property>
+            <property name="ypad">6</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHSeparator" id="hseparator1">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHBox" id="hbox1">
+            <property name="spacing">6</property>
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkAlignment" id="alignment1">
+                <property name="border_width">6</property>
+                <property name="visible">True</property>
+                <property name="yscale">0.980000019073</property>
+                <child>
+                  <object class="GtkHBox" id="hbox2">
+                    <property name="spacing">6</property>
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkLabel" id="temperature_label">
+                        <property context="yes" name="label" translatable="yes">&lt;b&gt;_Temperature:&lt;/b&gt;</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_markup">True</property>
+                        <property name="visible">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="temperature">
+                        <property name="visible">True</property>
+                      </object>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="vbox2">
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkHBox" id="hbox3">
+                    <property name="spacing">6</property>
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkLabel" id="celsius_label">
+                        <property context="yes" name="label" translatable="yes">&lt;b&gt;Celsius:&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                        <property name="visible">True</property>
+                        <property name="xalign">1.0</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="celsius">
+                        <property name="visible">True</property>
+                        <property name="xalign">1.0</property>
+                      </object>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkHSeparator" id="hseparator3">
+                    <property name="visible">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkHBox" id="hbox4">
+                    <property name="spacing">6</property>
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkLabel" id="farenheit_label">
+                        <property context="yes" name="label" translatable="yes">&lt;b&gt;Farenheit:&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                        <property name="visible">True</property>
+                        <property name="xalign">1.0</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="farenheit">
+                        <property name="visible">True</property>
+                        <property name="xalign">1.0</property>
+                      </object>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHSeparator" id="hseparator2">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHButtonBox" id="hbuttonbox1">
+            <property name="border_width">6</property>
+            <property name="layout_style">end</property>
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkButton" id="quitbutton">
+                <property context="yes" name="label" translatable="yes">_Quit</property>
+                <property name="use_underline">True</property>
+                <property name="visible">True</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

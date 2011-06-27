@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--*- mode: xml -*-->
+<interface>
+  <object class="GtkWindow" id="gender">
+    <property context="yes" name="title" translatable="yes">Gender Selection</property>
+    <child>
+      <object class="GtkVBox" id="vbox1">
+        <property name="visible">True</property>
+        <child>
+          <object class="GtkLabel" id="label1">
+            <property context="yes" name="label" translatable="yes">Choose your gender:</property>
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHBox" id="hbox1">
+            <property name="visible">True</property>
+            <child>
+              <object class="ProxyRadioButton" id="male">
+                <property name="data_type">str</property>
+                <property name="data_value">Male</property>
+                <property context="yes" name="label" translatable="yes">Male</property>
+                <property name="model_attribute">gender</property>
+                <property name="visible">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="ProxyRadioButton" id="female">
+                <property name="active">False</property>
+                <property name="data_type">str</property>
+                <property name="data_value">Female</property>
+                <property name="group">male</property>
+                <property context="yes" name="label" translatable="yes">Female</property>
+                <property name="model_attribute">gender</property>
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="ProxyRadioButton" id="other">
+                <property name="active">False</property>
+                <property name="data_type">str</property>
+                <property name="data_value">Other</property>
+                <property name="group">male</property>
+                <property context="yes" name="label" translatable="yes">Other</property>
+                <property name="model_attribute">gender</property>
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

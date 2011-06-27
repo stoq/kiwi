@@ -27,9 +27,6 @@
             <child>
               <object class="GtkEventBox" id="slave_area">
                 <property name="visible">True</property>
-                <child>
-                  <placeholder/>
-                </child>
               </object>
               <packing>
                 <property name="position">1</property>

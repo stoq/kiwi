@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--*- mode: xml -*-->
+<interface>
+  <object class="GtkWindow" id="hey">
+    <property name="default_height">50</property>
+    <property name="default_width">200</property>
+    <property name="role"/>
+    <property context="yes" name="title" translatable="yes">Anything to declare?</property>
+    <child>
+      <object class="GtkLabel" id="the_label">
+        <property context="yes" name="label" translatable="yes">Yeah. Don't go to London</property>
+        <property name="visible">True</property>
+      </object>
+    </child>
+  </object>
+</interface>

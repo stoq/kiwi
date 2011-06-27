@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--*- mode: xml -*-->
+<interface>
+  <object class="GtkWindow" id="lang">
+    <child>
+      <object class="GtkVBox" id="vbox1">
+        <property name="visible">True</property>
+        <child>
+          <object class="GtkFrame" id="frame1">
+            <property name="border_width">6</property>
+            <property context="yes" name="label" translatable="yes">English</property>
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkEventBox" id="english">
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkLabel" id="label1">
+                    <property context="yes" name="label" translatable="yes">label</property>
+                    <property name="visible">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkFrame" id="frame2">
+            <property name="border_width">6</property>
+            <property context="yes" name="label" translatable="yes">Swedish</property>
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkEventBox" id="swedish">
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkLabel" id="label2">
+                    <property context="yes" name="label" translatable="yes">label</property>
+                    <property name="visible">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHButtonBox" id="hbuttonbox1">
+            <property name="border_width">6</property>
+            <property name="layout_style">end</property>
+            <property name="spacing">6</property>
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkButton" id="ok_button">
+                <property name="label">gtk-ok</property>
+                <property name="use_stock">True</property>
+                <property name="visible">True</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

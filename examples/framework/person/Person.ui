@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<!--*- mode: xml -*-->
+<interface>
+  <object class="GtkWindow" id="Person">
+    <property name="allow_shrink">True</property>
+    <property context="yes" name="title" translatable="yes">Person editor</property>
+    <child>
+      <object class="GtkVBox" id="vbox1">
+        <property name="visible">True</property>
+        <child>
+          <object class="GtkLabel" id="label1">
+            <property name="justify">center</property>
+            <property context="yes" name="label" translatable="yes">Person</property>
+            <property name="visible">True</property>
+            <property name="xalign">0.0</property>
+            <property name="xpad">5</property>
+            <property name="ypad">10</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHSeparator" id="hseparator1">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkTable" id="table1">
+            <property name="border_width">5</property>
+            <property name="column_spacing">2</property>
+            <property name="n_columns">2</property>
+            <property name="n_rows">3</property>
+            <property name="row_spacing">5</property>
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkLabel" id="label2">
+                <property name="justify">center</property>
+                <property context="yes" name="label" translatable="yes">Name:</property>
+                <property name="visible">True</property>
+                <property name="xalign">1.0</property>
+              </object>
+              <packing>
+                <property name="x_options">fill</property>
+                <property name="y_options"/>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label3">
+                <property name="justify">center</property>
+                <property context="yes" name="label" translatable="yes">Address:</property>
+                <property name="visible">True</property>
+                <property name="xalign">1.0</property>
+              </object>
+              <packing>
+                <property name="bottom_attach">2</property>
+                <property name="top_attach">1</property>
+                <property name="x_options">fill</property>
+                <property name="y_options"/>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label4">
+                <property name="justify">center</property>
+                <property context="yes" name="label" translatable="yes">Phone:</property>
+                <property name="visible">True</property>
+                <property name="xalign">1.0</property>
+              </object>
+              <packing>
+                <property name="bottom_attach">3</property>
+                <property name="top_attach">2</property>
+                <property name="x_options">fill</property>
+                <property name="y_options"/>
+              </packing>
+            </child>
+            <child>
+              <object class="ProxyEntry" id="name">
+                <property name="data_type">str</property>
+                <property name="model_attribute">name</property>
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="y_options"/>
+              </packing>
+            </child>
+            <child>
+              <object class="ProxyEntry" id="address">
+                <property name="data_type">str</property>
+                <property name="model_attribute">address</property>
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="bottom_attach">2</property>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">1</property>
+                <property name="y_options"/>
+              </packing>
+            </child>
+            <child>
+              <object class="ProxyEntry" id="phone">
+                <property name="data_type">str</property>
+                <property name="model_attribute">phone</property>
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="bottom_attach">3</property>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">2</property>
+                <property name="y_options"/>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHSeparator" id="hseparator2">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label5">
+            <property context="yes" name="label" translatable="yes">A simple persistence demonstration: change 
+the data in the entries, and quit the application. 
+Run it again, and the data is magically reloaded.</property>
+            <property name="visible">True</property>
+            <property name="xalign">0.0</property>
+            <property name="xpad">5</property>
+            <property name="yalign">0.0</property>
+            <property name="ypad">5</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

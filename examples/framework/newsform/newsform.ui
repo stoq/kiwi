@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<!--*- mode: xml -*-->
+<interface>
+  <object class="GtkWindow" id="newsform">
+    <property context="yes" name="title" translatable="yes">News Editor</property>
+    <child>
+      <object class="GtkTable" id="table1">
+        <property name="border_width">6</property>
+        <property name="column_spacing">6</property>
+        <property name="n_columns">2</property>
+        <property name="n_rows">4</property>
+        <property name="row_spacing">6</property>
+        <property name="visible">True</property>
+        <child>
+          <object class="GtkLabel" id="label1">
+            <property context="yes" name="label" translatable="yes">_Title:</property>
+            <property name="use_underline">True</property>
+            <property name="visible">True</property>
+            <property name="xalign">1.0</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label2">
+            <property context="yes" name="label" translatable="yes">_Author:</property>
+            <property name="use_underline">True</property>
+            <property name="visible">True</property>
+            <property name="xalign">1.0</property>
+          </object>
+          <packing>
+            <property name="bottom_attach">2</property>
+            <property name="top_attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label3">
+            <property context="yes" name="label" translatable="yes">_URL:</property>
+            <property name="use_underline">True</property>
+            <property name="visible">True</property>
+            <property name="xalign">1.0</property>
+          </object>
+          <packing>
+            <property name="bottom_attach">3</property>
+            <property name="top_attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label4">
+            <property context="yes" name="label" translatable="yes">Size:</property>
+            <property name="visible">True</property>
+            <property name="xalign">1.0</property>
+          </object>
+          <packing>
+            <property name="bottom_attach">4</property>
+            <property name="top_attach">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="ProxyEntry" id="title">
+            <property name="data_type">str</property>
+            <property name="model_attribute">title</property>
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left_attach">1</property>
+            <property name="right_attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="ProxyEntry" id="author">
+            <property name="data_type">str</property>
+            <property name="model_attribute">author</property>
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="bottom_attach">2</property>
+            <property name="left_attach">1</property>
+            <property name="right_attach">2</property>
+            <property name="top_attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="ProxyEntry" id="url">
+            <property name="data_type">str</property>
+            <property name="model_attribute">url</property>
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="bottom_attach">3</property>
+            <property name="left_attach">1</property>
+            <property name="right_attach">2</property>
+            <property name="top_attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="ProxyEntry" id="size">
+            <property name="data_type">int</property>
+            <property name="model_attribute">size</property>
+            <property name="visible">True</property>
+            <property name="xalign">1.0</property>
+          </object>
+          <packing>
+            <property name="bottom_attach">4</property>
+            <property name="left_attach">1</property>
+            <property name="right_attach">2</property>
+            <property name="top_attach">3</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

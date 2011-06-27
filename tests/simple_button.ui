@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--*- mode: xml -*-->
+<interface>
+  <object class="GtkWindow" id="simple_button">
+    <property name="role"/>
+    <property context="yes" name="title" translatable="yes"/>
+    <child>
+      <object class="GtkButton" id="button">
+        <property context="yes" name="label" translatable="yes">Click me!</property>
+        <property name="visible">True</property>
+      </object>
+    </child>
+  </object>
+</interface>
