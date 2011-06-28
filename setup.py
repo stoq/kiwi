@@ -57,7 +57,7 @@ setup(name="kiwi",
                   ('share/glade3/pixmaps', pixmaps),
                   # Documentation
                   ('share/doc/kiwi',
-                   ('AUTHORS', 'ChangeLog', 'NEWS', 'README')),
+                   ('AUTHORS', 'NEWS', 'README')),
                   ('share/doc/kiwi/howto',
                    listfiles('doc/howto/', '*')),
                   ('share/doc/kiwi/api',

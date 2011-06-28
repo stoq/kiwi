@@ -40,8 +40,6 @@ Always run pyflakes on the whole source code before submitting, it's important
 that pyflakes does not show *ANY* warnings at all. Sometimes you have to
 add tiny hacks to workaround bugs in pyflakes.
 
-Try to keep ChangeLog updated
-
 Testsuite
 =========
 
@@ -82,6 +80,5 @@ To make it easier to get your patch accepted, follow these steps.
 * if new/modified API:
   * add doc strings
   * example
-* ChangeLog entry
 * diff -u
 * bugzilla

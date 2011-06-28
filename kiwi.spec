@@ -98,7 +98,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f kiwi.lang
 %defattr(-,root,root,-)
-%doc AUTHORS COPYING ChangeLog README NEWS
+%doc AUTHORS COPYING README NEWS
 %{_bindir}/*
 %{_datadir}/kiwi
 %{python_sitelib}/kiwi
