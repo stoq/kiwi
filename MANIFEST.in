@@ -10,7 +10,6 @@ include debian/changelog debian/compat debian/copyright debian/control debian/ru
 include debian/pycompat debian/watch
 include debian/*.docs debian/*.install debian/*.examples debian/*.api debian/patches/*.diff
 include AUTHORS
-include ChangeLog
 include COPYING
 include MANIFEST.in
 include README
