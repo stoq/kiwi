@@ -278,7 +278,7 @@ class SlaveView(gobject.GObject):
                             "toplevel widget in it")
 
         if isinstance(toplevel, gtk.Window):
-            if toplevel.flags() & gtk.VISIBLE:
+            if toplevel.get_visible():
                 log.warn("Toplevel widget %s (%s) is visible; that's probably "
                          "wrong" % (toplevel, toplevel.get_name()))
 
@@ -445,7 +445,7 @@ class SlaveView(gobject.GObject):
             widget = getattr(self, widget_name)
             if not isinstance(widget, gtk.Widget):
                 continue
-            if not widget.flags() & gtk.REALIZED:
+            if not widget.get_realized():
                 # If widget isn't realized but we have a toplevel
                 # window, it's safe to realize it. If this check isn't
                 # performed, we get a crash as per
@@ -460,7 +460,7 @@ class SlaveView(gobject.GObject):
                 # Combos don't focus, but their entries do
                 if isinstance(widget, gtk.Combo):
                     widget = widget.entry
-                if not widget.flags() & gtk.CAN_FOCUS or \
+                if not widget.get_can_focus() or \
                     isinstance(widget, (gtk.Label, gtk.HSeparator,
                                         gtk.VSeparator, gtk.Window)):
                     continue

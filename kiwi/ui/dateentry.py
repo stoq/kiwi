@@ -204,11 +204,11 @@ class _DateEntryPopup(gtk.Window):
         @param date: date to select
         """
         combo = self._dateentry
-        if not (combo.flags() & gtk.REALIZED):
+        if not combo.get_realized():
             return
 
         treeview = self.calendar
-        if treeview.flags() & gtk.MAPPED:
+        if treeview.get_mapped():
             return
         toplevel = combo.get_toplevel()
         if isinstance(toplevel, gtk.Window) and toplevel.group:
@@ -224,7 +224,7 @@ class _DateEntryPopup(gtk.Window):
             self.set_date(date)
         self.grab_focus()
 
-        if not (self.calendar.flags() & gtk.HAS_FOCUS):
+        if not self.calendar.has_focus():
             self.calendar.grab_focus()
 
         if not self._popup_grab_window():
@@ -236,7 +236,7 @@ class _DateEntryPopup(gtk.Window):
     def popdown(self):
         """Hides the list of options"""
         combo = self._dateentry
-        if not (combo.flags() & gtk.REALIZED):
+        if not combo.get_realized():
             return
 
         self.grab_remove()

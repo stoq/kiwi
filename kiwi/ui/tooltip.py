@@ -53,7 +53,7 @@ class Tooltip(gtk.Window):
 
         x, y = widget.window.get_origin()
 
-        if widget.flags() & gtk.NO_WINDOW:
+        if not widget.get_has_window():
             x += widget.allocation.x
             y += widget.allocation.y
 
