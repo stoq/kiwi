@@ -1722,6 +1722,8 @@ class ObjectList(gtk.ScrolledWindow):
         self._expand_parents(treeiter)
         selection.select_iter(treeiter)
 
+        self._select_and_focus_row(treeiter)
+
         if scroll:
             self._treeview.scroll_to_cell(self._model[treeiter].path,
                                           None, True, 0.5, 0)
