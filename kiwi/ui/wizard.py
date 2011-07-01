@@ -100,15 +100,7 @@ class PluggableWizard(GladeDelegate):
     # Callbacks
 
     def on_next_button__clicked(self, button):
-        if not self._current.validate_step():
-            return
-
-        if not self._current.has_next_step():
-            # This is the last step
-            self._change_step()
-            return
-
-        self._change_step(self._current.next_step())
+        self.go_to_next()
 
     def on_ok_button__clicked(self, button):
         self._change_step()
@@ -235,3 +227,14 @@ class PluggableWizard(GladeDelegate):
         # Redefine this method if you want something done when finishing the
         # wizard.
         pass
+
+    def go_to_next(self):
+        if not self._current.validate_step():
+            return
+
+        if not self._current.has_next_step():
+            # This is the last step
+            self._change_step()
+            return
+
+        self._change_step(self._current.next_step())
