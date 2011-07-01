@@ -911,6 +911,7 @@ class SearchContainer(gtk.VBox):
     """
     __gtype_name__ = 'SearchContainer'
     filter_label = gobject.property(type=str)
+    gsignal("search-completed", object)
 
     def __init__(self, columns=None, chars=25):
         """
@@ -1092,6 +1093,7 @@ class SearchContainer(gtk.VBox):
         results = self._query_executer.search(states)
         self.results.clear()
         self.results.extend(results)
+        self.emit("search-completed", self.results)
         if self._summary_label:
             self._summary_label.update_total()
 
