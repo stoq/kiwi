@@ -60,6 +60,7 @@ class BaseComboBoxEntry(gtk.ComboBox):
             text_column = 0
         self.set_model(model)
         self.set_text_column(text_column)
+        self.set_can_focus(True)
 
     # Virtual methods
     def do_mnemnoic_activate(self, group_cycling):

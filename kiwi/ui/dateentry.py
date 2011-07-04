@@ -307,6 +307,7 @@ class DateEntry(gtk.HBox):
         self._popup.connect('date-selected', self._on_popup__date_selected)
         self._popup.connect('hide', self._on_popup__hide)
         self._popup.set_size_request(-1, 24)
+        self.set_can_focus(True)
 
     # Virtual methods
 
