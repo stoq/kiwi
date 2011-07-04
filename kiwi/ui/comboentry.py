@@ -101,7 +101,7 @@ class _ComboEntryPopup(gtk.Window):
         set using L{set_model}()
         """
         combo = self._comboentry
-        if not combo.get_realized():
+        if not (combo.flags() & gtk.REALIZED):
             return
 
         treeview = self._treeview
@@ -150,7 +150,7 @@ class _ComboEntryPopup(gtk.Window):
         # Grab window
         self.grab_focus()
 
-        if not self._treeview.has_focus():
+        if not (self._treeview.flags() & gtk.HAS_FOCUS):
             self._treeview.grab_focus()
 
         if not self._popup_grab_window():
@@ -161,7 +161,7 @@ class _ComboEntryPopup(gtk.Window):
 
     def popdown(self):
         combo = self._comboentry
-        if not combo.get_realized():
+        if not (combo.flags() & gtk.REALIZED):
             return
 
         self.grab_remove()

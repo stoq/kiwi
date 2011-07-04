@@ -34,7 +34,7 @@ class SelectableBox(object):
         self._selected = None
         self._draw_gc = None
         self._selection_width = width
-        self.set_has_window(True)
+        self.unset_flags(gtk.NO_WINDOW)
         self.set_redraw_on_allocate(True)
         self.set_spacing(width)
         self.set_border_width(width)
@@ -100,8 +100,8 @@ class SelectableBox(object):
     # GtkWidget
 
     def do_realize(self):
-        assert self.get_has_window()
-        self.set_realized(True)
+        assert not (self.flags() & gtk.NO_WINDOW)
+        self.set_flags(self.flags() | gtk.REALIZED)
         self.window = gdk.Window(self.get_parent_window(),
                                  width=self.allocation.width,
                                  height=self.allocation.height,
@@ -143,8 +143,7 @@ class SelectableBox(object):
             child_x, child_y = coords
             if (0 <= child_x < child.allocation.width and
                 0 <= child_y < child.allocation.height and
-                child.get_mapped() and
-                child.get_visible()):
+                child.flags() & (gtk.MAPPED | gtk.VISIBLE)):
                 return child
 
     def _child_added(self, child):
@@ -163,7 +162,7 @@ class SelectableHBox(SelectableBox, gtk.HBox):
 
     def do_size_allocate(self, allocation):
         gtk.HBox.do_size_allocate(self, allocation)
-        if self.get_realized():
+        if self.flags() & gtk.REALIZED:
             self.window.move_resize(*allocation)
 
     def do_expose_event(self, event):
@@ -182,7 +181,7 @@ class SelectableVBox(SelectableBox, gtk.VBox):
 
     def do_size_allocate(self, allocation):
         gtk.VBox.do_size_allocate(self, allocation)
-        if self.get_realized():
+        if self.flags() & gtk.REALIZED:
             self.window.move_resize(*allocation)
 
     def do_expose_event(self, event):

@@ -136,7 +136,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
 
     def _on_completion_key_press(self, entry, event):
         window = self._popup_window
-        if window and not window.get_visible():
+        if window and not window.flags() & gtk.VISIBLE:
             return False
 
         if not self._treeview:
@@ -237,7 +237,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
         self._key = self._entry.get_text()
         self._filter_model.refilter()
         self._treeview.set_model(self._filter_model)
-        if self._treeview.get_realized():
+        if self._treeview.flags() & gtk.REALIZED:
             self._treeview.scroll_to_point(0,0)
 
     def set_entry(self, entry):
