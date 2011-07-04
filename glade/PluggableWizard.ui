@@ -55,7 +55,6 @@
                         <property name="label">gtk-cancel</property>
                         <property name="width_request">90</property>
                         <property name="visible">True</property>
-                        <property name="is_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -70,7 +69,6 @@
                         <property name="label">gtk-go-back</property>
                         <property name="width_request">90</property>
                         <property name="visible">True</property>
-                        <property name="is_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -85,7 +83,6 @@
                         <property name="label">gtk-go-forward</property>
                         <property name="width_request">90</property>
                         <property name="visible">True</property>
-                        <property name="is_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -99,7 +96,6 @@
                       <object class="GtkButton" id="ok_button">
                         <property name="label">gtk-ok</property>
                         <property name="visible">True</property>
-                        <property name="is_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="use_stock">True</property>
                       </object>
