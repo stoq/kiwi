@@ -142,7 +142,7 @@ def _clean_rml(data):
 
 def _extract_rml_files(root):
     files = []
-    for rml_file in findall(root):
+    for rml_file in sorted(findall(root)):
         if not rml_file.endswith('.rml'):
             continue
         data = open(rml_file).read()
