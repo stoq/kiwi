@@ -71,6 +71,24 @@ def list_languages(root):
                 for po_file in listfiles(root, 'po', '*.po')]
 
 def update_po(root, package):
+    update_pot(root, package)
+
+    old = os.getcwd()
+    os.chdir(os.path.join(root, 'po'))
+
+    for lang in list_languages(root):
+        new = lang + '.new.po'
+        cmd = ('intltool-update --dist --gettext-package=%s '
+               '-o %s %s > /dev/null' % (package, new, lang))
+        os.system(cmd)
+        if not os.path.exists(new):
+            raise SystemExit("ERROR: intltool failed, see above")
+
+        os.rename(new, lang + '.po')
+
+    os.chdir(old)
+
+def update_pot(root, package):
     files = get_translatable_files(root)
     potfiles_in = os.path.join(root, 'po', 'POTFILES.in')
     if os.path.exists(potfiles_in):
@@ -98,16 +116,6 @@ def update_po(root, package):
     res = os.system('intltool-update --pot --gettext-package=%s' % package)
     if res != 0:
         raise SystemExit("ERROR: failed to generate pot file")
-
-    for lang in list_languages(root):
-        new = lang + '.new.po'
-        cmd = ('intltool-update --dist --gettext-package=%s '
-               '-o %s %s > /dev/null' % (package, new, lang))
-        os.system(cmd)
-        if not os.path.exists(new):
-            raise SystemExit("ERROR: intltool failed, see above")
-
-        os.rename(new, lang + '.po')
 
     os.chdir(old)
 
@@ -184,6 +192,10 @@ def main(args):
                       action="store_true",
                       dest="update",
                       help="Update pot file and all po files")
+    parser.add_option('-t', '--update-pot',
+                      action="store_true",
+                      dest="update_pot",
+                      help="Update pot file")
     parser.add_option('-c', '--compile',
                       action="store_true",
                       dest="compile",
@@ -214,6 +226,9 @@ def main(args):
 
     if options.update:
         update_po(root, package)
+
+    if options.update_pot:
+        update_pot(root, package)
 
     if options.compile:
         check_pot_file(root, package)
