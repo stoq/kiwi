@@ -145,6 +145,9 @@ class Column(gobject.GObject):
       - B{pack_end}: bool I{False}
         - If set it will pack the renderer to the end of the column instead
           of the beginning.
+      - B{width_chars}: int I{-1}
+        - If set it will specify the number of characters that should displayed
+          for the cells in this column.
     """
     __gtype_name__ = 'Column'
     attribute = gobject.property(type=str,
@@ -174,6 +177,7 @@ class Column(gobject.GObject):
     column = gobject.property(type=str)
     sort_func = gobject.property(type=object, default=None)
     pack_end = gobject.property(type=bool, default=False)
+    width_chars = gobject.property(type=int, default=-1)
 
     # This can be set in subclasses, to be able to allow custom
     # cell_data_functions, used by SequentialColumn
@@ -442,7 +446,8 @@ class Column(gobject.GObject):
                 renderer.connect('edited', self._on_renderer_text__edited,
                                  model, self.attribute, self,
                                  self.from_string)
-
+            if self.width_chars != -1:
+                renderer.set_property('width-chars', self.width_chars)
         else:
             raise ValueError("the type %s is not supported yet" % data_type)
 
