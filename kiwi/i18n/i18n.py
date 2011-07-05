@@ -64,7 +64,7 @@ def get_translatable_files(root):
     fp = open(pofiles)
     for line in fp.readlines():
         filelist.process_template_line(line)
-    return filelist.files
+    return sorted(filelist.files)
 
 def list_languages(root):
     return [os.path.basename(po_file[:-3])
