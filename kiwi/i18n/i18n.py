@@ -154,7 +154,7 @@ def _extract_rml_files(root):
             os.unlink(extracted)
         open(extracted, 'w').write(data)
         extracted = extracted[len(root)+1:]
-        cmd = 'intltool-extract --type=gettext/xml %s' % extracted
+        cmd = 'intltool-extract -q --type=gettext/xml %s' % extracted
         res = os.system(cmd)
         if res != 0:
             raise SystemExit("ERROR: failed to generate pot file")
