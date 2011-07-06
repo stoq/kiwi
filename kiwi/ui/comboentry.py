@@ -412,7 +412,6 @@ class ComboEntry(gtk.VBox):
         completion.set_treeview(self._popup._treeview)
         self.entry.set_completion(completion)
         self.set_model(completion.get_model())
-        self.set_can_focus(True)
 
     # Virtual methods
 
