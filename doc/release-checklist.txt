@@ -20,7 +20,6 @@ Before you use make, read common/async.mk and Makefile
 ---
 make docs
 make release
-  Add a release mark in Changelog
   Add a release mark in debian/changelog (dch -v newversion)
 Update NEWS (look in the Changelog)
 make deb
