@@ -565,6 +565,12 @@ class SlaveView(gobject.GObject):
                          "a window and was not a slave view" % (slave, self))
             slave._accel_groups = []
 
+        # Merge the sizegroups of the slave that is being attached  with the
+        # sizegroups of where it is being attached to. Only the sizegroups
+        # with the same name will be merged.
+        for sizegroup in slave.get_sizegroups():
+            self._merge_sizegroup(sizegroup)
+
         if isinstance(placeholder, gtk.EventBox):
             # standard mechanism
             child = placeholder.get_child()
@@ -615,6 +621,24 @@ class SlaveView(gobject.GObject):
             return []
 
         return self._glade_adaptor.get_sizegroups()
+
+    def _merge_sizegroup(self, other_sizegroup):
+        # Merge sizegroup from other with self that have the same name.
+        # Actually, no merging is being done, since the old group is preserved
+
+        name = other_sizegroup.get_data('gazpacho::object-id')
+        if name is None:
+            return
+        sizegroup = getattr(self, name, None)
+        if not sizegroup:
+            return
+
+        widgets = other_sizegroup.get_data('gazpacho::sizegroup-widgets')
+        if not widgets:
+            return
+
+        for widget in widgets:
+            sizegroup.add_widget(widget)
 
     def detach_slave(self, name):
         """
@@ -936,6 +960,13 @@ class BaseView(SlaveView):
         self.toplevel.hide()
         self.quit_if_last()
 
+def _get_gazpacho():
+    try:
+        from kiwi.ui.gazpacholoader import GazpachoWidgetTree
+    except ImportError:
+        return
+    return GazpachoWidgetTree
+
 def _get_libglade():
     try:
         from kiwi.ui.libgladeloader import LibgladeWidgetTree
@@ -999,10 +1030,14 @@ def _open_glade(view, gladefile, domain):
         WidgetTree = _get_gaxml()
         loader_name = 'gaxml'
     else:
-        log.warning("Could not determine type/dtd of gladefile %s" % gladefile)
+        # gazpacho:
+        #<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
+        #<!DOCTYPE glade-interface SYSTEM "http://gazpacho.sicem.biz/gazpacho-0.1.dtd">
+        if not 'gazpacho-0.1.dtd' in sniff:
+            log.warning("Could not determine type/dtd of gladefile %s" % gladefile)
 
-        WidgetTree = _get_builder()
-        loader_name = 'builder'
+        WidgetTree = _get_gazpacho()
+        loader_name = 'gazpacho.loader'
 
     # None means, failed to import
     if WidgetTree is None:
