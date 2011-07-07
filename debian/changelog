@@ -1,3 +1,9 @@
+kiwi (1.9.28.1) lucid; urgency=low
+
+  * Add back Gazpacho, so Stoq 0.9.15 still works with it
+
+ -- Johan <jdahlin@async.com.br>  Fri, 08 Jul 2011 03:15:51 +1000
+
 kiwi (1.9.28) natty; urgency=low
 
   * New Release
