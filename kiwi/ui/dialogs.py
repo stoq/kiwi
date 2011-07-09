@@ -60,6 +60,7 @@ class HIGAlertDialog(gtk.Dialog):
                 "buttons be one of: %s", ', '.join(_BUTTON_TYPES.keys()))
 
         gtk.Dialog.__init__(self, '', parent, flags)
+        self.set_deletable(False)
         self.set_border_width(5)
         self.set_resizable(False)
         self.set_has_separator(False)
