@@ -2,59 +2,17 @@
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 Name:           python-kiwi
-Version:        1.9.24
+Version:        1.9.28
 Release:        1%{?dist}
 Summary:        Framework for Python GUI applications
-
-Name:           python-kiwi
-Version:        1.9.23
-Release:        1%{?dist}
-Summary:        Framework for Python GUI applications
-
-Name:           python-kiwi
-Version:        1.9.22
-Release:        1%{?dist}
-Summary:        Framework for Python GUI applications
-
-Name:           python-kiwi
-Version:        1.9.21
-Release:        1%{?dist}
-Summary:        Framework for Python GUI applications
-
-Name:           python-kiwi
-Version:        1.9.20
-Release:        1%{?dist}
-Summary:        Framework for Python GUI applications
-
-Name:           python-kiwi
-Version:        1.9.19
-Release:        1%{?dist}
-Summary:        Framework for Python GUI applications
-
-Name:           python-kiwi
-Version:        1.9.18
-Release:        1%{?dist}
-Summary:        Framework for Python GUI applications
-
-Name:           python-kiwi
-Version:        1.9.17
-Release:        1%{?dist}
-Summary:        Framework for Python GUI applications
-
-Name:           python-kiwi
-Version:        1.9.16
-Release:        1%{?dist}
-Summary:        Framework for Python GUI applications
-
 Group:          Development/Libraries
 License:        LGPL
 URL:            http://www.async.com.br/projects/kiwi/
 Source0:        http://download.gnome.org/sources/kiwi/1.9/kiwi-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-
 BuildArch:      noarch
-BuildRequires:  python-devel, pygtk2 >= 2.8, gettext
-Requires:       pygtk2 >= 2.8
+BuildRequires:  python-devel, pygtk2 >= 2.18, gettext
+Requires:       pygtk2 >= 2.18
 
 
 %description
@@ -100,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING README NEWS
 %{_bindir}/*
+%{_libdir}/python*/site-packages/*.egg-info
+%{_libdir}/glade3/*
+%{_datadir}/glade3/*
 %{_datadir}/kiwi
 %{python_sitelib}/kiwi
 
@@ -109,8 +70,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Tue Jul 07 2007 Johan Dahlin <jdahlin@async.com.br> 1.9.16-1
-- Upstream 1.9.13
+* Tue Jul 14 2011 Johan Dahlin <jdahlin@async.com.br> 1.9.28-1
+- upstream 1.9.28
 
 * Tue Feb 04 2007 Johan Dahlin <jdahlin@async.com.br> 1.9.14-1
 - Version 1.9.14
