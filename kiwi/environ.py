@@ -340,7 +340,7 @@ class Library(Environment):
             else:
                 return fp.read().split()[0]
         else:
-            return self.module.revision
+            return str(self.module.revision)
 
 class Application(Library):
     """Application extends a L{Library}. It's meant to be used
