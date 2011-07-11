@@ -12,11 +12,9 @@ clean-docs:
 	rm -fr doc/api
 	rm -fr doc/howto
 
-clean: clean-docs
-	debclean
-	rm -fr $(BUILDDIR)
+clean:
+	rm -fr build
 	rm -f MANIFEST
-	rm -fr kiwi/_kiwi.so
 
 docs:
 	make -s -C doc api howto
@@ -32,18 +30,11 @@ web: clean-docs docs
 bdist:
 	python setup.py -q bdist_wininst
 
-release-tag:
-	#svn cp -m "Tag $(VERSION)" . svn+ssh://async.com.br/pub/kiwi/tags/$(VERSION)
-	bzr tag $(VERSION)
-
 upload-release:
 	scp dist/$(TARBALL) johan@gnome.org:
 	ssh gnome.org install-module $(TARBALL)
 	scp dist/kiwi-$(VERSION).win32.exe gnome.org:/ftp/pub/GNOME/binaries/win32/kiwi/
 
-sdist:
-	python setup.py -q sdist
+include async.mk
 
-rpm: sdist
-	rpmbuild -ta dist/$(TARBALL)
 .PHONY: bdist upload-release
