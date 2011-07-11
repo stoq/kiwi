@@ -3,8 +3,7 @@ PACKAGE=kiwi
 DEBPACKAGE=python-kiwi
 WEBDIR=/mondo/htdocs/async.com.br/www/projects/kiwi
 TARBALL_DIR=/mondo/htdocs/stoq.com.br/download/sources
-
-include common/async.mk
+TARBALL=kiwi-$(VERSION).tar.gz
 
 all:
 	python setup.py build_ext -i
@@ -42,4 +41,9 @@ upload-release:
 	ssh gnome.org install-module $(TARBALL)
 	scp dist/kiwi-$(VERSION).win32.exe gnome.org:/ftp/pub/GNOME/binaries/win32/kiwi/
 
+sdist:
+	python setup.py -q sdist
+
+rpm: sdist
+	rpmbuild -ta dist/$(TARBALL)
 .PHONY: bdist upload-release
