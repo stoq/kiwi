@@ -118,6 +118,9 @@ class PluggableWizard(GladeDelegate):
             # This is the last step and we can finish the job here
             self.finish()
             return
+        # If the next step is the current one, stay on it.
+        if step is self._current:
+            return
         step.show()
         self._current = step
         self._refresh_slave()
