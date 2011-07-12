@@ -911,6 +911,7 @@ class SearchContainer(gtk.VBox):
     """
     __gtype_name__ = 'SearchContainer'
     filter_label = gobject.property(type=str)
+    results_class = SearchResults
     gsignal("search-completed", object)
 
     def __init__(self, columns=None, chars=25):
@@ -1091,8 +1092,7 @@ class SearchContainer(gtk.VBox):
             raise ValueError("A query executer needs to be set at this point")
         states = [(sf.get_state()) for sf in self._search_filters]
         results = self._query_executer.search(states)
-        self.results.clear()
-        self.results.extend(results)
+        self.add_results(results)
         self.emit("search-completed", self.results)
         if self._summary_label:
             self._summary_label.update_total()
@@ -1151,6 +1151,10 @@ class SearchContainer(gtk.VBox):
     def enable_advanced_search(self):
         self._create_advanced_search()
 
+    def add_results(self, results):
+        self.results.clear()
+        self.results.extend(results)
+
     #
     # Callbacks
     #
@@ -1175,7 +1179,7 @@ class SearchContainer(gtk.VBox):
     def _create_ui(self):
         self._create_basic_search()
 
-        self.results = SearchResults(self._columns)
+        self.results = self.results_class(self._columns)
         self.pack_end(self.results, True, True, 6)
         self.results.show()
 
