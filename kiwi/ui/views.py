@@ -1010,36 +1010,31 @@ def _open_glade(view, gladefile, domain):
     sniff = fp.read(200)
     fp.close()
 
-    # glade-2
-    #<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
-    #<!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
-
-    # glade-3
-    # <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-    # <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
     if '<interface' in sniff:
         WidgetTree = _get_builder()
         loader_name = 'builder'
+    # glade-2: <!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
+    # glade-3: <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
     elif 'glade-2.0.dtd' in sniff:
         WidgetTree = _get_libglade()
         loader_name = 'libglade'
     elif 'gaxml-0.1.dtd' in sniff:
         WidgetTree = _get_gaxml()
         loader_name = 'gaxml'
-    else:
-        # gazpacho:
-        #<?xml version="1.0" standalone="no"?> <!--*- mode: xml -*-->
-        #<!DOCTYPE glade-interface SYSTEM "http://gazpacho.sicem.biz/gazpacho-0.1.dtd">
-        if not 'gazpacho-0.1.dtd' in sniff:
-            log.warning("Could not determine type/dtd of gladefile %s" % gladefile)
-
+    # gazpacho: <!DOCTYPE glade-interface SYSTEM "http://gazpacho.sicem.biz/gazpacho-0.1.dtd">
+    elif 'gazpacho-0.1.dtd' in sniff:
         WidgetTree = _get_gazpacho()
         loader_name = 'gazpacho.loader'
+    else:
+        log.warning("Could not determine type/dtd of gladefile %s" % gladefile)
+        # Defaulting to builder
+        WidgetTree = _get_builder()
+        loader_name = 'builder'
 
     # None means, failed to import
     if WidgetTree is None:
         raise RuntimeError(
             "Could not find %s, it needs to be installed to "
-            "load the gladefile %s" % (loader_name, gladefile))
+            "load the gladefile %r" % (loader_name, gladefile))
 
     return WidgetTree(view, gladefile, domain)
