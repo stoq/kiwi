@@ -1290,14 +1290,11 @@ class SearchContainer(gtk.VBox):
             self.combo_group.add_widget(combo)
 
 
-# This is not quite a requirement at this point, only
-# do it if install_child_property is available, eg pygtk >= 2.10
-if hasattr(gtk.Container, 'install_child_property'):
-    SearchContainer.install_child_property(
-        1, ('filter-position', str,
-            'Search Filter Position',
-            'The search filter position in the container',
-            '', gobject.PARAM_READWRITE))
+SearchContainer.install_child_property(
+    1, ('filter-position', str,
+        'Search Filter Position',
+        'The search filter position in the container',
+        '', gobject.PARAM_READWRITE))
 
 
 class SearchSlaveDelegate(SlaveDelegate):

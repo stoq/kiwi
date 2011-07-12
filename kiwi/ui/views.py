@@ -1018,9 +1018,6 @@ def _open_glade(view, gladefile, domain):
     # <?xml version="1.0" encoding="UTF-8" standalone="no"?>
     # <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
     if '<interface' in sniff:
-        if not hasattr(gtk, 'Builder'):
-            raise AssertionError(
-                "PyGTK 2.12 or higher is required for builder support")
         WidgetTree = _get_builder()
         loader_name = 'builder'
     elif 'glade-2.0.dtd' in sniff:
