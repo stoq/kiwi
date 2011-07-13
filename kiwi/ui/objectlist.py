@@ -356,7 +356,7 @@ class Column(gobject.GObject):
             treeview_column.set_fixed_width(self.width)
 
         if self.expand:
-            # Default is False
+            treeview_column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
             treeview_column.set_expand(True)
 
         if self.sorted:
