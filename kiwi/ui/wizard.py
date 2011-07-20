@@ -203,7 +203,7 @@ class PluggableWizard(GladeDelegate):
             button = self.ok_button
         else:
             button = self.next_button
-        button.set_label(_('Finish'))
+        button.set_label(_('_Finish'))
 
     def disable_finish(self):
         """

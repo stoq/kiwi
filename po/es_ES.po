@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.9.20\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-06 13:40-0300\n"
+"POT-Creation-Date: 2011-07-20 16:30-0300\n"
 "PO-Revision-Date: 2008-03-03 10:07+0100\n"
 "Last-Translator: Jose A. Martin <j.martin.bejarano@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -161,56 +161,56 @@ msgstr "_Cancelar"
 msgid "_Select"
 msgstr "Seleccionar"
 
-#: ../kiwi/ui/dialogs.py:101
+#: ../kiwi/ui/dialogs.py:102
 msgid "Show more _details"
 msgstr "Muestra más _detalles"
 
-#: ../kiwi/ui/dialogs.py:250
+#: ../kiwi/ui/dialogs.py:251
 msgid "Open"
 msgstr "Abrir"
 
-#: ../kiwi/ui/dialogs.py:286
+#: ../kiwi/ui/dialogs.py:287
 #, python-format
 msgid "Could not open file \"%s\""
 msgstr "No se pudo abrir el archivo \"%s\""
 
-#: ../kiwi/ui/dialogs.py:287
+#: ../kiwi/ui/dialogs.py:288
 #, python-format
 msgid "The file \"%s\" could not be opened. Permission denied."
 msgstr "El archivo \"%s\" no se pudo abrir. Permiso denegado"
 
-#: ../kiwi/ui/dialogs.py:303
+#: ../kiwi/ui/dialogs.py:304
 msgid "Select folder"
 msgstr "Seleccione carpeta"
 
-#: ../kiwi/ui/dialogs.py:326
+#: ../kiwi/ui/dialogs.py:327
 #, python-format
 msgid "Could not select folder \"%s\""
 msgstr "No se pudo seleccionar la carpeta \"%s\""
 
-#: ../kiwi/ui/dialogs.py:327
+#: ../kiwi/ui/dialogs.py:328
 #, python-format
 msgid "The folder \"%s\" could not be selected. Permission denied."
 msgstr "La carpeta \"%s\" no se pudo seleccionar. Permiso denegado"
 
-#: ../kiwi/ui/dialogs.py:334
+#: ../kiwi/ui/dialogs.py:335
 #, python-format
 msgid "A file named \"%s\" already exists"
 msgstr "Ya existe un archivo llamado \"%s\""
 
-#: ../kiwi/ui/dialogs.py:335
+#: ../kiwi/ui/dialogs.py:336
 msgid "Do you wish to replace it with the current one?"
 msgstr "¿Desea reemplazarlo con el actual?"
 
-#: ../kiwi/ui/dialogs.py:341
+#: ../kiwi/ui/dialogs.py:342
 msgid "Replace"
 msgstr "Reemplazar"
 
-#: ../kiwi/ui/dialogs.py:347
+#: ../kiwi/ui/dialogs.py:348
 msgid "Save"
 msgstr "Guardar"
 
-#: ../kiwi/ui/dialogs.py:402
+#: ../kiwi/ui/dialogs.py:403
 msgid "Password:"
 msgstr "Contraseña"
 
@@ -320,14 +320,15 @@ msgstr ""
 msgid "And"
 msgstr "Cualquiera"
 
-#: ../kiwi/ui/search.py:929
+#: ../kiwi/ui/search.py:930
 msgid "Search:"
 msgstr "Búsqueda"
 
-#: ../kiwi/ui/search.py:1212
+#: ../kiwi/ui/search.py:1216
 msgid "Filter"
 msgstr ""
 
-#: ../kiwi/ui/wizard.py:203
-msgid "Finish"
+#: ../kiwi/ui/wizard.py:206
+#, fuzzy
+msgid "_Finish"
 msgstr "Finalizar"

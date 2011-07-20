@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-06 13:40-0300\n"
+"POT-Creation-Date: 2011-07-20 16:30-0300\n"
 "PO-Revision-Date: 2007-07-20 17:57-0300\n"
 "Last-Translator: Ronaldo Maia <romaia@async.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -161,56 +161,56 @@ msgstr "_Cancelar"
 msgid "_Select"
 msgstr "_Selecionar"
 
-#: ../kiwi/ui/dialogs.py:101
+#: ../kiwi/ui/dialogs.py:102
 msgid "Show more _details"
 msgstr "Exibir mais _detalhes"
 
-#: ../kiwi/ui/dialogs.py:250
+#: ../kiwi/ui/dialogs.py:251
 msgid "Open"
 msgstr "Abrir"
 
-#: ../kiwi/ui/dialogs.py:286
+#: ../kiwi/ui/dialogs.py:287
 #, python-format
 msgid "Could not open file \"%s\""
 msgstr "Não foi possivel abrir o arquivo \"%s\""
 
-#: ../kiwi/ui/dialogs.py:287
+#: ../kiwi/ui/dialogs.py:288
 #, python-format
 msgid "The file \"%s\" could not be opened. Permission denied."
 msgstr "O arquivo \"%s\" não pode ser aberto. Permissão negada."
 
-#: ../kiwi/ui/dialogs.py:303
+#: ../kiwi/ui/dialogs.py:304
 msgid "Select folder"
 msgstr "Selecionar pasta"
 
-#: ../kiwi/ui/dialogs.py:326
+#: ../kiwi/ui/dialogs.py:327
 #, python-format
 msgid "Could not select folder \"%s\""
 msgstr "Não foi possivel selecionar a pasta \"%s\""
 
-#: ../kiwi/ui/dialogs.py:327
+#: ../kiwi/ui/dialogs.py:328
 #, python-format
 msgid "The folder \"%s\" could not be selected. Permission denied."
 msgstr "A pasta \"%s\" não pode ser selecionada. Permissão negada."
 
-#: ../kiwi/ui/dialogs.py:334
+#: ../kiwi/ui/dialogs.py:335
 #, python-format
 msgid "A file named \"%s\" already exists"
 msgstr "Já existe um arquivo com o nome \"%s\""
 
-#: ../kiwi/ui/dialogs.py:335
+#: ../kiwi/ui/dialogs.py:336
 msgid "Do you wish to replace it with the current one?"
 msgstr "Deseja substituí-lo pelo arquivo atual?"
 
-#: ../kiwi/ui/dialogs.py:341
+#: ../kiwi/ui/dialogs.py:342
 msgid "Replace"
 msgstr "Substituir"
 
-#: ../kiwi/ui/dialogs.py:347
+#: ../kiwi/ui/dialogs.py:348
 msgid "Save"
 msgstr "Salvar"
 
-#: ../kiwi/ui/dialogs.py:402
+#: ../kiwi/ui/dialogs.py:403
 msgid "Password:"
 msgstr "Senha:"
 
@@ -318,17 +318,17 @@ msgstr "Data inválida"
 msgid "And"
 msgstr "E"
 
-#: ../kiwi/ui/search.py:929
+#: ../kiwi/ui/search.py:930
 msgid "Search:"
 msgstr "Pesquisar:"
 
-#: ../kiwi/ui/search.py:1212
+#: ../kiwi/ui/search.py:1216
 msgid "Filter"
 msgstr "Filtro"
 
-#: ../kiwi/ui/wizard.py:203
-msgid "Finish"
-msgstr "Terminar"
+#: ../kiwi/ui/wizard.py:206
+msgid "_Finish"
+msgstr "_Terminar"
 
 #~ msgid "Pixbuf"
 #~ msgstr "Pixbuf"
