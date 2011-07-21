@@ -118,7 +118,7 @@ class HIGAlertDialog(gtk.Dialog):
         self._secondary_label.set_markup(text)
 
     def set_details(self, text):
-        self._details_label.set_text(text)
+        self._details_label.set_markup(text)
         self._expander.show()
 
     def set_details_widget(self, widget):
