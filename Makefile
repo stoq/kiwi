@@ -31,9 +31,9 @@ bdist:
 	python setup.py -q bdist_wininst
 
 upload-release:
-	scp dist/$(TARBALL) johan@gnome.org:
-	ssh gnome.org install-module $(TARBALL)
-	scp dist/kiwi-$(VERSION).win32.exe gnome.org:/ftp/pub/GNOME/binaries/win32/kiwi/
+	scp dist/$(TARBALL) johan@master.gnome.org:
+	ssh johan@master.gnome.org ftpadmin install $(TARBALL)
+	scp dist/kiwi-$(VERSION).win32.exe johan@master.gnome.org:/ftp/pub/GNOME/binaries/win32/kiwi/
 
 include async.mk
 
