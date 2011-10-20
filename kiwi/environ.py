@@ -250,7 +250,7 @@ class Library(Environment):
         loc = locale.getlocale()[0]
 
         # We're not interested in warnings for these locales
-        if loc in (None, 'C', 'en_US'):
+        if loc in (None, 'C', 'en_US', 'English_United States'):
             return
 
         # check sv_SE and sv
