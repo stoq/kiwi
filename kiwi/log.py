@@ -184,6 +184,9 @@ def _create_console():
     _filter = console_filter
     _console = console
 
+def update_logger():
+    _create_console()
+
 _create_console()
 
 kiwi_log = Logger('kiwi')
