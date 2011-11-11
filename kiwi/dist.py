@@ -26,7 +26,6 @@
 from distutils.command.clean import clean
 from distutils.command.install_data import install_data
 from distutils.command.install_lib import install_lib
-from distutils.core import setup as DS_setup
 from distutils.dep_util import newer
 from distutils.log import info, warn
 from distutils.sysconfig import get_python_lib
@@ -36,6 +35,8 @@ from shutil import copyfile
 import os
 import new
 import sys
+
+from setuptools import setup as DS_setup
 
 class _VariableExtender:
     def __init__(self, distribution):
