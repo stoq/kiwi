@@ -2185,10 +2185,9 @@ class ListLabel(gtk.HBox):
                     self._label_widget.set_text('')
                 else:
                     self._label_widget.set_markup(self._label)
-
             # XXX: Replace 12 with a constant
-            if position >= 12:
-                self._label_widget.set_size_request(position - 12, -1)
+            #if position >= 12:
+            #    self._label_widget.set_size_request(position - 12, -1)
 
         if width != -1:
             self._value_widget.set_size_request(width, -1)

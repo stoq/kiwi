@@ -1143,8 +1143,8 @@ class SearchContainer(gtk.VBox):
 
         if not parent:
             parent = self
-        elif not isinstance(parent, gtk.Container):
-            raise TypeError("parent %r must be a GtkContainer subclass" % (
+        elif not isinstance(parent, gtk.Box):
+            raise TypeError("parent %r must be a GtkBox subclass" % (
                 parent))
 
         if self._summary_label:
@@ -1154,7 +1154,6 @@ class SearchContainer(gtk.VBox):
                                            label=label,
                                            value_format=format)
         parent.pack_end(self._summary_label, False, False)
-        parent.reorder_child(self._summary_label, 1)
         self._summary_label.show()
 
     def enable_advanced_search(self):
