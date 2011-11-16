@@ -1123,12 +1123,15 @@ class SearchContainer(gtk.VBox):
         self._search_filters.remove(self._primary_filter)
         self._primary_filter = None
 
-    def set_summary_label(self, column, label='Total:', format='%s'):
+    def set_summary_label(self, column, label='Total:', format='%s',
+                          parent=None):
         """
         Adds a summary label to the result set
         @param column: the column to sum from
         @param label: the label to use, defaults to 'Total:'
         @param format: the format, defaults to '%%s', must include '%%s'
+        @param parent: the parent widget a label should be added to or
+           None if it should be added to the SearchContainer
         """
         if not '%s' in format:
             raise ValueError("format must contain %s")
@@ -1138,14 +1141,20 @@ class SearchContainer(gtk.VBox):
         except LookupError:
             raise ValueError("%s is not a valid column" % (column,))
 
+        if not parent:
+            parent = self
+        elif not isinstance(parent, gtk.Container):
+            raise TypeError("parent %r must be a GtkContainer subclass" % (
+                parent))
+
         if self._summary_label:
             self._summary_label.parent.remove(self._summary_label)
         self._summary_label = SummaryLabel(klist=self.results,
                                            column=column,
                                            label=label,
                                            value_format=format)
-        self.pack_end(self._summary_label, False, False)
-        self.reorder_child(self._summary_label, 1)
+        parent.pack_end(self._summary_label, False, False)
+        parent.reorder_child(self._summary_label, 1)
         self._summary_label.show()
 
     def enable_advanced_search(self):
@@ -1368,11 +1377,12 @@ class SearchSlaveDelegate(SlaveDelegate):
         """
         self.search.disable_search_entry()
 
-    def set_summary_label(self, column, label='Total:', format='%s'):
+    def set_summary_label(self, column, label='Total:', format='%s',
+                          parent=None):
         """
         See L{SearchContainer.set_summary_label}
         """
-        self.search.set_summary_label(column, label, format)
+        self.search.set_summary_label(column, label, format, parent)
 
     def enable_advanced_search(self):
         """
