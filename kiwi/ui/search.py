@@ -1188,7 +1188,7 @@ class SearchContainer(gtk.VBox):
         self._create_basic_search()
 
         self.results = self.results_class(self._columns)
-        self.pack_end(self.results, True, True, 6)
+        self.pack_end(self.results, True, True, 0)
         self.results.show()
 
     def _create_basic_search(self):
