@@ -649,6 +649,62 @@ class ComboSearchFilter(SearchFilter):
         self.emit('changed')
 
 
+# Ported from evolution
+# Replace with GtkEntry::placeholder-text in Gtk 3.2
+class HintedEntry(gtk.Entry):
+    def __init__(self):
+        gtk.Entry.__init__(self)
+        self._hint_shown = False
+        self._hint = None
+
+    def set_hint(self, text):
+        self._hint = text
+        if self._hint_shown:
+            gtk.Entry.set_text(self, text)
+
+    def set_text(self, text):
+        if not text and not self.entry.has_focus():
+            self.show_hint()
+        else:
+            self.show_text(text)
+
+    def get_text(self):
+        text = ""
+        if not self._hint_shown:
+            text = gtk.Entry.get_text(self)
+        return text
+
+    def show_hint(self):
+        self._hint_shown = True
+        gtk.Entry.set_text(self, self._hint)
+        self.modify_text(gtk.STATE_NORMAL,
+                         self.style.text[gtk.STATE_INSENSITIVE])
+
+    def show_text(self, text):
+        self._hint_shown = False
+        gtk.Entry.set_text(self, text)
+        self.modify_text(gtk.STATE_NORMAL, None)
+
+    def do_grab_focus(self):
+        chain = gtk.Entry
+        if self._hint_shown:
+            chain = gtk.Entry.__base__
+        chain.do_grab_focus(self)
+
+    def do_focus_in_event(self, event):
+        if self._hint_shown:
+            self.show_text("")
+        return gtk.Entry.do_focus_in_event(self, event)
+
+    def do_focus_out_event(self, event):
+        text = self.get_text()
+        if not text:
+            self.show_hint()
+        return gtk.Entry.do_focus_out_event(self, event)
+
+
+gobject.type_register(HintedEntry)
+
 class StringSearchFilter(SearchFilter):
     """
     - a label
@@ -672,7 +728,9 @@ class StringSearchFilter(SearchFilter):
         self.mode.connect('content-changed', self._on_mode__content_changed)
         self.pack_start(self.mode, False, False, 6)
 
-        self.entry = gtk.Entry()
+        self.entry = HintedEntry()
+        self.entry.set_hint(_("Search"))
+        self.entry.show_hint()
         self.entry.set_icon_from_stock(gtk.ENTRY_ICON_PRIMARY,
                                        gtk.STOCK_FIND)
         self.entry.connect('activate', self._on_entry__activate)
