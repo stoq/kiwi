@@ -663,7 +663,7 @@ class HintedEntry(gtk.Entry):
             gtk.Entry.set_text(self, text)
 
     def set_text(self, text):
-        if not text and not self.entry.has_focus():
+        if not text and not self.has_focus():
             self.show_hint()
         else:
             self.show_text(text)
@@ -731,9 +731,16 @@ class StringSearchFilter(SearchFilter):
         self.entry = HintedEntry()
         self.entry.set_hint(_("Search"))
         self.entry.show_hint()
+        self.entry.props.secondary_icon_sensitive = False
         self.entry.set_icon_from_stock(gtk.ENTRY_ICON_PRIMARY,
                                        gtk.STOCK_FIND)
+        self.entry.set_icon_from_stock(gtk.ENTRY_ICON_SECONDARY,
+                                       gtk.STOCK_CLEAR)
+        self.entry.set_icon_tooltip_text(gtk.ENTRY_ICON_SECONDARY,
+                                         _("Clear the search"))
+        self.entry.connect("icon-release", self._on_entry__icon_release)
         self.entry.connect('activate', self._on_entry__activate)
+        self.entry.connect('changed', self._on_entry__changed)
         if chars:
             self.entry.set_width_chars(chars)
         self.pack_start(self.entry, False, False, 6)
@@ -758,6 +765,15 @@ class StringSearchFilter(SearchFilter):
 
     def _on_entry__activate(self, entry):
         self.emit('changed')
+
+    def _on_entry__changed(self, entry):
+        entry.props.secondary_icon_sensitive = bool(entry.get_text())
+
+    def _on_entry__icon_release(self, entry, icon_pos, event):
+        if icon_pos == gtk.ENTRY_ICON_SECONDARY:
+            entry.set_text("")
+            entry.grab_focus()
+            self.emit('changed')
 
     #
     # SearchFilter
