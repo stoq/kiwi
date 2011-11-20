@@ -673,6 +673,8 @@ class StringSearchFilter(SearchFilter):
         self.pack_start(self.mode, False, False, 6)
 
         self.entry = gtk.Entry()
+        self.entry.set_icon_from_stock(gtk.ENTRY_ICON_PRIMARY,
+                                       gtk.STOCK_FIND)
         self.entry.connect('activate', self._on_entry__activate)
         if chars:
             self.entry.set_width_chars(chars)
@@ -1167,9 +1169,6 @@ class SearchContainer(gtk.VBox):
     # Callbacks
     #
 
-    def _on_search_button__clicked(self, button):
-        self.search()
-
     def _on_search_entry__activate(self, button):
         self.search()
 
@@ -1209,11 +1208,6 @@ class SearchContainer(gtk.VBox):
         self.search_entry = self._primary_filter.entry
         self.search_entry.connect('activate',
                                   self._on_search_entry__activate)
-
-        button = SearchFilterButton(stock=gtk.STOCK_FIND)
-        button.connect('clicked', self._on_search_button__clicked)
-        hbox.pack_start(button, False, False)
-        button.show()
 
         self.filters_box = filters_box
 
