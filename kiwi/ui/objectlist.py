@@ -1715,17 +1715,26 @@ class ObjectList(gtk.ScrolledWindow):
             self._expand_parents(self._model[path].iter)
             selection.select_path(path)
 
-    def select(self, instance, scroll=True):
+    def select(self, instances, scroll=True):
+        if type(instances) not in [list, tuple]:
+            instances = [instances]
+
         selection = self._treeview.get_selection()
         if selection.get_mode() == gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed")
 
-        if not instance in self._iters:
-            raise ValueError("instance %s is not in the list" % repr(instance))
+        if (selection.get_mode() != gtk.SELECTION_MULTIPLE and
+            len(instances) > 1):
+            raise TypeError("You can only select multiple items with"
+                            "selection mode set to gtk.SELECTION_MULTIPLE")
 
-        treeiter = self._iters[instance]
-        self._expand_parents(treeiter)
-        selection.select_iter(treeiter)
+        for instance in instances:
+            if not instance in self._iters:
+                raise ValueError("instance %s is not in the list" % repr(instance))
+
+            treeiter = self._iters[instance]
+            self._expand_parents(treeiter)
+            selection.select_iter(treeiter)
 
         self._select_and_focus_row(treeiter)
 
