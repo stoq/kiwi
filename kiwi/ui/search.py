@@ -1243,6 +1243,9 @@ class SearchContainer(gtk.VBox):
     # Callbacks
     #
 
+    def _on_search_button__clicked(self, button):
+        self.search()
+
     def _on_search_entry__activate(self, button):
         self.search()
 
@@ -1282,6 +1285,11 @@ class SearchContainer(gtk.VBox):
         self.search_entry = self._primary_filter.entry
         self.search_entry.connect('activate',
                                   self._on_search_entry__activate)
+
+        self.search_button = SearchFilterButton(stock=gtk.STOCK_FIND)
+        self.search_button.connect('clicked', self._on_search_button__clicked)
+        hbox.pack_start(self.search_button, False, False)
+        self.search_button.show()
 
         self.filters_box = filters_box
 
