@@ -890,6 +890,8 @@ class ObjectList(gtk.ScrolledWindow):
       - B{has-rows} (list, bool):
         - Emitted when the objectlist goes from an empty to a non-empty
           state or vice verse.
+      - B{activate-link} (str):
+        - Emitted when the a link in a message is clicked on
 
     Properties
     ==========
@@ -922,6 +924,9 @@ class ObjectList(gtk.ScrolledWindow):
 
     # emitted when the user sorts a column
     gsignal('sorting-changed', object, gtk.SortType)
+
+    # emitted when the user clicks on a message link
+    gsignal('activate-link', str)
 
     def __init__(self, columns=None,
                  objects=None,
@@ -1471,6 +1476,12 @@ class ObjectList(gtk.ScrolledWindow):
         self.emit('sorting-changed', column.attribute,
                   treeview_column.get_sort_order())
 
+    # Message label
+
+    def _on_message_label__activate_link(self, label, uri):
+        self.emit('activate-link', uri)
+        return True
+
     # hacks
     def _get_column_button(self, column):
         """Return the button widget of a particular TreeViewColumn.
@@ -1938,6 +1949,7 @@ class ObjectList(gtk.ScrolledWindow):
         gtk.Container.remove(self, self._treeview)
 
         label = gtk.Label(markup)
+        label.connect('activate-link', self._on_message_label__activate_link)
         label.set_use_markup(True)
         label.show()
         label.set_alignment(0, 0)
