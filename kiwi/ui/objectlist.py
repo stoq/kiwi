@@ -960,7 +960,8 @@ class ObjectList(gtk.ScrolledWindow):
         self._iters = {}
         self._autosize = True
         self._vscrollbar = None
-        self._after_expose_event_id = 0
+        self._message_visible = False
+        self._message_view = None
 
         gtk.ScrolledWindow.__init__(self)
 
@@ -1932,44 +1933,39 @@ class ObjectList(gtk.ScrolledWindow):
         """Adds a message on top of the treeview rows
         @markup: PangoMarkup with the text to add
         """
-        self.set_app_paintable(True)
-        settings = gtk.settings_get_default()
-        font = pango.FontDescription(settings.props.gtk_font_name)
-        border = 12
-        def after_expose_event(treeview, event):
-            win = treeview.get_bin_window()
-            width, height = win.get_size()
-            cr = win.cairo_create()
-
-            # Clear the background
-            cr.set_source_rgb(1, 1, 1)
-            cr.rectangle(0, 0, width, height)
-            cr.fill()
-
-            # Draw a message in black
-            pcr = pangocairo.CairoContext(cr)
-            layout = pcr.create_layout()
-            cr.set_source_rgb(0, 0, 0)
-            layout.set_font_description(font)
-            layout.set_markup(markup)
-            layout.set_width(pango.SCALE * width - (border * 2))
-            pcr.update_layout(layout)
-            cr.move_to(border, border)
-            pcr.show_layout(layout)
-            return False
 
         self.clear_message()
-        self._after_expose_event_id = self._treeview.connect(
-                'expose-event', after_expose_event)
-        self._treeview.queue_draw()
-        self.queue_draw()
+        gtk.Container.remove(self, self._treeview)
+
+        label = gtk.Label(markup)
+        label.set_use_markup(True)
+        label.show()
+        label.set_alignment(0, 0)
+        label.set_padding(12, 12)
+
+        eb = gtk.EventBox()
+        eb.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
+        eb.add(label)
+        eb.show()
+
+        vp = gtk.Viewport()
+        vp.add(eb)
+        vp.show()
+        self.add(vp)
+
+        eb.parent.set_shadow_type(gtk.SHADOW_NONE)
+
+        self._message_view = vp
+        self._message_visible = True
 
     def clear_message(self):
-        if self._after_expose_event_id == 0:
+        if not self._message_visible:
             return
-        self._treeview.disconnect(self._after_expose_event_id)
-        self._after_expose_event_id = 0
-        self._treeview.queue_draw()
+
+        gtk.Container.remove(self, self._message_view)
+        self.add(self._treeview)
+
+        self._message_visible = False
 
 type_register(ObjectList)
 
