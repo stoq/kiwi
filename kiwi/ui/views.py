@@ -278,7 +278,7 @@ class SlaveView(gobject.GObject):
                             "toplevel widget in it")
 
         if isinstance(toplevel, gtk.Window):
-            if toplevel.flags() & gtk.VISIBLE:
+            if toplevel.get_visible():
                 log.warn("Toplevel widget %s (%s) is visible; that's probably "
                          "wrong" % (toplevel, toplevel.get_name()))
 
@@ -906,13 +906,13 @@ class BaseView(SlaveView):
 
     def get_focus_widget(self):
         """Returns the currently focused widget in the window"""
-        return self.toplevel.focus_widget
+        return self.toplevel.get_focus()
 
     def check_focus(self):
         """ Tests the focus in the window and prints a warning if no
         widget is focused.
         """
-        focus = self.toplevel.focus_widget
+        focus = self.toplevel.get_focus()
         if focus:
             return
         values = self.__dict__.values()

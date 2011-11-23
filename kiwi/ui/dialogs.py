@@ -63,13 +63,11 @@ class HIGAlertDialog(gtk.Dialog):
         self.set_deletable(False)
         self.set_border_width(5)
         self.set_resizable(False)
-        self.set_has_separator(False)
         # Some window managers (ION) displays a default title (???) if
         # the specified one is empty, workaround this by setting it
         # to a single space instead
         self.set_title(" ")
         self.set_skip_taskbar_hint(True)
-        self.vbox.set_spacing(14)
 
         # It seems like get_accessible is not available on windows, go figure
         if hasattr(self, 'get_accessible'):
@@ -103,7 +101,7 @@ class HIGAlertDialog(gtk.Dialog):
         self._expander.set_spacing(6)
         self._expander.add(self._details_label)
         vbox.pack_start(self._expander, False, False)
-        self.vbox.pack_start(hbox, False, False)
+        self.get_content_area().pack_start(hbox, False, False)
         hbox.show_all()
         self._expander.hide()
         self.add_buttons(*_BUTTON_TYPES[buttons])
