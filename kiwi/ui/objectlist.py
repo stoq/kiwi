@@ -965,7 +965,7 @@ class ObjectList(gtk.ScrolledWindow):
         self._iters = {}
         self._autosize = True
         self._vscrollbar = None
-        self._message_visible = False
+        self._message_label = None
 
         gtk.ScrolledWindow.__init__(self)
         # we always want a vertical scrollbar. Otherwise the button on top
@@ -979,26 +979,14 @@ class ObjectList(gtk.ScrolledWindow):
         self.set_hadjustment(gtk.Adjustment())
         self.set_vadjustment(gtk.Adjustment())
 
-        self._view_port = gtk.Viewport()
-        self._view_port.set_shadow_type(gtk.SHADOW_NONE)
-        self.add(self._view_port)
-        self._view_port.show()
+        view_port = gtk.Viewport()
+        view_port.set_shadow_type(gtk.SHADOW_NONE)
+        self.add(view_port)
+        view_port.show()
 
-        box = gtk.HBox()
-        self._view_port.add(box)
-        box.show()
-
-        self._message_box = gtk.EventBox()
-        self._message_box.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
-        box.pack_start(self._message_box)
-
-        self._message_label = gtk.Label()
-        self._message_label.connect('activate-link', self._on_message_label__activate_link)
-        self._message_label.set_use_markup(True)
-        self._message_label.set_alignment(0, 0)
-        self._message_label.set_padding(12, 12)
-        self._message_box.add(self._message_label)
-        self._message_label.show()
+        self._hbox = gtk.HBox()
+        view_port.add(self._hbox)
+        self._hbox.show()
 
         if not model:
             model = gtk.ListStore(object)
@@ -1013,7 +1001,7 @@ class ObjectList(gtk.ScrolledWindow):
                                      self._after_treeview__row_activated)
         self._treeview.set_rules_hint(True)
         self._treeview.show()
-        box.pack_start(self._treeview)
+        self._hbox.pack_start(self._treeview)
 
         # create a popup menu for showing or hiding columns
         self._popup = _ContextMenu(self._treeview)
@@ -1964,13 +1952,31 @@ class ObjectList(gtk.ScrolledWindow):
         @markup: PangoMarkup with the text to add
         """
 
+        if self._message_label is None:
+            self._message_box = gtk.EventBox()
+            self._message_box.modify_bg(
+                gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
+            self._hbox.pack_start(self._message_box)
+
+            self._message_label = gtk.Label()
+            self._message_label.connect(
+                'activate-link', self._on_message_label__activate_link)
+            self._message_label.set_use_markup(True)
+            self._message_label.set_alignment(0, 0)
+            self._message_label.set_padding(12, 12)
+            self._message_box.add(self._message_label)
+            self._message_label.show()
+
         self._treeview.hide()
         self._message_box.show()
         self._message_label.set_label(markup)
 
     def clear_message(self):
+        if self._message_label is None:
+            return
         self._treeview.show()
         self._message_box.hide()
+        self._message_label.set_label("")
 
 type_register(ObjectList)
 
