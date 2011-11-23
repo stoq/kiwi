@@ -32,6 +32,7 @@ import pickle
 
 import gobject
 import pango
+import pangocairo
 import gtk
 from gtk import gdk
 
@@ -959,6 +960,7 @@ class ObjectList(gtk.ScrolledWindow):
         self._iters = {}
         self._autosize = True
         self._vscrollbar = None
+        self._after_expose_event_id = 0
 
         gtk.ScrolledWindow.__init__(self)
 
@@ -1674,6 +1676,7 @@ class ObjectList(gtk.ScrolledWindow):
         @param view_only: if True, only force a refresh of the
             visible part of this objectlist's Treeview.
         """
+        self.clear_message()
         if view_only:
             self._treeview.queue_draw()
         else:
@@ -1805,6 +1808,7 @@ class ObjectList(gtk.ScrolledWindow):
         """Removes all the instances of the list"""
         self._model.clear()
         self._iters = {}
+        self.clear_message()
 
     def get_next(self, instance):
         """
@@ -1923,6 +1927,49 @@ class ObjectList(gtk.ScrolledWindow):
         return [
             ('OBJECTLIST_ROW', 0, 10),
             ]
+
+    def set_message(self, markup):
+        """Adds a message on top of the treeview rows
+        @markup: PangoMarkup with the text to add
+        """
+        self.set_app_paintable(True)
+        settings = gtk.settings_get_default()
+        font = pango.FontDescription(settings.props.gtk_font_name)
+        border = 12
+        def after_expose_event(treeview, event):
+            win = treeview.get_bin_window()
+            width, height = win.get_size()
+            cr = win.cairo_create()
+
+            # Clear the background
+            cr.set_source_rgb(1, 1, 1)
+            cr.rectangle(0, 0, width, height)
+            cr.fill()
+
+            # Draw a message in black
+            pcr = pangocairo.CairoContext(cr)
+            layout = pcr.create_layout()
+            cr.set_source_rgb(0, 0, 0)
+            layout.set_font_description(font)
+            layout.set_markup(markup)
+            layout.set_width(pango.SCALE * width - (border * 2))
+            pcr.update_layout(layout)
+            cr.move_to(border, border)
+            pcr.show_layout(layout)
+            return False
+
+        self.clear_message()
+        self._after_expose_event_id = self._treeview.connect(
+                'expose-event', after_expose_event)
+        self._treeview.queue_draw()
+        self.queue_draw()
+
+    def clear_message(self):
+        if self._after_expose_event_id == 0:
+            return
+        self._treeview.disconnect(self._after_expose_event_id)
+        self._after_expose_event_id = 0
+        self._treeview.queue_draw()
 
 type_register(ObjectList)
 
