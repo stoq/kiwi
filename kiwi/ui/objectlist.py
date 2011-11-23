@@ -966,10 +966,8 @@ class ObjectList(gtk.ScrolledWindow):
         self._autosize = True
         self._vscrollbar = None
         self._message_visible = False
-        self._message_view = None
 
         gtk.ScrolledWindow.__init__(self)
-
         # we always want a vertical scrollbar. Otherwise the button on top
         # of it doesn't make sense. This button is used to display the popup
         # menu
@@ -980,6 +978,27 @@ class ObjectList(gtk.ScrolledWindow):
         # properly set when using gobject.new.
         self.set_hadjustment(gtk.Adjustment())
         self.set_vadjustment(gtk.Adjustment())
+
+        self._view_port = gtk.Viewport()
+        self._view_port.set_shadow_type(gtk.SHADOW_NONE)
+        self.add(self._view_port)
+        self._view_port.show()
+
+        box = gtk.HBox()
+        self._view_port.add(box)
+        box.show()
+
+        self._message_box = gtk.EventBox()
+        self._message_box.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
+        box.pack_start(self._message_box)
+
+        self._message_label = gtk.Label()
+        self._message_label.connect('activate-link', self._on_message_label__activate_link)
+        self._message_label.set_use_markup(True)
+        self._message_label.set_alignment(0, 0)
+        self._message_label.set_padding(12, 12)
+        self._message_box.add(self._message_label)
+        self._message_label.show()
 
         if not model:
             model = gtk.ListStore(object)
@@ -994,7 +1013,7 @@ class ObjectList(gtk.ScrolledWindow):
                                      self._after_treeview__row_activated)
         self._treeview.set_rules_hint(True)
         self._treeview.show()
-        self.add(self._treeview)
+        box.pack_start(self._treeview)
 
         # create a popup menu for showing or hiding columns
         self._popup = _ContextMenu(self._treeview)
@@ -1945,39 +1964,13 @@ class ObjectList(gtk.ScrolledWindow):
         @markup: PangoMarkup with the text to add
         """
 
-        self.clear_message()
-        gtk.Container.remove(self, self._treeview)
-
-        label = gtk.Label(markup)
-        label.connect('activate-link', self._on_message_label__activate_link)
-        label.set_use_markup(True)
-        label.show()
-        label.set_alignment(0, 0)
-        label.set_padding(12, 12)
-
-        eb = gtk.EventBox()
-        eb.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
-        eb.add(label)
-        eb.show()
-
-        vp = gtk.Viewport()
-        vp.add(eb)
-        vp.show()
-        self.add(vp)
-
-        eb.parent.set_shadow_type(gtk.SHADOW_NONE)
-
-        self._message_view = vp
-        self._message_visible = True
+        self._treeview.hide()
+        self._message_box.show()
+        self._message_label.set_label(markup)
 
     def clear_message(self):
-        if not self._message_visible:
-            return
-
-        gtk.Container.remove(self, self._message_view)
-        self.add(self._treeview)
-
-        self._message_visible = False
+        self._treeview.show()
+        self._message_box.hide()
 
 type_register(ObjectList)
 
