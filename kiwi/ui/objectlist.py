@@ -844,7 +844,7 @@ COL_MODEL = 0
 
 _marker = object()
 
-class ObjectList(gtk.ScrolledWindow):
+class ObjectList(gtk.HBox):
     """
     An enhanced version of GtkTreeView, which provides pythonic wrappers
     for accessing rows, and optional facilities for column sorting (with
@@ -967,26 +967,21 @@ class ObjectList(gtk.ScrolledWindow):
         self._vscrollbar = None
         self._message_label = None
 
-        gtk.ScrolledWindow.__init__(self)
+        gtk.HBox.__init__(self)
         # we always want a vertical scrollbar. Otherwise the button on top
         # of it doesn't make sense. This button is used to display the popup
         # menu
-        self.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
-        self.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+
+        self._sw = gtk.ScrolledWindow()
+        self._sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
+        self._sw.set_shadow_type(gtk.SHADOW_ETCHED_IN)
         # This is required for gobject.new to work, since scrolledwindow.add
         # requires valid adjustments and they are for some reason not
         # properly set when using gobject.new.
-        self.set_hadjustment(gtk.Adjustment())
-        self.set_vadjustment(gtk.Adjustment())
-
-        view_port = gtk.Viewport()
-        view_port.set_shadow_type(gtk.SHADOW_NONE)
-        self.add(view_port)
-        view_port.show()
-
-        self._hbox = gtk.HBox()
-        view_port.add(self._hbox)
-        self._hbox.show()
+        self._sw.set_hadjustment(gtk.Adjustment())
+        self._sw.set_vadjustment(gtk.Adjustment())
+        self.pack_start(self._sw)
+        self._sw.show()
 
         if not model:
             model = gtk.ListStore(object)
@@ -1001,7 +996,7 @@ class ObjectList(gtk.ScrolledWindow):
                                      self._after_treeview__row_activated)
         self._treeview.set_rules_hint(True)
         self._treeview.show()
-        self._hbox.pack_start(self._treeview)
+        self._sw.add(self._treeview)
 
         # create a popup menu for showing or hiding columns
         self._popup = _ContextMenu(self._treeview)
@@ -1953,10 +1948,15 @@ class ObjectList(gtk.ScrolledWindow):
         """
 
         if self._message_label is None:
+            self._viewport = gtk.Viewport()
+            self._viewport.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+            self.pack_start(self._viewport)
+
             self._message_box = gtk.EventBox()
             self._message_box.modify_bg(
                 gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
-            self._hbox.pack_start(self._message_box)
+            self._viewport.add(self._message_box)
+            self._message_box.show()
 
             self._message_label = gtk.Label()
             self._message_label.connect(
@@ -1967,15 +1967,15 @@ class ObjectList(gtk.ScrolledWindow):
             self._message_box.add(self._message_label)
             self._message_label.show()
 
-        self._treeview.hide()
-        self._message_box.show()
+        self._sw.hide()
+        self._viewport.show()
         self._message_label.set_label(markup)
 
     def clear_message(self):
         if self._message_label is None:
             return
-        self._treeview.show()
-        self._message_box.hide()
+        self._sw.show()
+        self._viewport.hide()
         self._message_label.set_label("")
 
 type_register(ObjectList)
