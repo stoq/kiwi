@@ -678,7 +678,7 @@ class HintedEntry(gtk.Entry):
         self._hint_shown = True
         gtk.Entry.set_text(self, self._hint)
         self.modify_text(gtk.STATE_NORMAL,
-                         self.style.text[gtk.STATE_INSENSITIVE])
+                         self.get_style().text[gtk.STATE_INSENSITIVE])
 
     def show_text(self, text):
         self._hint_shown = False
