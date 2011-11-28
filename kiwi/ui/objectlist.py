@@ -107,6 +107,10 @@ class Column(gobject.GObject):
            I{Note}: that you cannot use format and format_func at the same time,
            if you provide a format function you'll be responsible for
            converting the value to a string.
+      - B{format_func_data}: object I{None}
+        -  If format_func_data is not None, format_func will receive the row
+           object instead of just the column value, and also receive this value
+           as a second argument.
       - B{editable}: bool I{False}
         - if true the field is editable and when you modify the contents of
           the cell the model will be updated.
@@ -164,6 +168,7 @@ class Column(gobject.GObject):
     expand = gobject.property(type=bool, default=False)
     tooltip = gobject.property(type=str)
     format_func = gobject.property(type=object)
+    format_func_data = gobject.property(type=object, default=None)
     editable = gobject.property(type=bool, default=False)
     searchable = gobject.property(type=bool, default=False)
     radio = gobject.property(type=bool, default=False)
@@ -470,10 +475,9 @@ class Column(gobject.GObject):
             else:
                 raise AssertionError
 
-        data = column.get_attribute(row[COL_MODEL],
-                                    column.attribute, None)
-
-        text = column.as_string(data)
+        obj = row[COL_MODEL]
+        data = column.get_attribute(obj, column.attribute, None)
+        text = column.as_string(data, obj)
 
         renderer.set_property(renderer_prop, text)
 
@@ -493,9 +497,9 @@ class Column(gobject.GObject):
     def _cell_data_combo_func(self, tree_column, renderer, model, treeiter,
                               (column, renderer_prop)):
         row = model[treeiter]
-        data = column.get_attribute(row[COL_MODEL],
-                                    column.attribute, None)
-        text = column.as_string(data)
+        obj = row[COL_MODEL]
+        data = column.get_attribute(obj, column.attribute, None)
+        text = column.as_string(data, obj)
         renderer.set_property('text', text.lower().capitalize())
 
     def _cell_data_spin_func(self, tree_column, renderer, model, treeiter,
@@ -507,9 +511,9 @@ class Column(gobject.GObject):
                                         column.editable_attribute, None)
             renderer.set_property('editable', data)
 
-        data = column.get_attribute(row[COL_MODEL],
-                                    column.attribute, None)
-        text = column.as_string(data)
+        obj = row[COL_MODEL]
+        data = column.get_attribute(obj, column.attribute, None)
+        text = column.as_string(data, obj)
         renderer.set_property(renderer_prop, text)
 
         if column.renderer_func:
@@ -599,12 +603,22 @@ class Column(gobject.GObject):
     # a staticmethod as an optimization, so we can avoid a function call.
     get_attribute = staticmethod(kgetattr)
 
-    def as_string(self, data):
+    def as_string(self, data, obj=None):
+        """
+        Formats the column as a string that should be renderd into the cell.
+
+        @param data: The column value that will be converted to string.
+        @param obj: Necessary only when format_func_data is set. This will make
+                    format_func receive I{obj} instead of I{data}
+        """
         data_type = self.data_type
         if data is None and data_type != gdk.Pixbuf:
             text = ''
         elif self.format_func:
-            text = self.format_func(data)
+            if self.format_func_data is not None:
+                text = self.format_func(obj, self.format_func_data)
+            else:
+                text = self.format_func(data)
         elif (self.format or
             data_type == float or
             data_type == Decimal or
@@ -719,8 +733,6 @@ class ColoredColumn(Column):
 
     def __init__(self, attribute, title=None, data_type=None,
                  color=None, data_func=None, use_data_model=False, **kwargs):
-        if not issubclass(data_type, number):
-            raise TypeError("data type must be a number")
         if not callable(data_func):
             raise TypeError("data func must be callable")
 
@@ -740,11 +752,13 @@ class ColoredColumn(Column):
         self._color_normal = renderer.get_property('foreground-gdk')
 
     def renderer_func(self, renderer, data):
-        if self._use_data_model:
-            ret = self._data_func(data)
+        if not self._use_data_model:
+            data = self.get_attribute(data, self.attribute, None)
+
+        if self.format_func_data is not None:
+            ret = self._data_func(data, self.format_func_data)
         else:
-            attr_data = self.get_attribute(data, self.attribute, None)
-            ret = self._data_func(attr_data)
+            ret = self._data_func(data)
 
         if ret and self._color:
             color = self._color
