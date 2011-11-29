@@ -79,6 +79,13 @@ def quit_if_last(*args):
     if len(windows) == 1:
         gtk.main_quit()
 
+def _select_notebook_tab(widget, event, notebook):
+    val = event.keyval - 48
+    if event.state & gdk.MOD1_MASK and 1 <= val <= 9:
+        notebook.set_current_page(val-1)
+
+def register_notebook_shortcuts(dialog, notebook):
+    dialog.toplevel.connect('key-press-event', _select_notebook_tab, notebook)
 
 class FadeOut(gobject.GObject):
     """I am a helper class to draw the fading effect of the background

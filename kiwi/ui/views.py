@@ -43,7 +43,7 @@ from kiwi.interfaces import IValidatableProxyWidget
 from kiwi.log import Logger
 from kiwi.python import namedAny
 from kiwi.utils import gsignal, type_register
-from kiwi.ui.gadgets import quit_if_last
+from kiwi.ui.gadgets import quit_if_last, register_notebook_shortcuts
 from kiwi.ui.proxy import Proxy
 
 log = Logger('kiwi.view')
@@ -250,6 +250,8 @@ class SlaveView(gobject.GObject):
         #   dict (slave name -> validation status)
         self._notebook_validation = {}
         self._notebooks = self._get_notebooks()
+        if len(self._notebooks) == 1:
+            register_notebook_shortcuts(self, self._notebooks[0])
 
     def _get_notebooks(self):
         if not self._glade_adaptor:
