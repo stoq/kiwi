@@ -2243,7 +2243,7 @@ class ListLabel(gtk.HBox):
         layout = self._label_widget.get_layout()
         self._label_width = layout.get_pixel_size()[0]
         self._label_widget.set_alignment(1.0, 0.5)
-        self.pack_start(self._label_widget, False, False, padding=6)
+        self.pack_start(self._label_widget, True, True, padding=6)
         self._label_widget.show()
 
         self._value_widget = gtk.Label()
