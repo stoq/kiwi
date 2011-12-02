@@ -32,7 +32,6 @@ import pickle
 
 import gobject
 import pango
-import pangocairo
 import gtk
 from gtk import gdk
 
@@ -51,9 +50,9 @@ log = Logger('objectlist')
 
 def str2enum(value_name, enum_class):
     "converts a string to a enum"
-    for _, enum in enum_class.__enum_values__.items():
-        if value_name in (enum.value_name, enum.value_nick):
-            return enum
+    for _, _enum in enum_class.__enum_values__.items():
+        if value_name in (_enum.value_name, _enum.value_nick):
+            return _enum
 
 def str2bool(value, from_string=converter.from_string):
     "converts a boolean to a enum"
@@ -467,7 +466,6 @@ class Column(gobject.GObject):
         if column.editable_attribute:
             data = column.get_attribute(row[COL_MODEL],
                                         column.editable_attribute, None)
-            data_type = column.data_type
             if isinstance(renderer, gtk.CellRendererToggle):
                 renderer.set_property('activatable', data)
             elif isinstance(renderer, gtk.CellRendererText):
@@ -1292,7 +1290,6 @@ class ObjectList(gtk.HBox):
             self._autosize = False
 
     def _setup_columns(self, columns):
-        searchable = None
         sorted = None
         expand = False
         for column in columns:
