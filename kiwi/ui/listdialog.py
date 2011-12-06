@@ -147,6 +147,7 @@ class ListContainer(gtk.HBox):
             raise retval
 
         self.list.append(retval)
+        self.list.refresh()
 
     def _remove_item(self, item):
         retval = self.emit('remove-item', item)
