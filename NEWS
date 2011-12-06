@@ -1,3 +1,10 @@
+kiwi-1.9.30 06-december-2011
+    - added API to set message on an ObjectList
+    - Added option to format_func receive entire object instead of just the
+      column value.
+    - When there is a notebook in the view, set keyboard shortcuts alt+N to
+      select corresponding tabs (like in a web browser)
+
 kiwi-1.9.29 22-july-2011
     - Remove support for gazpacho in favor of GtkBuilder
     - Use new gtk entries with icon instead of our old IconEntry
