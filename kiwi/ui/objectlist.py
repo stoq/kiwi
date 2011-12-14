@@ -1747,6 +1747,9 @@ class ObjectList(gtk.HBox):
         if type(instances) not in [list, tuple]:
             instances = [instances]
 
+        if not instances:
+            return
+
         selection = self._treeview.get_selection()
         if selection.get_mode() == gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed")
