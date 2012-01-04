@@ -39,7 +39,7 @@ if sys.platform != 'win32' and not 'bdist_wininst' in sys.argv:
                                      libraries=libraries))
 
 pixmaps = listfiles('glade-plugin', 'resources', 'kiwiwidgets', '*.png')
-setup(name="kiwi",
+setup(name="kiwi-gtk",
       version=".".join(map(str, kiwi_version)),
       description="A framework and a set of enhanced widgets based on PyGTK",
       long_description=__doc__,
