@@ -50,6 +50,7 @@
                     <property name="visible">True</property>
                     <property name="border_width">6</property>
                     <property name="spacing">6</property>
+                    <property name="layout-style">end</property>
                     <child>
                       <object class="GtkButton" id="cancel_button">
                         <property name="label">gtk-cancel</property>
@@ -107,7 +108,7 @@
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
+                    <property name="expand">True</property>
                     <property name="pack_type">end</property>
                     <property name="position">0</property>
                   </packing>
