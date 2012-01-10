@@ -306,7 +306,7 @@ class Column(gobject.GObject):
             treeview_column = objectlist.get_treeview_column(other_column)
 
         treeview_column.attribute = self.attribute
-        renderer, renderer_prop = self._guess_renderer_for_type(model)
+        renderer, renderer_prop = self.create_renderer(model)
         if self.on_attach_renderer:
             self.on_attach_renderer(renderer)
         justify = self.justify
@@ -383,7 +383,7 @@ class Column(gobject.GObject):
 
         return treeview_column
 
-    def _guess_renderer_for_type(self, model):
+    def create_renderer(self, model):
         """Gusses which CellRenderer we should use for a given type.
         It also set the property of the renderer that depends on the model,
         in the renderer.
