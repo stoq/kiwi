@@ -202,6 +202,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         self._valid = True
         self._fade = FadeOut(self)
         self._fade.connect('color-changed', self._on_fadeout__color_changed)
+        self.connect('notify::mandatory', self._on_notify__mandatory)
 
     # Override in subclass
 
@@ -357,3 +358,6 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
     def _on_fadeout__color_changed(self, fadeout, color):
         self.update_background(color)
+
+    def _on_notify__mandatory(self, obj, pspec):
+        self.validate()
