@@ -344,6 +344,11 @@ class DateSearchFilter(SearchFilter):
             return DateQueryState(filter=self, date=start)
         return DateIntervalQueryState(filter=self, start=start, end=end)
 
+    def set_state(self, start, end=None):
+        self.start_date.set_date(state.start)
+        if end is not None:
+            self.end_date.set_date(state.end)
+
     def get_title_label(self):
         return self.title_label
 
@@ -617,6 +622,9 @@ class ComboSearchFilter(SearchFilter):
         return NumberQueryState(filter=self,
                                 value=self.combo.get_selected_data())
 
+    def set_state(self, value):
+        self.select(value)
+
     def get_title_label(self):
         return self.title_label
 
@@ -785,6 +793,11 @@ class StringSearchFilter(SearchFilter):
                                 text=self.entry.get_text(),
                                 mode=option.mode)
 
+    def set_state(self, text, mode=None):
+        self.entry.set_text(text)
+        if mode is not None:
+            self.mode.select_item_by_position(mode)
+
     def get_title_label(self):
         return self.title_label
 
@@ -908,6 +921,10 @@ class NumberSearchFilter(SearchFilter):
 
         start, end = option().get_interval(start_value, end_value)
         return NumberIntervalQueryState(filter=self, start=start, end=end)
+
+    def set_state(self, start, end):
+        self.start.set_value(start)
+        self.end.set_value(end)
 
     def get_title_label(self):
         return self.title_label
@@ -1103,6 +1120,11 @@ class SearchContainer(gtk.VBox):
     def get_search_filters(self):
         return self._search_filters
 
+    def get_search_filter_by_label(self, label):
+        for search_filter in self._search_filters:
+            if search_filter.label == label:
+                return search_filter
+
     def set_filter_position(self, search_filter, position):
         """
         Set the the filter position.
@@ -1239,6 +1261,33 @@ class SearchContainer(gtk.VBox):
     def add_results(self, results):
         self.results.clear()
         self.results.extend(results)
+
+    def get_filter_states(self):
+        dict_state = {}
+        for search_filter in self._search_filters:
+            dict_state[search_filter.label] = data = {}
+            state = search_filter.get_state()
+            if isinstance(state, DateQueryState):
+                data['start'] = state.start
+            elif isinstance(state, DateIntervalQueryState):
+                data['start'] = state.start
+                data['end'] = state.end
+            elif isinstance(state, NumberQueryState):
+                data['value'] = state.value
+            elif isinstance(state, StringQueryState):
+                data['text'] = state.text
+                data['mode'] = state.mode
+            else:
+                raise NotImplementedError(state)
+        return dict_state
+
+    def set_filter_states(self, dict_state):
+        for label, filter_state in dict_state.items():
+            search_filter = self.get_search_filter_by_label(label)
+            if search_filter is None:
+                continue
+            search_filter.set_state(**filter_state)
+
 
     #
     # Callbacks
