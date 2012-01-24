@@ -619,10 +619,22 @@ class ComboSearchFilter(SearchFilter):
     #
 
     def get_state(self):
-        return NumberQueryState(filter=self,
-                                value=self.combo.get_selected_data())
+        value = self.combo.get_selected_data()
+        state = NumberQueryState(filter=self,
+                                 value=value)
+        if hasattr(value, 'id'):
+            state.value_id = value.id
+            state.value = None
+        return state
 
-    def set_state(self, value):
+    def set_state(self, value, value_id=None):
+        if value_id is not None:
+            for item in self.combo.get_model_items().values():
+                if item is None:
+                    continue
+                if item.id == value_id:
+                    value = item
+                    break
         self.select(value)
 
     def get_title_label(self):
@@ -1274,6 +1286,9 @@ class SearchContainer(gtk.VBox):
                 data['end'] = state.end
             elif isinstance(state, NumberQueryState):
                 data['value'] = state.value
+                if hasattr(state, 'value_id'):
+                    data['value_id'] = state.value_id
+
             elif isinstance(state, StringQueryState):
                 data['text'] = state.text
                 data['mode'] = state.mode
