@@ -40,7 +40,7 @@ if sys.platform != 'win32' and not 'bdist_wininst' in sys.argv:
 
 pixmaps = listfiles('glade-plugin', 'resources', 'kiwiwidgets', '*.png')
 # When uploading to pypi
-if 'upload' in sys.args:
+if 'upload' in sys.argv:
     name = 'kiwi-gtk'
 else:
     name = 'kiwi'
