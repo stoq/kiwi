@@ -282,13 +282,15 @@ class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
     gsignal('validate', object, retval=object)
 
     def __init__(self):
+        self._color_attribute = None
         gtk.ComboBox.__init__(self)
         ProxyWidgetMixin.__init__(self)
         self._helper = _EasyComboBoxHelper(self)
         self.connect('changed', self._on__changed)
-        renderer = gtk.CellRendererText()
-        self.pack_start(renderer)
-        self.add_attribute(renderer, 'text', ComboColumn.LABEL)
+
+        self._text_renderer = gtk.CellRendererText()
+        self.pack_start(self._text_renderer)
+        self.add_attribute(self._text_renderer, 'text', ComboColumn.LABEL)
 
     def __len__(self):
         # GtkComboBox is a GtkContainer subclass which implements __len__ in
@@ -304,6 +306,35 @@ class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
 
     def _on__changed(self, combo):
         self.emit('content-changed')
+
+
+    def set_color_attribute(self, value):
+        self._color_attribute = value
+
+        if not value:
+            return
+
+        def cell_data_func(view, renderer, model, treeiter):
+            category = model[treeiter][ComboColumn.DATA]
+            if category and category.color:
+                renderer.set_property('background', category.color)
+                renderer.set_property('background-set', True)
+            else:
+                renderer.set_property('background-set', False)
+                renderer.set_property('width', 20)
+
+        renderer = gtk.CellRendererText()
+        self.pack_start(renderer, False)
+        self.reorder(renderer, 0)
+        self.set_cell_data_func(renderer, cell_data_func)
+        self._text_renderer.set_padding(6, 0)
+
+    def get_color_attribute(self):
+        return self._color_attribute
+    color_attribute = gobject.property(
+        getter=get_color_attribute,
+        setter=set_color_attribute,
+        type=str, blurb='Color attribute')
 
     # IProxyWidget
 
