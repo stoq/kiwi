@@ -345,9 +345,9 @@ class DateSearchFilter(SearchFilter):
         return DateIntervalQueryState(filter=self, start=start, end=end)
 
     def set_state(self, start, end=None):
-        self.start_date.set_date(state.start)
+        self.start_date.set_date(start)
         if end is not None:
-            self.end_date.set_date(state.end)
+            self.end_date.set_date(end)
 
     def get_title_label(self):
         return self.title_label
@@ -1288,7 +1288,9 @@ class SearchContainer(gtk.VBox):
                 data['value'] = state.value
                 if hasattr(state, 'value_id'):
                     data['value_id'] = state.value_id
-
+            elif isinstance(state, NumberIntervalQueryState):
+                data['start'] = state.start
+                data['end'] = state.end
             elif isinstance(state, StringQueryState):
                 data['text'] = state.text
                 data['mode'] = state.mode
