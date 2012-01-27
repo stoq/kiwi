@@ -341,7 +341,11 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     # Private
 
     def _set_valid_state(self, state):
-        """Updates the validation state and emits a signal iff it changed"""
+        """Updates the validation state and emits a signal if it changed"""
+        # FIXME: This should not happen, but somehow, model_attribute is being
+        # set too late in some cases.
+        if not self.model_attribute:
+            return
 
         if self._valid == state:
             return
