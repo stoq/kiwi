@@ -49,6 +49,7 @@ from kiwi.interfaces import IEasyCombo
 from kiwi.python import deprecationwarn
 from kiwi.ui.comboboxentry import BaseComboBoxEntry
 from kiwi.ui.comboentry import ComboEntry
+from kiwi.ui.gadgets import render_pixbuf
 from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
 from kiwi.ui.widgets.entry import ProxyEntry
 from kiwi.utils import gsignal
@@ -316,14 +317,10 @@ class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
 
         def cell_data_func(view, renderer, model, treeiter):
             category = model[treeiter][ComboColumn.DATA]
-            if category and category.color:
-                renderer.set_property('background', category.color)
-                renderer.set_property('background-set', True)
-            else:
-                renderer.set_property('background-set', False)
-                renderer.set_property('width', 20)
+            renderer.set_property('pixbuf',
+                                render_pixbuf(category and category.color))
 
-        renderer = gtk.CellRendererText()
+        renderer = gtk.CellRendererPixbuf()
         self.pack_start(renderer, False)
         self.reorder(renderer, 0)
         self.set_cell_data_func(renderer, cell_data_func)
