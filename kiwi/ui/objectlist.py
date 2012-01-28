@@ -347,6 +347,9 @@ class Column(gobject.GObject):
         else:
             expand = True
 
+        if self.data_type == gtk.gdk.Pixbuf:
+            renderer.set_padding(2, 0)
+
         if self.pack_end:
             treeview_column.pack_end(renderer, expand)
         else:
