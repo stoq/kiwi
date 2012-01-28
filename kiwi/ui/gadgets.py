@@ -224,6 +224,8 @@ def render_pixbuf(color_name, width=16, height=16):
         green = float(color.green) / 65536
         blue = float(color.blue) / 65536
         cr.set_source_rgb(red, green, blue)
+    else:
+        cr.set_source_rgba(1, 1, 1, 1)
 
     cr.fill_preserve()
     cr.set_source_rgba(0, 0, 0, 0.5)
