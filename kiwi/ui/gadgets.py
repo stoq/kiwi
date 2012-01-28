@@ -20,10 +20,15 @@
 #
 # Author(s): Lorenzo Gil Sanchez <lgs@sicem.biz>
 #            Johan Dahlin <jdahlin@async.com.br>
+#            Og B. Maciel <ogmaciel@src.gnome.org>
 #
 
 """Graphical utilities: color management and eyecandy"""
 
+import math
+import StringIO
+
+import cairo
 import gobject
 import gtk
 from gtk import gdk
@@ -190,3 +195,51 @@ class FadeOut(gobject.GObject):
         self._done = False
 
 type_register(FadeOut)
+
+_pixbuf_cache = {}
+
+# Based on code from BillReminder by Og Maciel and
+# http://cairographics.org/cookbook/roundedrectangles/
+
+def render_pixbuf(color_name, width=16, height=16):
+    pixbuf = _pixbuf_cache.get(color_name)
+    if pixbuf is not None:
+        return pixbuf
+
+    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+    cr = cairo.Context(surface)
+
+    r = 5
+    pi2 = math.pi / 2
+    cr.new_sub_path()
+    cr.arc(r, r, r, math.pi, 3 * pi2)
+    cr.arc(height - r, r, r, 3 * pi2, 4 * pi2)
+    cr.arc(height - r, width - r, r, 0, pi2)
+    cr.arc(r, width - r, r, pi2, math.pi)
+    cr.close_path()
+
+    if color_name:
+        color = gtk.gdk.color_parse(color_name)
+        red = float(color.red) / 65536
+        green = float(color.green) / 65536
+        blue = float(color.blue) / 65536
+        cr.set_source_rgb(red, green, blue)
+
+    cr.fill_preserve()
+    cr.set_source_rgba(0, 0, 0, 0.5)
+
+    cr.set_line_width(1)
+    cr.stroke()
+
+    buf = StringIO.StringIO()
+    surface.write_to_png(buf)
+
+    buf.seek(0)
+    loader = gtk.gdk.PixbufLoader()
+    loader.write(buf.getvalue())
+    loader.close()
+
+    pixbuf = loader.get_pixbuf()
+
+    _pixbuf_cache[color_name] = pixbuf
+    return pixbuf
