@@ -201,7 +201,7 @@ _pixbuf_cache = {}
 # Based on code from BillReminder by Og Maciel and
 # http://cairographics.org/cookbook/roundedrectangles/
 
-def render_pixbuf(color_name, width=16, height=16):
+def render_pixbuf(color_name, width=16, height=16, radius=4):
     pixbuf = _pixbuf_cache.get(color_name)
     if pixbuf is not None:
         return pixbuf
@@ -209,23 +209,22 @@ def render_pixbuf(color_name, width=16, height=16):
     surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
     cr = cairo.Context(surface)
 
-    r = 5
-    pi2 = math.pi / 2
-    cr.new_sub_path()
-    cr.arc(r, r, r, math.pi, 3 * pi2)
-    cr.arc(height - r, r, r, 3 * pi2, 4 * pi2)
-    cr.arc(height - r, width - r, r, 0, pi2)
-    cr.arc(r, width - r, r, pi2, math.pi)
-    cr.close_path()
-
     if color_name:
+        pi2 = math.pi / 2
+        cr.new_sub_path()
+        cr.arc(radius, radius, radius, math.pi, 3 * pi2)
+        cr.arc(height - radius, radius, radius, 3 * pi2, 4 * pi2)
+        cr.arc(height - radius, width - radius, radius, 0, pi2)
+        cr.arc(radius, width - radius, radius, pi2, math.pi)
+        cr.close_path()
+
         color = gtk.gdk.color_parse(color_name)
-        red = float(color.red) / 65536
-        green = float(color.green) / 65536
-        blue = float(color.blue) / 65536
-        cr.set_source_rgb(red, green, blue)
+        cr.set_source_rgb(
+            float(color.red) / 65536,
+            float(color.green) / 65536,
+            float(color.blue) / 65536)
     else:
-        cr.set_source_rgba(1, 1, 1, 1)
+        cr.set_source_rgba(0, 0, 0, 0.0)
 
     cr.fill_preserve()
     cr.set_source_rgba(0, 0, 0, 0.5)
