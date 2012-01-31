@@ -480,6 +480,9 @@ class Column(gobject.GObject):
         data = column.get_attribute(obj, column.attribute, None)
         text = column.as_string(data, obj)
 
+        if self._objectlist.cell_data_func:
+            text = self._objectlist.cell_data_func(self, renderer, obj, text)
+
         renderer.set_property(renderer_prop, text)
 
         if column.renderer_func:
@@ -981,6 +984,7 @@ class ObjectList(gtk.HBox):
         self._autosize = True
         self._vscrollbar = None
         self._message_label = None
+        self.cell_data_func = None
 
         gtk.HBox.__init__(self)
         # we always want a vertical scrollbar. Otherwise the button on top
@@ -1994,6 +1998,9 @@ class ObjectList(gtk.HBox):
         self._sw.show()
         self._viewport.hide()
         self._message_label.set_label("")
+
+    def set_cell_data_func(self, cell_data_func):
+        self.cell_data_func = cell_data_func
 
 type_register(ObjectList)
 
