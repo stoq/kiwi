@@ -624,7 +624,6 @@ class ComboSearchFilter(SearchFilter):
                                  value=value)
         if hasattr(value, 'id'):
             state.value_id = value.id
-            state.value = None
         return state
 
     def set_state(self, value, value_id=None):
@@ -1288,6 +1287,7 @@ class SearchContainer(gtk.VBox):
                 data['value'] = state.value
                 if hasattr(state, 'value_id'):
                     data['value_id'] = state.value_id
+                    data['value'] = None
             elif isinstance(state, NumberIntervalQueryState):
                 data['start'] = state.start
                 data['end'] = state.end
