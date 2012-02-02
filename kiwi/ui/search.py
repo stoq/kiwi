@@ -601,6 +601,7 @@ class ComboSearchFilter(SearchFilter):
         @param values: items to put in the combo, see
             L{kiwi.ui.widgets.combo.ProxyComboBox.prefill}
         """
+        self._block_updates = False
         SearchFilter.__init__(self, label=label)
         label = gtk.Label(label)
         self.pack_start(label, False, False)
@@ -609,7 +610,7 @@ class ComboSearchFilter(SearchFilter):
 
         self.combo = ProxyComboBox()
         if values:
-            self.combo.prefill(values)
+            self.update_values(values)
         self.combo.connect('content-changed', self._on_combo__content_changed)
         self.pack_start(self.combo, False, False, 6)
         self.combo.show()
@@ -635,6 +636,11 @@ class ComboSearchFilter(SearchFilter):
                     value = item
                     break
         self.select(value)
+
+    def update_values(self, values):
+        self._block_updates = True
+        self.combo.prefill(values)
+        self._block_updates = False
 
     def get_title_label(self):
         return self.title_label
@@ -665,7 +671,8 @@ class ComboSearchFilter(SearchFilter):
     #
 
     def _on_combo__content_changed(self, mode):
-        self.emit('changed')
+        if not self._block_updates:
+            self.emit('changed')
 
 
 # Ported from evolution
