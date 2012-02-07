@@ -2002,6 +2002,40 @@ class ObjectList(gtk.HBox):
     def set_cell_data_func(self, cell_data_func):
         self.cell_data_func = cell_data_func
 
+    def get_visible_columns(self):
+        """Returns a list of visibile columns"""
+        columns = []
+        for column in self.get_columns():
+            if not column.treeview_column.get_visible():
+                continue
+            # Skip pixbuf columns for now, we don't really
+            # care about colors in this kind of output
+            if column.data_type == gdk.Pixbuf:
+                continue
+            columns.append(column)
+        return columns
+
+    def get_header_titles(self):
+        titles = []
+        for column in self.get_visible_columns():
+            header_widget = column.treeview_column.get_widget()
+            if header_widget:
+                titles.append(header_widget.get_text())
+        return titles
+
+    def get_cell_contents(self):
+        attributes = []
+        for column in self.get_visible_columns():
+            attributes.append(column.attribute)
+
+        lines = []
+        for item in self:
+            row = []
+            for attribute in attributes:
+                row.append(getattr(item, attribute))
+            lines.append(row)
+        return lines
+
 type_register(ObjectList)
 
 
