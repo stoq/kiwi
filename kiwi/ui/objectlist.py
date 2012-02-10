@@ -2032,7 +2032,7 @@ class ObjectList(gtk.HBox):
         for item in self:
             row = []
             for attribute in attributes:
-                row.append(getattr(item, attribute))
+                row.append(getattr(item, attribute, None))
             lines.append(row)
         return lines
 
