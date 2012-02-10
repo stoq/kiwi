@@ -58,7 +58,7 @@ class DateSearchOption(object):
     """
     Base class for Date search options
     A date search option is an interval of dates
-    @cvar name: name of the search option
+    :cvar name: name of the search option
     """
     name = None
 
@@ -68,8 +68,8 @@ class DateSearchOption(object):
     def get_interval(self):
         """
         Get start and end date.
-        @returns: start date, end date
-        @rtype: datetime.date tuple
+        :returns: start date, end date
+        :rtype: datetime.date tuple
         """
 
 class Any(DateSearchOption):
@@ -147,8 +147,8 @@ class NumberSearchOption(object):
     """
     Base class for Number search options
     A number search option is an interval of numbers
-    @cvar name: name of the search option
-    @cvar numbers: how many numbers must the user input: 0, 1 or 2
+    :cvar name: name of the search option
+    :cvar numbers: how many numbers must the user input: 0, 1 or 2
     """
     name = None
     numbers = 0
@@ -156,7 +156,7 @@ class NumberSearchOption(object):
     def get_interval(self, start, end):
         """
         Get start and end interval.
-        @returns: start, end
+        :returns: start, end
         """
 
 class Between(NumberSearchOption):
@@ -269,7 +269,7 @@ class SearchFilter(gtk.HBox):
 
     def get_description(self):
         """Returns a description of the search filter.
-        @returns: a string describing the search filter.
+        :returns: a string describing the search filter.
         """
         raise NotImplementedError
 
@@ -291,7 +291,7 @@ class DateSearchFilter(SearchFilter):
     def __init__(self, label=''):
         """
         Create a new DateSearchFilter object.
-        @param label: name of the search filter
+        :param label: name of the search filter
         """
         self._options = {}
         SearchFilter.__init__(self, label=label)
@@ -383,8 +383,8 @@ class DateSearchFilter(SearchFilter):
     def add_option(self, option_type, position=-2):
         """
         Adds a date option
-        @param option_type: option to add
-        @type option_type: a L{DateSearchOption} subclass
+        :param option_type: option to add
+        :type option_type: a :class:`DateSearchOption` subclass
         """
         option = option_type()
         num = len(self.mode) + position
@@ -395,9 +395,9 @@ class DateSearchFilter(SearchFilter):
         """
         Adds a fixed option, eg one for which date is not
         possible to modify.
-        @param name: name of the option
-        @param date: fixed data
-        @param position: position to add the option at
+        :param name: name of the option
+        :param date: fixed data
+        :param position: position to add the option at
         """
         option_type = type('', (FixedDateSearchOption,),
                            dict(name=name, date=date))
@@ -408,10 +408,10 @@ class DateSearchFilter(SearchFilter):
         """
         Adds a fixed option interval, eg one for which the dates are not
         possible to modify.
-        @param name: name of the option
-        @param start: start of the fixed interval
-        @param end: end of the fixed interval
-        @param position: position to add the option at
+        :param name: name of the option
+        :param start: start of the fixed interval
+        :param end: end of the fixed interval
+        :param position: position to add the option at
         """
         option_type = type('', (FixedIntervalSearchOption,),
                            dict(name=name, start=start, end=end))
@@ -432,23 +432,23 @@ class DateSearchFilter(SearchFilter):
     def get_start_date(self):
         """
         Get the start date.
-        @returns: start date
-        @rtype: datetime.date or None
+        :returns: start date
+        :rtype: datetime.date or None
         """
         return self.start_date.get_date()
 
     def get_end_date(self):
         """
         Get the end date.
-        @returns: end date
-        @rtype: datetime.date or None
+        :returns: end date
+        :rtype: datetime.date or None
         """
         return self.end_date.get_date()
 
     def set_use_date_entries(self, use_date_entries):
         """
         Toggles the visibility of the user selectable date entries
-        @param use_date_entries:
+        :param use_date_entries:
         """
         self.from_label.props.visible = use_date_entries
         self.to_label.props.visible = use_date_entries
@@ -461,8 +461,8 @@ class DateSearchFilter(SearchFilter):
         Data or position can be sent in. If nothing
         is sent in the first item will be selected, if any
 
-        @param data: data to select
-        @param position: position of data to select
+        :param data: data to select
+        :param position: position of data to select
         """
         if data is not None and position is not None:
             raise TypeError("You can't send in both data and position")
@@ -597,9 +597,9 @@ class ComboSearchFilter(SearchFilter):
     def __init__(self, label='', values=None):
         """
         Create a new ComboSearchFilter object.
-        @param name: name of the search filter
-        @param values: items to put in the combo, see
-            L{kiwi.ui.widgets.combo.ProxyComboBox.prefill}
+        :param name: name of the search filter
+        :param values: items to put in the combo, see
+            :class:`kiwi.ui.widgets.combo.ProxyComboBox.prefill`
         """
         self._block_updates = False
         SearchFilter.__init__(self, label=label)
@@ -662,7 +662,7 @@ class ComboSearchFilter(SearchFilter):
     def select(self, data):
         """
         selects an item in the combo
-        @param data: what to select
+        :param data: what to select
         """
         self.combo.select(data)
 
@@ -735,14 +735,14 @@ class StringSearchFilter(SearchFilter):
     """
     - a label
     - an entry
-    @ivar entry: the entry
-    @ivar label: the label
+    :ivar entry: the entry
+    :ivar label: the label
     """
     def __init__(self, label, chars=0):
         """
         Create a new StringSearchFilter object.
-        @param label: label of the search filter
-        @param chars: maximum number of chars used by the search entry
+        :param label: label of the search filter
+        :param chars: maximum number of chars used by the search entry
         """
         SearchFilter.__init__(self, label=label)
         self.title_label = gtk.Label(label)
@@ -848,7 +848,7 @@ class NumberSearchFilter(SearchFilter):
     def __init__(self, label=''):
         """
         Create a new NumberSearchFilter object.
-        @param label: name of the search filter
+        :param label: name of the search filter
         """
 
         self._options = {}
@@ -890,7 +890,7 @@ class NumberSearchFilter(SearchFilter):
     def set_digits(self, digits):
         """
         Number of decimal place to be displayed
-        @param digits: number of decimal places
+        :param digits: number of decimal places
         """
         self.start.set_digits(digits)
         self.end.set_digits(digits)
@@ -972,8 +972,8 @@ class NumberSearchFilter(SearchFilter):
     def add_option(self, option_type, position=-2):
         """
         Adds a date option
-        @param option_type: option to add
-        @type option_type: a L{NumberSearchOption} subclass
+        :param option_type: option to add
+        :type option_type: a :class:`NumberSearchOption` subclass
         """
         option = option_type()
         num = len(self.mode) + position
@@ -1012,14 +1012,14 @@ class SearchResults(ObjectList):
 class SearchContainer(gtk.VBox):
     """
     A search container is a widget which consists of:
-    - search entry (w/ a label) (L{StringSearchFilter})
+    - search entry (w/ a label) (:class:`StringSearchFilter`)
     - search button
-    - objectlist result (L{SearchResult})
-    - a query executer (L{kiwi.db.query.QueryExecuter})
+    - objectlist result (:class:`SearchResult`)
+    - a query executer (:class:`kiwi.db.query.QueryExecuter`)
 
     Additionally you can add a number of search filters to the SearchContainer.
     You can chose if you want to add the filter in the top-left corner
-    of bottom, see L{SearchFilterPosition}
+    of bottom, see :class:`SearchFilterPosition`
     """
     __gtype_name__ = 'SearchContainer'
     filter_label = gobject.property(type=str)
@@ -1029,8 +1029,8 @@ class SearchContainer(gtk.VBox):
     def __init__(self, columns=None, chars=25):
         """
         Create a new SearchContainer object.
-        @param columns: a list of L{kiwi.ui.objectlist.Column}
-        @param chars: maximum number of chars used by the search entry
+        :param columns: a list of :class:`kiwi.ui.objectlist.Column`
+        :param chars: maximum number of chars used by the search entry
         """
         gtk.VBox.__init__(self)
         self._columns = columns
@@ -1094,10 +1094,10 @@ class SearchContainer(gtk.VBox):
                    columns=None, callback=None):
         """
         Adds a search filter
-        @param search_filter: the search filter
-        @param postition: a L{SearchFilterPosition} enum
-        @param columns:
-        @param callback:
+        :param search_filter: the search filter
+        :param postition: a :class:`SearchFilterPosition` enum
+        :param columns:
+        :param callback:
         """
 
         if not isinstance(search_filter, SearchFilter):
@@ -1146,8 +1146,8 @@ class SearchContainer(gtk.VBox):
     def set_filter_position(self, search_filter, position):
         """
         Set the the filter position.
-        @param search_filter:
-        @param position:
+        :param search_filter:
+        :param position:
         """
         if search_filter.parent:
             search_filter.parent.remove(search_filter)
@@ -1162,7 +1162,7 @@ class SearchContainer(gtk.VBox):
     def get_filter_position(self, search_filter):
         """
         Get filter by position.
-        @param search_filter:
+        :param search_filter:
         """
         if search_filter.parent == self.hbox:
             return SearchFilterPosition.TOP
@@ -1174,8 +1174,8 @@ class SearchContainer(gtk.VBox):
     def set_query_executer(self, querty_executer):
         """
         Ties a QueryExecuter instance to the SearchContainer class
-        @param querty_executer: a querty executer
-        @type querty_executer: a L{QueryExecuter} subclass
+        :param querty_executer: a querty executer
+        :type querty_executer: a :class:`QueryExecuter` subclass
         """
         if not isinstance(querty_executer, QueryExecuter):
             raise TypeError("querty_executer must be a QueryExecuter instance")
@@ -1185,8 +1185,8 @@ class SearchContainer(gtk.VBox):
     def get_query_executer(self):
         """
         Fetchs the QueryExecuter for the SearchContainer
-        @returns: a querty executer
-        @rtype: a L{QueryExecuter} subclass
+        :returns: a querty executer
+        :rtype: a :class:`QueryExecuter` subclass
         """
         return self._query_executer
 
@@ -1195,7 +1195,7 @@ class SearchContainer(gtk.VBox):
         Fetches the primary filter for the SearchContainer.
         The primary filter is the filter attached to the standard entry
         normally used to do free text searching
-        @returns: the primary filter
+        :returns: the primary filter
         """
         return self._primary_filter
 
@@ -1218,7 +1218,7 @@ class SearchContainer(gtk.VBox):
         """
         Enables/Disables auto search which means that the search result box
         is automatically populated when a filter changes
-        @param auto_search: True to enable, False to disable
+        :param auto_search: True to enable, False to disable
         """
         self._auto_search = auto_search
 
@@ -1244,10 +1244,10 @@ class SearchContainer(gtk.VBox):
                           parent=None):
         """
         Adds a summary label to the result set
-        @param column: the column to sum from
-        @param label: the label to use, defaults to 'Total:'
-        @param format: the format, defaults to '%%s', must include '%%s'
-        @param parent: the parent widget a label should be added to or
+        :param column: the column to sum from
+        :param label: the label to use, defaults to 'Total:'
+        :param format: the format, defaults to '%%s', must include '%%s'
+        :param parent: the parent widget a label should be added to or
            None if it should be added to the SearchContainer
         """
         if not '%s' in format:
@@ -1463,8 +1463,8 @@ class SearchSlaveDelegate(SlaveDelegate):
     def __init__(self, columns):
         """
         Create a new SearchSlaveDelegate object.
-        @ivar results: the results list of the container
-        @ivar search: the L{SearchContainer}
+        :ivar results: the results list of the container
+        :ivar search: the :class:`SearchContainer`
         """
         self.search = SearchContainer(columns)
         SlaveDelegate.__init__(self, toplevel=self.search)
@@ -1479,26 +1479,26 @@ class SearchSlaveDelegate(SlaveDelegate):
     def add_filter(self, search_filter, position=SearchFilterPosition.BOTTOM,
                    columns=None, callback=None):
         """
-        See L{SearchSlaveDelegate.add_filter}
+        See :class:`SearchSlaveDelegate.add_filter`
         """
         self.search.add_filter(search_filter, position, columns, callback)
 
     def set_query_executer(self, querty_executer):
         """
-        See L{SearchSlaveDelegate.set_query_executer}
+        See :class:`SearchSlaveDelegate.set_query_executer`
         """
         self.search.set_query_executer(querty_executer)
 
     def set_text_field_columns(self, columns):
         """
-        See L{SearchSlaveDelegate.set_text_field_columns}
+        See :class:`SearchSlaveDelegate.set_text_field_columns`
         """
         self.search.set_text_field_columns(columns)
 
     def get_primary_filter(self):
         """
         Fetches the primary filter of the SearchSlaveDelegate
-        @returns: primary filter
+        :returns: primary filter
         """
         return self.search.get_primary_filter()
 
@@ -1529,13 +1529,13 @@ class SearchSlaveDelegate(SlaveDelegate):
     def set_summary_label(self, column, label='Total:', format='%s',
                           parent=None):
         """
-        See L{SearchContainer.set_summary_label}
+        See :class:`SearchContainer.set_summary_label`
         """
         self.search.set_summary_label(column, label, format, parent)
 
     def enable_advanced_search(self):
         """
-        See L{SearchContainer.enable_advanced_search}
+        See :class:`SearchContainer.enable_advanced_search`
         """
         self.search.enable_advanced_search()
 
@@ -1549,7 +1549,7 @@ class SearchSlaveDelegate(SlaveDelegate):
     def get_columns(self):
         """
         This needs to be implemented in a subclass
-        @returns: columns
-        @rtype: list of L{kiwi.ui.objectlist.Column}
+        :returns: columns
+        :rtype: list of :class:`kiwi.ui.objectlist.Column`
         """
         raise NotImplementedError

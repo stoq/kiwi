@@ -24,8 +24,8 @@
 
 """GtkLabel support for the Kiwi Framework
 
-The L{Label} is also extended to support some basic markup like
-L{Label.set_bold}"""
+The :class:`Label` is also extended to support some basic markup like
+:class:`Label.set_bold`"""
 
 import datetime
 
@@ -52,8 +52,8 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
     def __init__(self, label='', data_type=None):
         """
         Create a new ProxyLabel object.
-        @param label: initial text
-        @param data_type: data type of label
+        :param label: initial text
+        :param data_type: data type of label
         """
         gtk.Label.__init__(self, label)
         ProxyWidgetMixin.__init__(self)
@@ -141,7 +141,7 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
 
     def set_italic(self, value):
         """ Enable or disable italic text
-        @param value: Allowed values:
+        :param value: Allowed values:
           - True: enable Italic attribute
           - False: disable Italic attribute
         """
@@ -149,7 +149,7 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
 
     def set_underline(self, value):
         """ Enable or disable underlined text
-        @param value: Allowed values:
+        :param value: Allowed values:
           - True: enable Underline attribute
           - Fase: disable Underline attribute
         """
@@ -158,7 +158,7 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
     def set_size(self, size=None):
         """ Set the size of the label. If size is empty the label will be
         set to the default size.
-        @param size: Allowed values:
+        :param size: Allowed values:
           - xx-small
           - x-small
           - small
@@ -166,7 +166,7 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
           - large
           - x-large
           - xx-large
-        @type size: string
+        :type size: string
         """
         if (size is not None and
             size not in self._size_list):
@@ -179,8 +179,8 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
     def set_text(self, text):
         """ Overrides gtk.Label set_text method. Sets the new text of
         the label but keeps the formating
-        @param text: label
-        @type text: string
+        :param text: label
+        :type text: string
         """
         gtk.Label.set_text(self, text)
         self._apply_attributes()

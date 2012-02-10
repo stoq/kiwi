@@ -66,8 +66,8 @@ class _VariableExtender:
     def extend(self, string, relative=False):
         """
         Expand a variable.
-        @param string: string to replace.
-        @param relative: if True, assume the content of all variables
+        :param string: string to replace.
+        :param relative: if True, assume the content of all variables
             to be relative to the prefix.
         """
         for name, var in [('sysconfdir', self.sysconfdir),
@@ -209,7 +209,7 @@ def get_site_packages_dir(*dirs):
     where files is a list of files to be installed in
     a directory called foo created in your site-packages directory
 
-    @param dirs: directory names to be appended
+    :param dirs: directory names to be appended
     """
     python_version = sys.version_info[:2]
     libdir = get_python_lib(plat_specific=False,
@@ -228,7 +228,7 @@ def listfiles(*dirs):
     >>> listfiles('data', 'glade', '*.glade')
     ['data/glade/Foo.glade', 'data/glade/Bar.glade', ...]
 
-    @param dirs: directory parts
+    :param dirs: directory parts
     """
 
     dir, pattern = os.path.split(os.path.join(*dirs))
@@ -245,9 +245,9 @@ def compile_po_files(domain, dirname='locale'):
     Compiles po files to mo files.
     Note. this function depends on gettext utilities being installed
 
-    @param domain: gettext domain
-    @param dirname: base directory
-    @returns: a list of po files
+    :param domain: gettext domain
+    :param dirname: base directory
+    :returns: a list of po files
     """
     if os.system('msgfmt 2> /dev/null') not in [1, 256]:
         warn('msgfmt is missing, not installing translations')
@@ -277,8 +277,8 @@ def listpackages(root, exclude=None):
     Optionally exclude can be specified which is a string
     like foo/bar.
 
-    @param root: directory
-    @param exclude: optional packages to be skipped
+    :param root: directory
+    :param exclude: optional packages to be skipped
     """
 
     packages = []
@@ -307,9 +307,9 @@ def setup(**kwargs):
     """
     A drop in replacement for distutils.core.setup which
     integrates nicely with kiwi.environ
-    @var resources:
-    @var global_resources:
-    @var templates: List of templates to install
+    :attribute resources:
+    :attribute global_resources:
+    :attribute templates: List of templates to install
     """
     resources = {}
     global_resources = {}

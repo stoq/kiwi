@@ -76,10 +76,10 @@ class PluggableWizard(GladeDelegate):
     def __init__(self, title, first_step, size=None, edit_mode=False):
         """
         Create a new PluggableWizard object.
-        @param title:
-        @param first_step:
-        @param size:
-        @param edit_mode:
+        :param title:
+        :param first_step:
+        :param size:
+        :param edit_mode:
         """
         GladeDelegate.__init__(self, delete_handler=self.quit_if_last,
                                gladefile=self.gladefile)
@@ -217,7 +217,7 @@ class PluggableWizard(GladeDelegate):
     def set_message(self, message):
         """
         Set message for nofitication.
-        @param message:
+        :param message:
         """
         self.notification_lbl.set_text(message)
 

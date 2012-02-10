@@ -161,8 +161,8 @@ class FadeOut(gobject.GObject):
 
     def start(self, color):
         """Schedules a start of the countdown.
-        @param color: initial background color
-        @returns: True if we could start, False if was already in progress
+        :param color: initial background color
+        :returns: True if we could start, False if was already in progress
         """
         if self._background_timeout_id != -1:
             self._log.debug('start: Background change already running')

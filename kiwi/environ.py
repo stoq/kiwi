@@ -193,9 +193,9 @@ class Library(Environment):
         toplevel package. All resources will be relative to the I{root}
         directory.
 
-        @param name: name of the library
-        @param root: root directory
-        @param dirname:
+        :param name: name of the library
+        :param root: root directory
+        :param dirname:
         """
         self.name = name
 
@@ -269,9 +269,9 @@ class Library(Environment):
         """
         Enables translation for a library
 
-        @param domain: optional, if not specified name sent to constructor
+        :param domain: optional, if not specified name sent to constructor
           will be used
-        @param localedir: directory to get locales from when running in
+        :param localedir: directory to get locales from when running in
           uninstalled mode. If not specified a directory called 'locale' in
           the root will be used.
         """
@@ -310,7 +310,7 @@ class Library(Environment):
     def set_application_domain(self, domain):
         """
         Sets the default application domain
-        @param domain: the domain
+        :param domain: the domain
         """
         gettext.textdomain(domain)
         # For libglade, but only on non-win32 systems
@@ -343,7 +343,7 @@ class Library(Environment):
             return str(self.module.revision)
 
 class Application(Library):
-    """Application extends a L{Library}. It's meant to be used
+    """Application extends a :class:`Library`. It's meant to be used
     by applications
 
     Libraries are usually instantiated in __init__.py in the topmost package
@@ -359,7 +359,7 @@ class Application(Library):
 
     >>> app.enable_translation()
 
-    @see: L{Library} for more information on how to integrate it with
+    @see: :class:`Library` for more information on how to integrate it with
       the standard distutils configuration.
     """
 
@@ -390,7 +390,7 @@ class Application(Library):
     def enable_translation(self, domain=None, localedir=None):
         """
         Enables translation for a application
-        See L{Library.enable_translation}.
+        See :class:`Library.enable_translation`.
 
         """
         Library.enable_translation(self, domain, localedir)

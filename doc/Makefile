@@ -46,8 +46,6 @@ howto: howto.tex
 
 api:
 	@echo Creating API documentation
-	@cd .. && pydoctor --project-name="Kiwi" --add-package=kiwi --make-html
-	@mv ../apidocs api
 
 clean:
 	rm -rf api/ howto/ *.log *.aux *.l2h *.dvi *.ps *.bak *~

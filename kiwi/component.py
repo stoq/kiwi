@@ -102,8 +102,8 @@ def provide_utility(iface, utility, replace=False):
     Set the utility for the named interface. If the utility is already
     set, an {AlreadyImplementedError} is raised.
 
-    @param iface: interface to set the utility for.
-    @param utility: utility providing the interface.
+    :param iface: interface to set the utility for.
+    :param utility: utility providing the interface.
     """
     utilities.provide(iface, utility, replace)
 
@@ -113,9 +113,9 @@ def get_utility(iface, default=ValueUnset):
     available (has not been set) a {NotImplementedError} is raised unless
     default is set.
 
-    @param iface: an interface
-    @param default: optional, if set return if a utility is not found
-    @returns: the utility
+    :param iface: an interface
+    :param default: optional, if set return if a utility is not found
+    :returns: the utility
     """
 
     return utilities.get(iface, default)
@@ -126,8 +126,8 @@ def remove_utility(iface):
     If the utility is not available (has not been set)
     {NotImplementedError} is raised.
 
-    @param iface: the interface
-    @returns: the removed utility
+    :param iface: the interface
+    :returns: the removed utility
     """
 
     return utilities.remove(iface)

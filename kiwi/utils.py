@@ -65,7 +65,7 @@ def list_properties(gtype, parent=True):
 
 def type_register(gtype):
     """Register the type, but only if it's not already registered
-    @param gtype: the class to register
+    :param gtype: the class to register
     """
 
     # copied from gobjectmodule.c:_wrap_type_register
@@ -82,9 +82,9 @@ def gsignal(name, *args, **kwargs):
     Add a GObject signal to the current object.
     It current supports the following types:
         - str, int, float, long, object, enum
-    @param name: name of the signal
-    @type name: string
-    @param args: types for signal parameters,
+    :param name: name of the signal
+    :type name: string
+    :param args: types for signal parameters,
         if the first one is a string 'override', the signal will be
         overridden and must therefor exists in the parent GObject.
     @note: flags: A combination of;
@@ -126,8 +126,8 @@ def gsignal(name, *args, **kwargs):
 def quote(msg):
     """
     Similar to urllib.quote but for glibs GMarkup
-    @param msg: string to quote
-    @returns: quoted string
+    :param msg: string to quote
+    :returns: quoted string
     """
     msg = msg.replace('&', '&amp;')
     msg = msg.replace('<', '&lt;')

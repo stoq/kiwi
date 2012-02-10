@@ -66,8 +66,8 @@ class HyperLink(gtk.EventBox):
         """
         Create a new hyperlink.
 
-        @param text: The text of the hyperlink.
-        @type text: str
+        :param text: The text of the hyperlink.
+        :type text: str
         """
         gtk.EventBox.__init__(self)
         self.set_above_child(False)
@@ -104,8 +104,8 @@ class HyperLink(gtk.EventBox):
         """
         Set the text of the hyperlink.
 
-        @param text: The text to set the hyperlink to.
-        @type text: str
+        :param text: The text to set the hyperlink to.
+        :type text: str
         """
         self.text = text
         self._update_look()
@@ -114,8 +114,8 @@ class HyperLink(gtk.EventBox):
         """
         Set the menu to be used for popups.
 
-        @param menu: the gtk.Menu to be used.
-        @type menu: gtk.Menu
+        :param menu: the gtk.Menu to be used.
+        :type menu: gtk.Menu
         """
         self._menu = menu
 
@@ -123,7 +123,7 @@ class HyperLink(gtk.EventBox):
         """
         Return whether the widget has a menu set.
 
-        @return: a boolean value indicating whether the internal menu has been
+        :return: a boolean value indicating whether the internal menu has been
             set.
         """
         return self._menu is not None
@@ -132,15 +132,15 @@ class HyperLink(gtk.EventBox):
         """
         Popup the menu and emit the popup signal.
 
-        @param menu: The gtk.Menu to be popped up. This menu will be
+        :param menu: The gtk.Menu to be popped up. This menu will be
             used instead of the internally set menu. If this parameter is not
             passed or None, the internal menu will be used.
-        @type menu: gtk.Menu
-        @param button: An integer representing the button number pressed to
+        :type menu: gtk.Menu
+        :param button: An integer representing the button number pressed to
             cause the popup action.
-        @type button: int
-        @param etime: The time that the popup event was initiated.
-        @type etime: long
+        :type button: int
+        :param etime: The time that the popup event was initiated.
+        :type etime: long
         """
         if menu is None:
             menu = self._menu
@@ -228,8 +228,8 @@ class HyperLink(gtk.EventBox):
         """
         Called when the mouse pinter enters or leaves the widget.
 
-        @param hover: Whether the mouse has entered the widget.
-        @type hover: boolean
+        :param hover: Whether the mouse has entered the widget.
+        :type hover: boolean
         """
         self._is_hover = hover
         self._update_look()

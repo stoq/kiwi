@@ -201,7 +201,7 @@ class _DateEntryPopup(gtk.Window):
     def popup(self, date):
         """
         Shows the list of options. And optionally selects an item
-        @param date: date to select
+        :param date: date to select
         """
         combo = self._dateentry
         if not (combo.flags() & gtk.REALIZED):
@@ -248,16 +248,16 @@ class _DateEntryPopup(gtk.Window):
 
     def get_date(self):
         """Gets the date of the date entry
-        @returns: date of the entry
-        @rtype date: datetime.date
+        :returns: date of the entry
+        :rtype date: datetime.date
         """
         y, m, d = self.calendar.get_date()
         return datetime.date(y, m + 1, d)
 
     def set_date(self, date):
         """Sets the date of the date entry
-        @param date: date to set
-        @type date: datetime.date
+        :param date: date to set
+        :type date: datetime.date
         """
         self.calendar.select_month(date.month - 1, date.year)
         self.calendar.select_day(date.day)
@@ -376,8 +376,8 @@ class DateEntry(gtk.HBox):
 
     def set_date(self, date):
         """Sets the date.
-        @param date: date to set
-        @type date: a datetime.date instance or None
+        :param date: date to set
+        :type date: a datetime.date instance or None
         """
         if not isinstance(date, datetime.date) and date is not None:
             raise TypeError(
@@ -392,8 +392,8 @@ class DateEntry(gtk.HBox):
 
     def get_date(self):
         """Get the selected date
-        @returns: the date.
-        @rtype: datetime.date or None
+        :returns: the date.
+        :rtype: datetime.date or None
         """
         try:
             date = self.entry.read()

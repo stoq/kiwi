@@ -127,7 +127,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     def set_mask_for_data_type(self, data_type):
         """
         Set a mask for the parameter data_type.
-        @param data_type:
+        :param data_type:
         """
         conv = converter.get_converter(data_type)
         mask = conv.get_mask()
@@ -140,10 +140,10 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         If values are provided, each string will have an additional
         data type.
 
-        @param strings:
-        @type  strings: list of strings
-        @param values:
-        @type  values: list of values
+        :param strings:
+        :type  strings: list of strings
+        :param values:
+        :type  values: list of values
         """
 
         completion = self._get_entry_completion()
@@ -162,7 +162,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         """
         Sets the text of the entry
 
-        @param text:
+        :param text:
         """
 
         self._has_been_updated = True

@@ -385,7 +385,7 @@ class SlaveView(gobject.GObject):
         argument is supplied and is a valid view, this view is set as a
         transient for the parent view
 
-        @param parent:
+        :param parent:
         """
 
         self.show()

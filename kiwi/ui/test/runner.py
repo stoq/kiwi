@@ -81,7 +81,7 @@ class _SpoofOut(StringIO):
 class Runner(object):
     """
     Create a new Runner object.
-    @ivar parser:
+    :ivar parser:
     """
     def __init__(self, filename):
         self.parser = doctest.DocTestParser()
@@ -212,7 +212,7 @@ class Runner(object):
     def waitopen(self, window_name):
         """
         Wait to open an window.
-        @param window_name:
+        :param window_name:
         """
         if not window_name in self._windows:
             raise NotReadyYet(window_name)
@@ -221,7 +221,7 @@ class Runner(object):
     def waitclose(self, window_name):
         """
         Wait to close an window.
-        @param window_name:
+        :param window_name:
         """
         if window_name in self._windows:
             raise NotReadyYet(window_name)
@@ -231,9 +231,9 @@ runner = None
 def play_file(script, filename=None, args=None):
     """
     Run an script.
-    @param script:
-    @param filename:
-    @param args:
+    :param script:
+    :param filename:
+    :param args:
     """
 
     global runner

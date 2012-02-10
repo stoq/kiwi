@@ -76,7 +76,7 @@ class DesktopParser(ConfigParser):
         values in lists. Typically ';' or ',' are used
         as separators. The default list separator is ';'.
 
-        @param separator: the separator
+        :param separator: the separator
         """
         self._list_separator = separator
 
@@ -84,10 +84,10 @@ class DesktopParser(ConfigParser):
         """
         Set locale.
 
-        @param section: section name
-        @param option: an option
-        @param locale: a locale
-        @param value: value to set
+        :param section: section name
+        :param option: an option
+        :param locale: a locale
+        :param value: value to set
         """
         self.set(section, _localize(option, locale), value)
 
@@ -95,9 +95,9 @@ class DesktopParser(ConfigParser):
         """
         Get locale.
 
-        @param section: section name
-        @param option: an option
-        @param locale: a locale
+        :param section: section name
+        :param option: an option
+        :param locale: a locale
         """
         return self.get(section, _localize(option, locale))
 
@@ -105,8 +105,8 @@ class DesktopParser(ConfigParser):
         """
         Get a list as string.
 
-        @param section: section name
-        @param option: an option
+        :param section: section name
+        :param option: an option
         """
         return self.get(section, option).split(self._list_separator)
 
@@ -114,9 +114,9 @@ class DesktopParser(ConfigParser):
         """
         Set a list of string values.
 
-        @param section: section name
-        @param option: an option
-        @param values: list of string values
+        :param section: section name
+        :param option: an option
+        :param values: list of string values
         """
         value = self._list_separator.join(values)
         self.set(section, option, value)
@@ -125,8 +125,8 @@ class DesktopParser(ConfigParser):
         """
         Get a list of integers as string.
 
-        @param section: section name
-        @param option: an option
+        :param section: section name
+        :param option: an option
         """
         return map(int, self.get_string_list(section, option))
 
@@ -134,9 +134,9 @@ class DesktopParser(ConfigParser):
         """
         Set a list with integer values.
 
-        @param section: section name
-        @param option: an option
-        @param values: list of integer values
+        :param section: section name
+        :param option: an option
+        :param values: list of integer values
         """
         self.set_string_list(section, option, map(str, values))
 
@@ -144,8 +144,8 @@ class DesktopParser(ConfigParser):
         """
         Get a boolean list.
 
-        @param section: section name
-        @param option: an option
+        :param section: section name
+        :param option: an option
         """
         return map(_tobool, self.get_string_list(section, option))
 
@@ -153,9 +153,9 @@ class DesktopParser(ConfigParser):
         """
         Set an list wiht boolena values.
 
-        @param section: section name
-        @param option: an option
-        @param values: list of boolean values
+        :param section: section name
+        :param option: an option
+        :param values: list of boolean values
         """
         self.set_string_list(section, option, map(_frombool, values))
 
@@ -163,10 +163,10 @@ class DesktopParser(ConfigParser):
         """
         Set string list with locale values.
 
-        @param section: section name
-        @param option: an option
-        @param locale: a locale
-        @param values: list of string values
+        :param section: section name
+        :param option: an option
+        :param locale: a locale
+        :param values: list of string values
         """
         self.set_string_list(section, _localize(option, locale), values)
 
@@ -174,8 +174,8 @@ class DesktopParser(ConfigParser):
         """
         Get list locale as an string.
 
-        @param section: section name
-        @param option: an option
-        @param locale: a locale
+        :param section: section name
+        :param option: an option
+        :param locale: a locale
         """
         return self.get_string_list(section, _localize(option, locale))

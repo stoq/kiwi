@@ -31,8 +31,8 @@ class QueryState(object):
     def __init__(self, search_filter):
         """
         Create a new QueryState object.
-        @param search_filter: search filter this query state is associated with
-        @type search_filter: L{SearchFilter}
+        :param search_filter: search filter this query state is associated with
+        :type search_filter: :class:`SearchFilter`
         """
         self.filter = search_filter
 
@@ -40,7 +40,7 @@ class QueryState(object):
 class NumberQueryState(QueryState):
     """
     Create a new NumberQueryState object.
-    @cvar value: number
+    :cvar value: number
     """
     def __init__(self, filter, value):
         QueryState.__init__(self, filter)
@@ -53,8 +53,8 @@ class NumberQueryState(QueryState):
 class NumberIntervalQueryState(QueryState):
     """
     Create a new NumberIntervalQueryState object.
-    @cvar start: number
-    @cvar end: number
+    :cvar start: number
+    :cvar end: number
     """
     def __init__(self, filter, start, end):
         QueryState.__init__(self, filter)
@@ -68,7 +68,7 @@ class NumberIntervalQueryState(QueryState):
 class StringQueryState(QueryState):
     """
     Create a new StringQueryState object.
-    @cvar text: string
+    :cvar text: string
     """
     (CONTAINS,
      NOT_CONTAINS) = range(2)
@@ -85,7 +85,7 @@ class StringQueryState(QueryState):
 class DateQueryState(QueryState):
     """
     Create a new DateQueryState object.
-    @cvar date: date
+    :cvar date: date
     """
     def __init__(self, filter, date):
         QueryState.__init__(self, filter)
@@ -98,8 +98,8 @@ class DateQueryState(QueryState):
 class DateIntervalQueryState(QueryState):
     """
     Create a new DateIntervalQueryState object.
-    @cvar start: start of interval
-    @cvar end: end of interval
+    :cvar start: start of interval
+    :cvar end: end of interval
     """
     def __init__(self, filter, start, end):
         QueryState.__init__(self, filter)
@@ -117,7 +117,7 @@ class QueryExecuter(object):
     objects from search filters and construct a query.
     How the query is constructed is ORM/DB-layer dependent.
 
-    @cvar default_search_limit: The default search limit.
+    :cvar default_search_limit: The default search limit.
     """
     default_search_limit = 1000
 
@@ -144,16 +144,16 @@ class QueryExecuter(object):
     def search(self, states):
         """
         Execute a search.
-        @param states:
-        @type states: list of L{QueryStates}
-        @returns: list of objects matching query
+        :param states:
+        :type states: list of :class:`QueryStates`
+        :returns: list of objects matching query
         """
         raise NotImplementedError
 
     def set_limit(self, limit):
         """
         Set the maximum number of result items to return in a search query.
-        @param limit:
+        :param limit:
         """
         self._limit = limit
 

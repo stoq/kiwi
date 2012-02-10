@@ -27,7 +27,7 @@ User interface event recorder and serializer.
 This module provides an interface for creating, listening to
 and saving events.
 It uses the gobject introspection base class
-L{kiwi.ui.test.common.WidgetIntrospecter} to gather widgets, windows and
+:class:`kiwi.ui.test.common.WidgetIntrospecter` to gather widgets, windows and
 other objects.
 
 The user interfaces are saved in a format so they can easily be played
@@ -63,7 +63,7 @@ def register_event_type(event_type):
     """
     Add an event type to a list of event types.
 
-    @param event_type: a L{Event} subclass
+    :param event_type: a :class:`Event` subclass
     """
     if event_type in _events:
         raise AssertionError("event %s already registered" % event_type)
@@ -72,7 +72,7 @@ def register_event_type(event_type):
 def get_event_types():
     """
     Returns the collection of event types.
-    @returns: the event types.
+    :returns: the event types.
     """
     return _events
 
@@ -83,15 +83,15 @@ class Event(object):
     """
     Event is a base class for all events.
     An event represent a user change of an interactive widget.
-    @cvar object_type: subclass for type, L{Recorder} uses this to
+    :cvar object_type: subclass for type, :class:`Recorder` uses this to
       automatically attach events to objects when they appear
     """
     object_type = None
     def __init__(self, object, name=None):
         """
         Create a new Event object.
-        @param object: a gobject subclass
-        @param name: name of the object, if None, the
+        :param object: a gobject subclass
+        :param name: name of the object, if None, the
           method get_name() will be called
         """
         self.object = object
@@ -120,26 +120,26 @@ class Event(object):
         >>> def serialize(self):
         >>> ... return '%s.clicked' % self.name
 
-        @returns: string to reproduce event
+        :returns: string to reproduce event
         Override this in a subclass.
         """
         pass
 
 class SignalEvent(Event):
     """
-    A SignalEvent is an L{Event} which is tied to a GObject signal,
-    L{Recorder} uses this to automatically attach itself to a signal
+    A SignalEvent is an :class:`Event` which is tied to a GObject signal,
+    :class:`Recorder` uses this to automatically attach itself to a signal
     at which point this object will be instantiated.
 
-    @cvar signal_name: signal to listen to
+    :cvar signal_name: signal to listen to
     """
     signal_name = None
     def __init__(self, object, name, args):
         """
         Create a new SignalEvent object.
-        @param object:
-        @param name:
-        @param args:
+        :param object:
+        :param name:
+        :param args:
         """
         Event.__init__(self, object, name)
         self.args = args
@@ -148,9 +148,9 @@ class SignalEvent(Event):
         """
         Calls connect on I{object} for signal I{signal_name}.
 
-        @param object: object to connect on
-        @param signal_name: signal name to listen to
-        @param cb: callback
+        :param object: object to connect on
+        :param signal_name: signal name to listen to
+        :param cb: callback
         """
         object.connect(signal_name, cb, cls, object)
     connect = classmethod(connect)
@@ -209,7 +209,7 @@ register_event_type(ImageMenuItemButtonReleaseEvent)
 class ToolButtonReleaseEvent(SignalEvent):
     """
     This event represents a click on a normal toolbar button
-    Hackish, see L{ImageMenuItemButtonReleaseEvent} for more details.
+    Hackish, see :class:`ImageMenuItemButtonReleaseEvent` for more details.
     """
     signal_name = 'button-release-event'
     object_type = gtk.Button
@@ -266,7 +266,7 @@ register_event_type(ButtonClickedEvent)
 class ObjectListSelectionChanged(SignalEvent):
     """
     This event represents a selection change on a
-    L{kiwi.ui.objectlist.ObjectList},
+    :class:`kiwi.ui.objectlist.ObjectList`,
     eg when the user selects or unselects a row.
     It is actually tied to the signal changed on GtkTreeSelection object.
     """
@@ -336,8 +336,8 @@ register_event_type(ObjectListDoubleClick)
 # class KiwiComboBoxChangedEvent(SignalEvent):
 #     """
 #     This event represents a a selection of an item
-#     in a L{kiwi.ui.widgets.combobox.ComboBoxEntry} or
-#     L{kiwi.ui.widgets.combobox.ComboBox}.
+#     in a :class:`kiwi.ui.widgets.combobox.ComboBoxEntry` or
+#     :class:`kiwi.ui.widgets.combobox.ComboBox`.
 #     """
 #     signal_name = 'changed'
 #     object_type = ComboMixin
@@ -356,13 +356,13 @@ class Recorder(WidgetIntrospecter):
     and creates the events when the user is interacting with some widgets.
     When the tracked program is closed the events are serialized into
     a script which can be played back with help of
-    L{kiwi.ui.test.player.Player}.
+    :class:`kiwi.ui.test.player.Player`.
     """
 
     def __init__(self, filename):
         """
         Create a new Recorder object.
-        @param filename: name of the script
+        :param filename: name of the script
         """
         WidgetIntrospecter.__init__(self)
         self.register_event_handler()

@@ -61,7 +61,7 @@ def str2bool(value, from_string=converter.from_string):
 
 class Column(gobject.GObject):
     """
-    Specifies a column for an L{ObjectList}, see the ObjectList documentation
+    Specifies a column for an :class:`ObjectList`, see the ObjectList documentation
     for a simple example.
 
     Properties
@@ -73,7 +73,7 @@ class Column(gobject.GObject):
         - the type of the attribute that will be inserted into the column.
           Supported data types: bool, int, float, str, unicode,
           decimal.Decimal, datetime.date, datetime.time, datetime.datetime,
-          gtk.gdk.Pixbuf, L{kiwi.currency.currency}, L{kiwi.python.enum}.
+          gtk.gdk.Pixbuf, :class:`kiwi.currency.currency`, L{kiwi.python.enum}.
       - B{visible}: bool I{True}
         - specifying if it is initially hidden or shown.
       - B{justify}: gtk.Justification I{None}
@@ -201,11 +201,11 @@ class Column(gobject.GObject):
         Creates a new Column, which describes how a column in a
         ObjectList should be rendered.
 
-        @param attribute: a string with the name of the instance attribute the
+        :param attribute: a string with the name of the instance attribute the
             column represents.
-        @param title: the title of the column, defaulting to the capitalized
+        :param title: the title of the column, defaulting to the capitalized
             form of the attribute.
-        @param data_type: the type of the attribute that will be inserted
+        :param data_type: the type of the attribute that will be inserted
             into the column.
 
         @note: title_pixmap: (TODO) if set to a filename a pixmap will be
@@ -611,8 +611,8 @@ class Column(gobject.GObject):
         """
         Formats the column as a string that should be renderd into the cell.
 
-        @param data: The column value that will be converted to string.
-        @param obj: Necessary only when format_func_data is set. This will make
+        :param data: The column value that will be converted to string.
+        :param obj: Necessary only when format_func_data is set. This will make
                     format_func receive I{obj} instead of I{data}
         """
         data_type = self.data_type
@@ -642,9 +642,9 @@ class Column(gobject.GObject):
         """Set the number of precision digits to be shown in the
         spinbutton.
 
-        @param digits: the number of precision digits to be set in
+        :param digits: the number of precision digits to be set in
         spinbutton
-        @type digits: int
+        :type digits: int
         """
         if not self.spin_adjustment:
             raise TypeError("You can not set spinbutton precision "
@@ -693,16 +693,16 @@ class SequentialColumn(Column):
 class SearchColumn(Column):
     """
     I am a column that should be used in conjunction with
-    L{kiwi.ui.search.SearchSlaveDelegate}
+    :class:`kiwi.ui.search.SearchSlaveDelegate`
 
-    @param long_title: The title to display in the combo for this field.
+    :param long_title: The title to display in the combo for this field.
                        This is usefull if you need to display a small
                        description on the column header, but still want a full
                        description on the advanced search.
-    @param valid_values: This should be a list of touples (display value, db
+    :param valid_values: This should be a list of touples (display value, db
                          value). If provided, then a combo with only this
                          values will be shown, instead of a free text entry.
-    @param search_attribute: Use this if the name of the db column that should
+    :param search_attribute: Use this if the name of the db column that should
                              be searched is different than the attribute of
                              the model.
     """
@@ -870,7 +870,7 @@ class ObjectList(gtk.HBox):
 
     Items in an ObjectList is stored in objects. Each row represents an object
     and each column represents an attribute in the object.
-    The column description object must be a subclass of L{Column}.
+    The column description object must be a subclass of :class:`Column`.
     Simple example
 
     >>> class Fruit:
@@ -953,11 +953,11 @@ class ObjectList(gtk.HBox):
                  model=None):
         """
         Create a new ObjectList object.
-        @param columns:       a list of L{Column}s
-        @param objects:       a list of objects to be inserted or None
-        @param mode:          selection mode
-        @param sortable:      whether the user can sort the list
-        @param model:         gtk.TreeModel to use or None to create one
+        :param columns:       a list of :class:`Column`s
+        :param objects:       a list of objects to be inserted or None
+        :param mode:          selection mode
+        :param sortable:      whether the user can sort the list
+        :param model:         gtk.TreeModel to use or None to create one
         """
         if columns is None:
             columns = []
@@ -1118,7 +1118,7 @@ class ObjectList(gtk.HBox):
         """
         Extend list by appending elements from the iterable
 
-        @param iterable:
+        :param iterable:
         """
 
         return self.add_list(iterable, clear=False)
@@ -1127,9 +1127,9 @@ class ObjectList(gtk.HBox):
         """
         Return first index of value
 
-        @param item:
-        @param start:
-        @param stop
+        :param item:
+        :param start:
+        :param stop
         """
 
         if start is not None or stop is not None:
@@ -1152,9 +1152,9 @@ class ObjectList(gtk.HBox):
 
     def insert(self, index, instance, select=False):
         """Inserts an instance to the list
-        @param index: position to insert the instance at
-        @param instance: the instance to be added (according to the columns spec)
-        @param select: whether or not the new item should appear selected.
+        :param index: position to insert the instance at
+        :param instance: the instance to be added (according to the columns spec)
+        :param select: whether or not the new item should appear selected.
         """
         self._treeview.freeze_notify()
 
@@ -1171,7 +1171,7 @@ class ObjectList(gtk.HBox):
     def pop(self, index):
         """
         Remove and return item at index (default last)
-        @param index:
+        :param index:
         """
         raise NotImplementedError
 
@@ -1188,10 +1188,10 @@ class ObjectList(gtk.HBox):
         """
         Sort by an attribute in the object model.
 
-        @param attribute: attribute to sort on
-        @type attribute: string
-        @param order: one of gtk.SORT_ASCENDING, gtk.SORT_DESCENDING
-        @type order: gtk.SortType
+        :param attribute: attribute to sort on
+        :type attribute: string
+        :param order: one of gtk.SORT_ASCENDING, gtk.SORT_DESCENDING
+        :type order: gtk.SortType
         """
         def _sort_func(model, iter1, iter2):
             return cmp(
@@ -1203,8 +1203,8 @@ class ObjectList(gtk.HBox):
 
     def set_context_menu(self, menu):
         """Sets a context-menu (eg, when you right click) for the list.
-        @param menu: context menu
-        @type menu: ContextMenu
+        :param menu: context menu
+        :type menu: ContextMenu
         """
 
         if not isinstance(menu, ContextMenu):
@@ -1584,7 +1584,7 @@ class ObjectList(gtk.HBox):
     def get_treeview_column(self, column):
         """
         Get the treeview column given an objectlist column
-        @param column: a @Column
+        :param column: a @Column
         """
         if not isinstance(column, Column):
             raise TypeError
@@ -1598,10 +1598,10 @@ class ObjectList(gtk.HBox):
         """Set the number of precision digits used by the spinbutton in
         a column.
 
-        @param column_name: the column name which has the spinbutton
-        @type column_name: str
-        @param digits: a number specifying the precision digits
-        @type digits: int
+        :param column_name: the column name which has the spinbutton
+        :type column_name: str
+        :param digits: a number specifying the precision digits
+        :type digits: int
         """
         column = self.get_column_by_name(column_name)
         column.set_spinbutton_precision_digits(digits)
@@ -1630,7 +1630,7 @@ class ObjectList(gtk.HBox):
     def set_columns(self, columns):
         """
         Set columns.
-        @param columns: a sequence of L{Column} objects.
+        :param columns: a sequence of :class:`Column` objects.
         """
 
         if not isinstance(columns, (list, tuple)):
@@ -1642,8 +1642,8 @@ class ObjectList(gtk.HBox):
 
     def append(self, instance, select=False):
         """Adds an instance to the list.
-        @param instance: the instance to be added (according to the columns spec)
-        @param select: whether or not the new item should appear selected.
+        :param instance: the instance to be added (according to the columns spec)
+        :param select: whether or not the new item should appear selected.
         """
 
         # Freeze and save original selection mode to avoid blinking
@@ -1675,8 +1675,8 @@ class ObjectList(gtk.HBox):
         If the instance is not in the list it returns False. Otherwise it
         returns True.
 
-        @param instance:
-        @param select: if true, the previous item will be selected
+        :param instance:
+        :param select: if true, the previous item will be selected
           if there is one.
         """
 
@@ -1705,7 +1705,7 @@ class ObjectList(gtk.HBox):
         """
         Reloads the values from all objects.
 
-        @param view_only: if True, only force a refresh of the
+        :param view_only: if True, only force a refresh of the
             visible part of this objectlist's Treeview.
         """
         self.clear_message()
@@ -1738,7 +1738,7 @@ class ObjectList(gtk.HBox):
         """
         Selects a number of rows corresponding to paths
 
-        @param paths: rows to be selected
+        :param paths: rows to be selected
         """
 
         selection = self._treeview.get_selection()
@@ -1826,8 +1826,8 @@ class ObjectList(gtk.HBox):
         Allows a list to be loaded, by default clearing it first.
         freeze() and thaw() are called internally to avoid flashing.
 
-        @param instances: a list to be added
-        @param clear: a boolean that specifies whether or not to
+        :param instances: a list to be added
+        :param clear: a boolean that specifies whether or not to
           clear the list
         """
 
@@ -1851,7 +1851,7 @@ class ObjectList(gtk.HBox):
         Note that the instance must be inserted before this can be called
         If there are no instances after,  the first item will be returned.
 
-        @param instance: the instance
+        :param instance: the instance
         """
 
         objid = instance
@@ -1874,7 +1874,7 @@ class ObjectList(gtk.HBox):
         Note that the instance must be inserted before this can be called
         If there are no instances before,  the last item will be returned.
 
-        @param instance: the instance
+        :param instance: the instance
         """
 
         objid = instance
@@ -1908,7 +1908,7 @@ class ObjectList(gtk.HBox):
         """
         Same as double clicking on the row rowno
 
-        @param rowno: integer
+        :param rowno: integer
         """
         columns = self._treeview.get_columns()
         if not columns:
@@ -1920,7 +1920,7 @@ class ObjectList(gtk.HBox):
     def set_headers_visible(self, value):
         """
         Show or hide the headers.
-        @param value: if true, shows the headers, if false hide then
+        :param value: if true, shows the headers, if false hide then
         """
         self._treeview.set_headers_visible(value)
 
@@ -1929,7 +1929,7 @@ class ObjectList(gtk.HBox):
         Sets the number of visible rows of the treeview. This is useful to use
         instead of set_size_request() directly, since you can avoid using raw
         pixel sizes.
-        @param rows: number of rows to show
+        :param rows: number of rows to show
         """
 
         treeview = self._treeview
@@ -1965,7 +1965,7 @@ class ObjectList(gtk.HBox):
 
     def set_message(self, markup):
         """Adds a message on top of the treeview rows
-        @markup: PangoMarkup with the text to add
+        :param markup: PangoMarkup with the text to add
         """
 
         if self._message_label is None:
@@ -2094,20 +2094,20 @@ class ObjectTree(ObjectList):
     def append(self, parent, instance, select=False):
         """
         Append the selected row in an instance.
-        @param parent: Object or None, representing the parent
-        @param instance: the instance to be added
-        @param select: select the row
-        @returns: the appended object
+        :param parent: Object or None, representing the parent
+        :param instance: the instance to be added
+        :param select: select the row
+        :returns: the appended object
         """
         return self._append_internal(parent, instance, select, prepend=False)
 
     def prepend(self, parent, instance, select=False):
         """
         Prepend the selected row in an instance.
-        @param parent: Object or None, representing the parent
-        @param instance: the instance to be added
-        @param select: select the row
-        @returns: the prepended object
+        :param parent: Object or None, representing the parent
+        :param instance: the instance to be added
+        :param select: select the row
+        :returns: the prepended object
         """
         return self._append_internal(parent, instance, select, prepend=True)
 
@@ -2115,8 +2115,8 @@ class ObjectTree(ObjectList):
         """
         This method opens the row specified by path so its children
         are visible.
-        @param instance: an instance to expand at
-        @param open_all: If True, expand all rows, otherwise just the
+        :param instance: an instance to expand at
+        :param open_all: If True, expand all rows, otherwise just the
         immediate children
         """
         objid = instance
@@ -2131,7 +2131,7 @@ class ObjectTree(ObjectList):
         """
         This method collapses the row specified by path
         (hides its child rows, if they exist).
-        @param instance: an instance to collapse
+        :param instance: an instance to collapse
         """
         objid = instance
         if not objid in self._iters:
@@ -2145,7 +2145,7 @@ class ObjectTree(ObjectList):
         """
         This method returns the parent of the specified instance
         are visible.
-        @returns: the parent of the instance or None
+        :returns: the parent of the instance or None
         """
         if instance is None:
             return None
@@ -2163,7 +2163,7 @@ class ObjectTree(ObjectList):
         """
         This method returns the root object of a certain instance. If
         the instance is the root, then returns the given instance.
-        @param instance: an instance which we want the root object
+        :param instance: an instance which we want the root object
         """
         # Short-cut for simplified logic for callsites
         if instance is None:
@@ -2184,8 +2184,8 @@ class ObjectTree(ObjectList):
         """
         This method returns the descendants objects of a certain instance.
         If the given instance is a leaf, then return an empty sequence.
-        @param root_instance: an instance which we want the descendants
-        @returns: a sequence of descendants objects
+        :param root_instance: an instance which we want the descendants
+        :returns: a sequence of descendants objects
         """
         objid = root_instance
         if not objid in self._iters:
@@ -2222,14 +2222,14 @@ class ListLabel(gtk.HBox):
                  font_desc=None):
         """
         Constructor.
-        @param klist:        list to follow
-        @type klist:         kiwi.ui.objectlist.ObjectList
-        @param column:       name of a column in a klist
-        @type column:        string
-        @param label:        label
-        @type label:         string
-        @param value_format: format string used to format value
-        @type value_format:  string
+        :param klist:        list to follow
+        :type klist:         kiwi.ui.objectlist.ObjectList
+        :param column:       name of a column in a klist
+        :type column:        string
+        :param label:        label
+        :type label:         string
+        :param value_format: format string used to format value
+        :type value_format:  string
         """
         self._label = label
         self._label_width = -1

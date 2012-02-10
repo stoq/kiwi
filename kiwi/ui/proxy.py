@@ -73,11 +73,11 @@ class Proxy:
     def __init__(self, view, model=None, widgets=()):
         """
         Create a new Proxy object.
-        @param view:    view attched to the slave
-        @type  view:    a L{kiwi.ui.views.BaseView} subclass
-        @param model:   model attached to proxy
-        @param widgets: the widget names
-        @type  widgets: list of strings
+        :param view:    view attched to the slave
+        :type  view:    a :class:`kiwi.ui.views.BaseView` subclass
+        :param model:   model attached to proxy
+        :param widgets: the widget names
+        :type  widgets: list of strings
         """
         self._view = view
         self._model = model
@@ -239,18 +239,18 @@ class Proxy:
         model. Implement it in the inherited class to perform actions that
         should be done each time the user changes something in the interface.
         This hook by default does nothing.
-        @param widget:
-        @param attribute:
-        @param value:
+        :param widget:
+        :param attribute:
+        :param value:
         """
 
     def update_many(self, attributes, value=ValueUnset, block=False):
         """
-        Like L{update} but takes a sequence of attributes
+        Like :class:`update` but takes a sequence of attributes
 
-        @param attributes: sequence of attributes to update
-        @param value: see L{update}
-        @param block: see L{update}
+        :param attributes: sequence of attributes to update
+        :param value: see :class:`update`
+        :param block: see :class:`update`
         """
 
         for attribute in attributes:
@@ -260,13 +260,13 @@ class Proxy:
         """ Generic frontend function to update the contentss of a widget based
         on its model attribute name using the internal update functions.
 
-        @param attribute: the name of the attribute whose widget we wish to
+        :param attribute: the name of the attribute whose widget we wish to
           updated.  If accessing a radiobutton, specify its group
           name.
-        @param value: specifies the value to set in the widget. If
+        :param value: specifies the value to set in the widget. If
           unspecified, it defaults to the current model's value
           (through an accessor, if it exists, or getattr).
-        @param block: defines if we are to block cascading proxy updates
+        :param block: defines if we are to block cascading proxy updates
           triggered by this update. You should use block if you are
           calling update on *the same attribute that is currently
           being updated*.
@@ -331,8 +331,8 @@ class Proxy:
         Allows a proxy interface to change model without the need to destroy
         and recreate the UI (which would cause flashing, at least)
 
-        @param model:
-        @param relax_type:
+        :param model:
+        :param relax_type:
         """
         if self._model is not None and model is not None:
             if (not relax_type and
@@ -359,8 +359,8 @@ class Proxy:
         """
         Adds a new widget to the proxy
 
-        @param name: name of the widget
-        @param widget: widget, must be a gtk.Widget subclass
+        :param name: name of the widget
+        :param widget: widget, must be a gtk.Widget subclass
         """
         if name in self._model_attributes:
             raise TypeError("there is already a widget called %s" % name)
@@ -374,7 +374,7 @@ class Proxy:
         """
         Removes a widget from the proxy
 
-        @param name: the name of the widget to remove
+        :param name: the name of the widget to remove
         """
         if not name in self._model_attributes:
             raise TypeError("there is no widget called %s" % name)

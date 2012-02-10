@@ -77,7 +77,7 @@ class ProxyWidgetMixin(object):
     Usually the Proxy class need to set and get data from the widgets. It also
     need a validation framework.
 
-    @cvar allowed_data_types: A list of types which we are allowed to use
+    :cvar allowed_data_types: A list of types which we are allowed to use
       in this class.
     """
 
@@ -105,7 +105,7 @@ class ProxyWidgetMixin(object):
     def set_data_type(self, data_type):
         """Set the data type for the widget
 
-        @param data_type: can be None, a type object or a string with the
+        :param data_type: can be None, a type object or a string with the
                           name of the type object, so None, "<type 'str'>"
                           or 'str'
         """
@@ -132,7 +132,7 @@ class ProxyWidgetMixin(object):
         that the converter.as_string method should be able to handle such
         parameters.
 
-        @param datatype: the datatype.
+        :param datatype: the datatype.
         """
         if not options:
             raise ValueError
@@ -142,15 +142,15 @@ class ProxyWidgetMixin(object):
     def read(self):
         """Get the content of the widget.
         The type of the return value
-        @returns: None if the user input a invalid value
-        @rtype: Must matche the data-type property.
+        :returns: None if the user input a invalid value
+        :rtype: Must matche the data-type property.
         """
         raise NotImplementedError
 
     def update(self, value):
         """
         Update the content value of the widget.
-        @param value:
+        :param value:
         """
         raise NotImplementedError
 
@@ -158,7 +158,7 @@ class ProxyWidgetMixin(object):
 
     def _as_string(self, data):
         """Convert a value to a string
-        @param data: data to convert
+        :param data: data to convert
         """
         conv = self._converter
         if conv is None:
@@ -169,9 +169,9 @@ class ProxyWidgetMixin(object):
 
     def _from_string(self, data):
         """Convert a string to the data type of the widget
-        This may raise a L{kiwi.datatypes.ValidationError} if conversion
+        This may raise a :class:`kiwi.datatypes.ValidationError` if conversion
         failed
-        @param data: data to convert
+        :param data: data to convert
         """
         conv = self._converter
         if conv is None:
@@ -223,7 +223,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     def is_valid(self):
         """
         Verify the widget state.
-        @returns: True if the widget is in validated state
+        :returns: True if the widget is in validated state
         """
         return self._valid
 
@@ -231,8 +231,8 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         """Checks if the data is valid.
         Validates data-type and custom validation.
 
-        @param force: if True, force validation
-        @returns:     validated data or ValueUnset if it failed
+        :param force: if True, force validation
+        :returns:     validated data or ValueUnset if it failed
         """
 
         # If we're not visible or sensitive return a blank value, except
@@ -284,8 +284,8 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
     def set_invalid(self, text=None, fade=True):
         """Changes the validation state to invalid.
-        @param text: text of tooltip of None
-        @param fade: if we should fade the background
+        :param text: text of tooltip of None
+        :param fade: if we should fade the background
         """
         log.debug('Setting state for %s to INVALID' % self.model_attribute)
 

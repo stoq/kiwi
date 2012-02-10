@@ -163,9 +163,9 @@ class _EasyComboBoxHelper(object):
 
     def insert_item(self, position, label, data=None):
         """ Inserts a single item at a position to the Combo.
-        @param position: position to insert the item at
-        @param label: a string with the text to be added
-        @param data: the data to be associated with that item
+        :param position: position to insert the item at
+        :param label: a string with the text to be added
+        :param data: the data to be associated with that item
         """
         if not isinstance(label, basestring):
             raise TypeError("label must be string, found %s" % (label,))
@@ -361,7 +361,7 @@ class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
 
     def prefill(self, itemdata, sort=False):
         """
-        See L{kiwi.interfaces.IEasyCombo.prefill}
+        See :class:`kiwi.interfaces.IEasyCombo.prefill`
         """
         self._helper.prefill(itemdata, sort)
 
@@ -371,74 +371,74 @@ class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
 
     def clear(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.clear}
+        See :class:`kiwi.interfaces.IEasyCombo.clear`
         """
         self._helper.clear()
         self.emit('content-changed')
 
     def append_item(self, label, data=None):
         """
-        See L{kiwi.interfaces.IEasyCombo.append_item}
+        See :class:`kiwi.interfaces.IEasyCombo.append_item`
         """
         self._helper.append_item(label, data)
 
     def insert_item(self, position, label, data=None):
         """
-        See L{kiwi.interfaces.IEasyCombo.insert_item}
+        See :class:`kiwi.interfaces.IEasyCombo.insert_item`
         """
         self._helper.insert_item(position, label, data)
 
     def select(self, data):
         """
-        See L{kiwi.interfaces.IEasyCombo.select}
+        See :class:`kiwi.interfaces.IEasyCombo.select`
         """
         self._helper.select(data)
 
     def select_item_by_position(self, pos):
         """
-        See L{kiwi.interfaces.IEasyCombo.select}
+        See :class:`kiwi.interfaces.IEasyCombo.select`
         """
         self._helper.select_item_by_position(pos)
 
     def select_item_by_label(self, label):
         """
-        See L{kiwi.interfaces.IEasyCombo.select_item_by_position}
+        See :class:`kiwi.interfaces.IEasyCombo.select_item_by_position`
         """
         self._helper.select_item_by_label(label)
 
     def select_item_by_data(self, data):
         """
-        See L{kiwi.interfaces.IEasyCombo.select_item_by_label}
+        See :class:`kiwi.interfaces.IEasyCombo.select_item_by_label`
         """
         self._helper.select_item_by_data(data)
 
     def get_model_strings(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.select_item_by_data}
+        See :class:`kiwi.interfaces.IEasyCombo.select_item_by_data`
         """
         return self._helper.get_model_strings()
 
     def get_model_items(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_model_strings}
+        See :class:`kiwi.interfaces.IEasyCombo.get_model_strings`
         """
         return self._helper.get_model_items()
 
     def get_selected_label(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_model_items}
+        See :class:`kiwi.interfaces.IEasyCombo.get_model_items`
         """
         return self._helper.get_selected_label()
 
     def get_selected_data(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_selected_label}
+        See :class:`kiwi.interfaces.IEasyCombo.get_selected_label`
         """
         return self._helper.get_selected_data()
 
     def get_selected(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_selected_data}
+        See :class:`kiwi.interfaces.IEasyCombo.get_selected_data`
         """
         return self._helper.get_selected()
 
@@ -566,7 +566,7 @@ class ProxyComboBoxEntry(BaseComboBoxEntry,
 
     def prefill(self, itemdata, sort=False, clear_entry=True):
         """
-        See L{kiwi.interfaces.IEasyCombo.prefill}
+        See :class:`kiwi.interfaces.IEasyCombo.prefill`
         """
         self._helper.prefill(itemdata, sort)
         if clear_entry:
@@ -584,74 +584,74 @@ class ProxyComboBoxEntry(BaseComboBoxEntry,
 
     def clear(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.clear}
+        See :class:`kiwi.interfaces.IEasyCombo.clear`
         """
         self._helper.clear()
         self.entry.set_text("")
 
     def append_item(self, label, data=None):
         """
-        See L{kiwi.interfaces.IEasyCombo.append_item}
+        See :class:`kiwi.interfaces.IEasyCombo.append_item`
         """
         self._helper.append_item(label, data)
 
     def insert_item(self, position, label, data=None):
         """
-        See L{kiwi.interfaces.IEasyCombo.insert_item}
+        See :class:`kiwi.interfaces.IEasyCombo.insert_item`
         """
         self._helper.insert_item(position, label, data)
 
     def select(self, data):
         """
-        See L{kiwi.interfaces.IEasyCombo.select}
+        See :class:`kiwi.interfaces.IEasyCombo.select`
         """
         self._helper.select(data)
 
     def select_item_by_position(self, pos):
         """
-        See L{kiwi.interfaces.IEasyCombo.select}
+        See :class:`kiwi.interfaces.IEasyCombo.select`
         """
         self._helper.select_item_by_position(pos)
 
     def select_item_by_label(self, label):
         """
-        See L{kiwi.interfaces.IEasyCombo.select_item_by_position}
+        See :class:`kiwi.interfaces.IEasyCombo.select_item_by_position`
         """
         self._helper.select_item_by_label(label)
 
     def select_item_by_data(self, data):
         """
-        See L{kiwi.interfaces.IEasyCombo.select_item_by_label}
+        See :class:`kiwi.interfaces.IEasyCombo.select_item_by_label`
         """
         self._helper.select_item_by_data(data)
 
     def get_model_strings(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.select_item_by_data}
+        See :class:`kiwi.interfaces.IEasyCombo.select_item_by_data`
         """
         return self._helper.get_model_strings()
 
     def get_model_items(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_model_strings}
+        See :class:`kiwi.interfaces.IEasyCombo.get_model_strings`
         """
         return self._helper.get_model_items()
 
     def get_selected_label(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_model_items}
+        See :class:`kiwi.interfaces.IEasyCombo.get_model_items`
         """
         return self._helper.get_selected_label()
 
     def get_selected_data(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_selected_label}
+        See :class:`kiwi.interfaces.IEasyCombo.get_selected_label`
         """
         return self._helper.get_selected_data()
 
     def get_selected(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_selected_data}
+        See :class:`kiwi.interfaces.IEasyCombo.get_selected_data`
         """
         return self._helper.get_selected()
 

@@ -42,8 +42,8 @@ class currency(Decimal):
     def __new__(cls, value):
         """
         Convert value to currency.
-        @param value: value to convert
-        @type value: string or number
+        :param value: value to convert
+        :type value: string or number
         """
         if isinstance(value, str):
             conv = get_localeconv()
@@ -204,8 +204,8 @@ def format_price(value, symbol=True, precision=None):
     Formats a price according to the current locales monetary
     settings
 
-    @param value: number
-    @param symbol: whether to include the currency symbol
+    :param value: number
+    :param symbol: whether to include the currency symbol
     """
 
     return currency(value).format(symbol, precision)

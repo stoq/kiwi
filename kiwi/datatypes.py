@@ -86,7 +86,7 @@ class ConverterRegistry:
     def add(self, converter_type):
         """
         Adds converter_type as a new converter
-        @param converter_type: a L{BaseConverter} subclass
+        :param converter_type: a :class:`BaseConverter` subclass
         """
         if not issubclass(converter_type, BaseConverter):
             raise TypeError("converter_type must be a BaseConverter subclass")
@@ -103,7 +103,7 @@ class ConverterRegistry:
     def remove(self, converter_type):
         """
         Removes converter_type from the registry
-        @param converter_type: a L{BaseConverter} subclass
+        :param converter_type: a :class:`BaseConverter` subclass
         """
         if not issubclass(converter_type, BaseConverter):
             raise TypeError("converter_type must be a BaseConverter subclass")
@@ -161,9 +161,9 @@ class ConverterRegistry:
     def as_string(self, converter_type, value, format=None):
         """
         Convert to a string
-        @param converter_type:
-        @param value:
-        @param format:
+        :param converter_type:
+        :param value:
+        :param format:
         """
         c = self.get_converter(converter_type)
         if c.as_string is None:
@@ -178,8 +178,8 @@ class ConverterRegistry:
     def from_string(self, converter_type, value):
         """
         Convert from a string
-        @param converter_type:
-        @param value:
+        :param converter_type:
+        :param value:
         """
         c = self.get_converter(converter_type)
         if c.from_string is None:
@@ -198,9 +198,9 @@ converter = ConverterRegistry()
 class BaseConverter(object):
     """
     Abstract converter used by all datatypes
-    @cvar type:
-    @cvar name: The name of the datatype.
-    @cvar align: The alignment of the datatype. Normally right for numbers
+    :cvar type:
+    :cvar name: The name of the datatype.
+    :cvar align: The alignment of the datatype. Normally right for numbers
                  and dates, left for others. Default is left.
     """
     type = None
@@ -211,29 +211,29 @@ class BaseConverter(object):
         """
         This can be overriden by a subclass to provide a custom comparison
         function.
-        @returns: cmp
+        :returns: cmp
         """
         return cmp
 
     def as_string(self, value, format):
         """
         Convert the value to a string using the specificed format.
-        @param value:
-        @param format:
-        @returns:
+        :param value:
+        :param format:
+        :returns:
         """
 
     def from_string(self, value):
         """
         Convert a value from a string.
-        @param value:
-        @returns:
+        :param value:
+        :returns:
         """
 
     def get_mask(self):
         """
         Returns the mask of the entry or None if not specified.
-        @returns: the mask or None.
+        :returns: the mask or None.
         """
         return None
 
@@ -430,8 +430,8 @@ DATE_MASK_TABLE = {
 class _BaseDateTimeConverter(BaseConverter):
     """
     Abstract class for converting datatime objects to and from strings
-    @cvar date_format:
-    @cvar lang_constant:
+    :cvar date_format:
+    :cvar lang_constant:
     """
     date_format = None
     align = Alignment.RIGHT
@@ -667,9 +667,9 @@ def filter_locale(value, monetary=False):
     convert the decimal point.
     The returned value of this function can safely be passed to float()
 
-    @param value: value to convert
-    @param monetary: if we should treat it as monetary data or not
-    @returns: the value without locale specific data
+    :param value: value to convert
+    :param monetary: if we should treat it as monetary data or not
+    :returns: the value without locale specific data
     """
 
     def _filter_thousands_sep(value, thousands_sep):

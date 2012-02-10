@@ -195,7 +195,7 @@ class PickledModel(Model):
         Saves the instance to a pickle filename. If no filename argument is
         provided, will try to use the internal _filename attribute that is
         set using set_filename()
-        @param filename: optional filename to pass in
+        :param filename: optional filename to pass in
         """
 
         filename = filename or self._filename

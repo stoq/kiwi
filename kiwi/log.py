@@ -110,8 +110,8 @@ def set_log_file(filename, mask=None):
     """
     Set the filename used for logging.
 
-    @param filename:
-    @param mask: optional
+    :param filename:
+    :param mask: optional
     """
     file_handler = logging.FileHandler(filename, 'w')
     file_handler.setFormatter(logging.Formatter(
@@ -131,8 +131,8 @@ def set_log_level(name, level):
     """
     Set the log level.
 
-    @param name: logging category
-    @param level: level
+    :param name: logging category
+    :param level: level
     """
     global _filter
     _filter.add_filter(name, level)

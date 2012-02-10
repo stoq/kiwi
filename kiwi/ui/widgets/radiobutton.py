@@ -65,7 +65,7 @@ class ProxyRadioButton(gtk.RadioButton, ProxyWidgetMixin):
         """
         Get the currently selected radiobutton.
 
-        @returns: The selected L{RadioButton} or None if there are no
+        :returns: The selected :class:`RadioButton` or None if there are no
           selected radiobuttons.
         """
 

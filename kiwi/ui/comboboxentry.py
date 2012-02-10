@@ -22,7 +22,7 @@
 
 """Reimplementation of GtkComboBoxEntry in Python.
 
-The main difference between the L{BaseComboBoxEntry} and GtkComboBoxEntry
+The main difference between the :class:`BaseComboBoxEntry` and GtkComboBoxEntry
 is that a {kiwi.ui.widgets.entry.Entry} is used instead of a GtkEntry."""
 
 import gobject

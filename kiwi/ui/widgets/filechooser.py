@@ -53,8 +53,8 @@ class ProxyFileChooserWidget(_FileChooserMixin, gtk.FileChooserWidget,
     def __init__(self, action=gtk.FILE_CHOOSER_ACTION_OPEN, backend=None):
         """
         Create a new ProxyFileChooserWidget object.
-        @param action:
-        @param backend:
+        :param action:
+        :param backend:
         """
         ProxyWidgetMixin.__init__(self)
         self.props.data_type = str
@@ -66,9 +66,9 @@ class ProxyFileChooserButton(_FileChooserMixin, gtk.FileChooserButton,
     def __init__(self, title=None, backend=None, dialog=None):
         """
         Create a new ProxyFileChooserButton object.
-        @param title:
-        @param backend:
-        @param dialog:
+        :param title:
+        :param backend:
+        :param dialog:
         """
         ProxyWidgetMixin.__init__(self)
         self.props.data_type = str

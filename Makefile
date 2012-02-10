@@ -19,6 +19,12 @@ clean:
 docs:
 	make -s -C doc api howto
 
+apidocs:
+	make -C docs/api pickle html devhelp
+
+upload-apidocs:
+	scp -r docs/api/_build/html anthem:/var/www/stoq.com.br/doc/api/kiwi
+
 web: clean-docs docs
 	cp -r doc/api ${WEBDIR}
 	cp -r doc/howto ${WEBDIR}

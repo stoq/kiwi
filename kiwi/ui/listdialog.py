@@ -35,9 +35,9 @@ _ = lambda m: gettext.dgettext('kiwi', m)
 
 
 class ListContainer(gtk.HBox):
-    """A ListContainer is an L{ObjectList} with buttons to be able
+    """A ListContainer is an :class:`ObjectList` with buttons to be able
     to modify the content of the list.
-    Depending on the list_mode, @see L{set_list_mode} you will
+    Depending on the list_mode, @see :class:`set_list_mode` you will
     have add, remove and edit buttons.
 
     Signals
@@ -52,12 +52,12 @@ class ListContainer(gtk.HBox):
         - emitted when editing an item
           you can block the update afterwards by returning False
 
-    @ivar add_button: add button
-    @type add_button: L{gtk.Button}
-    @ivar remove_button: remove button
-    @type remove_button: L{gtk.Button}
-    @ivar edit_button: edit button
-    @type edit_button: L{gtk.Button}
+    :ivar add_button: add button
+    :type add_button: :class:`gtk.Button`
+    :ivar remove_button: remove button
+    :type remove_button: :class:`gtk.Button`
+    :ivar edit_button: edit button
+    :type edit_button: :class:`gtk.Button`
     """
 
     gsignal('add-item', retval=object)
@@ -68,12 +68,12 @@ class ListContainer(gtk.HBox):
     def __init__(self, columns, orientation=gtk.ORIENTATION_VERTICAL):
         """
         Create a new ListContainer object.
-        @param columns: columns for the L{kiwi.ui.objectlist.ObjectList}
-        @type columns: a list of L{kiwi.ui.objectlist.Columns}
-        @param orientation: the position where the buttons will be
+        :param columns: columns for the :class:`kiwi.ui.objectlist.ObjectList`
+        :type columns: a list of :class:`kiwi.ui.objectlist.Columns`
+        :param orientation: the position where the buttons will be
             placed: at the right (vertically) or at the bottom (horizontally)
             of the list. Defaults to the right of the list.
-        @type: gtk.ORIENTATION_HORIZONTAL or gtk.ORIENTATION_VERTICAL
+        :type: gtk.ORIENTATION_HORIZONTAL or gtk.ORIENTATION_VERTICAL
         """
         self._list_type = None
 
@@ -163,34 +163,34 @@ class ListContainer(gtk.HBox):
 
     def add_item(self, item):
         """Appends an item to the list
-        @param item: item to append
+        :param item: item to append
         """
         self.list.append(item)
 
     def add_items(self, items):
         """Appends a list of items to the list
-        @param items: items to add
-        @type items: a sequence of items
+        :param items: items to add
+        :type items: a sequence of items
         """
         self.list.extend(items)
 
     def remove_item(self, item):
         """Removes an item from the list
-        @param item: item to remove
+        :param item: item to remove
         """
         self.list.remove(item)
 
     def update_item(self, item):
         """Updates an item in the list.
         You should call this if you change the object
-        @param item: item to update
+        :param item: item to update
         """
         self.list.update(item)
 
     def default_remove(self, item):
         """Asks the user confirmation for removal of an item.
-        @param item: a description of the item that will be removed
-        @returns: True if the user confirm the removal, False otherwise
+        :param item: a description of the item that will be removed
+        :returns: True if the user confirm the removal, False otherwise
         """
         response = yesno(_('Do you want to remove %s ?') % (quote(str(item)),),
                          parent=None,
@@ -201,7 +201,7 @@ class ListContainer(gtk.HBox):
 
     def set_list_type(self, list_type):
         """Sets the kind of list type.
-        @param list_type:
+        :param list_type:
         """
         if not isinstance(list_type, ListType):
             raise TypeError("list_type must be a ListType enum")
@@ -308,31 +308,31 @@ class ListSlave(SlaveDelegate):
 
     def set_list_type(self, list_type):
         """Set list type.
-        @see: L{Listcontainer.set_list_type}
+        @see: :class:`Listcontainer.set_list_type`
         """
         self.listcontainer.set_list_type(list_type)
 
     def add_list_item(self, item):
         """Add item to list.
-        @see: L{Listcontainer.add_item}
+        @see: :class:`Listcontainer.add_item`
         """
         self.listcontainer.add_item(item)
 
     def add_list_items(self, item):
         """Add items to list.
-        @see: L{Listcontainer.add_items}
+        @see: :class:`Listcontainer.add_items`
         """
         self.listcontainer.add_items(item)
 
     def remove_list_item(self, item):
         """Remove item from list.
-        @see: L{Listcontainer.remove_item}
+        @see: :class:`Listcontainer.remove_item`
         """
         self.listcontainer.remove_item(item)
 
     def update_list_item(self, item):
         """Update item in list.
-        @see: L{Listcontainer.edit_item}
+        @see: :class:`Listcontainer.edit_item`
         """
         self.listcontainer.update_item(item)
 
@@ -360,15 +360,15 @@ class ListSlave(SlaveDelegate):
     def remove_item(self, item):
         """A subclass can implement this to get a notification after
         an item is removed.
-        If it's not implemented L{ListContainer.default_remove} will be called
-        @returns: False if the item should not be removed
+        If it's not implemented :class:`ListContainer.default_remove` will be called
+        :returns: False if the item should not be removed
         """
         return self.listcontainer.default_remove(item)
 
     def edit_item(self, item):
         """A subclass must implement this if you want to support editing
         of objects.
-        @returns: False if the item should not be removed
+        :returns: False if the item should not be removed
         """
         raise NotImplementedError(
             "You need to implement edit_item in %s" %
@@ -376,19 +376,19 @@ class ListSlave(SlaveDelegate):
 
     def selection_changed(self, selection):
         """This will be called when the selection changes in the ListDialog
-        @param selection: selected object or None if nothing is selected
+        :param selection: selected object or None if nothing is selected
         """
     def populate(self):
         """This will be called once after the user interface construction is done.
         It should return a list of objects which will initially be inserted
-        @returns: object to insert
-        @rtype: sequence of objects
+        :returns: object to insert
+        :rtype: sequence of objects
         """
         return []
 
 
 class ListDialog(gtk.Dialog, ListSlave):
-    """A ListDialog implements a L{ListContainer} in a L{gtk.Dialog} with
+    """A ListDialog implements a :class:`ListContainer` in a L{gtk.Dialog} with
     a close button.
 
     It's a simple Base class which needs to be subclassed to provide interesting

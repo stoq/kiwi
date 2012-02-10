@@ -95,8 +95,8 @@ class IEasyCombo(Interface):
 
     def append_item(label, data=None):
         """Adds a single item to the Combo.
-        @param label: a string with the text to be added
-        @param data: the data to be associated with that item
+        :param label: a string with the text to be added
+        :param data: the data to be associated with that item
         """
 
     def clear():
@@ -105,45 +105,45 @@ class IEasyCombo(Interface):
     def select(data):
         """
         Select an item giving data which could be an object or text.
-        @param data: data or text to select
+        :param data: data or text to select
         """
 
     def select_item_by_position(position):
         """
         Selects an item in the combo from a integer where 0
         represents the first item.
-        @param position: an integer
+        :param position: an integer
         """
 
     def select_item_by_label(text):
         """
         Select item given text.
-        @param text: text to select
+        :param text: text to select
         """
 
     def select_item_by_data(data):
         """
         Select item given data.
-        @param data: object to select
+        :param data: object to select
         """
 
     def get_selected_label():
         """
         Gets the label of the currently selected item.
-        @returns: the selected label.
+        :returns: the selected label.
         """
 
     def get_selected_data():
         """
         Gets the data of the the currently selected item.
-        @returns: the selected data.
+        :returns: the selected data.
         """
 
     def get_selected():
         """
         Get  the text or item  of the currently selected item
         or None if nothing is selected.
-        @returns: selected text or item or None.
+        :returns: selected text or item or None.
         """
 
     def get_model_strings():
@@ -179,5 +179,5 @@ class ISearchFilter(Interface):
     def get_state():
         """
         Gets the state.
-        @rtype: L{QueryState}
+        :rtype: :class:`QueryState`
         """

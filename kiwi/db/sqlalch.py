@@ -49,7 +49,7 @@ class SQLAlchemyQueryExecuter(QueryExecuter):
     def set_table(self, table):
         """
         Sets the SQLObject table/object for this executer
-        @param table: a SQLObject subclass
+        :param table: a SQLObject subclass
         """
         self.table = table
 
@@ -57,7 +57,7 @@ class SQLAlchemyQueryExecuter(QueryExecuter):
         """
         Adds a generic query callback
 
-        @param callback: a callable
+        :param callback: a callable
         """
         if not callable(callback):
             raise TypeError
@@ -67,8 +67,8 @@ class SQLAlchemyQueryExecuter(QueryExecuter):
         """
         Adds a query callback for the filter search_filter
 
-        @param search_filter: a search filter
-        @param callback: a callable
+        :param search_filter: a search filter
+        :param callback: a callable
         """
         if not ISearchFilter.providedBy(search_filter):
             raise TypeError
@@ -80,7 +80,7 @@ class SQLAlchemyQueryExecuter(QueryExecuter):
     def set_query(self, callback):
         """
         Overrides the default query mechanism.
-        @param callback: a callable which till take two arguments:
+        :param callback: a callable which till take two arguments:
           (query, connection)
         """
         if callback is None:
@@ -97,7 +97,7 @@ class SQLAlchemyQueryExecuter(QueryExecuter):
     def search(self, states):
         """
         Execute a search.
-        @param states:
+        :param states:
         """
         if self.table is None:
             raise ValueError("table cannot be None")

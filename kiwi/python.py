@@ -51,9 +51,9 @@ class ClassInittableObject(object):
         """
         Called when the class is created
 
-        @param cls:       class
-        @param namespace: namespace for newly created
-        @type  namespace: dict
+        :param cls:       class
+        :param namespace: namespace for newly created
+        :type  namespace: dict
         """
     __class_init__ = classmethod(__class_init__)
 
@@ -80,8 +80,8 @@ class AttributeForwarder(ClassInittableObject):
     AttributeForwarder is an object which is used to forward certain
     attributes to another object.
 
-    @cvar attributes: list of attributes to be forwarded
-    @ivar target: forwarded object
+    :cvar attributes: list of attributes to be forwarded
+    :ivar target: forwarded object
     """
     attributes = None
 
@@ -105,7 +105,7 @@ class AttributeForwarder(ClassInittableObject):
         """
         Create a new AttributeForwarder object.
 
-        @param target: object to forward attributes to
+        :param target: object to forward attributes to
         """
         self.target = target
 
@@ -114,8 +114,8 @@ class AttributeForwarder(ClassInittableObject):
 def namedAny(name):
     """Get a fully named package, module, module-global object, or attribute.
 
-    @param name:
-    @returns: object, module or attribute
+    :param name:
+    :returns: object, module or attribute
     """
 
     names = name.split('.')
@@ -164,7 +164,7 @@ class Settable:
     def getattributes(self):
         """
         Fetches the attributes used to create this object
-        @returns: a dictionary with attributes
+        :returns: a dictionary with attributes
         """
         return self._attrs
 
@@ -178,7 +178,7 @@ def qual(klass):
     Convert a class to a string representation, which is the name of the module
     plut a dot plus the name of the class.
 
-    @returns: fully qualified module and class name
+    :returns: fully qualified module and class name
     """
     return klass.__module__ + '.' + klass.__name__
 
@@ -190,10 +190,10 @@ def clamp(x, low, high):
     * clamp(15, 5, 10) is 10.
     * clamp(20, 15, 25) is 20.
 
-    @param    x: the value to clamp.
-    @param  low: the minimum value allowed.
-    @param high: the maximum value allowed.
-    @returns: the clamped value
+    :param    x: the value to clamp.
+    :param  low: the minimum value allowed.
+    :param high: the maximum value allowed.
+    :returns: the clamped value
     """
 
     return min(max(x, low), high)
@@ -201,9 +201,9 @@ def clamp(x, low, high):
 def slicerange(slice, limit):
     """Takes a slice object and returns a range iterator
 
-    @param slice: slice object
-    @param limit: maximum value allowed
-    @returns: iterator
+    :param slice: slice object
+    :param limit: maximum value allowed
+    :returns: iterator
     """
 
     return xrange(*slice.indices(limit))
@@ -264,7 +264,7 @@ class enum(int):
     def get(cls, value):
         """
         Lookup an enum by value
-        @param value: the value
+        :param value: the value
         """
         if not value in cls.values:
             raise ValueError("There is no enum for value %d" % (value,))
@@ -275,8 +275,8 @@ class enum(int):
         """
         Create a new Enum.
 
-        @param value: value of the enum
-        @param name: name of the enum
+        :param value: value of the enum
+        :param name: name of the enum
         """
         if name in cls.names:
             raise ValueError("There is already an enum called %s" % (name,))
@@ -304,7 +304,7 @@ class enum(int):
 def all(seq):
     """
     Predict used to check if all items in a seq are True.
-    @returns: True if all items in seq are True
+    :returns: True if all items in seq are True
     """
     for item in seq:
         if not item:
@@ -314,7 +314,7 @@ def all(seq):
 def any(seq):
     """
     Predict used to check if any item in a seq are True.
-    @returns: True if any item in seq is True
+    :returns: True if any item in seq is True
     """
     for item in seq:
         if item:

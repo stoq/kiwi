@@ -156,7 +156,7 @@ class KiwiEntry(gtk.Entry):
 
       - Mask, force the input to meet certain requirements
       - IComboMixin: Allows you work with objects instead of strings
-        Adds a number of convenience methods such as L{prefill}().
+        Adds a number of convenience methods such as :class:`prefill`().
     """
     __gtype_name__ = 'KiwiEntry'
 
@@ -312,7 +312,7 @@ class KiwiEntry(gtk.Entry):
         Example mask for a ISO-8601 date
         >>> entry.set_mask('0000-00-00')
 
-        @param mask: the mask to set
+        :param mask: the mask to set
         """
 
         if not mask:
@@ -355,7 +355,7 @@ class KiwiEntry(gtk.Entry):
     def get_mask(self):
         """
         Get the mask.
-        @returns: the mask
+        :returns: the mask
         """
         return self._mask
 
@@ -376,8 +376,8 @@ class KiwiEntry(gtk.Entry):
         if a field is empty it'll return an empty string
         otherwise it'll include the content
 
-        @returns: fields
-        @rtype: list of strings
+        :returns: fields
+        :rtype: list of strings
         """
         if not self._mask:
             raise MaskError("a mask must be set before calling get_fields")
@@ -394,10 +394,10 @@ class KiwiEntry(gtk.Entry):
         """
         Gets the empty mask between start and end
 
-        @param start:
-        @param end:
-        @returns: mask
-        @rtype: string
+        :param start:
+        :param end:
+        :returns: mask
+        :rtype: string
         """
 
         if start is None:
@@ -463,12 +463,12 @@ class KiwiEntry(gtk.Entry):
         Shift the text, to the right or left, n positions. Note that this
         does not change the entry text. It returns the shifted text.
 
-        @param start:
-        @param end:
-        @param direction:   see L{kiwi.enums.Direction}
-        @param positions:   the number of positions to shift.
+        :param start:
+        :param end:
+        :param direction:   see :class:`kiwi.enums.Direction`
+        :param positions:   the number of positions to shift.
 
-        @return:        returns the text between start and end, shifted to
+        :return:        returns the text between start and end, shifted to
                         the direction provided.
         """
         text = self.get_text()
@@ -523,8 +523,8 @@ class KiwiEntry(gtk.Entry):
                                       skip=0):
         """
         Get next non-static char position, skiping some chars, if necessary.
-        @param skip:        skip first n chars
-        @param direction:   direction of the search.
+        :param skip:        skip first n chars
+        :param direction:   direction of the search.
         """
         text = self.get_text()
         validators = self._mask_validators
@@ -552,8 +552,8 @@ class KiwiEntry(gtk.Entry):
         Exact means it needs to start with the value typed
         and the case needs to be correct.
 
-        @param value: enable exact completion
-        @type value:  boolean
+        :param value: enable exact completion
+        :type value:  boolean
         """
 
         if value:
@@ -743,10 +743,10 @@ class KiwiEntry(gtk.Entry):
         """
         Check if a chararcter can be inserted at some position
 
-        @param new: The char that wants to be inserted.
-        @param pos: The position where it wants to be inserted.
+        :param new: The char that wants to be inserted.
+        :param pos: The position where it wants to be inserted.
 
-        @return: Returns None if it can be inserted. If it cannot be,
+        :return: Returns None if it can be inserted. If it cannot be,
                  return the next position where it can be successfuly
                  inserted.
         """
@@ -785,11 +785,11 @@ class KiwiEntry(gtk.Entry):
         Inserts the character at the give position in text. Note that the
         insertion won't be applied to the entry, but to the text provided.
 
-        @param text:    Text that it will be inserted into.
-        @param new:     New text to insert.
-        @param pos:     Positon to insert at
+        :param text:    Text that it will be inserted into.
+        :param new:     New text to insert.
+        :param pos:     Positon to insert at
 
-        @return:    Returns a tuple, with the position after the insetion
+        :return:    Returns a tuple, with the position after the insetion
                     and the new text.
         """
         field = self._get_field_at_pos(pos)
@@ -1033,7 +1033,7 @@ class KiwiEntry(gtk.Entry):
 
     def prefill(self, itemdata, sort=False):
         """
-        See L{kiwi.interfaces.IEasyCombo.prefill}
+        See :class:`kiwi.interfaces.IEasyCombo.prefill`
         """
 
         if not isinstance(itemdata, (list, tuple)):

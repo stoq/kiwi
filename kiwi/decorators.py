@@ -34,10 +34,10 @@ class deprecated(object):
         """
         Create a new deprecated object.
 
-        @param new: the name of the new function replacing the old
+        :param new: the name of the new function replacing the old
             deprecated one.
-        @type new: string.
-        @param log: the lob object to use, optional.
+        :type new: string.
+        :param log: the lob object to use, optional.
         """
         self._new = new
         self._log = log or kiwi_log
@@ -59,7 +59,7 @@ class deprecated(object):
 
 class signal_block(object):
     """
-    A decorator to be used on L{kiwi.ui.views.SlaveView} methods.
+    A decorator to be used on :class:`kiwi.ui.views.SlaveView` methods.
     It takes a list of arguments which is the name of the widget and
     the signal name separated by a dot.
 

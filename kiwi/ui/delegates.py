@@ -37,8 +37,8 @@ class Delegate(BaseView, BaseController):
                  toplevel_name=None,
                  delete_handler=None, keyactions=None):
         """Creates a new Delegate.
-        The keyactions parameter is sent to L{kiwi.controllers.BaseController},
-        the rest are sent to L{kiwi.ui.views.BaseView}
+        The keyactions parameter is sent to :class:`kiwi.controllers.BaseController`,
+        the rest are sent to :class:`kiwi.ui.views.BaseView`
         """
         if gladefile:
             deprecationwarn(
@@ -61,8 +61,8 @@ class GladeDelegate(BaseView, BaseController):
     def __init__(self, gladefile=None, toplevel_name=None, domain=None,
                  delete_handler=None, keyactions=None):
         """Creates a new GladeDelegate.
-        The keyactions parameter is sent to L{kiwi.controllers.BaseController},
-        the rest are sent to L{kiwi.ui.views.BaseView}
+        The keyactions parameter is sent to :class:`kiwi.controllers.BaseController`,
+        the rest are sent to :class:`kiwi.ui.views.BaseView`
         """
 
         BaseView.__init__(self,
@@ -80,8 +80,8 @@ class SlaveDelegate(SlaveView, BaseController):
     def __init__(self, toplevel=None, widgets=(), gladefile=None,
                  toplevel_name=None, keyactions=None):
         """
-        The keyactions parameter is sent to L{kiwi.controllers.BaseController},
-        the rest are sent to L{kiwi.ui.views.SlaveView}
+        The keyactions parameter is sent to :class:`kiwi.controllers.BaseController`,
+        the rest are sent to :class:`kiwi.ui.views.SlaveView`
         """
         if gladefile:
             deprecationwarn(
@@ -101,8 +101,8 @@ class GladeSlaveDelegate(SlaveView, BaseController):
                  toplevel_name=None, domain=None,
                  keyactions=None):
         """
-        The keyactions parameter is sent to L{kiwi.controllers.BaseController},
-        the rest are sent to L{kiwi.ui.views.SlavseView}
+        The keyactions parameter is sent to :class:`kiwi.controllers.BaseController`,
+        the rest are sent to :class:`kiwi.ui.views.SlavseView`
         """
         SlaveView.__init__(self,
                            gladefile=gladefile,
@@ -115,18 +115,18 @@ class ProxyDelegate(Delegate):
     """A class that combines view, controller and proxy functionality into a
     single package. The Delegate class possesses a top-level window.
 
-    @ivar model: the model
-    @ivar proxy: the proxy
+    :ivar model: the model
+    :ivar proxy: the proxy
     """
     def __init__(self, model, proxy_widgets=None, gladefile=None,
                  toplevel=None, widgets=(),
                  toplevel_name=None, domain=None, delete_handler=None,
                  keyactions=None):
         """Creates a new Delegate.
-        @param model: instance to be attached
-        @param proxy_widgets:
-        The keyactions parameter is sent to L{kiwi.controllers.BaseController},
-        the rest are sent to L{kiwi.ui.views.BaseView}
+        :param model: instance to be attached
+        :param proxy_widgets:
+        The keyactions parameter is sent to :class:`kiwi.controllers.BaseController`,
+        the rest are sent to :class:`kiwi.ui.views.BaseView`
         """
 
         BaseView.__init__(self, toplevel, widgets, gladefile,
@@ -141,7 +141,7 @@ class ProxyDelegate(Delegate):
     def set_model(self, model):
         """
         Set model.
-        @param model:
+        :param model:
         """
         self.proxy.set_model(model)
         self.model = model
@@ -159,16 +159,16 @@ class ProxySlaveDelegate(GladeSlaveDelegate):
     single package. It does not possess a top-level window, but is instead
     intended to be plugged in to a View or Delegate using attach_slave()
 
-    @ivar model: the model
-    @ivar proxy: the proxy
+    :ivar model: the model
+    :ivar proxy: the proxy
     """
     def __init__(self, model, proxy_widgets=None, gladefile=None,
                  toplevel_name=None, domain=None, keyactions=None):
         """Creates a new Delegate.
-        @param model: instance to be attached
-        @param proxy_widgets:
-        The keyactions parameter is sent to L{kiwi.controllers.BaseController},
-        the rest are sent to L{kiwi.ui.views.BaseView}
+        :param model: instance to be attached
+        :param proxy_widgets:
+        The keyactions parameter is sent to :class:`kiwi.controllers.BaseController`,
+        the rest are sent to :class:`kiwi.ui.views.BaseView`
         """
 
         GladeSlaveDelegate.__init__(self, gladefile, toplevel_name,
@@ -180,7 +180,7 @@ class ProxySlaveDelegate(GladeSlaveDelegate):
     def set_model(self, model):
         """
         Set model.
-        @param model:
+        :param model:
         """
         self.proxy.set_model(model)
         self.model = model

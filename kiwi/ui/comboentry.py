@@ -96,9 +96,9 @@ class _ComboEntryPopup(gtk.Window):
     def popup(self, text=None, filter=False):
         """
         Shows the list of options. And optionally selects an item
-        @param text: text to select
-        @param filter: filter the list of options. A filter_model must be
-        set using L{set_model}()
+        :param text: text to select
+        :param filter: filter the list of options. A filter_model must be
+        set using :class:`set_model`()
         """
         combo = self._comboentry
         if not (combo.flags() & gtk.REALIZED):
@@ -327,7 +327,7 @@ class _ComboEntryPopup(gtk.Window):
     def set_selected_iter(self, treeiter):
         """
         Selects an item in the comboentry given a treeiter
-        @param treeiter: the tree iter to select
+        :param treeiter: the tree iter to select
         """
         model = self._treeview.get_model()
 
@@ -362,7 +362,7 @@ class ComboEntry(gtk.VBox):
     def __init__(self, entry=None):
         """
         Create a new ComboEntry object.
-        @param entry: a gtk.Entry subclass to use
+        :param entry: a gtk.Entry subclass to use
         """
         gtk.VBox.__init__(self)
         self._popping_down = False
@@ -523,7 +523,7 @@ class ComboEntry(gtk.VBox):
     def set_text(self, text):
         """
         Sets the text.
-        @param text:
+        :param text:
         """
         self.entry.set_text(text)
         self.emit('changed')
@@ -531,15 +531,15 @@ class ComboEntry(gtk.VBox):
     def get_text(self):
         """
         Gets the current text.
-        @returns: the text.
+        :returns: the text.
         """
         return self.entry.get_text()
 
     def set_model(self, model):
         """
         Set the tree model to model
-        @param model: new model
-        @type model: gtk.TreeModel
+        :param model: new model
+        :type model: gtk.TreeModel
         """
         self._model = model
         self._popup.set_model(model)
@@ -553,16 +553,16 @@ class ComboEntry(gtk.VBox):
     def get_model(self):
         """
         Gets our model.
-        @returns: model
-        @rtype: gtk.TreeModel
+        :returns: model
+        :rtype: gtk.TreeModel
         """
         return self._model
 
     def set_active_iter(self, iter):
         """
         Set the iter selected.
-        @param iter: iter to select
-        @type iter: gtk.TreeIter
+        :param iter: iter to select
+        :type iter: gtk.TreeIter
         """
         self._popup.set_selected_iter(iter)
         text = self._model[iter][0]
@@ -572,8 +572,8 @@ class ComboEntry(gtk.VBox):
     def get_active_iter(self):
         """
         Gets the selected iter.
-        @returns: iter selected.
-        @rtype: gtk.TreeIter
+        :returns: iter selected.
+        :rtype: gtk.TreeIter
         """
         return self._popup.get_selected_iter()
 
@@ -590,7 +590,7 @@ class ComboEntry(gtk.VBox):
     def set_details_callback(self, callable):
         """Display some details as a second line on each entry
 
-        @param callable: a callable that expects an object and returns a
+        :param callable: a callable that expects an object and returns a
                          string
         """
         self._popup.set_details_callback(callable)
@@ -604,7 +604,7 @@ class ComboEntry(gtk.VBox):
 
     def prefill(self, itemdata, sort=False):
         """
-        See L{kiwi.interfaces.IEasyCombo.prefill}
+        See :class:`kiwi.interfaces.IEasyCombo.prefill`
         """
         self._model.clear()
         self.entry.prefill(itemdata, sort)
@@ -612,28 +612,28 @@ class ComboEntry(gtk.VBox):
 
     def select_item_by_data(self, data):
         """
-        See L{kiwi.interfaces.IEasyCombo.select_item_by_data}
+        See :class:`kiwi.interfaces.IEasyCombo.select_item_by_data`
         """
         treeiter = self.entry.get_iter_by_data(data)
         self.set_active_iter(treeiter)
 
     def select_item_by_label(self, text):
         """
-        See L{kiwi.interfaces.IEasyCombo.select_item_by_label}
+        See :class:`kiwi.interfaces.IEasyCombo.select_item_by_label`
         """
         treeiter = self.entry.get_iter_by_label(text)
         self.set_active_iter(treeiter)
 
     def select_item_by_position(self, position):
         """
-        See L{kiwi.interfaces.IEasyCombo.select_item_by_position}
+        See :class:`kiwi.interfaces.IEasyCombo.select_item_by_position`
         """
         row = self._model[position]
         self.set_active_iter(row.iter)
 
     def get_selected(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_selected}
+        See :class:`kiwi.interfaces.IEasyCombo.get_selected`
         """
         treeiter = self.get_active_iter()
         if treeiter:
@@ -641,7 +641,7 @@ class ComboEntry(gtk.VBox):
 
     def get_selected_label(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_selected_label}
+        See :class:`kiwi.interfaces.IEasyCombo.get_selected_label`
         """
         treeiter = self.get_active_iter()
         if treeiter:
@@ -649,7 +649,7 @@ class ComboEntry(gtk.VBox):
 
     def get_selected_data(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_selected_data}
+        See :class:`kiwi.interfaces.IEasyCombo.get_selected_data`
         """
         treeiter = self.get_active_iter()
         if treeiter:
@@ -657,7 +657,7 @@ class ComboEntry(gtk.VBox):
 
     def select(self, obj):
         """
-        See L{kiwi.interfaces.IEasyCombo.select}
+        See :class:`kiwi.interfaces.IEasyCombo.select`
         """
         try:
             treeiter = self.entry.get_iter_from_obj(obj)
@@ -669,7 +669,7 @@ class ComboEntry(gtk.VBox):
 
     def append_item(self, label, data=None):
         """
-        See L{kiwi.interfaces.IEasyCombo.append_item}
+        See :class:`kiwi.interfaces.IEasyCombo.append_item`
         """
         if not isinstance(label, basestring):
             raise TypeError("label must be string, found %s" % label)
@@ -694,13 +694,13 @@ class ComboEntry(gtk.VBox):
 
     def get_model_strings(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_model_strings}
+        See :class:`kiwi.interfaces.IEasyCombo.get_model_strings`
         """
         return [row[ComboColumn.LABEL] for row in self._model]
 
     def get_model_items(self):
         """
-        See L{kiwi.interfaces.IEasyCombo.get_model_items}
+        See :class:`kiwi.interfaces.IEasyCombo.get_model_items`
         """
         if self.mode != ComboMode.DATA:
             raise TypeError("get_model_items can only be used in data mode")

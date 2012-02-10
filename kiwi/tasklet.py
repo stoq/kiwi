@@ -67,7 +67,7 @@ Structure of a tasklet
        (see below);
 
     2. After each C{yield} that indicates events, the function
-       L{kiwi.tasklet.get_event} must be called to retrieve the event that
+       :class:`kiwi.tasklet.get_event` must be called to retrieve the event that
        just occurred.
 
 Syntax for yield in tasklets
@@ -77,27 +77,27 @@ Syntax for yield in tasklets
   execution of the tasklet while waiting for certain events.  Valid
   C{yield} values are:
 
-    - A single L{Message} object, with a correctly set I{dest}
+    - A single :class:`Message` object, with a correctly set I{dest}
       parameter.  With this form, a message is sent to the indicated
       tasklet.  When C{yield} returns, no event is generated, so the
-      tasklet should B{not} call L{get_event}.
+      tasklet should B{not} call :class:`get_event`.
 
     - One, or a sequence of:
 
-       - L{WaitCondition}, meaning to wait for that specific condition
+       - :class:`WaitCondition`, meaning to wait for that specific condition
 
-       - L{Tasklet}, with the same meaning as L{WaitForTasklet}C{(tasklet)}
+       - :class:`Tasklet`, with the same meaning as L{WaitForTasklet}C{(tasklet)}
 
-       - generator, with the same meaning as L{WaitForTasklet}C{(Tasklet(gen))}
+       - generator, with the same meaning as :class:`WaitForTasklet`C{(Tasklet(gen))}
 
       In this case, the tasklet is suspended until either one of the
-      indicated events occurs.  The tasklet must call L{get_event} in
+      indicated events occurs.  The tasklet must call :class:`get_event` in
       this case.
 
 Launching a tasklet
 ===================
 
-  To start a tasklet, the L{Tasklet} constructor must be used::
+  To start a tasklet, the :class:`Tasklet` constructor must be used::
     from kiwi import tasklet
 
     def my_task(x):
@@ -105,7 +105,7 @@ Launching a tasklet
 
     tasklet.Tasklet(my_task(x=0))
 
-  Alternatively, L{kiwi.tasklet.run} can be used to the same effect::
+  Alternatively, :class:`kiwi.tasklet.run` can be used to the same effect::
     from kiwi import tasklet
     tasklet.run(my_task(x=0))
 
@@ -215,10 +215,10 @@ def get_event():
     return event
 
 def run(gen):
-    """Start running a generator as a L{Tasklet}.
+    """Start running a generator as a :class:`Tasklet`.
 
-    @param gen: generator object that implements the tasklet body.
-    @return: a new L{Tasklet} instance, already running.
+    :param gen: generator object that implements the tasklet body.
+    :return: a new :class:`Tasklet` instance, already running.
 
     @note: this is strictly equivalent to calling C{Tasklet(gen)}.
 
@@ -249,7 +249,7 @@ class WaitCondition(object):
         WaitCondition object must "rearm" itself (continue to monitor
         events), otherwise it should disarm.
 
-        @param tasklet: the tasklet instance the wait condition is
+        :param tasklet: the tasklet instance the wait condition is
           to be associated with.
         @note: this method normally should not be called directly
           by the programmer.
@@ -283,13 +283,13 @@ class WaitForCall(WaitCondition):
         tasklet.run(my_task())
         mainloop.run()
 
-      @ivar return_value: value to return when called
+      :ivar return_value: value to return when called
 
     '''
     def __init__(self, return_value=None):
         '''
         Creates a wait condition that is actually a callable object, and waits for a call to be made on it.
-        @param return_value: value to return when called; can also be
+        :param return_value: value to return when called; can also be
         modified dynamically from the tasklet as the C{return_value}
         instance variable.
         '''
@@ -325,14 +325,14 @@ class WaitForIO(WaitCondition):
         '''
         Create a new WaitForIO object.
 
-        @param filedes: object to monitor for IO
-        @type filedes: int file descriptor, or a
+        :param filedes: object to monitor for IO
+        :type filedes: int file descriptor, or a
             gobject.IOChannel, or an object with a C{fileno()}
             method, such as socket or unix file.
 
-        @param condition: IO event mask
-        @type condition: a set of C{gobject.IO_*} flags ORed together
-        @param priority: mainloop source priority
+        :param condition: IO event mask
+        :type condition: a set of C{gobject.IO_*} flags ORed together
+        :param priority: mainloop source priority
         '''
 
         WaitCondition.__init__(self)
@@ -387,8 +387,8 @@ class WaitForTimeout(WaitCondition):
     def __init__(self, timeout, priority=gobject.PRIORITY_DEFAULT):
         '''An object that waits for a specified ammount of time.
 
-        @param timeout: ammount of time to wait, in miliseconds
-        @param priority: mainloop priority for the timeout event
+        :param timeout: ammount of time to wait, in miliseconds
+        :param priority: mainloop priority for the timeout event
         '''
 
         WaitCondition.__init__(self)
@@ -398,14 +398,14 @@ class WaitForTimeout(WaitCondition):
         self._priority = priority
 
     def arm(self, tasklet):
-        '''See L{WaitCondition.arm}'''
+        '''See :class:`WaitCondition.arm`'''
         if self._id is None:
             self._tasklet = tasklet
             self._id = gobject.timeout_add(self.timeout, self._timeout_cb,
                                            priority=self._priority)
 
     def disarm(self):
-        '''See L{WaitCondition.disarm}'''
+        '''See :class:`WaitCondition.disarm`'''
         if self._id is not None:
             gobject.source_remove(self._id)
             self._id = None
@@ -438,13 +438,13 @@ class WaitForIdle(WaitCondition):
         self._priority = priority
 
     def arm(self, tasklet):
-        '''See L{WaitCondition.arm}'''
+        '''See :class:`WaitCondition.arm`'''
         if self._id is None:
             self._callback = tasklet.wait_condition_fired
             self._id = gobject.idle_add(self._idle_cb, self._priority)
 
     def disarm(self):
-        '''See L{WaitCondition.disarm}'''
+        '''See :class:`WaitCondition.disarm`'''
         if self._id is not None:
             gobject.source_remove(self._id)
             self._id = None
@@ -472,7 +472,7 @@ class WaitForTasklet(WaitCondition):
         self.retval = None
 
     def arm(self, tasklet):
-        '''See L{WaitCondition.arm}'''
+        '''See :class:`WaitCondition.arm`'''
         self._callback = tasklet.wait_condition_fired
         if self._id is None:
             self._id = self._tasklet.add_join_callback(self._join_cb)
@@ -481,7 +481,7 @@ class WaitForTasklet(WaitCondition):
             self._join_cb(self._tasklet, self._tasklet.return_value)
 
     def disarm(self):
-        '''See L{WaitCondition.disarm}'''
+        '''See :class:`WaitCondition.disarm`'''
         if self._idle_id is not None:
             gobject.source_remove(self._idle_id)
             self._idle_id = None
@@ -513,10 +513,10 @@ class WaitForSignal(WaitCondition):
     def __init__(self, obj, signal):
         '''Waits for a signal to be emitted on a specific GObject instance or class.
 
-        @param obj: object monitor for the signal
-        @type obj: gobject.GObject
-        @param signal: signal name
-        @type signal: str
+        :param obj: object monitor for the signal
+        :type obj: gobject.GObject
+        :param signal: signal name
+        :type signal: str
         '''
         WaitCondition.__init__(self)
         if isinstance(obj, type):
@@ -539,7 +539,7 @@ class WaitForSignal(WaitCondition):
         self.signal_args = None
 
     def arm(self, tasklet):
-        '''See L{WaitCondition.arm}'''
+        '''See :class:`WaitCondition.arm`'''
         if self._id is None:
             self._callback = tasklet.wait_condition_fired
             if self.class_ is not None:
@@ -591,8 +591,8 @@ class WaitForProcess(WaitCondition):
         '''
         Creates an object that waits for a subprocess.
 
-        @param pid: Process identifier
-        @type pid: int
+        :param pid: Process identifier
+        :type pid: int
         '''
         WaitCondition.__init__(self)
         self.pid = pid
@@ -601,13 +601,13 @@ class WaitForProcess(WaitCondition):
         self.status = None
 
     def arm(self, tasklet):
-        '''See L{WaitCondition.arm}'''
+        '''See :class:`WaitCondition.arm`'''
         self._callback = tasklet.wait_condition_fired
         if self._id is None:
             self._id = gobject.child_watch_add(self.pid, self._child_cb)
 
     def disarm(self):
-        '''See L{WaitCondition.disarm}'''
+        '''See :class:`WaitCondition.disarm`'''
         if self._id is not None:
             gobject.source_remove(self._id)
             self._id = None
@@ -633,13 +633,13 @@ class Message(object):
         '''
         Create a new Message object.
 
-        @param name: name of message
-        @type name: str
-        @param dest: destination tasklet for this message
-        @type dest: L{Tasklet}
-        @param value: value associated with the message
-        @param sender: sender tasklet for this message
-        @type sender: L{Tasklet}
+        :param name: name of message
+        :type name: str
+        :param dest: destination tasklet for this message
+        :type dest: :class:`Tasklet`
+        :param value: value associated with the message
+        :param sender: sender tasklet for this message
+        :type sender: :class:`Tasklet`
 
         '''
         assert isinstance(sender, (Tasklet, type(None)))
@@ -686,17 +686,17 @@ class WaitForMessages(WaitCondition):
         arrive.
 
         @note: unlike other wait conditions, when a message
-          is received, a L{Message} instance is returned by L{get_event()},
-          not the L{WaitForMessages} instance.
-        @param accept: message name or names to accept (receive) in
+          is received, a :class:`Message` instance is returned by L{get_event()},
+          not the :class:`WaitForMessages` instance.
+        :param accept: message name or names to accept (receive) in
           the current state
-        @type accept: string or sequence of string
-        @param defer: message name or names to defer (queue) in the
+        :type accept: string or sequence of string
+        :param defer: message name or names to defer (queue) in the
           current state
-        @type defer: string or sequence of string
-        @param discard: message name or names to discard (drop) in the
+        :type defer: string or sequence of string
+        :param discard: message name or names to discard (drop) in the
           current state
-        @type discard: string or sequence of string
+        :type discard: string or sequence of string
         '''
         WaitCondition.__init__(self)
         self._tasklet = None
@@ -726,14 +726,14 @@ class WaitForMessages(WaitCondition):
 class Tasklet(object):
     '''An object that launches and manages a tasklet.
 
-    @ivar state: current execution state of the tasklet, one of the STATE_* contants.
+    :ivar state: current execution state of the tasklet, one of the STATE_* contants.
 
-    @ivar return_value: the value returned by the task function, or None.
+    :ivar return_value: the value returned by the task function, or None.
 
-    @cvar STATE_RUNNING: the tasklet function is currently executing code
-    @cvar STATE_SUSPENDED: the tasklet function is currently waiting for an event
-    @cvar STATE_MSGSEND: the tasklet function is currently sending a message
-    @cvar STATE_ZOMBIE: the tasklet function has ended
+    :cvar STATE_RUNNING: the tasklet function is currently executing code
+    :cvar STATE_SUSPENDED: the tasklet function is currently waiting for an event
+    :cvar STATE_MSGSEND: the tasklet function is currently sending a message
+    :cvar STATE_ZOMBIE: the tasklet function has ended
     '''
 
     STATE_RUNNING, STATE_SUSPENDED, STATE_MSGSEND, STATE_ZOMBIE = range(4)
@@ -742,10 +742,10 @@ class Tasklet(object):
         '''
         Launch a generator tasklet.
 
-        @param gen: a generator object that implements the tasklet main body
-        @param start: whether to automatically start running the tasklet in the constructor
+        :param gen: a generator object that implements the tasklet main body
+        :param start: whether to automatically start running the tasklet in the constructor
 
-        If `gen` is omitted or None, L{run} should be overridden in a
+        If `gen` is omitted or None, :class:`run` should be overridden in a
         subclass.
 
         '''
@@ -930,7 +930,7 @@ class Tasklet(object):
         return value (or None).
 
         When a join callback is invoked, it is automatically removed,
-        so calling L{remove_join_callback} afterwards produces a KeyError
+        so calling :class:`remove_join_callback` afterwards produces a KeyError
         exception.
 
         '''
@@ -941,7 +941,7 @@ class Tasklet(object):
         return handle
 
     def remove_join_callback(self, handle):
-        '''Remove a join callback previously added with L{add_join_callback}'''
+        '''Remove a join callback previously added with :class:`add_join_callback`'''
         del self._join_callbacks[handle]
 
     def _join(self, retval):
@@ -962,7 +962,7 @@ class Tasklet(object):
 
         @note: Don't call this from another tasklet, only from the
         main loop!  To send a message from another tasklet, yield a
-        L{Message} with a correctly set 'dest' parameter.
+        :class:`Message` with a correctly set 'dest' parameter.
 
         """
         assert isinstance(message, Message)

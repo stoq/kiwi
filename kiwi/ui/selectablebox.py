@@ -44,7 +44,7 @@ class SelectableBox(object):
     def get_selected(self):
         """
         Get the currently selected widget.
-        @returns: widget
+        :returns: widget
         """
 
         return self._selected
@@ -52,7 +52,7 @@ class SelectableBox(object):
     def set_selected(self, widget):
         """
         Set the widget to be selected, must be a children of self.
-        @param widget: widget to select.
+        :param widget: widget to select.
         """
 
         if not widget in self.get_children():
@@ -129,10 +129,10 @@ class SelectableBox(object):
     def _get_child_at_pos(self, x, y):
         """
         Get child at position x and y.
-        @param x: x coordinate
-        @type x: integer
-        @param y: y coordinate
-        @type y: integer
+        :param x: x coordinate
+        :type x: integer
+        :param y: y coordinate
+        :type y: integer
         """
         toplevel = self.get_toplevel()
         for child in self.get_children():
