@@ -57,11 +57,17 @@ ProxyButton
 log = Logger('builderloader')
 
 class BuilderWidgetTree:
-    def __init__(self, view, gladefile, domain=None):
+    def __init__(self, view, gladefile=None, domain=None, data=None):
         self._view = view
         self._gladefile = gladefile
         self._builder = gtk.Builder()
-        self._builder.add_from_file(gladefile)
+        if gladefile is not None:
+            self._builder.add_from_file(gladefile)
+        elif data is not None:
+            self._builder.add_from_string(data)
+        else:
+            raise ValueError("need a gladefile or data")
+
         if domain is not None:
             self._builder.set_translation_domain(domain)
 
