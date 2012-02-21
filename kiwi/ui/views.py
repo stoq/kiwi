@@ -962,6 +962,12 @@ class BaseView(SlaveView):
         self.toplevel.hide()
         self.quit_if_last()
 
+_glade_loader_func = None
+
+def set_glade_loader_func(func):
+    global _glade_loader_func
+    _glade_loader_func = func
+
 def _get_libglade():
     try:
         from kiwi.ui.libgladeloader import LibgladeWidgetTree
@@ -989,6 +995,9 @@ def _open_glade(view, gladefile, domain):
     elif not isinstance(gladefile, basestring):
         raise TypeError(
               "gladefile should be a string, found %s" % type(gladefile))
+
+    if _glade_loader_func:
+        return _glade_loader_func(view, gladefile, domain)
 
     if gladefile.endswith('.ui'):
         directory = os.path.dirname(namedAny(view.__module__).__file__)
