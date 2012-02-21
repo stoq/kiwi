@@ -123,6 +123,23 @@ class Environment:
             fd = self.find_resource(resource, name)
             return open(fd).read()
 
+    def get_resource_filename(self, domain, resource, name):
+        if self._is_egg:
+            return pkg_resources.resource_filename(
+                domain, 'data/%s/%s' % (resource, name))
+        else:
+            return self.find_resource(resource, name)
+
+    def get_resource_names(self, domain, resource):
+        names = []
+        if self._is_egg:
+            return pkg_resources.resource_listdir(domain, 'data/%s' % (resource, ))
+        else:
+            for path in self.get_resource_paths(resource):
+                for dirname in os.listdir(path):
+                    names.append(dirname)
+        return names
+
     def find_resource(self, resource, name):
         """Locate a specific resource of called name of type resource"""
 
