@@ -35,6 +35,7 @@ from gtk import gdk
 
 from kiwi.log import Logger
 from kiwi.utils import gsignal, type_register
+from kiwi.ui.pixbufutils import pixbuf_from_string
 
 def gdk_color_to_string(color):
     """Convert a color to a #AABBCC string"""
@@ -236,11 +237,7 @@ def render_pixbuf(color_name, width=16, height=16, radius=4):
     surface.write_to_png(buf)
 
     buf.seek(0)
-    loader = gtk.gdk.PixbufLoader()
-    loader.write(buf.getvalue())
-    loader.close()
-
-    pixbuf = loader.get_pixbuf()
+    pixbuf = pixbuf_from_string(buf.getvalue())
 
     _pixbuf_cache[color_name] = pixbuf
     return pixbuf

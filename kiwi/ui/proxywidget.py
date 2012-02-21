@@ -40,6 +40,7 @@ from kiwi.datatypes import ValidationError, converter, BaseConverter
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
 from kiwi.log import Logger
 from kiwi.ui.gadgets import FadeOut
+from kiwi.ui.pixbufutils import pixbuf_from_string
 
 log = Logger('widget proxy')
 
@@ -58,15 +59,10 @@ class _PixbufConverter(BaseConverter):
         return string
 
     def from_string(self, value, format='png'):
-        loader = gdk.PixbufLoader(format)
         try:
-            loader.write(value)
-            loader.close()
+            return pixbuf_from_string(value, format)
         except gobject.GError, e:
             raise ValidationError(_("Could not load image: %s") % e)
-
-        pixbuf = loader.get_pixbuf()
-        return pixbuf
 
 converter.add(_PixbufConverter)
 
@@ -197,11 +193,8 @@ _error_icon = None
 def _load_error_icon():
     global _error_icon
     if _error_icon is None:
-        loader = gdk.PixbufLoader('png')
-        png_data = base64.decodestring(VALIDATION_PNG)
-        loader.write(png_data)
-        loader.close()
-        _error_icon = loader.get_pixbuf()
+        value = base64.decodestring(VALIDATION_PNG)
+        _error_icon = pixbuf_from_string(value, format)
     return _error_icon
 
 
