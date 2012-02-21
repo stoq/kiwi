@@ -51,7 +51,12 @@ class _VariableExtender:
             prefix = prefix[:-1]
         self.prefix = prefix
 
-        self.datadir = os.path.join('share', name)
+        is_egg = 'bdist_egg' in distribution.commands
+        if is_egg:
+            self.datadir = name + '/data'
+        else:
+            self.datadir = os.path.join('share', name)
+
         if self.prefix == '/usr':
             self.sysconfdir = '/etc'
         else:

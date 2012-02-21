@@ -33,6 +33,8 @@ import sys
 from kiwi.log import Logger
 from kiwi.python import namedAny
 
+import pkg_resources
+
 __all__ = ['Application', 'Library', 'app', 'environ']
 
 log = Logger('environ')
@@ -66,6 +68,8 @@ class Environment:
         self._add_resource_variable("glade", "KIWI_GLADE_PATH")
         self._add_resource_variable("image", "KIWI_IMAGE_PATH")
 
+        self._is_egg = sys.argv[0].endswith('.egg')
+
     def get_root(self):
         return self._root
 
@@ -90,6 +94,8 @@ class Environment:
         return self._resources[resource]
 
     def add_resource(self, resource, path):
+        if self._is_egg:
+            return
         path = os.path.join(self._root, path)
 
         if not os.path.isdir(path):
@@ -108,6 +114,14 @@ class Environment:
                     continue
 
             self.add_resource(resource, path)
+
+    def get_resource_string(self, domain, resource, name):
+        if self._is_egg:
+            return pkg_resources.resource_string(
+                domain, 'data/%s/%s' % (resource, name))
+        else:
+            fd = self.find_resource(resource, name)
+            return open(fd).read()
 
     def find_resource(self, resource, name):
         """Locate a specific resource of called name of type resource"""
