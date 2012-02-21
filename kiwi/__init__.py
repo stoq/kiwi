@@ -69,8 +69,6 @@ from kiwi.environ import Library
 assert kiwi_version # pyflakes
 
 library = Library('kiwi')
-if library.uninstalled:
-    library.add_global_resource('glade', 'glade')
 library.enable_translation()
 
 # Be careful to not export too much

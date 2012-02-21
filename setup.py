@@ -52,9 +52,7 @@ setup(name=name,
       author_email="kiwi@async.com.br",
       url="http://www.async.com.br/projects/kiwi/",
       license="GNU LGPL 2.1 (see COPYING)",
-      data_files=[('$datadir/glade',
-                   listfiles('glade', '*.glade') + listfiles('glade', '*.ui')),
-                  # Glade3
+      data_files=[# Glade3
                   ('share/glade3/catalogs', ['kiwiwidgets.xml']),
                   ('$libdir/glade3/modules', ['kiwiwidgets.py']),
                   ('share/glade3/pixmaps', pixmaps),
@@ -71,6 +69,4 @@ setup(name=name,
       packages=listpackages('kiwi'),
       ext_modules=ext_modules,
       resources=dict(locale='$prefix/share/locale'),
-      global_resources=dict(glade='$datadir/glade',
-                            pixmap='$datadir/pixmaps'),
       )
