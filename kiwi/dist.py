@@ -330,6 +330,9 @@ def setup(**kwargs):
         varext = _VariableExtender(self.distribution)
 
         for path, files in templates:
+            # Skip templates inside eggs for now
+            if 'bdist_egg' in self.distribution.commands:
+                continue
             install = self.distribution.get_command_obj('install')
             target = os.path.join(install.prefix, path)
             if install.root:
