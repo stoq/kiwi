@@ -962,13 +962,6 @@ class BaseView(SlaveView):
         self.toplevel.hide()
         self.quit_if_last()
 
-def _get_gazpacho():
-    try:
-        from kiwi.ui.gazpacholoader import GazpachoWidgetTree
-    except ImportError:
-        return
-    return GazpachoWidgetTree
-
 def _get_libglade():
     try:
         from kiwi.ui.libgladeloader import LibgladeWidgetTree
@@ -1023,10 +1016,6 @@ def _open_glade(view, gladefile, domain):
     elif 'gaxml-0.1.dtd' in sniff:
         WidgetTree = _get_gaxml()
         loader_name = 'gaxml'
-    # gazpacho: <!DOCTYPE glade-interface SYSTEM "http://gazpacho.sicem.biz/gazpacho-0.1.dtd">
-    elif 'gazpacho-0.1.dtd' in sniff:
-        WidgetTree = _get_gazpacho()
-        loader_name = 'gazpacho.loader'
     else:
         log.warning("Could not determine type/dtd of gladefile %s" % gladefile)
         # Defaulting to builder

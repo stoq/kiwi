@@ -348,14 +348,6 @@ def setup(**kwargs):
                 info('installing template %s' % target_file)
                 open(target_file, 'w').write(data)
 
-        # Copied from gazpacho, needs to be tested
-
-        #if 'bdist_wininst' in sys.argv:
-        #    prefix_code = 'import sys; prefix = sys.prefix'
-        #else:
-        #    install = self.distribution.get_command_obj('install')
-        #    prefix = install.prefix
-        #    prefix_code = 'prefix = r"%s"' % prefix
 
     # distutils uses old style classes
     InstallData = new.classobj('InstallData', (KiwiInstallData,),

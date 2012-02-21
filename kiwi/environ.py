@@ -33,8 +33,7 @@ import sys
 from kiwi.log import Logger
 from kiwi.python import namedAny
 
-__all__ = ['Application', 'Library', 'app', 'environ', 'require_gazpacho',
-           'is_gazpacho_required']
+__all__ = ['Application', 'Library', 'app', 'environ']
 
 log = Logger('environ')
 
@@ -61,8 +60,7 @@ class Environment:
         self._root = root
 
         # Add some compressed formats as alternative extensions to
-        # "glade" resources. A patch has been added to gazpacho trunk
-        # (rev. 2251) to support loading those compressed formats.
+        # "glade" resources
         self._add_extensions("glade", ".bz2", ".gz")
 
         self._add_resource_variable("glade", "KIWI_GLADE_PATH")
@@ -407,16 +405,6 @@ class Application(Library):
             sys.exit(main(sys.argv))
         except KeyboardInterrupt:
             raise SystemExit
-
-_require_gazpacho_loader = False
-
-def require_gazpacho():
-    global _require_gazpacho_loader
-    _require_gazpacho_loader = True
-
-def is_gazpacho_required():
-    global _require_gazpacho_loader
-    return _require_gazpacho_loader
 
 # Global variables
 environ = Environment()

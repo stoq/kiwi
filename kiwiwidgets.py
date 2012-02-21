@@ -35,7 +35,7 @@ def _get_icon_path():
         prefix = os.path.join(dirname, '..', '..', '..')
         icondir = os.path.join(prefix, 'share', 'glade3', 'pixmaps', '22x22')
     else:
-        icondir = os.path.join(dirname, '..', 'gazpacho-plugin',
+        icondir = os.path.join(dirname, '..', 'glade-plugin',
                                'resources', 'kiwiwidgets')
     return os.path.abspath(icondir)
 
