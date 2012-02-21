@@ -9,7 +9,6 @@ from gtk import gdk
 from kiwi.datatypes import converter, ValidationError, ValueUnset, \
      Decimal, BaseConverter
 from kiwi.currency import currency
-from kiwi.environ import environ
 from kiwi.python import enum
 
 # pixbuf converter
@@ -373,39 +372,6 @@ class DecimalTest(unittest.TestCase):
                          '10 000 000,0')
         self.assertEqual(self.conv.as_string(Decimal('10000000.0')),
                          '10 000 000,0')
-
-class PixbufTest(unittest.TestCase):
-    def setUp(self):
-        self.conv = converter.get_converter(gdk.Pixbuf)
-
-    def testPNGAsString(self):
-        if sys.platform == 'win32':
-            return
-        file_name = environ.find_resource('pixmap', 'validation-error-16.png')
-
-        f = file(file_name)
-        png_string = f.read()
-        f.close()
-
-        pixbuf = self.conv.from_string(png_string)
-        string = self.conv.as_string(pixbuf)
-        # XXX Not always equal. need to investigate
-        #self.assertEqual(string, png_string)
-
-        # Compare png header
-        self.assertEqual(string[0:8], '\x89\x50\x4e\x47\x0d\x0a\x1a\x0a')
-
-    def testPNGFromString(self):
-        if sys.platform == 'win32':
-            return
-        file_name = environ.find_resource('pixmap', 'validation-error-16.png')
-        f = file(file_name)
-        png_string = f.read()
-        f.close()
-
-        pixbuf = self.conv.from_string(png_string)
-        self.assertEqual(pixbuf.get_width(), 17)
-        self.assertEqual(pixbuf.get_height(), 17)
 
 class EnumTest(unittest.TestCase):
     def testSimple(self):

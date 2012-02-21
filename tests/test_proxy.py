@@ -5,7 +5,6 @@ from gtk import gdk
 
 from kiwi import ValueUnset
 from kiwi.datatypes import converter
-from kiwi.environ import environ
 from kiwi.python import Settable
 from kiwi.ui.proxy import Proxy
 from kiwi.ui.widgets.button import ProxyButton
@@ -144,22 +143,6 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(self.model.button, 'button')
         self.view.button.update('sliff')
         self.assertEqual(self.model.button, 'sliff')
-
-    def testButtonPixbuf(self):
-        if sys.platform == 'win32':
-            return
-
-        filename = environ.find_resource('pixmap', 'validation-error-16.png')
-        pixbuf = gdk.pixbuf_new_from_file(filename)
-        #self.assertEqual(self.view.buttonpixbuf.data_type, 'Pixbuf')
-        self.view.buttonpixbuf.update(pixbuf)
-        self.assertEqual(type(self.view.buttonpixbuf.read()), gdk.Pixbuf)
-        conv = converter.get_converter(gdk.Pixbuf)
-        self.assertEqual(conv.as_string(self.model.buttonpixbuf),
-                         conv.as_string(pixbuf))
-        self.view.buttonpixbuf.update(None)
-        self.assertEqual(self.view.buttonpixbuf.read(), None)
-        self.assertEqual(self.model.buttonpixbuf, None)
 
     def testEmptyModel(self):
         self.radio_second.set_active(True)
