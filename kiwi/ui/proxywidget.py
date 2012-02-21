@@ -27,6 +27,7 @@
 
 """Basic classes for widget support for the Kiwi Framework"""
 
+import base64
 import gettext
 
 import gobject
@@ -36,7 +37,6 @@ from gtk import gdk
 from kiwi import ValueUnset
 from kiwi.component import implements
 from kiwi.datatypes import ValidationError, converter, BaseConverter
-from kiwi.environ import environ
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
 from kiwi.log import Logger
 from kiwi.ui.gadgets import FadeOut
@@ -181,8 +181,29 @@ class ProxyWidgetMixin(object):
 
 VALIDATION_ICON_WIDTH = 16
 MANDATORY_ICON = gtk.STOCK_EDIT
-ERROR_ICON = gdk.pixbuf_new_from_file(
-    environ.find_resource('pixmap', 'validation-error-16.png'))
+
+VALIDATION_PNG = """iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAABGdBTUEAANbY1E9YMgAAABl0RVh0
+U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAFGSURBVHjaYmRAA/8ZGOyBlAMDbnCAkYHh
+ILIAQAAxohkw/5+CYsJ/BUWcJjDduMbA+OJFAlDjQpgYQAAxohhgYJjwNyCEAS/48Z2BZcEcFIMA
+AoiRJANwGAQQQIxAA/z/aWhu+BsRw0AqYAYatFVHJwAggJiAbIP/EpIM5ABQ2P3g5CwACCAmBioA
+gABiQQl5dxcGRglxwro+fGT4tmoNAyeUCxBAKIYwW5gRbfvrtasZ5KBsgAACG8J04RwD04ljDD8Y
+fjO8cnYkaMCrw4cYZKdPY2BiZWNgELVjAAggUPTWA/F/cvGq0LD9AAFElYAFCCCQIQcoMeC1qCgD
+QAAxQTNTAjkGbPbx/fBaTKwAIICQM188KWGxycf3fUNDoz5IL0AAoRcD8eQYABBAjOgG7XdwiH8t
+KpaALwxAXmhoqL8IEwMIMAD/caLWpAsJ0wAAAABJRU5ErkJggg==
+"""
+
+_error_icon = None
+
+def _load_error_icon():
+    global _error_icon
+    if _error_icon is None:
+        loader = gdk.PixbufLoader('png')
+        png_data = base64.decodestring(VALIDATION_PNG)
+        loader.write(png_data)
+        loader.close()
+        _error_icon = loader.get_pixbuf()
+    return _error_icon
+
 
 class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     """Class used by some Kiwi Widgets that need to support mandatory
@@ -297,7 +318,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
             text = _("'%s' is not a valid value for this field") % self.read()
 
         if not fade:
-            self.set_pixbuf(ERROR_ICON)
+            self.set_pixbuf(_load_error_icon())
             self.update_background(gtk.gdk.color_parse(self._fade.ERROR_COLOR))
             return
 
@@ -306,7 +327,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         # (which removes this timeout) is called as soon as the user
         # types valid data.
         def done(fadeout, c):
-            self.set_pixbuf(ERROR_ICON)
+            self.set_pixbuf(_load_error_icon())
             self.queue_draw()
             fadeout.disconnect(c.signal_id)
 

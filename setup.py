@@ -54,8 +54,6 @@ setup(name=name,
       license="GNU LGPL 2.1 (see COPYING)",
       data_files=[('$datadir/glade',
                    listfiles('glade', '*.glade') + listfiles('glade', '*.ui')),
-                  ('$datadir/pixmaps',
-                   listfiles('pixmaps', '*.png')),
                   # Glade3
                   ('share/glade3/catalogs', ['kiwiwidgets.xml']),
                   ('$libdir/glade3/modules', ['kiwiwidgets.py']),

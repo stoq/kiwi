@@ -3,7 +3,6 @@ recursive-include doc Makefile howto.tex *.txt  *.tmpl *.eps *.png *.dia
 recursive-include examples *
 recursive-include glade-plugin *.png
 recursive-include glade *.ui
-recursive-include pixmaps *.png
 recursive-include po *.po kiwi.pot POTFILES.list
 include debian/changelog debian/compat debian/copyright debian/control debian/rules debian/pyversions
 include debian/pycompat debian/watch
