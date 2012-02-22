@@ -194,7 +194,7 @@ def _load_error_icon():
     global _error_icon
     if _error_icon is None:
         value = base64.decodestring(VALIDATION_PNG)
-        _error_icon = pixbuf_from_string(value, format)
+        _error_icon = pixbuf_from_string(value, 'png')
     return _error_icon
 
 
