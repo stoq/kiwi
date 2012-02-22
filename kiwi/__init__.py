@@ -63,14 +63,17 @@ except ImportError, e:
 #         ('.'.join(map(str, gobject.pygtk_version))),))
 
 from kiwi.__version__ import version as kiwi_version
-from kiwi.environ import Library
+from kiwi.environ import EnvironmentError, Library
 
 
 assert kiwi_version # pyflakes
 
 library = Library('kiwi')
 if library.uninstalled:
-    library.add_global_resource('glade', 'glade')
+    try:
+        library.add_global_resource('glade', 'glade')
+    except EnvironmentError:
+        pass
 library.enable_translation()
 
 # Be careful to not export too much
