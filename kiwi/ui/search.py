@@ -738,12 +738,13 @@ class StringSearchFilter(SearchFilter):
     :ivar entry: the entry
     :ivar label: the label
     """
-    def __init__(self, label, chars=0):
+    def __init__(self, label, chars=0, container=None):
         """
         Create a new StringSearchFilter object.
         :param label: label of the search filter
         :param chars: maximum number of chars used by the search entry
         """
+        self.container = container
         SearchFilter.__init__(self, label=label)
         self.title_label = gtk.Label(label)
         self.pack_start(self.title_label, False, False)
@@ -795,11 +796,22 @@ class StringSearchFilter(SearchFilter):
     def _on_entry__changed(self, entry):
         entry.props.secondary_icon_sensitive = bool(entry.get_text())
 
+    def _position_filter_menu(self, data):
+        window = self.entry.get_icon_window(gtk.ENTRY_ICON_PRIMARY)
+        x, y = window.get_origin()
+        border = self.entry.style_get_property('progress-border')
+        return (x, y + window.get_size()[1] + border.bottom, True)
+
     def _on_entry__icon_release(self, entry, icon_pos, event):
         if icon_pos == gtk.ENTRY_ICON_SECONDARY:
             entry.set_text("")
             entry.grab_focus()
             self.emit('changed')
+        elif icon_pos == gtk.ENTRY_ICON_PRIMARY:
+            if not self.container:
+                return
+            self.container.menu.popup(None, None,
+                                      self._position_filter_menu, 0, event.time)
 
     #
     # SearchFilter
@@ -1039,7 +1051,8 @@ class SearchContainer(gtk.VBox):
         self._auto_search = True
         self._summary_label = None
 
-        search_filter = StringSearchFilter(_('Search:'), chars=chars)
+        search_filter = StringSearchFilter(_('Search:'), chars=chars,
+                                           container=self)
         search_filter.connect('changed', self._on_search_filter__changed)
         self._search_filters.append(search_filter)
         self._primary_filter = search_filter
@@ -1371,13 +1384,6 @@ class SearchContainer(gtk.VBox):
         self.label_group = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
         self.combo_group = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
 
-        add = SearchFilterButton(label=_('Filter'), stock=gtk.STOCK_ADD)
-        add.connect('clicked', self._on_add_field_clicked)
-        add.show()
-        self.hbox.pack_end(add, False, False, 0)
-
-        self.add_filter_button = add
-
         self.menu = gtk.Menu()
         for column in self._columns:
             if not isinstance(column, SearchColumn):
@@ -1394,18 +1400,6 @@ class SearchContainer(gtk.VBox):
             menu_item.show()
             menu_item.connect('activate', self._on_menu_item_activate)
             self.menu.append(menu_item)
-
-        if not len(self.menu):
-            self.add_filter_button.hide()
-
-    def _position_filter_menu(self, data):
-        alloc = self.add_filter_button.get_allocation()
-        x, y = self.add_filter_button.window.get_origin()
-
-        return (x + alloc.x, y + alloc.y + alloc.height, True)
-
-    def _on_add_field_clicked(self, button):
-        self.menu.popup(None, None, self._position_filter_menu, 0, 0L)
 
     def _on_menu_item_activate(self, item):
         column = item.get_data('column')
