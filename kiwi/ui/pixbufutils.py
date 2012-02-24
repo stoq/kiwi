@@ -24,8 +24,15 @@
 
 from gtk import gdk
 
-def pixbuf_from_string(pixbuf_data, format='png'):
+def pixbuf_from_string(pixbuf_data, format='png', width=None, height=None):
     loader = gdk.PixbufLoader(format)
     loader.write(pixbuf_data)
     loader.close()
-    return loader.get_pixbuf()
+    pixbuf = loader.get_pixbuf()
+    if width is not None or height is not None:
+        scaled_pixbuf = pixbuf.scale_simple(width, height, gdk.INTERP_BILINEAR)
+        if scaled_pixbuf is None:
+            print 'Warning: could not scale image'
+        else:
+            pixbuf = scaled_pixbuf
+    return pixbuf
