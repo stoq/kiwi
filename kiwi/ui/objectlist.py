@@ -28,6 +28,7 @@
 
 import datetime
 import gettext
+import locale
 import pickle
 
 import gobject
@@ -284,7 +285,10 @@ class Column(gobject.GObject):
     def _set_data_type(self, data):
         if data is not None:
             conv = converter.get_converter(data)
-            self.compare = self.compare or conv.get_compare_function()
+            if data == str:
+                self.compare = locale.strcoll
+            else:
+                self.compare = self.compare or conv.get_compare_function()
             self.from_string = conv.from_string
         self._data_type = data
     data_type = gobject.property(getter=_get_data_type,
@@ -1384,9 +1388,9 @@ class ObjectList(gtk.HBox):
 
     def _model_sort_func(self, model, iter1, iter2, (column, attr)):
         "This method is used to sort the GtkTreeModel"
-        return column.compare(
-            column.get_attribute(model[iter1][COL_MODEL], attr),
-            column.get_attribute(model[iter2][COL_MODEL], attr))
+        a = column.get_attribute(model[iter1][COL_MODEL], attr)
+        b = column.get_attribute(model[iter2][COL_MODEL], attr)
+        return column.compare(a, b)
 
     # Selection
     def _on_selection__changed(self, selection):
