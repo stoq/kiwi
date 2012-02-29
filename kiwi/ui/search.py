@@ -225,7 +225,7 @@ class SearchFilter(gtk.HBox):
     implements(ISearchFilter)
 
     def __init__(self, label=''):
-        self.__gobject_init__(label=label)
+        gtk.HBox.__init__(self)
         self._label = label
         self._remove_button = None
 
@@ -744,7 +744,7 @@ class StringSearchFilter(SearchFilter):
         :param label: label of the search filter
         :param chars: maximum number of chars used by the search entry
         """
-        self.container = container
+        self._container = container
         SearchFilter.__init__(self, label=label)
         self.title_label = gtk.Label(label)
         self.pack_start(self.title_label, False, False)
@@ -808,10 +808,10 @@ class StringSearchFilter(SearchFilter):
             entry.grab_focus()
             self.emit('changed')
         elif icon_pos == gtk.ENTRY_ICON_PRIMARY:
-            if not self.container:
+            if not self._container:
                 return
-            self.container.menu.popup(None, None,
-                                      self._position_filter_menu, 0, event.time)
+            self._container.menu.popup(None, None,
+                                       self._position_filter_menu, 0, event.time)
 
     #
     # SearchFilter
