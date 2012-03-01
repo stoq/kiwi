@@ -2320,14 +2320,14 @@ class ListLabel(gtk.HBox):
     # Callbacks
 
     def _on_treeview_column_button__size_allocate(self, label, rect):
-        self._resize(position=rect[0])
+        self._resize(position=rect.x)
 
     def _on_treeview_column__notify_width(self, treeview, pspec):
         value = treeview.get_property(pspec.name)
         self._resize(width=value)
 
     def _on_list__size_allocate(self, list, rect):
-        self._resize(position=rect[0], width=rect[2])
+        self._resize(position=rect.x, width=rect.width)
 
 
 class SummaryLabel(ListLabel):
