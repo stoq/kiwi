@@ -821,7 +821,7 @@ class StringSearchFilter(SearchFilter):
         option = self.mode.get_selected_data()
         return StringQueryState(filter=self,
                                 text=self.entry.get_text(),
-                                mode=option.mode)
+                                mode=option and option.mode)
 
     def set_state(self, text, mode=None):
         self.entry.set_text(text)
