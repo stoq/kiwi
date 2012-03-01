@@ -28,6 +28,7 @@ import gettext
 import imp
 import locale
 import os
+import platform
 import sys
 
 from kiwi.log import Logger
@@ -336,6 +337,13 @@ class Library(Environment):
         if hasattr(gettext, 'bind_textdomain_codeset'):
             gettext.bind_textdomain_codeset(domain, 'utf-8')
 
+        if platform.system() == 'Windows':
+            from ctypes import cdll
+            libintl = cdll.intl
+            libintl.bindtextdomain(domain, localedir[0])
+            libintl.bind_textdomain_codeset(domain, 'UTF-8')
+            del libintl
+
     def set_application_domain(self, domain):
         """
         Sets the default application domain
@@ -345,6 +353,12 @@ class Library(Environment):
         # For libglade, but only on non-win32 systems
         if hasattr(locale, 'textdomain'):
             locale.textdomain(domain)
+
+        if platform.system() == 'Windows':
+            from ctypes import cdll
+            libintl = cdll.intl
+            libintl.textdomain(domain)
+            del libintl
 
     def add_global_resource(self, resource, path):
         """Convenience method to add a global resource.
