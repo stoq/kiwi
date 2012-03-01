@@ -217,8 +217,7 @@ class SearchFilter(gtk.HBox):
     """
     A base classed used by common search filters
     """
-    label = gobject.property(type=str, flags=(gobject.PARAM_READWRITE |
-                                              gobject.PARAM_CONSTRUCT_ONLY))
+    label = gobject.property(type=str, flags=(gobject.PARAM_READWRITE))
     gsignal('changed')
     gsignal('removed')
 
@@ -226,6 +225,7 @@ class SearchFilter(gtk.HBox):
 
     def __init__(self, label=''):
         gtk.HBox.__init__(self)
+        self.props.label = label
         self._label = label
         self._remove_button = None
 
