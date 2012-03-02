@@ -286,7 +286,9 @@ class Column(gobject.GObject):
         if data is not None:
             conv = converter.get_converter(data)
             if data == str:
-                self.compare = locale.strcoll
+                def str_compare(a, b):
+                    return locale.strcoll(a or '', b or '')
+                self.compare = str_compare
             else:
                 self.compare = self.compare or conv.get_compare_function()
             self.from_string = conv.from_string
