@@ -41,15 +41,17 @@ class ContextMenuItem(gtk.ImageMenuItem):
         The first will display an label 'foo'. The second will display the same label with the
         paste icon, and the last will display the paste icon with the default paste label
         """
-        # For some reason I don't know, gtk.ImageMenuItem.__init__(...) does not work. It
-        # complains I should use __gobject_init__ instead.
-        self.__gobject_init__()
+        gtk.ImageMenuItem.__init__(self)
 
         if not stock:
             stock = label
             info = gtk.stock_lookup(label)
             if info:
-                label = info[1]
+                try:
+                    label = info.label
+                # For PyGTk
+                except AttributeError:
+                    label = info[1]
 
         lbl = gtk.AccelLabel(label)
         lbl.set_alignment(0, 0.5)
