@@ -377,11 +377,12 @@ class _DecimalConverter(_FloatConverter):
     type = Decimal
     name = _('Decimal')
     align = Alignment.RIGHT
-    def from_string(self, value):
+    def from_string(self, value, filter=True):
         if value == '':
             return ValueUnset
 
-        value = filter_locale(value)
+        if filter:
+            value = filter_locale(value)
 
         try:
             retval = Decimal(value)

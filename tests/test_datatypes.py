@@ -169,6 +169,9 @@ class CurrencyTest(unittest.TestCase):
             raise AssertionError("monetary separator could not be removed")
         self.assertEqual(c, Decimal('1234567.40'))
 
+        self.assertEqual(currency('1,234'), Decimal('1.234'))
+        self.assertEqual(currency('1.234'), Decimal('1234'))
+
         # Sometimes it works, sometimes it doesn''10,000,000.0't
         #self.assertEqual(self.conv.from_string('0,5'), currency('0.5'))
 
