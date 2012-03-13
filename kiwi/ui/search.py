@@ -1134,7 +1134,7 @@ class SearchContainer(gtk.VBox):
                     "You need to set an executor before calling set_filters "
                     "with columns or callback set")
 
-        assert not search_filter.parent
+        assert not search_filter.get_parent()
         self.set_filter_position(search_filter, position)
         search_filter.connect('changed', self._on_search_filter__changed)
         search_filter.connect('removed', self._on_search_filter__remove)
@@ -1162,8 +1162,8 @@ class SearchContainer(gtk.VBox):
         :param search_filter:
         :param position:
         """
-        if search_filter.parent:
-            search_filter.parent.remove(search_filter)
+        if search_filter.get_parent():
+            search_filter.get_parent().remove(search_filter)
 
         if position == SearchFilterPosition.TOP:
             self.hbox.pack_start(search_filter, False, False)
@@ -1177,9 +1177,9 @@ class SearchContainer(gtk.VBox):
         Get filter by position.
         :param search_filter:
         """
-        if search_filter.parent == self.hbox:
+        if search_filter.get_parent() == self.hbox:
             return SearchFilterPosition.TOP
-        elif search_filter.parent == self:
+        elif search_filter.get_parent() == self:
             return SearchFilterPosition.BOTTOM
         else:
             raise AssertionError(search_filter)
@@ -1278,7 +1278,7 @@ class SearchContainer(gtk.VBox):
                 parent))
 
         if self._summary_label:
-            self._summary_label.parent.remove(self._summary_label)
+            self._summary_label.get_parent().remove(self._summary_label)
         self._summary_label = SummaryLabel(klist=self.results,
                                            column=column,
                                            label=label,

@@ -48,7 +48,7 @@ from kiwi.ui.proxy import Proxy
 
 log = Logger('kiwi.view')
 
-_non_interactive = (
+_non_interactive = [
     gtk.Label,
     gtk.Alignment,
     gtk.AccelLabel,
@@ -61,7 +61,6 @@ _non_interactive = (
     gtk.HPaned,
     gtk.HSeparator,
     gtk.Layout,
-    gtk.Progress,
     gtk.ProgressBar,
     gtk.ScrolledWindow,
     gtk.Table,
@@ -70,7 +69,10 @@ _non_interactive = (
     gtk.VPaned,
     gtk.VSeparator,
     gtk.Window,
-)
+]
+
+if hasattr(gtk, 'Progress'):
+    _non_interactive.append(gtk.Progress)
 
 color_red = gdk.color_parse('red')
 color_black = gdk.color_parse('black')

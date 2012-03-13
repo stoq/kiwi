@@ -126,7 +126,7 @@ class WidgetIntrospecter(gobject.GObject):
         def on_widget__notify_parent(widget, pspec, name, widgets,
                                      signal_container):
             # Only take action when the widget is removed from a parent
-            if widget.parent is not None:
+            if widget.get_parent() is not None:
                 return
 
             for child_name, child in widgets.items():
