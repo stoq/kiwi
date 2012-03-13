@@ -924,7 +924,7 @@ class BaseView(SlaveView):
         # Check if any of the widgets is interactive
         for v in values:
             if (isinstance(v, gtk.Widget) and not
-                isinstance(v, _non_interactive)):
+                isinstance(v, tuple(_non_interactive))):
                 interactive = v
         if interactive:
             log.warn("No widget is focused in view %s but you have an "
