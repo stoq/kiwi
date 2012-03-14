@@ -212,7 +212,7 @@ class _EasyComboBoxHelper(object):
                 break
         else:
             raise KeyError("No item correspond to label %r in the combo %s"
-                           % (label, self._combobox.name))
+                           % (label, self._combobox.get_name()))
 
     def select_item_by_data(self, data):
         if self.mode != ComboMode.DATA:
@@ -225,7 +225,7 @@ class _EasyComboBoxHelper(object):
                 break
         else:
             raise KeyError("No item correspond to data %r in the combo %s"
-                           % (data, self._combobox.name))
+                           % (data, self._combobox.get_name()))
 
     def get_model_strings(self):
         return [row[ComboColumn.LABEL] for row in self._combobox.get_model()]
