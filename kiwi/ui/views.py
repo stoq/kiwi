@@ -850,7 +850,7 @@ class BaseView(SlaveView):
         SlaveView.__init__(self, toplevel, widgets, gladefile, toplevel_name,
                            domain)
 
-        if not isinstance(self.toplevel, gtk.Window):
+        if not isinstance(self.toplevel, (gtk.Window, gtk.Dialog)):
             raise TypeError("toplevel widget must be a Window "
                             "(or inherit from it),\nfound `%s' %s"
                             % (toplevel, self.toplevel))
