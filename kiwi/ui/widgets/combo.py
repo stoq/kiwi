@@ -176,6 +176,8 @@ class _EasyComboBoxHelper(object):
             else:
                 self.set_mode(ComboMode.STRING)
 
+        if position < 0:
+            position = 0
         model = self._combobox.get_model()
         if self.mode == ComboMode.STRING:
             if data is not None:
