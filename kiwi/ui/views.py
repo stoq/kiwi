@@ -281,7 +281,7 @@ class SlaveView(gobject.GObject):
                             "called toplevel that specifies the "
                             "toplevel widget in it")
 
-        if isinstance(toplevel, gtk.Window):
+        if isinstance(toplevel, (gtk.Window, gtk.Dialog)):
             if toplevel.get_visible():
                 log.warn("Toplevel widget %s (%s) is visible; that's probably "
                          "wrong" % (toplevel, toplevel.get_name()))
@@ -306,7 +306,7 @@ class SlaveView(gobject.GObject):
         # window, so we pull our slave out from it, grab its groups and
         # muerder it later
         shell = glade_adaptor.get_widget(container_name)
-        if not isinstance(shell, gtk.Window):
+        if not isinstance(shell, (gtk.Window, gtk.Dialog)):
             raise TypeError("Container %s should be a Window, found %s" % (
                 container_name, type(shell)))
 
@@ -454,7 +454,8 @@ class SlaveView(gobject.GObject):
                 # window, it's safe to realize it. If this check isn't
                 # performed, we get a crash as per
                 # http://bugzilla.gnome.org/show_bug.cgi?id=107872
-                if isinstance(widget.get_toplevel(), gtk.Window):
+                if isinstance(widget.get_toplevel(), (gtk.Window,
+                                                      gtk.Dialog)):
                     widget.realize()
                 else:
                     log.warn("get_topmost_widget: widget %s was not realized"
@@ -466,7 +467,8 @@ class SlaveView(gobject.GObject):
                     widget = widget.entry
                 if not widget.flags() & gtk.CAN_FOCUS or \
                     isinstance(widget, (gtk.Label, gtk.HSeparator,
-                                        gtk.VSeparator, gtk.Window)):
+                                        gtk.VSeparator, gtk.Window,
+                                        gtk.Dialog)):
                     continue
 
             if top_widget:
@@ -537,7 +539,7 @@ class SlaveView(gobject.GObject):
 
         shell = slave.get_toplevel()
 
-        if isinstance(shell, gtk.Window): # view with toplevel window
+        if isinstance(shell, (gtk.Window, gtk.Dialog)): # view with toplevel window
             new_widget = shell.get_child()
             shell.remove(new_widget) # remove from window to allow reparent
         else: # slaveview
@@ -557,7 +559,7 @@ class SlaveView(gobject.GObject):
             # accel groups; otherwise complain if we're dropping the
             # accelerators
             win = parent.get_toplevel()
-            if isinstance(win, gtk.Window):
+            if isinstance(win, (gtk.Window, gtk.Dialog)):
                 # use idle_add to be sure we attach the groups as late
                 # as possible and avoid reattaching groups -- see
                 # comment in _attach_groups.
@@ -894,7 +896,7 @@ class BaseView(SlaveView):
         # top view is difficult. We used to print a warning here, I
         # removed it for convenience; we might want to put it back when
         # http://bugs.async.com.br/show_bug.cgi?id=682 is fixed
-        elif isinstance(view, gtk.Window):
+        elif isinstance(view, (gtk.Window, gtk.Dialog)):
             self.toplevel.set_transient_for(view)
         else:
             raise TypeError("Parameter to set_transient_for should "

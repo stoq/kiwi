@@ -83,7 +83,12 @@ class _DateEntryPopup(gtk.Window):
         self.set_screen(dateentry.get_screen())
 
         self.realize()
-        self.height = self._vbox.size_request()[1]
+        req = self._vbox.size_request()
+        try:
+            height = req[1]
+        except TypeError:
+            height = req.height
+        self.height = height
 
     def _on_calendar__day_selected_double_click(self, calendar):
         self.emit('date-selected', self.get_date())
@@ -211,7 +216,7 @@ class _DateEntryPopup(gtk.Window):
         if treeview.flags() & gtk.MAPPED:
             return
         toplevel = combo.get_toplevel()
-        if isinstance(toplevel, gtk.Window) and toplevel.group:
+        if isinstance(toplevel, (gtk.Window, gtk.Dialog)) and toplevel.group:
             toplevel.group.add_window(self)
 
         x, y, width, height = self._get_position()

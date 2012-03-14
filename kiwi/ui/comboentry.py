@@ -117,7 +117,7 @@ class _ComboEntryPopup(gtk.Window):
         treeview.set_model(model)
 
         toplevel = combo.get_toplevel()
-        if isinstance(toplevel, gtk.Window) and toplevel.group:
+        if isinstance(toplevel, (gtk.Window, gtk.Dialog)) and toplevel.group:
             toplevel.group.add_window(self)
 
         # width is meant for the popup window

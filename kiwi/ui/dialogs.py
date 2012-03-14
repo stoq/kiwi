@@ -130,7 +130,7 @@ class HIGAlertDialog(gtk.Dialog):
 
 class BaseDialog(gtk.Dialog):
     def __init__(self, parent=None, title='', flags=0, buttons=()):
-        if parent and not isinstance(parent, gtk.Window):
+        if parent and not isinstance(parent, (gtk.Window, gtk.Dialog)):
             raise TypeError("parent needs to be None or a gtk.Window subclass")
 
         if not flags and parent:
@@ -179,7 +179,7 @@ def messagedialog(dialog_type, short, long=None, parent=None,
                 "buttons must be a GtkButtonsTypes constant or a tuple")
         dialog_buttons = gtk.BUTTONS_NONE
 
-    if parent and not isinstance(parent, gtk.Window):
+    if parent and not isinstance(parent, (gtk.Window, gtk.Dialog)):
         raise TypeError("parent must be a gtk.Window subclass")
 
     d = HIGAlertDialog(parent=parent, flags=gtk.DIALOG_MODAL,
