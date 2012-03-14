@@ -101,7 +101,7 @@ class _ComboEntryPopup(gtk.Window):
         set using :class:`set_model`()
         """
         combo = self._comboentry
-        if not (combo.flags() & gtk.REALIZED):
+        if not combo.get_realized():
             return
 
         treeview = self._treeview
@@ -161,7 +161,7 @@ class _ComboEntryPopup(gtk.Window):
 
     def popdown(self):
         combo = self._comboentry
-        if not (combo.flags() & gtk.REALIZED):
+        if not combo.get_realized():
             return
 
         self.grab_remove()
