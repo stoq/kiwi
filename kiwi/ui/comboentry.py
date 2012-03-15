@@ -117,8 +117,9 @@ class _ComboEntryPopup(gtk.Window):
         treeview.set_model(model)
 
         toplevel = combo.get_toplevel()
-        if isinstance(toplevel, (gtk.Window, gtk.Dialog)) and toplevel.group:
-            toplevel.group.add_window(self)
+        if (isinstance(toplevel, (gtk.Window, gtk.Dialog)) and
+            toplevel.get_group()):
+            toplevel.get_group().add_window(self)
 
         # width is meant for the popup window
         # height is meant for the treeview, since it calculates using
@@ -150,7 +151,7 @@ class _ComboEntryPopup(gtk.Window):
         # Grab window
         self.grab_focus()
 
-        if not (self._treeview.flags() & gtk.HAS_FOCUS):
+        if not self._treeview.has_focus():
             self._treeview.grab_focus()
 
         if not self._popup_grab_window():
@@ -218,7 +219,7 @@ class _ComboEntryPopup(gtk.Window):
     def _on__button_press_event(self, window, event):
         # If we're clicking outside of the window
         # close the popup
-        if (event.window != self.window or
+        if (event.window != self.get_window() or
             (tuple(self.allocation.intersect(
                    gdk.Rectangle(x=int(event.x), y=int(event.y),
                                  width=1, height=1)))) == (0, 0, 0, 0)):
@@ -245,15 +246,16 @@ class _ComboEntryPopup(gtk.Window):
 
     def _popup_grab_window(self):
         activate_time = 0L
-        if gdk.pointer_grab(self.window, True,
+        window = self.get_window()
+        if gdk.pointer_grab(window, True,
                             (gdk.BUTTON_PRESS_MASK |
                              gdk.BUTTON_RELEASE_MASK |
                              gdk.POINTER_MOTION_MASK),
                              None, None, activate_time) == 0:
-            if gdk.keyboard_grab(self.window, True, activate_time) == 0:
+            if gdk.keyboard_grab(window, True, activate_time) == 0:
                 return True
             else:
-                self.window.get_display().pointer_ungrab(activate_time);
+                window.pointer_ungrab(activate_time);
                 return False
         return False
 
@@ -262,16 +264,33 @@ class _ComboEntryPopup(gtk.Window):
         treeview.realize()
 
         sample = self._comboentry
+        widget = sample.entry
 
-        # We need to fetch the coordinates of the entry window
-        # since comboentry itself does not have a window
-        x, y = sample.entry.window.get_origin()
-        width = sample.allocation.width
+        allocation = widget.get_allocation()
+
+        window  = widget.get_window()
+        # Gtk+ 3.x
+        if hasattr(window, 'get_root_coords'):
+            x = 0
+            y = 0
+            if not widget.get_has_window():
+                x += allocation.x
+                y += allocation.y
+            x, y = window.get_root_coords(x, y)
+        # Gtk+ 2.x
+        else:
+            x, y = widget.window.get_origin()
+
+        width = allocation.width
 
         hpolicy = vpolicy = gtk.POLICY_NEVER
         self._sw.set_policy(hpolicy, vpolicy)
 
-        pwidth = self.size_request()[0]
+        req = self.size_request()
+        try:
+            pwidth = req[0]
+        except:
+            pwidth = req.width
         if pwidth > width:
             self._sw.set_policy(gtk.POLICY_ALWAYS, vpolicy)
             pwidth, pheight = self.size_request()
@@ -286,7 +305,7 @@ class _ComboEntryPopup(gtk.Window):
         height = cell_height * rows
 
         screen = self._comboentry.get_screen()
-        monitor_num = screen.get_monitor_at_window(sample.entry.window)
+        monitor_num = screen.get_monitor_at_window(widget.get_window())
         monitor = screen.get_monitor_geometry(monitor_num)
 
         if x < monitor.x:
@@ -294,13 +313,13 @@ class _ComboEntryPopup(gtk.Window):
         elif x + width > monitor.x + monitor.width:
             x = monitor.x + monitor.width - width
 
-        if y + sample.entry.allocation.height + height <= monitor.y + monitor.height:
-            y += sample.entry.allocation.height
+        if y + allocation.height + height <= monitor.y + monitor.height:
+            y += allocation.height
         elif y - height >= monitor.y:
             y -= height
-        elif (monitor.y + monitor.height - (y + sample.entry.allocation.height) >
+        elif (monitor.y + monitor.height - (y + allocation.height) >
               y - monitor.y):
-            y += sample.entry.allocation.height
+            y += allocation.height
             height = monitor.y + monitor.height - y
         else :
             height = y - monitor.y

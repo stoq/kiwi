@@ -87,7 +87,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
         if not self._popup_window:
             return
 
-        if (event.window != self._popup_window.window or
+        if (event.window != self._popup_window.get_window() or
             (tuple(self._popup_window.allocation.intersect(
                    gdk.Rectangle(x=int(event.x), y=int(event.y),
                                  width=1, height=1)))) == (0, 0, 0, 0)):
@@ -212,22 +212,24 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
 
     def _popup_grab_window(self):
         activate_time = 0L
-        if gdk.pointer_grab(self._entry.window, True,
+        window = self._entry.get_window()
+        if gdk.pointer_grab(window, True,
                             (gdk.BUTTON_PRESS_MASK |
                              gdk.BUTTON_RELEASE_MASK |
                              gdk.POINTER_MOTION_MASK),
                              None, None, activate_time) == 0:
-            if gdk.keyboard_grab(self._entry.window, True, activate_time) == 0:
+            if gdk.keyboard_grab(window, True, activate_time) == 0:
                 return True
             else:
-                self._entry.window.get_display().pointer_ungrab(activate_time);
+                window.get_display().pointer_ungrab(activate_time);
                 return False
         return False
 
     def _popup_ungrab_window(self):
         activate_time = 0L
-        self._entry.window.get_display().pointer_ungrab(activate_time);
-        self._entry.window.get_display().keyboard_ungrab(activate_time);
+        display = self._entry.get_window().get_display()
+        display.pointer_ungrab(activate_time)
+        display.keyboard_ungrab(activate_time)
 
     # Public API
     def complete(self):
