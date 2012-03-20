@@ -779,7 +779,7 @@ class StringSearchFilter(SearchFilter):
 
     def _add_option(self, option_type, position=-2):
         option = option_type()
-        num = len(self.mode) + position
+        num = abs(position)
         self.mode.insert_item(num, option.name, option_type)
         self._options[option_type] = option
 
