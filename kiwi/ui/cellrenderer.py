@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2008 Async Open Source
+# Copyright (C) 2008-2012 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -20,13 +20,15 @@
 #
 # Author(s): Ronaldo Maia <romaia@async.com.br>
 #
+
 import gtk
 import gobject
 
 from kiwi.utils import quote
 from kiwi.ui.gadgets import gdk_color_to_string
 
-class ComboDetailsCellRenderer(gtk.GenericCellRenderer):
+
+class ComboDetailsCellRenderer(gtk.CellRenderer):
     """A Cell Renderer for ComboEntry inspired by firefox's awesome bar
 
     To show some details on each entry of the popup, you should call the method
@@ -45,26 +47,25 @@ class ComboDetailsCellRenderer(gtk.GenericCellRenderer):
         self._label_layout = label.create_pango_layout('')
         self._details_callback = None
 
-        gtk.GenericCellRenderer.__init__(self)
+        gtk.CellRenderer.__init__(self)
 
     def set_details_callback(self, callable):
         self._details_callback = callable
 
-    def on_render(self, window, widget, background_area,
-                  cell_area, expose_area, flags):
-
-        x_offset, y_offset, width, height = self.on_get_size(widget, cell_area)
+    def do_render_gtk2(self, window, widget, background_area, cell_area,
+                       expose_area, flags):
+        x_offset, y_offset, width, height = self.do_get_size(widget, cell_area)
 
         # Center the label
-        y_offset = cell_area.height/2 - height/2
+        y_offset = cell_area.height / 2 - height / 2
 
         # Draws label
         widget.style.paint_layout(window,
-                                 gtk.STATE_ACTIVE, False,
-                                 cell_area, widget, "",
-                                 cell_area.x + x_offset,
-                                 cell_area.y + y_offset,
-                                 self._label_layout)
+                                  gtk.STATE_ACTIVE, False,
+                                  cell_area, widget, "",
+                                  cell_area.x + x_offset,
+                                  cell_area.y + y_offset,
+                                  self._label_layout)
 
         if not self._details_callback:
             return
@@ -73,11 +74,36 @@ class ComboDetailsCellRenderer(gtk.GenericCellRenderer):
         widget.style.paint_hline(window,
                                  gtk.STATE_ACTIVE,
                                  cell_area, widget, "",
-                                 cell_area.x, cell_area.x+cell_area.width,
-                                 cell_area.y+cell_area.height - 1
-                                 )
+                                 cell_area.x,
+                                 cell_area.x + cell_area.width,
+                                 cell_area.y + cell_area.height - 1)
 
-    def on_get_size(self, widget, cell_area):
+    def do_render_gtk3(self, cr, widget, background_area, cell_area, flags):
+        x_offset, y_offset, width, height = self.do_get_size(widget, cell_area)
+
+        # Center the label
+        y_offset = cell_area.height / 2 - height / 2
+
+        # Draws label
+        context = widget.get_style_context()
+        gtk.render_layout(context, cr,
+                          cell_area.x + x_ofsete,
+                          cell_area.y + y_offset,
+                          self._label_layout)
+        if not self._details_callback:
+            return
+
+        gtk.render_line(context, cr,
+                        cell_area.x, cell_area.y,
+                        cell_area.x + cell_area.width,
+                        cell_area.y + cell_area.height - 1)
+
+    if gtk.gtk_version >= (3, 0):
+        do_render = do_render_gtk3
+    else:
+        do_render = do_render_gtk2
+
+    def do_get_size(self, widget, cell_area):
         text = quote(self.label)
 
         if self._details_callback:
