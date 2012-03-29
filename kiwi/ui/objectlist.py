@@ -1268,9 +1268,9 @@ class ObjectList(gtk.HBox):
                 # the previous inserted object
                 if not objid in iters:
                     if prev is None:
-                        prev = model.append((instance,))
+                        prev = self._model_append(instance)
                     else:
-                        prev = model.insert_after(prev, (instance,))
+                        prev = self._model_insert_after(prev, instance)
                     iters[objid] = prev
                 else:
                     prev = iters[objid]
@@ -1287,7 +1287,7 @@ class ObjectList(gtk.HBox):
                     self._remove(objid)
         else:
             for instance in iter(instances):
-                iters[instance] = model.append((instance,))
+                self._iters[instance] = self._model_append(instance)
 
         # Restore selection
         for instance in selected_instances:
@@ -1387,6 +1387,12 @@ class ObjectList(gtk.HBox):
     def _on_model__row_deleted(self, model, path):
         if not len(model):
             self.emit('has-rows', False)
+
+    def _model_append(self, instance):
+        return self._model.append((instance,))
+
+    def _model_insert_after(self, prev, instance):
+        return self._model.insert_after(prev, (instance,))
 
     def _model_sort_func(self, model, iter1, iter2, (column, attr)):
         "This method is used to sort the GtkTreeModel"
@@ -2096,6 +2102,17 @@ class ObjectTree(ObjectList):
             self._select_and_focus_row(row_iter)
         self._treeview.thaw_notify()
         return instance
+
+    def _model_append(self, instance):
+        # Overriding ObjectList._model_append as appending on a tree model
+        # takes the parent too as the first arg.
+        return self._model.append(self.get_parent(instance), (instance,))
+
+    def _model_insert_after(self, prev, instance):
+        # Overriding ObjectList._model_insert_after as inserting before on
+        # a tree model takes the parent too as the first arg.
+        return self._model.insert_after(self.get_parent(instance), prev,
+                                        (instance,))
 
     def append(self, parent, instance, select=False):
         """

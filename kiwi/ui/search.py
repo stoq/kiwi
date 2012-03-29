@@ -42,7 +42,8 @@ from kiwi.enums import SearchFilterPosition
 from kiwi.interfaces import ISearchFilter
 from kiwi.python import enum
 from kiwi.ui.delegates import SlaveDelegate
-from kiwi.ui.objectlist import ObjectList, SummaryLabel, SearchColumn
+from kiwi.ui.objectlist import (ObjectList, ObjectTree,
+                                SummaryLabel, SearchColumn)
 from kiwi.ui.widgets.combo import ProxyComboBox
 from kiwi.ui.widgets.entry import ProxyDateEntry
 from kiwi.utils import gsignal
@@ -1020,13 +1021,25 @@ class SearchResults(ObjectList):
     def __init__(self, columns):
         ObjectList.__init__(self, columns)
 
+    def add_results(self, results):
+        self.extend(results)
+
+
+class SearchResultsTree(ObjectTree):
+    def __init__(self, columns):
+        ObjectTree.__init__(self, columns)
+
+    def add_results(self, results):
+        for result in results:
+            self.append(result.get_parent(), result)
+
 
 class SearchContainer(gtk.VBox):
     """
     A search container is a widget which consists of:
     - search entry (w/ a label) (:class:`StringSearchFilter`)
     - search button
-    - objectlist result (:class:`SearchResult`)
+    - objectlist result (:class:`SearchResults` or class:`SearchResultsTree)
     - a query executer (:class:`kiwi.db.query.QueryExecuter`)
 
     Additionally you can add a number of search filters to the SearchContainer.
@@ -1038,12 +1051,16 @@ class SearchContainer(gtk.VBox):
     results_class = SearchResults
     gsignal("search-completed", object, object)
 
-    def __init__(self, columns=None, chars=25):
+    def __init__(self, columns=None, tree=False, chars=25):
         """
         Create a new SearchContainer object.
         :param columns: a list of :class:`kiwi.ui.objectlist.Column`
+        :param tree: if we should list the results as a tree
         :param chars: maximum number of chars used by the search entry
         """
+        if tree:
+            self.results_class = SearchResultsTree
+
         gtk.VBox.__init__(self)
         self._columns = columns
         self._search_filters = []
@@ -1291,7 +1308,7 @@ class SearchContainer(gtk.VBox):
 
     def add_results(self, results):
         self.results.clear()
-        self.results.extend(results)
+        self.results.add_results(results)
 
     def get_filter_states(self):
         dict_state = {}
@@ -1454,17 +1471,16 @@ SearchContainer.install_child_property(
 
 
 class SearchSlaveDelegate(SlaveDelegate):
-    def __init__(self, columns):
+    def __init__(self, columns, tree=False):
         """
         Create a new SearchSlaveDelegate object.
         :ivar results: the results list of the container
         :ivar search: the :class:`SearchContainer`
         """
-        self.search = SearchContainer(columns)
+        self.search = SearchContainer(columns, tree=tree)
         SlaveDelegate.__init__(self, toplevel=self.search)
         self.results = self.search.results
         self.search.show()
-
 
     #
     # Public API
