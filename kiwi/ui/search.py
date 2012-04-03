@@ -1031,7 +1031,10 @@ class SearchResultsTree(ObjectTree):
 
     def add_results(self, results):
         for result in results:
-            self.append(result.get_parent(), result)
+            parent = result.get_parent()
+            self.append(parent, result)
+            if parent:
+                self.expand(parent)
 
 
 class SearchContainer(gtk.VBox):
