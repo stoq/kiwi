@@ -203,7 +203,7 @@ class _DateEntryPopup(gtk.Window):
             x, y = window.get_root_coords(x, y)
         # Gtk+ 2.x
         else:
-            x, y = window.get_origin()
+            x, y = widget.entry.window.get_origin()
 
         req = calendar.size_request()
         try:
@@ -279,6 +279,8 @@ class _DateEntryPopup(gtk.Window):
             return
 
         self.grab_remove()
+        for child in self.get_children():
+            child.hide()
         self.hide()
 
     # month in gtk.Calendar is zero-based (i.e the allowed values are 0-11)
