@@ -31,9 +31,9 @@ from types import ClassType
 from kiwi.datatypes import number as number_type
 
 class CustomType(type):
+    @classmethod
     def value_check(mcs, name, value):
         pass
-    value_check = classmethod(value_check)
 
 class number(CustomType):
     """
@@ -47,10 +47,10 @@ class percent(CustomType):
     """
     type = number_type
 
+    @classmethod
     def value_check(mcs, name, value):
         if (value < 0) or (value > 100):
             raise ValueError("%s must be between 0 and 100" % name)
-    value_check = classmethod(value_check)
 
 _NoValue = object()
 
@@ -82,19 +82,19 @@ class argcheck(object):
                 raise TypeError("must be a type or class instance, not %r" % argtype)
         self.types = types
 
+    @classmethod
     def enable(cls):
         """
         Enable argcheck globally
         """
         cls.__enabled__ = True
-    enable = classmethod(enable)
 
+    @classmethod
     def disable(cls):
         """
         Disable argcheck globally
         """
         cls.__enabled__ = False
-    disable = classmethod(disable)
 
     def __call__(self, func):
         if not callable(func):

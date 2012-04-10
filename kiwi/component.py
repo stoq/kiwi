@@ -31,6 +31,7 @@ try:
     implements, Attribute, Interface
 except ImportError:
     class Interface(object):
+        @classmethod
         def providedBy(cls, impl):
             candidates = (impl,) + impl.__class__.__bases__
             for candidate in candidates:
@@ -39,7 +40,6 @@ except ImportError:
                         return True
             return False
 
-        providedBy = classmethod(providedBy)
 
     class Attribute(object):
         def __init__(self, __name__, __doc__=''):

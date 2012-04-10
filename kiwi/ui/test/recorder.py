@@ -144,6 +144,7 @@ class SignalEvent(Event):
         Event.__init__(self, object, name)
         self.args = args
 
+    @classmethod
     def connect(cls, object, signal_name, cb):
         """
         Calls connect on I{object} for signal I{signal_name}.
@@ -153,7 +154,6 @@ class SignalEvent(Event):
         :param cb: callback
         """
         object.connect(signal_name, cb, cls, object)
-    connect = classmethod(connect)
 
 #
 # Special Events
@@ -295,10 +295,10 @@ class ObjectListSelectionChanged(SignalEvent):
 
         return []
 
+    @classmethod
     def connect(cls, orig, signal_name, cb):
         object = orig.get_treeview().get_selection()
         object.connect(signal_name, cb, cls, orig)
-    connect = classmethod(connect)
 
     def get_toplevel(self, widget):
         return self._objectlist.get_toplevel()
@@ -322,10 +322,10 @@ class ObjectListDoubleClick(SignalEvent):
         SignalEvent.__init__(self, objectlist, name, args)
         self.row = objectlist.get_selected_row_number()
 
+    @classmethod
     def connect(cls, orig, signal_name, cb):
         object = orig.get_treeview()
         object.connect(signal_name, cb, cls, orig)
-    connect = classmethod(connect)
 
     def serialize(self):
         return '%s.double_click(%s)' % (self.name, self.row)

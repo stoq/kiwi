@@ -224,7 +224,7 @@ class PickledModel(Model):
         model"""
         self._filename = filename
 
-    #@unpickle
+    @classmethod
     def unpickle(cls, filename=None):
         """
         Loads an instance from a pickle file; if it fails for some reason,
@@ -269,6 +269,5 @@ class PickledModel(Model):
         fh.close()
         ret.set_filename(filename)
         return ret
-    unpickle = classmethod(unpickle)
 
 # TODO: implement a Model that saves itself as CSV/XML?

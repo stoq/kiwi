@@ -80,10 +80,9 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
         setter=_set_data_type,
         type=str, blurb='Data Type')
 
-    #@classmethod
+    @classmethod
     def replace(cls, markup, value):
         cls._label_replacements[markup] = value
-    replace = classmethod(replace)
 
     def _on_label_changed(self, label, param):
         if self._block_notify_label:

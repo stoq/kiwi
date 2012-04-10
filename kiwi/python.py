@@ -47,6 +47,7 @@ class ClassInittableObject(object):
     """
     __metaclass__ = ClassInittableMetaType
 
+    @classmethod
     def __class_init__(cls, namespace):
         """
         Called when the class is created
@@ -55,7 +56,6 @@ class ClassInittableObject(object):
         :param namespace: namespace for newly created
         :type  namespace: dict
         """
-    __class_init__ = classmethod(__class_init__)
 
 
 class _ForwardedProperty(object):
@@ -85,6 +85,7 @@ class AttributeForwarder(ClassInittableObject):
     """
     attributes = None
 
+    @classmethod
     def __class_init__(cls, ns):
         if cls.__bases__ == (ClassInittableObject,):
             return
@@ -98,8 +99,6 @@ class AttributeForwarder(ClassInittableObject):
 
         for attribute in ns['attributes']:
             setattr(cls, attribute,  _ForwardedProperty(attribute))
-
-    __class_init__ = classmethod(__class_init__)
 
     def __init__(self, target):
         """
@@ -250,7 +249,7 @@ class enum(int):
 
     __metaclass__ = ClassInittableMetaType
 
-    #@classmethod
+    @classmethod
     def __class_init__(cls, ns):
         cls.names = {} # name -> enum
         cls.values = {} # value -> enum
@@ -258,9 +257,8 @@ class enum(int):
         for key, value in ns.items():
             if isinstance(value, int):
                 cls(value, key)
-    __class_init__ = classmethod(__class_init__)
 
-    #@classmethod
+    @classmethod
     def get(cls, value):
         """
         Lookup an enum by value
@@ -269,7 +267,6 @@ class enum(int):
         if not value in cls.values:
             raise ValueError("There is no enum for value %d" % (value,))
         return cls.values[value]
-    get = classmethod(get)
 
     def __new__(cls, value, name):
         """
