@@ -1031,7 +1031,13 @@ class SearchResultsTree(ObjectTree):
 
     def add_results(self, results):
         for result in results:
-            parent = result.get_parent()
+            self._add_result(result)
+
+    def _add_result(self, result):
+        parent = result.get_parent()
+        if parent:
+            self._add_result(parent)
+        if not result in self:
             self.append(parent, result)
             if parent:
                 self.expand(parent)
