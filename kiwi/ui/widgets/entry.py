@@ -197,6 +197,8 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     def update(self, data):
         if data is ValueUnset:
             self.set_text("")
+            if self.props.mandatory:
+                self.emit('validation-changed', False)
             self._has_been_updated = False
         elif data is None:
             self.set_text("")
@@ -209,6 +211,8 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
                 text = new
             elif mode == ENTRY_MODE_TEXT:
                 text = self._as_string(data)
+            if self.props.mandatory and self.get_text() == "":
+                self.emit('validation-changed', True)
             self.set_text(text)
 
 type_register(ProxyEntry)
