@@ -38,6 +38,7 @@ import gobject
 import gtk
 from gtk import gdk
 
+from kiwi import ValueUnset
 from kiwi.environ import environ
 from kiwi.interfaces import IValidatableProxyWidget
 from kiwi.log import Logger
@@ -763,6 +764,15 @@ class SlaveView(gobject.GObject):
                 raise AssertionError("%r does not have a validation-changed "
                                      "signal." % widget)
 
+            if widget.props.mandatory:
+                try:
+                    empty = widget.read() is ValueUnset
+                    if empty:
+                        self._validation[widget_name] = False
+                # FIXME: This is probably wrong, but we get improperly placed
+                #        thousand operators in other places that has to be fixed first
+                except ValidationError:
+                    pass
         proxy = Proxy(self, model, widgets)
         self._proxies.append(proxy)
         return proxy
@@ -810,9 +820,7 @@ class SlaveView(gobject.GObject):
     def check_and_notify_validity(self, force=False):
         # Current view is only valid if we have no invalid children
         # their status are stored as values in the dictionary
-        is_valid = True
-        if False in self._validation.values():
-            is_valid = False
+        is_valid = all(self._validation.values())
 
         # Check if validation really changed
         if self._valid == is_valid and force == False:
