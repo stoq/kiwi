@@ -195,13 +195,12 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
             raise AssertionError
 
     def update(self, data):
-        if data is ValueUnset:
-            self.set_text("")
-            if self.props.mandatory:
+        if data is ValueUnset or data is None:
+            if self.props.mandatory and self.get_text() != "":
                 self.emit('validation-changed', False)
-            self._has_been_updated = False
-        elif data is None:
             self.set_text("")
+            if data is ValueUnset:
+                self._has_been_updated = False
         else:
             mode = self._mode
             if mode == ENTRY_MODE_DATA:
