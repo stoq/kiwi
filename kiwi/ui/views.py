@@ -50,6 +50,8 @@ from kiwi.ui.proxy import Proxy
 
 log = Logger('kiwi.view')
 
+validation_log = Logger('kiwi.validation')
+
 _non_interactive = [
     gtk.Label,
     gtk.Alignment,
@@ -765,9 +767,14 @@ class SlaveView(gobject.GObject):
                 raise AssertionError("%r does not have a validation-changed "
                                      "signal." % widget)
 
-            if widget.props.mandatory:
+            if (widget.props.mandatory and
+                widget.props.sensitive and
+                widget.props.visible):
                 try:
-                    empty = widget.read() is ValueUnset
+                    value = widget.read()
+                    empty = value is ValueUnset or value is None
+                    validation_log.info("%s: %s=%r (initial)" % (
+                        self.__class__.__name__, widget_name, value))
                     if empty:
                         self._validation[widget_name] = False
                 # FIXME: This is probably wrong, but we get improperly placed
@@ -792,6 +799,8 @@ class SlaveView(gobject.GObject):
                 not child.get_property('sensitive')):
                 value = True
 
+        validation_log.info("%s: %s=%r" % (self.__class__.__name__,
+                                           name, value))
         self._validation[name] = value
 
         self.check_and_notify_validity()
@@ -823,6 +832,8 @@ class SlaveView(gobject.GObject):
         # their status are stored as values in the dictionary
         is_valid = all(self._validation.values())
 
+        validation_log.info("%s: validate state=%r" % (
+            self.__class__.__name__, self._validation))
         # Check if validation really changed
         if self._valid == is_valid and force == False:
             return
