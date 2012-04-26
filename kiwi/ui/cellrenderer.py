@@ -87,7 +87,7 @@ class ComboDetailsCellRenderer(gtk.CellRenderer):
         # Draws label
         context = widget.get_style_context()
         gtk.render_layout(context, cr,
-                          cell_area.x + x_ofsete,
+                          cell_area.x + x_offset,
                           cell_area.y + y_offset,
                           self._label_layout)
         if not self._details_callback:

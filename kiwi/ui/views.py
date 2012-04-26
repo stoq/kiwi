@@ -39,6 +39,7 @@ import gtk
 from gtk import gdk
 
 from kiwi import ValueUnset
+from kiwi.datatypes import ValidationError
 from kiwi.environ import environ
 from kiwi.interfaces import IValidatableProxyWidget
 from kiwi.log import Logger
