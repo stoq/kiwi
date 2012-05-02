@@ -733,11 +733,11 @@ class ProxyComboEntry(ComboEntry, ValidatableProxyWidgetMixin):
         entry = self.entry
         if data is ValueUnset or data is None:
             if entry.props.mandatory and entry.get_text() != "":
-                self.emit('validation-changed', False)
+                self.emit('validation-changed', True)
             self.entry.set_text("")
         else:
             if entry.props.mandatory and entry.get_text() == "":
-                self.emit('validation-changed', True)
+                self.emit('validation-changed', False)
             self.select(data)
 
     #FIXME: This is really an ugly workaround. But for some dark and
