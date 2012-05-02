@@ -81,11 +81,11 @@ class ProxySpinButton(gtk.SpinButton, ValidatableProxyWidgetMixin):
     def update(self, data):
         if data is None or data is ValueUnset:
             if self.props.mandatory and self.get_text() != "":
-                self.emit('validation-changed', True)
+                self.emit('validation-changed', False)
             self.set_text("")
         else:
             if self.props.mandatory and self.get_text() == "":
-                self.emit('validation-changed', False)
+                self.emit('validation-changed', True)
             # set_value accepts a float or int, no as_string conversion needed,
             # and since we accept only int and float just send it in.
             self.set_value(data)
