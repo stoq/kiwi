@@ -213,7 +213,9 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     def __init__(self, widget=None):
         ProxyWidgetMixin.__init__(self)
 
-        self._valid = True
+        # Inicial valid state is unkown (None), so that when _set_valid_state is
+        # called for the first time, the signal gets emitted
+        self._valid = None
         self._fade = FadeOut(self)
         self._fade.connect('color-changed', self._on_fadeout__color_changed)
         self.connect('notify::mandatory', self._on_notify__mandatory)
