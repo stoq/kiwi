@@ -235,7 +235,7 @@ class KiwiEntry(gtk.Entry):
         try:
             self.set_mask(value)
             return self.get_mask()
-        except MaskError, e:
+        except MaskError:
             pass
     mask = gobject.property(getter=_get_mask,
                             setter=_set_mask,
@@ -265,7 +265,6 @@ class KiwiEntry(gtk.Entry):
 
         self._really_delete_text(0, -1)
         if not self._mask:
-            new_text = text
             self._really_insert_text(text, 0)
             return
 
@@ -327,7 +326,6 @@ class KiwiEntry(gtk.Entry):
 
         mask = unicode(mask)
         input_length = len(mask)
-        lenght = 0
         pos = 0
         field_begin = 0
         field_end = 0
@@ -446,7 +444,6 @@ class KiwiEntry(gtk.Entry):
         self.set_position(pos)
 
         if select:
-            field_text = self.get_field_text(field)
             start, end = self._mask_fields[field]
             self.select_region(start, pos)
 
@@ -793,7 +790,6 @@ class KiwiEntry(gtk.Entry):
                     and the new text.
         """
         field = self._get_field_at_pos(pos)
-        length = len(new)
         new_pos = pos
         start, end = self._mask_fields[field]
 
@@ -803,9 +799,10 @@ class KiwiEntry(gtk.Entry):
                     text[end:])
 
         # Overwrite Right
-#        new_text = (text[:pos] + new +
-#                    text[pos+length:end]+
-#                    text[end:])
+        #length = len(new)
+        #new_text = (text[:pos] + new +
+        #            text[pos+length:end]+
+        #            text[end:])
         new_pos = pos+1
         gobject.idle_add(self.set_position, new_pos)
 

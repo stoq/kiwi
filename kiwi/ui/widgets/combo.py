@@ -191,7 +191,6 @@ class _EasyComboBoxHelper(object):
             raise AssertionError
 
     def select(self, data):
-        mode = self.mode
         if self.mode == ComboMode.STRING:
             self.select_item_by_label(data)
         elif self.mode == ComboMode.DATA:

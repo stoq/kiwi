@@ -66,9 +66,10 @@ if sys.platform == 'win32':
             ctypes.windll.kernel32.GetLocaleInfoA(0, value, s, 255)
             return str(s.value)
     except ImportError:
-        def GetLocaleInfo(value):
+        def _GetLocaleInfo(value):
             raise Exception(
                 "ctypes is required for datetime types on win32")
+        GetLocaleInfo = _GetLocaleInfo
 
 __all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
 

@@ -1,10 +1,8 @@
-import sys
 import unittest
 
 from gtk import gdk
 
 from kiwi import ValueUnset
-from kiwi.datatypes import converter
 from kiwi.python import Settable
 from kiwi.ui.proxy import Proxy
 from kiwi.ui.widgets.button import ProxyButton

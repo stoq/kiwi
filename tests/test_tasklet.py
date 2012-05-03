@@ -134,7 +134,7 @@ class TestIO(unittest.TestCase):
         write_chan.set_flags(gobject.IO_FLAG_NONBLOCK)
         write_chan.set_encoding(None)
         write_chan.set_buffered(False)
-        writer = tasklet.run(pipe_writer(write_chan, chr(123)))
+        tasklet.run(pipe_writer(write_chan, chr(123)))
 
         mainloop = gobject.MainLoop()
         reader.add_join_callback(lambda task, retval: mainloop.quit())

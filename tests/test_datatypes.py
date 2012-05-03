@@ -2,9 +2,6 @@ import cPickle
 import datetime
 import locale
 import unittest
-import sys
-
-from gtk import gdk
 
 from kiwi.datatypes import converter, ValidationError, ValueUnset, \
      Decimal, BaseConverter
@@ -18,7 +15,7 @@ proxywidget # pyflakes
 def set_locale(category, name):
     # set the date format to the spanish one
     try:
-        rv = locale.setlocale(category, name)
+        locale.setlocale(category, name)
     except locale.Error:
         print 'skipping %s, locale not available' % name
         return False

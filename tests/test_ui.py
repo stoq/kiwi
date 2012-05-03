@@ -33,8 +33,6 @@ def create():
             continue
         name = 'test_' + filename[:-7]
 
-        full = os.path.join(uidir, filename)
-
         func = lambda self, filename=filename: test_filename(rootdir, filename)
         try:
             func.__name__ = name
