@@ -3,6 +3,7 @@ import unittest
 
 from kiwi.ui.dateentry import DateEntry
 
+
 class TestDateEntry(unittest.TestCase):
     def setUp(self):
         self.date = datetime.date.today()

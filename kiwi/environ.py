@@ -42,12 +42,14 @@ log = Logger('environ')
 
 EnvironmentError = EnvironmentError
 
+
 # From http://tinyurl.com/77ukj
 def _is_frozen():
     "Helper function to check if we're frozen in a py2exe'd file"
     return (hasattr(sys, "frozen") or # new py2exe
             hasattr(sys, "importers") # old py2exe
             or imp.is_frozen("__main__")) # tools/freeze
+
 
 class Environment:
     """Environment control
@@ -170,6 +172,7 @@ class Environment:
         return False
 
     epydoc = property(_get_epydoc)
+
 
 class Library(Environment):
     """A Library is a local environment object, it's a subclass of the
@@ -379,11 +382,12 @@ class Library(Environment):
                 fp = open(revision)
             except IOError, e:
                 if e.errno != errno.ENOENT:
-                     raise
+                    raise
             else:
                 return fp.read().split()[0]
         else:
             return str(self.module.revision)
+
 
 class Application(Library):
     """Application extends a :class:`Library`. It's meant to be used
@@ -438,7 +442,7 @@ class Application(Library):
         """
         Library.enable_translation(self, domain, localedir)
         old_domain = gettext.textdomain()
-        if old_domain  != 'messages':
+        if old_domain != 'messages':
             log.warn('overriding default domain, was %s' % old_domain)
 
         self.set_application_domain(domain)

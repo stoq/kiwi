@@ -40,11 +40,10 @@ except ImportError:
                         return True
             return False
 
-
     class Attribute(object):
         def __init__(self, __name__, __doc__=''):
-            self.__name__=__name__
-            self.__doc__=__doc__
+            self.__name__ = __name__
+            self.__doc__ = __doc__
 
     def implements(iface):
         frame = sys._getframe(1)
@@ -53,8 +52,10 @@ except ImportError:
         finally:
             del frame
 
+
 class AlreadyImplementedError(Exception):
     """Called when a utility already exists."""
+
 
 class _UtilityHandler(object):
     def __init__(self):
@@ -97,6 +98,7 @@ class _UtilityHandler(object):
     def clean(self):
         self._utilities = {}
 
+
 def provide_utility(iface, utility, replace=False):
     """
     Set the utility for the named interface. If the utility is already
@@ -106,6 +108,7 @@ def provide_utility(iface, utility, replace=False):
     :param utility: utility providing the interface.
     """
     utilities.provide(iface, utility, replace)
+
 
 def get_utility(iface, default=ValueUnset):
     """
@@ -120,6 +123,7 @@ def get_utility(iface, default=ValueUnset):
 
     return utilities.get(iface, default)
 
+
 def remove_utility(iface):
     """
     Remove the utility provided for an interface
@@ -132,6 +136,5 @@ def remove_utility(iface):
 
     return utilities.remove(iface)
 
+
 utilities = _UtilityHandler()
-
-

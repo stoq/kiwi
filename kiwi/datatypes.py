@@ -54,13 +54,16 @@ try:
     Decimal, InvalidOperation # pyflakes
 except:
     HAVE_DECIMAL = False
+
     class Decimal(float):
         pass
+
     InvalidOperation = ValueError
 
 if sys.platform == 'win32':
     try:
         import ctypes
+
         def GetLocaleInfo(value):
             s = ctypes.create_string_buffer("\000" * 255)
             ctypes.windll.kernel32.GetLocaleInfoA(0, value, s, 255)
@@ -77,8 +80,10 @@ _ = lambda m: gettext.dgettext('kiwi', m)
 
 number = (int, float, long, Decimal)
 
+
 class ValidationError(Exception):
     pass
+
 
 class ConverterRegistry:
     def __init__(self):
@@ -100,7 +105,7 @@ class ConverterRegistry:
         self._converters[str(c.type)] = c
         self._converters[c.type.__name__] = c
         return c
-    
+
     def remove(self, converter_type):
         """
         Removes converter_type from the registry
@@ -196,6 +201,7 @@ class ConverterRegistry:
 # Global converter, can be accessed from outside
 converter = ConverterRegistry()
 
+
 class BaseConverter(object):
     """
     Abstract converter used by all datatypes
@@ -238,6 +244,7 @@ class BaseConverter(object):
         """
         return None
 
+
 class _StringConverter(BaseConverter):
     type = str
     name = _('String')
@@ -252,6 +259,7 @@ class _StringConverter(BaseConverter):
 
 converter.add(_StringConverter)
 
+
 class _UnicodeConverter(BaseConverter):
     type = unicode
     name = _('Unicode')
@@ -265,6 +273,7 @@ class _UnicodeConverter(BaseConverter):
         return unicode(value)
 
 converter.add(_UnicodeConverter)
+
 
 class _IntConverter(BaseConverter):
     type = int
@@ -295,10 +304,13 @@ class _IntConverter(BaseConverter):
 
 converter.add(_IntConverter)
 
+
 class _LongConverter(_IntConverter):
     type = long
     name = _('Long')
+
 converter.add(_LongConverter)
+
 
 class _BoolConverter(BaseConverter):
     type = bool
@@ -321,6 +333,7 @@ class _BoolConverter(BaseConverter):
             _("'%s' can not be converted to a boolean") % value)
 
 converter.add(_BoolConverter)
+
 
 class _FloatConverter(BaseConverter):
     type = float
@@ -374,10 +387,12 @@ class _FloatConverter(BaseConverter):
 
 converter.add(_FloatConverter)
 
+
 class _DecimalConverter(_FloatConverter):
     type = Decimal
     name = _('Decimal')
     align = Alignment.RIGHT
+
     def from_string(self, value, filter=True):
         if value == '':
             return ValueUnset
@@ -415,7 +430,7 @@ DATE_REPLACEMENTS_WIN32 = [
 # a tuple, which holds in the first position the
 # mask characters and in the second position
 # a "human-readable" format, used for outputting user
-# messages (see method _BaseDateTimeConverter.convert_format) 
+# messages (see method _BaseDateTimeConverter.convert_format)
 DATE_MASK_TABLE = {
     '%m': ('00', _('mm')),
     '%y': ('00', _('yy')),
@@ -428,6 +443,7 @@ DATE_MASK_TABLE = {
     # FIXME: locale specific
     '%r': ('00:00:00 LL', _('hh:mm:ss LL')),
     }
+
 
 class _BaseDateTimeConverter(BaseConverter):
     """
@@ -564,6 +580,7 @@ class _TimeConverter(_BaseDateTimeConverter):
     type = datetime.time
     name = _('Time')
     date_format = '%X'
+
     def get_lang_constant_win32(self):
         return [LOCALE_STIMEFORMAT]
 
@@ -573,12 +590,15 @@ class _TimeConverter(_BaseDateTimeConverter):
     def from_dateinfo(self, dateinfo):
         # hour, minute, second
         return datetime.time(*dateinfo[3:6])
+
 converter.add(_TimeConverter)
+
 
 class _DateTimeConverter(_BaseDateTimeConverter):
     type = datetime.datetime
     name = _('Date and Time')
     date_format = '%c'
+
     def get_lang_constant_win32(self):
         return [LOCALE_SSHORTDATE, LOCALE_STIMEFORMAT]
 
@@ -588,12 +608,15 @@ class _DateTimeConverter(_BaseDateTimeConverter):
     def from_dateinfo(self, dateinfo):
         # year, month, day, hour, minute, second
         return datetime.datetime(*dateinfo[:6])
+
 converter.add(_DateTimeConverter)
+
 
 class _DateConverter(_BaseDateTimeConverter):
     type = datetime.date
     name = _('Date')
     date_format = '%x'
+
     def get_lang_constant_win32(self):
         return [LOCALE_SSHORTDATE]
 
@@ -603,7 +626,9 @@ class _DateConverter(_BaseDateTimeConverter):
     def from_dateinfo(self, dateinfo):
         # year, month, day
         return datetime.date(*dateinfo[:3])
+
 converter.add(_DateConverter)
+
 
 class _ObjectConverter(BaseConverter):
     type = object
@@ -611,7 +636,9 @@ class _ObjectConverter(BaseConverter):
 
     as_string = None
     from_string = None
+
 converter.add(_ObjectConverter)
+
 
 class _EnumConverter(BaseConverter):
     type = enum
@@ -633,9 +660,11 @@ class _EnumConverter(BaseConverter):
 
 converter.add(_EnumConverter)
 
+
 def lformat(format, value):
     """Like locale.format but with grouping enabled"""
     return locale.format(format, value, 1)
+
 
 def get_localeconv():
     conv = locale.localeconv()
@@ -662,6 +691,7 @@ def get_localeconv():
 
     return conv
 
+
 def filter_locale(value, monetary=False):
     """
     Removes the locale specific data from the value string.
@@ -683,7 +713,7 @@ def filter_locale(value, monetary=False):
         th_sep_count = value.count(thousands_sep)
         if th_sep_count and decimal_points:
             decimal_point_pos = value.index(decimal_point)
-            if thousands_sep in value[decimal_point_pos+1:]:
+            if thousands_sep in value[decimal_point_pos + 1:]:
                 raise ValidationError(_("You have a thousand separator to the "
                                         "right of the decimal point"))
             check_value = value[:decimal_point_pos]

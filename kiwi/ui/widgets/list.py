@@ -34,6 +34,7 @@ from kiwi.ui.objectlist import ObjectList, log
 # pyflakes
 Column, SequentialColumn, ColoredColumn, ListLabel, SummaryLabel
 
+
 class List(ObjectList):
     def __init__(self, columns=[],
                  instance_list=None,
@@ -59,4 +60,3 @@ class List(ObjectList):
     def select_instance(self, *args, **kwargs):
         return self.select(*args, **kwargs)
     select_instance = deprecated('select', log)(select_instance)
-

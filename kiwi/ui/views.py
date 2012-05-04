@@ -87,6 +87,7 @@ color_black = gdk.color_parse('black')
 
 method_regex = re.compile(r'^(on|after)_(\w+)__(\w+)$')
 
+
 class SignalBroker(object):
     def __init__(self, view, controller):
         methods = controller._get_all_methods()
@@ -164,6 +165,7 @@ class SignalBroker(object):
         for widget, signals in self._autoconnected.items():
             for signal in signals:
                 widget.disconnect(signal[1])
+
 
 class GladeSignalBroker(SignalBroker):
     def _do_connections(self, view, methods):
@@ -477,7 +479,7 @@ class SlaveView(gobject.GObject):
 
             if top_widget:
                 allocation = widget.allocation
-                top_allocation = getattr(top_widget, 'allocation',  None)
+                top_allocation = getattr(top_widget, 'allocation', None)
                 assert top_allocation != None
                 if (top_allocation[0] + top_allocation[1] >
                     allocation[0] + allocation[1]):
@@ -533,8 +535,8 @@ class SlaveView(gobject.GObject):
 
         if name in self.slaves:
             # XXX: TypeError
-            log.warn("A slave with name %s is already attached to %r"  % (
-                name, self))
+            log.warn("A slave with name %s is already attached to %r" % (
+                     name, self))
         self.slaves[name] = slave
 
         if not isinstance(slave, SlaveView):
@@ -680,8 +682,6 @@ class SlaveView(gobject.GObject):
 
     def get_slave(self, holder):
         return self.slaves.get(holder)
-
-
 
     #
     # Signal connection
@@ -864,6 +864,7 @@ class SlaveView(gobject.GObject):
 
 type_register(SlaveView)
 
+
 class BaseView(SlaveView):
     """A view with a toplevel window."""
 
@@ -988,9 +989,11 @@ class BaseView(SlaveView):
 
 _glade_loader_func = None
 
+
 def set_glade_loader_func(func):
     global _glade_loader_func
     _glade_loader_func = func
+
 
 def _get_libglade():
     try:
@@ -999,6 +1002,7 @@ def _get_libglade():
         return
     return LibgladeWidgetTree
 
+
 def _get_gaxml():
     try:
         from kiwi.ui.gaxmlloader import GAXMLWidgetTree
@@ -1006,12 +1010,14 @@ def _get_gaxml():
         return
     return GAXMLWidgetTree
 
+
 def _get_builder():
     try:
         from kiwi.ui.builderloader import BuilderWidgetTree
     except ImportError:
         return
     return BuilderWidgetTree
+
 
 def _open_glade(view, gladefile, domain):
     if not gladefile:
@@ -1032,7 +1038,6 @@ def _open_glade(view, gladefile, domain):
             gladefile = environ.find_resource("glade", filename + '.glade')
         except EnvironmentError:
             gladefile = environ.find_resource("glade", filename + '.ui')
-
 
     fp = open(gladefile)
     sniff = fp.read(200)

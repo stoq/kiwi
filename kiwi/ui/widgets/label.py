@@ -38,6 +38,7 @@ from kiwi.ui.gadgets import set_foreground
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import gsignal, type_register
 
+
 class ProxyLabel(gtk.Label, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyLabel'
     model_attribute = gobject.property(type=str, blurb='Model attribute')
@@ -59,10 +60,10 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
         ProxyWidgetMixin.__init__(self)
         self.props.data_type = data_type
         self.set_use_markup(True)
-        self._attr_dic = { "style": None,
-                           "weight": None,
-                           "size": None,
-                           "underline": None }
+        self._attr_dic = {"style": None,
+                          "weight": None,
+                          "size": None,
+                          "underline": None}
         self._size_list = ('xx-small', 'x-small',
                            'small', 'medium',
                            'large', 'x-large',
@@ -186,7 +187,9 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
 
     def set_color(self, color):
         set_foreground(self, color)
+
 type_register(ProxyLabel)
+
 
 class Label(ProxyLabel):
     def __init__(self, label='', data_type=None):
@@ -194,4 +197,5 @@ class Label(ProxyLabel):
             'Label is deprecated, use ProxyLabel instead',
             stacklevel=3)
         ProxyLabel.__init__(self, label=label, data_type=data_type)
+
 type_register(Label)

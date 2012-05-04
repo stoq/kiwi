@@ -9,6 +9,7 @@ from kiwi.python import Settable
 
 from utils import refresh_gui
 
+
 class Person:
     def __init__(self, name, age):
         self.name, self.age = name, age
@@ -17,6 +18,7 @@ class Person:
 persons = (Person('Johan', 24), Person('Gustavo', 25),
            Person('Kiko', 28), Person('Salgado', 25),
            Person('Lorenzo', 26), Person('Henrique', 21))
+
 
 class ColumnTests(unittest.TestCase):
 
@@ -50,6 +52,7 @@ class ColumnTests(unittest.TestCase):
     def testGObjectNew(self):
         column = gobject.new(Column, attribute='foo')
         self.assertEquals(column.attribute, "foo")
+
 
 class DataTests(unittest.TestCase):
     """In all this tests we use the same configuration for a list"""
@@ -132,7 +135,6 @@ class DataTests(unittest.TestCase):
 
         self.assertEqual(len(self.list), 0)
 
-
     def testUpdatingOneInstance(self):
         global persons
 
@@ -154,7 +156,6 @@ class DataTests(unittest.TestCase):
         new_person = Person('Nando', 32)
         self.assertRaises(ValueError, self.list.update, new_person)
 
-
     def testContains(self):
         global persons
 
@@ -172,6 +173,7 @@ class DataTests(unittest.TestCase):
 
         self.list.remove(first)
         self.assertRaises(ValueError, self.list.select, first)
+
 
 class TreeDataTests(unittest.TestCase):
     def setUp(self):
@@ -217,6 +219,7 @@ class TreeDataTests(unittest.TestCase):
         self.assertEqual(test_descendants, [child2])
         test_descendants = self.tree.get_descendants(child2)
         self.assertEqual(test_descendants, [])
+
 
 class TestSignals(unittest.TestCase):
     def setUp(self):
@@ -265,6 +268,7 @@ class TestSignals(unittest.TestCase):
         self.assertEqual(self.selected, None)
         self.assertRaises(ValueError, self.klist.select, 2)
 
+
 class ConstructorTest(unittest.TestCase):
     def testInvalidArguments(self):
         self.assertRaises(TypeError, ObjectList, columns='')
@@ -286,6 +290,7 @@ class ConstructorTest(unittest.TestCase):
     def testGObjectNew(self):
         olist = gobject.new(ObjectList)
         self.assertTrue(isinstance(olist, ObjectList))
+
 
 class MethodTest(unittest.TestCase):
     def setUp(self):
@@ -398,6 +403,7 @@ class MethodTest(unittest.TestCase):
         self.assertEqual(self.klist[0].name, 'two')
         self.assertEqual(self.klist[1].name, 'three')
         self.assertEqual(self.klist[2].name, 'one')
+
 
 class BooleanDataTests(unittest.TestCase):
     def setUp(self):

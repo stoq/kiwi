@@ -3,6 +3,7 @@ import unittest
 
 from kiwi.ui.widgets.scale import ProxyHScale, ProxyVScale
 
+
 class ScaleTest(unittest.TestCase):
     def testFloat(self):
         vscale = ProxyVScale()

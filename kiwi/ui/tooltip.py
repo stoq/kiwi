@@ -31,6 +31,7 @@ import gtk
 DEFAULT_DELAY = 500
 BORDER_WIDTH = 4
 
+
 class Tooltip(gtk.Window):
     def __init__(self, widget):
         gtk.Window.__init__(self, gtk.WINDOW_POPUP)
@@ -69,7 +70,7 @@ class Tooltip(gtk.Window):
         monitor = screen.get_monitor_geometry(monitor_num)
 
         if (x + w) > monitor.x + monitor.width:
-            x -= (x + w) - (monitor.x + monitor.width);
+            x -= (x + w) - (monitor.x + monitor.width)
         elif x < monitor.x:
             x = monitor.x
 

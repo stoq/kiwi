@@ -16,11 +16,14 @@ from Kiwi.initgtk import gtk
 from Kiwi.Proxies import Proxy
 from Kiwi.Models import Model
 
+
 class Foo(Model):
     pass
 
+
 class NoProxy(Proxy):
     widgets = [":A"]
+
     def __init__(self, model, flag=0):
         self._build()
         Proxy.__init__(self, model, delete_handler=gtk.mainquit)

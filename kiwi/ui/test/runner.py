@@ -39,11 +39,14 @@ from kiwi.ui.test.common import WidgetIntrospecter
 
 log = Logger('kiwi.ui.test.player')
 
+
 class NotReadyYet(Exception):
     pass
 
+
 class MissingWidget(KeyError):
     pass
+
 
 class MagicWindowWrapper(object):
     def __init__(self, window, ns):
@@ -57,6 +60,7 @@ class MagicWindowWrapper(object):
         if not attr in self.ns:
             raise MissingWidget(attr)
         return self.ns[attr]
+
 
 # Override some StringIO methods.
 class _SpoofOut(StringIO):
@@ -73,10 +77,11 @@ class _SpoofOut(StringIO):
             del self.softspace
         return result
 
-    def truncate(self,   size=None):
+    def truncate(self, size=None):
         StringIO.truncate(self, size)
         if hasattr(self, "softspace"):
             del self.softspace
+
 
 class Runner(object):
     """
@@ -228,6 +233,7 @@ class Runner(object):
 
 runner = None
 
+
 def play_file(script, filename=None, args=None):
     """
     Run an script.
@@ -249,7 +255,7 @@ def play_file(script, filename=None, args=None):
         # run: ....
         pos = data.find('run:')
         if pos != -1:
-            rest = data[pos+5:]
+            rest = data[pos + 5:]
             # run: foo --arg
             if ' ' in rest:
                 filename, args = rest.split(' ', 1)

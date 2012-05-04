@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import sys, pprint
+import pprint
+import sys
 sys.path.insert(0, "../..")
 
 DEBUG = 0
@@ -12,6 +13,7 @@ from Kiwi.initgtk import gtk
 from Kiwi.Proxies import Proxy
 from Kiwi.FrameWork import Model
 
+
 class Foo(Model):
     A = "Alphabet"
     B = "Beetroot"
@@ -21,8 +23,10 @@ class Foo(Model):
     # F unset
     G = 30.42
 
+
 class TextProxy(Proxy):
     widgets = [":A", ":B", ":C", ":D", ":E", ":F", ":G"]
+
     def __init__(self, model, flag=0):
         self._build()
         self.set_numeric("C")
@@ -88,5 +92,7 @@ assert f.C == 200, f.D
 assert f.D == "barney", f.D
 t = c.G.get_chars(0, c.G.get_length())
 assert t == "30.420", t
-if DEBUG: c.show_all_and_loop() ; pprint.pprint(f.__dict__)
+if DEBUG:
+    c.show_all_and_loop()
+    pprint.pprint(f.__dict__)
 print "Text OK"

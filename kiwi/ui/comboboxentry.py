@@ -31,6 +31,7 @@ import gtk
 from kiwi.python import deprecationwarn
 from kiwi.ui.entry import KiwiEntry
 
+
 class BaseComboBoxEntry(gtk.ComboBox):
     def __init__(self, model=None, text_column=-1):
         deprecationwarn(
@@ -109,6 +110,7 @@ class BaseComboBoxEntry(gtk.ComboBox):
         return self.entry.get_background()
 
 gobject.type_register(BaseComboBoxEntry)
+
 
 def test():
     win = gtk.Window()

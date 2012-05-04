@@ -38,6 +38,7 @@ import sys
 
 from setuptools import setup as DS_setup
 
+
 class _VariableExtender:
     def __init__(self, distribution):
         install = distribution.get_command_obj('install')
@@ -84,6 +85,7 @@ class _VariableExtender:
                 var = os.path.join(self.prefix, var)
             string = string.replace('$' + name, var)
         return string
+
 
 class KiwiInstallLib(install_lib):
     # Overridable by subclass
@@ -175,6 +177,7 @@ revision = %r
 # Backwards compat
 TemplateInstallLib = KiwiInstallLib
 
+
 class KiwiInstallData(install_data):
     def run(self):
         self.varext = _VariableExtender(self.distribution)
@@ -225,6 +228,7 @@ def get_site_packages_dir(*dirs):
         site = 'dist-packages'
     return os.path.join(libdir, site, *dirs)
 
+
 def listfiles(*dirs):
     """
     Lists all files in directories and optionally uses basic shell
@@ -244,6 +248,7 @@ def listfiles(*dirs):
     return [os.path.join(dir, filename)
             for filename in os.listdir(abspath)
                 if filename[0] != '.' and fnmatch(filename, pattern)]
+
 
 def compile_po_files(domain, dirname='locale'):
     """
@@ -277,6 +282,7 @@ def compile_po_files(domain, dirname='locale'):
 
     return data_files
 
+
 def listpackages(root, exclude=None):
     """Recursivly list all packages in directory root
     Optionally exclude can be specified which is a string
@@ -308,6 +314,7 @@ def listpackages(root, exclude=None):
 
     return packages
 
+
 def setup(**kwargs):
     """
     A drop in replacement for distutils.core.setup which
@@ -329,7 +336,7 @@ def setup(**kwargs):
     def run_install(self):
         name = kwargs.get('name')
         if name:
-           self.data_files.extend(compile_po_files(name))
+            self.data_files.extend(compile_po_files(name))
         KiwiInstallData.run(self)
 
         varext = _VariableExtender(self.distribution)
@@ -355,7 +362,6 @@ def setup(**kwargs):
                 target_file = os.path.join(target, os.path.basename(filename))
                 info('installing template %s' % target_file)
                 open(target_file, 'w').write(data)
-
 
     # distutils uses old style classes
     InstallData = new.classobj('InstallData', (KiwiInstallData,),

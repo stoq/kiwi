@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import sys, pprint
+import pprint
+import sys
 sys.path.insert(0, "../..")
 
 DEBUG = 0
@@ -12,6 +13,7 @@ from Kiwi.initgtk import gtk
 from Kiwi.Proxies import Proxy
 from Kiwi.Models import Model
 
+
 class Foo(Model):
     A = "Alphabet"
     B = "Beetroot"
@@ -21,6 +23,7 @@ class Foo(Model):
     # F unset
     G = 30
     # H unset
+
 
 class NumberFoo(Model):
     A = 1
@@ -32,8 +35,10 @@ class NumberFoo(Model):
     G = 6
     # H unset
 
+
 class EntryProxy(Proxy):
     widgets = [":B", ":A", ":C", ":D", ":E", ":F", ":G", ":H"]
+
     def __init__(self, model, flag=0):
         self._build()
         self.set_numeric("C")
@@ -71,6 +76,7 @@ class EntryProxy(Proxy):
         self.vbox = vbox
         self.win.add(vbox)
 
+
 class ComboProxy(EntryProxy):
     def _build(self):
         self.win = gtk.Window()
@@ -99,6 +105,7 @@ class ComboProxy(EntryProxy):
         vbox.add(self.H)
         self.win.add(vbox)
 
+
 class LabelProxy(EntryProxy):
     def _build(self):
         self.win = gtk.Window()
@@ -121,6 +128,7 @@ class LabelProxy(EntryProxy):
         vbox.add(self.G)
         vbox.add(self.H)
         self.win.add(vbox)
+
 
 class SpinProxy(EntryProxy):
     def _build(self):
@@ -183,7 +191,9 @@ assert f.D == "barney", f.D
 t = c.G.get_text()
 assert t == "30,420", t
 assert f.G == 30.42
-if DEBUG: c.show_all_and_loop() ; pprint.pprint(f.__dict__)
+if DEBUG:
+    c.show_all_and_loop()
+    pprint.pprint(f.__dict__)
 print "Entry OK"
 
 f = Foo()
@@ -209,7 +219,9 @@ assert f.C == 200, f.D
 assert f.D == "barney", f.D
 t = c.G.entry.get_text()
 assert t == "30,420", t
-if DEBUG: c.show_all_and_loop() ; pprint.pprint(f.__dict__)
+if DEBUG:
+    c.show_all_and_loop()
+    pprint.pprint(f.__dict__)
 print "Combo OK"
 
 f = Foo()
@@ -243,7 +255,9 @@ assert c.C.get() == "200", f.C
 assert c.D.get() == "barney", f.D
 t = c.G.get_text()
 assert t == "30,420", t
-if DEBUG: c.show_all_and_loop() ; pprint.pprint(f.__dict__)
+if DEBUG:
+    c.show_all_and_loop()
+    pprint.pprint(f.__dict__)
 print "Label OK"
 
 f = NumberFoo()
@@ -254,7 +268,9 @@ except TypeError:
     pass
 f.flush_proxies()
 c = SpinProxy(f, 1)
-if DEBUG: c.show_all_and_loop() ; pprint.pprint(f.__dict__)
+if DEBUG:
+    c.show_all_and_loop()
+    pprint.pprint(f.__dict__)
 assert f.A == 0, f.A
 assert f.B == 0, f.B
 assert f.C == 0

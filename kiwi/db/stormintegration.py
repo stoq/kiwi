@@ -34,7 +34,9 @@ from kiwi.db.query import NumberQueryState, StringQueryState, \
      NumberIntervalQueryState
 from kiwi.interfaces import ISearchFilter
 
-# FIXME: make this usable outside of stoqlib 
+# FIXME: make this usable outside of stoqlib
+
+
 class StormQueryExecuter(QueryExecuter):
     """Execute queries from a storm database"""
 
@@ -202,4 +204,3 @@ class StormQueryExecuter(QueryExecuter):
             queries.append(table_field <= state.end)
         if queries:
             return And(*queries)
-

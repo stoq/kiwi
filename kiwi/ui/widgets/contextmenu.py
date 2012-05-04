@@ -26,6 +26,7 @@ import gobject
 
 from kiwi.utils import gsignal
 
+
 class ContextMenuItem(gtk.ImageMenuItem):
     gsignal('can-disable', retval=bool)
 
@@ -66,6 +67,7 @@ class ContextMenuItem(gtk.ImageMenuItem):
 
 gobject.type_register(ContextMenuItem)
 
+
 class ContextMenu(gtk.Menu):
 
     def append_separator(self):
@@ -83,5 +85,3 @@ class ContextMenu(gtk.Menu):
 
             can_select = not menu_item.emit('can-disable')
             menu_item.set_sensitive(can_select)
-
-

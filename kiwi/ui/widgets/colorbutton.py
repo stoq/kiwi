@@ -42,6 +42,7 @@ class ProxyColorButton(gtk.ColorButton, ProxyWidgetMixin):
         gtk.ColorButton.__init__(self, color)
 
     gsignal('color-set', 'override')
+
     def do_color_set(self):
         self.emit('content-changed')
         self.chain()

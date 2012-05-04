@@ -4,7 +4,8 @@
 # Tests creating a Proxy with no initial model, and then adding one later
 #
 
-import sys, pprint
+import pprint
+import sys
 sys.path.insert(0, "../..")
 
 DEBUG = 0
@@ -15,11 +16,14 @@ from Kiwi.initgtk import gtk
 from Kiwi.Proxies import Proxy
 from Kiwi.Models import Model
 
+
 class Foo(Model):
     pass
 
+
 class XProxy(Proxy):
     widgets = [":A"]
+
     def __init__(self, model=None, flag=0):
         self._build()
         self.set_numeric("A")

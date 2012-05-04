@@ -10,8 +10,9 @@ from kiwi import tasklet
 
 
 class C(gobject.GObject):
-    __gsignals__ = { 'my-signal': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
-                                   (gobject.TYPE_INT,)) }
+    __gsignals__ = {'my-signal': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
+                                  (gobject.TYPE_INT,))}
+
     def do_my_signal(self, arg):
         self.arg = arg
 
@@ -75,7 +76,9 @@ class TestWaitForTimeout(unittest.TestCase):
         self.assertEqual(task.return_value, "return-val")
         ## check that elapsed time aproximately 100 ms second, give or take 50 ms
         ## (glib doesn't guarantee precise timing)
-        self.assert_(math.fabs((t2 - t1) - 0.1) < 0.05, "elapsed time was %f, expected 0.1" % ((t2 - t1),))
+        self.assert_(math.fabs((t2 - t1) - 0.1) < 0.05, "elapsed time was %f, expected 0.1" %
+                     ((t2 - t1),))
+
 
 class TestMessages(unittest.TestCase):
     def testPing(self):
@@ -95,6 +98,7 @@ class TestMessages(unittest.TestCase):
         task = tasklet.run(pinger(tasklet.run(echoer()), 123))
         self.assertEqual(task.state, tasklet.Tasklet.STATE_ZOMBIE)
         self.assertEqual(task.return_value, 123)
+
 
 class TestIO(unittest.TestCase):
     def testPipe(self):
@@ -142,6 +146,7 @@ class TestIO(unittest.TestCase):
 
         self.assertEqual(reader.state, tasklet.Tasklet.STATE_ZOMBIE)
         self.assertEqual(reader.return_value, chr(123))
+
 
 class TestCallback(unittest.TestCase):
     def testCallback(self):

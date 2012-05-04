@@ -3,6 +3,7 @@ import unittest
 
 from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 
+
 class CheckButtonTest(unittest.TestCase):
     def testForBool(self):
         myChkBtn = ProxyCheckButton()

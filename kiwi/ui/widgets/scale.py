@@ -31,13 +31,14 @@ from kiwi import ValueUnset
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import gsignal, type_register
 
-class _ProxyScale:
 
+class _ProxyScale:
     # changed allowed data types because scales can only
     # accept float values
     allowed_data_types = float,
 
     gsignal('value_changed', 'override')
+
     def do_value_changed(self):
         self.emit('content-changed')
         self.chain()

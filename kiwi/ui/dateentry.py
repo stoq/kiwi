@@ -39,8 +39,10 @@ _ = lambda m: gettext.dgettext('kiwi', m)
 
 date_converter = converter.get_converter(datetime.date)
 
+
 class _DateEntryPopup(gtk.Window):
     gsignal('date-selected', object)
+
     def __init__(self, dateentry):
         gtk.Window.__init__(self, gtk.WINDOW_POPUP)
         self.add_events(gdk.BUTTON_PRESS_MASK)
@@ -179,7 +181,7 @@ class _DateEntryPopup(gtk.Window):
             if gdk.keyboard_grab(window, True, activate_time) == 0:
                 return True
             else:
-                window.get_display().pointer_ungrab(activate_time);
+                window.get_display().pointer_ungrab(activate_time)
                 return False
         return False
 
@@ -192,7 +194,7 @@ class _DateEntryPopup(gtk.Window):
         # We need to fetch the coordinates of the entry window
         # since comboentry itself does not have a window
         allocation = widget.get_allocation()
-        window  = widget.get_window()
+        window = widget.get_window()
         # Gtk+ 3.x
         if hasattr(window, 'get_root_coords'):
             x = 0
@@ -231,7 +233,7 @@ class _DateEntryPopup(gtk.Window):
               y - monitor.y):
             y += allocation.height
             height = monitor.y + monitor.height - y
-        else :
+        else:
             height = y - monitor.y
             y = monitor.y
 
@@ -306,6 +308,7 @@ class _DateEntryPopup(gtk.Window):
         self.calendar.clear_marks()
         self.calendar.mark_day(date.day)
 
+
 class DateEntry(gtk.HBox):
     """I am an entry which you can input a date on.
     In addition to an gtk.Entry I also contain a button
@@ -314,6 +317,7 @@ class DateEntry(gtk.HBox):
     """
     gsignal('changed')
     gsignal('activate')
+
     def __init__(self):
         gtk.HBox.__init__(self)
 

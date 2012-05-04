@@ -70,8 +70,10 @@ import os
 _console = None
 _filter = None
 
+
 class LogError(Exception):
     pass
+
 
 class Logger(object):
     # Backwards compatibility, we should probably replace the callsites
@@ -79,11 +81,13 @@ class Logger(object):
     def __new__(self, name):
         return logging.getLogger(name)
 
+
 class _Logger(logging.Logger):
     def __call__(self, message, *args, **kwargs):
         self.info(message, *args, **kwargs)
 
 logging.setLoggerClass(_Logger)
+
 
 class ReversedGlobalFilter(logging.Filter):
     """
@@ -106,6 +110,7 @@ class ReversedGlobalFilter(logging.Filter):
 
         return False
 
+
 def set_log_file(filename, mask=None):
     """
     Set the filename used for logging.
@@ -127,6 +132,7 @@ def set_log_file(filename, mask=None):
 
     return file_handler.stream
 
+
 def set_log_level(name, level):
     """
     Set the log level.
@@ -136,6 +142,7 @@ def set_log_level(name, level):
     """
     global _filter
     _filter.add_filter(name, level)
+
 
 def _read_log_levels(console_filter):
     log_levels = {}
@@ -163,6 +170,7 @@ def _read_log_levels(console_filter):
 
         console_filter.add_filter(name, level)
 
+
 def _create_console():
     global _filter, _console
 
@@ -183,6 +191,7 @@ def _create_console():
     # Set globals
     _filter = console_filter
     _console = console
+
 
 def update_logger():
     _create_console()

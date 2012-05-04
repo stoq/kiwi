@@ -41,6 +41,7 @@ log = Logger('kiwi.ui.combo')
 
 class _ComboEntryPopup(gtk.Window):
     gsignal('text-selected', str)
+
     def __init__(self, comboentry):
         gtk.Window.__init__(self, gtk.WINDOW_POPUP)
         self.add_events(gdk.BUTTON_PRESS_MASK)
@@ -255,7 +256,7 @@ class _ComboEntryPopup(gtk.Window):
             if gdk.keyboard_grab(window, True, activate_time) == 0:
                 return True
             else:
-                window.pointer_ungrab(activate_time);
+                window.pointer_ungrab(activate_time)
                 return False
         return False
 
@@ -268,7 +269,7 @@ class _ComboEntryPopup(gtk.Window):
 
         allocation = widget.get_allocation()
 
-        window  = widget.get_window()
+        window = widget.get_window()
         # Gtk+ 3.x
         if hasattr(window, 'get_root_coords'):
             x = 0
@@ -321,7 +322,7 @@ class _ComboEntryPopup(gtk.Window):
               y - monitor.y):
             y += allocation.height
             height = monitor.y + monitor.height - y
-        else :
+        else:
             height = y - monitor.y
             y = monitor.y
 
@@ -358,10 +359,10 @@ class _ComboEntryPopup(gtk.Window):
             # testcase
             tmodel = model.get_model()
             if tmodel.iter_is_valid(treeiter):
-               # revert back to the unfiltered model so we can select
-               # the right object
-               self._treeview.set_model(tmodel)
-               self._selection = self._treeview.get_selection()
+                # revert back to the unfiltered model so we can select
+                # the right object
+                self._treeview.set_model(tmodel)
+                self._selection = self._treeview.get_selection()
             else:
                 treeiter = model.convert_child_iter_to_iter(treeiter)
         self._selection.select_iter(treeiter)
@@ -370,6 +371,7 @@ class _ComboEntryPopup(gtk.Window):
         self._renderer.set_details_callback(callable)
 
 type_register(_ComboEntryPopup)
+
 
 class ComboEntry(gtk.VBox):
 
@@ -595,7 +597,6 @@ class ComboEntry(gtk.VBox):
         :rtype: gtk.TreeIter
         """
         return self._popup.get_selected_iter()
-
 
     def get_mode(self):
         return self.mode

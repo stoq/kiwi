@@ -134,10 +134,10 @@ INPUT_FORMATS = {
 #  C - Alpha, optional
 
 INPUT_CHAR_MAP = {
-    INPUT_ASCII_LETTER:     lambda text: text in string.ascii_letters,
-    INPUT_ALPHA:            unicode.isalpha,
-    INPUT_ALPHANUMERIC:     unicode.isalnum,
-    INPUT_DIGIT:            unicode.isdigit,
+    INPUT_ASCII_LETTER: lambda text: text in string.ascii_letters,
+    INPUT_ALPHA: unicode.isalpha,
+    INPUT_ALPHANUMERIC: unicode.isalnum,
+    INPUT_DIGIT: unicode.isdigit,
     }
 
 
@@ -149,6 +149,7 @@ INPUT_CHAR_MAP = {
  ENTRY_MODE_DATA) = range(3)
 
 _ = lambda msg: gettext.dgettext('kiwi', msg)
+
 
 class KiwiEntry(gtk.Entry):
     """
@@ -291,7 +292,7 @@ class KiwiEntry(gtk.Entry):
                 to_insert[pos] = t
 
         self._really_insert_text(''.join(to_insert), 0)
-        self.set_position(pos+1)
+        self.set_position(pos + 1)
 
     # Mask & Fields
 
@@ -427,7 +428,7 @@ class KiwiEntry(gtk.Entry):
     def _get_field_ideal_pos(self, field):
         start, end = self._mask_fields[field]
         text = self.get_field_text(field)
-        pos = start+len(text)
+        pos = start + len(text)
         return pos
 
     def get_field(self):
@@ -489,7 +490,7 @@ class KiwiEntry(gtk.Entry):
                 # Otherwise, when shifting right, the char will be
                 # prepended.
                 next_pos = self._get_next_non_static_char_pos(i, direction,
-                                                              positions-1)
+                                                              positions - 1)
 
                 # If its outside the bounds of the region, ignore it.
                 if not start <= next_pos <= end:
@@ -509,9 +510,9 @@ class KiwiEntry(gtk.Entry):
             else:
                 # Keep the static char where it is.
                 if direction == Direction.LEFT:
-                   new_text = new_text + text[i]
+                    new_text = new_text + text[i]
                 else:
-                   new_text = text[i] + new_text
+                    new_text = text[i] + new_text
             i += direction
 
         return new_text
@@ -525,7 +526,7 @@ class KiwiEntry(gtk.Entry):
         """
         text = self.get_text()
         validators = self._mask_validators
-        i = pos+direction+skip
+        i = pos + direction + skip
         while 0 <= i < len(text):
             if isinstance(validators[i], int):
                 return i
@@ -762,7 +763,7 @@ class KiwiEntry(gtk.Entry):
         # position after that static char.
         if (self._confirms_to_mask(pos, new) and
             not isinstance(validators[pos], int)):
-            return pos+1
+            return pos + 1
 
         # If does not confirms to mask:
         #  - Check if the char the user just tried to enter appers later.
@@ -770,7 +771,7 @@ class KiwiEntry(gtk.Entry):
         if not self._confirms_to_mask(pos, new):
             field = self._appers_later(new, pos)
             if field is not False:
-                pos = self.get_field_pos(field+1)
+                pos = self.get_field_pos(field + 1)
                 if pos is not None:
                     gobject.idle_add(self.set_position, pos)
             return pos
@@ -803,13 +804,13 @@ class KiwiEntry(gtk.Entry):
         #new_text = (text[:pos] + new +
         #            text[pos+length:end]+
         #            text[end:])
-        new_pos = pos+1
+        new_pos = pos + 1
         gobject.idle_add(self.set_position, new_pos)
 
         # If the field is full, jump to the next field
-        if len(self.get_field_text(field)) == self.get_field_length(field)-1:
-            gobject.idle_add(self.set_field, field+1, True)
-            self.set_field(field+1)
+        if len(self.get_field_text(field)) == self.get_field_length(field) - 1:
+            gobject.idle_add(self.set_field, field + 1, True)
+            self.set_field(field + 1)
 
         return new_pos, new_text
 
@@ -827,8 +828,8 @@ class KiwiEntry(gtk.Entry):
             else:
                 self._icon_pos = gtk.POS_LEFT
 
-
     # Callbacks
+
     def _on_insert_text(self, editable, new, length, position):
         if not self._mask or self._block_insert:
             return
@@ -864,16 +865,16 @@ class KiwiEntry(gtk.Entry):
         if (0 < start < len(self._mask_validators)
             and not isinstance(self._mask_validators[start], int)
             and pos != start):
-            self._on_delete_text(editable, start-1, start)
+            self._on_delete_text(editable, start - 1, start)
             return
 
         # we just tried to delete, stop the selection.
         self._selecting = False
 
-        field = self._get_field_at_pos(end-1)
+        field = self._get_field_at_pos(end - 1)
         # Outside a field. Cannot delete.
         if field is None:
-            self.set_position(end-1)
+            self.set_position(end - 1)
             return
         _start, _end = self._mask_fields[field]
 
@@ -887,16 +888,16 @@ class KiwiEntry(gtk.Entry):
         # Shift Left
         new_text = (text[:start] +
                     self._shift_text(start, _end, Direction.LEFT,
-                                     end-start) +
+                                     end - start) +
                     text[_end:])
 
         # Overwrite Left
-#        empty_mask = self.get_empty_mask()
-#        new_text = (text[:_start] +
-#                    text[_start:start] +
-#                    empty_mask[start:start+(end-start)] +
-#                    text[start+(end-start):_end] +
-#                    text[_end:])
+        #empty_mask = self.get_empty_mask()
+        #new_text = (text[:_start] +
+        #            text[_start:start] +
+        #            empty_mask[start:start+(end-start)] +
+        #            text[start+(end-start):_end] +
+        #            text[_end:])
 
         new_pos = start
 
@@ -939,7 +940,7 @@ class KiwiEntry(gtk.Entry):
             return False
 
         if field < 0:
-            field = len(self._mask_fields)-1
+            field = len(self._mask_fields) - 1
 
         # grab_focus changes the selection, so we need to grab_focus before
         # making the selection.
@@ -1150,9 +1151,11 @@ class KiwiEntry(gtk.Entry):
 
 type_register(KiwiEntry)
 
+
 def main(args):
     win = gtk.Window()
     win.set_title('gtk.Entry subclass')
+
     def cb(window, event):
         print 'fields', widget.get_field_text()
         gtk.main_quit()

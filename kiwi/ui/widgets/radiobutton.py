@@ -34,6 +34,7 @@ from kiwi.python import deprecationwarn
 from kiwi.utils import gsignal, type_register
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 
+
 class ProxyRadioButton(gtk.RadioButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyRadioButton'
     allowed_data_types = object,
@@ -94,10 +95,12 @@ class ProxyRadioButton(gtk.RadioButton, ProxyWidgetMixin):
             if rb.get_property('data-value') == data:
                 rb.set_active(True)
 
+
 class RadioButton(ProxyRadioButton):
     def __init__(self):
         deprecationwarn(
             'RadioButton is deprecated, use ProxyRadioButton instead',
             stacklevel=3)
         ProxyRadioButton.__init__(self)
+
 type_register(RadioButton)

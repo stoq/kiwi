@@ -54,6 +54,7 @@ from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
 from kiwi.ui.widgets.entry import ProxyEntry
 from kiwi.utils import gsignal
 
+
 class _EasyComboBoxHelper(object):
 
     implements(IEasyCombo)
@@ -309,7 +310,6 @@ class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
     def _on__changed(self, combo):
         self.emit('content-changed')
 
-
     def set_color_attribute(self, value):
         self._color_attribute = value
 
@@ -443,6 +443,7 @@ class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
         """
         return self._helper.get_selected()
 
+
 class ProxyComboBoxEntry(BaseComboBoxEntry,
                          ValidatableProxyWidgetMixin):
     allowed_data_types = (basestring, object) + number
@@ -485,7 +486,6 @@ class ProxyComboBoxEntry(BaseComboBoxEntry,
         self.set_events(gtk.gdk.KEY_RELEASE_MASK)
         self.connect("key-release-event", self._on__key_release_event)
 
-
     def __nonzero__(self):
         return True
 
@@ -508,7 +508,6 @@ class ProxyComboBoxEntry(BaseComboBoxEntry,
                                      setter=_set_list_editable,
                                      type=bool, default=True,
                                      nick="Editable")
-
 
     # Private
 
@@ -666,6 +665,7 @@ class ProxyComboBoxEntry(BaseComboBoxEntry,
             self.entry.set_editable(False)
 
         self._helper.set_mode(self, mode)
+
 
 class ProxyComboEntry(ComboEntry, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyComboEntry'

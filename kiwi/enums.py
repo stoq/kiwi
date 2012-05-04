@@ -23,21 +23,26 @@
 
 from kiwi.python import enum
 
+
 class ComboColumn(enum):
     (LABEL,
      DATA) = range(2)
+
 
 class ComboMode(enum):
     (UNKNOWN,
      STRING,
      DATA) = range(3)
 
+
 class Alignment(enum):
     (LEFT,
      RIGHT) = range(2)
 
+
 class Direction(enum):
     (LEFT, RIGHT) = (1, -1)
+
 
 class ListType(enum):
     """
@@ -55,6 +60,7 @@ class ListType(enum):
      UNADDABLE,
      UNEDITABLE) = range(6)
 
+
 class SearchFilterPosition(enum):
     """
     An enum used to indicate where a search filter should be added to
@@ -65,4 +71,3 @@ class SearchFilterPosition(enum):
     """
     (TOP,
      BOTTOM) = range(2)
-

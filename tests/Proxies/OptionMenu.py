@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import sys, pprint
+import pprint
+import sys
 sys.path.insert(0, "../..")
 
 DEBUG = 0
@@ -12,8 +13,10 @@ from Kiwi.Models import Model
 #from Kiwi.Menu import OptionMenu
 from gtk import OptionMenu
 
+
 def prefill(args):
     print "ARGS", args
+
 
 class Foo(Model):
     A = "Run"
@@ -23,8 +26,10 @@ class Foo(Model):
     E = 666 # Run
     # No F - Play
 
+
 class CheckProxy(Proxy):
     widgets = [":A", ":B", ":C", ":D", ":E", ":F"]
+
     def __init__(self, model):
         self._build()
         Proxy.__init__(self, model, delete_handler=gtk.mainquit)
@@ -41,9 +46,9 @@ class CheckProxy(Proxy):
         self.D = OptionMenu()
         self.D.prefill(["Play", "Hide", "Run"])
         self.E = OptionMenu()
-        self.E.prefill([("Play", 111), ("Hide", 222) , ("Run", 666)])
+        self.E.prefill([("Play", 111), ("Hide", 222), ("Run", 666)])
         self.F = OptionMenu()
-        self.F.prefill([("Play", 111), ("Hide", 222) , ("Run", 666)])
+        self.F.prefill([("Play", 111), ("Hide", 222), ("Run", 666)])
         vbox = gtk.VBox()
         vbox.add(self.A)
         vbox.add(self.B)
@@ -73,5 +78,7 @@ try:
 except ValueError:
     # XXX: set value back to normal. See Model.__setattr__
     f.E = 222
-if DEBUG: c.show_all_and_loop() ; pprint.pprint(f.__dict__)
+if DEBUG:
+    c.show_all_and_loop()
+    pprint.pprint(f.__dict__)
 print "OptionMenu OK"

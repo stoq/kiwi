@@ -3,11 +3,12 @@ import unittest
 from kiwi.component import AlreadyImplementedError, Interface, \
      get_utility, provide_utility, remove_utility, implements, utilities
 
+o = object()
+
+
 class IBanana(Interface):
     pass
 
-class Obj(object): pass
-o = Obj()
 
 class TestUtilities(unittest.TestCase):
     def tearDown(self):
@@ -53,12 +54,12 @@ class TestUtilities(unittest.TestCase):
     def testImplements(self):
         class I1(Interface):
             pass
+
         class C(object):
             implements(I1)
+
         c = C()
-        class X(object):
-            pass
-        x = X()
+        x = object()
         self.assertEqual(I1.providedBy(x), False)
         #self.assertEqual(I1.providedBy(C), False)
         self.assertEqual(I1.providedBy(c), True)
@@ -66,12 +67,16 @@ class TestUtilities(unittest.TestCase):
     def testInterfaceSub(self):
         class I1(Interface):
             pass
+
         class I2(I1):
             pass
+
         class C(object):
             implements(I2)
+
         class D(object):
             implements(I1)
+
         c = C()
         self.assertEqual(I1.providedBy(c), True)
         self.assertEqual(I2.providedBy(c), True)
@@ -87,12 +92,12 @@ class TestUtilities(unittest.TestCase):
 
         class I1(Interface):
             pass
+
         class C(object):
             implements(I1)
+
         c = C()
-        class X(object):
-            pass
-        x = X()
+        x = object()
         self.assertEqual(I1.providedBy(x), False)
         self.assertEqual(I1.providedBy(C), False)
         self.assertEqual(I1.providedBy(c), True)
@@ -105,12 +110,16 @@ class TestUtilities(unittest.TestCase):
 
         class I1(Interface):
             pass
+
         class I2(I1):
             pass
+
         class C(object):
             implements(I2)
+
         class D(object):
             implements(I1)
+
         c = C()
         self.assertEqual(I1.providedBy(c), True)
         self.assertEqual(I2.providedBy(c), True)

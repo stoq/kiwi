@@ -36,6 +36,7 @@ from kiwi.python import deprecationwarn
 from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
 from kiwi.utils import gsignal, type_register
 
+
 class ProxySpinButton(gtk.SpinButton, ValidatableProxyWidgetMixin):
     """
     A SpinButton subclass which adds supports for the Kiwi Framework.
@@ -66,6 +67,7 @@ class ProxySpinButton(gtk.SpinButton, ValidatableProxyWidgetMixin):
         self.set_property('xalign', 1.0)
 
     gsignal('changed', 'override')
+
     def do_changed(self):
         """Called when the content of the spinbutton changes.
         """
@@ -112,4 +114,5 @@ class SpinButton(ProxySpinButton):
             'SpinButton is deprecated, use ProxySpinButton instead',
             stacklevel=3)
         ProxySpinButton.__init__(self)
+
 type_register(SpinButton)

@@ -7,6 +7,7 @@ import unittest
 
 from kiwi.log import Logger, set_log_file
 
+
 class LogTest(unittest.TestCase):
     def setUp(self):
         self.filename = tempfile.mktemp()
@@ -25,7 +26,6 @@ class LogTest(unittest.TestCase):
         lines = open(self.filename).readlines()
         self.assertEqual(len(lines), 1)
         self.failUnless('sliff' in lines[0])
-
 
     def testStdErr(self):
         root = logging.getLogger()

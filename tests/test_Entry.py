@@ -10,6 +10,7 @@ from kiwi import datatypes
 from kiwi.ui.entry import KiwiEntry
 from kiwi.ui.widgets.entry import ProxyEntry
 
+
 class EntryTest(unittest.TestCase):
     def testModel(self):
         entry = ProxyEntry()

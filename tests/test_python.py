@@ -2,6 +2,7 @@ import unittest
 
 from kiwi.python import AttributeForwarder, slicerange, enum
 
+
 class SliceTest(unittest.TestCase):
     def genlist(self, limit, start, stop=None, step=None):
         if stop == None:
@@ -27,11 +28,14 @@ class SliceTest(unittest.TestCase):
     def testStartStopStep(self):
         self.assertEqual(self.genlist(10, 0, 10, 2), range(10)[0:10:2])
 
+
 class Status(enum):
     OPEN, CLOSE = range(2)
 
+
 class Color(enum):
     RED, GREEN, BLUE = range(3)
+
 
 class EnumTest(unittest.TestCase):
     def testEnums(self):

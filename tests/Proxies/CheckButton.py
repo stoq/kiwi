@@ -10,12 +10,15 @@ from Kiwi.initgtk import gtk
 from Kiwi.Proxies import Proxy
 from Kiwi.Models import Model
 
+
 class Foo(Model):
     A = 1
     B = 0
 
+
 class CheckProxy(Proxy):
     widgets = [":B", ":A"]
+
     def __init__(self, model):
         self._build()
         Proxy.__init__(self, model, delete_handler=gtk.mainquit)
@@ -29,6 +32,7 @@ class CheckProxy(Proxy):
         vbox.add(self.A)
         vbox.add(self.B)
         self.win.add(vbox)
+
 
 class ToggleProxy(CheckProxy):
     def _build(self):
@@ -48,7 +52,9 @@ c.A.clicked()
 c.B.clicked()
 assert f.A == 0, f.A
 assert f.B == 1, f.B
-if DEBUG: c.show_all_and_loop() ; print f.__dict__
+if DEBUG:
+    c.show_all_and_loop()
+    print f.__dict__
 print "CheckButton OK"
 
 f = Foo()
@@ -59,5 +65,7 @@ c.A.clicked()
 c.B.clicked()
 assert f.A == 0, f.A
 assert f.B == 1, f.B
-if DEBUG: c.show_all_and_loop(); print f.__dict__
+if DEBUG:
+    c.show_all_and_loop()
+    print f.__dict__
 print "ToggleButton OK"

@@ -3,12 +3,15 @@ import subprocess
 import sys
 import unittest
 
+
 def setup(self, rootdir):
     self._dir = os.getcwd()
     os.chdir(rootdir)
 
+
 def teardown(self):
     os.chdir(self._dir)
+
 
 def test_filename(rootdir, filename):
     cmd = '%s %s -v %s' % (sys.executable,
@@ -19,6 +22,7 @@ def test_filename(rootdir, filename):
 
     if status != 0:
         raise AssertionError("UI Test %s failed" % filename)
+
 
 def create():
     testdir = os.path.dirname(__file__)
@@ -44,4 +48,3 @@ def create():
 # Disable UI tests on win32, they do not quite work yet.
 if sys.platform != 'win32':
     TestUI = create()
-

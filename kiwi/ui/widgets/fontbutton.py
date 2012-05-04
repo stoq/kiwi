@@ -32,6 +32,7 @@ class ProxyFontButton(gtk.FontButton, ProxyWidgetMixin):
         self.props.data_type = str
 
     gsignal('font-set', 'override')
+
     def do_font_set(self):
         self.emit('content-changed')
         self.chain()
@@ -43,4 +44,3 @@ class ProxyFontButton(gtk.FontButton, ProxyWidgetMixin):
         self.set_font_name(data)
 
 type_register(ProxyFontButton)
-

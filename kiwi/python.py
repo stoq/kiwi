@@ -28,11 +28,13 @@ import warnings
 
 __all__ = ['ClassInittableMetaType', 'ClassInittableObject']
 
+
 class ClassInittableMetaType(type):
     # pylint fails to understand this is a metaclass
     def __init__(self, name, bases, namespace):
         type.__init__(self, name, bases, namespace)
         self.__class_init__(namespace)
+
 
 class ClassInittableObject(object):
     """
@@ -98,7 +100,7 @@ class AttributeForwarder(ClassInittableObject):
             raise TypeError("'target' is a reserved attribute")
 
         for attribute in ns['attributes']:
-            setattr(cls, attribute,  _ForwardedProperty(attribute))
+            setattr(cls, attribute, _ForwardedProperty(attribute))
 
     def __init__(self, target):
         """
@@ -146,6 +148,7 @@ def namedAny(name):
 
     return obj
 
+
 class Settable:
     """
     A mixin class for syntactic sugar.  Lets you assign attributes by
@@ -172,6 +175,7 @@ class Settable:
                             ', '.join(
             ['%s=%r' % (attr, getattr(self, attr)) for attr in self._attrs]))
 
+
 def qual(klass):
     """
     Convert a class to a string representation, which is the name of the module
@@ -180,6 +184,7 @@ def qual(klass):
     :returns: fully qualified module and class name
     """
     return klass.__module__ + '.' + klass.__name__
+
 
 def clamp(x, low, high):
     """
@@ -197,6 +202,7 @@ def clamp(x, low, high):
 
     return min(max(x, low), high)
 
+
 def slicerange(slice, limit):
     """Takes a slice object and returns a range iterator
 
@@ -209,6 +215,7 @@ def slicerange(slice, limit):
 
 _no_deprecation = False
 
+
 def deprecationwarn(msg, stacklevel=2):
     """
     Prints a deprecation warning
@@ -218,6 +225,7 @@ def deprecationwarn(msg, stacklevel=2):
         return
 
     warnings.warn(msg, DeprecationWarning, stacklevel=stacklevel)
+
 
 def disabledeprecationcall(func, *args, **kwargs):
     """
@@ -229,6 +237,7 @@ def disabledeprecationcall(func, *args, **kwargs):
     retval = func(*args, **kwargs)
     _no_deprecation = old
     return retval
+
 
 class enum(int):
     """
@@ -298,6 +307,7 @@ class enum(int):
             self.__class__.__name__, self.name)
     __repr__ = __str__
 
+
 def all(seq):
     """
     Predict used to check if all items in a seq are True.
@@ -307,6 +317,7 @@ def all(seq):
         if not item:
             return False
     return True
+
 
 def any(seq):
     """
