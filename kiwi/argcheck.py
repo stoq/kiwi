@@ -30,16 +30,21 @@ from types import ClassType
 
 from kiwi.datatypes import number as number_type
 
+_NoValue = object()
+
+
 class CustomType(type):
     @classmethod
     def value_check(mcs, name, value):
         pass
+
 
 class number(CustomType):
     """
     Custom type that verifies that the type is a number (eg float or int)
     """
     type = number_type
+
 
 class percent(CustomType):
     """
@@ -52,7 +57,6 @@ class percent(CustomType):
         if (value < 0) or (value > 100):
             raise ValueError("%s must be between 0 and 100" % name)
 
-_NoValue = object()
 
 class argcheck(object):
     """

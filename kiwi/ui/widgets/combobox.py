@@ -30,8 +30,10 @@ backwards compatibility layer"""
 from kiwi.ui.widgets.combo import ProxyComboBox
 from kiwi.ui.widgets.combo import ProxyComboBoxEntry
 
+
 class ComboBox(ProxyComboBox):
     pass
+
 
 class ComboBoxEntry(ProxyComboBoxEntry):
     pass

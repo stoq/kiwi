@@ -33,20 +33,26 @@ import gobject.propertyhelper
 
 gprop = gobject.propertyhelper.property
 parent_type_from_parent = gprop._type_from_python
+parent_get_pspec_args = gprop.get_pspec_args
+
+
 def _type_from_python(self, type_):
     if issubclass(type_, gobject.GEnum):
         return type_.__gtype__
     else:
         return parent_type_from_parent(self, type_)
+
 gprop._type_from_python = _type_from_python
 
-parent_get_pspec_args = gprop.get_pspec_args
+
 def _get_pspec_args(self):
     if gobject.type_is_a(self.type, gobject.GEnum):
         return (self.type, self.nick, self.blurb, self.default, self.flags)
     else:
         return parent_get_pspec_args(self)
+
 gprop.get_pspec_args = _get_pspec_args
+
 
 def list_properties(gtype, parent=True):
     """
@@ -63,6 +69,7 @@ def list_properties(gtype, parent=True):
     return [pspec for pspec in pspecs
                       if pspec not in parent_pspecs]
 
+
 def type_register(gtype):
     """Register the type, but only if it's not already registered
     :param gtype: the class to register
@@ -76,6 +83,7 @@ def type_register(gtype):
     gobject.type_register(gtype)
 
     return True
+
 
 def gsignal(name, *args, **kwargs):
     """
@@ -122,6 +130,7 @@ def gsignal(name, *args, **kwargs):
                 "gobject.SIGNAL_RUN_LAST")
 
         dict[name] = (flags, retval, args)
+
 
 def quote(msg):
     """

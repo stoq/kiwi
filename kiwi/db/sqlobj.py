@@ -33,11 +33,14 @@ from kiwi.db.query import NumberQueryState, StringQueryState, \
      NumberIntervalQueryState
 from kiwi.interfaces import ISearchFilter
 
+
 class _FTI(SQLExpression):
     def __init__(self, q):
         self.q = q
+
     def __sqlrepr__(self, db):
         return self.q
+
 
 class SQLObjectQueryExecuter(QueryExecuter):
     def __init__(self, conn=None):

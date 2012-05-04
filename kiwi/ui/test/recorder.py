@@ -59,6 +59,7 @@ _events = []
 
 log = Logger('recorder')
 
+
 def register_event_type(event_type):
     """
     Add an event type to a list of event types.
@@ -69,6 +70,7 @@ def register_event_type(event_type):
         raise AssertionError("event %s already registered" % event_type)
     _events.append(event_type)
 
+
 def get_event_types():
     """
     Returns the collection of event types.
@@ -76,8 +78,10 @@ def get_event_types():
     """
     return _events
 
+
 class SkipEvent(Exception):
     pass
+
 
 class Event(object):
     """
@@ -87,6 +91,7 @@ class Event(object):
       automatically attach events to objects when they appear
     """
     object_type = None
+
     def __init__(self, object, name=None):
         """
         Create a new Event object.
@@ -125,6 +130,7 @@ class Event(object):
         """
         pass
 
+
 class SignalEvent(Event):
     """
     A SignalEvent is an :class:`Event` which is tied to a GObject signal,
@@ -134,6 +140,7 @@ class SignalEvent(Event):
     :cvar signal_name: signal to listen to
     """
     signal_name = None
+
     def __init__(self, object, name, args):
         """
         Create a new SignalEvent object.
@@ -155,6 +162,7 @@ class SignalEvent(Event):
         """
         object.connect(signal_name, cb, cls, object)
 
+
 #
 # Special Events
 #
@@ -164,6 +172,7 @@ class WindowDeleteEvent(Event):
     This event represents a user click on the close button in the
     window manager.
     """
+
 
 #
 # Signal Events
@@ -179,7 +188,9 @@ class MenuItemActivateEvent(SignalEvent):
 
     def serialize(self):
         return '%s.activate()' % self.name
+
 register_event_type(MenuItemActivateEvent)
+
 
 class ImageMenuItemButtonReleaseEvent(SignalEvent):
     """
@@ -204,7 +215,9 @@ class ImageMenuItemButtonReleaseEvent(SignalEvent):
 
     def serialize(self):
         return '%s.activate()' % self.name
+
 register_event_type(ImageMenuItemButtonReleaseEvent)
+
 
 class ToolButtonReleaseEvent(SignalEvent):
     """
@@ -216,7 +229,9 @@ class ToolButtonReleaseEvent(SignalEvent):
 
     def serialize(self):
         return '%s.activate()' % self.name
+
 register_event_type(ToolButtonReleaseEvent)
+
 
 class EntrySetTextEvent(SignalEvent):
     """
@@ -233,7 +248,9 @@ class EntrySetTextEvent(SignalEvent):
 
     def serialize(self):
         return '%s.set_text("%s")' % (self.name, self.text)
+
 register_event_type(EntrySetTextEvent)
+
 
 class EntryActivateEvent(SignalEvent):
     """
@@ -246,7 +263,9 @@ class EntryActivateEvent(SignalEvent):
 
     def serialize(self):
         return '%s.activate()' % (self.name)
+
 register_event_type(EntryActivateEvent)
+
 
 # Also works for Toggle, Radio and Check
 class ButtonClickedEvent(SignalEvent):
@@ -260,7 +279,9 @@ class ButtonClickedEvent(SignalEvent):
 
     def serialize(self):
         return '%s.clicked()' % self.name
+
 register_event_type(ButtonClickedEvent)
+
 
 # Kiwi widget support
 class ObjectListSelectionChanged(SignalEvent):
@@ -272,6 +293,7 @@ class ObjectListSelectionChanged(SignalEvent):
     """
     object_type = ObjectList
     signal_name = 'changed'
+
     def __init__(self, objectlist, name, args):
         self._objectlist = objectlist
         SignalEvent.__init__(self, objectlist, name=objectlist.get_name(),
@@ -305,7 +327,9 @@ class ObjectListSelectionChanged(SignalEvent):
 
     def serialize(self):
         return '%s.select_paths(%s)' % (self.name, self.rows)
+
 register_event_type(ObjectListSelectionChanged)
+
 
 class ObjectListDoubleClick(SignalEvent):
     """
@@ -349,6 +373,7 @@ register_event_type(ObjectListDoubleClick)
 #         return '%s.select_item_by_label("%s")' % (self.name, self.label)
 
 # register_event_type(KiwiComboBoxChangedEvent)
+
 
 class Recorder(WidgetIntrospecter):
     """

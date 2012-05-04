@@ -188,6 +188,7 @@ if gobject.pygtk_version <= (2, 8):
 
 _event = None
 
+
 class task(object):
     """A decorator that modifies a tasklet function to avoid the need
     to call C{tasklet.run(func())} or C{tasklet.Tasklet(func())}.
@@ -199,6 +200,7 @@ class task(object):
 
     def __call__(self, *args, **kwargs):
         return Tasklet(self._func(*args, **kwargs))
+
 
 def get_event():
     """
@@ -213,6 +215,7 @@ def get_event():
     event = _event
     _event = None
     return event
+
 
 def run(gen):
     """Start running a generator as a :class:`Tasklet`.
@@ -426,6 +429,7 @@ class WaitForTimeout(WaitCondition):
             self._id = None
         return retval
 
+
 class WaitForIdle(WaitCondition):
     '''An object that waits for the main loop to become idle'''
 
@@ -506,6 +510,7 @@ class WaitForTasklet(WaitCondition):
         self._id = None
         self._idle_id = None
         return False
+
 
 class WaitForSignal(WaitCondition):
     '''An object that waits for a signal emission'''
@@ -811,7 +816,7 @@ class Tasklet(object):
             return None
         else:
             self.state = Tasklet.STATE_SUSPENDED
-            assert gen_value is not None            
+            assert gen_value is not None
         if __debug__:
             if had_event and _event is not None:
                 warnings.warn("Tasklet %s forgot to read an event!" % self)
@@ -891,7 +896,6 @@ class Tasklet(object):
             if self._message_actions[msg.name] == Message.ACCEPT:
                 return self._message_queue.pop(idx)
         return None
-
 
     def _update_wait_conditions(self, old_wait_list):
         '''disarm wait conditions removed and arm new wait conditions'''

@@ -73,6 +73,7 @@ class DateSearchOption(object):
         :rtype: datetime.date tuple
         """
 
+
 class Any(DateSearchOption):
     name = _('Any')
 
@@ -159,6 +160,7 @@ class NumberSearchOption(object):
         Get start and end interval.
         :returns: start, end
         """
+
 
 class Between(NumberSearchOption):
     name = _('Between')
@@ -285,6 +287,7 @@ class DateSearchFilter(SearchFilter):
     Can be customized through add_option.
     """
     __gtype_name__ = 'DateSearchFilter'
+
     class Type(enum):
         (USER_DAY,
          USER_INTERVAL) = range(100, 102)
@@ -366,7 +369,7 @@ class DateSearchFilter(SearchFilter):
                                           _(u'to'), end_date.strftime('%x'),)
 
             else:
-                 desc += start_date.strftime('%x')
+                desc += start_date.strftime('%x')
         if desc:
             return '%s %s' % (self.get_title_label().get_text(), desc,)
 
@@ -403,7 +406,6 @@ class DateSearchFilter(SearchFilter):
         option_type = type('', (FixedDateSearchOption,),
                            dict(name=name, date=date))
         self.add_option(option_type, position=position)
-
 
     def add_option_fixed_interval(self, name, start, end, position=-2):
         """
@@ -732,6 +734,7 @@ class HintedEntry(gtk.Entry):
 
 gobject.type_register(HintedEntry)
 
+
 class StringSearchFilter(SearchFilter):
     """
     - a label
@@ -879,7 +882,7 @@ class NumberSearchFilter(SearchFilter):
 
         self.start = gtk.SpinButton(climb_rate=1.0)
         self.start.get_adjustment().step_increment = 1.0
-        self.start.set_range(-sys.maxint-1, sys.maxint)
+        self.start.set_range(-sys.maxint - 1, sys.maxint)
         self.pack_start(self.start, False, False, 6)
         self.start.show()
         self.start.connect_after('activate', self._on_entry__activate)
@@ -890,7 +893,7 @@ class NumberSearchFilter(SearchFilter):
 
         self.end = gtk.SpinButton(climb_rate=1.0)
         self.end.get_adjustment().step_increment = 1.0
-        self.end.set_range(-sys.maxint-1, sys.maxint)
+        self.end.set_range(-sys.maxint - 1, sys.maxint)
         self.pack_start(self.end, False, False, 6)
         self.end.show()
         self.end.connect_after('activate', self._on_entry__activate)
@@ -927,7 +930,6 @@ class NumberSearchFilter(SearchFilter):
             self.start.show()
             self.and_label.show()
             self.end.show()
-
 
     #
     #   Callbacks
@@ -1085,7 +1087,6 @@ class SearchContainer(gtk.VBox):
 
         self._create_ui()
 
-
     #
     # GObject
     #
@@ -1124,7 +1125,6 @@ class SearchContainer(gtk.VBox):
         else:
             raise AssertionError(pspec.name)
 
-
     #
     # Public API
     #
@@ -1138,7 +1138,6 @@ class SearchContainer(gtk.VBox):
         :param columns:
         :param callback:
         """
-
         if not isinstance(search_filter, SearchFilter):
             raise TypeError("search_filter must be a SearchFilter subclass, "
                             "not %r" % (search_filter,))
@@ -1350,7 +1349,6 @@ class SearchContainer(gtk.VBox):
             if search_filter is None:
                 continue
             search_filter.set_state(**filter_state)
-
 
     #
     # Callbacks

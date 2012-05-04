@@ -34,6 +34,7 @@ from kiwi.datatypes import number
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import gsignal
 
+
 class ProxyButton(gtk.Button, ProxyWidgetMixin):
     """
     A ProxyButton is a Button subclass which is implementing the features
@@ -98,4 +99,3 @@ class ProxyButton(gtk.Button, ProxyWidgetMixin):
             self.set_label(text)
 
         self.emit('content-changed')
-

@@ -6,6 +6,7 @@ from kiwi.enums import ComboMode
 from kiwi.ui.comboentry import ComboEntry
 from kiwi.ui.widgets.combo import ProxyComboEntry
 
+
 class TestComboEntry(unittest.TestCase):
     def setUp(self):
         self.called = False
@@ -31,6 +32,7 @@ class TestComboEntry(unittest.TestCase):
         entry.connect('activate', self._on_activate)
         entry.entry.emit('activate')
         self.assertEqual(self.called, True)
+
 
 class TestProxyComboEntry(unittest.TestCase):
     def testSelectItemByLabel(self):
@@ -101,7 +103,7 @@ class TestProxyComboEntry(unittest.TestCase):
         entry = ProxyComboEntry()
         self.assertEqual(entry.get_mode(), ComboMode.UNKNOWN)
         entry.prefill(['one', 'two'])
-        self.assertEqual(entry.get_mode(),  ComboMode.STRING)
+        self.assertEqual(entry.get_mode(), ComboMode.STRING)
 
 if __name__ == '__main__':
     unittest.main()

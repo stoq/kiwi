@@ -41,6 +41,15 @@ upload-release:
 	ssh johan@master.gnome.org ftpadmin install $(TARBALL)
 	scp dist/kiwi-$(VERSION).win32.exe johan@master.gnome.org:/ftp/pub/GNOME/binaries/win32/kiwi/
 
+check:
+	trial tests
+
+pyflakes:
+	trial tests.test_pyflakes
+
+pep8:
+	trial tests.test_pep8
+
 include async.mk
 
 .PHONY: bdist upload-release

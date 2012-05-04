@@ -17,7 +17,7 @@ from distutils.extension import Extension
 import sys
 
 from kiwi import kiwi_version
-from kiwi.dist import setup, listfiles, listpackages, get_site_packages_dir
+from kiwi.dist import setup, listfiles, listpackages
 
 
 ext_modules = []

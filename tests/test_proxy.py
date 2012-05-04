@@ -1,10 +1,8 @@
-import sys
 import unittest
 
 from gtk import gdk
 
 from kiwi import ValueUnset
-from kiwi.datatypes import converter
 from kiwi.python import Settable
 from kiwi.ui.proxy import Proxy
 from kiwi.ui.widgets.button import ProxyButton
@@ -16,6 +14,7 @@ from kiwi.ui.widgets.scale import ProxyHScale, ProxyVScale
 from kiwi.ui.widgets.spinbutton import ProxySpinButton
 from kiwi.ui.widgets.textview import ProxyTextView
 from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox
+
 
 class FakeView(object):
     def __init__(self):
@@ -37,6 +36,7 @@ class FakeView(object):
     def handler_unblock(self, *args):
         pass
 
+
 class Model(Settable):
     def __init__(self):
         Settable.__init__(self,
@@ -51,6 +51,7 @@ class Model(Settable):
                           comboentry='CE1',
                           combobox='CB1',
                           button='button')
+
 
 class TestProxy(unittest.TestCase):
     def setUp(self):
@@ -75,11 +76,11 @@ class TestProxy(unittest.TestCase):
         self.view.vscale.get_adjustment().upper = 250
 
         self.comboentry = self.view.add('comboentry', str, ProxyComboEntry)
-        self.comboentry.prefill(['CE1','CE2','CE3'])
+        self.comboentry.prefill(['CE1', 'CE2', 'CE3'])
         self.comboentry.show()
 
         self.combobox = self.view.add('combobox', str, ProxyComboBox)
-        self.combobox.prefill(['CB1','CB2','CB3'])
+        self.combobox.prefill(['CB1', 'CB2', 'CB3'])
         self.combobox.show()
 
         self.model = Model()

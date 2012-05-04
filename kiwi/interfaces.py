@@ -26,6 +26,7 @@
 
 from kiwi.component import Interface
 
+
 class IProxyWidget(Interface):
     """
     IProxyWidget is a widget that can be attached to a proxy.
@@ -52,6 +53,7 @@ class IProxyWidget(Interface):
         """
         pass
 
+
 class IValidatableProxyWidget(IProxyWidget):
     """
     IValidatableProxyWidget extends IProxyWidget with validation support
@@ -71,6 +73,7 @@ class IValidatableProxyWidget(IProxyWidget):
 
     def validate(force=False):
         pass
+
 
 class IEasyCombo(Interface):
 
@@ -152,6 +155,7 @@ class IEasyCombo(Interface):
     def get_model_items():
         pass
 
+
 class AbstractGladeAdaptor(Interface):
     """Abstract class that define the functionality an class that handle
     glade files should provide."""
@@ -173,6 +177,7 @@ class AbstractGladeAdaptor(Interface):
         """Connect the signals in the keys of dict with the objects in the
         values of dic
         """
+
 
 class ISearchFilter(Interface):
 

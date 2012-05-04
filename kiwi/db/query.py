@@ -27,6 +27,7 @@ from kiwi.interfaces import ISearchFilter
 # Query building
 #
 
+
 class QueryState(object):
     def __init__(self, search_filter):
         """

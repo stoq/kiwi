@@ -56,6 +56,7 @@ ProxyButton
 
 log = Logger('builderloader')
 
+
 class BuilderWidgetTree:
     def __init__(self, view, gladefile=None, domain=None, data=None):
         self._view = view

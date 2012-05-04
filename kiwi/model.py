@@ -37,6 +37,7 @@ log = Logger('model')
 # attributes are changed, it notifies any proxies of the change.
 #
 
+
 class Model:
     """
     The Model is a mixin to be used by domain classes when attached to
@@ -86,13 +87,13 @@ class Model:
 
         # XXX: should use weakref if possible, and if not, warn of leaks
         proxies = self._v_proxies
-        if not proxies.has_key(attr):
+        if not attr in proxies:
             proxies[attr] = [proxy]
         else:
             if proxy in proxies[attr]:
-                raise AssertionError, ("Tried to attach proxy %s "
-                                       "twice to attribute `%s'."
-                                       % ( proxy, attr ))
+                raise AssertionError("Tried to attach proxy %s "
+                                     "twice to attribute `%s'." %
+                                     (proxy, attr))
             proxies[attr].append(proxy)
 
     def unregister_proxy_for_attribute(self, attr, proxy):
@@ -100,7 +101,7 @@ class Model:
         if not hasattr(self, "_v_proxies"):
             self.ensure_init()
         proxies = self._v_proxies
-        if proxies.has_key(attr) and proxy in proxies[attr]:
+        if attr in proxies and proxy in proxies[attr]:
             # Only one listener per attribute per proxy, so remove()
             # works
             proxies[attr].remove(proxy)
@@ -157,12 +158,9 @@ class Model:
         if not hasattr(self, "_v_proxies"):
             self.ensure_init()
 
-        if self._v_autonotify and self._v_proxies.has_key(attr):
+        if self._v_autonotify and attr in self._v_proxies:
             self.notify_proxies(attr)
 
-#
-# A sample model that pickles itself into a file
-#
 
 class PickledModel(Model):
     """

@@ -10,8 +10,10 @@ from kiwi.ui.gadgets import set_foreground, get_foreground, \
                             set_background, get_background
 from kiwi.ui.views import BaseView
 
+
 class FooView(BaseView):
-    widgets = [ "vbox", "label" ]
+    widgets = ["vbox", "label"]
+
     def __init__(self):
         self.build_ui()
         BaseView.__init__(self, toplevel_name='win')
@@ -28,6 +30,7 @@ class FooView(BaseView):
         self.win.add(vbox)
         self.vbox = vbox
         return vbox
+
 
 class FooController(BaseController):
     def __init__(self, view):
@@ -46,6 +49,7 @@ class FooController(BaseController):
         # This is subclassed
         self.view.label.set_text("Good click!")
 
+
 class Bar(BaseView, BaseController):
     def __init__(self):
         self.win = gtk.Window()
@@ -55,6 +59,7 @@ class Bar(BaseView, BaseController):
         BaseController.__init__(self, view=self)
         set_foreground(self.label, "#CC99FF")
         set_background(self.win, "#001100")
+
 
 # these classes are bad and should trigger exceptions
 
@@ -75,6 +80,7 @@ class NotWidgetFoo(FooView, BaseController):
 
     def on_noogie__haxored(self, *args):
         print "I AM NOT A NUMBER I AM A FREE MAN"
+
 
 class BaseViewTest(unittest.TestCase):
 

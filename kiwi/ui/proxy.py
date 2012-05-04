@@ -38,10 +38,12 @@ from kiwi.decorators import deprecated
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
 from kiwi.log import Logger
 
+log = Logger('proxy')
+
+
 class ProxyError(Exception):
     pass
 
-log = Logger('proxy')
 
 def block_widget(widget):
     """Blocks the signal handler of the 'content-changed' signal on widget"""
@@ -49,16 +51,19 @@ def block_widget(widget):
     if connection_id:
         widget.handler_block(connection_id)
 
+
 def unblock_widget(widget):
     """Unblocks the signal handler of the 'content-changed' signal on widget"""
     connection_id = widget.get_data('content-changed-id')
     if connection_id:
         widget.handler_unblock(connection_id)
 
+
 def _get_widget_data_type(widget):
     data_type = widget.get_property('data-type')
     c = converter.get_converter(data_type)
     return c.type
+
 
 class Proxy:
     """ A Proxy is a class that 'attaches' an instance to an interface's
@@ -301,7 +306,6 @@ class Proxy:
                                  % (attribute, self,
                                     self._model_attributes.keys()))
 
-
         # The type of value should match the data-type property. The two
         # exceptions to this rule are ValueUnset and None
         if not (value is ValueUnset or value is None):
@@ -392,4 +396,3 @@ class Proxy:
     def new_model(self, model, relax_type=False):
         self.set_model(model)
     new_model = deprecated('set_model', log)(new_model)
-

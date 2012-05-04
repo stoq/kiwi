@@ -41,6 +41,7 @@ except ImportError:
     except ImportError:
         event_handler_set = None
 
+
 class WidgetIntrospecter(gobject.GObject):
     gsignal('window-added', object, str, object)
     gsignal('window-removed', object, str)

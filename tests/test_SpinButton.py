@@ -3,6 +3,7 @@ import unittest
 
 from kiwi.ui.widgets.spinbutton import ProxySpinButton
 
+
 class SpinButtonTest(unittest.TestCase):
     def testForIntFloat(self):
         mySpinBtn = ProxySpinButton()

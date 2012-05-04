@@ -4,6 +4,7 @@ import unittest
 from kiwi.argcheck import argcheck, number, percent
 from kiwi.datatypes import Decimal
 
+
 class ArgTest(unittest.TestCase):
     def testOneArg(self):
         f = argcheck(str)(lambda s: None)
@@ -120,7 +121,6 @@ class ArgTest(unittest.TestCase):
         self.assertRaises(TypeError, func_none2, s='boogie',
                           date=None, date2=True)
 
-
     def testNumber(self):
         def func(n):
             return n
@@ -149,6 +149,7 @@ class ArgTest(unittest.TestCase):
 
     def testDisable(self):
         argcheck.disable()
+
         def func(s):
             pass
         func = argcheck(str)(func)
@@ -158,7 +159,7 @@ class ArgTest(unittest.TestCase):
     def testErrorHandling(self):
         self.assertRaises(TypeError, argcheck(str), True)
         self.assertRaises(TypeError, argcheck(int), lambda **x: None)
-        self.assertRaises(TypeError, argcheck(int), lambda : None)
+        self.assertRaises(TypeError, argcheck(int), lambda: None)
         self.assertRaises(TypeError, argcheck(int), lambda x='str': None)
 
 if __name__ == '__main__':

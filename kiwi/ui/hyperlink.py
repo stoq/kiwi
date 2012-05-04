@@ -34,6 +34,7 @@ from kiwi.utils import gsignal, type_register
 
 import gobject
 
+
 class HyperLink(gtk.EventBox):
     __gtype_name__ = 'HyperLink'
     """

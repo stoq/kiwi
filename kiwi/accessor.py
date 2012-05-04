@@ -40,6 +40,7 @@ from kiwi.log import Logger
 
 log = Logger('kiwi.accessor')
 
+
 def get_default_getter(model, attr_name, cache):
     """Obtains from model a callable through which attr_name can be
     retrieved.  This callable is an accessor named get_foo, where
@@ -54,6 +55,7 @@ def get_default_getter(model, attr_name, cache):
         return func
     else:
         return (model, attr_name)
+
 
 def get_default_setter(model, attr_name, cache):
     """Obtains from model a callable through which attr_name can be
@@ -99,8 +101,10 @@ _kgetattr_wref = {}
 _ksetattr_cache = {}
 _ksetattr_wref = {}
 
+
 class CacheControl(object):
     __slots__ = ['key', 'cacheable']
+
     def __init__(self, key):
         self.key = key
         self.cacheable = 1
@@ -110,20 +114,23 @@ class CacheControl(object):
 
     def invalidate(self):
         key = self.key
-        if _kgetattr_cache.has_key(key):
+        if key in _kgetattr_cache:
             del _kgetattr_cache[key]
-        if _ksetattr_cache.has_key(key):
+        if key in _ksetattr_cache:
             del _ksetattr_cache[key]
+
 
 class _AttrUnset:
     # indicates an unset value since None needs to be used
     pass
+
 
 class DefaultValue(Exception):
     """
     This can be raised in kgetattr accessors to indicate that the default
     value should be used
     """
+
 
 def kgetattr_guard(wref):
     try:
@@ -134,6 +141,7 @@ def kgetattr_guard(wref):
         # This path is used only when the program terminates.
         pass
 
+
 def ksetattr_guard(wref):
     try:
         key = _ksetattr_wref[id(wref)][0]
@@ -142,6 +150,7 @@ def ksetattr_guard(wref):
     except KeyError:
         # This path is used only when the program terminates.
         pass
+
 
 # 1. Break up attr_name into parts
 # 2. Loop around main lookup code for each part:
@@ -152,30 +161,31 @@ def ksetattr_guard(wref):
 #   Use value as obj in next iteration
 # 3. Return value
 
-def kgetattr(model,
-             attr_name,
-             default=_AttrUnset,
-             flat=0,
-             # bind to local variables for speed:
-             ref=weakref.ref,
-             TupleType=types.TupleType,
-             MethodType=types.MethodType,
-             split=string.split,
-             kgetattr_guard=kgetattr_guard,
-             getattr=getattr,
-             dummycache=CacheControl((None,None)),
-             # constants:
-             # access opcodes:
-             LAMBDA_ACCESS = 0,
-             METHOD_ACCESS = 1,
-             TUPLE_ACCESS = 2,
-             NWR_METHOD_ACCESS = 3,
-             NWR_TUPLE_ACCESS = 4,
-             # FAST tuples do not store the object, as the input object
-             # is also the accesses object.
-             FAST_METHOD_ACCESS = 5,
-             FAST_TUPLE_ACCESS = 6,
-             ):
+def kgetattr(
+    model,
+    attr_name,
+    default=_AttrUnset,
+    flat=0,
+    # bind to local variables for speed:
+    ref=weakref.ref,
+    TupleType=types.TupleType,
+    MethodType=types.MethodType,
+    split=string.split,
+    kgetattr_guard=kgetattr_guard,
+    getattr=getattr,
+    dummycache=CacheControl((None, None)),
+    # constants:
+    # access opcodes:
+    LAMBDA_ACCESS=0,
+    METHOD_ACCESS=1,
+    TUPLE_ACCESS=2,
+    NWR_METHOD_ACCESS=3,
+    NWR_TUPLE_ACCESS=4,
+    # FAST tuples do not store the object, as the input object
+    # is also the accesses object.
+    FAST_METHOD_ACCESS=5,
+    FAST_TUPLE_ACCESS=6,
+    ):
     """Returns the value associated with the attribute in model
     named by attr_name. If default is provided and model does not
     have an attribute called attr_name, the default value is
@@ -284,7 +294,7 @@ def kgetattr(model,
                     # store a hard reference.
                     _kgetattr_cache[key] = (obj, icode, data1, data2)
             else:
-                if _kgetattr_cache.has_key(key):
+                if key in _kgetattr_cache:
                     del _kgetattr_cache[key]
 
         # 2.3. Use accessor tuple to grab value
@@ -324,6 +334,7 @@ def kgetattr(model,
     # 3. Return value
     return obj
 
+
 # A general algo for ksetattr:
 #
 # 1. Use attr_name to kgetattr the target object, and get the real attribute
@@ -331,28 +342,29 @@ def kgetattr(model,
 # 3. If not there, generate accessor tuple and store it
 # 4. Set value to target object's attribute
 
-def ksetattr(model,
-             attr_name,
-             value,
-             flat=0,
+def ksetattr(
+    model,
+    attr_name,
+    value,
+    flat=0,
 
-             # bind to local variables for speed:
-             ref=weakref.ref,
-             TupleType=types.TupleType,
-             MethodType=types.MethodType,
-             ksetattr_guard=ksetattr_guard,
-             getattr=getattr,
-             dummycache=CacheControl((None,None)),
+    # bind to local variables for speed:
+    ref=weakref.ref,
+    TupleType=types.TupleType,
+    MethodType=types.MethodType,
+    ksetattr_guard=ksetattr_guard,
+    getattr=getattr,
+    dummycache=CacheControl((None, None)),
 
-             # constants:
-             LAMBDA_ACCESS = 0,
-             METHOD_ACCESS = 1,
-             TUPLE_ACCESS = 2,
-             NWR_METHOD_ACCESS = 3,
-             NWR_TUPLE_ACCESS = 4,
-             FAST_METHOD_ACCESS = 5,
-             FAST_TUPLE_ACCESS = 6,
-                 ):
+    # constants:
+    LAMBDA_ACCESS=0,
+    METHOD_ACCESS=1,
+    TUPLE_ACCESS=2,
+    NWR_METHOD_ACCESS=3,
+    NWR_TUPLE_ACCESS=4,
+    FAST_METHOD_ACCESS=5,
+    FAST_TUPLE_ACCESS=6,
+    ):
     """Set the value associated with the attribute in model
     named by attr_name. If flat=1 is specified, no dot path parsing will
     be done."""
@@ -367,7 +379,7 @@ def ksetattr(model,
         lastdot = string.rfind(attr_name, ".")
         if lastdot != -1:
             model = kgetattr(model, attr_name[:lastdot])
-            attr_name = attr_name[lastdot+1:]
+            attr_name = attr_name[lastdot + 1:]
 
     # At this point we only have a flat attribute and the right model.
     key = (id(model), attr_name)
@@ -446,7 +458,7 @@ def ksetattr(model,
                 # it's not weakref-able, store a hard reference.
                 _ksetattr_cache[key] = (model, icode, data1, data2)
         else:
-            if _ksetattr_cache.has_key(key):
+            if key in _ksetattr_cache:
                 del _ksetattr_cache.has_key[key]
 
     if icode == FAST_TUPLE_ACCESS:
@@ -466,6 +478,7 @@ def ksetattr(model,
     else:
         raise AssertionError("Unknown tuple type in _ksetattr_cache")
 
+
 def enable_attr_cache():
     """Enables the use of the kgetattr cache when using Python
     versions that do not support weakrefs (1.5.x and earlier). Be
@@ -476,6 +489,7 @@ def enable_attr_cache():
     _ksetattr_cache = {}
     _kgetattr_wref = {}
     _ksetattr_wref = {}
+
 
 def clear_attr_cache():
     """Clears the kgetattr cache. It must be called repeatedly to

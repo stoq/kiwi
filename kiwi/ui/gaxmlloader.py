@@ -27,6 +27,7 @@ from kiwi.log import Logger
 
 log = Logger('gaxmlparser')
 
+
 class GAXMLWidgetTree(object):
     def __init__(self, view, gladefile, domain=None):
         self._view = view

@@ -21,8 +21,8 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
-
 from gtk import gdk
+
 
 def pixbuf_from_string(pixbuf_data, format='png', width=None, height=None):
     loader = gdk.PixbufLoader(format)

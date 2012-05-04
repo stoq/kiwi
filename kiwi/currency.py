@@ -32,6 +32,7 @@ from kiwi.enums import Alignment
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
+
 class currency(Decimal):
     """
     A datatype representing currency, used together with the list and
@@ -128,8 +129,8 @@ class currency(Decimal):
                 if frac_digits == 127:
                     frac_digits = 2
 
-            format = '%%.%sf' % (frac_digits+1)
-            dec_part = (format % value)[-(frac_digits+1):-1]
+            format = '%%.%sf' % (frac_digits + 1)
+            dec_part = (format % value)[-(frac_digits + 1):-1]
 
             mon_decimal_point = conv.get('mon_decimal_point', '.')
             currency += mon_decimal_point + dec_part
@@ -159,6 +160,7 @@ class currency(Decimal):
         return '<currency %s>' % self.format()
 
 _DecimalConverter = type(converter.get_converter(Decimal))
+
 
 class _CurrencyConverter(_DecimalConverter):
     type = currency

@@ -3,6 +3,7 @@ import unittest
 
 from kiwi.ui.widgets.label import ProxyLabel
 
+
 class LabelTest(unittest.TestCase):
     def testAttr(self):
         label = ProxyLabel()

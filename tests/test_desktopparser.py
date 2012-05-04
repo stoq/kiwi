@@ -12,6 +12,7 @@ Name[sv]=Filmspelaren Totem
 Categories=GNOME;Application;AudioVideo
 """
 
+
 class TestTotem(unittest.TestCase):
     def setUp(self):
         self.parser = DesktopParser()

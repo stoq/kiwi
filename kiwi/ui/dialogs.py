@@ -33,10 +33,10 @@ _ = lambda m: gettext.dgettext('kiwi', m)
 
 _IMAGE_TYPES = {
     gtk.MESSAGE_INFO: gtk.STOCK_DIALOG_INFO,
-    gtk.MESSAGE_WARNING : gtk.STOCK_DIALOG_WARNING,
-    gtk.MESSAGE_QUESTION : gtk.STOCK_DIALOG_QUESTION,
-    gtk.MESSAGE_ERROR : gtk.STOCK_DIALOG_ERROR,
-}
+    gtk.MESSAGE_WARNING: gtk.STOCK_DIALOG_WARNING,
+    gtk.MESSAGE_QUESTION: gtk.STOCK_DIALOG_QUESTION,
+    gtk.MESSAGE_ERROR: gtk.STOCK_DIALOG_ERROR,
+    }
 
 _BUTTON_TYPES = {
     gtk.BUTTONS_NONE: (),
@@ -48,6 +48,7 @@ _BUTTON_TYPES = {
     gtk.BUTTONS_OK_CANCEL: (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                             gtk.STOCK_OK, gtk.RESPONSE_OK)
     }
+
 
 class HIGAlertDialog(gtk.Dialog):
     def __init__(self, parent, flags,
@@ -128,6 +129,7 @@ class HIGAlertDialog(gtk.Dialog):
         widget.show()
         self._expander.show()
 
+
 class BaseDialog(gtk.Dialog):
     def __init__(self, parent=None, title='', flags=0, buttons=()):
         if parent and not isinstance(parent, (gtk.Window, gtk.Dialog)):
@@ -142,6 +144,7 @@ class BaseDialog(gtk.Dialog):
         self.set_border_width(6)
         self.set_has_separator(False)
         self.vbox.set_spacing(6)
+
 
 def messagedialog(dialog_type, short, long=None, parent=None,
                   buttons=gtk.BUTTONS_OK, default=-1):
@@ -210,6 +213,7 @@ def messagedialog(dialog_type, short, long=None, parent=None,
     d.destroy()
     return response
 
+
 def _simple(type, short, long=None, parent=None, buttons=gtk.BUTTONS_OK,
           default=-1):
     if buttons == gtk.BUTTONS_OK:
@@ -218,22 +222,27 @@ def _simple(type, short, long=None, parent=None, buttons=gtk.BUTTONS_OK,
                          parent=parent, buttons=buttons,
                          default=default)
 
+
 def error(short, long=None, parent=None, buttons=gtk.BUTTONS_OK, default=-1):
     return _simple(gtk.MESSAGE_ERROR, short, long, parent=parent,
                    buttons=buttons, default=default)
+
 
 def info(short, long=None, parent=None, buttons=gtk.BUTTONS_OK, default=-1):
     return _simple(gtk.MESSAGE_INFO, short, long, parent=parent,
                    buttons=buttons, default=default)
 
+
 def warning(short, long=None, parent=None, buttons=gtk.BUTTONS_OK, default=-1):
     return _simple(gtk.MESSAGE_WARNING, short, long, parent=parent,
                    buttons=buttons, default=default)
+
 
 def yesno(text, parent=None, default=gtk.RESPONSE_YES,
           buttons=gtk.BUTTONS_YES_NO):
     return messagedialog(gtk.MESSAGE_WARNING, text, None, parent,
                          buttons=buttons, default=default)
+
 
 def open(title='', parent=None, patterns=None, folder=None, filter=None,
          with_file_chooser=False):
@@ -294,6 +303,7 @@ def open(title='', parent=None, patterns=None, folder=None, filter=None,
     filechooser.destroy()
     return
 
+
 def selectfolder(title='', parent=None, folder=None):
     """Displays a select folder dialog.
     :param title: the title of the folder, defaults to 'Select folder'
@@ -332,6 +342,7 @@ def selectfolder(title='', parent=None, folder=None):
     filechooser.destroy()
     return
 
+
 def ask_overwrite(filename, parent=None):
     submsg1 = _('A file named "%s" already exists') % os.path.abspath(filename)
     submsg2 = _('Do you wish to replace it with the current one?')
@@ -343,6 +354,7 @@ def ask_overwrite(filename, parent=None):
                                     (_("Replace"),
                                      gtk.RESPONSE_YES)))
     return result == gtk.RESPONSE_YES
+
 
 def save(title='', parent=None, current_name='', folder=None):
     """Displays a save dialog."""
@@ -373,6 +385,7 @@ def save(title='', parent=None, current_name='', folder=None):
             break
     filechooser.destroy()
     return path
+
 
 def password(primary='', secondary='', parent=None):
     """
@@ -423,6 +436,7 @@ def password(primary='', secondary='', parent=None):
         password = None
     d.destroy()
     return password
+
 
 def _test():
     yesno('Kill?', default=gtk.RESPONSE_NO)

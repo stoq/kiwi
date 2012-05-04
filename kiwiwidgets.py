@@ -29,6 +29,7 @@ ProxySpinButton
 ProxyTextView
 ProxyButton
 
+
 def _get_icon_path():
     dirname = os.path.dirname(__file__)
     if not os.path.exists(os.path.join(dirname, '.svn')):
@@ -39,6 +40,7 @@ def _get_icon_path():
                                'resources', 'kiwiwidgets')
     return os.path.abspath(icondir)
 
+
 def _register_icons():
     icondir = _get_icon_path()
     for filename in glob.glob(os.path.join(icondir, '*.png')):
@@ -48,5 +50,6 @@ def _register_icons():
             'widget-kiwi-%s' % (name,),
             22,
             gtk.gdk.pixbuf_new_from_file(filename))
+
 
 _register_icons()

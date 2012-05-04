@@ -11,11 +11,14 @@ from Kiwi.initgtk import gtk
 from Kiwi.Proxies import Proxy
 from Kiwi.Models import Model
 
+
 class Foo(Model):
     A = 10.10
 
+
 class EntryProxy(Proxy):
     widgets = [":A"]
+
     def __init__(self, model):
         self.set_numeric("A")
         self._build()

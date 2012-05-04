@@ -29,6 +29,7 @@ from kiwi.ui.views import SlaveView, BaseView
 from kiwi.controllers import BaseController
 from kiwi.python import deprecationwarn
 
+
 class Delegate(BaseView, BaseController):
     """A class that combines view and controller functionality into a
     single package. The Delegate class possesses a top-level window.
@@ -54,6 +55,7 @@ class Delegate(BaseView, BaseController):
                           delete_handler=delete_handler)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
+
 class GladeDelegate(BaseView, BaseController):
     """A class that combines view and controller functionality into a
     single package. The Delegate class possesses a top-level window.
@@ -71,6 +73,7 @@ class GladeDelegate(BaseView, BaseController):
                           domain=domain,
                           delete_handler=delete_handler)
         BaseController.__init__(self, view=self, keyactions=keyactions)
+
 
 class SlaveDelegate(SlaveView, BaseController):
     """A class that combines view and controller functionality into a
@@ -91,6 +94,7 @@ class SlaveDelegate(SlaveView, BaseController):
         SlaveView.__init__(self, toplevel, widgets, gladefile,
                            toplevel_name)
         BaseController.__init__(self, view=self, keyactions=keyactions)
+
 
 class GladeSlaveDelegate(SlaveView, BaseController):
     """A class that combines view and controller functionality into a
@@ -191,5 +195,3 @@ class ProxySlaveDelegate(GladeSlaveDelegate):
 
     def update(self, attribute):
         self.proxy.update(attribute)
-
-

@@ -27,16 +27,19 @@ import optparse
 
 from kiwi.log import set_log_level
 
+
 def _play(options, filename, args):
     from kiwi.ui.test.runner import play_file
 
     play_file(filename, options.command, args)
+
 
 def _record(options, filename, args):
     from kiwi.ui.test.recorder import Recorder
 
     recorder = Recorder(filename)
     recorder.execute(args)
+
 
 def main(args):
     parser = optparse.OptionParser()

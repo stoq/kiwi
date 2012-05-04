@@ -5,6 +5,7 @@ from kiwi.python import disabledeprecationcall, Settable
 from kiwi.ui.proxy import Proxy
 from kiwi.ui.widgets.combobox import ProxyComboBox, ProxyComboBoxEntry
 
+
 class TestComboBox(unittest.TestCase):
     def setUp(self):
         self.combo = ProxyComboBox()
@@ -74,12 +75,14 @@ class TestComboBox(unittest.TestCase):
         self.combo.clear()
         self.assertEqual(map(list, self.combo.get_model()), [])
 
+
 class FakeView:
     def handler_block(self, widget):
         pass
 
     def handler_unblock(self, widget):
         pass
+
 
 class BaseModelTest:
     def setUp(self):
@@ -105,8 +108,10 @@ class BaseModelTest:
         self.combo.select_item_by_label('foo')
         self.assertEqual(self.model.attr, 0)
 
+
 class ComboModelTest(BaseModelTest, unittest.TestCase):
     type = ProxyComboBox
+
 
 class ComboEntryModelTest(BaseModelTest, unittest.TestCase):
     type = ProxyComboBoxEntry

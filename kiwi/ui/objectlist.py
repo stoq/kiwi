@@ -49,11 +49,13 @@ _ = lambda m: gettext.dgettext('kiwi', m)
 
 log = Logger('objectlist')
 
+
 def str2enum(value_name, enum_class):
     "converts a string to a enum"
     for _, _enum in enum_class.__enum_values__.items():
         if value_name in (_enum.value_name, _enum.value_nick):
             return _enum
+
 
 def str2bool(value, from_string=converter.from_string):
     "converts a boolean to a enum"
@@ -162,7 +164,7 @@ class Column(gobject.GObject):
     visible = gobject.property(type=bool, default=True)
     justify = gobject.property(type=gtk.Justification, default=gtk.JUSTIFY_LEFT)
     format = gobject.property(type=str)
-    width = gobject.property(type=int, maximum=2**16)
+    width = gobject.property(type=int, maximum=2 ** 16)
     sorted = gobject.property(type=bool, default=False)
     order = gobject.property(type=gtk.SortType, default=gtk.SORT_ASCENDING)
     expand = gobject.property(type=bool, default=False)
@@ -664,7 +666,6 @@ class Column(gobject.GObject):
         renderer.set_property('digits', digits)
 
 
-
 class SequentialColumn(Column):
     """I am a column which will display a sequence of numbers, which
     represent the row number. The value is independent of the data in
@@ -696,6 +697,7 @@ class SequentialColumn(Column):
             raise TypeError("%r does not support parameter %s" %
                             (renderer, renderer_prop))
 
+
 class SearchColumn(Column):
     """
     I am a column that should be used in conjunction with
@@ -723,7 +725,6 @@ class SearchColumn(Column):
         self.search_attribute = search_attribute
         self.sensitive = True
         Column.__init__(self, attribute, title, data_type, **kwargs)
-
 
 
 class ColoredColumn(Column):
@@ -778,6 +779,7 @@ class ColoredColumn(Column):
             color = self._color_normal
 
         renderer.set_property('foreground-gdk', color)
+
 
 class _ContextMenu(gtk.Menu):
 
@@ -867,6 +869,7 @@ class _ContextMenu(gtk.Menu):
 COL_MODEL = 0
 
 _marker = object()
+
 
 class ObjectList(gtk.HBox):
     """
@@ -1230,7 +1233,6 @@ class ObjectList(gtk.HBox):
                                       default=gtk.SELECTION_BROWSE,
                                       nick="SelectionMode")
 
-
     # Columns handling
 
     def _load(self, instances, clear):
@@ -1498,7 +1500,6 @@ class ObjectList(gtk.HBox):
             if item:
                 self.emit('double-click', item)
 
-
     def _on_treeview__source_drag_data_get(self, treeview, context,
                                            selection, info, timestamp):
         item = self.get_selected()
@@ -1695,7 +1696,6 @@ class ObjectList(gtk.HBox):
         objid = instance
         if not objid in self._iters:
             raise ValueError("instance %r is not in the list" % instance)
-
 
         if select:
             prev = self.get_previous(instance)
@@ -2235,6 +2235,7 @@ class ObjectTree(ObjectList):
             flattern(row)
 
 type_register(ObjectTree)
+
 
 class ListLabel(gtk.HBox):
     """I am a subclass of a GtkHBox which you can use if you want

@@ -35,6 +35,7 @@ from kiwi.dist import listfiles
 # will be generate from it, see update_po()
 POTFILES = 'POTFILES.list'
 
+
 def check_directory(root):
     po_dir = os.path.join(root, 'po')
     if not os.path.exists(po_dir):
@@ -47,11 +48,13 @@ def check_directory(root):
         if not os.path.isdir(po_dir):
             raise SystemExit("locale must be a directory")
 
+
 def check_pot_file(root, package):
     pot_file = os.path.join(root, 'po', '%s.pot' % package)
     if not os.path.exists(pot_file):
         raise SystemExit("Need a pot file, run --update first")
     return pot_file
+
 
 def get_translatable_files(root):
     pofiles = os.path.join(root, 'po', POTFILES)
@@ -66,9 +69,11 @@ def get_translatable_files(root):
         filelist.process_template_line(line)
     return sorted(filelist.files)
 
+
 def list_languages(root):
     return [os.path.basename(po_file[:-3])
-                for po_file in listfiles(root, 'po', '*.po')]
+            for po_file in listfiles(root, 'po', '*.po')]
+
 
 def update_po(root, package):
     update_pot(root, package)
@@ -88,6 +93,7 @@ def update_po(root, package):
 
     os.chdir(old)
 
+
 def update_pot(root, package):
     files = get_translatable_files(root)
     potfiles_in = os.path.join(root, 'po', 'POTFILES.in')
@@ -104,7 +110,6 @@ def update_pot(root, package):
             filename = '[type: gettext/glade]' + filename
         fd.write(filename + '\n')
     fd.close()
-
 
     old = os.getcwd()
     os.chdir(os.path.join(root, 'po'))
@@ -124,6 +129,7 @@ def update_pot(root, package):
 
     os.unlink(potfiles_in)
 
+
 def _clean_rml(data):
     fixed = ''
     while data:
@@ -137,8 +143,9 @@ def _clean_rml(data):
         if end_pos == -1:
             end_pos = data.find('/>')
             assert end_pos != -1
-        data = data[end_pos+2:]
+        data = data[end_pos + 2:]
     return fixed
+
 
 def _extract_rml_files(root):
     files = []
@@ -153,7 +160,7 @@ def _extract_rml_files(root):
         if os.path.exists(extracted):
             os.unlink(extracted)
         open(extracted, 'w').write(data)
-        extracted = extracted[len(root)+1:]
+        extracted = extracted[len(root) + 1:]
         cmd = 'intltool-extract -q --type=gettext/xml %s' % extracted
         res = os.system(cmd)
         if res != 0:
@@ -161,6 +168,7 @@ def _extract_rml_files(root):
         os.unlink(extracted)
         files.append(extracted + '.h')
     return files
+
 
 def compile_po_files(root, package):
     if os.system('msgfmt 2> /dev/null') != 256:
@@ -177,6 +185,7 @@ def compile_po_files(root, package):
             if not os.path.exists(directory):
                 os.makedirs(directory)
             os.system('msgfmt %s -o %s' % (po_file, mo))
+
 
 def main(args):
     parser = OptionParser()

@@ -30,20 +30,24 @@ from ConfigParser import ConfigParser
 
 # Private
 
+
 def _localize(option, locale):
     if locale:
         option = option + '[%s]' % locale
     return option
+
 
 def _tobool(s):
     if s == 'true':
         return True
     return False
 
+
 def _frombool(s):
     if s:
         return 'true'
     return 'false'
+
 
 class DesktopParser(ConfigParser):
     """

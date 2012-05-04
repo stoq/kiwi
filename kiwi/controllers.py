@@ -26,6 +26,7 @@ from gtk import gdk
 
 """Holds the base controller class for the Kiwi Framework"""
 
+
 class BaseController:
     """
     A generic controller that can be attached to any View
@@ -36,6 +37,7 @@ class BaseController:
           holds the UI implementation itself (widgets, layout, etc.)
     """
     view = None
+
     def __init__(self, view=None, keyactions=None):
         """
         Creates a new controller, and attaches itself to a view. The
@@ -53,7 +55,7 @@ class BaseController:
 
         if not view and not self.view:
             raise AssertionError(
-                "Need a view to create controller, found None" )
+                "Need a view to create controller, found None")
         else:
             self.set_view(view)
 
@@ -91,7 +93,6 @@ class BaseController:
 
         if func:
             return func()
-
 
     #
     # Accessors

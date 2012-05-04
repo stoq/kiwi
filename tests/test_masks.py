@@ -8,24 +8,26 @@ from kiwi.ui.delegates import Delegate
 from kiwi.ui.entry import KiwiEntry
 
 SPECIAL_KEYS = {
-    '/' : 'slash',
-    '+' : 'plus',
-    '-' : 'minus',
-    '(' : 'parenleft',
-    ')' : 'parenright',
-    ' ' : 'space',
-}
+    '/': 'slash',
+    '+': 'plus',
+    '-': 'minus',
+    '(': 'parenleft',
+    ')': 'parenright',
+    ' ': 'space',
+    }
 
 DELAY = 0.1
+
 
 def send_backspace(widget):
     event = gtk.gdk.Event(gtk.gdk.KEY_PRESS)
     event.keyval = int(keysyms.BackSpace)
     event.hardware_keycode = 22
     event.window = widget.window
-#    widget.event(event)
+    #widget.event(event)
     gtk.main_do_event(event)
     refresh_gui(DELAY)
+
 
 def send_delete(widget):
     event = gtk.gdk.Event(gtk.gdk.KEY_PRESS)
@@ -33,17 +35,17 @@ def send_delete(widget):
     event.hardware_keycode = 107
     event.window = widget.window
     gtk.main_do_event(event)
-#    widget.event(event)
+    #widget.event(event)
     refresh_gui(DELAY)
 
 
 def send_key(widget, key):
     if isinstance(key, str) and key.isdigit():
-        key = 'KP_'+key
+        key = 'KP_' + key
     elif isinstance(key, str) and key in SPECIAL_KEYS:
         key = SPECIAL_KEYS[key]
 
-    keysym  = getattr(keysyms, key)
+    keysym = getattr(keysyms, key)
 
     # Key press
     event = gtk.gdk.Event(gtk.gdk.KEY_PRESS)
@@ -53,17 +55,22 @@ def send_key(widget, key):
 
     refresh_gui(DELAY)
 
+
 def insert_text(widget, text):
     for i in text:
         send_key(widget, i)
 
+
 LEFT, RIGHT = -1, 1
+
+
 def move(entry, direction):
     entry.emit('move-cursor', gtk.MOVEMENT_VISUAL_POSITIONS, direction, False)
 
+
 def select(entry, start, end):
     entry.set_position(start)
-    entry.emit('move-cursor', gtk.MOVEMENT_VISUAL_POSITIONS, end-start, True)
+    entry.emit('move-cursor', gtk.MOVEMENT_VISUAL_POSITIONS, end - start, True)
 
 
 class MasksDelegate(Delegate):
@@ -74,7 +81,6 @@ class MasksDelegate(Delegate):
 
         Delegate.__init__(self, toplevel=self.win)
         self.win.show_all()
-
 
 
 class TestMasks(unittest.TestCase):
@@ -129,7 +135,6 @@ class TestMasks(unittest.TestCase):
         insert_text(entry, '1234567890')
         self.assertEqual(entry.get_text(), '(12) 3456-7890')
 
-
     def testMovementTabsEmptyMask(self):
         entry = self.entry
         entry.set_mask('(00) 0000-0000')
@@ -172,7 +177,6 @@ class TestMasks(unittest.TestCase):
 
         move(entry, LEFT)
         self.assertEqual(entry.get_position(), 3)
-
 
         # Home
         entry.emit('move-cursor', gtk.MOVEMENT_DISPLAY_LINE_ENDS, -1, False)
@@ -219,7 +223,6 @@ class TestMasks(unittest.TestCase):
 
         insert_text(entry, '4')
         self.assertEqual(entry.get_text(), '(1 ) 2 3 -4   ')
-
 
     # FIXME: Delete/Backspace does not work on windows or xvfb
     def testBackspace(self):
@@ -320,4 +323,3 @@ class TestMasks(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

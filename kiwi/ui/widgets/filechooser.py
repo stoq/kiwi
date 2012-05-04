@@ -29,12 +29,14 @@ import gtk
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import gsignal
 
+
 class _FileChooserMixin(object):
     """Mixin to use common methods of the FileChooser interface"""
 
     allowed_data_types = basestring,
 
     gsignal('selection_changed', 'override')
+
     def do_selection_changed(self):
         self.emit('content-changed')
         self.chain()
@@ -47,9 +49,11 @@ class _FileChooserMixin(object):
             return
         self.set_filename(data)
 
+
 class ProxyFileChooserWidget(_FileChooserMixin, gtk.FileChooserWidget,
                              ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFileChooserWidget'
+
     def __init__(self, action=gtk.FILE_CHOOSER_ACTION_OPEN, backend=None):
         """
         Create a new ProxyFileChooserWidget object.
@@ -60,9 +64,11 @@ class ProxyFileChooserWidget(_FileChooserMixin, gtk.FileChooserWidget,
         self.props.data_type = str
         gtk.FileChooserWidget.__init__(self, action=action, backend=backend)
 
+
 class ProxyFileChooserButton(_FileChooserMixin, gtk.FileChooserButton,
                              ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFileChooserButton'
+
     def __init__(self, title=None, backend=None, dialog=None):
         """
         Create a new ProxyFileChooserButton object.

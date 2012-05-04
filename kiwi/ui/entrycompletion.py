@@ -31,6 +31,7 @@ from kiwi.utils import gsignal, type_register
 COMPLETION_TIMEOUT = 300
 PAGE_INCREMENT = 14
 
+
 class KiwiEntryCompletion(gtk.EntryCompletion):
     def __init__(self):
         gtk.EntryCompletion.__init__(self)
@@ -51,6 +52,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
         self._selected_index = -1
 
     gsignal('match-selected', 'override')
+
     def do_match_selected(self, model, iter):
         self._entry.set_text(model[iter][0])
         return True
@@ -149,14 +151,14 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
         if keyval == keysyms.Up or keyval == keysyms.KP_Up:
             index -= 1
             if index < -1:
-                index = matches -1
+                index = matches - 1
 
             self._select_item(index)
             return True
 
         elif keyval == keysyms.Down or keyval == keysyms.KP_Down:
             index += 1
-            if index > matches-1:
+            if index > matches - 1:
                 index = -1
 
             self._select_item(index)
@@ -164,7 +166,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
 
         elif keyval == keysyms.Page_Up:
             if index < 0:
-                index = matches-1
+                index = matches - 1
             elif index > 0 and index - PAGE_INCREMENT < 0:
                 index = 0
             else:
@@ -179,8 +181,8 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
         elif keyval == keysyms.Page_Down:
             if index < 0:
                 index = 0
-            elif index < matches-1 and index + PAGE_INCREMENT > matches - 1:
-                index = matches -1
+            elif index < matches - 1 and index + PAGE_INCREMENT > matches - 1:
+                index = matches - 1
             else:
                 index += PAGE_INCREMENT
 
@@ -221,7 +223,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
             if gdk.keyboard_grab(window, True, activate_time) == 0:
                 return True
             else:
-                window.get_display().pointer_ungrab(activate_time);
+                window.get_display().pointer_ungrab(activate_time)
                 return False
         return False
 
@@ -240,7 +242,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
         self._filter_model.refilter()
         self._treeview.set_model(self._filter_model)
         if self._treeview.flags() & gtk.REALIZED:
-            self._treeview.scroll_to_point(0,0)
+            self._treeview.scroll_to_point(0, 0)
 
     def set_entry(self, entry):
         self._entry = entry

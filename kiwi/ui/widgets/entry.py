@@ -41,11 +41,13 @@ from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin, \
      VALIDATION_ICON_WIDTH
 from kiwi.utils import gsignal, type_register
 
+
 class ProxyEntryMeta(gobject.GObjectMeta):
     def __call__(self, *args, **kwargs):
         rv = super(ProxyEntryMeta, self).__call__(*args, **kwargs)
         rv.__post_init__()
         return rv
+
 
 class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     """The Kiwi Entry widget has many special features that extend the basic
@@ -94,6 +96,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
 
     # Virtual methods
     gsignal('changed', 'override')
+
     def do_changed(self):
         if self._block_changed:
             self.emit_stop_by_name('changed')
@@ -216,12 +219,15 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
 
 type_register(ProxyEntry)
 
+
 class Entry(ProxyEntry):
     def __init__(self, data_type=None):
         deprecationwarn('Entry is deprecated, use ProxyEntry instead',
                         stacklevel=3)
         ProxyEntry.__init__(self, data_type)
+
 type_register(Entry)
+
 
 class ProxyDateEntry(DateEntry, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyDateEntry'
@@ -261,6 +267,7 @@ class ProxyDateEntry(DateEntry, ValidatableProxyWidgetMixin):
                                    + int(icon_width / char_width))
 
     gsignal('changed', 'override')
+
     def do_changed(self):
         self.chain()
         self.emit('content-changed')

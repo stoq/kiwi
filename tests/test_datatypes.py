@@ -2,9 +2,6 @@ import cPickle
 import datetime
 import locale
 import unittest
-import sys
-
-from gtk import gdk
 
 from kiwi.datatypes import converter, ValidationError, ValueUnset, \
      Decimal, BaseConverter
@@ -15,18 +12,22 @@ from kiwi.python import enum
 from kiwi.ui import proxywidget
 proxywidget # pyflakes
 
+fake = type('fake', (object,), {})
+
+
 def set_locale(category, name):
     # set the date format to the spanish one
     try:
-        rv = locale.setlocale(category, name)
+        locale.setlocale(category, name)
     except locale.Error:
         print 'skipping %s, locale not available' % name
         return False
     return True
 
-fake = type('fake', (object,), {})
+
 class FakeConverter(BaseConverter):
     type = fake
+
 
 class RegistryTest(unittest.TestCase):
     def testAdd(self):
@@ -53,6 +54,7 @@ class RegistryTest(unittest.TestCase):
         conv = converter.get_converter(object)
         self.assertTrue(conv in converters)
 
+
 class BoolTest(unittest.TestCase):
     def setUp(self):
         self.conv = converter.get_converter(bool)
@@ -69,6 +71,7 @@ class BoolTest(unittest.TestCase):
 
         # you are not supposed to pass something that is not a string
         self.assertRaises(AttributeError, self.conv.from_string, None)
+
 
 class DateTest(unittest.TestCase):
     def setUp(self):
@@ -217,6 +220,7 @@ class CurrencyTest(unittest.TestCase):
         recoverd_var = cPickle.loads(pickled_var)
         self.assertEqual(recoverd_var.format(), '$12,123.45')
 
+
 class UnicodeTest(unittest.TestCase):
     def setUp(self):
         self.conv = converter.get_converter(unicode)
@@ -229,6 +233,7 @@ class UnicodeTest(unittest.TestCase):
     def testAsString(self):
         self.assertEqual(self.conv.as_string(u'foobar'), 'foobar')
         self.assertEqual(self.conv.as_string(u'\xe4'), '\xc3\xa4')
+
 
 class IntTest(unittest.TestCase):
     def setUp(self):
@@ -250,6 +255,7 @@ class IntTest(unittest.TestCase):
             return
 
         self.assertEqual(self.conv.as_string(123456789), '123456789')
+
 
 class FloatTest(unittest.TestCase):
     def setUp(self):
@@ -375,6 +381,7 @@ class DecimalTest(unittest.TestCase):
                          '10 000 000,0')
         self.assertEqual(self.conv.as_string(Decimal('10000000.0')),
                          '10 000 000,0')
+
 
 class EnumTest(unittest.TestCase):
     def testSimple(self):

@@ -46,6 +46,7 @@ log = Logger('widget proxy')
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
+
 class _PixbufConverter(BaseConverter):
     type = gdk.Pixbuf
     name = 'Pixbuf'
@@ -161,7 +162,7 @@ class ProxyWidgetMixin(object):
             conv = converter.get_converter(str)
 
         return conv.as_string(data, format=self._data_format,
-                              **self._converter_options.get(conv.type,{}))
+                              **self._converter_options.get(conv.type, {}))
 
     def _from_string(self, data):
         """Convert a string to the data type of the widget
@@ -189,6 +190,7 @@ KpaALwxAXmhoqL8IEwMIMAD/caLWpAsJ0wAAAABJRU5ErkJggg==
 """
 
 _error_icon = None
+
 
 def _load_error_icon():
     global _error_icon

@@ -25,6 +25,7 @@
 
 from kiwi.log import kiwi_log
 
+
 class deprecated(object):
     """
     I am a decorator which prints a deprecation warning each
@@ -56,6 +57,7 @@ class deprecated(object):
             else:
                 raise
         return wrapper
+
 
 class signal_block(object):
     """

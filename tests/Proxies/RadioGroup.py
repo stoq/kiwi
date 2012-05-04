@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import sys, pprint
+import pprint
+import sys
 sys.path.insert(0, "../..")
 
 DEBUG = 0
@@ -10,6 +11,7 @@ from Kiwi.initgtk import gtk
 from Kiwi.Proxies import Proxy
 from Kiwi.Models import Model
 
+
 class Foo(Model):
     A = "Play"
     B = 222
@@ -17,6 +19,7 @@ class Foo(Model):
     # No D - Play
     E = None # Run
     # No F - Play
+
 
 class RadioProxy(Proxy):
     def __init__(self, model):
@@ -99,5 +102,7 @@ c.A3.clicked()
 assert f.A == "Run", f.A
 f.E = None
 assert f.E == 111, f.E
-if DEBUG: c.show_all_and_loop(); pprint.pprint(f.__dict__)
+if DEBUG:
+    c.show_all_and_loop()
+    pprint.pprint(f.__dict__)
 print 'RadioButton OK'
