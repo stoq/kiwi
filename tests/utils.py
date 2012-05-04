@@ -50,6 +50,9 @@ def _get_kiwi_sources(root):
                 continue
             yield fname
 
+        for module in ['setup', 'kiwiwidgets']:
+            yield os.path.join(root, module + '.py')
+
 
 class SourceTest(ClassInittableObject):
     @classmethod
