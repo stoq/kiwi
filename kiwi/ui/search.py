@@ -803,8 +803,11 @@ class StringSearchFilter(SearchFilter):
     def _position_filter_menu(self, data):
         window = self.entry.get_icon_window(gtk.ENTRY_ICON_PRIMARY)
         x, y = window.get_origin()
+        y += window.get_size()[1]
         border = self.entry.style_get_property('progress-border')
-        return (x, y + window.get_size()[1] + border.bottom, True)
+        if border is not None:
+            y += border.bottom
+        return (x, y, True)
 
     def _on_entry__icon_release(self, entry, icon_pos, event):
         if icon_pos == gtk.ENTRY_ICON_SECONDARY:
