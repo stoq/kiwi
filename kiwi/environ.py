@@ -124,7 +124,14 @@ class Environment:
                 domain, 'data/%s/%s' % (resource, name))
         else:
             fd = self.find_resource(resource, name)
-            return open(fd).read()
+            # FIXME: add a parameter specifying if we need to read
+            #        files in a binary mode
+            suffix = name.rsplit('.', 1)[-1]
+            if suffix in ['png', 'jpeg', 'gif', 'ttf']:
+                mode = 'rb'
+            else:
+                mode = 'r'
+            return open(fd, mode).read()
 
     def get_resource_filename(self, domain, resource, name):
         if self._is_egg:
