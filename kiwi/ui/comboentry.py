@@ -212,7 +212,8 @@ class _ComboEntryPopup(gtk.Window):
               keyval == keysyms.KP_Enter or
               keyval == keysyms.KP_Space):
             model, treeiter = self._selection.get_selected()
-            self.emit('text-selected', model[treeiter][0])
+            if treeiter:
+                self.emit('text-selected', model[treeiter][0])
             return True
 
         return False
