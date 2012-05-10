@@ -123,7 +123,7 @@ class KiwiInstallLib(install_lib):
         else:
             install = self.distribution.get_command_obj('install')
             # Use raw strings so UNC paths which has \\ works
-            prefix = '%s' % install.prefix or sys.prefix
+            prefix = '%s' % install.install_data
 
         filename = self._get_template()
         self.mkpath(os.path.dirname(filename))
