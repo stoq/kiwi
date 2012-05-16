@@ -1583,6 +1583,10 @@ class ObjectList(gtk.HBox):
         "Return treeview of the current list"
         return self._treeview
 
+    def get_scrolled_window(self):
+        "Return the scrolled window containing the treeview"
+        return self._sw
+
     def get_columns(self):
         return self._columns
 
