@@ -1587,6 +1587,10 @@ class ObjectList(gtk.HBox):
         "Return the scrolled window containing the treeview"
         return self._sw
 
+    def get_sortable(self):
+        "Returns if the ObjectList is going to be sortable"
+        return self._sortable
+
     def get_columns(self):
         return self._columns
 
