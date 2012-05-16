@@ -1240,7 +1240,7 @@ class SearchContainer(gtk.VBox):
         """
         return self._primary_filter
 
-    def search(self):
+    def search(self, clear=True):
         """
         Starts a search.
         Fetches the states of all filters and send it to a query executer and
@@ -1250,7 +1250,7 @@ class SearchContainer(gtk.VBox):
             raise ValueError("A query executer needs to be set at this point")
         states = [(sf.get_state()) for sf in self._search_filters]
         results = self._query_executer.search(states)
-        self.add_results(results)
+        self.add_results(results, clear=clear)
         self.emit("search-completed", self.results, states)
         if self._summary_label:
             self._summary_label.update_total()
@@ -1317,8 +1317,9 @@ class SearchContainer(gtk.VBox):
     def enable_advanced_search(self):
         self._create_advanced_search()
 
-    def add_results(self, results):
-        self.results.clear()
+    def add_results(self, results, clear=True):
+        if clear:
+            self.results.clear()
         self.results.add_results(results)
 
     def get_filter_states(self):
