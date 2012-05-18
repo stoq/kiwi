@@ -42,6 +42,7 @@ from kiwi.enums import SearchFilterPosition
 from kiwi.interfaces import ISearchFilter
 from kiwi.python import enum
 from kiwi.ui.delegates import SlaveDelegate
+from kiwi.ui.lazyobjectlist import LazyObjectListUpdater
 from kiwi.ui.objectlist import (ObjectList, ObjectTree,
                                 SummaryLabel, SearchColumn)
 from kiwi.ui.widgets.combo import ProxyComboBox
@@ -1076,10 +1077,12 @@ class SearchContainer(gtk.VBox):
             self.results_class = SearchResultsTree
 
         gtk.VBox.__init__(self)
-        self._columns = columns
-        self._search_filters = []
-        self._query_executer = None
         self._auto_search = True
+        self._columns = columns
+        self._lazy_updater = None
+        self._model = None
+        self._query_executer = None
+        self._search_filters = []
         self._summary_label = None
 
         search_filter = StringSearchFilter(_('Search:'), chars=chars,
@@ -1255,6 +1258,11 @@ class SearchContainer(gtk.VBox):
         if self._summary_label:
             self._summary_label.update_total()
 
+    def enable_lazy_search(self):
+        self._lazy_updater = LazyObjectListUpdater(
+            executer=self._query_executer,
+            search=self)
+
     def set_auto_search(self, auto_search):
         """
         Enables/Disables auto search which means that the search result box
@@ -1319,8 +1327,14 @@ class SearchContainer(gtk.VBox):
 
     def add_results(self, results, clear=True):
         if clear:
+            if self._lazy_updater:
+                self._lazy_updater.restore_model()
             self.results.clear()
-        self.results.add_results(results)
+
+        if self._lazy_updater:
+            self._lazy_updater.add_results(results)
+        else:
+            self.results.add_results(results)
 
     def get_filter_states(self):
         dict_state = {}

@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2001-2008 Async Open Source
+# Copyright (C) 2001-2012 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -474,8 +474,9 @@ class Column(gobject.GObject):
                              (column, renderer_prop)):
         "To render the data of a cell renderer text"
         row = model[treeiter]
-        if column.editable_attribute:
-            data = column.get_attribute(row[COL_MODEL],
+        obj = row[COL_MODEL]
+        if column.editable_attribute and obj is not empty_marker:
+            data = column.get_attribute(obj,
                                         column.editable_attribute, None)
             if isinstance(renderer, gtk.CellRendererToggle):
                 renderer.set_property('activatable', data)
@@ -484,17 +485,20 @@ class Column(gobject.GObject):
             else:
                 raise AssertionError
 
-        obj = row[COL_MODEL]
         data = column.get_attribute(obj, column.attribute, None)
         text = column.as_string(data, obj)
 
-        if self._objectlist.cell_data_func:
+        if self._objectlist.cell_data_func and obj is not empty_marker:
             text = self._objectlist.cell_data_func(self, renderer, obj, text)
 
-        renderer.set_property(renderer_prop, text)
+        if obj is empty_marker:
+            if isinstance(renderer, gtk.CellRendererText):
+                renderer.set_property(renderer_prop, '')
+        else:
+            renderer.set_property(renderer_prop, text)
 
         if column.renderer_func:
-            column.renderer_func(renderer, row[COL_MODEL])
+            column.renderer_func(renderer, obj)
 
     def _cell_data_pixbuf_func(self, tree_column, renderer, model, treeiter,
                                (column, renderer_prop)):
@@ -869,6 +873,7 @@ class _ContextMenu(gtk.Menu):
 COL_MODEL = 0
 
 _marker = object()
+empty_marker = object()
 
 
 class ObjectList(gtk.HBox):
@@ -1405,14 +1410,7 @@ class ObjectList(gtk.HBox):
     # Selection
     def _on_selection__changed(self, selection):
         "This method is used to proxy selection::changed to selection-changed"
-        mode = selection.get_mode()
-        if mode == gtk.SELECTION_MULTIPLE:
-            item = self.get_selected_rows()
-        elif mode in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
-            item = self.get_selected()
-        else:
-            raise AssertionError
-        self.emit('selection-changed', item)
+        self.update_selection()
 
     # ScrolledWindow
     def _on_scrolled_window__realize(self, widget):
@@ -1578,6 +1576,11 @@ class ObjectList(gtk.HBox):
     def get_model(self):
         "Return treemodel of the current list"
         return self._model
+
+    def set_model(self, model):
+        "Updates the model of the list and the treeview"
+        self._model = model
+        self._treeview.set_model(model)
 
     def get_treeview(self):
         "Return treeview of the current list"
@@ -1840,6 +1843,21 @@ class ObjectList(gtk.HBox):
         if paths:
             return [model[path][COL_MODEL] for (path,) in paths]
         return []
+
+    def update_selection(self):
+        mode = self._treeview.get_selection().get_mode()
+        if mode == gtk.SELECTION_MULTIPLE:
+            item = self.get_selected_rows()
+        elif mode in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
+            item = self.get_selected()
+        else:
+            raise AssertionError
+
+        # Skip emitting this
+        if (item is empty_marker or
+            type(item) == list and empty_marker in item):
+            return
+        self.emit('selection-changed', item)
 
     def add_list(self, instances, clear=True):
         """

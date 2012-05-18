@@ -120,11 +120,9 @@ class QueryExecuter(object):
 
     :cvar default_search_limit: The default search limit.
     """
-    default_search_limit = 1000
-
     def __init__(self):
         self._columns = {}
-        self._limit = self.default_search_limit
+        self._limit = -1
 
     #
     # Public API
