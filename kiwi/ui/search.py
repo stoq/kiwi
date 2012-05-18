@@ -1262,6 +1262,9 @@ class SearchContainer(gtk.VBox):
         self._lazy_updater = LazyObjectListUpdater(
             executer=self._query_executer,
             search=self)
+        # Limits doesn't make sense when using lazy search, the idea
+        # is to always show everything.
+        self._query_executer.set_limit(-1)
 
     def set_auto_search(self, auto_search):
         """
