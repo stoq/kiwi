@@ -89,9 +89,32 @@ method_regex = re.compile(r'^(on|after)_(\w+)__(\w+)$')
 
 
 class SignalBroker(object):
-    def __init__(self, view, controller):
-        methods = controller._get_all_methods()
+    def __init__(self, view, controller=None):
+        if controller is None:
+            controller = view
+        methods = self._get_all_methods(controller)
         self._do_connections(view, methods)
+
+    def _get_all_methods(self, controller, klass=None):
+        klass = klass or controller.__class__
+        # Very poor simulation of inheritance, but WFM(tm)
+        classes = [klass]
+        # Collect bases for class, using a pretty evil recursion
+        for klass in classes:
+            map(classes.append, klass.__bases__)
+        # Order bases so that the class itself is the last one referred to
+        # in the loop. This guarantees that the inheritance ordering for the
+        # methods is preserved.
+        classes.reverse()
+        methods = {}
+        for c in classes:
+            for name in c.__dict__.keys():
+                # Need to use getattr() to ensure we get bound methods
+                try:
+                    methods[name] = getattr(controller, name)
+                except AttributeError:
+                    continue
+        return methods
 
     def _do_connections(self, view, methods):
         """This method allows subclasses to add more connection mechanism"""
