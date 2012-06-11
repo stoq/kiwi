@@ -261,7 +261,7 @@ class SlaveView(gobject.GObject):
         # setup the initial state with the value of the arguments or the
         # class variables
         klass = type(self)
-        self.toplevel = toplevel or klass.toplevel
+        self.toplevel = toplevel or getattr(self, 'toplevel', klass.toplevel)
         self.widgets = widgets or klass.widgets
         self.gladefile = gladefile or klass.gladefile
         self.toplevel_name = (toplevel_name or
