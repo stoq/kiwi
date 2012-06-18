@@ -125,7 +125,7 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
                                                         if attrs[key]]
         self.set_markup('<span %s>%s</span>' % (
             ' '.join(attr_pairs),
-            glib.escape_markup_text(self.get_text())))
+            self.get_text()))
 
     def _set_text_attribute(self, attribute_name, attr, value):
         if value:
