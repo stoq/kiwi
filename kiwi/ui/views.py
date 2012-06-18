@@ -1,7 +1,7 @@
 #
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
-# Copyright (C) 2001-2006 Async Open Source
+# Copyright (C) 2001-2012 Async Open Source
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -231,6 +231,8 @@ class SlaveView(gobject.GObject):
     toplevel_name = None
     gladefile = None
     domain = None
+    fields = None
+    form_holder_name = 'toplevel'
 
     # This signal is emited when the view wants to return a result value
     gsignal("result", object)
@@ -253,6 +255,8 @@ class SlaveView(gobject.GObject):
 
         # slave/widget name -> validation status
         self._validation = {}
+        self._forms = {}
+        self._forms_attached = False
 
         # stores the function that will be called when widgets
         # validity is checked
@@ -270,6 +274,17 @@ class SlaveView(gobject.GObject):
         self.domain = domain or klass.domain
 
         self._check_reserved()
+
+        # Make it possible to run a view without a glade file, to be able
+        # to attach slaves we need the toplevel widget to be an EventBox.
+        if not self.gladefile and self.toplevel is None:
+            self.toplevel = gtk.Window()
+
+        # Forms create widgets that we want to connect signals to,
+        # so this needs to be done before the View constructor
+        if self.fields:
+            self.add_form(self.fields)
+
         self._glade_adaptor = self.get_glade_adaptor()
         self.toplevel = self._get_toplevel()
 
@@ -283,6 +298,7 @@ class SlaveView(gobject.GObject):
         self._notebooks = self._get_notebooks()
         if len(self._notebooks) == 1:
             register_notebook_shortcuts(self, self._notebooks[0])
+        self._attach_forms()
 
     def _get_notebooks(self):
         if not self._glade_adaptor:
@@ -344,6 +360,37 @@ class SlaveView(gobject.GObject):
         shell.destroy()
 
         return glade_adaptor
+
+    def add_form(self, fields, holder_name=None):
+        """ Adds a new form given a dictionary of fields and attaches
+        it to the view as a slave at the holder_name location.
+        This needs to be called before the View constructor is called.
+        """
+        if self._forms_attached:
+            raise TypeError(
+                "add_forms needs to be called before the %r constructor" % (
+                self, ))
+
+        if holder_name is None:
+            holder_name = self.form_holder_name
+
+        if holder_name in self._forms:
+            raise TypeError(
+                "%r is attached to %r, you need to specify "
+                "another holder name" % (
+                self._forms[holder_name], holder_name))
+        # To avoid a cyclic dependency between forms & views
+        from kiwi.ui.forms import BasicForm
+        form = BasicForm(self)
+        form.build(fields)
+        self._forms[holder_name] = form
+
+    def _attach_forms(self):
+        for holder_name, form in self._forms.items():
+            self.attach_slave(holder_name, form)
+            form.populate(self.conn)
+            form.show()
+        self._forms_attached = True
 
     #
     # Hooks
@@ -580,7 +627,17 @@ class SlaveView(gobject.GObject):
         if not placeholder:
             raise AttributeError(
                   "slave container widget `%s' not found" % name)
-        parent = placeholder.get_parent()
+
+        # This is for glade-less Views, create an EventBox automatically
+        # for a holder
+        if isinstance(placeholder, gtk.Window):
+            parent = placeholder
+            placeholder = gtk.EventBox()
+            placeholder.set_border_width(6)
+            parent.add(placeholder)
+            placeholder.show()
+        else:
+            parent = placeholder.get_parent()
 
         if slave._accel_groups:
             # take care of accelerator groups; attach to parent window if we

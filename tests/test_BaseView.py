@@ -63,12 +63,6 @@ class Bar(BaseView, BaseController):
 
 # these classes are bad and should trigger exceptions
 
-class NoWinFoo(BaseView, BaseController):
-    def __init__(self):
-        self.win = 0
-        BaseView.__init__(self)
-        BaseController.__init__(self, view=self)
-
 
 class NotWidgetFoo(FooView, BaseController):
     def __init__(self):
@@ -120,11 +114,6 @@ class BaseViewTest(unittest.TestCase):
 
 
 class BrokenViewsTest(unittest.TestCase):
-
-    def testNoWindow(self):
-        # A View requires an instance variable called toplevel that
-        # specifies the toplevel widget in it
-        self.assertRaises(TypeError, NoWinFoo)
 
     def testNotAWidget(self):
         # noogie (__main__.NotWidgetFoo) is not a widget and
