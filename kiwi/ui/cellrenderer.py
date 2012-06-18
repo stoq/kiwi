@@ -21,8 +21,9 @@
 # Author(s): Ronaldo Maia <romaia@async.com.br>
 #
 
-import gtk
+import glib
 import gobject
+import gtk
 
 from kiwi.utils import quote
 from kiwi.ui.gadgets import gdk_color_to_string
@@ -110,7 +111,8 @@ class ComboDetailsCellRenderer(gtk.CellRenderer):
             details = self._details_callback(self.data)
             mark_up = '%s\n<span foreground="%s">%s</span>'
             color = gdk_color_to_string(widget.style.fg[gtk.STATE_NORMAL])
-            text = mark_up % (self.label, color, details)
+            text = mark_up % (self.label, color,
+                              glib.markup_escape_text(details))
 
         self._label_layout.set_markup(text)
         width, height = self._label_layout.get_pixel_size()

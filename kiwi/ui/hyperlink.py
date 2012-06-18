@@ -26,13 +26,11 @@
 """A hyper link widget."""
 
 
-from cgi import escape
-
+import glib
+import gobject
 import gtk
 
 from kiwi.utils import gsignal, type_register
-
-import gobject
 
 
 class HyperLink(gtk.EventBox):
@@ -184,7 +182,7 @@ class HyperLink(gtk.EventBox):
         """
         Build a marked up string depending on parameters.
         """
-        out = '<span color="%s">%s</span>' % (color, escape(text))
+        out = '<span color="%s">%s</span>' % (color, glib.markup_escape_text(text))
         if underline:
             out = '<u>%s</u>' % out
         if bold:

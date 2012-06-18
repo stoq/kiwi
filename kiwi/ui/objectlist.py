@@ -31,6 +31,7 @@ import gettext
 import locale
 import pickle
 
+import glib
 import gobject
 import pango
 import gtk
@@ -2028,7 +2029,7 @@ class ObjectList(gtk.HBox):
 
         self._sw.hide()
         self._viewport.show()
-        self._message_label.set_label(markup)
+        self._message_label.set_label(glib.markup_escape_text(markup))
 
     def clear_message(self):
         if self._message_label is None:
@@ -2309,7 +2310,8 @@ class ListLabel(gtk.HBox):
         value_format in the constructor.
         I also support the GMarkup syntax, so you can use "<b>%d</b>" if
         you want."""
-        self._value_widget.set_markup(self._value_format % value)
+        self._value_widget.set_markup(
+            self._value_format % glib.markup_escape_text(value))
 
     def get_value_widget(self):
         return self._value_widget
@@ -2335,7 +2337,7 @@ class ListLabel(gtk.HBox):
                        self._on_treeview_column_button__size_allocate)
 
         self._label_widget = gtk.Label()
-        self._label_widget.set_markup(self._label)
+        self._label_widget.set_markup(glib.markup_escape_text(self._label))
 
         layout = self._label_widget.get_layout()
         self._label_width = layout.get_pixel_size()[0]
@@ -2355,7 +2357,8 @@ class ListLabel(gtk.HBox):
                 if self._label_width > position:
                     self._label_widget.set_text('')
                 else:
-                    self._label_widget.set_markup(self._label)
+                    self._label_widget.set_markup(
+                        glib.markup_escape_text(self._label))
             # XXX: Replace 12 with a constant
             #if position >= 12:
             #    self._label_widget.set_size_request(position - 12, -1)

@@ -30,6 +30,7 @@ The :class:`Label` is also extended to support some basic markup like
 import datetime
 
 import gobject
+import glib
 import gtk
 
 from kiwi.datatypes import number, ValueUnset
@@ -122,8 +123,9 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
 
         attr_pairs = ['%s="%s"' % (key, attrs[key]) for key in keys
                                                         if attrs[key]]
-        self.set_markup('<span %s>%s</span>' % (' '.join(attr_pairs),
-                                                self.get_text()))
+        self.set_markup('<span %s>%s</span>' % (
+            ' '.join(attr_pairs),
+            glib.escape_markup_text(self.get_text())))
 
     def _set_text_attribute(self, attribute_name, attr, value):
         if value:
