@@ -309,18 +309,25 @@ class FormTableLayout(FormLayout):
     def __init__(self, form, fields):
         FormLayout.__init__(self, form, fields)
         table = gtk.Table(len(fields), 4, False)
-        table.props.column_spacing = 6
         table.props.row_spacing = 6
 
         focus_widgets = []
         for i, (field, field_name) in enumerate(fields):
             form.build_field(field, field_name)
-            table.attach_defaults(field.label_widget, 0, 1, i, i + 1)
-            table.attach_defaults(field.widget, 1, 2, i, i + 1)
+            table.attach(field.label_widget, 0, 1, i, i + 1,
+                         gtk.EXPAND | gtk.FILL,
+                         gtk.EXPAND | gtk.FILL, 0, 0)
+            table.attach(field.widget, 1, 2, i, i + 1,
+                         gtk.EXPAND | gtk.FILL,
+                         gtk.EXPAND | gtk.FILL, 6, 0)
             if field.add_button:
-                table.attach_defaults(field.add_button, 2, 3, i, i + 1)
+                table.attach(field.add_button, 2, 3, i, i + 1,
+                             gtk.SHRINK,
+                             gtk.EXPAND | gtk.FILL, 0, 0)
             if field.edit_button:
-                table.attach_defaults(field.edit_button, 3, 4, i, i + 1)
+                table.attach(field.edit_button, 3, 4, i, i + 1,
+                             gtk.SHRINK,
+                             gtk.EXPAND | gtk.FILL, 0, 0)
             focus_widgets.append(field.widget)
 
         table.set_focus_chain(focus_widgets)
