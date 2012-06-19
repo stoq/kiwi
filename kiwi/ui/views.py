@@ -284,6 +284,11 @@ class SlaveView(gobject.GObject):
         # so this needs to be done before the View constructor
         if self.fields:
             self.add_form(self.fields)
+            # FIXME: This is a hack to avoid a toplevel window
+            #        showing up, I cannot quite figure out how it works
+            #        probably related to attach_slave(), Johan 2012-06-19
+            if not self.gladefile:
+                self.toplevel.hide()
 
         self._glade_adaptor = self.get_glade_adaptor()
         self.toplevel = self._get_toplevel()
