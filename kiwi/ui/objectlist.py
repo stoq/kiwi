@@ -647,7 +647,7 @@ class Column(gobject.GObject):
             conv = converter.get_converter(data_type)
             text = conv.as_string(data, format=self.format or None)
         else:
-            text = data
+            text = str(data)
 
         return text
 
