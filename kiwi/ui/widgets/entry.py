@@ -246,6 +246,8 @@ class ProxyDateEntry(DateEntry, ValidatableProxyWidgetMixin):
     gsignal('validate', object, retval=object)
 
     def __init__(self):
+        self._in_do_changed = False
+
         DateEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
 
@@ -269,8 +271,12 @@ class ProxyDateEntry(DateEntry, ValidatableProxyWidgetMixin):
     gsignal('changed', 'override')
 
     def do_changed(self):
+        if self._in_do_changed:
+            return
+        self._in_do_changed = True
         self.chain()
         self.emit('content-changed')
+        self._in_do_changed = False
 
     # ProxyWidgetMixin implementation
 
