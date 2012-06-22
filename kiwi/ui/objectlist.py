@@ -1464,6 +1464,9 @@ class ObjectList(gtk.HBox):
 
     def _get_selection_or_selected_rows(self):
         selection = self._treeview.get_selection()
+        # This happens for unknown reasons in some crashreports
+        if selection is None:
+            return
         mode = selection.get_mode()
         if mode == gtk.SELECTION_MULTIPLE:
             item = self.get_selected_rows()
