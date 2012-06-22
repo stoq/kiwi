@@ -323,6 +323,7 @@ class DateEntry(gtk.HBox):
 
         self._popping_down = False
         self._old_date = None
+        self._block_changed = False
 
         # bootstrap problems, kiwi.ui.widgets.entry imports dateentry
         # we need to use a proxy entry because we want the mask
@@ -413,6 +414,8 @@ class DateEntry(gtk.HBox):
         self._changed(date)
 
     def _changed(self, date):
+        if self._block_changed:
+            return
         if self._old_date != date:
             self.emit('changed')
             self._old_date = date
@@ -433,7 +436,15 @@ class DateEntry(gtk.HBox):
             value = ''
         else:
             value = date_converter.as_string(date)
+
+        # We're block the changed call and doing it manually because
+        # set_text() triggers a delete-text and then an insert-text,
+        # both which are emitting an entry::changed signal
+        self._block_changed = True
         self.entry.set_text(value)
+        self._block_changed = False
+
+        self._changed(date)
 
     def get_date(self):
         """Get the selected date
