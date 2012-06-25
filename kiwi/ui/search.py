@@ -1258,7 +1258,12 @@ class SearchContainer(gtk.VBox):
         self.add_results(results, clear=clear)
         self.emit("search-completed", self.results, states)
         if self._summary_label:
-            self._summary_label.update_total()
+            if self._lazy_updater and len(self.results):
+                post = self.results.get_model().get_post_data()
+                if post is not None:
+                    self._summary_label.update_total(post.sum)
+            else:
+                self._summary_label.update_total()
 
     def enable_lazy_search(self):
         self._lazy_updater = LazyObjectListUpdater(
