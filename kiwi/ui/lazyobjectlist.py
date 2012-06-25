@@ -253,8 +253,8 @@ class LazyObjectListUpdater(object):
     def _load_result_set(self, start, end):
         self._treeview.freeze_notify()
         loaded = self._model.load_items_from_results(
-            start[0] - self.EXTRA_ROWS,
-            end[0] + self.EXTRA_ROWS)
+            max(start[0] - self.EXTRA_ROWS, 0),
+            min(end[0] + self.EXTRA_ROWS, len(self._model)))
         if loaded:
             self._objectlist.update_selection()
         self._treeview.thaw_notify()
