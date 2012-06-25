@@ -42,7 +42,8 @@ from kiwi.enums import SearchFilterPosition
 from kiwi.interfaces import ISearchFilter
 from kiwi.python import enum
 from kiwi.ui.delegates import SlaveDelegate
-from kiwi.ui.lazyobjectlist import LazyObjectListUpdater
+from kiwi.ui.lazyobjectlist import (LazyObjectListUpdater,
+                                    LazySummaryLabel)
 from kiwi.ui.objectlist import (ObjectList, ObjectTree,
                                 SummaryLabel, SearchColumn)
 from kiwi.ui.widgets.combo import ProxyComboBox
@@ -1319,12 +1320,20 @@ class SearchContainer(gtk.VBox):
 
         if self._summary_label:
             self._summary_label.get_parent().remove(self._summary_label)
-        self._summary_label = SummaryLabel(klist=self.results,
-                                           column=column,
-                                           label=label,
-                                           value_format=format)
+        if self._lazy_updater:
+            summary_label_class = LazySummaryLabel
+        else:
+            summary_label_class = SummaryLabel
+        self._summary_label = summary_label_class(klist=self.results,
+                                                  column=column,
+                                                  label=label,
+                                                  value_format=format)
         parent.pack_end(self._summary_label, False, False)
         self._summary_label.show()
+
+    @property
+    def summary_label(self):
+        return self._summary_label
 
     def enable_advanced_search(self):
         self._create_advanced_search()

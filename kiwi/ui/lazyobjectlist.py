@@ -21,9 +21,14 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
+import gettext
+
 import gtk
 
-from kiwi.ui.objectlist import empty_marker
+from kiwi.datatypes import number
+from kiwi.ui.objectlist import empty_marker, ListLabel
+
+_ = lambda m: gettext.dgettext('kiwi', m)
 
 
 # FIXME: Port to Gtk.TreeModel so it works under gi
@@ -31,19 +36,22 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
 
     __gtype_name__ = 'LazyObjectModel'
 
-    def __init__(self, objectlist, result, initial_count):
+    def __init__(self, objectlist, result, executer, initial_count):
         """
         :param objectlist: a ObjectList
         :param result: a result set from ORM
+        :param executer:
         :param initial_count: number of items to load the first time,
           this should at least be all visible rows
         """
         old_model = objectlist.get_model()
         self._objectlist = objectlist
         self._count = 0
+        self._executer = executer
         self._initial_count = initial_count
         self._iters = []
         self._orig_result = result
+        self._post_result = None
         self._result = None
         self._values = []
         self.old_model = old_model
@@ -54,7 +62,11 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         self._load_result_set(result)
 
     def _load_result_set(self, result):
-        count = result.count()
+        self._post_result = self._executer.post_result
+        if self._post_result is not None:
+            count = self._post_result.count
+        else:
+            count = result.count()
         self._count = count
         self._iters = range(0, count)
         self._result = result
@@ -194,6 +206,9 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         # If anything was loaded
         return has_loaded != -1
 
+    def get_post_data(self):
+        return self._post_result
+
 
 class LazyObjectListUpdater(object):
     """This is a helper that updates the list automatically when you
@@ -226,6 +241,7 @@ class LazyObjectListUpdater(object):
 
     def add_results(self, results):
         self._model = LazyObjectModel(self._objectlist, results,
+                                      self._executer,
                                       initial_count=self.INITIAL_ROWS)
         self._objectlist.set_model(self._model)
 
@@ -278,3 +294,21 @@ class LazyObjectListUpdater(object):
 
     def _on_resuls__sorting_changed(self, objectlist, attribute, sort_type):
         self._treeview.scroll_to_point(0, 0)
+
+
+class LazySummaryLabel(ListLabel):
+    def __init__(self, klist, column, label=_('Total:'), value_format='%s',
+                 font_desc=None):
+        ListLabel.__init__(self, klist, column, label, value_format, font_desc)
+        if not issubclass(self._column.data_type, number):
+            raise TypeError("data_type of column must be a number, not %r",
+                            self._column.data_type)
+
+    # Public API
+
+    def update_total(self, value=None):
+        """Recalculate the total value of all columns"""
+        if value is None:
+            return
+        column = self._column
+        self.set_value(column.as_string(value))
