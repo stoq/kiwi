@@ -2332,9 +2332,6 @@ class ListLabel(gtk.HBox):
         # * size-allocate of treeview_columns header widget
         #
         tree_column = self._klist.get_treeview_column(self._column)
-        tree_column.connect('notify::width',
-                            self._on_treeview_column__notify_width)
-
         button = self._klist._get_column_button(tree_column)
         button.connect('size-allocate',
                        self._on_treeview_column_button__size_allocate)
@@ -2372,10 +2369,6 @@ class ListLabel(gtk.HBox):
 
     def _on_treeview_column_button__size_allocate(self, label, rect):
         self._resize(position=rect.x)
-
-    def _on_treeview_column__notify_width(self, treeview, pspec):
-        value = treeview.get_property(pspec.name)
-        self._resize(width=value)
 
     def _on_list__size_allocate(self, list, rect):
         self._resize(position=rect.x, width=rect.width)
