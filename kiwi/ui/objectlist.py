@@ -646,6 +646,10 @@ class Column(gobject.GObject):
             issubclass(data_type, enum)):
             conv = converter.get_converter(data_type)
             text = conv.as_string(data, format=self.format or None)
+        # Actually the expected data type depends on the renderer,
+        # but this is pragmatic workaround
+        elif data_type is bool:
+            text = data
         else:
             text = str(data)
 
