@@ -22,6 +22,7 @@
 """
 import gettext
 
+import glib
 import gobject
 import gtk
 
@@ -29,7 +30,7 @@ from kiwi.enums import ListType
 from kiwi.ui.delegates import SlaveDelegate
 from kiwi.ui.dialogs import yesno
 from kiwi.ui.objectlist import ObjectList
-from kiwi.utils import gsignal, quote
+from kiwi.utils import gsignal
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
@@ -192,7 +193,8 @@ class ListContainer(gtk.HBox):
         :param item: a description of the item that will be removed
         :returns: True if the user confirm the removal, False otherwise
         """
-        response = yesno(_('Do you want to remove %s ?') % (quote(str(item)),),
+        response = yesno(_('Do you want to remove %s ?') %
+                (glib.markup_escape_text(str(item)),),
                          parent=None,
                          default=gtk.RESPONSE_OK,
                          buttons=((gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL),
