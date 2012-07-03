@@ -30,7 +30,6 @@ The :class:`Label` is also extended to support some basic markup like
 import datetime
 
 import gobject
-import glib
 import gtk
 
 from kiwi.datatypes import number, ValueUnset
