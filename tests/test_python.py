@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+
 import unittest
 
-from kiwi.python import AttributeForwarder, slicerange, enum
+from kiwi.python import AttributeForwarder, slicerange, enum, strip_accents
 
 
 class SliceTest(unittest.TestCase):
@@ -79,6 +81,29 @@ class AttributeForwarderTest(unittest.TestCase):
         f.forward = 'bar'
         self.assertEqual(target.forward, 'bar')
         self.assertEqual(f.forward, 'bar')
+
+
+class StripAccentsTest(unittest.TestCase):
+    def testStripAccents(self):
+        for string, string_without_accentuation in [
+            # normal strings
+            ('áâãäåāăąàÁÂÃÄÅĀĂĄÀ', 'aaaaaaaaaAAAAAAAAA'),
+            ('èééêëēĕėęěĒĔĖĘĚ', 'eeeeeeeeeeEEEEE'),
+            ('ìíîïìĩīĭÌÍÎÏÌĨĪĬ', 'iiiiiiiiIIIIIIII'),
+            ('óôõöōŏőÒÓÔÕÖŌŎŐ', 'oooooooOOOOOOOO'),
+            ('ùúûüũūŭůÙÚÛÜŨŪŬŮ', 'uuuuuuuuUUUUUUUU'),
+            ('çÇ', 'cC'),
+            # unicode strings
+            (u'áâãäåāăąàÁÂÃÄÅĀĂĄÀ', u'aaaaaaaaaAAAAAAAAA'),
+            (u'èééêëēĕėęěĒĔĖĘĚ', u'eeeeeeeeeeEEEEE'),
+            (u'ìíîïìĩīĭÌÍÎÏÌĨĪĬ', u'iiiiiiiiIIIIIIII'),
+            (u'óôõöōŏőÒÓÔÕÖŌŎŐ', u'oooooooOOOOOOOO'),
+            (u'ùúûüũūŭůÙÚÛÜŨŪŬŮ', u'uuuuuuuuUUUUUUUU'),
+            (u'çÇ', u'cC'),
+            ]:
+            self.assertEqual(strip_accents(string),
+                             string_without_accentuation)
+
 
 if __name__ == '__main__':
     unittest.main()
