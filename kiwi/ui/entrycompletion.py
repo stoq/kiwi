@@ -26,6 +26,7 @@ import gtk
 from gtk import gdk
 from gtk import keysyms
 
+from kiwi.python import strip_accents
 from kiwi.utils import gsignal, type_register
 
 COMPLETION_TIMEOUT = 300
@@ -72,7 +73,14 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
             return False
 
         entry_text = self._entry.get_text()
-        return value.lower().startswith(entry_text.lower())
+        if self._entry.completion_ignore_case:
+            entry_text = entry_text.lower()
+            value = value.lower()
+        if self._entry.completion_ignore_accents:
+            entry_text = strip_accents(entry_text)
+            value = strip_accents(value)
+
+        return value.startswith(entry_text)
 
     def _connect_completion_signals(self):
         if self._popup_completion:

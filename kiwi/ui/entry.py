@@ -20,7 +20,7 @@
 #
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #            Ronaldo Maia <romaia@async.com.br>
-#
+#            Thiago Bellini <hackedbellini@async.com.br>
 #
 # Design notes:
 #
@@ -90,6 +90,7 @@ An enchanced version of GtkEntry that supports icons and masks
 """
 
 import gettext
+import re
 import string
 try:
     set
@@ -101,6 +102,7 @@ import pango
 import gtk
 
 from kiwi.enums import Direction
+from kiwi.python import strip_accents
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import type_register
 
@@ -158,8 +160,24 @@ class KiwiEntry(gtk.Entry):
       - Mask, force the input to meet certain requirements
       - IComboMixin: Allows you work with objects instead of strings
         Adds a number of convenience methods such as :class:`prefill`().
+
+    Properties
+    ==========
+      - B{completion_ignore_case}: bool
+        - if when doing the completion, we should search for a pattern
+          ignoring case. Default: True
+      - B{completion_ignore_accents}: bool
+        - if when doing the completion, we should search for a pattern
+          ignoring string accents. Default: True
+      - B{completion_hightlight_match}: bool
+        - if when doing the completion, the pattern should be
+          highlighted in bold. Default: True
     """
     __gtype_name__ = 'KiwiEntry'
+
+    completion_ignore_case = gobject.property(type=bool, default=True)
+    completion_ignore_accents = gobject.property(type=bool, default=True)
+    completion_hightlight_match = gobject.property(type=bool, default=True)
 
     def __init__(self):
         self._completion = None
@@ -189,6 +207,7 @@ class KiwiEntry(gtk.Entry):
         self._current_object = None
         self._mode = ENTRY_MODE_TEXT
 
+        self._exact_completion = True
         # List of validators
         #  str -> static characters
         #  int -> dynamic, according to constants above
@@ -201,33 +220,10 @@ class KiwiEntry(gtk.Entry):
         self._current_field = -1
         self._pos = 0
         self._selecting = False
-        self._prop_completion = False
-        self._exact_completion = False
         self._block_insert = False
         self._block_delete = False
 
     # Properties
-
-    def _get_exact_completion(self):
-        return self._exact_completion
-
-    def _set_exact_completion(self, value):
-        self.set_exact_completion(value)
-        self._exact_completion = value
-    exact_completion = gobject.property(getter=_get_exact_completion,
-                                        setter=_set_exact_completion,
-                                        type=bool, default=False)
-
-    def _prop_get_completion(self):
-        return self._prop_completion
-
-    def _prop_set_completion(self, value):
-        if not self.get_completion():
-            self.set_completion(gtk.EntryCompletion())
-        self._prop_completion = value
-    completion = gobject.property(getter=_prop_get_completion,
-                                  setter=_prop_set_completion,
-                                  type=bool, default=False)
 
     def _get_mask(self):
         return self._mask
@@ -544,22 +540,23 @@ class KiwiEntry(gtk.Entry):
 
         return None
 
-    def set_exact_completion(self, value):
-        """
-        Enable exact entry completion.
-        Exact means it needs to start with the value typed
-        and the case needs to be correct.
+    def set_exact_completion(self):
+        """Enable exact entry completion.
 
-        :param value: enable exact completion
-        :type value:  boolean
+        Exact means it will match from the beggining of the string.
         """
-
-        if value:
-            match_func = self._completion_exact_match_func
-        else:
-            match_func = self._completion_normal_match_func
+        self._exact_completion = True
         completion = self._get_entry_completion()
-        completion.set_match_func(match_func)
+        completion.set_match_func(self._completion_exact_match_func)
+
+    def set_normal_completion(self):
+        """Enable normal entry completion.
+
+        Normal means it will match anywhere on the string.
+        """
+        self._exact_completion = False
+        completion = self._get_entry_completion()
+        completion.set_match_func(self._completion_normal_match_func)
 
     def is_empty(self):
         text = self.get_text()
@@ -664,49 +661,91 @@ class KiwiEntry(gtk.Entry):
         return self._completion
 
     def set_completion(self, completion):
-        if not isinstance(completion, KiwiEntryCompletion):
+        if isinstance(completion, KiwiEntryCompletion):
+            old = self.get_completion()
+            if old == completion:
+                return completion
+
+            if old and isinstance(old, KiwiEntryCompletion):
+                old.disconnect_completion_signals()
+
+            completion.set_entry(self)
+            completion.connect("match-selected",
+                               self._on_completion__match_selected)
+        else:
             gtk.Entry.set_completion(self, completion)
-            completion.set_model(gtk.ListStore(str, object))
-            completion.set_text_column(0)
-            self._completion = gtk.Entry.get_completion(self)
-            return
-
-        old = self.get_completion()
-        if old == completion:
-            return completion
-
-        if old and isinstance(old, KiwiEntryCompletion):
-            old.disconnect_completion_signals()
 
         self._completion = completion
-
-        # First, tell the completion what entry it will complete
-        completion.set_entry(self)
         completion.set_model(gtk.ListStore(str, object))
         completion.set_text_column(0)
-        self.set_exact_completion(False)
-        completion.connect("match-selected",
-                           self._on_completion__match_selected)
+
+        if self._exact_completion:
+            self.set_exact_completion()
+        else:
+            self.set_normal_completion()
+
+        completion.set_cell_data_func(completion.get_cells()[0],
+                                      self._completion_cell_data_func)
         self._current_object = None
+
         return completion
+
+    def _completion_cell_data_func(self, completion, cell, model, iter_):
+        if not self.completion_hightlight_match:
+            return
+
+        text = unicode(model[iter_][COL_TEXT])
+        search_str = unicode(self.get_text())
+
+        if self._exact_completion:
+            markup = '<b>%s</b>%s' % (text[:len(search_str)],
+                                      text[len(search_str):])
+        else:
+            # This will replace search_str to <b>search_str</b> on text
+            # ignoring case. Like, 'Ball' will replace both 'Ball' and 'ball'
+            # to <b>Ball</b> and <b>ball</b> accordingly.
+            markup = re.sub('(%s)' % search_str, '<b>\\1</b>', text,
+                            flags=re.IGNORECASE)
+
+        cell.props.markup = markup.encode('utf-8')
 
     def _completion_exact_match_func(self, completion, key, iter):
         model = completion.get_model()
         if not len(model):
-            return
+            return False
 
         content = model[iter][COL_TEXT]
-        return key.startswith(content)
+        if content is None:
+            # FIXME: Find out why this happens some times
+            return False
+
+        if self.completion_ignore_case:
+            key = key.lower()
+            content = content.lower()
+        if self.completion_ignore_accents:
+            key = strip_accents(key)
+            content = strip_accents(content)
+
+        return content.startswith(key)
 
     def _completion_normal_match_func(self, completion, key, iter):
         model = completion.get_model()
         if not len(model):
-            return
-        raw_content = model[iter][COL_TEXT]
-        if raw_content is not None:
-            return key.lower() in raw_content.lower()
-        else:
             return False
+
+        content = model[iter][COL_TEXT]
+        if content is None:
+            # FIXME: Find out why this happens some times
+            return False
+
+        if self.completion_ignore_case:
+            key = key.lower()
+            content = content.lower()
+        if self.completion_ignore_accents:
+            key = strip_accents(key)
+            content = strip_accents(content)
+
+        return key in content
 
     def _on_completion__match_selected(self, completion, model, iter):
         if not len(model):

@@ -23,6 +23,7 @@
 
 """Generic python addons"""
 
+import unicodedata
 import sys
 import warnings
 
@@ -328,3 +329,19 @@ def any(seq):
         if item:
             return True
     return False
+
+
+def strip_accents(string):
+    """Remove the accentuantion of a string
+
+    Taken from http://www.python.org.br/wiki/RemovedorDeAcentos
+
+    :param string: a string, either in str or unicode format
+    :returns: the string without accentuantion
+    """
+    if isinstance(string, str):
+        # unicode don't need this
+        string = string.decode('utf-8')
+
+    string = unicodedata.normalize('NFKD', string)
+    return string.encode('ASCII', 'ignore')
