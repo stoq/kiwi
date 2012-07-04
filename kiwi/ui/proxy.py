@@ -62,6 +62,8 @@ def unblock_widget(widget):
 def _get_widget_data_type(widget):
     data_type = widget.get_property('data-type')
     c = converter.get_converter(data_type)
+    if c.type is str or c.type is unicode:
+        return basestring
     return c.type
 
 
