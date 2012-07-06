@@ -298,7 +298,6 @@ class SlaveView(gobject.GObject):
         self._notebooks = self._get_notebooks()
         if len(self._notebooks) == 1:
             register_notebook_shortcuts(self, self._notebooks[0])
-        self._attach_forms()
 
         # FIXME: This is a hack to avoid a toplevel window
         #        showing up, I cannot quite figure out how it works
@@ -395,6 +394,7 @@ class SlaveView(gobject.GObject):
         for holder_name, form in self._forms.items():
             self.attach_slave(holder_name, form)
             form.populate(self.conn)
+            form.add_proxy()
             form.show()
         self._forms_attached = True
 
@@ -578,6 +578,9 @@ class SlaveView(gobject.GObject):
 
         if self.toplevel:
             self.toplevel.connect("key-press-event", controller.on_key_press)
+
+        # We have to wait until callbacks are connected to add the proxies
+        self._attach_forms()
 
     #
     # Slave handling

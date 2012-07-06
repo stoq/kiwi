@@ -382,10 +382,15 @@ class BasicForm(SlaveDelegate):
         self.toplevel.add(layout.widget)
         layout.widget.show()
 
-        if self._fields:
-            self._add_proxy()
+    def add_proxy(self):
+        """Add proxy for this form
 
-    def _add_proxy(self):
+        Make sure to call this after the callbacks for self.main_view are
+        connected
+        """
+        if not self._fields:
+            return
+
         proxy_fields = []
         for field_name, field in self._fields.items():
             if field.proxy:
