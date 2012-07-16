@@ -27,7 +27,7 @@
 Storm integration for Kiwi
 """
 
-from storm.expr import And, Or, Like, Not
+from storm.expr import And, Or, Like, Not, Alias
 
 from kiwi.db.query import NumberQueryState, StringQueryState, \
      DateQueryState, DateIntervalQueryState, QueryExecuter, \
@@ -37,10 +37,14 @@ from kiwi.interfaces import ISearchFilter
 # FIXME: make this usable outside of stoqlib
 
 
+class ILike(Like):
+    oper = ' ILIKE '
+
+
 class StormQueryExecuter(QueryExecuter):
     """Execute queries from a storm database"""
 
-    def __init__(self, conn):
+    def __init__(self, conn=None):
         QueryExecuter.__init__(self)
         self.conn = conn
         self.table = None
@@ -96,7 +100,8 @@ class StormQueryExecuter(QueryExecuter):
             having = And(self._having)
 
         result = self._query(query, having, self.conn)
-        return result.config(limit=self.get_limit())
+        return result
+        #return result.config(limit=self.get_limit())
 
     def set_table(self, table):
         """
@@ -152,6 +157,9 @@ class StormQueryExecuter(QueryExecuter):
         for column in columns:
             query = None
             table_field = getattr(table, column)
+            if isinstance(table_field, Alias):
+                table_field = table_field.expr
+
             if isinstance(state, NumberQueryState):
                 query = self._parse_number_state(state, table_field)
             elif isinstance(state, NumberIntervalQueryState):
@@ -185,8 +193,8 @@ class StormQueryExecuter(QueryExecuter):
     def _parse_string_state(self, state, table_field):
         if not state.text:
             return
-        text = '%%%s%%' % state.text.lower()
-        retval = Like(table_field, text)
+        text = u'%%%s%%' % state.text.lower()
+        retval = ILike(table_field, text)
         if state.mode == StringQueryState.NOT_CONTAINS:
             retval = Not(retval)
 
