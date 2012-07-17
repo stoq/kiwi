@@ -107,7 +107,7 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         return False
 
     def on_iter_children(self, row):
-        if row is None:
+        if row is None and self._iters:
             return self._iters[0]
         else:
             return None
@@ -137,9 +137,6 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         else:
             raise AssertionError(key)
         return [self._values[index]]
-
-    def __iter__(self):
-        return iter(self._values)
 
     def __contains__(self, value):
         return value in self._values
