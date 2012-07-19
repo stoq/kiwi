@@ -251,7 +251,7 @@ class SlaveView(gobject.GObject):
         self._broker = None
         self.slaves = {}
         self._proxies = []
-        self._valid = True
+        self.is_valid = True
 
         # slave/widget name -> validation status
         self._validation = {}
@@ -929,10 +929,10 @@ class SlaveView(gobject.GObject):
         validation_log.info("%s: validate state=%r" % (
             self.__class__.__name__, self._validation))
         # Check if validation really changed
-        if self._valid == is_valid and force == False:
+        if self.is_valid == is_valid and force == False:
             return
 
-        self._valid = is_valid
+        self.is_valid = is_valid
         self.emit('validation-changed', is_valid)
 
         # FIXME: Remove and update all callsites to use validation-changed
