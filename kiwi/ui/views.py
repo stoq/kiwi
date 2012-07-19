@@ -279,6 +279,7 @@ class SlaveView(gobject.GObject):
         # to attach slaves we need the toplevel widget to be an EventBox.
         if not self.gladefile and self.toplevel is None:
             self.toplevel = gtk.Window()
+            self.toplevel.set_name('KiwiViewWindow')
 
         # Forms create widgets that we want to connect signals to,
         # so this needs to be done before the View constructor
@@ -688,8 +689,12 @@ class SlaveView(gobject.GObject):
             raise TypeError(
                 "widget to be replaced must be wrapped in eventbox")
 
-        # when attaching a slave we usually want it visible
-        parent.show()
+        # when attaching a slave we usually want it visible, the exception is
+        # views that are glade less are have a window created for them automatically,
+        # they need to be showed explicitly using view.show/show_all.
+        if parent.get_name() != 'KiwiViewWindow':
+            parent.show()
+
         # call slave's callback
         slave.on_attach(self)
 
