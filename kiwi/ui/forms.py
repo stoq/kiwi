@@ -62,10 +62,10 @@ class Field(gobject.GObject):
       - B{label_attribute}: string I{None}
         - Name of the label widget inside the view, None
           means it should be model_attribute + '_lbl'
-      - B{can_add}: bool I{False}
-        - If a new model of this widget can be created via another dialog
-      - B{can_edit}: bool I{False}
-        - If content of this widget can be modified via another dialog
+      - B{has_add_button}: bool I{False}
+        - If we should add an add button next to the widget
+      - B{has_edit_button}: bool I{False}
+        - If we should add an edit button next to the widget
       - B{proxy}: bool I{False}
         - If this field should be added to a proxy
     """
@@ -79,8 +79,8 @@ class Field(gobject.GObject):
     mandatory = gobject.property(type=bool, default=False)
     label = gobject.property(type=str)
     label_attribute = gobject.property(type=str)
-    can_add = gobject.property(type=bool, default=False)
-    can_edit = gobject.property(type=bool, default=False)
+    has_add_button = gobject.property(type=bool, default=False)
+    has_edit_button = gobject.property(type=bool, default=False)
     proxy = gobject.property(type=bool, default=False)
 
     # This can be used by subclasses to override the default
@@ -126,15 +126,16 @@ class Field(gobject.GObject):
         self.model_attribute = model_attribute
         self.form = form
         self.view = form.view
-        self.attach()
         self._build_add_button()
         self._build_edit_button()
+        self.attach()
         self.label_widget.show()
         self.widget.show()
 
     def _build_add_button(self):
-        if not self.can_add:
+        if not self.has_add_button:
             return
+
         self.add_button = self.create_button(gtk.STOCK_ADD)
         self.add_button.set_use_stock(True)
         self.add_button.set_tooltip_text(_("Add a %s") % (
@@ -142,7 +143,7 @@ class Field(gobject.GObject):
         self.add_button.connect('clicked', self.add_button_clicked)
 
     def _build_edit_button(self):
-        if not self.can_edit:
+        if not self.has_edit_button:
             return
 
         self.edit_button = self.create_button(gtk.STOCK_EDIT)
@@ -150,7 +151,6 @@ class Field(gobject.GObject):
         self.edit_button.set_use_stock(True)
         self.edit_button.set_tooltip_text(_("Edit the selected %s") % (
             self.label.lower(), ))
-        self.edit_button.set_sensitive(False)
         self.edit_button.set_sensitive(False)
 
     def _on_widget__content_changed(self, widget):
@@ -167,6 +167,13 @@ class Field(gobject.GObject):
         button.set_relief(gtk.RELIEF_NONE)
         button.show()
         return button
+
+    def set_read_only(self):
+        self.widget.set_sensitive(False)
+        if self.add_button:
+            self.add_button.set_sensitive(False)
+        if self.edit_button:
+            self.edit_button.set_sensitive(False)
 
     # Overridables
 
