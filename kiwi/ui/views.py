@@ -372,11 +372,6 @@ class SlaveView(gobject.GObject):
         it to the view as a slave at the holder_name location.
         This needs to be called before the View constructor is called.
         """
-        if self._forms_attached:
-            raise TypeError(
-                "add_forms needs to be called before the %r constructor" % (
-                self, ))
-
         if holder_name is None:
             holder_name = self.form_holder_name
 
