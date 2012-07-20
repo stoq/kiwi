@@ -627,6 +627,11 @@ class ComboEntry(gtk.VBox):
         """
         See :class:`kiwi.interfaces.IEasyCombo.prefill`
         """
+        if not itemdata:
+            # If itemdata has no items, just clear
+            self.clear()
+            return
+
         self._model.clear()
         self.entry.prefill(itemdata, sort)
         self.mode = self.entry.get_mode()
