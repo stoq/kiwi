@@ -322,7 +322,7 @@ class FormTableLayout(FormLayout):
         for i, (field, field_name) in enumerate(fields):
             form.build_field(field, field_name)
             table.attach(field.label_widget, 0, 1, i, i + 1,
-                         gtk.EXPAND | gtk.FILL,
+                         gtk.FILL,
                          gtk.EXPAND | gtk.FILL, 0, 0)
             table.attach(field.widget, 1, 2, i, i + 1,
                          gtk.EXPAND | gtk.FILL,
@@ -363,7 +363,7 @@ class BasicForm(SlaveDelegate):
         self.proxy = None
         self.main_view = view
         # Just a simple GtkBin
-        self.toplevel = gtk.Alignment()
+        self.toplevel = gtk.Alignment(xscale=1)
         SlaveDelegate.__init__(self)
 
     def __repr__(self):
