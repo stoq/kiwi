@@ -168,12 +168,12 @@ class Field(gobject.GObject):
         button.show()
         return button
 
-    def set_read_only(self):
-        self.widget.set_sensitive(False)
+    def set_sensitive(self, value):
+        self.widget.set_sensitive(value)
         if self.add_button:
-            self.add_button.set_sensitive(False)
+            self.add_button.set_sensitive(value)
         if self.edit_button:
-            self.edit_button.set_sensitive(False)
+            self.edit_button.set_sensitive(value)
 
     # Overridables
 
