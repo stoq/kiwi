@@ -97,6 +97,7 @@ class HIGAlertDialog(gtk.Dialog):
         hbox.pack_start(vbox, False, False)
         vbox.pack_start(self._primary_label, False, False)
         vbox.pack_start(self._secondary_label, False, False)
+        self.main_vbox = vbox
 
         self._expander = gtk.expander_new_with_mnemonic(
             _("Show more _details"))
@@ -117,6 +118,9 @@ class HIGAlertDialog(gtk.Dialog):
 
     def set_secondary(self, text):
         self._secondary_label.set_markup(text)
+
+    def set_details_label(self, label):
+        self._expander.set_label(label)
 
     def set_details(self, text, use_markup=False):
         if use_markup:
