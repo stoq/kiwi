@@ -111,6 +111,11 @@ class Field(gobject.GObject):
     def value(self):
         return getattr(self.view.model, self.model_attribute)
 
+    @property
+    def toplevel(self):
+        if self.form:
+            return self.form.main_view
+
     def attach_form(self, form, model_attribute):
         self.label_widget = self.build_label()
         self.widget = self.build_widget()
