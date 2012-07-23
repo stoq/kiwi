@@ -26,7 +26,7 @@
 #   Matthias Clasen <mclasen@redhat.com>
 #
 
-from ConfigParser import ConfigParser
+from ConfigParser import ConfigParser, NoOptionError
 
 # Private
 
@@ -103,7 +103,11 @@ class DesktopParser(ConfigParser):
         :param option: an option
         :param locale: a locale
         """
-        return self.get(section, _localize(option, locale))
+        try:
+            return self.get(section, _localize(option, locale))
+        except NoOptionError:
+            # Fallback to default option
+            return self.get(section, option)
 
     def get_string_list(self, section, option):
         """
@@ -182,4 +186,8 @@ class DesktopParser(ConfigParser):
         :param option: an option
         :param locale: a locale
         """
-        return self.get_string_list(section, _localize(option, locale))
+        try:
+            return self.get_string_list(section, _localize(option, locale))
+        except NoOptionError:
+            # Fallback to default option
+            return self.get_string_list(section, option)
