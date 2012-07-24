@@ -6,7 +6,7 @@ import datetime
 import gtk
 from sqlobject import connectionForURI, SQLObject, StringCol, DateCol, DecimalCol
 
-from kiwi.datatypes import currency
+from kiwi.currency import currency
 from kiwi.db.sqlobj import SQLObjectQueryExecuter
 from kiwi.ui.objectlist import Column
 from kiwi.ui.search import SearchContainer, DateSearchFilter

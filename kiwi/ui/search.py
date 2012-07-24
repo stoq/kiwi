@@ -34,7 +34,7 @@ import gobject
 import gtk
 
 from kiwi.component import implements
-from kiwi.datatypes import currency
+from kiwi.currency import currency
 from kiwi.db.query import (NumberQueryState, StringQueryState,
                            DateQueryState, DateIntervalQueryState,
                            NumberIntervalQueryState, QueryExecuter)

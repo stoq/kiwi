@@ -5,7 +5,7 @@ import time
 
 import gtk
 
-from kiwi.datatypes import currency
+from kiwi.currency import currency
 from kiwi.ui.objectlist import (Column, ObjectList, SequentialColumn,
                                   ColoredColumn, SummaryLabel)
 

@@ -29,7 +29,8 @@ import datetime
 import gobject
 import pango
 
-from kiwi.datatypes import converter, number, ValueUnset, currency
+from kiwi.currency import currency
+from kiwi.datatypes import converter, number, ValueUnset
 from kiwi.decorators import deprecated
 from kiwi.enums import Alignment
 from kiwi.ui.proxywidget import ProxyWidgetMixin

@@ -1,7 +1,7 @@
 import datetime
 import gtk
 
-from kiwi.datatypes import currency
+from kiwi.currency import currency
 from kiwi.ui.widgets.entry import ProxyEntry
 from kiwi.ui.widgets.label import ProxyLabel
 

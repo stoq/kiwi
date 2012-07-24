@@ -4,7 +4,8 @@ import datetime
 
 import gtk
 
-from kiwi.datatypes import ValidationError, currency
+from kiwi.datatypes import ValidationError
+from kiwi.currency import currency
 from kiwi.ui.delegates import GladeDelegate
 
 

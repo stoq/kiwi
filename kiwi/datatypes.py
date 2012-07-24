@@ -74,7 +74,7 @@ if sys.platform == 'win32':
                 "ctypes is required for datetime types on win32")
         GetLocaleInfo = _GetLocaleInfo
 
-__all__ = ['ValidationError', 'lformat', 'converter', 'format_price']
+__all__ = ['ValidationError', 'lformat', 'converter']
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
@@ -764,10 +764,3 @@ def filter_locale(value, monetary=False):
     if decimal_point != '.' and decimal_point != '':
         value = value.replace(decimal_point, '.')
     return value
-
-# FIXME: Get rid of this
-from kiwi.currency import currency, format_price
-
-# Pyflakes
-currency
-format_price

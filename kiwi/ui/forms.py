@@ -35,9 +35,9 @@ import gettext
 import gobject
 import gtk
 
-from kiwi.ui.delegates import SlaveDelegate
-from kiwi.datatypes import currency
+from kiwi.currency import currency
 from kiwi.interfaces import IProxyWidget
+from kiwi.ui.delegates import SlaveDelegate
 from kiwi.ui.widgets.colorbutton import ProxyColorButton
 from kiwi.ui.widgets.combo import ProxyComboEntry
 from kiwi.ui.widgets.combobox import ProxyComboBox

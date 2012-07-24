@@ -7,7 +7,7 @@ import gtk
 
 from storm.locals import Int, Unicode, Float, Date, create_database, Store
 
-from kiwi.datatypes import currency
+from kiwi.currency import currency
 from kiwi.db.stormintegration import StormQueryExecuter
 from kiwi.ui.objectlist import Column
 from kiwi.ui.search import SearchContainer, DateSearchFilter
