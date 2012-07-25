@@ -392,6 +392,9 @@ class ComboEntry(gtk.VBox):
         if not entry:
             entry = KiwiEntry()
 
+        if isinstance(entry, KiwiEntry):
+            entry.set_normal_completion()
+
         self.hbox = gtk.HBox()
         self.pack_start(gtk.EventBox())
         self.pack_start(self.hbox, expand=False)
