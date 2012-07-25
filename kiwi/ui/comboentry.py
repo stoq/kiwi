@@ -506,7 +506,7 @@ class ComboEntry(gtk.VBox):
 
     def _on_popup__text_selected(self, popup, text):
         self.set_text(text)
-        popup.popdown()
+        self.popdown()
         self.entry.grab_focus()
         self.entry.set_position(len(self.entry.get_text()))
         self.emit('changed')
@@ -544,6 +544,14 @@ class ComboEntry(gtk.VBox):
         Hide the popup window
         """
         self._popup.popdown()
+        # FIXME: This is a very ugly hack. For some reason, data is not
+        # set when typing or pressing enter on the completion. It only works
+        # with the mouse (both clicking on completion and scrolling results).
+        # Find out why this happens and remove the try/except bellow.
+        try:
+            self.select_item_by_label(self.entry.get_text())
+        except KeyError:
+            pass
 
     def set_text(self, text):
         """
