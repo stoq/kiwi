@@ -414,6 +414,12 @@ class BasicForm(SlaveDelegate):
         field.attach_form(self, model_attribute)
         setattr(self.main_view, model_attribute, field.widget)
         setattr(self.main_view, field.label_attribute, field.label_widget)
+        if field.has_add_button:
+            setattr(self.main_view,
+                    field.model_attribute + '_add_button', field.add_button)
+        if field.has_edit_button:
+            setattr(self.main_view,
+                    field.model_attribute + '_edit_button', field.edit_button)
         self._fields[model_attribute] = field
 
     def populate(self, *args):
