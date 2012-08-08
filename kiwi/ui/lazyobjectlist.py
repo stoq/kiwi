@@ -85,7 +85,7 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         return object
 
     def on_get_value(self, row, column):
-        raise NotImplementedError
+        return self._values[row]
 
     def on_get_iter(self, path):
         if self._iters:
