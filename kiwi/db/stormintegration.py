@@ -51,6 +51,7 @@ class StormQueryExecuter(QueryExecuter):
         self._query_callbacks = []
         self._filter_query_callbacks = {}
         self._query = self._default_query
+        self.post_result = None
 
     def search(self, states):
         """
