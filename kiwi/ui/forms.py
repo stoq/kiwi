@@ -30,6 +30,7 @@ Form is a simple way of creating fields that are:
 """
 
 import datetime
+from decimal import Decimal
 import gettext
 
 import gobject
@@ -43,6 +44,7 @@ from kiwi.ui.widgets.combo import ProxyComboEntry
 from kiwi.ui.widgets.combobox import ProxyComboBox
 from kiwi.ui.widgets.entry import ProxyEntry, ProxyDateEntry
 from kiwi.ui.widgets.label import ProxyLabel
+from kiwi.ui.widgets.spinbutton import ProxySpinButton
 from kiwi.utils import gsignal
 
 _ = lambda m: gettext.dgettext('kiwi', m)
@@ -285,6 +287,21 @@ class ColorField(Field):
     def build_widget(self):
         button = ProxyColorButton()
         return button
+
+
+class PercentageField(Field):
+    """
+    I am a field representing a percentage.
+    """
+    widget_data_type = Decimal
+
+    def build_widget(self):
+        entry = ProxySpinButton()
+        entry.set_adjustment(gtk.Adjustment(lower=0, step_incr=1,
+                                            upper=100, page_incr=10))
+        entry.set_range(0, 100)
+        entry.set_digits(2)
+        return entry
 
 
 class FormLayout(object):
