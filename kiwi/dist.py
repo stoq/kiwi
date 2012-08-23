@@ -34,6 +34,7 @@ from fnmatch import fnmatch
 from shutil import copyfile
 import os
 import new
+import subprocess
 import sys
 
 from setuptools import setup as DS_setup
@@ -260,10 +261,6 @@ def compile_po_files(domain, dirname='locale'):
     :param dirname: base directory
     :returns: a list of po files
     """
-    if os.system('msgfmt 2> /dev/null') not in [1, 256]:
-        warn('msgfmt is missing, not installing translations')
-        return []
-
     data_files = []
     for po in listfiles('po', '*.po'):
         lang = os.path.basename(po[:-3])
@@ -274,10 +271,16 @@ def compile_po_files(domain, dirname='locale'):
             if not os.path.exists(directory):
                 info("creating %s" % directory)
                 os.makedirs(directory)
-            cmd = 'msgfmt -o %s %s' % (mo, po)
-            info('compiling %s -> %s' % (po, mo))
-            if os.system(cmd) != 0:
-                raise SystemExit("Error while running msgfmt")
+            try:
+                p = subprocess.Popen(['msgfmt', '-o', mo, po],
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
+            except OSError:
+                warn('msgfmt is missing, not installing translations')
+                return []
+            info('compiled %s -> %s' % (po, mo))
+            p.communicate()
+
         dest = os.path.dirname(os.path.join('share', mo))
         data_files.append((dest, [mo]))
 
