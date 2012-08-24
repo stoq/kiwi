@@ -468,6 +468,9 @@ class Column(gobject.GObject):
         else:
             raise ValueError("the type %s is not supported yet" % data_type)
 
+        renderer.connect('editing-started', self._on_renderer__editing_started,
+                         model, self.attribute)
+
         return renderer, prop
 
     # CellRenderers
@@ -571,6 +574,12 @@ class Column(gobject.GObject):
         setattr(new, attr, True)
         renderer.set_data('kiwilist::radio-active', new)
         self._objectlist.emit('cell-edited', new, attr)
+
+    def _on_renderer__editing_started(self, renderer, editable, path,
+                                      model, attr):
+        obj = model[path][COL_MODEL]
+        self._objectlist.emit('cell-editing-started', obj, attr,
+                              renderer, editable)
 
     def _on_renderer_text__edited(self, renderer, path, text,
                                   model, attr, column, from_string):
@@ -924,6 +933,8 @@ class ObjectList(gtk.HBox):
         - Emitted when a row is clicked with the right mouse button.
       - B{cell-edited} (list, object, attribute):
         - Emitted when a cell is edited.
+      - B{cell-editing-started} (list, object, attribute, renderer, editable):
+        - Emitted when the user starts to edit a cell
       - B{has-rows} (list, bool):
         - Emitted when the objectlist goes from an empty to a non-empty
           state or vice verse.
@@ -955,6 +966,9 @@ class ObjectList(gtk.HBox):
 
     # edited object, attribute name
     gsignal('cell-edited', object, str)
+
+    # object to edit, attribute name, renderer, renderers' editable
+    gsignal('cell-editing-started', object, str, object, object)
 
     # emitted when empty or non-empty status changes
     gsignal('has-rows', bool)
