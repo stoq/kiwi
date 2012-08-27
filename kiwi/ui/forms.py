@@ -247,12 +247,12 @@ class ChoiceField(Field):
             combo = ProxyComboEntry()
         else:
             combo = ProxyComboBox()
-        self.fill()
+        self.fill(combo)
         return combo
 
-    def fill(self):
+    def fill(self, widget):
         if self.values:
-            self.widget.prefill(self.values)
+            widget.prefill(self.values)
 
 
 class PriceField(Field):
