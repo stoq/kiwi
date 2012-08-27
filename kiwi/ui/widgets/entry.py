@@ -190,7 +190,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
             # Do not consider masks which only displays static
             # characters invalid, instead return empty string
             text = self.get_text()
-            if text == self.get_empty_mask():
+            if self.mask and text == self.get_empty_mask():
                 return ''
             if not self._has_been_updated:
                 return ValueUnset
