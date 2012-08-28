@@ -157,8 +157,6 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
             return
         column = self._objectlist.get_columns()[self._sort_column_id]
         self._result = self._orig_result.orderBy(column.attribute)
-        if self._sort_order == gtk.SORT_DESCENDING:
-            self._result = self._result.reversed()
         self._load_result_set(self._result)
         self.load_items_from_results(0, self._initial_count)
         self.sort_column_changed()
@@ -192,7 +190,10 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
             return
 
         has_loaded = -1
-        for i, item in enumerate(self._result[start:end], start):
+        results = list(self._result[start:end])
+        if self._sort_order == gtk.SORT_DESCENDING:
+            results = reversed(results)
+        for i, item in enumerate(results, start):
             if self._values[i] is not empty_marker:
                 continue
             self._values[i] = item
