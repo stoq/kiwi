@@ -179,6 +179,7 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         :param end: index of the last row to load
         """
         end = min(end, self._count)
+        load_total = end - start
 
         # Avoid loading items already loaded
         for i in range(start, end):
@@ -188,6 +189,9 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
             start = i
         else:
             return
+
+        # If we moved the start value in the for above, also move the end value
+        end = min(start + load_total, self._count)
 
         if self._sort_order == gtk.SORT_DESCENDING:
             # Results should be reversed, so we need to invert the start and
