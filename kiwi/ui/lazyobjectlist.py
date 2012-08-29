@@ -190,9 +190,17 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
             return
 
         has_loaded = -1
-        results = list(self._result[start:end])
         if self._sort_order == gtk.SORT_DESCENDING:
-            results = reversed(results)
+            # Results should be reversed, so we need to invert the start and
+            # end values, and use the end of the list as a reference.
+            # This should be as easy as reversed(self._results[-end:-start])
+            # but storm does not support this.
+            start_ = self._count - end
+            end_ = self._count - start
+            results = reversed(list(self._result[start_:end_]))
+        else:
+            results = list(self._result[start:end])
+
         for i, item in enumerate(results, start):
             if self._values[i] is not empty_marker:
                 continue
