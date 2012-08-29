@@ -189,7 +189,6 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         else:
             return
 
-        has_loaded = -1
         if self._sort_order == gtk.SORT_DESCENDING:
             # Results should be reversed, so we need to invert the start and
             # end values, and use the end of the list as a reference.
@@ -201,16 +200,17 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         else:
             results = list(self._result[start:end])
 
+        has_loaded = False
         for i, item in enumerate(results, start):
             if self._values[i] is not empty_marker:
                 continue
+            has_loaded = True
             self._values[i] = item
             path = (i, )
             titer = self.create_tree_iter(path)
             self.row_changed(path, titer)
 
-        # If anything was loaded
-        return has_loaded != -1
+        return has_loaded
 
     def get_post_data(self):
         return self._post_result
