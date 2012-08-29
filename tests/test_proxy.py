@@ -96,10 +96,17 @@ class TestProxy(unittest.TestCase):
         self.view.entry.set_text('bar')
         self.assertEqual(self.model.entry, 'bar')
 
+        # If the widget is insensitive, it should not change the model
+        self.view.entry.set_sensitive(False)
+        self.view.entry.set_text('bin')
+        self.assertEqual(self.model.entry, 'bar')
+
     def testLabel(self):
         self.assertEqual(self.model.label, 'label')
         self.view.label.set_text('other label')
-        self.assertEqual(self.model.label, 'other label')
+        # When the proxy label is updated, the model should not change. Labels
+        # are non interactive widget, and the user cannot edit the value.
+        self.assertEqual(self.model.label, 'label')
 
     def testRadioButton(self):
         self.assertEqual(self.model.radiobutton, 'first')
@@ -121,6 +128,11 @@ class TestProxy(unittest.TestCase):
     def testSpinButton(self):
         self.assertEqual(self.model.spinbutton, 100)
         self.view.spinbutton.set_text("200")
+        self.assertEqual(self.model.spinbutton, 200)
+
+        # If the widget is insensitive, it should not change the model
+        self.view.spinbutton.set_sensitive(False)
+        self.view.spinbutton.set_text('400')
         self.assertEqual(self.model.spinbutton, 200)
 
     def testTextView(self):

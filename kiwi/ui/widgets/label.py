@@ -42,9 +42,8 @@ from kiwi.utils import gsignal, type_register
 class ProxyLabel(gtk.Label, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyLabel'
     model_attribute = gobject.property(type=str, blurb='Model attribute')
+    # We wont emmit content-changed, but kiwi.proxy still relies on this.
     gsignal('content-changed')
-    gsignal('validation-changed', bool)
-    gsignal('validate', object, retval=object)
 
     allowed_data_types = (basestring, datetime.date, datetime.datetime,
                           datetime.time) + number
@@ -97,11 +96,6 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
 
         self._block_notify_label = True
         self.set_property('label', text)
-
-        # Since most of the time labels do not have a model attached to it
-        # we should just emit a signal if a model is defined
-        if self.model_attribute:
-            self.emit('content-changed')
 
     def read(self):
         return self._from_string(self.get_text())
