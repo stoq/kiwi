@@ -1333,7 +1333,7 @@ class SearchContainer(gtk.VBox):
                                                   column=column,
                                                   label=label,
                                                   value_format=format)
-        parent.pack_end(self._summary_label, False, False)
+        parent.pack_start(self._summary_label, False, False)
         self._summary_label.show()
 
     @property
@@ -1411,7 +1411,7 @@ class SearchContainer(gtk.VBox):
         self._create_basic_search()
 
         self.results = self.results_class(self._columns)
-        self.pack_end(self.results, True, True, 0)
+        self.pack_start(self.results, True, True, 0)
         self.results.show()
 
     def _create_basic_search(self):
