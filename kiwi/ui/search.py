@@ -1217,16 +1217,16 @@ class SearchContainer(gtk.VBox):
         else:
             raise AssertionError(search_filter)
 
-    def set_query_executer(self, querty_executer):
+    def set_query_executer(self, query_executer):
         """
         Ties a QueryExecuter instance to the SearchContainer class
         :param querty_executer: a querty executer
         :type querty_executer: a :class:`QueryExecuter` subclass
         """
-        if not isinstance(querty_executer, QueryExecuter):
-            raise TypeError("querty_executer must be a QueryExecuter instance")
+        if not isinstance(query_executer, QueryExecuter):
+            raise TypeError("query_executer must be a QueryExecuter instance")
 
-        self._query_executer = querty_executer
+        self._query_executer = query_executer
 
     def get_query_executer(self):
         """

@@ -27,7 +27,7 @@
 Storm integration for Kiwi
 """
 
-from storm.expr import And, Or, Like, Not, Alias
+from storm.expr import And, Or, Like, Not, Alias, NamedFunc
 
 from kiwi.db.query import NumberQueryState, StringQueryState, \
      DateQueryState, DateIntervalQueryState, QueryExecuter, \
@@ -39,6 +39,11 @@ from kiwi.interfaces import ISearchFilter
 
 class ILike(Like):
     oper = ' ILIKE '
+
+
+# Storm does not have a Date named funcion.
+class Date(NamedFunc):
+    name = 'DATE'
 
 
 class StormQueryExecuter(QueryExecuter):
@@ -203,13 +208,13 @@ class StormQueryExecuter(QueryExecuter):
 
     def _parse_date_state(self, state, table_field):
         if state.date:
-            return table_field == state.date
+            return Date(table_field) == Date(state.date)
 
     def _parse_date_interval_state(self, state, table_field):
         queries = []
         if state.start:
-            queries.append(table_field >= state.start)
+            queries.append(Date(table_field) >= Date(state.start))
         if state.end:
-            queries.append(table_field <= state.end)
+            queries.append(Date(table_field) <= Date(state.end))
         if queries:
             return And(*queries)
