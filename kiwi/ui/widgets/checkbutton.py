@@ -55,6 +55,8 @@ class ProxyCheckButton(gtk.CheckButton, ProxyWidgetMixin):
         gtk.CheckButton.__init__(self, label=label,
                                  use_underline=use_underline)
         ProxyWidgetMixin.__init__(self)
+
+    def __post_init__(self):
         self.props.data_type = bool
 
     gsignal('toggled', 'override')
