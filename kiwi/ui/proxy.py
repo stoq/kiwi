@@ -101,6 +101,26 @@ class Proxy:
 
     # Private API
 
+    def _update_attribute(self, widget, attribute, value):
+        log('%s.%s = %r' %
+            (self._model.__class__.__name__, attribute, value))
+
+        # only update the model if the data is correct
+        if value is ValueUnset:
+            return
+
+        model = self.model
+        # XXX: One day we might want to queue and unique updates?
+        if hasattr(model, "block_proxy"):
+            model.block_proxy(self)
+            ksetattr(model, attribute, value)
+            model.unblock_proxy(self)
+        else:
+            ksetattr(model, attribute, value)
+
+        # Call global update hook
+        self.proxy_updated(widget, attribute, value)
+
     def _reset_widget(self, attribute, widget):
         if self._model is None:
             # if we have no model, leave value unset so we pick up
@@ -159,6 +179,12 @@ class Proxy:
                 self._on_widget__notify)
             widget.set_data('notify-sensitive-id', connection_id)
 
+            connection_id = widget.connect(
+                'validation-changed',
+                self._on_widget__validation_changed,
+                attribute)
+            widget.set_data('validation-changed-id', connection_id)
+
         model_attributes = self._model_attributes
         # save this widget in our map
         if (attribute in model_attributes and
@@ -210,24 +236,14 @@ class Proxy:
         else:
             value = widget.read()
 
-        log('%s.%s = %r' % (self._model.__class__.__name__,
-                            attribute, value))
+        self._update_attribute(widget, attribute, value)
 
-        # only update the model if the data is correct
-        if value is ValueUnset:
-            return
-
-        model = self._model
-        # XXX: one day we might want to queue and unique updates?
-        if hasattr(model, "block_proxy"):
-            model.block_proxy(self)
-            ksetattr(model, attribute, value)
-            model.unblock_proxy(self)
-        else:
-            ksetattr(model, attribute, value)
-
-        # Call global update hook
-        self.proxy_updated(widget, attribute, value)
+    def _on_widget__validation_changed(self, widget, is_valid, attribute):
+        # When validation changes to valid state, maybe the attribute's
+        # value wasn't propagate to the model. Try to do that now.
+        if is_valid:
+            value = widget.read()
+            self._update_attribute(widget, attribute, value)
 
     # notify::sensitive and notify::visible are connected here
     def _on_widget__notify(self, widget, pspec):

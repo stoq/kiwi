@@ -3,6 +3,7 @@ import unittest
 from gtk import gdk
 
 from kiwi import ValueUnset
+from kiwi.datatypes import ValidationError
 from kiwi.python import Settable
 from kiwi.ui.proxy import Proxy
 from kiwi.ui.widgets.button import ProxyButton
@@ -176,3 +177,22 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(self.view.entry.get_text(), "")
         self.view.spinbutton.update(ValueUnset)
         self.assertEqual(self.view.spinbutton.get_text(), "")
+
+    def testValueChangeWhenWidgetInalid(self):
+        def validate_entry(entry, value):
+            if entry.make_invalid:
+                return ValidationError("")
+
+        self.view.entry.connect('validate', validate_entry)
+
+        self.view.entry.make_invalid = False
+        self.view.entry.update("Propagated immediatly")
+        self.assertEqual(self.model.entry, "Propagated immediatly")
+
+        self.view.entry.make_invalid = True
+        self.view.entry.update("Propagated later")
+        self.assertEqual(self.model.entry, "Propagated immediatly")
+
+        self.view.entry.make_invalid = False
+        self.view.entry.validate(force=True)
+        self.assertEqual(self.model.entry, "Propagated later")
