@@ -135,6 +135,7 @@ class Field(gobject.GObject):
         self.view = form.view
         self._build_add_button()
         self._build_edit_button()
+        self.attach()
         self.label_widget.show()
         self.widget.show()
 
@@ -199,6 +200,9 @@ class Field(gobject.GObject):
 
     def build_widget(self):
         raise NotImplementedError
+
+    def attach(self):
+        pass
 
     def populate(self, value, *args):
         pass
