@@ -135,7 +135,6 @@ class Field(gobject.GObject):
         self.view = form.view
         self._build_add_button()
         self._build_edit_button()
-        self.attach()
         self.label_widget.show()
         self.widget.show()
 
@@ -190,11 +189,16 @@ class Field(gobject.GObject):
         label_widget.set_alignment(1.0, 0.5)
         return label_widget
 
+    def get_attachable_widget(self):
+        """Returns the widget that should be attached in the form
+
+        Subclasses can overwrite this if they need to create a parent container
+        for the widget (Like a gtk.ScrolledWindow)
+        """
+        return self.widget
+
     def build_widget(self):
         raise NotImplementedError
-
-    def attach(self):
-        pass
 
     def populate(self, value, *args):
         pass
@@ -304,6 +308,21 @@ class PercentageField(Field):
         return entry
 
 
+class MultiLineField(Field):
+    widget_data_type = unicode
+
+    def build_widget(self):
+        from kiwi.ui.widgets.textview import ProxyTextView
+        widget = ProxyTextView()
+        return widget
+
+    def get_attachable_widget(self):
+        sw = gtk.ScrolledWindow()
+        sw.add(self.widget)
+        sw.show()
+        return sw
+
+
 class FormLayout(object):
     #
     # A Layout is a class that decides how the widgets
@@ -346,7 +365,7 @@ class FormTableLayout(FormLayout):
             table.attach(field.label_widget, 0, 1, i, i + 1,
                          gtk.FILL,
                          gtk.EXPAND | gtk.FILL, 0, 0)
-            table.attach(field.widget, 1, 2, i, i + 1,
+            table.attach(field.get_attachable_widget(), 1, 2, i, i + 1,
                          gtk.EXPAND | gtk.FILL,
                          gtk.EXPAND | gtk.FILL, 6, 0)
             if field.add_button:
