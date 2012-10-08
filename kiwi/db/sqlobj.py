@@ -175,7 +175,6 @@ class SQLObjectQueryExecuter(QueryExecuter):
             else:
                 table_field = column
 
-
             # If the field has an aggregate function (sum, avg, etc..), then
             # this clause should be in the HAVING part of the query.
             use_having = table_field.hasSQLCall()
