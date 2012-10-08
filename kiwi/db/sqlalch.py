@@ -149,7 +149,11 @@ class SQLAlchemyQueryExecuter(QueryExecuter):
         queries = []
         for column in columns:
             query = None
-            table_field = getattr(table.c, column)
+            if isinstance(column, str):
+                table_field = getattr(table.c, column)
+            else:
+                table_field = column
+
             if isinstance(state, NumberQueryState):
                 query = self._parse_number_state(state, table_field)
             elif isinstance(state, NumberIntervalQueryState):

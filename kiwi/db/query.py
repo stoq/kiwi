@@ -129,6 +129,12 @@ class QueryExecuter(object):
     #
 
     def set_filter_columns(self, search_filter, columns):
+        """Set what columns should be filtered for the search_filter
+
+        :param columns: Should be a list of column names or properties to be
+          used in the query. If they are column names (strings), we will call
+          getattr on the table to get the property for the query construction.
+        """
         if not ISearchFilter.providedBy(search_filter):
             pass
             #raise TypeError("search_filter must implement ISearchFilter")

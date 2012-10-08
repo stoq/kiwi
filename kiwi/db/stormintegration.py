@@ -162,7 +162,11 @@ class StormQueryExecuter(QueryExecuter):
         queries = []
         for column in columns:
             query = None
-            table_field = getattr(table, column)
+            if isinstance(column, str):
+                table_field = getattr(table, column)
+            else:
+                table_field = column
+
             if isinstance(table_field, Alias):
                 table_field = table_field.expr
 

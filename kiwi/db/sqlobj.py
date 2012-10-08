@@ -170,7 +170,11 @@ class SQLObjectQueryExecuter(QueryExecuter):
 
         for column in columns:
             query = None
-            table_field = getattr(table.q, column)
+            if isinstance(column, str):
+                table_field = getattr(table.q, column)
+            else:
+                table_field = column
+
 
             # If the field has an aggregate function (sum, avg, etc..), then
             # this clause should be in the HAVING part of the query.
