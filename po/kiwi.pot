@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-23 12:13-0300\n"
+"POT-Creation-Date: 2012-10-09 15:03-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -219,17 +219,17 @@ msgstr ""
 msgid "'%s' is not a valid object"
 msgstr ""
 
-#: ../kiwi/ui/forms.py:141
+#: ../kiwi/ui/forms.py:148
 #, python-format
 msgid "Add a %s"
 msgstr ""
 
-#: ../kiwi/ui/forms.py:152
+#: ../kiwi/ui/forms.py:159
 #, python-format
 msgid "Edit the selected %s"
 msgstr ""
 
-#: ../kiwi/ui/lazyobjectlist.py:297 ../kiwi/ui/objectlist.py:2387
+#: ../kiwi/ui/lazyobjectlist.py:310 ../kiwi/ui/objectlist.py:2401
 msgid "Total:"
 msgstr ""
 
