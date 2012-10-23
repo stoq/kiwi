@@ -156,7 +156,12 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
             not changed_order):
             return
         column = self._objectlist.get_columns()[self._sort_column_id]
-        self._result = self._orig_result.orderBy(column.attribute)
+        if hasattr(column, 'search_attribute'):
+            # Even if it's defined, it could be None
+            order_attr = column.search_attribute or column.attribute
+        else:
+            order_attr = column.attribute
+        self._result = self._orig_result.orderBy(order_attr)
         self._load_result_set(self._result)
         self.load_items_from_results(0, self._initial_count)
         self.sort_column_changed()
