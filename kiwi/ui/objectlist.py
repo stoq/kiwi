@@ -1640,6 +1640,11 @@ class ObjectList(gtk.HBox):
 
         return column.treeview_column
 
+    def set_instance_iter(self, item, treeiter):
+        """Sets the treeiter related an object in the list
+        """
+        self._iters[item] = treeiter
+
     def set_spinbutton_digits(self, column_name, digits):
         """Set the number of precision digits used by the spinbutton in
         a column.

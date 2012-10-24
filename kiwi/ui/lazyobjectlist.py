@@ -31,6 +31,17 @@ from kiwi.ui.objectlist import empty_marker, ListLabel
 _ = lambda m: gettext.dgettext('kiwi', m)
 
 
+class LazyObjectModelRow(object):
+    def __init__(self, item, path, iter):
+        self.item = item
+        self.path = path
+        self.iter = iter
+
+    def __getitem__(self, index):
+        assert index == 0, index
+        return self.item
+
+
 # FIXME: Port to Gtk.TreeModel so it works under gi
 class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
 
@@ -136,7 +147,7 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
             index = key[0]
         else:
             raise AssertionError(key)
-        return [self._values[index]]
+        return LazyObjectModelRow(self._values[index], (index,), (index,))
 
     def __contains__(self, value):
         return value in self._values
@@ -216,7 +227,11 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
             has_loaded = True
             self._values[i] = item
             path = (i, )
-            titer = self.create_tree_iter(path)
+            titer = self.create_tree_iter(i)
+            # We are bypassing ObjectList to insert items in the model, but
+            # ObjectList depends on knowing where the model is present for a few
+            # actions. Let it know about this new item
+            self._objectlist.set_instance_iter(item, titer)
             self.row_changed(path, titer)
 
         return has_loaded
