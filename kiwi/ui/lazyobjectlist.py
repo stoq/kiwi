@@ -160,6 +160,7 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         return (self._sort_column_id, self._sort_order)
 
     def do_set_sort_column_id(self, sort_column_id, sort_order):
+        self.old_model.set_sort_column_id(sort_column_id, sort_order)
         changed_column = sort_column_id != self._sort_column_id
         self._sort_column_id = sort_column_id
         changed_order = sort_order != self._sort_order
@@ -168,15 +169,8 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         if (not changed_column and
             not changed_order):
             return
-        column = self._objectlist.get_columns()[self._sort_column_id]
-        if hasattr(column, 'search_attribute'):
-            # Even if it's defined, it could be None
-            order_attr = column.search_attribute or column.attribute
-        else:
-            order_attr = column.attribute
-        self._result = self._orig_result.orderBy(order_attr)
+
         self._load_result_set(self._result)
-        self.load_items_from_results(0, self._initial_count)
         self.sort_column_changed()
 
     def do_set_sort_func(self, sort_column_id, sort_func, user_data=None):
@@ -186,7 +180,10 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         pass
 
     def do_has_default_sort_func(self):
-        return True
+        # Don't return True here, so that we can have only sorted/not sorted
+        # statuses. If we return True, there is also the posibility of the
+        # default order (thats when the query is not sorted)
+        pass
 
     # Public API
 
@@ -210,6 +207,14 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
 
         # If we moved the start value in the for above, also move the end value
         end = min(start + load_total, self._count)
+
+        column = self._objectlist.get_columns()[self._sort_column_id]
+        if hasattr(column, 'search_attribute'):
+            # Even if it's defined, it could be None
+            order_attr = column.search_attribute or column.attribute
+        else:
+            order_attr = column.attribute
+        self._result = self._orig_result.orderBy(order_attr)
 
         if self._sort_order == gtk.SORT_DESCENDING:
             # Results should be reversed, so we need to invert the start and
