@@ -35,6 +35,8 @@ class LazyObjectModelRow(object):
     def __init__(self, item, path, iter):
         self.item = item
         self.path = path
+        self.parent = None  # not supported yet
+        self.next = None  # not supported yet
         self.iter = iter
 
     def __getitem__(self, index):
