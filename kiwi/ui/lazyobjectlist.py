@@ -75,7 +75,7 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         self._load_result_set(result)
 
     def _load_result_set(self, result):
-        self._post_result = self._executer.post_result
+        self._post_result = self._executer.get_post_result(result)
         if self._post_result is not None:
             count = self._post_result.count
         else:
