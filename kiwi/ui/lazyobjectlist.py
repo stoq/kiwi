@@ -187,6 +187,10 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
 
     # Public API
 
+    def clear(self):
+        self._objectlist.set_model(self.old_model)
+        self.old_model.clear()
+
     def load_items_from_results(self, start, end):
         """
         Fetchs rows from the database and displays in the model
@@ -281,11 +285,6 @@ class LazyObjectListUpdater(object):
                                       self._executer,
                                       initial_count=self.INITIAL_ROWS)
         self._objectlist.set_model(self._model)
-
-    def restore_model(self):
-        if not self._model:
-            return
-        self._objectlist.set_model(self._model.old_model)
 
     def _load_result_set(self, start, end):
         self._treeview.freeze_notify()

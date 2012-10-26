@@ -1345,8 +1345,6 @@ class SearchContainer(gtk.VBox):
 
     def add_results(self, results, clear=True):
         if clear:
-            if self._lazy_updater:
-                self._lazy_updater.restore_model()
             self.results.clear()
 
         if self._lazy_updater:
