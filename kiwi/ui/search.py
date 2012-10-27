@@ -1112,28 +1112,6 @@ class SearchContainer(gtk.VBox):
             raise AssertionError(pspec.name)
 
     #
-    # GtkContainer
-    #
-
-    def do_set_child_property(self, child, property_id, value, pspec):
-        if pspec.name == 'filter-position':
-            if value == 'top':
-                pos = SearchFilterPosition.TOP
-            elif value == 'bottom':
-                pos = SearchFilterPosition.BOTTOM
-            else:
-                raise Exception(pos)
-            self.set_filter_position(child, pos)
-        else:
-            raise AssertionError(pspec.name)
-
-    def do_get_child_property(self, child, property_id, pspec):
-        if pspec.name == 'filter-position':
-            return self.get_filter_position(child)
-        else:
-            raise AssertionError(pspec.name)
-
-    #
     # Public API
     #
 
@@ -1502,13 +1480,6 @@ class SearchContainer(gtk.VBox):
         combo = filter.get_mode_combo()
         if combo:
             self.combo_group.add_widget(combo)
-
-
-SearchContainer.install_child_property(
-    1, ('filter-position', str,
-        'Search Filter Position',
-        'The search filter position in the container',
-        '', gobject.PARAM_READWRITE))
 
 
 class SearchSlaveDelegate(SlaveDelegate):
