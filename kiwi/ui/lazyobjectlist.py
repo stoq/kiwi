@@ -321,7 +321,10 @@ class LazyObjectListUpdater(object):
 
     def _maybe_load_more_search_results(self):
         # First check if we've already loaded all items
-        start, end = self._treeview.get_visible_range()
+        res = self._treeview.get_visible_range()
+        if res is None:
+            return
+        start, end = res
 
         def timeout_func(timeout):
             self._timeout_queue.remove(timeout)
