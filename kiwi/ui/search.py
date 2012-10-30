@@ -854,7 +854,7 @@ class StringSearchFilter(SearchFilter):
     # Public API
     #
 
-    def enable_advaced(self):
+    def enable_advanced(self):
         self.mode.show()
 
     def set_label(self, label):
@@ -1086,6 +1086,7 @@ class SearchContainer(gtk.VBox):
         self._query_executer = None
         self._search_filters = []
         self._summary_label = None
+        self.menu = None
 
         search_filter = StringSearchFilter(_('Search:'), chars=chars,
                                            container=self)
@@ -1158,6 +1159,51 @@ class SearchContainer(gtk.VBox):
 
         if self._auto_search:
             self.search()
+
+    def add_filter_by_column(self, column):
+        """Add a filter accordingly to the column specification
+
+        :param column: a SearchColumn instance
+        """
+        title = (column.long_title or column.title) + ':'
+
+        if column.data_type == datetime.date:
+            filter = DateSearchFilter(title)
+            if column.valid_values:
+                filter.clear_options()
+                filter.add_custom_options()
+                for opt in column.valid_values:
+                    filter.add_option(opt)
+                filter.select(column.valid_values[0])
+
+        elif (column.data_type == Decimal or
+              column.data_type == int or
+              column.data_type == currency):
+            filter = NumberSearchFilter(title)
+            if column.data_type != int:
+                filter.set_digits(2)
+        elif column.data_type == str:
+            if column.valid_values:
+                filter = ComboSearchFilter(title, column.valid_values)
+            else:
+                filter = StringSearchFilter(title)
+                filter.enable_advanced()
+        else:
+            # TODO: Boolean
+            raise NotImplementedError, (title, column.data_type)
+
+        filter.set_removable()
+        attr = column.search_attribute or column.attribute
+        self.add_filter(filter, columns=[attr])
+
+        label = filter.get_title_label()
+        label.set_alignment(1.0, 0.5)
+        self.label_group.add_widget(label)
+        combo = filter.get_mode_combo()
+        if combo:
+            self.combo_group.add_widget(combo)
+
+        return filter
 
     def get_search_filters(self):
         return self._search_filters
@@ -1439,47 +1485,10 @@ class SearchContainer(gtk.VBox):
 
     def _on_menu_item_activate(self, item):
         column = item.get_data('column')
-
         if column is None:
             return
 
-        title = (column.long_title or column.title) + ':'
-
-        if column.data_type == datetime.date:
-            filter = DateSearchFilter(title)
-            if column.valid_values:
-                filter.clear_options()
-                filter.add_custom_options()
-                for opt in column.valid_values:
-                    filter.add_option(opt)
-                filter.select(column.valid_values[0])
-
-        elif (column.data_type == Decimal or
-              column.data_type == int or
-              column.data_type == currency):
-            filter = NumberSearchFilter(title)
-            if column.data_type != int:
-                filter.set_digits(2)
-        elif column.data_type == str:
-            if column.valid_values:
-                filter = ComboSearchFilter(title, column.valid_values)
-            else:
-                filter = StringSearchFilter(title)
-                filter.enable_advaced()
-        else:
-            # TODO: Boolean
-            raise NotImplementedError
-
-        filter.set_removable()
-        attr = column.search_attribute or column.attribute
-        self.add_filter(filter, columns=[attr])
-
-        label = filter.get_title_label()
-        label.set_alignment(1.0, 0.5)
-        self.label_group.add_widget(label)
-        combo = filter.get_mode_combo()
-        if combo:
-            self.combo_group.add_widget(combo)
+        self.add_filter_by_column(column)
 
 
 class SearchSlaveDelegate(SlaveDelegate):
