@@ -1190,7 +1190,7 @@ class SearchContainer(gtk.VBox):
                 filter.enable_advanced()
         else:
             # TODO: Boolean
-            raise NotImplementedError, (title, column.data_type)
+            raise NotImplementedError(title, column.data_type)
 
         filter.set_removable()
         attr = column.search_attribute or column.attribute
