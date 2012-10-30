@@ -265,6 +265,10 @@ class LazyObjectListUpdater(object):
     # How many rows should we initially load
     INITIAL_ROWS = 50
 
+    # If the quantity of results is less or equal than this, load
+    # everything as it will be better than doing a lot of slices
+    THRESHOLD = 250
+
     def __init__(self, executer, search):
         self._executer = executer
         self._model = None
@@ -288,11 +292,19 @@ class LazyObjectListUpdater(object):
 
     def _load_result_set(self, start, end):
         self._treeview.freeze_notify()
-        loaded = self._model.load_items_from_results(
-            max(start[0] - self.EXTRA_ROWS, 0),
-            min(end[0] + self.EXTRA_ROWS, len(self._model)))
+
+        count = len(self._model)
+        if count <= self.THRESHOLD:
+            start = 0
+            end = count
+        else:
+            start = max(start[0] - self.EXTRA_ROWS, 0)
+            end = min(end[0] + self.EXTRA_ROWS, count)
+
+        loaded = self._model.load_items_from_results(start, end)
         if loaded:
             self._objectlist.update_selection()
+
         self._treeview.thaw_notify()
 
     def _get_row_height(self):
