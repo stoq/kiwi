@@ -32,6 +32,7 @@ Form is a simple way of creating fields that are:
 import datetime
 from decimal import Decimal
 import gettext
+import sys
 
 import gobject
 import gtk
@@ -295,6 +296,19 @@ class ColorField(Field):
     def build_widget(self):
         button = ProxyColorButton()
         return button
+
+
+class NumericField(Field):
+    """
+    I am a field representing a numeric value.
+    """
+    widget_data_type = Decimal
+
+    def build_widget(self):
+        entry = ProxySpinButton()
+        entry.set_adjustment(gtk.Adjustment(lower=0, step_incr=1,
+                                            upper=sys.maxint, page_incr=10))
+        return entry
 
 
 class PercentageField(Field):
