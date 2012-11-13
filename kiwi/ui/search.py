@@ -818,7 +818,8 @@ class StringSearchFilter(SearchFilter):
             self.emit('changed')
         elif icon_pos == gtk.ENTRY_ICON_PRIMARY:
             # We don't need create popup filters if haven't search columns.
-            if not self._container or not hasattr(self._container, 'menu'):
+            if (not self._container or not hasattr(self._container, 'menu') or
+                not self._container.menu):
                 return
             self._container.menu.popup(None, None,
                                        self._position_filter_menu, 0, event.time)
