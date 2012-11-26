@@ -719,12 +719,14 @@ class KiwiEntry(gtk.Entry):
             # FIXME: Find out why this happens some times
             return False
 
-        if self.completion_ignore_case:
-            key = key.lower()
-            content = content.lower()
+        # We need to do strip_accents() before lower(), since
+        # lower() on win32 will corrupt the utf-8 encoded string
         if self.completion_ignore_accents:
             key = strip_accents(key)
             content = strip_accents(content)
+        if self.completion_ignore_case:
+            key = key.lower()
+            content = content.lower()
 
         return content.startswith(key)
 
@@ -738,12 +740,14 @@ class KiwiEntry(gtk.Entry):
             # FIXME: Find out why this happens some times
             return False
 
-        if self.completion_ignore_case:
-            key = key.lower()
-            content = content.lower()
+        # We need to do strip_accents() before lower(), since
+        # lower() on win32 will corrupt the utf-8 encoded string
         if self.completion_ignore_accents:
             key = strip_accents(key)
             content = strip_accents(content)
+        if self.completion_ignore_case:
+            key = key.lower()
+            content = content.lower()
 
         return key in content
 
