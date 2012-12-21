@@ -31,7 +31,9 @@ import gobject
 # Monkey patch gobject to support enum properties
 import gobject.propertyhelper
 
-gprop = gobject.propertyhelper.property
+gprop = getattr(gobject.propertyhelper, "property", None)
+if gprop is None:
+    gprop = gobject.Property
 parent_type_from_parent = gprop._type_from_python
 parent_get_pspec_args = gprop.get_pspec_args
 
