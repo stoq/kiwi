@@ -49,9 +49,9 @@ class Date(NamedFunc):
 class StormQueryExecuter(QueryExecuter):
     """Execute queries from a storm database"""
 
-    def __init__(self, conn=None):
+    def __init__(self, store=None):
         QueryExecuter.__init__(self)
-        self.conn = conn
+        self.store = store
         self.table = None
         self._query_callbacks = []
         self._filter_query_callbacks = {}
@@ -105,7 +105,7 @@ class StormQueryExecuter(QueryExecuter):
         if self._having:
             having = And(self._having)
 
-        result = self._query(query, having, self.conn)
+        result = self._query(query, having, self.store)
         return result
         #return result.config(limit=self.get_limit())
 
@@ -144,7 +144,7 @@ class StormQueryExecuter(QueryExecuter):
         """
         Overrides the default query mechanism.
         :param callback: a callable which till take two arguments:
-          (query, connection)
+          (query, store)
         """
         if callback is None:
             callback = self._default_query
@@ -154,9 +154,9 @@ class StormQueryExecuter(QueryExecuter):
         self._query = callback
 
     # Basically stolen from sqlobject integration
-    def _default_query(self, query, having, conn):
+    def _default_query(self, query, having, store):
         # FIXME: work outside of sqlobject emulation layer
-        return self.table.select(query, having=having, connection=conn)
+        return self.table.select(query, having=having, store=store)
 
     def _construct_state_query(self, table, state, columns):
         queries = []

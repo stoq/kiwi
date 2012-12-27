@@ -389,7 +389,7 @@ class SlaveView(gobject.GObject):
     def _attach_forms(self):
         for holder_name, form in self._forms.items():
             self.attach_slave(holder_name, form)
-            form.populate(self.conn)
+            form.populate(self.store)
             form.add_proxy()
             form.show()
         self._forms_attached = True
