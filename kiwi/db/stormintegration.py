@@ -155,8 +155,19 @@ class StormQueryExecuter(QueryExecuter):
 
     # Basically stolen from sqlobject integration
     def _default_query(self, query, having, store):
-        # FIXME: work outside of sqlobject emulation layer
-        return self.table.select(query, having=having, store=store)
+        # Remove this once we figure out the viewable
+        if not hasattr(self.table, '__storm_table__'):
+            return self.table.select(query, having=having, store=store)
+
+        if query:
+            results = store.find(self.table, query)
+        else:
+            results = store.find(self.table)
+
+        if having:
+            results = results.having(having)
+
+        return results
 
     def _construct_state_query(self, table, state, columns):
         queries = []
