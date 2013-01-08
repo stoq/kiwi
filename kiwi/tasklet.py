@@ -183,9 +183,6 @@ import warnings
 
 import gobject
 
-if gobject.pygtk_version <= (2, 8):
-    raise RuntimeError("PyGTK 2.8 or later is required for kiwi.tasklet")
-
 _event = None
 
 

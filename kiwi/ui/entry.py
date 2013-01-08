@@ -106,13 +106,6 @@ from kiwi.python import strip_accents
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import type_register
 
-# In gtk+ 2.18 they refactored gtk.Entry to use gtk.EntryBuffer, so we need to
-# track the gtk version here for later use.
-if gtk.gtk_version >= (2, 18):
-    GTK_2_18 = True
-else:
-    GTK_2_18 = False
-
 
 class MaskError(Exception):
     pass
@@ -247,14 +240,13 @@ class KiwiEntry(gtk.Entry):
 
         gtk.Entry.set_text(self, text)
 
-        if GTK_2_18:
-            self._do_2_18_workaround(text)
+        self._apply_set_text_workaround(text)
 
         if isinstance(completion, KiwiEntryCompletion):
             self.handler_unblock(completion.changed_id)
 
-    def _do_2_18_workaround(self, text):
-        # FIXME: When using gtk 2.18 and pygtk 2.16 our set_text method is
+    def _apply_set_text_workaround(self, text):
+        # FIXME: When using gtk 2.18 and later our set_text method is
         # broken because we edit the text that will stay in the entry (mask
         # feature). My guess is that the signal 'insert-text' have not been
         # emitted when calling gtk_entry_set_text method (but the signal is

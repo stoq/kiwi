@@ -7,9 +7,9 @@ offers extended widgets based upon the original PyGTK widgets.
 
 * Requirements
 
-    - GTK+ 2.20.x      ftp://ftp.gtk.org/pub/gtk/v2.20/
-    - PyGTK 2.16.x     ftp://ftp.gtk.org/pub/gtk/python/
-    - Python > 2.5     http://www.python.org/download/
+    - GTK+ 2.22.x      ftp://ftp.gtk.org/pub/gtk/v2.22/
+    - PyGTK 2.22.x     ftp://ftp.gtk.org/pub/gtk/python/
+    - Python >= 2.6    http://www.python.org/download/
 
   Optional
 
