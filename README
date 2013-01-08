@@ -36,6 +36,16 @@ offers extended widgets based upon the original PyGTK widgets.
 
         $ git clone github.com/jdahlin/kiwi.git
 
+* Contribute
+
+    We use gerrit to control the Kiwi development:
+
+    http://gerrit.async.com.br/
+
+    Create an account there and submit your patches via:
+
+    $ git push git+ssh://$USERNAME@gerrit.async.com.br:29418/kiwi
+
 * Documentation
 
     Included in doc/howto/ and doc/api/ are HTML versions of the
