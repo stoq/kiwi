@@ -302,7 +302,7 @@ def open(title='', parent=None, patterns=None, folder=None, filter=None,
 
     error(_('Could not open file "%s"') % abspath,
           _('The file "%s" could not be opened. '
-            'Permission denied.') %  abspath)
+            'Permission denied.') % abspath)
 
     if with_file_chooser:
         return None, filechooser
@@ -343,7 +343,7 @@ def selectfolder(title='', parent=None, folder=None):
 
     error(_('Could not select folder "%s"') % abspath,
           _('The folder "%s" could not be selected. '
-            'Permission denied.') %  abspath)
+            'Permission denied.') % abspath)
 
     filechooser.destroy()
     return

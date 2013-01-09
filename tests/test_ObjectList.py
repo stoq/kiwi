@@ -103,7 +103,7 @@ class DataTests(unittest.TestCase):
         self.assertEqual(len(self.list), len(persons))
 
     def testRemovingOneInstance(self):
-        global  persons
+        global persons
 
         self.list.add_list(persons)
         refresh_gui()

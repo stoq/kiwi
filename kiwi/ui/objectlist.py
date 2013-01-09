@@ -431,7 +431,7 @@ class Column(gobject.GObject):
             for key, value in items:
                 enum_model.append((key.lower().capitalize(), value))
 
-            renderer =  gtk.CellRendererCombo()
+            renderer = gtk.CellRendererCombo()
             renderer.set_property('model', enum_model)
             renderer.set_property('text-column', 0)
             renderer.set_property('has-entry', True)

@@ -13,11 +13,8 @@ _IGNORED_ERRORS = [
     'E126',  # continuation line over-indented for hanging indent
     'E127',  # continuation line over-indented for visual indent
     'E128',  # continuation line under-indented for visual indent
-    'E222',  # multiple spaces after operator
     'E261',  # at least two spaces before inline comment
     'E262',  # inline comment should start with '# '
-    'E271',  # multiple spaces after keyword
-    'E369',  # multiple spaces after operator
     'E501',  # line too long
     'E502',  # the backslash is redundant between brackets
     'E711',  # comparison to None should be 'if cond is None:'

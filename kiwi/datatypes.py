@@ -366,7 +366,7 @@ class _FloatConverter(BaseConverter):
             # will also be formated as an integer, so we add a '.0'
 
             conv = get_localeconv()
-            as_str +=  conv.get('decimal_point') + '0'
+            as_str += conv.get('decimal_point') + '0'
 
         return as_str
 

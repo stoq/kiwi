@@ -152,7 +152,7 @@ class Runner(object):
                 self.quit()
                 break
 
-            ex =  stmts[self._pos]
+            ex = stmts[self._pos]
             self._pos += 1
 
             log.info('will now execute %r' % (ex.source[:-1],))

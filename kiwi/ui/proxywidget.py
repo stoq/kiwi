@@ -261,7 +261,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
         try:
             data = self.read()
-            log.debug('Read %r for %s' %  (data, self.model_attribute))
+            log.debug('Read %r for %s' % (data, self.model_attribute))
 
             # check if we should draw the mandatory icon
             # this need to be done before any data conversion because we

@@ -263,7 +263,7 @@ class ProxyDateEntry(DateEntry, ValidatableProxyWidgetMixin):
         layout = self.entry.get_layout()
         context = layout.get_context()
         metrics = context.get_metrics(context.get_font_description())
-        char_width =  metrics.get_approximate_char_width() / pango.SCALE
+        char_width = metrics.get_approximate_char_width() / pango.SCALE
         current_width = self.entry.get_width_chars()
 
         # We add 4 pixels to the width, because of the icon borders

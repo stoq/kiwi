@@ -171,9 +171,9 @@ class HyperLink(gtk.EventBox):
             state = 'hover'
         else:
             state = 'normal'
-        color =  self.get_property('%s-color' % state)
-        underline =  self.get_property('%s-underline' % state)
-        bold =  self.get_property('%s-bold' % state)
+        color = self.get_property('%s-color' % state)
+        underline = self.get_property('%s-underline' % state)
+        bold = self.get_property('%s-bold' % state)
         markup_string = self._build_markup(self.get_text() or '',
                                            color, underline, bold)
         self._label.set_markup(markup_string)

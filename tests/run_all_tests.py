@@ -6,7 +6,7 @@ import inspect
 import unittest
 
 myself = os.path.abspath(__file__)
-testdir =  os.path.dirname(myself)
+testdir = os.path.dirname(myself)
 if testdir not in sys.path:
     sys.path.append(testdir)
 sys.path.insert(0, os.path.join(testdir, '..'))
