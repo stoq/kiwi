@@ -17,7 +17,7 @@ class LogTest(unittest.TestCase):
         if os.path.exists(self.filename):
             try:
                 os.unlink(self.filename)
-            except OSError: # win32 permission error
+            except OSError:  # win32 permission error
                 pass
 
     def testSetLogFile(self):

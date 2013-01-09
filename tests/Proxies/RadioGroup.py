@@ -17,7 +17,7 @@ class Foo(Model):
     B = 222
     C = "OOH"
     # No D - Play
-    E = None # Run
+    E = None  # Run
     # No F - Play
 
 

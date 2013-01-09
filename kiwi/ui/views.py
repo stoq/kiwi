@@ -620,10 +620,10 @@ class SlaveView(gobject.GObject):
 
         shell = slave.get_toplevel()
 
-        if isinstance(shell, (gtk.Window, gtk.Dialog)): # view with toplevel window
+        if isinstance(shell, (gtk.Window, gtk.Dialog)):  # view with toplevel window
             new_widget = shell.get_child()
-            shell.remove(new_widget) # remove from window to allow reparent
-        else: # slaveview
+            shell.remove(new_widget)  # remove from window to allow reparent
+        else:  # slaveview
             new_widget = shell
 
         placeholder = placeholder_widget or self.get_widget(name)
@@ -1060,7 +1060,7 @@ class BaseView(SlaveView):
         is set as a transient for the parent view.
         """
         # Uniconize window if minimized
-        self.toplevel.present() # this call win.show() for us
+        self.toplevel.present()  # this call win.show() for us
         self.check_focus()
         if parent is not None:
             self.set_transient_for(parent)

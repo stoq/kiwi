@@ -39,7 +39,7 @@ from gtk import gdk
 
 from kiwi.accessor import kgetattr
 from kiwi.datatypes import converter, number, Decimal, ValidationError
-from kiwi.currency import currency # after datatypes
+from kiwi.currency import currency  # after datatypes
 from kiwi.enums import Alignment
 from kiwi.log import Logger
 from kiwi.python import enum, slicerange

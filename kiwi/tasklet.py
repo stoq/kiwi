@@ -337,8 +337,8 @@ class WaitForIO(WaitCondition):
 
         WaitCondition.__init__(self)
         self.filedes = filedes
-        self._condition = condition # listen condition
-        self.condition = None # last occurred condition
+        self._condition = condition  # listen condition
+        self.condition = None  # last occurred condition
         self._callback = None
         self._id = None
         self._priority = priority
@@ -764,7 +764,7 @@ class Tasklet(object):
             assert isinstance(gen, types.GeneratorType)
             self.gen = gen
         if start:
-            self._next_round() # bootstrap
+            self._next_round()  # bootstrap
 
     def start(self):
         """Starts the execution of the task, for use with tasklets
@@ -823,7 +823,7 @@ class Tasklet(object):
     def _next_round(self):
         assert self.state == Tasklet.STATE_SUSPENDED
         old_wait_list = self.wait_list
-        while True: # loop while tasklet yields tasklet.post_message(...)
+        while True:  # loop while tasklet yields tasklet.post_message(...)
 
             gen_value = self._invoke()
             if gen_value is None:
@@ -834,7 +834,7 @@ class Tasklet(object):
                 self.state = Tasklet.STATE_MSGSEND
                 msg.sender = self
                 msg.dest.send_message(msg)
-                continue # loop because we posted a message
+                continue  # loop because we posted a message
             elif isinstance(gen_value, tuple):
                 self.wait_list = list(gen_value)
             elif isinstance(gen_value, list):
@@ -936,7 +936,7 @@ class Tasklet(object):
 
         '''
         handle = hash(callback)
-        while handle in self._join_callbacks: # handle collisions
+        while handle in self._join_callbacks:  # handle collisions
             handle += 1
         self._join_callbacks[handle] = callback, extra_args
         return handle

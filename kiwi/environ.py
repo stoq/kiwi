@@ -46,9 +46,9 @@ EnvironmentError = EnvironmentError
 # From http://tinyurl.com/77ukj
 def _is_frozen():
     "Helper function to check if we're frozen in a py2exe'd file"
-    return (hasattr(sys, "frozen") or # new py2exe
-            hasattr(sys, "importers") # old py2exe
-            or imp.is_frozen("__main__")) # tools/freeze
+    return (hasattr(sys, "frozen") or  # new py2exe
+            hasattr(sys, "importers")  # old py2exe
+            or imp.is_frozen("__main__"))  # tools/freeze
 
 
 class Environment:

@@ -261,8 +261,8 @@ class enum(int):
 
     @classmethod
     def __class_init__(cls, ns):
-        cls.names = {} # name -> enum
-        cls.values = {} # value -> enum
+        cls.names = {}  # name -> enum
+        cls.values = {}  # value -> enum
 
         for key, value in ns.items():
             if isinstance(value, int):

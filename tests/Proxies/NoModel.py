@@ -42,7 +42,7 @@ if DEBUG:
     c.show_all()
     gtk.mainloop()
     pprint.pprint(f.__dict__)
-assert f.A == 0, f.A # XXX: Is this really expected?
+assert f.A == 0, f.A  # XXX: Is this really expected?
 
 f = Foo()
 f.A = 10

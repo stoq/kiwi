@@ -33,11 +33,11 @@ from kiwi.utils import gsignal
 
 try:
     from gtk.gdk import event_handler_set
-    event_handler_set # pyflakes
+    event_handler_set  # pyflakes
 except ImportError:
     try:
         from kiwi._kiwi import event_handler_set
-        event_handler_set # pyflakes
+        event_handler_set  # pyflakes
     except ImportError:
         event_handler_set = None
 
@@ -49,8 +49,8 @@ class WidgetIntrospecter(gobject.GObject):
     def __init__(self):
         gobject.GObject.__init__(self)
         self._objects = {}
-        self._id_to_obj = {} # GdkWindow -> GtkWindow
-        self._windows = {} # toplevels ?
+        self._id_to_obj = {}  # GdkWindow -> GtkWindow
+        self._windows = {}  # toplevels ?
 
     def _event_handler(self, event):
         # Separate method so we can use return inside

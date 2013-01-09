@@ -16,7 +16,7 @@ class ArgTest(unittest.TestCase):
         f = argcheck(str, int)(lambda s, i: None)
         f('str', 1)
         self.assertRaises(TypeError, f, 1, 1)         # first incorret
-        self.assertRaises(TypeError, f, 'str', 'str') # second incorrect
+        self.assertRaises(TypeError, f, 'str', 'str')  # second incorrect
         self.assertRaises(TypeError, f, 1, 'str')     # swapped
         self.assertRaises(TypeError, f, 1)            # too few
         self.assertRaises(TypeError, f, 'str', 1, 1)  # too many

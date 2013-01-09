@@ -47,11 +47,11 @@ from kiwi.ui.objectlist import ObjectList
 
 try:
     from gobject import add_emission_hook
-    add_emission_hook # pyflakes
+    add_emission_hook  # pyflakes
 except ImportError:
     try:
         from kiwi._kiwi import add_emission_hook
-        add_emission_hook # pyflakes
+        add_emission_hook  # pyflakes
     except ImportError:
         add_emission_hook = None
 

@@ -51,7 +51,7 @@ from kiwi.python import enum
 try:
     from decimal import Decimal, InvalidOperation
     HAVE_DECIMAL = True
-    Decimal, InvalidOperation # pyflakes
+    Decimal, InvalidOperation  # pyflakes
 except:
     HAVE_DECIMAL = False
 

@@ -21,9 +21,9 @@ def prefill(args):
 class Foo(Model):
     A = "Run"
     B = "Hide"
-    C = None # Play
+    C = None  # Play
     # No D - Play
-    E = 666 # Run
+    E = 666  # Run
     # No F - Play
 
 

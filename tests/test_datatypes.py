@@ -10,7 +10,7 @@ from kiwi.python import enum
 
 # pixbuf converter
 from kiwi.ui import proxywidget
-proxywidget # pyflakes
+proxywidget  # pyflakes
 
 fake = type('fake', (object,), {})
 

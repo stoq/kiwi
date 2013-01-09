@@ -52,7 +52,7 @@ set_decimal_separator("X")
 f = Foo()
 c = EntryProxy(f)
 c.set_decimal_separator(".")
-c.update("A") # Trigger view refresh
+c.update("A")  # Trigger view refresh
 assert c.A.get_text() == "10.1", c.A.get_text()
 assert f.A == 10.1
 

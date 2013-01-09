@@ -41,7 +41,7 @@ Kiwi includes a Framework and a set of enhanced widgets
 
 try:
     import gobject
-    gobject # pyflakes
+    gobject  # pyflakes
 except ImportError, e:
     try:
         import pygtk
@@ -51,7 +51,7 @@ except ImportError, e:
 
     try:
         import gobject
-        gobject # pyflakes
+        gobject  # pyflakes
     except:
         raise SystemExit(
             "PyGTK 2.22 or higher is required by kiwi\n"
@@ -61,7 +61,7 @@ from kiwi.__version__ import version as kiwi_version
 from kiwi.environ import EnvironmentError, Library
 
 
-assert kiwi_version # pyflakes
+assert kiwi_version  # pyflakes
 
 library = Library('kiwi')
 if library.uninstalled:
@@ -85,7 +85,7 @@ __all__ = ['ValueUnset', 'kiwi_version']
 # locale so we need to set the locale to that one
 import locale
 try:
-    locale.setlocale(locale.LC_ALL, '') # this set the user locale ( $LANG )
+    locale.setlocale(locale.LC_ALL, '')  # this set the user locale ( $LANG )
 except locale.Error:
     pass
 del locale
