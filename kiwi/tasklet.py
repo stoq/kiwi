@@ -858,7 +858,7 @@ class Tasklet(object):
             msg = self._dispatch_message()
             if msg is not None:
                 self._event = msg
-                continue ## send a message
+                continue  # send a message
 
             break
 

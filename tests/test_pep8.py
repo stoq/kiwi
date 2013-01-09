@@ -8,7 +8,6 @@ from utils import SourceTest
 _IGNORED_ERRORS = [
     'E125',  # continuation line does not distinguish itself from next logical line
     'E261',  # at least two spaces before inline comment
-    'E262',  # inline comment should start with '# '
     'E501',  # line too long
 ]
 
