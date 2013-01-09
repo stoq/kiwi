@@ -1130,17 +1130,14 @@ class SearchContainer(gtk.VBox):
             raise TypeError("search_filter must be a SearchFilter subclass, "
                             "not %r" % (search_filter,))
 
-        if columns and callback:
-            raise TypeError("Cannot specify both column and callback")
-
         executer = self.get_query_executer()
         if executer:
-            if columns:
-                executer.set_filter_columns(search_filter, columns)
             if callback:
                 if not callable(callback):
                     raise TypeError("callback must be callable")
                 executer.add_filter_query_callback(search_filter, callback)
+            elif columns:
+                executer.set_filter_columns(search_filter, columns)
         else:
             if columns or callback:
                 raise TypeError(
@@ -1166,7 +1163,7 @@ class SearchContainer(gtk.VBox):
 
         :param column: a SearchColumn instance
         """
-        title = (column.long_title or column.title) + ':'
+        title = column.get_search_label() + ':'
 
         if column.data_type == datetime.date:
             filter = DateSearchFilter(title)
@@ -1195,7 +1192,8 @@ class SearchContainer(gtk.VBox):
 
         filter.set_removable()
         attr = column.search_attribute or column.attribute
-        self.add_filter(filter, columns=[attr])
+        self.add_filter(filter, columns=[attr],
+                        callback=column.search_func)
 
         label = filter.get_title_label()
         label.set_alignment(1.0, 0.5)
@@ -1476,7 +1474,7 @@ class SearchContainer(gtk.VBox):
                                         str):
                 continue
 
-            title = column.long_title or column.title
+            title = column.get_search_label()
 
             menu_item = gtk.MenuItem(title)
             menu_item.set_data('column', column)

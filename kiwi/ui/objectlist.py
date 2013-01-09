@@ -733,6 +733,11 @@ class SearchColumn(Column):
                              the model.
     """
 
+    #: overrides the function that generates the query to process the search
+    search_func = gobject.property(type=object, default=None)
+    #: names the search interface differently from the column
+    search_label = gobject.property(type=object, default=None)
+
     def __init__(self, attribute, title=None, data_type=None,
                  long_title=None, valid_values=None, search_attribute=None,
                  **kwargs):
@@ -742,7 +747,22 @@ class SearchColumn(Column):
         self.valid_values = valid_values
         self.search_attribute = search_attribute
         self.sensitive = True
+
         Column.__init__(self, attribute, title, data_type, **kwargs)
+
+        search_func = kwargs.get('search_func')
+        if search_func:
+            if not callable(search_func):
+                raise TypeError("search_func must be callable")
+            self.search_func = search_func
+
+    def get_search_label(self):
+        """Get the search label for this column.
+          This is normally used when constructing a search filter for this
+          column.
+          :returns: the search label
+        """
+        return self.search_label or self.long_title or self.title
 
 
 class ColoredColumn(Column):
