@@ -791,7 +791,7 @@ class SlaveView(gobject.GObject):
         for widget in widgets:
             if not isinstance(widget, gtk.Widget):
                 raise TypeError(
-                "Only Gtk widgets may be passed in list, found\n%s" % widget)
+                    "Only Gtk widgets may be passed in list, found\n%s" % widget)
             if after:
                 widget.connect_after(signal, handler)
             else:

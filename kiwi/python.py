@@ -173,8 +173,8 @@ class Settable:
 
     def __repr__(self):
         return '<%s %s>' % (self.__class__.__name__,
-                            ', '.join(
-            ['%s=%r' % (attr, getattr(self, attr)) for attr in self._attrs]))
+                            ', '.join(['%s=%r' % (attr, getattr(self, attr)) for
+                                       attr in self._attrs]))
 
 
 def qual(klass):

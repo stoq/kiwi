@@ -95,7 +95,7 @@ class Proxy:
             if widget is None:
                 raise AttributeError("The widget %s was not found in the "
                                      "view %s" % (
-                    widget_name, self._view.__class__.__name__))
+                                         widget_name, self._view.__class__.__name__))
 
             self._setup_widget(widget_name, widget)
 
@@ -152,7 +152,7 @@ class Proxy:
         if data_type is None:
             raise ProxyError("The kiwi widget %s (%r) in view %s should "
                              "have a data type set" % (
-                widget_name, widget, self._view.__class__.__name__))
+                                 widget_name, widget, self._view.__class__.__name__))
 
         attribute = widget.get_property('model-attribute')
         if not attribute:
@@ -193,8 +193,8 @@ class Proxy:
             old_widget = model_attributes[attribute]
             raise KeyError("The widget %s (%r) in view %s is already in "
                            "the proxy, defined by widget %s (%r)" % (
-                widget_name, widget, self._view.__class__.__name__,
-                old_widget.name, old_widget))
+                               widget_name, widget, self._view.__class__.__name__,
+                               old_widget.name, old_widget))
 
         model_attributes[attribute] = widget
         self._reset_widget(attribute, widget)

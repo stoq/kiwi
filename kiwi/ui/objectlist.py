@@ -1356,7 +1356,7 @@ class ObjectList(gtk.HBox):
                 if sorted:
                     raise ValueError("Can't make column %s sorted, column"
                                      " %s is already set as sortable" % (
-                        column.attribute, sorted))
+                                         column.attribute, sorted))
                 sorted = column.attribute
             if column.expand:
                 expand = True
