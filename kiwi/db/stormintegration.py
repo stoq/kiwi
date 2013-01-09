@@ -30,8 +30,8 @@ Storm integration for Kiwi
 from storm.expr import And, Or, Like, Not, Alias, NamedFunc
 
 from kiwi.db.query import NumberQueryState, StringQueryState, \
-     DateQueryState, DateIntervalQueryState, QueryExecuter, \
-     NumberIntervalQueryState
+    DateQueryState, DateIntervalQueryState, QueryExecuter, \
+    NumberIntervalQueryState
 from kiwi.interfaces import ISearchFilter
 
 # FIXME: make this usable outside of stoqlib

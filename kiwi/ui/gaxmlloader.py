@@ -55,7 +55,7 @@ class GAXMLWidgetTree(object):
         widget = self._parser.get_object(name=name)
         if widget is None:
             raise AttributeError(
-                  "Widget %s not found in view %s" % (name, self._view))
+                "Widget %s not found in view %s" % (name, self._view))
         return widget
 
     def get_widgets(self):

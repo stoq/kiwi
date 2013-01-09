@@ -6,7 +6,6 @@ import sys
 from utils import SourceTest
 
 _IGNORED_ERRORS = [
-    'E121',  # continuation line indentation is not a multiple of four
     'E125',  # continuation line does not distinguish itself from next logical line
     'E261',  # at least two spaces before inline comment
     'E262',  # inline comment should start with '# '

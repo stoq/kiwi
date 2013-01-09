@@ -36,10 +36,10 @@ from kiwi.enums import Alignment
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.python import deprecationwarn
 from kiwi.ui.entry import MaskError, KiwiEntry, ENTRY_MODE_TEXT, \
-     ENTRY_MODE_DATA
+    ENTRY_MODE_DATA
 from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin, \
-     VALIDATION_ICON_WIDTH
+    VALIDATION_ICON_WIDTH
 from kiwi.utils import gsignal, type_register
 
 

@@ -631,7 +631,7 @@ class SlaveView(gobject.GObject):
 
         if not placeholder:
             raise AttributeError(
-                  "slave container widget `%s' not found" % name)
+                "slave container widget `%s' not found" % name)
 
         # This is for glade-less Views, create an EventBox automatically
         # for a holder
@@ -1113,7 +1113,7 @@ def _open_glade(view, gladefile, domain):
         raise ValueError("A gladefile wasn't provided.")
     elif not isinstance(gladefile, basestring):
         raise TypeError(
-              "gladefile should be a string, found %s" % type(gladefile))
+            "gladefile should be a string, found %s" % type(gladefile))
 
     if _glade_loader_func:
         return _glade_loader_func(view, gladefile, domain)

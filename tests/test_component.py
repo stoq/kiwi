@@ -1,7 +1,7 @@
 import unittest
 
 from kiwi.component import AlreadyImplementedError, Interface, \
-     get_utility, provide_utility, remove_utility, implements, utilities
+    get_utility, provide_utility, remove_utility, implements, utilities
 
 o = object()
 

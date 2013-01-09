@@ -28,7 +28,7 @@ import gtk
 from kiwi.decorators import deprecated
 from kiwi.python import deprecationwarn
 from kiwi.ui.objectlist import Column, SequentialColumn, ColoredColumn, \
-     ListLabel, SummaryLabel
+    ListLabel, SummaryLabel
 from kiwi.ui.objectlist import ObjectList, log
 
 # pyflakes

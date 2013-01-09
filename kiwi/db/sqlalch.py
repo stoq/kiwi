@@ -27,8 +27,8 @@ SQLAlchemy integration for Kiwi
 from sqlalchemy import and_, or_, not_
 
 from kiwi.db.query import NumberQueryState, StringQueryState, \
-     DateQueryState, DateIntervalQueryState, QueryExecuter, \
-     NumberIntervalQueryState
+    DateQueryState, DateIntervalQueryState, QueryExecuter, \
+    NumberIntervalQueryState
 from kiwi.interfaces import ISearchFilter
 
 

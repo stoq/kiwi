@@ -4,7 +4,7 @@ import locale
 import unittest
 
 from kiwi.datatypes import converter, ValidationError, ValueUnset, \
-     Decimal, BaseConverter
+    Decimal, BaseConverter
 from kiwi.currency import currency
 from kiwi.python import enum
 
