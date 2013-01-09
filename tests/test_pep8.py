@@ -1,37 +1,29 @@
+import os
 import unittest
-
-import pep8
+import subprocess
+import sys
 
 from utils import SourceTest
 
-ERRORS = [
-    'E111', # indentation is not a multiple of four
-    'E112', # expected an indented block
-    'E113', # unexpected indentation
-    'E201', # whitespace after '{'
-    'E202', # whitespace before ')'
-    'E203', # whitespace before ':'
-    'E211', # whitespace before '('
-    'E221', # multiple spaces before operator
-    'E225', # missing whitespace around operator
-    'E231', # E231 missing whitespace after ','/':'
-    'E241', # multiple spaces after operator
-    'E251', # no spaces around keyword / parameter equals
-    'E262', # inline comment should start with '# '
-    'W291', # trailing whitespace
-    'W292', # no newline at end of file
-    'W293', # blank line contains whitespace
-    'E301', # expected 1 blank line, found 0
-    'E302', # expected 2 blank lines, found 1
-    'E303', # too many blank lines
-    'W391', # blank line at end of file
-    'E401', # multiple imports on one line
-    'W601', # in instead of dict.has_key
-    'W602', # deprecated form of raising exception
-    'W603', # '<>' is deprecated, use '!='"
-    'W604', # backticks are deprecated, use 'repr()'
-    'E701', # multiple statements on one line (colon)
-    'E702', # multiple statements on one line (semicolon)
+_IGNORED_ERRORS = [
+    'E101',  # indentation contains mixed spaces and tabs
+    'E123',  # closing bracket does not match indentation of opening bracket's line
+    'E121',  # continuation line indentation is not a multiple of four
+    'E122',  # continuation line missing indentation or outdented
+    'E125',  # continuation line does not distinguish itself from next logical line
+    'E126',  # continuation line over-indented for hanging indent
+    'E127',  # continuation line over-indented for visual indent
+    'E128',  # continuation line under-indented for visual indent
+    'E222',  # multiple spaces after operator
+    'E261',  # at least two spaces before inline comment
+    'E262',  # inline comment should start with '# '
+    'E271',  # multiple spaces after keyword
+    'E369',  # multiple spaces after operator
+    'E501',  # line too long
+    'E502',  # the backslash is redundant between brackets
+    'E711',  # comparison to None should be 'if cond is None:'
+    'E712',  # comparison to True should be 'if cond is True:' or 'if cond:'
+    'W191',  # indentation contains tabs
     ]
 
 
@@ -39,12 +31,16 @@ class TestPEP8(SourceTest, unittest.TestCase):
     """Check for pep8 problems on kiwi sources"""
 
     def check_filename(self, root, filename):
-        pep8.process_options([
-            '--repeat',
-            '--select=%s' % (','.join(ERRORS), ), filename
-            ])
-        pep8.input_file(filename)
-        result = pep8.get_count()
+        cmd = [sys.executable,
+               os.path.join(root, 'tools', 'pep8.py'),
+               '--count',
+               '--repeat',
+               '--ignore=%s' % (','.join(_IGNORED_ERRORS), ),
+               filename]
+
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        stdout = p.communicate()[0]
+        result = p.returncode
         if result:
-            raise AssertionError("ERROR: %d PEP8 errors in %s" % (result,
-                                                                  filename))
+            raise AssertionError("ERROR: %d PEP8 errors in %s" %
+                                 (result, stdout))
