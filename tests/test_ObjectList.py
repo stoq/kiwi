@@ -276,14 +276,14 @@ class ConstructorTest(unittest.TestCase):
 
     def testInstanceObjectList(self):
         klist = ObjectList([Column('name', sorted=True)],
-                     [Settable(name='first')])
+                           [Settable(name='first')])
         columns = klist.get_columns()
         self.assertEqual(len(columns), 1)
         self.assertEqual(columns[0].attribute, 'name')
 
     def testInstanceObjectListWithNoneData(self):
         klist = ObjectList([Column('name', sorted=True)],
-                     [Settable(name=None)])
+                           [Settable(name=None)])
         columns = klist.get_columns()
         self.assertEqual(len(columns), 1)
 

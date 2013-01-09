@@ -253,7 +253,7 @@ class _ComboEntryPopup(gtk.Window):
                             (gdk.BUTTON_PRESS_MASK |
                              gdk.BUTTON_RELEASE_MASK |
                              gdk.POINTER_MOTION_MASK),
-                             None, None, activate_time) == 0:
+                            None, None, activate_time) == 0:
             if gdk.keyboard_grab(window, True, activate_time) == 0:
                 return True
             else:

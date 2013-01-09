@@ -98,7 +98,7 @@ class BuilderWidgetTree:
 
     def get_sizegroups(self):
         return [obj for obj in self._builder.get_objects()
-                        if isinstance(obj, gtk.SizeGroup)]
+                if isinstance(obj, gtk.SizeGroup)]
 
     def signal_autoconnect(self, obj):
         self._builder.connect_signals(obj)

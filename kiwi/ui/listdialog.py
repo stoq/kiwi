@@ -194,7 +194,7 @@ class ListContainer(gtk.HBox):
         :returns: True if the user confirm the removal, False otherwise
         """
         response = yesno(_('Do you want to remove %s ?') %
-                (glib.markup_escape_text(str(item)),),
+                        (glib.markup_escape_text(str(item)),),
                          parent=None,
                          default=gtk.RESPONSE_OK,
                          buttons=((gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL),

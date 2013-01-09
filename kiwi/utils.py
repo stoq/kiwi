@@ -69,7 +69,7 @@ def list_properties(gtype, parent=True):
 
     parent_pspecs = gobject.list_properties(parent)
     return [pspec for pspec in pspecs
-                      if pspec not in parent_pspecs]
+            if pspec not in parent_pspecs]
 
 
 def type_register(gtype):

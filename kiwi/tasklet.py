@@ -362,8 +362,8 @@ class WaitForIO(WaitCondition):
                 else:
                     filedes = self.filedes.fileno()
                 self._id = gobject.io_add_watch(filedes, self._condition,
-                                                 self._io_cb,
-                                                 priority=self._priority)
+                                                self._io_cb,
+                                                priority=self._priority)
 
     def disarm(self):
         '''Overrides WaitCondition.disarm'''
@@ -881,12 +881,12 @@ class Tasklet(object):
         if __debug__:
             self._message_queue = [msg
                                    for msg in self._message_queue
-                                       if _get_action(msg) != Message.DISCARD]
+                                   if _get_action(msg) != Message.DISCARD]
         else:
             ## slightly more efficient version of the above
             self._message_queue = [msg for msg in self._message_queue
-                if (self._message_actions.get(msg.name, Message.DISCARD)
-                    != Message.DISCARD)]
+                                   if (self._message_actions.get(msg.name, Message.DISCARD)
+                                       != Message.DISCARD)]
 
         ## find next ACCEPT-able message from queue, and pop it out
         for idx, msg in enumerate(self._message_queue):

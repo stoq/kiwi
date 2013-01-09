@@ -115,7 +115,7 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
         keys.sort()
 
         attr_pairs = ['%s="%s"' % (key, attrs[key]) for key in keys
-                                                        if attrs[key]]
+                      if attrs[key]]
         self.set_markup('<span %s>%s</span>' % (
             ' '.join(attr_pairs),
             self.get_text()))

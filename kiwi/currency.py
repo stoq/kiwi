@@ -55,7 +55,7 @@ class currency(Decimal):
             try:
                 text = filter_locale(text, monetary=True)
                 value = currency._converter.from_string(text,
-                                                filter=False)
+                                                        filter=False)
             except ValidationError:
                 # Decimal does not accept leading and trailing spaces. See
                 # bug 1516613

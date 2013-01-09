@@ -85,7 +85,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
     def _connect_completion_signals(self):
         if self._popup_completion:
             self.changed_id = self._entry.connect('changed',
-                                self._on_completion_changed)
+                                                  self._on_completion_changed)
 
             self._entry.connect('key-press-event',
                                 self._on_completion_key_press)
@@ -227,7 +227,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
                             (gdk.BUTTON_PRESS_MASK |
                              gdk.BUTTON_RELEASE_MASK |
                              gdk.POINTER_MOTION_MASK),
-                             None, None, activate_time) == 0:
+                            None, None, activate_time) == 0:
             if gdk.keyboard_grab(window, True, activate_time) == 0:
                 return True
             else:

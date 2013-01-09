@@ -311,7 +311,7 @@ class SlaveView(gobject.GObject):
             return []
 
         return [widget for widget in self._glade_adaptor.get_widgets()
-                           if isinstance(widget, gtk.Notebook)]
+                if isinstance(widget, gtk.Notebook)]
 
     def _check_reserved(self):
         for reserved in ["widgets", "toplevel", "gladefile",

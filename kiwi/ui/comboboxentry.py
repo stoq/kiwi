@@ -50,7 +50,7 @@ class BaseComboBoxEntry(gtk.ComboBox):
         self.pack_start(self._text_renderer, True)
         self.set_active(-1)
         self.entry_changed_id = self.entry.connect('changed',
-                                                     self._on_entry__changed)
+                                                   self._on_entry__changed)
         self._active_changed_id = self.connect("changed",
                                                self._on_entry__active_changed)
         self._has_frame_changed(None)

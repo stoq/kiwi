@@ -221,7 +221,7 @@ def messagedialog(dialog_type, short, long=None, parent=None,
 
 
 def _simple(type, short, long=None, parent=None, buttons=gtk.BUTTONS_OK,
-          default=-1):
+            default=-1):
     if buttons == gtk.BUTTONS_OK:
         default = gtk.RESPONSE_OK
     return messagedialog(type, short, long,

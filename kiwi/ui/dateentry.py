@@ -63,7 +63,7 @@ class _DateEntryPopup(gtk.Window):
 
         self.calendar = gtk.Calendar()
         self.calendar.connect('day-selected-double-click',
-                               self._on_calendar__day_selected_double_click)
+                              self._on_calendar__day_selected_double_click)
         vbox.pack_start(self.calendar, False, False)
         self.calendar.show()
 
@@ -177,7 +177,7 @@ class _DateEntryPopup(gtk.Window):
                             (gdk.BUTTON_PRESS_MASK |
                              gdk.BUTTON_RELEASE_MASK |
                              gdk.POINTER_MOTION_MASK),
-                             None, None, activate_time) == 0:
+                            None, None, activate_time) == 0:
             if gdk.keyboard_grab(window, True, activate_time) == 0:
                 return True
             else:

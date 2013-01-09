@@ -87,7 +87,7 @@ def get_background(widget, state=gtk.STATE_NORMAL):
 def quit_if_last(*args):
     windows = [toplevel
                for toplevel in gtk.window_list_toplevels()
-                   if toplevel.get_property('type') == gtk.WINDOW_TOPLEVEL]
+               if toplevel.get_property('type') == gtk.WINDOW_TOPLEVEL]
     if len(windows) == 1:
         gtk.main_quit()
 

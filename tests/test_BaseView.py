@@ -7,7 +7,7 @@ from utils import refresh_gui
 
 from kiwi.controllers import BaseController
 from kiwi.ui.gadgets import set_foreground, get_foreground, \
-                            set_background, get_background
+    set_background, get_background
 from kiwi.ui.views import BaseView
 
 

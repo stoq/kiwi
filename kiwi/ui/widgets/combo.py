@@ -319,7 +319,7 @@ class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
         def cell_data_func(view, renderer, model, treeiter):
             category = model[treeiter][ComboColumn.DATA]
             renderer.set_property('pixbuf',
-                                render_pixbuf(category and category.color))
+                                  render_pixbuf(category and category.color))
 
         renderer = gtk.CellRendererPixbuf()
         self.pack_start(renderer, False)
@@ -687,7 +687,7 @@ class ProxyComboEntry(ComboEntry, ValidatableProxyWidgetMixin):
         ValidatableProxyWidgetMixin.__init__(self)
         entry.connect('content-changed', self._on_entry__content_changed)
         entry.connect('validation-changed',
-                       self._on_entry__validation_changed)
+                      self._on_entry__validation_changed)
 
     def __nonzero__(self):
         return True

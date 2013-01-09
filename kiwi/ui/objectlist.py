@@ -646,13 +646,13 @@ class Column(gobject.GObject):
             else:
                 text = self.format_func(data)
         elif (self.format or
-            data_type == float or
-            data_type == Decimal or
-            data_type == currency or
-            data_type == datetime.date or
-            data_type == datetime.datetime or
-            data_type == datetime.time or
-            issubclass(data_type, enum)):
+              data_type == float or
+              data_type == Decimal or
+              data_type == currency or
+              data_type == datetime.date or
+              data_type == datetime.datetime or
+              data_type == datetime.time or
+              issubclass(data_type, enum)):
             conv = converter.get_converter(data_type)
             text = conv.as_string(data, format=self.format or None)
         # Actually the expected data type depends on the renderer,
@@ -834,7 +834,7 @@ class _ContextMenu(gtk.Menu):
         self._signal_ids = []
         self._treeview = treeview
         self._treeview.connect('columns-changed',
-                              self._on_treeview__columns_changed)
+                               self._on_treeview__columns_changed)
         self._create()
 
     def clean(self):
@@ -900,7 +900,7 @@ class _ContextMenu(gtk.Menu):
             # If there's only one menuitem less to select, set
             # it to insensitive
             active_children = [child for child in children
-                                         if child.get_active()]
+                               if child.get_active()]
             if len(active_children) == 1:
                 active_children[0].set_sensitive(False)
 
@@ -1141,7 +1141,7 @@ class ObjectList(gtk.HBox):
         elif isinstance(arg, slice):
             model = self._model
             return [model[item][COL_MODEL]
-                        for item in slicerange(arg, len(self._model))]
+                    for item in slicerange(arg, len(self._model))]
         else:
             raise TypeError("argument arg must be int, gtk.Treeiter or "
                             "slice, not %s" % type(arg))
@@ -1300,7 +1300,7 @@ class ObjectList(gtk.HBox):
             _, paths = selection.get_selected_rows()
             if paths:
                 selected_instances = [model[path][COL_MODEL]
-                                          for (path,) in paths]
+                                      for (path,) in paths]
 
         iters = self._iters
         prev = None

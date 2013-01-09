@@ -249,7 +249,7 @@ def listfiles(*dirs):
         return []
     return [os.path.join(dir, filename)
             for filename in os.listdir(abspath)
-                if filename[0] != '.' and fnmatch(filename, pattern)]
+            if filename[0] != '.' and fnmatch(filename, pattern)]
 
 
 def compile_po_files(domain, dirname='locale'):
