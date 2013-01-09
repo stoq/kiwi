@@ -246,7 +246,7 @@ class Library(Environment):
             root = os.path.dirname(executable)
         # normal
         else:
-            if dirname == None:
+            if dirname is None:
                 # Figure out the absolute path to the caller
                 caller = sys._getframe(1).f_locals['__file__']
                 dirname = os.path.split(caller)[0]

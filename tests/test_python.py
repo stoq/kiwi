@@ -7,7 +7,7 @@ from kiwi.python import AttributeForwarder, slicerange, enum, strip_accents
 
 class SliceTest(unittest.TestCase):
     def genlist(self, limit, start, stop=None, step=None):
-        if stop == None:
+        if stop is None:
             stop = start
             start = None
 

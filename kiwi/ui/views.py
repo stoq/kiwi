@@ -552,7 +552,7 @@ class SlaveView(gobject.GObject):
             if top_widget:
                 allocation = widget.allocation
                 top_allocation = getattr(top_widget, 'allocation', None)
-                assert top_allocation != None
+                assert top_allocation is not None
                 if (top_allocation[0] + top_allocation[1] >
                     allocation[0] + allocation[1]):
                     top_widget = widget
@@ -924,7 +924,7 @@ class SlaveView(gobject.GObject):
         validation_log.info("%s: validate state=%r" % (
             self.__class__.__name__, self._validation))
         # Check if validation really changed
-        if self.is_valid == is_valid and force == False:
+        if self.is_valid == is_valid and not force:
             return
 
         self.is_valid = is_valid

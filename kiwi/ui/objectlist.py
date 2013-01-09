@@ -562,7 +562,7 @@ class Column(gobject.GObject):
             for row in model:
                 obj = row[COL_MODEL]
                 value = getattr(obj, attr)
-                if value == True:
+                if value:
                     old = obj
                     break
         if old:

@@ -78,7 +78,7 @@ try:
     raise AssertionError
 except:
     pass
-assert f.E == None, f.E
+assert f.E is None, f.E
 try:
     c = RadioProxy(f)
     raise AssertionError

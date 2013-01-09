@@ -10,8 +10,6 @@ _IGNORED_ERRORS = [
     'E261',  # at least two spaces before inline comment
     'E262',  # inline comment should start with '# '
     'E501',  # line too long
-    'E711',  # comparison to None should be 'if cond is None:'
-    'E712',  # comparison to True should be 'if cond is True:' or 'if cond:'
 ]
 
 

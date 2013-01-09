@@ -266,7 +266,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
             # check if we should draw the mandatory icon
             # this need to be done before any data conversion because we
             # we don't want to end drawing two icons
-            if self.mandatory and (data == None or
+            if self.mandatory and (data is None or
                                    data == '' or
                                    data == ValueUnset):
                 self.set_blank()
