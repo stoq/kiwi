@@ -6,7 +6,6 @@ import sys
 from utils import SourceTest
 
 _IGNORED_ERRORS = [
-    'E101',  # indentation contains mixed spaces and tabs
     'E123',  # closing bracket does not match indentation of opening bracket's line
     'E121',  # continuation line indentation is not a multiple of four
     'E122',  # continuation line missing indentation or outdented
@@ -23,7 +22,6 @@ _IGNORED_ERRORS = [
     'E502',  # the backslash is redundant between brackets
     'E711',  # comparison to None should be 'if cond is None:'
     'E712',  # comparison to True should be 'if cond is True:' or 'if cond:'
-    'W191',  # indentation contains tabs
     ]
 
 

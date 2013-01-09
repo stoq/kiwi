@@ -113,7 +113,7 @@ class Environment:
             if resource == 'locale':
                 try:
                     self.add_resource(resource, path)
-	        except EnvironmentError:
+                except EnvironmentError:
                     continue
 
             self.add_resource(resource, path)
