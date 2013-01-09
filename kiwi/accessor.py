@@ -184,8 +184,7 @@ def kgetattr(
     # FAST tuples do not store the object, as the input object
     # is also the accesses object.
     FAST_METHOD_ACCESS=5,
-    FAST_TUPLE_ACCESS=6,
-    ):
+    FAST_TUPLE_ACCESS=6):
     """Returns the value associated with the attribute in model
     named by attr_name. If default is provided and model does not
     have an attribute called attr_name, the default value is
@@ -363,8 +362,7 @@ def ksetattr(
     NWR_METHOD_ACCESS=3,
     NWR_TUPLE_ACCESS=4,
     FAST_METHOD_ACCESS=5,
-    FAST_TUPLE_ACCESS=6,
-    ):
+    FAST_TUPLE_ACCESS=6):
     """Set the value associated with the attribute in model
     named by attr_name. If flat=1 is specified, no dot path parsing will
     be done."""

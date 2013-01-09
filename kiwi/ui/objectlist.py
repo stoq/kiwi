@@ -2046,7 +2046,7 @@ class ObjectList(gtk.HBox):
         """
         return [
             ('OBJECTLIST_ROW', 0, 10),
-            ]
+        ]
 
     def set_message(self, markup):
         """Adds a message on top of the treeview rows

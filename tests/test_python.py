@@ -100,7 +100,7 @@ class StripAccentsTest(unittest.TestCase):
             (u'óôõöōŏőÒÓÔÕÖŌŎŐ', u'oooooooOOOOOOOO'),
             (u'ùúûüũūŭůÙÚÛÜŨŪŬŮ', u'uuuuuuuuUUUUUUUU'),
             (u'çÇ', u'cC'),
-            ]:
+        ]:
             self.assertEqual(strip_accents(string),
                              string_without_accentuation)
 

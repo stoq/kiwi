@@ -14,7 +14,7 @@ SPECIAL_KEYS = {
     '(': 'parenleft',
     ')': 'parenright',
     ' ': 'space',
-    }
+}
 
 DELAY = 0.1
 

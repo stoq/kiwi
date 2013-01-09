@@ -121,7 +121,7 @@ INPUT_FORMATS = {
     'A': INPUT_ALPHANUMERIC,
     'a': INPUT_ALPHANUMERIC,
     '&': INPUT_ALPHA,
-    }
+}
 
 # Todo list: Other usefull Masks
 #  9 - Digit, optional
@@ -133,7 +133,7 @@ INPUT_CHAR_MAP = {
     INPUT_ALPHA: unicode.isalpha,
     INPUT_ALPHANUMERIC: unicode.isalnum,
     INPUT_DIGIT: unicode.isdigit,
-    }
+}
 
 
 (COL_TEXT,

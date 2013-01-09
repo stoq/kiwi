@@ -37,7 +37,7 @@ _IMAGE_TYPES = {
     gtk.MESSAGE_WARNING: gtk.STOCK_DIALOG_WARNING,
     gtk.MESSAGE_QUESTION: gtk.STOCK_DIALOG_QUESTION,
     gtk.MESSAGE_ERROR: gtk.STOCK_DIALOG_ERROR,
-    }
+}
 
 _BUTTON_TYPES = {
     gtk.BUTTONS_NONE: (),
@@ -48,7 +48,7 @@ _BUTTON_TYPES = {
                          gtk.STOCK_YES, gtk.RESPONSE_YES),
     gtk.BUTTONS_OK_CANCEL: (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                             gtk.STOCK_OK, gtk.RESPONSE_OK)
-    }
+}
 
 
 class HIGAlertDialog(gtk.Dialog):

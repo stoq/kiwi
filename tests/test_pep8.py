@@ -6,7 +6,6 @@ import sys
 from utils import SourceTest
 
 _IGNORED_ERRORS = [
-    'E123',  # closing bracket does not match indentation of opening bracket's line
     'E121',  # continuation line indentation is not a multiple of four
     'E122',  # continuation line missing indentation or outdented
     'E125',  # continuation line does not distinguish itself from next logical line
@@ -18,7 +17,7 @@ _IGNORED_ERRORS = [
     'E501',  # line too long
     'E711',  # comparison to None should be 'if cond is None:'
     'E712',  # comparison to True should be 'if cond is True:' or 'if cond:'
-    ]
+]
 
 
 class TestPEP8(SourceTest, unittest.TestCase):

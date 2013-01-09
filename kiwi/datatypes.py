@@ -423,7 +423,7 @@ DATE_REPLACEMENTS_WIN32 = [
     (re.compile('MM?'), '%m'),
     (re.compile('yyyyy?'), '%Y'),
     (re.compile('yy?'), '%y')
-    ]
+]
 
 # This "table" contains, associated with each
 # key (ie. strftime "conversion specifications")
@@ -442,7 +442,7 @@ DATE_MASK_TABLE = {
     '%T': ('00:00:00', _('hh:mm:ss')),
     # FIXME: locale specific
     '%r': ('00:00:00 LL', _('hh:mm:ss LL')),
-    }
+}
 
 
 class _BaseDateTimeConverter(BaseConverter):
