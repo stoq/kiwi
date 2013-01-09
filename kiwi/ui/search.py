@@ -220,7 +220,7 @@ class DoesNotContain(StringSearchOption):
 
 class SearchFilter(gtk.HBox):
     """
-    A base classed used by common search filters
+    A base class used by common search filters
     """
     label = gobject.property(type=str, flags=(gobject.PARAM_READWRITE))
     gsignal('changed')
