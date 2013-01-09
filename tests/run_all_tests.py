@@ -19,8 +19,8 @@ for file in glob.glob(os.path.join(testdir, 'test_*.py')):
     filename = os.path.basename(file)
     modulename = os.path.splitext(filename)[0]
     mod = __import__(modulename, globals(), locals())
-    members = [mem[1] for mem in inspect.getmembers(mod, inspect.isclass) \
-               if issubclass(mem[1], unittest.TestCase) \
+    members = [mem[1] for mem in inspect.getmembers(mod, inspect.isclass)
+               if issubclass(mem[1], unittest.TestCase)
                and not mem[1] == unittest.TestCase]
     for mem in members:
         suite.addTest(unittest.makeSuite(mem))
