@@ -20,8 +20,11 @@ def set_locale(category, name):
     try:
         locale.setlocale(category, name)
     except locale.Error:
-        print 'skipping %s, locale not available' % name
-        return False
+        try:
+            locale.setlocale(category, name + '.UTF-8')
+        except locale.Error:
+            print 'skipping %s, locale not available' % name
+            return False
     return True
 
 
