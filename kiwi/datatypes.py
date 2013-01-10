@@ -456,6 +456,7 @@ class _BaseDateTimeConverter(BaseConverter):
 
     def __init__(self):
         self._keep_am_pm = False
+        # FIXME: There should be a way of changing this outside
         self._keep_seconds = False
 
     def get_lang_constant_win32(self):

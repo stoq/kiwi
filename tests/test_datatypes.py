@@ -3,6 +3,8 @@ import datetime
 import locale
 import unittest
 
+import mock
+
 from kiwi.datatypes import converter, ValidationError, ValueUnset, \
     Decimal, BaseConverter
 from kiwi.currency import currency
@@ -75,6 +77,71 @@ class BoolTest(unittest.TestCase):
         # you are not supposed to pass something that is not a string
         self.assertRaises(AttributeError, self.conv.from_string, None)
 
+    def testAsString(self):
+        self.assertEqual(self.conv.as_string(True), 'True')
+        self.assertEqual(self.conv.as_string(False), 'False')
+
+
+class TimeTest(unittest.TestCase):
+    def setUp(self):
+        set_locale(locale.LC_TIME, 'C')
+        self.time = datetime.time(12, 15, 30)
+        self.conv = converter.get_converter(datetime.time)
+
+    def tearDown(self):
+        set_locale(locale.LC_TIME, 'C')
+
+    def testFromStringBR(self):
+        if not set_locale(locale.LC_TIME, 'pt_BR'):
+            return
+
+        # FIXME: Those should be supported
+        #self.assertEqual(self.conv.from_string("12:15"), self.time)
+        #self.assertEqual(self.conv.from_string("12:15"), datetime.time(12, 15, 00))
+        self.assertRaises(ValidationError, self.conv.from_string, "12:15:30")
+        with mock.patch.object(self.conv, '_keep_seconds', True):
+            self.assertEqual(self.conv.from_string("12:15:30"), self.time)
+            self.assertRaises(ValidationError, self.conv.from_string, "12:15")
+
+        # test some invalid dates
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, "12:70")
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, "25:10")
+
+    def testFromStringUS(self):
+        if not set_locale(locale.LC_TIME, 'en_US'):
+            return
+
+        # FIXME: This should be supported
+        #self.assertEqual(self.conv.from_string("12:15"), self.time)
+        self.assertRaises(ValidationError, self.conv.from_string, "12:15:30")
+        with mock.patch.object(self.conv, '_keep_seconds', True):
+            self.assertEqual(self.conv.from_string("12:15:30"), self.time)
+            self.assertRaises(ValidationError, self.conv.from_string, "12:15")
+
+        # test some invalid dates
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, "12:70")
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, "25:10")
+
+    def testAsStringBR(self):
+        if not set_locale(locale.LC_TIME, 'pt_BR'):
+            return
+
+        self.assertEqual(self.conv.as_string(self.time), "12:15")
+        with mock.patch.object(self.conv, '_keep_seconds', True):
+            self.assertEqual(self.conv.as_string(self.time), "12:15:30")
+
+    def testAsStringUS(self):
+        if not set_locale(locale.LC_TIME, 'en_US'):
+            return
+
+        self.assertEqual(self.conv.as_string(self.time), "12:15")
+        with mock.patch.object(self.conv, '_keep_seconds', True):
+            self.assertEqual(self.conv.as_string(self.time), "12:15:30")
+
 
 class DateTest(unittest.TestCase):
     def setUp(self):
@@ -118,6 +185,31 @@ class DateTest(unittest.TestCase):
             return
 
         self.assertEqual(self.conv.as_string(self.date), "12-02-1979")
+
+    def testFromStringUS(self):
+        if not set_locale(locale.LC_TIME, 'en_US'):
+            return
+
+        self.assertEqual(self.conv.from_string("2/12/1979"), self.date)
+        self.assertEqual(
+            self.conv.from_string("02/1/1979"), datetime.date(1979, 2, 1))
+        self.assertEqual(self.conv.from_string("02/12/1979"), self.date)
+
+        # test some invalid dates
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, "40-10-2005")
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, "30-02-2005")
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, "01-01-1899")
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, "13/12/1979")
+
+    def testAsStringUS(self):
+        if not set_locale(locale.LC_TIME, 'en_US'):
+            return
+
+        self.assertEqual(self.conv.as_string(self.date), "02/12/1979")
 
     def testFromStringPortugueseBrazil(self):
         if not set_locale(locale.LC_TIME, 'Portuguese_Brazil.1252'):
@@ -349,6 +441,28 @@ class DecimalTest(unittest.TestCase):
         self.assertRaises(ValidationError, self.conv.from_string, '1.2.3')
         self.assertEqual(self.conv.from_string(''), ValueUnset)
 
+    def testFromStringUS(self):
+        if not set_locale(locale.LC_NUMERIC, 'en_US'):
+            return
+        self.assertEqual(
+            self.conv.from_string('10,000,000.0'), Decimal('10000000'))
+        self.assertEqual(
+            self.conv.from_string('10,000,000.0'), Decimal('10000000.0'))
+        # pt_BR style decimals should raise ValidationError
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, '10.000.000,0')
+
+    def testFromStringBR(self):
+        if not set_locale(locale.LC_NUMERIC, 'pt_BR'):
+            return
+        self.assertEqual(
+            self.conv.from_string('10.000.000,0'), Decimal('10000000'))
+        self.assertEqual(
+            self.conv.from_string('10.000.000,0'), Decimal('10000000.0'))
+        # en_US style decimals should raise ValidationError
+        self.assertRaises(ValidationError,
+                          self.conv.from_string, '10,000,000.0')
+
     def testAsString(self):
         self.assertEqual(self.conv.as_string(Decimal('0.0')), '0.0')
         self.assertEqual(self.conv.as_string(Decimal('0.5')), '0.5')
@@ -369,6 +483,22 @@ class DecimalTest(unittest.TestCase):
                          '10,000,000.0')
         self.assertEqual(self.conv.as_string(Decimal('10000000.0')),
                          '10,000,000.0')
+
+    def testAsStringBR(self):
+        if not set_locale(locale.LC_NUMERIC, 'pt_BR'):
+            return
+        self.assertEqual(
+            self.conv.as_string(Decimal('10000000')), '10.000.000,0')
+        self.assertEqual(
+            self.conv.as_string(Decimal('10000000.0')), '10.000.000,0')
+        self.assertEqual(
+            self.conv.as_string(Decimal('0.0')), '0,0')
+        self.assertEqual(
+            self.conv.as_string(Decimal('0.5')), '0,5')
+        self.assertEqual(
+            self.conv.as_string(Decimal('-0.5')), '-0,5')
+        self.assertEqual(
+            self.conv.as_string(Decimal('0.123456789')), '0,123456789')
 
     def testAsStringSE(self):
         if not set_locale(locale.LC_NUMERIC, 'sv_SE'):

@@ -69,5 +69,6 @@ setup(name=name,
                'bin/kiwi-ui-test'],
       packages=listpackages('kiwi'),
       ext_modules=ext_modules,
+      test_requires=['mock'],
       resources=dict(locale='$prefix/share/locale'),
       )

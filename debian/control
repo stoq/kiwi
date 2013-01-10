@@ -2,7 +2,7 @@ Source: kiwi
 Section: python
 Priority: optional
 Maintainer: Ronaldo Francisco Maia <romaia@async.com.br>
-Build-Depends: cdbs (>= 0.4.43), debhelper (>= 5.0.37.2), python, python-setuptools (>= 0.6b3-1~), python-support (>= 0.3)
+Build-Depends: cdbs (>= 0.4.43), debhelper (>= 5.0.37.2), python, python-setuptools (>= 0.6b3-1~), python-support (>= 0.3), python-mock (>= 0.7)
 Build-Depends-Indep: python-dev (>= 2.5), python-gtk2 (>= 2.16.0), libgtk2.0-0 (>= 2.20.0), pkg-config, gettext, intltool
 Standards-Version: 3.8.3
 
