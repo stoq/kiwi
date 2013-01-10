@@ -38,6 +38,7 @@ Simple example:
 """
 
 import datetime
+import decimal
 import gettext
 import locale
 import re
@@ -47,18 +48,6 @@ import time
 from kiwi import ValueUnset
 from kiwi.enums import Alignment
 from kiwi.python import enum
-
-try:
-    from decimal import Decimal, InvalidOperation
-    HAVE_DECIMAL = True
-    Decimal, InvalidOperation  # pyflakes
-except:
-    HAVE_DECIMAL = False
-
-    class Decimal(float):
-        pass
-
-    InvalidOperation = ValueError
 
 if sys.platform == 'win32':
     try:
@@ -78,7 +67,7 @@ __all__ = ['ValidationError', 'lformat', 'converter']
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
-number = (int, float, long, Decimal)
+number = (int, float, long, decimal.Decimal)
 
 
 class ValidationError(Exception):
@@ -389,7 +378,7 @@ converter.add(_FloatConverter)
 
 
 class _DecimalConverter(_FloatConverter):
-    type = Decimal
+    type = decimal.Decimal
     name = _('Decimal')
     align = Alignment.RIGHT
 
@@ -401,8 +390,8 @@ class _DecimalConverter(_FloatConverter):
             value = filter_locale(value)
 
         try:
-            retval = Decimal(value)
-        except InvalidOperation:
+            retval = decimal.Decimal(value)
+        except decimal.InvalidOperation:
             raise ValidationError(_("This field requires a number, not %r") %
                                   value)
 

@@ -27,6 +27,7 @@
 """High level wrapper for GtkTreeView"""
 
 import datetime
+import decimal
 import gettext
 import locale
 import pickle
@@ -38,7 +39,7 @@ import gtk
 from gtk import gdk
 
 from kiwi.accessor import kgetattr
-from kiwi.datatypes import converter, number, Decimal, ValidationError
+from kiwi.datatypes import converter, number, ValidationError
 from kiwi.currency import currency  # after datatypes
 from kiwi.enums import Alignment
 from kiwi.log import Logger
@@ -647,7 +648,7 @@ class Column(gobject.GObject):
                 text = self.format_func(data)
         elif (self.format or
               data_type == float or
-              data_type == Decimal or
+              data_type == decimal.Decimal or
               data_type == currency or
               data_type == datetime.date or
               data_type == datetime.datetime or
