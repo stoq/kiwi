@@ -137,7 +137,8 @@ class Field(gobject.GObject):
         self._build_add_button()
         self._build_edit_button()
         self.attach()
-        self.label_widget.show()
+        if self.label_widget:
+            self.label_widget.show()
         self.widget.show()
 
     def _build_add_button(self):
@@ -186,6 +187,9 @@ class Field(gobject.GObject):
     # Overridables
 
     def build_label(self):
+        # This method will be overridden by some fields that don't need a
+        # label_widget, because they carry their own label. Because of this,
+        # we need to verify if label_widget exists everytime we use it.
         label_widget = ProxyLabel()
         label_widget.set_markup(self.label + ':')
         label_widget.set_alignment(1.0, 0.5)
@@ -380,9 +384,10 @@ class FormTableLayout(FormLayout):
         focus_widgets = []
         for i, (field, field_name) in enumerate(fields):
             form.build_field(field, field_name)
-            table.attach(field.label_widget, 0, 1, i, i + 1,
-                         gtk.FILL,
-                         gtk.EXPAND | gtk.FILL, 0, 0)
+            if field.label_widget:
+                table.attach(field.label_widget, 0, 1, i, i + 1,
+                             gtk.FILL,
+                             gtk.EXPAND | gtk.FILL, 0, 0)
             table.attach(field.get_attachable_widget(), 1, 2, i, i + 1,
                          gtk.EXPAND | gtk.FILL,
                          gtk.EXPAND | gtk.FILL, 6, 0)
@@ -467,7 +472,8 @@ class BasicForm(SlaveDelegate):
     def build_field(self, field, model_attribute):
         field.attach_form(self, model_attribute)
         setattr(self.main_view, model_attribute, field.widget)
-        setattr(self.main_view, field.label_attribute, field.label_widget)
+        if field.label_widget:
+            setattr(self.main_view, field.label_attribute, field.label_widget)
         if field.has_add_button:
             setattr(self.main_view,
                     field.model_attribute + '_add_button', field.add_button)
