@@ -192,7 +192,8 @@ class Field(gobject.GObject):
         # label_widget, because they carry their own label. Because of this,
         # we need to verify if label_widget exists everytime we use it.
         label_widget = ProxyLabel()
-        label_widget.set_markup(self.label + ':')
+        if self.label:
+            label_widget.set_markup(self.label + ':')
         label_widget.set_alignment(1.0, 0.5)
         return label_widget
 
