@@ -33,11 +33,13 @@ import sys
 import gobject
 import gtk
 
+from kiwi import ValueUnset
 from kiwi.component import implements
 from kiwi.currency import currency
 from kiwi.db.query import (NumberQueryState, StringQueryState,
                            DateQueryState, DateIntervalQueryState,
-                           NumberIntervalQueryState, QueryExecuter)
+                           NumberIntervalQueryState, BoolQueryState,
+                           QueryExecuter)
 from kiwi.enums import SearchFilterPosition
 from kiwi.interfaces import ISearchFilter
 from kiwi.python import enum
@@ -46,6 +48,7 @@ from kiwi.ui.lazyobjectlist import (LazyObjectListUpdater,
                                     LazySummaryLabel)
 from kiwi.ui.objectlist import (ObjectList, ObjectTree,
                                 SummaryLabel, SearchColumn)
+from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 from kiwi.ui.widgets.combo import ProxyComboBox
 from kiwi.ui.widgets.entry import ProxyDateEntry
 from kiwi.utils import gsignal
@@ -680,6 +683,72 @@ class ComboSearchFilter(SearchFilter):
             self.emit('changed')
 
 
+class BoolSearchFilter(SearchFilter):
+    """
+    - a checkbutton
+    - a label
+    """
+    __gtype_name__ = 'BoolSearchFilter'
+
+    def __init__(self, label=''):
+        """
+        Create a new BoolSearchFilter object.
+        :param label: label of the search filter
+        """
+        self._block_updates = False
+        SearchFilter.__init__(self, label=label)
+
+        self.button = ProxyCheckButton(label=label)
+        self.button.connect('content-changed', self._on_button__content_changed)
+        self.pack_start(self.button, False, False, 6)
+        self.button.show()
+
+        self.combo = False
+
+    #
+    # SearchFilter
+    #
+
+    def get_state(self):
+        return BoolQueryState(filter=self,
+                              value=self.button.read())
+
+    def set_state(self, value):
+        if isinstance(value, bool):
+            self.button.set_active(value)
+        elif value is None or value is ValueUnset:
+            self.button.set_active(False)
+        else:
+            self.button.set_active(True)
+
+    def get_title_label(self):
+        return self.button.get_label()
+
+    def get_description(self):
+        return '%s: %s' % (self.get_label(), str(self.get_state()))
+
+    def get_mode_combo(self):
+        return None
+
+    #
+    # Public API
+    #
+
+    def check(self, data):
+        self.button.set_active(True)
+
+    def uncheck(self, data):
+        self.button.set_active(False)
+
+    #
+    # Callbacks
+    #
+
+    def _on_button__content_changed(self, mode):
+        if not self._block_updates:
+            self.emit('changed')
+
+
 # Ported from evolution
 # Replace with GtkEntry::placeholder-text in Gtk 3.2
 class HintedEntry(gtk.Entry):
@@ -1163,7 +1232,9 @@ class SearchContainer(gtk.VBox):
 
         :param column: a SearchColumn instance
         """
-        title = column.get_search_label() + ':'
+        title = column.get_search_label()
+        if column.data_type is not bool:
+            title += ':'
 
         if column.data_type == datetime.date:
             filter = DateSearchFilter(title)
@@ -1186,8 +1257,9 @@ class SearchContainer(gtk.VBox):
             else:
                 filter = StringSearchFilter(title)
                 filter.enable_advanced()
+        elif column.data_type == bool:
+            filter = BoolSearchFilter(title)
         else:
-            # TODO: Boolean
             raise NotImplementedError(title, column.data_type)
 
         filter.set_removable()
@@ -1195,9 +1267,10 @@ class SearchContainer(gtk.VBox):
         self.add_filter(filter, columns=[attr],
                         callback=column.search_func)
 
-        label = filter.get_title_label()
-        label.set_alignment(1.0, 0.5)
-        self.label_group.add_widget(label)
+        if column.data_type is not bool:
+            label = filter.get_title_label()
+            label.set_alignment(1.0, 0.5)
+            self.label_group.add_widget(label)
         combo = filter.get_mode_combo()
         if combo:
             self.combo_group.add_widget(combo)
@@ -1471,7 +1544,7 @@ class SearchContainer(gtk.VBox):
                 continue
 
             if column.data_type not in (datetime.date, Decimal, int, currency,
-                                        str):
+                                        str, bool):
                 continue
 
             title = column.get_search_label()

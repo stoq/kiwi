@@ -112,6 +112,19 @@ class DateIntervalQueryState(QueryState):
             self.start, self.end)
 
 
+class BoolQueryState(QueryState):
+    """
+    Create a new BoolQueryState object.
+    :cvar value: value of the query state
+    """
+    def __init__(self, filter, value):
+        QueryState.__init__(self, filter)
+        self.value = value
+
+    def __repr__(self):
+        return '<BoolQueryState value=%r>' % (self.value)
+
+
 class QueryExecuter(object):
     """
     A QueryExecuter is responsible for taking the state (as in QueryState)
