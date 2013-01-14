@@ -40,6 +40,7 @@ import gtk
 from kiwi.currency import currency
 from kiwi.interfaces import IProxyWidget
 from kiwi.ui.delegates import SlaveDelegate
+from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 from kiwi.ui.widgets.colorbutton import ProxyColorButton
 from kiwi.ui.widgets.combo import ProxyComboEntry
 from kiwi.ui.widgets.combobox import ProxyComboBox
@@ -222,6 +223,20 @@ class Field(gobject.GObject):
         pass
 
 gobject.type_register(Field)
+
+
+class BoolField(Field):
+    """
+    I am a boolean field with a checkbox and a label.
+    """
+    widget_data_type = bool
+
+    def build_widget(self):
+        widget = ProxyCheckButton(self.label)
+        return widget
+
+    def build_label(self):
+        return None
 
 
 class TextField(Field):
