@@ -602,7 +602,7 @@ class ComboSearchFilter(SearchFilter):
     def __init__(self, label='', values=None):
         """
         Create a new ComboSearchFilter object.
-        :param name: name of the search filter
+        :param label: label of the search filter
         :param values: items to put in the combo, see
             :class:`kiwi.ui.widgets.combo.ProxyComboBox.prefill`
         """
