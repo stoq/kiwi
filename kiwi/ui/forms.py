@@ -85,6 +85,7 @@ class Field(gobject.GObject):
     label_attribute = gobject.property(type=str)
     has_add_button = gobject.property(type=bool, default=False)
     has_edit_button = gobject.property(type=bool, default=False)
+    has_delete_button = gobject.property(type=bool, default=False)
     proxy = gobject.property(type=bool, default=False)
 
     # This can be used by subclasses to override the default
@@ -99,6 +100,7 @@ class Field(gobject.GObject):
         self.widget = None
         self.add_button = None
         self.edit_button = None
+        self.delete_button = None
 
         # Label is a positional argument for convienience, convert it to
         # a keyword argument so it can be set via GObject.__init__
@@ -137,6 +139,7 @@ class Field(gobject.GObject):
         self.view = form.view
         self._build_add_button()
         self._build_edit_button()
+        self._build_delete_button()
         self.attach()
         if self.label_widget:
             self.label_widget.show()
@@ -163,6 +166,17 @@ class Field(gobject.GObject):
             self.label.lower(), ))
         self.edit_button.set_sensitive(False)
 
+    def _build_delete_button(self):
+        if not self.has_delete_button:
+            return
+
+        self.delete_button = self.create_button(gtk.STOCK_DELETE)
+        self.delete_button.connect('clicked', self.delete_button_clicked)
+        self.delete_button.set_use_stock(True)
+        self.delete_button.set_tooltip_text(_("Delete the selected %s") % (
+            self.label.lower(), ))
+        self.delete_button.set_sensitive(False)
+
     def _on_widget__content_changed(self, widget):
         self.content_changed()
 
@@ -184,6 +198,8 @@ class Field(gobject.GObject):
             self.add_button.set_sensitive(value)
         if self.edit_button:
             self.edit_button.set_sensitive(value)
+        if self.delete_button:
+            self.delete_button.set_sensitive(value)
 
     # Overridables
 
@@ -218,6 +234,9 @@ class Field(gobject.GObject):
         raise NotImplementedError
 
     def edit_button_clicked(self, button):
+        raise NotImplementedError
+
+    def delete_button_clicked(self, button):
         raise NotImplementedError
 
     def content_changed(self):
@@ -383,18 +402,18 @@ class FormLayout(object):
 class FormTableLayout(FormLayout):
     """Most common layout, a table with four columns:
 
-    +-------+-------+---+----+
-    | Value:|Widget |Add|Edit|
-    +-------+-------+---+----+
-    |  Name:|Widget |Add|Edit|
-    +-------+-------+---+----+
-    | ....  |...... |...|....|
+    +-------+-------+---+----+------+
+    | Value:|Widget |Add|Edit|Delete|
+    +-------+-------+---+----+------+
+    |  Name:|Widget |Add|Edit|Delete|
+    +-------+-------+---+----+------+
+    | ....  |...... |...|....|......|
 
     Each new field is added as another vertical line.
     """
     def __init__(self, form, fields):
         FormLayout.__init__(self, form, fields)
-        table = gtk.Table(len(fields), 4, False)
+        table = gtk.Table(len(fields), 5, False)
         table.props.row_spacing = 6
 
         focus_widgets = []
@@ -413,6 +432,10 @@ class FormTableLayout(FormLayout):
                              gtk.EXPAND | gtk.FILL, 0, 0)
             if field.edit_button:
                 table.attach(field.edit_button, 3, 4, i, i + 1,
+                             gtk.SHRINK,
+                             gtk.EXPAND | gtk.FILL, 0, 0)
+            if field.delete_button:
+                table.attach(field.delete_button, 4, 5, i, i + 1,
                              gtk.SHRINK,
                              gtk.EXPAND | gtk.FILL, 0, 0)
             focus_widgets.append(field.widget)
@@ -496,6 +519,9 @@ class BasicForm(SlaveDelegate):
         if field.has_edit_button:
             setattr(self.main_view,
                     field.model_attribute + '_edit_button', field.edit_button)
+        if field.has_delete_button:
+            setattr(self.main_view,
+                    field.model_attribute + '_delete_button', field.delete_button)
         self._fields[model_attribute] = field
 
     def populate(self, *args):
