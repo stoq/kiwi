@@ -376,6 +376,8 @@ class MultiLineField(Field):
     def get_attachable_widget(self):
         sw = gtk.ScrolledWindow()
         sw.add(self.widget)
+        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        sw.set_shadow_type(gtk.SHADOW_OUT)
         sw.show()
         return sw
 
