@@ -141,7 +141,7 @@ class QueryExecuter(object):
     # Public API
     #
 
-    def set_filter_columns(self, search_filter, columns):
+    def set_filter_columns(self, search_filter, columns, use_having=False):
         """Set what columns should be filtered for the search_filter
 
         :param columns: Should be a list of column names or properties to be
@@ -153,7 +153,7 @@ class QueryExecuter(object):
             #raise TypeError("search_filter must implement ISearchFilter")
 
         assert not search_filter in self._columns
-        self._columns[search_filter] = columns
+        self._columns[search_filter] = (columns, use_having)
 
     #
     # Overridable

@@ -73,7 +73,8 @@ class SQLObjectQueryExecuter(QueryExecuter):
             raise TypeError
         self._query_callbacks.append(callback)
 
-    def add_filter_query_callback(self, search_filter, callback):
+    def add_filter_query_callback(self, search_filter, callback,
+                                  use_having=False):
         """
         Adds a query callback for the filter search_filter
 
@@ -85,7 +86,7 @@ class SQLObjectQueryExecuter(QueryExecuter):
         if not callable(callback):
             raise TypeError
         l = self._filter_query_callbacks.setdefault(search_filter, [])
-        l.append(callback)
+        l.append((callback, use_having))
 
     def set_query(self, callback):
         """
@@ -113,22 +114,26 @@ class SQLObjectQueryExecuter(QueryExecuter):
             raise ValueError("table cannot be None")
         table = self.table
         queries = []
-        self._having = []
+        having = []
         for state in states:
             search_filter = state.filter
             assert state.filter
 
             # Column query
             if search_filter in self._columns:
-                query = self._construct_state_query(
-                    table, state, self._columns[search_filter])
-                if query:
+                columns, use_having = self._columns[search_filter]
+                query = self._construct_state_query(table, state, columns)
+                if query and use_having:
+                    having.append(query)
+                elif query:
                     queries.append(query)
             # Custom per filter/state query.
             elif search_filter in self._filter_query_callbacks:
-                for callback in self._filter_query_callbacks[search_filter]:
+                for callback, use_having in self._filter_query_callbacks[search_filter]:
                     query = callback(state)
-                    if query:
+                    if query and use_having:
+                        having.append(query)
+                    elif query:
                         queries.append(query)
             else:
                 if (self._query == self._default_query and
@@ -147,9 +152,10 @@ class SQLObjectQueryExecuter(QueryExecuter):
         else:
             query = None
 
-        having = None
-        if self._having:
-            having = AND(self._having)
+        if having:
+            having = AND(*having)
+        else:
+            having = None
 
         result = self._query(query, having, self.conn)
         return result.limit(self.get_limit())
@@ -158,15 +164,11 @@ class SQLObjectQueryExecuter(QueryExecuter):
     # Private
     #
 
-    def _add_having(self, clause):
-        self._having.append(clause)
-
     def _default_query(self, query, having, conn):
         return self.table.select(query, having=having, connection=conn)
 
     def _construct_state_query(self, table, state, columns):
         queries = []
-        having_queries = []
 
         for column in columns:
             query = None
@@ -174,10 +176,6 @@ class SQLObjectQueryExecuter(QueryExecuter):
                 table_field = getattr(table.q, column)
             else:
                 table_field = column
-
-            # If the field has an aggregate function (sum, avg, etc..), then
-            # this clause should be in the HAVING part of the query.
-            use_having = table_field.hasSQLCall()
 
             if isinstance(state, NumberQueryState):
                 query = self._parse_number_state(state, table_field)
@@ -192,15 +190,8 @@ class SQLObjectQueryExecuter(QueryExecuter):
             else:
                 raise NotImplementedError(state.__class__.__name__)
 
-            if query and use_having:
-                having_queries.append(query)
-                query = None
-
             if query:
                 queries.append(query)
-
-        if having_queries:
-            self._add_having(OR(*having_queries))
 
         if queries:
             return OR(*queries)

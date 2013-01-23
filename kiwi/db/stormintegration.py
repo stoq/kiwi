@@ -67,22 +67,26 @@ class StormQueryExecuter(QueryExecuter):
             raise ValueError("table cannot be None")
         table = self.table
         queries = []
-        self._having = []
+        having = []
         for state in states:
             search_filter = state.filter
             assert state.filter
 
             # Column query
             if search_filter in self._columns:
-                query = self._construct_state_query(
-                    table, state, self._columns[search_filter])
-                if query:
+                columns, use_having = self._columns[search_filter]
+                query = self._construct_state_query(table, state, columns)
+                if query and use_having:
+                    having.append(query)
+                elif query:
                     queries.append(query)
             # Custom per filter/state query.
             elif search_filter in self._filter_query_callbacks:
-                for callback in self._filter_query_callbacks[search_filter]:
+                for callback, use_having in self._filter_query_callbacks[search_filter]:
                     query = callback(state)
-                    if query:
+                    if query and use_having:
+                        having.append(query)
+                    elif query:
                         queries.append(query)
             else:
                 if (self._query == self._default_query and
@@ -101,9 +105,10 @@ class StormQueryExecuter(QueryExecuter):
         else:
             query = None
 
-        having = None
-        if self._having:
-            having = And(self._having)
+        if having:
+            having = And(*having)
+        else:
+            having = None
 
         result = self._query(query, having, self.store)
         return result
@@ -126,7 +131,8 @@ class StormQueryExecuter(QueryExecuter):
             raise TypeError
         self._query_callbacks.append(callback)
 
-    def add_filter_query_callback(self, search_filter, callback):
+    def add_filter_query_callback(self, search_filter, callback,
+                                  use_having=False):
         """
         Adds a query callback for the filter search_filter
 
@@ -138,7 +144,7 @@ class StormQueryExecuter(QueryExecuter):
         if not callable(callback):
             raise TypeError
         l = self._filter_query_callbacks.setdefault(search_filter, [])
-        l.append(callback)
+        l.append((callback, use_having))
 
     def set_query(self, callback):
         """
