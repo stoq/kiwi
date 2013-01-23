@@ -751,10 +751,8 @@ class SearchColumn(Column):
         Column.__init__(self, attribute, title, data_type, **kwargs)
 
         search_func = kwargs.get('search_func')
-        if search_func:
-            if not callable(search_func):
-                raise TypeError("search_func must be callable")
-            self.search_func = search_func
+        if search_func and not callable(search_func):
+            raise TypeError("search_func must be callable")
 
     def get_search_label(self):
         """Get the search label for this column.
