@@ -2,7 +2,7 @@
 # vi:si:et:sw=4:sts=4:ts=4
 
 ##
-## Copyright (C) 2012 Async Open Source <http://www.async.com.br>
+## Copyright (C) 2012-2013 Async Open Source <http://www.async.com.br>
 ## All rights reserved
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -247,7 +247,8 @@ gobject.type_register(Field)
 
 class BoolField(Field):
     """
-    I am a boolean field with a checkbox and a label.
+    I am a field representing a yes/no choice,
+    rendered as a check button.
     """
     widget_data_type = bool
 
@@ -261,7 +262,8 @@ class BoolField(Field):
 
 class TextField(Field):
     """
-    I am a text field with one line, editable by the user
+    I am a text field with one line, editable by the user,
+    rendered as an entry.
     """
     editable = gobject.property(type=bool, default=True)
     input_mask = gobject.property(type=object)
@@ -284,7 +286,8 @@ gobject.type_register(TextField)
 
 class ChoiceField(Field):
     """
-    I am a field representing a choice, normally a ComboBox
+    I am a field representing a set of choices,
+    rendered as a ComboBox or ComboEntry.
     """
     values = gobject.property(type=object)
     use_entry = gobject.property(type=bool, default=False)
@@ -305,7 +308,8 @@ class ChoiceField(Field):
 
 class PriceField(Field):
     """
-    I am a field representing a price, contain a currency symbol, right-aligned etc.
+    I am a field representing a price, contain a currency symbol,
+    right-aligned etc, rendered as an entry.
     """
     widget_data_type = currency
 
@@ -317,7 +321,7 @@ class PriceField(Field):
 class DateField(Field):
     """
     I am a field representing a date where the user can chose
-    a date from a calendar.
+    a date from a calendar, rendered as a date entry.
     """
     widget_data_type = datetime.date
 
@@ -328,7 +332,8 @@ class DateField(Field):
 
 class ColorField(Field):
     """
-    I am a field representing a color.
+    I am a field representing a color,
+    rendered as a color button.
     """
     widget_data_type = str
 
@@ -339,7 +344,8 @@ class ColorField(Field):
 
 class NumericField(Field):
     """
-    I am a field representing a numeric value.
+    I am a field representing a numeric value,
+    rendered as a spin button.
     """
     widget_data_type = Decimal
 
@@ -352,7 +358,8 @@ class NumericField(Field):
 
 class PercentageField(Field):
     """
-    I am a field representing a percentage.
+    I am a field representing a percentage,
+    rendered as a spin button.
     """
     widget_data_type = Decimal
 
@@ -366,6 +373,10 @@ class PercentageField(Field):
 
 
 class MultiLineField(Field):
+    """
+    I am a text field with multiple lines,
+    rendered as a text view.
+    """
     widget_data_type = unicode
 
     def build_widget(self):
@@ -389,10 +400,11 @@ class FormLayout(object):
     # * call form.build_field(field, field_name) for all fields
     #   that are passed into the constructor
     # * pack the following widgets:
-    #   * field.label_widget
+    #   * field.label_widget (can be None, for BoolFields for example)
     #   * field.widget
     #   * field.add_button (can be None)
     #   * field.edit_button (can be None)
+    #   * field.delete_button (can be None)
     # * setup focus
     # * save the toplevel container as self.widget
     #
@@ -402,7 +414,7 @@ class FormLayout(object):
 
 
 class FormTableLayout(FormLayout):
-    """Most common layout, a table with four columns:
+    """Most common layout, a table with columns:
 
     +-------+-------+---+----+------+
     | Value:|Widget |Add|Edit|Delete|
@@ -412,6 +424,9 @@ class FormTableLayout(FormLayout):
     | ....  |...... |...|....|......|
 
     Each new field is added as another vertical line.
+    Widget will always be visible.
+    Add, Edit, Delete are optional.
+    Value label can be hidden.
     """
     def __init__(self, form, fields):
         FormLayout.__init__(self, form, fields)
