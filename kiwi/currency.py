@@ -24,8 +24,8 @@
 """Currency and datatype converter"""
 
 import gettext
+import decimal
 
-from kiwi.datatypes import HAVE_DECIMAL, Decimal, InvalidOperation
 from kiwi.datatypes import ValidationError, ValueUnset
 from kiwi.datatypes import converter, get_localeconv, filter_locale
 from kiwi.enums import Alignment
@@ -33,12 +33,12 @@ from kiwi.enums import Alignment
 _ = lambda m: gettext.dgettext('kiwi', m)
 
 
-class currency(Decimal):
+class currency(decimal.Decimal):
     """
     A datatype representing currency, used together with the list and
     the framework
     """
-    _converter = converter.get_converter(Decimal)
+    _converter = converter.get_converter(decimal.Decimal)
 
     def __new__(cls, value):
         """
@@ -62,20 +62,20 @@ class currency(Decimal):
                 value = text.strip()
 
             if value == ValueUnset:
-                raise InvalidOperation
-        elif HAVE_DECIMAL and isinstance(value, float):
+                raise decimal.InvalidOperation
+        elif isinstance(value, float):
             print ('Warning: losing precision converting float %r to currency'
                    % value)
             value = str(value)
-        elif not isinstance(value, (int, long, Decimal)):
+        elif not isinstance(value, (int, long, decimal.Decimal)):
             raise TypeError(
                 "cannot convert %r of type %s to a currency" % (
                 value, type(value)))
 
-        return Decimal.__new__(cls, value)
+        return decimal.Decimal.__new__(cls, value)
 
     def format(self, symbol=True, precision=None):
-        value = Decimal(self)
+        value = decimal.Decimal(self)
 
         conv = get_localeconv()
 
@@ -159,7 +159,7 @@ class currency(Decimal):
     def __repr__(self):
         return '<currency %s>' % self.format()
 
-_DecimalConverter = type(converter.get_converter(Decimal))
+_DecimalConverter = type(converter.get_converter(decimal.Decimal))
 
 
 class _CurrencyConverter(_DecimalConverter):
@@ -195,7 +195,7 @@ class _CurrencyConverter(_DecimalConverter):
             return ValueUnset
         try:
             return currency(value)
-        except (ValueError, InvalidOperation):
+        except (ValueError, decimal.InvalidOperation):
             raise ValidationError(
                 _("%s can not be converted to a currency") % value)
 
