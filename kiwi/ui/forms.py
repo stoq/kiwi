@@ -53,43 +53,40 @@ _ = lambda m: gettext.dgettext('kiwi', m)
 
 
 class Field(gobject.GObject):
-    """
-    Properties
-    ==========
-      - B{data_type}: string
-        - Used by proxy_widgets
-      - B{mandatory}: bool I{False}
-        - Used by proxy_widgets
-      - B{label}: string I{None}
-        - Text of the label that will be next to the field,
-          Can be None for not displaying any label at all
-      - B{label_attribute}: string I{None}
-        - Name of the label widget inside the view, None
-          means it should be model_attribute + '_lbl'
-      - B{has_add_button}: bool I{False}
-        - If we should add an add button next to the widget
-      - B{has_edit_button}: bool I{False}
-        - If we should add an edit button next to the widget
-      - B{proxy}: bool I{False}
-        - If this field should be added to a proxy
-    """
 
-    # This is used to sort class variables in creation order
-    # which is essentially the same thing as the order in the
-    # source file, idea borrowed from Django
+    #: This is used to sort class variables in creation order
+    #: which is essentially the same thing as the order in the
+    #: source file, idea borrowed from Django
     global_sort_key = 0
 
+    #: Used by proxy_widgets
     data_type = gobject.property(type=object)
+
+    #: Used by proxy_widgets
     mandatory = gobject.property(type=bool, default=False)
+
+    #: Text of the label that will be next to the field,
+    #: Can be None for not displaying any label at all
     label = gobject.property(type=str)
+
+    #: Name of the label widget inside the view, None
+    #: means it should be model_attribute + '_lbl'
     label_attribute = gobject.property(type=str)
+
+    #: If we should add an add button next to the widget
     has_add_button = gobject.property(type=bool, default=False)
+
+    #: If we should add an edit button next to the widget
     has_edit_button = gobject.property(type=bool, default=False)
+
+    #: If we should add a delete button next to the widget
     has_delete_button = gobject.property(type=bool, default=False)
+
+    #: If this field should be added to a proxy
     proxy = gobject.property(type=bool, default=False)
 
-    # This can be used by subclasses to override the default
-    # values for properties
+    #: This can be used by subclasses to override the default
+    #: values for properties
     default_overrides = {}
 
     def __init__(self, label='', **kwargs):
