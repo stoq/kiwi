@@ -20,8 +20,10 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
+import contextlib
 import os
 import gettext
+import warnings
 
 import glib
 import atk
@@ -250,64 +252,101 @@ def yesno(text, parent=None, default=gtk.RESPONSE_YES,
                          buttons=buttons, default=default)
 
 
-def open(title='', parent=None, patterns=None, folder=None, filter=None,
-         with_file_chooser=False):
-    """Displays an open dialog.
-    :param title: the title of the folder, defaults to 'Select folder'
-    :param parent: parent gtk.Window or None
-    :param patterns: a list of pattern strings ['*.py', '*.pl'] or None
-    :param folder: initial folder or None
-    :param filter: a filter to use or None, is incompatible with patterns
-    """
+@contextlib.contextmanager
+def selectfile(title='', parent=None, folder=None, filters=[]):
+    """Creates and returns a gtk.FileChooserDialog.
 
-    ffilter = filter
-    if patterns and ffilter:
-        raise TypeError("Can't use patterns and filter at the same time")
+    To run the dialog, the user apps should do:
 
-    filechooser = gtk.FileChooserDialog(title or _('Open'),
+        >>> from kiwi.ui.dialogs import selectfile
+        >>> with selectfile(...) as sf:
+        >>>     sf.run()
+        >>>     filename = sf.get_filename()
+        >>>     if not filename:
+        >>>         return
+
+    :param title: the title of the folder, defaults to 'Select file'
+    :param parent: parent gtk.Window (defaults to ``None``)
+    :param folder: initial folder (defaults to ``None``, which open current
+      folder)
+    :param filters: a list of filters to use, is incompatible with patterns"""
+
+    filechooser = gtk.FileChooserDialog(title or _('Select file'),
                                         parent,
                                         gtk.FILE_CHOOSER_ACTION_OPEN,
                                         (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                          gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
-    if patterns or ffilter:
-        if not ffilter:
-            ffilter = gtk.FileFilter()
-            for pattern in patterns:
-                ffilter.add_pattern(pattern)
-        if type(ffilter) != list:
-            ffilter = [ffilter]
-        for f in ffilter:
-            filechooser.add_filter(f)
-    filechooser.set_default_response(gtk.RESPONSE_OK)
+    for f in filters:
+        filechooser.add_filter(f)
 
     if folder:
         filechooser.set_current_folder(folder)
 
-    response = filechooser.run()
-    if response != gtk.RESPONSE_OK:
-        if with_file_chooser:
-            return None, filechooser
+    filechooser.set_default_response(gtk.RESPONSE_OK)
+
+    try:
+        yield filechooser
+    finally:
         filechooser.destroy()
-        return
 
-    path = filechooser.get_filename()
-    if path and os.access(path, os.R_OK):
+
+def open(title='', parent=None, patterns=None, folder=None, filters=None,
+         with_file_chooser=False, filter=None):
+    """Temporarily available to allow deprecated use of kiwi's open() function.
+      Will be removed eventually.
+    :param title: refer to selectfile()
+    :param parent: refer to selectfile()
+    :param folder: refer to selectfile()
+    :param filters: refer to selectfile()
+    :param with_file_chooser: returns filechooser with filename selected"""
+
+    warnings.warn('use selectfile() instead of open()', DeprecationWarning,
+                  stacklevel=2)
+
+    if filter:
+        if filters:
+            warnings.warn('do not use filter, being ignored',
+                          DeprecationWarning, stacklevel=2)
+        else:
+            warnings.warn('use argument filters instead of filter',
+                          DeprecationWarning, stacklevel=2)
+            filters = filter
+
+    if patterns:
+        if filters:
+            warnings.warn('do not use patterns, use gtk.FileFilter instead',
+                          DeprecationWarning, stacklevel=2)
+        else:
+            filters = gtk.FileFilter()
+            if type(patterns) != list:
+                patterns = [patterns]
+            for pattern in patterns:
+                filters.add_pattern(pattern)
+
+    with selectfile(title='', parent=parent, folder=folder,
+                    filters=filters) as sf:
+
+        sf.run()
+        path = sf.get_filename()
+        if not path:
+            if with_file_chooser:
+                return None, sf
+            return
+
+        if os.access(path, os.R_OK):
+            if with_file_chooser:
+                return path, sf
+            return path
+
+        abspath = os.path.abspath(path)
+
+        error(_('Could not open file "%s"') % abspath,
+              _('The file "%s" could not be opened. '
+                'Permission denied.') % abspath)
+
         if with_file_chooser:
-            return path, filechooser
-        filechooser.destroy()
-        return path
-
-    abspath = os.path.abspath(path)
-
-    error(_('Could not open file "%s"') % abspath,
-          _('The file "%s" could not be opened. '
-            'Permission denied.') % abspath)
-
-    if with_file_chooser:
-        return None, filechooser
-    filechooser.destroy()
-    return
+            return None, sf
 
 
 def selectfolder(title='', parent=None, folder=None):
