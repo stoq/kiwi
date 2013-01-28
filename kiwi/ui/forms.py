@@ -382,6 +382,7 @@ class MultiLineField(Field):
     def build_widget(self):
         from kiwi.ui.widgets.textview import ProxyTextView
         widget = ProxyTextView()
+        widget.set_wrap_mode(gtk.WRAP_WORD)
         return widget
 
     def get_attachable_widget(self):
