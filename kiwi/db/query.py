@@ -177,3 +177,8 @@ class QueryExecuter(object):
 
     def get_limit(self):
         return self._limit
+
+    def get_ordered_result(self, result, attribute):
+        """This should sort the results given the string attribute
+        """
+        pass

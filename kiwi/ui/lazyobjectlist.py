@@ -218,7 +218,8 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
             order_attr = column.search_attribute or column.attribute
         else:
             order_attr = column.attribute
-        self._result = self._orig_result.order_by(order_attr)
+        self._result = self._executer.get_ordered_result(self._orig_result,
+                                                         order_attr)
 
         if self._sort_order == gtk.SORT_DESCENDING:
             # Results should be reversed, so we need to invert the start and
