@@ -104,6 +104,7 @@ class SlaveView(gobject.GObject):
     domain = None
     fields = None
     form_holder_name = 'toplevel'
+    form_columns = 1
 
     # This signal is emited when the view wants to return a result value
     gsignal("result", object)

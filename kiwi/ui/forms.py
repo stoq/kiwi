@@ -32,6 +32,7 @@ Form is a simple way of creating fields that are:
 import datetime
 from decimal import Decimal
 import gettext
+import math
 import sys
 
 import gobject
@@ -83,6 +84,10 @@ class Field(gobject.GObject):
 
     #: If this field should be added to a proxy
     proxy = gobject.property(type=bool, default=False)
+
+    #: When attaching this field to a form, span that much on the
+    #: table. Analogous to html columns' colspan property
+    colspan = gobject.property(type=int, default=1)
 
     #: This can be used by subclasses to override the default
     #: values for properties
@@ -239,6 +244,19 @@ class Field(gobject.GObject):
         pass
 
 gobject.type_register(Field)
+
+
+class EmptyField(Field):
+    """
+    I am a field representing an empty space,
+    rendered as an empty label.
+    """
+
+    def build_widget(self):
+        return gtk.Label('')
+
+    def build_label(self):
+        return None
 
 
 class BoolField(Field):
@@ -474,33 +492,87 @@ class FormTableLayout(FormLayout):
     Add, Edit, Delete are optional.
     Value label can be hidden.
     """
-    def __init__(self, form, fields):
+
+    #: 3 is the number of items - [label]|[widget]|[add|edit|delete]
+    COLUMNS_PER_FIELD = 3
+
+    def __init__(self, form, fields, columns=1):
         FormLayout.__init__(self, form, fields)
-        table = gtk.Table(len(fields), 5, False)
+
+        # This is the number of spaces we need to be available on the table.
+        # Each field will need the same space as its colspan attribute
+        required_spaces = sum([f.colspan for f, fname in fields])
+
+        # The number of rows is the relation between required_spaces and
+        # columns. Some examples:
+        #   10 required_spaces, 1 column = 10 rows (10 x 1 = 10 spaces)
+        #   10 required_spaces, 2 column = 5 rows (5 x 2 = 10 spaces)
+        #   11 required_spaces, 3 column = 4 rows (4 x 3 = 12 spaces)
+        rows = int(math.ceil(required_spaces / float(columns)))
+
+        table = gtk.Table(rows, columns * self.COLUMNS_PER_FIELD, False)
         table.props.row_spacing = 6
+        table.props.column_spacing = 6
 
         focus_widgets = []
-        for i, (field, field_name) in enumerate(fields):
+        used_spaces = set()
+        i, j = 0, 0
+
+        # FIXME: This for is more complex than it should. Refactor it in the future
+        for field, field_name in fields:
+            if field.colspan > columns:
+                raise ValueError(
+                    "colspan cannot be greater then the number of columns")
+
             form.build_field(field, field_name)
+
+            # Find a place for the widget. This will search each row of each
+            # column ,starting at the first row (j == 0) until the last one.
+            # When the first column is completely filled, it will go to the
+            # next column and so on.
+            while (i, j) in used_spaces:
+                j += 1
+                if j >= rows:
+                    j = 0
+                    i += 1
+
+            # Mark i, j as used, even the spaces used by its colspan
+            for k in range(i, i + field.colspan):
+                used_spaces.add((k, j))
+
+            x = i * self.COLUMNS_PER_FIELD
+            y = j
+
+            # Attach the field label
             if field.label_widget:
-                table.attach(field.label_widget, 0, 1, i, i + 1,
-                             gtk.FILL,
-                             gtk.EXPAND | gtk.FILL, 0, 0)
-            table.attach(field.get_attachable_widget(), 1, 2, i, i + 1,
-                         gtk.EXPAND | gtk.FILL,
-                         gtk.EXPAND | gtk.FILL, 6, 0)
-            if field.add_button:
-                table.attach(field.add_button, 2, 3, i, i + 1,
-                             gtk.SHRINK,
-                             gtk.EXPAND | gtk.FILL, 0, 0)
-            if field.edit_button:
-                table.attach(field.edit_button, 3, 4, i, i + 1,
-                             gtk.SHRINK,
-                             gtk.EXPAND | gtk.FILL, 0, 0)
-            if field.delete_button:
-                table.attach(field.delete_button, 4, 5, i, i + 1,
-                             gtk.SHRINK,
-                             gtk.EXPAND | gtk.FILL, 0, 0)
+                table.attach(field.label_widget,
+                             x, x + 1, y, y + 1,
+                             gtk.FILL, 0, 0, 0)
+
+            x += 1
+            if field.colspan > 1:
+                extra_x = (field.colspan - 1) * (self.COLUMNS_PER_FIELD + 1)
+            else:
+                extra_x = 1
+
+            # Attach the field widget
+            table.attach(field.get_attachable_widget(),
+                         x, x + extra_x, y, y + 1,
+                         gtk.EXPAND | gtk.FILL, 0, 0, 0)
+
+            # Build and attach the extra buttons
+            hbox = gtk.HBox(spacing=0)
+            for button in [field.add_button, field.edit_button, field.delete_button]:
+                if not button:
+                    continue
+                hbox.pack_start(button, expand=False, fill=False)
+
+            x += extra_x
+            hbox.show_all()
+            table.attach(hbox,
+                         x, x + 1, y, y + 1,
+                         0, 0, 0, 0)
+
             focus_widgets.append(field.widget)
 
         table.set_focus_chain(focus_widgets)
@@ -551,7 +623,7 @@ class BasicForm(SlaveDelegate):
         # Remove sort key
         fields = [field[1:] for field in fields]
 
-        layout = FormTableLayout(self, fields)
+        layout = FormTableLayout(self, fields, self.main_view.form_columns)
         self.toplevel.add(layout.widget)
         layout.widget.show()
 
