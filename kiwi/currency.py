@@ -46,7 +46,7 @@ class currency(decimal.Decimal):
         :param value: value to convert
         :type value: string or number
         """
-        if isinstance(value, str):
+        if isinstance(value, basestring):
             conv = get_localeconv()
             currency_symbol = conv.get('currency_symbol')
             text = value.strip(currency_symbol)
@@ -66,7 +66,7 @@ class currency(decimal.Decimal):
         elif isinstance(value, float):
             print ('Warning: losing precision converting float %r to currency'
                    % value)
-            value = str(value)
+            value = unicode(value)
         elif not isinstance(value, (int, long, decimal.Decimal)):
             raise TypeError(
                 "cannot convert %r of type %s to a currency" % (

@@ -252,6 +252,7 @@ class CurrencyTest(unittest.TestCase):
         self.assertEqual(currency('1.994').format(), '$1.99')
         self.assertEqual(currency('1.995').format(), '$1.99')
         self.assertEqual(currency('1.996').format(), '$1.99')
+        self.assertEqual(currency(u'1.996').format(), u'$1.99')
 
     def testFormatBR(self):
         if not set_locale(locale.LC_ALL, 'pt_BR'):
