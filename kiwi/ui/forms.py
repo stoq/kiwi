@@ -332,7 +332,7 @@ class ColorField(Field):
     I am a field representing a color,
     rendered as a color button.
     """
-    widget_data_type = str
+    widget_data_type = unicode
 
     def build_widget(self):
         button = ProxyColorButton()

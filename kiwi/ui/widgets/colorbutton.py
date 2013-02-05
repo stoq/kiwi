@@ -35,7 +35,7 @@ class ProxyColorButton(gtk.ColorButton, ProxyWidgetMixin):
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
 
-    allowed_data_types = str,
+    allowed_data_types = (basestring, )
 
     def __init__(self, color=gtk.gdk.Color(0, 0, 0)):
         ProxyWidgetMixin.__init__(self)
@@ -49,9 +49,8 @@ class ProxyColorButton(gtk.ColorButton, ProxyWidgetMixin):
 
     def read(self):
         color = self.get_color()
-        return '#%02x%02x%02x' % (color.red / 256,
-                                  color.green / 256,
-                                  color.blue / 256)
+        return self._from_string('#%02x%02x%02x' % (
+            color.red / 256, color.green / 256, color.blue / 256))
 
     def update(self, data):
         if data is ValueUnset or data is None:

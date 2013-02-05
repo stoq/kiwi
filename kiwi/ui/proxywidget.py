@@ -153,6 +153,7 @@ class ProxyWidgetMixin(object):
 
     # Private
 
+    # FIXME: This should be public. All the callsites are outside this module
     def _as_string(self, data):
         """Convert a value to a string
         :param data: data to convert
@@ -164,6 +165,7 @@ class ProxyWidgetMixin(object):
         return conv.as_string(data, format=self._data_format,
                               **self._converter_options.get(conv.type, {}))
 
+    # FIXME: This should be public. All the callsites are outside this module
     def _from_string(self, data):
         """Convert a string to the data type of the widget
         This may raise a :class:`kiwi.datatypes.ValidationError` if conversion
