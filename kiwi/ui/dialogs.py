@@ -259,12 +259,13 @@ def selectfile(title='', parent=None, folder=None, filters=[]):
 
     To run the dialog, the user apps should do:
 
+        >>> import gtk
         >>> from kiwi.ui.dialogs import selectfile
         >>> with selectfile(...) as sf:
-        >>>     sf.run()
-        >>>     filename = sf.get_filename()
-        >>>     if not filename:
+        >>>     response = sf.run()
+        >>>     if response != gtk.RESPONSE_OK:
         >>>         return
+        >>>     filename = sf.get_filename()
 
     :param title: the title of the folder, defaults to 'Select file'
     :param parent: parent gtk.Window (defaults to ``None``)
@@ -328,13 +329,13 @@ def open(title='', parent=None, patterns=None, folder=None, filters=None,
     with selectfile(title='', parent=parent, folder=folder,
                     filters=[file_filter]) as sf:
 
-        sf.run()
-        path = sf.get_filename()
-        if not path:
+        response = sf.run()
+        if response != gtk.RESPONSE_OK:
             if with_file_chooser:
                 return None, sf
             return
 
+        path = sf.get_filename()
         if os.access(path, os.R_OK):
             if with_file_chooser:
                 return path, sf
