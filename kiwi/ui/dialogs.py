@@ -319,14 +319,14 @@ def open(title='', parent=None, patterns=None, folder=None, filters=None,
             warnings.warn('do not use patterns, use gtk.FileFilter instead',
                           DeprecationWarning, stacklevel=2)
         else:
-            filters = gtk.FileFilter()
+            file_filter = gtk.FileFilter()
             if type(patterns) != list:
                 patterns = [patterns]
             for pattern in patterns:
-                filters.add_pattern(pattern)
+                file_filter.add_pattern(pattern)
 
     with selectfile(title='', parent=parent, folder=folder,
-                    filters=filters) as sf:
+                    filters=[file_filter]) as sf:
 
         sf.run()
         path = sf.get_filename()
