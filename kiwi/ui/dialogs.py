@@ -155,7 +155,7 @@ class BaseDialog(gtk.Dialog):
 
 
 def messagedialog(dialog_type, short, long=None, parent=None,
-                  buttons=gtk.BUTTONS_OK, default=-1):
+                  buttons=gtk.BUTTONS_OK, default=-1, bold=True):
     """Create and show a MessageDialog.
 
     :param dialog_type: one of constants
@@ -178,6 +178,7 @@ def messagedialog(dialog_type, short, long=None, parent=None,
       or a tuple or 2-sized tuples representing label and response. If label
       is a stock-id a stock icon will be displayed.
     :param default: optional default response id
+    :param bold: If the short message should be formatted to bold
     """
     if buttons in (gtk.BUTTONS_NONE, gtk.BUTTONS_OK, gtk.BUTTONS_CLOSE,
                    gtk.BUTTONS_CANCEL, gtk.BUTTONS_YES_NO,
@@ -199,7 +200,7 @@ def messagedialog(dialog_type, short, long=None, parent=None,
         for text, response in buttons:
             d.add_buttons(text, response)
 
-    d.set_primary(short)
+    d.set_primary(short, bold=bold)
 
     if long:
         if isinstance(long, gtk.Widget):
@@ -394,6 +395,7 @@ def ask_overwrite(filename, parent=None):
     text = ('<span weight="bold" size="larger">%s</span>\n\n%s\n'
             % (submsg1, submsg2))
     result = messagedialog(gtk.MESSAGE_ERROR, text, parent=parent,
+                           bold=False,
                            buttons=((gtk.STOCK_CANCEL,
                                      gtk.RESPONSE_CANCEL),
                                     (_("Replace"),
