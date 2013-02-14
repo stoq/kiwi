@@ -54,7 +54,7 @@ except ImportError, e:
         gobject  # pyflakes
     except:
         raise SystemExit(
-            "PyGTK 2.22 or higher is required by kiwi\n"
+            "PyGTK 2.24 or higher is required by kiwi\n"
             "Error was: %s" % e)
 
 from kiwi.__version__ import version as kiwi_version

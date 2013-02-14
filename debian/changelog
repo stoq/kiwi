@@ -8,7 +8,7 @@ kiwi (1.9.37) precise; urgency=low
   * Add interface tests.
   * Upgrade to a more recent PEP8 version
   * Add search_func to SearchColumn
-  * Require PyGTK 2.22
+  * Require PyGTK 2.24
   * Require Python 2.6 and use remove Decimal compatibility for
     older versions
 
