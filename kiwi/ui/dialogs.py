@@ -254,7 +254,7 @@ def yesno(text, parent=None, default=gtk.RESPONSE_YES,
 
 
 @contextlib.contextmanager
-def selectfile(title='', parent=None, folder=None, filters=[]):
+def selectfile(title='', parent=None, folder=None, filters=None):
     """Creates and returns a gtk.FileChooserDialog.
 
     To run the dialog, the user apps should do:
@@ -278,6 +278,8 @@ def selectfile(title='', parent=None, folder=None, filters=[]):
                                         (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                          gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
+    if filters is None:
+        filters = []
     for f in filters:
         filechooser.add_filter(f)
 
@@ -324,9 +326,10 @@ def open(title='', parent=None, patterns=None, folder=None, filters=None,
                 patterns = [patterns]
             for pattern in patterns:
                 file_filter.add_pattern(pattern)
+            filters = [file_filter]
 
     with selectfile(title='', parent=parent, folder=folder,
-                    filters=[file_filter]) as sf:
+                    filters=filters) as sf:
 
         sf.run()
         path = sf.get_filename()
