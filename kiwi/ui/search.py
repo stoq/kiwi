@@ -1455,6 +1455,8 @@ class SearchContainer(gtk.VBox):
             state = search_filter.get_state()
             if isinstance(state, DateQueryState):
                 data['start'] = state.date
+            elif isinstance(state, BoolQueryState):
+                data['value'] = state.value
             elif isinstance(state, DateIntervalQueryState):
                 data['start'] = state.start
                 data['end'] = state.end
