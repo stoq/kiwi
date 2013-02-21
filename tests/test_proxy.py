@@ -168,7 +168,7 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(self.view.radiobutton.read(), 'first')
         self.assertEqual(self.view.label.read(), '', 'label')
         self.assertEqual(self.view.spinbutton.read(), ValueUnset, 'spinbutton')
-        self.assertEqual(self.view.textview.read(), ValueUnset, 'textview')
+        self.assertEqual(self.view.textview.read(), '', 'textview')
         self.assertEqual(self.view.comboentry.read(), None, 'comboentry')
         self.assertEqual(self.view.combobox.read(), 'CB1', 'combobox')
 

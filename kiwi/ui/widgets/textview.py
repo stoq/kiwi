@@ -52,7 +52,6 @@ class ProxyTextView(gtk.TextView, ValidatableProxyWidgetMixin):
     allowed_data_types = (basestring, datetime.date) + number
 
     def __init__(self):
-        self._is_unset = True
         gtk.TextView.__init__(self)
         self.props.data_type = str
         ValidatableProxyWidgetMixin.__init__(self)
@@ -63,29 +62,23 @@ class ProxyTextView(gtk.TextView, ValidatableProxyWidgetMixin):
         self.set_buffer(self._textbuffer)
 
     def _on_textbuffer__changed(self, textbuffer):
-        self._is_unset = False
         self.emit('content-changed')
         self.read()
 
     def read(self):
-        if self._is_unset:
-            return ValueUnset
         textbuffer = self._textbuffer
         data = textbuffer.get_text(textbuffer.get_start_iter(),
                                    textbuffer.get_end_iter())
         return self._from_string(data)
 
     def update(self, data):
-        if data is ValueUnset:
-            self._textbuffer.set_text("")
-            self._is_unset = True
-            return
-        elif data is None:
+        if data is ValueUnset or data is None:
             text = ""
         else:
-            self.is_unset = False
             text = self._as_string(data)
 
+        if self.props.mandatory:
+            self.emit('validation-changed', bool(text))
         self._textbuffer.set_text(text)
 
 
