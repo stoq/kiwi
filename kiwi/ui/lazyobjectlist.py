@@ -31,6 +31,20 @@ from kiwi.ui.objectlist import empty_marker, ListLabel
 _ = lambda m: gettext.dgettext('kiwi', m)
 
 
+DEBUG_TREE_MODEL = False
+
+def debug(func):
+    if not DEBUG_TREE_MODEL:
+        return func
+
+    def wrapper(*args, **kwargs):
+        retval = func(*args, **kwargs)
+        print func.__name__, args, kwargs, '->', retval
+        return retval
+
+    return wrapper
+
+
 class LazyObjectModelRow(object):
     def __init__(self, item, path, iter):
         self.item = item
@@ -70,6 +84,8 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         self.old_model = old_model
         (self._sort_column_id,
          self._sort_order) = old_model.get_sort_column_id()
+        if self._sort_column_id is None:
+            self._sort_column_id = 0
         gtk.GenericTreeModel.__init__(self)
         self.props.leak_references = False
         self._load_result_set(result)
@@ -88,49 +104,61 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
 
     # GtkTreeModel
 
+    @debug
     def on_get_flags(self):
         return gtk.TREE_MODEL_LIST_ONLY
 
+    @debug
     def on_get_n_columns(self):
         return 1
 
+    @debug
     def on_get_column_type(self, index):
         return object
 
+    @debug
     def on_get_value(self, row, column):
         return self._values[row]
 
+    @debug
     def on_get_iter(self, path):
         if self._iters:
             return self._iters[path[0]]
 
+    @debug
     def on_get_path(self, row):
         return (row, )
 
+    @debug
     def on_iter_parent(self, row):
         return None
 
+    @debug
     def on_iter_next(self, row):
         if row + 1 < self._count:
             return self._iters[row + 1]
         else:
             return None
 
+    @debug
     def on_iter_has_child(self, row):
         return False
 
+    @debug
     def on_iter_children(self, row):
         if row is None and self._iters:
             return self._iters[0]
         else:
             return None
 
+    @debug
     def on_iter_n_children(self, row):
         if row is None:
             return self._count
         else:
             return 0
 
+    @debug
     def on_iter_nth_child(self, parent, n):
         if parent:
             return None
@@ -140,6 +168,7 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
     def __len__(self):
         return self._count
 
+    @debug
     def __getitem__(self, key):
         if isinstance(key, gtk.TreeIter):
             index = self.get_user_data(key)
@@ -151,14 +180,22 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
             raise AssertionError(key)
         return LazyObjectModelRow(self._values[index], (index,), (index,))
 
+    @debug
     def __contains__(self, value):
         return value in self._values
 
     # GtkTreeSortable
 
-    def do_get_sort_column_id(self):
-        return (self._sort_column_id, self._sort_order)
+    if gtk.gtk_version >= (3, 0):
+        @debug
+        def do_get_sort_column_id(self):
+            return (self._sort_order >= 0, self._sort_column_id, self._sort_order)
+    else:
+        @debug
+        def do_get_sort_column_id(self):
+            return (self._sort_column_id, self._sort_order)
 
+    @debug
     def do_set_sort_column_id(self, sort_column_id, sort_order):
         self.old_model.set_sort_column_id(sort_column_id, sort_order)
         changed_column = sort_column_id != self._sort_column_id
@@ -173,12 +210,15 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         self._load_result_set(self._result)
         self.sort_column_changed()
 
+    @debug
     def do_set_sort_func(self, sort_column_id, sort_func, user_data=None):
         pass
 
+    @debug
     def do_set_default_sort_func(self, sort_func, user_data=None):
         pass
 
+    @debug
     def do_has_default_sort_func(self):
         # Don't return True here, so that we can have only sorted/not sorted
         # statuses. If we return True, there is also the posibility of the
