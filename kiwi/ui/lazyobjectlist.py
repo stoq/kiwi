@@ -198,7 +198,6 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
             return (self._sort_column_id, self._sort_order)
         do_get_sort_column_id = do_get_sort_column_id_gtk2
 
-
     @debug
     def do_set_sort_column_id(self, sort_column_id, sort_order):
         self.old_model.set_sort_column_id(sort_column_id, sort_order)
