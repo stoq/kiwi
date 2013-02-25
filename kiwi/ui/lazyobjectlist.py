@@ -33,6 +33,7 @@ _ = lambda m: gettext.dgettext('kiwi', m)
 
 DEBUG_TREE_MODEL = False
 
+
 def debug(func):
     if not DEBUG_TREE_MODEL:
         return func
@@ -191,9 +192,12 @@ class LazyObjectModel(gtk.GenericTreeModel, gtk.TreeSortable):
         def do_get_sort_column_id(self):
             return (self._sort_order >= 0, self._sort_column_id, self._sort_order)
     else:
+        # FIXME: Remove when done with gtk2
         @debug
-        def do_get_sort_column_id(self):
+        def do_get_sort_column_id_gtk2(self):
             return (self._sort_column_id, self._sort_order)
+        do_get_sort_column_id = do_get_sort_column_id_gtk2
+
 
     @debug
     def do_set_sort_column_id(self, sort_column_id, sort_order):
