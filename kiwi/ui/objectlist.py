@@ -286,15 +286,17 @@ class Column(gobject.GObject):
     def _get_data_type(self):
         return self._data_type
 
+    def _str_compare(a, b):
+        return locale.strcoll(a or '', b or '')
+
     def _set_data_type(self, data):
         if data is not None:
             conv = converter.get_converter(data)
             if data == str:
-                def str_compare(a, b):
-                    return locale.strcoll(a or '', b or '')
-                self.compare = str_compare
+                compare_func = self._str_compare
             else:
-                self.compare = self.compare or conv.get_compare_function()
+                compare_func = conv.get_compare_function()
+            self.compare = self.compare or compare_func
             self.from_string = conv.from_string
         self._data_type = data
     data_type = gobject.property(getter=_get_data_type,
