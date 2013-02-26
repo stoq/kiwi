@@ -286,7 +286,7 @@ class Column(gobject.GObject):
     def _get_data_type(self):
         return self._data_type
 
-    def _str_compare(a, b):
+    def _str_compare(self, a, b):
         return locale.strcoll(a or '', b or '')
 
     def _set_data_type(self, data):
