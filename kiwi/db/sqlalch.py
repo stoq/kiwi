@@ -63,7 +63,8 @@ class SQLAlchemyQueryExecuter(QueryExecuter):
             raise TypeError
         self._query_callbacks.append(callback)
 
-    def add_filter_query_callback(self, search_filter, callback):
+    def add_filter_query_callback(self, search_filter, callback,
+                                  use_having=False):
         """
         Adds a query callback for the filter search_filter
 
@@ -75,7 +76,7 @@ class SQLAlchemyQueryExecuter(QueryExecuter):
         if not callable(callback):
             raise TypeError
         l = self._filter_query_callbacks.setdefault(search_filter, [])
-        l.append(callback)
+        l.append((callback, use_having))
 
     def set_query(self, callback):
         """
@@ -110,12 +111,14 @@ class SQLAlchemyQueryExecuter(QueryExecuter):
             # Column query
             if search_filter in self._columns:
                 query = self._construct_state_query(
-                    table, state, self._columns[search_filter])
+                    table, state, self.columns[search_filter][0])
+                # FIXME: Support use_having
                 if query:
                     queries.append(query)
             # Custom per filter/state query.
             elif search_filter in self._filter_query_callbacks:
-                for callback in self._filter_query_callbacks[search_filter]:
+                # FIXME: Support use_having
+                for callback, use_having in self._filter_query_callbacks[search_filter]:
                     query = callback(state)
                     if query:
                         queries.append(query)

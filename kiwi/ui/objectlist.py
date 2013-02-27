@@ -738,8 +738,12 @@ class SearchColumn(Column):
 
     #: overrides the function that generates the query to process the search
     search_func = gobject.property(type=object, default=None)
+
     #: names the search interface differently from the column
     search_label = gobject.property(type=object, default=None)
+
+    #: use the query on the *having* part instead of the *where*'s on
+    use_having = gobject.property(type=bool, default=False)
 
     def __init__(self, attribute, title=None, data_type=None,
                  long_title=None, valid_values=None, search_attribute=None,

@@ -1187,7 +1187,7 @@ class SearchContainer(gtk.VBox):
     #
 
     def add_filter(self, search_filter, position=SearchFilterPosition.BOTTOM,
-                   columns=None, callback=None):
+                   columns=None, callback=None, use_having=False):
         """
         Adds a search filter
         :param search_filter: the search filter
@@ -1204,9 +1204,11 @@ class SearchContainer(gtk.VBox):
             if callback:
                 if not callable(callback):
                     raise TypeError("callback must be callable")
-                executer.add_filter_query_callback(search_filter, callback)
+                executer.add_filter_query_callback(search_filter, callback,
+                                                   use_having=use_having)
             elif columns:
-                executer.set_filter_columns(search_filter, columns)
+                executer.set_filter_columns(search_filter, columns,
+                                            use_having=use_having)
         else:
             if columns or callback:
                 raise TypeError(
@@ -1265,7 +1267,8 @@ class SearchContainer(gtk.VBox):
         filter.set_removable()
         attr = column.search_attribute or column.attribute
         self.add_filter(filter, columns=[attr],
-                        callback=column.search_func)
+                        callback=column.search_func,
+                        use_having=column.use_having)
 
         if column.data_type is not bool:
             label = filter.get_title_label()
@@ -1582,11 +1585,12 @@ class SearchSlaveDelegate(SlaveDelegate):
     #
 
     def add_filter(self, search_filter, position=SearchFilterPosition.BOTTOM,
-                   columns=None, callback=None):
+                   columns=None, callback=None, use_having=False):
         """
         See :class:`SearchSlaveDelegate.add_filter`
         """
-        self.search.add_filter(search_filter, position, columns, callback)
+        self.search.add_filter(search_filter, position, columns=columns,
+                               callback=callback, use_having=use_having)
 
     def set_query_executer(self, querty_executer):
         """
