@@ -31,20 +31,17 @@ offers extended widgets based upon the original PyGTK widgets.
 
         python setup.py install [--prefix=<prefix>]
 
-
     You can also fetch the latest source code from github:
 
-        $ git clone github.com/jdahlin/kiwi.git
+        $ git clone http://github.com/stoq/kiwi.git
 
 * Contribute
 
-    We use gerrit to control the Kiwi development:
+    For complete instructions on how to install all dependencies and setting
+    up a database so you can test Stoq, look at the wiki:
 
-    http://gerrit.async.com.br/
-
-    Create an account there and submit your patches via:
-
-    $ git push git+ssh://$USERNAME@gerrit.async.com.br:29418/kiwi
+        http://wiki.stoq.com.br/index.php/Getting_started (English)
+        http://wiki.stoq.com.br/index.php/Come%C3%A7ando (Português)
 
 * Documentation
 
@@ -74,6 +71,10 @@ offers extended widgets based upon the original PyGTK widgets.
 
 * Directory Layout
 
+    bin/
+
+        Scripts which are going to be installed
+
     examples/
 
         Contains a number of examples, most of which are referenced in
@@ -95,11 +96,27 @@ offers extended widgets based upon the original PyGTK widgets.
         Contains patches to GTK+ and PyGTK code, and helper scripts that
         can be used to accelerate certain tasks.
 
+    glade/
+
+        Glade files used by kiwi itself
+
+    pixmaps/
+
+        Pixmaps, images etc
+
+    po/
+
+        Translations
+
     tests/
 
         Contains a number of test cases for the Kiwi widgets and
         framework. All checkins and additions of new code should be
         preceded by a working testcase.
+
+    tools/
+
+        Useful scripts
 
 * Contact info:
 
