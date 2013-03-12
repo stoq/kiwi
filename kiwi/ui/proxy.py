@@ -62,8 +62,6 @@ def unblock_widget(widget):
 def _get_widget_data_type(widget):
     data_type = widget.get_property('data-type')
     c = converter.get_converter(data_type)
-    if c.type is str or c.type is unicode:
-        return basestring
     return c.type
 
 
@@ -328,8 +326,19 @@ class Proxy:
         # exceptions to this rule are ValueUnset and None
         if not (value is ValueUnset or value is None):
             data_type = _get_widget_data_type(widget)
-            value_type = type(value)
-            if not isinstance(value, data_type):
+            if (not isinstance(value, data_type) and
+                    issubclass(data_type, basestring)):
+                if data_type is basestring:
+                    # basestring cannot be instantiated, so use str instead
+                    data_type = str
+                try:
+                    value = data_type(value)
+                except UnicodeDecodeError:
+                    raise TypeError(
+                        "attribute %s of model %r cannot be converted "
+                        "to %s" % (attribute, self._model, data_type.__name__))
+            elif not isinstance(value, data_type):
+                value_type = type(value)
                 raise TypeError(
                     "attribute %s of model %r requires a value of "
                     "type %s, not %s" % (
