@@ -1,3 +1,12 @@
+kiwi (1.9.38) precise; urgency=low
+
+  * Improve compatibility with gtk3
+  * Add new option to filter using the having part of the query
+  * Fixed query generation for boolean columns
+  * Refactored the selectfile function
+
+ -- Ronaldo Francisco Maia <romaia@async.com.br>  Fri, 15 Mar 2013 10:32:16 -0300
+
 kiwi (1.9.37) precise; urgency=low
 
   * New release

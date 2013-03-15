@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kiwi 1.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-13 13:32-0200\n"
+"POT-Creation-Date: 2013-03-15 10:37-0300\n"
 "PO-Revision-Date: 2012-07-23 15:27+0000\n"
 "Last-Translator: Thiago Bellini <hackedbellini@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -167,52 +167,52 @@ msgstr "_Selecionar"
 msgid "Show more _details"
 msgstr "Exibir mais _detalhes"
 
-#: ../kiwi/ui/dialogs.py:275
+#: ../kiwi/ui/dialogs.py:276
 msgid "Select file"
 msgstr "Selecionar arquivo"
 
-#: ../kiwi/ui/dialogs.py:345
+#: ../kiwi/ui/dialogs.py:349
 #, python-format
 msgid "Could not open file \"%s\""
 msgstr "Não foi possivel abrir o arquivo \"%s\""
 
-#: ../kiwi/ui/dialogs.py:346
+#: ../kiwi/ui/dialogs.py:350
 #, python-format
 msgid "The file \"%s\" could not be opened. Permission denied."
 msgstr "O arquivo \"%s\" não pode ser aberto. Permissão negada."
 
-#: ../kiwi/ui/dialogs.py:361
+#: ../kiwi/ui/dialogs.py:365
 msgid "Select folder"
 msgstr "Selecionar pasta"
 
-#: ../kiwi/ui/dialogs.py:384
+#: ../kiwi/ui/dialogs.py:388
 #, python-format
 msgid "Could not select folder \"%s\""
 msgstr "Não foi possivel selecionar a pasta \"%s\""
 
-#: ../kiwi/ui/dialogs.py:385
+#: ../kiwi/ui/dialogs.py:389
 #, python-format
 msgid "The folder \"%s\" could not be selected. Permission denied."
 msgstr "A pasta \"%s\" não pode ser selecionada. Permissão negada."
 
-#: ../kiwi/ui/dialogs.py:393
+#: ../kiwi/ui/dialogs.py:397
 #, python-format
 msgid "A file named \"%s\" already exists"
 msgstr "Um arquivo com o nome \"%s\" já existe"
 
-#: ../kiwi/ui/dialogs.py:394
+#: ../kiwi/ui/dialogs.py:398
 msgid "Do you wish to replace it with the current one?"
 msgstr "Deseja substituí-lo pelo arquivo atual?"
 
-#: ../kiwi/ui/dialogs.py:401
+#: ../kiwi/ui/dialogs.py:405
 msgid "Replace"
 msgstr "Substituir"
 
-#: ../kiwi/ui/dialogs.py:408
+#: ../kiwi/ui/dialogs.py:412
 msgid "Save"
 msgstr "Salvar"
 
-#: ../kiwi/ui/dialogs.py:464
+#: ../kiwi/ui/dialogs.py:468
 msgid "Password:"
 msgstr "Senha:"
 
@@ -236,7 +236,7 @@ msgstr "Editar o %s selecionado"
 msgid "Delete the selected %s"
 msgstr "Remover o %s selecionado"
 
-#: ../kiwi/ui/lazyobjectlist.py:352 ../kiwi/ui/objectlist.py:2425
+#: ../kiwi/ui/lazyobjectlist.py:395 ../kiwi/ui/objectlist.py:2431
 msgid "Total:"
 msgstr "Total:"
 
@@ -272,12 +272,12 @@ msgid "Yesterday"
 msgstr "Ontem"
 
 #: ../kiwi/ui/search.py:106
-msgid "Last week"
-msgstr "Semana passada"
+msgid "Last 7 days"
+msgstr "Últimos 7 dias"
 
 #: ../kiwi/ui/search.py:114
-msgid "Last month"
-msgstr "Mês passado"
+msgid "Last 30 days"
+msgstr "Últimos 30 dias"
 
 #: ../kiwi/ui/search.py:171
 msgid "Between"
@@ -346,6 +346,12 @@ msgstr "E"
 #: ../kiwi/ui/search.py:1161
 msgid "Search:"
 msgstr "Pesquisar:"
+
+#~ msgid "Last week"
+#~ msgstr "Semana passada"
+
+#~ msgid "Last month"
+#~ msgstr "Mês passado"
 
 #~ msgid "Open"
 #~ msgstr "Abrir"
