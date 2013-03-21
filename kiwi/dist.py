@@ -23,6 +23,7 @@
 
 """Distutils extensions and utilities"""
 
+import commands
 from distutils.command.clean import clean
 from distutils.command.install_data import install_data
 from distutils.command.install_lib import install_lib
@@ -198,11 +199,19 @@ class KiwiInstallData(install_data):
 class KiwiClean(clean):
     def run(self):
         retval = clean.run(self)
-        info("Coping revision file")
         top_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-        src = os.path.join(top_dir, '.bzr', 'branch', 'last-revision')
         dest = os.path.join(top_dir, 'last-revision')
-        copyfile(src, dest)
+        git_src = os.path.join(top_dir, '.git', 'HEAD')
+        bzr_src = os.path.join(top_dir, '.bzr', 'branch', 'last-revision')
+        if os.path.exists(git_src):
+            status, output = commands.getstatusoutput(
+                'git rev-parse --short HEAD')
+            if status == 0:
+                info("Writing git revision file")
+                open(dest, 'w').write(output)
+        elif os.path.exists(bzr_src):
+            info("Copying bzr revision file")
+            copyfile(src, dest)
         return retval
 
 

@@ -23,6 +23,7 @@
 
 """Environment helpers: path mangling and resource management"""
 
+import commands
 import errno
 import gettext
 import imp
@@ -383,6 +384,9 @@ class Library(Environment):
 
     def get_revision(self):
         if self.uninstalled:
+            status, output = commands.getstatusoutput('git rev-parse --short HEAD')
+            if status == 0:
+                return output
             revision = os.path.join(
                 self._root, '.bzr', 'branch', 'last-revision')
             try:
