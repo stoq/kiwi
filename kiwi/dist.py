@@ -211,7 +211,7 @@ class KiwiClean(clean):
                 open(dest, 'w').write(output)
         elif os.path.exists(bzr_src):
             info("Copying bzr revision file")
-            copyfile(src, dest)
+            copyfile(bzr_src, dest)
         return retval
 
 
