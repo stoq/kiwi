@@ -23,6 +23,7 @@
 
 import gettext
 
+import glib
 import gtk
 
 from kiwi.datatypes import number
@@ -380,7 +381,7 @@ class LazyObjectListUpdater(object):
             return False
 
         timeout = {}
-        timeout['source_id'] = gtk.timeout_add(
+        timeout['source_id'] = glib.timeout_add(
             self.SCROLL_TIMEOUT, timeout_func, timeout)
         self._timeout_queue.append(timeout)
 
