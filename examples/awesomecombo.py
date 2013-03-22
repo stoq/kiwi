@@ -5,6 +5,7 @@ import gtk
 
 from kiwi.ui.comboentry import ComboEntry
 
+
 class Person:
     """The parameters need to be of the same name of the column headers"""
     def __init__(self, name, age, city):
@@ -19,7 +20,8 @@ data = (Person('Evandro', 23, 'Belo Horizonte'),
         Person('Gustavo', 23, 'São Jose do Santos'),
         Person('Johan', 23, 'Göteborg'),
         Person('Lorenzo', 26, 'Granada')
-       )
+        )
+
 
 def details_callback(data):
     return "<small><b>city:</b> <span foreground='#0000FF'>%s</span> \n" \

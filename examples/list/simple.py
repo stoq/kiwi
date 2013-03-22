@@ -2,6 +2,7 @@ import gtk
 
 from kiwi.ui.objectlist import Column, ObjectList
 
+
 class Fruit:
     def __init__(self, name, price):
         self.name = name

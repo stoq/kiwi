@@ -3,6 +3,7 @@ import gtk
 
 from kiwi.ui.widgets.entry import ProxyEntry
 
+
 def on_entry_activate(entry):
     print 'You selected:', entry.read()
     gtk.main_quit()
@@ -18,7 +19,7 @@ entry = ProxyEntry()
 entry.data_type = str
 entry.connect('activate', on_entry_activate)
 entry.prefill(['Belo Horizonte', u'São Carlos',
-               u'São Paulo',  u'Båstad',
+               u'São Paulo', u'Båstad',
                u'Örnsköldsvik', 'sanca', 'sampa'])
 vbox.pack_start(entry)
 

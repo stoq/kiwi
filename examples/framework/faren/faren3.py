@@ -3,16 +3,18 @@ import gtk
 
 from kiwi.ui.delegates import Delegate
 
+
 class Farenheit(Delegate):
     widgets = ["quitbutton", "temperature", "celsius", "farenheit",
-               "celsius_label" , "farenheit_label", "temperature_label"]
+               "celsius_label", "farenheit_label", "temperature_label"]
     gladefile = "faren"
+
     def __init__(self):
         Delegate.__init__(self, delete_handler=self.quit_if_last)
 
     def convert_temperature(self, temp):
-        farenheit = (temp * 9/5.0) + 32
-        celsius = (temp - 32) * 5/9.0
+        farenheit = (temp * 9 / 5.0) + 32
+        celsius = (temp - 32) * 5 / 9.0
         return farenheit, celsius
 
     def clear_temperature(self):

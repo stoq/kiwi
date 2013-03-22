@@ -22,6 +22,7 @@ news = [
         "http://www.pigdog.org/auto/viva_la_musica/link/2678.html")
 ]
 
+
 class News(SlaveView):
     def __init__(self):
         model = gtk.ListStore(str, str)
@@ -42,6 +43,6 @@ shell = BaseView(gladefile="news_shell", delete_handler=quit_if_last)
 shell.attach_slave("placeholder", news)
 
 news.show_all()
-news.focus_toplevel() # explained next section, don't worry
+news.focus_toplevel()  # explained next section, don't worry
 shell.show()
 gtk.main()

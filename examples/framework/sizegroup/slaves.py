@@ -26,7 +26,8 @@ class TestSlave(GladeSlaveDelegate):
         self.slave = NestedSlave(self)
         self.attach_slave("eventbox", self.slave)
         self.slave.show()
-        self.slave.focus_toplevel() # Must be done after attach
+        self.slave.focus_toplevel()  # Must be done after attach
+
 
 class Shell(GladeDelegate):
     def __init__(self):
@@ -36,7 +37,7 @@ class Shell(GladeDelegate):
         self.slave = TestSlave(self)
         self.attach_slave("placeholder", self.slave)
         self.slave.show()
-        self.slave.focus_toplevel() # Must be done after attach
+        self.slave.focus_toplevel()  # Must be done after attach
 
     def on_ok__clicked(self, *args):
         self.hide_and_quit()
@@ -45,4 +46,3 @@ shell = Shell()
 shell.show()
 
 gtk.main()
-

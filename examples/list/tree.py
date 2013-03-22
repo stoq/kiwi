@@ -2,10 +2,12 @@ import gtk
 
 from kiwi.ui.objectlist import Column, ObjectTree
 
+
 class Fruit:
     def __init__(self, name, price):
         self.name = name
         self.price = price
+
 
 class FruitDesc:
     def __init__(self, name):

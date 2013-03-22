@@ -5,6 +5,7 @@ from kiwi.controllers import BaseController
 from kiwi.ui.views import BaseView
 from kiwi.ui.gadgets import quit_if_last
 
+
 class FarenControl(BaseController):
 
     def on_quitbutton__clicked(self, *args):
@@ -15,8 +16,8 @@ class FarenControl(BaseController):
             temp = float(entry.get_text())
         except ValueError:
             temp = 0
-        celsius = (temp - 32) * 5/9.0
-        farenheit = (temp * 9/5.0) + 32
+        celsius = (temp - 32) * 5 / 9.0
+        farenheit = (temp * 9 / 5.0) + 32
         self.view.celsius.set_text("%.2f" % celsius)
         self.view.farenheit.set_text("%.2f" % farenheit)
 

@@ -34,6 +34,7 @@ import gtk
 
 from kiwi.ui import hyperlink
 
+
 class App(object):
 
     def __init__(self):
@@ -156,6 +157,7 @@ class App(object):
         buf = self._logger.get_buffer()
         timestr = time.strftime('%H:%M:%S')
         buf.insert(buf.get_start_iter(), '%s...%s\n' % (timestr, msg))
+
 
 def main():
     a = App()

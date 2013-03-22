@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# FIXME: Remove ^examples as soon as we fix source errors there
 # Exclude external scripts
-GREP_EXCLUDE='(^examples|tools/(pep8).py)'
+GREP_EXCLUDE='(tools/pep8.py)'
 PYFLAKES_BIN='pyflakes'
 PEP8_BIN=`dirname $0`/pep8.py
 # We probably don't want to fix these for now

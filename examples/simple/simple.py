@@ -3,6 +3,7 @@ import gtk
 
 from kiwi.ui.delegates import Delegate
 
+
 class Hello(Delegate):
     def __init__(self):
         self.index = 0

@@ -33,17 +33,17 @@ today = datetime.date.today()
 for description, price, date in [
     ('Cup of coffee', 2.04, today - datetime.timedelta(1)),
     ('Chocolate bar', 1.85, today - datetime.timedelta(40)),
-    ('Candy',         0.99, today - datetime.timedelta(30)),
-    ('Grape Juice',   3.38, today - datetime.timedelta(23)),
-    ('Ice tea',       1.25, today - datetime.timedelta(10)),
-    ('Cookies',       0.85, today - datetime.timedelta(5)),
-    ('Noogies',       1.45, today - datetime.timedelta(2)),
+    ('Candy', 0.99, today - datetime.timedelta(30)),
+    ('Grape Juice', 3.38, today - datetime.timedelta(23)),
+    ('Ice tea', 1.25, today - datetime.timedelta(10)),
+    ('Cookies', 0.85, today - datetime.timedelta(5)),
+    ('Noogies', 1.45, today - datetime.timedelta(2)),
     ('Chocolate bar', 1.85, today)]:
 
     s = Sale()
-    s.description=unicode(description)
-    s.price=price
-    s.date=date
+    s.description = unicode(description)
+    s.price = price
+    s.date = date
     store.add(s)
     store.flush()
 

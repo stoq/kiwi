@@ -7,16 +7,18 @@ import gtk
 
 from kiwi.currency import currency
 from kiwi.ui.objectlist import (Column, ObjectList, SequentialColumn,
-                                  ColoredColumn, SummaryLabel)
+                                ColoredColumn, SummaryLabel)
+
 
 def random_date():
     max = datetime.datetime.today()
-    min = max.replace(year=max.year-5)
+    min = max.replace(year=max.year - 5)
 
     timestamp = random.randint(
         time.mktime(min.timetuple()),
         time.mktime(max.timetuple()))
     return datetime.datetime.fromtimestamp(timestamp)
+
 
 class Person:
     """The parameters need to be of the same name of the column headers"""
@@ -31,13 +33,16 @@ class Person:
     def __repr__(self):
         return '<Person %s>' % self.name
 
+
 class MyColumn(Column):
     pass
+
 
 def format_func(age):
     if age % 2 == 0:
         return float(age)
     return age
+
 
 def color(data):
     return data % 2 == 0
@@ -53,7 +58,7 @@ columns = [
     Column('time', data_type=datetime.time),
     Column('datetime', data_type=datetime.datetime),
     ColoredColumn('age', data_type=int, color='red', data_func=color),
-    ]
+]
 
 data = (Person('Evandro', 23, 'Belo Horizonte'),
         Person('Daniel', 22, 'São Carlos'),
@@ -61,7 +66,7 @@ data = (Person('Evandro', 23, 'Belo Horizonte'),
         Person('Gustavo', 23, 'São Jose do Santos'),
         Person('Johan', 23, 'Göteborg'),
         Person('Lorenzo', 26, 'Granada')
-       )
+        )
 
 win = gtk.Window()
 win.set_size_request(850, 300)
@@ -72,7 +77,7 @@ win.add(vbox)
 
 l = ObjectList(columns, mode=gtk.SELECTION_MULTIPLE)
 l.extend(data)
-l.append(Person('Nando', 29+len(l), 'Santos'))
+l.append(Person('Nando', 29 + len(l), 'Santos'))
 
 
 # add an extra person

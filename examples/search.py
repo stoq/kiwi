@@ -13,6 +13,7 @@ from kiwi.ui.search import SearchContainer, DateSearchFilter
 
 __connection__ = connectionForURI('sqlite:///:memory:')
 
+
 class Sale(SQLObject):
     description = StringCol()
     price = DecimalCol(size=10, precision=2)
@@ -23,16 +24,17 @@ today = datetime.date.today()
 for description, price, date in [
     ('Cup of coffee', 2.04, today - datetime.timedelta(1)),
     ('Chocolate bar', 1.85, today - datetime.timedelta(40)),
-    ('Candy',         0.99, today - datetime.timedelta(30)),
-    ('Grape Juice',   3.38, today - datetime.timedelta(23)),
-    ('Ice tea',       1.25, today - datetime.timedelta(10)),
-    ('Cookies',       0.85, today - datetime.timedelta(5)),
-    ('Noogies',       1.45, today - datetime.timedelta(2)),
+    ('Candy', 0.99, today - datetime.timedelta(30)),
+    ('Grape Juice', 3.38, today - datetime.timedelta(23)),
+    ('Ice tea', 1.25, today - datetime.timedelta(10)),
+    ('Cookies', 0.85, today - datetime.timedelta(5)),
+    ('Noogies', 1.45, today - datetime.timedelta(2)),
     ('Chocolate bar', 1.85, today)]:
 
     Sale(description=description,
          price=price,
          date=date)
+
 
 class PurchaseViewer(gtk.Window):
     def __init__(self):

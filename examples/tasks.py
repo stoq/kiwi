@@ -11,9 +11,11 @@ from kiwi.ui.search import (SearchContainer, DateSearchFilter,
 
 __connection__ = connectionForURI('sqlite:///:memory:')
 
+
 class Category(SQLObject):
     name = StringCol()
 Category.createTable()
+
 
 class Task(SQLObject):
     title = StringCol()
@@ -32,18 +34,19 @@ school = Category.selectBy(name='School')[0]
 
 today = datetime.date.today()
 for title, category, date in [
-    ('Upgrade web server',  work, today - datetime.timedelta(1)),
+    ('Upgrade web server', work, today - datetime.timedelta(1)),
     ('Buy new light bulbs', home, today - datetime.timedelta(40)),
-    ('Set stock options',   home, today - datetime.timedelta(30)),
-    ('Pass geology test',   school, today - datetime.timedelta(23)),
+    ('Set stock options', home, today - datetime.timedelta(30)),
+    ('Pass geology test', school, today - datetime.timedelta(23)),
     ('Extend student loan', school, today - datetime.timedelta(10)),
-    ('Hire new secretary',  work, today - datetime.timedelta(5)),
-    ('Complete GTA',        home, today),
-    ('Train interns',       work, today)]:
+    ('Hire new secretary', work, today - datetime.timedelta(5)),
+    ('Complete GTA', home, today),
+    ('Train interns', work, today)]:
 
     Task(title=title,
          category=category,
          date=date)
+
 
 class TaskViewer(gtk.Window):
     def __init__(self):
@@ -85,7 +88,7 @@ class TaskViewer(gtk.Window):
                    expand=True),
             Column('category.name', title='Category'),
             Column('date', data_type=datetime.date, width=90)
-            ]
+        ]
 
 view = TaskViewer()
 view.set_size_request(-1, 400)

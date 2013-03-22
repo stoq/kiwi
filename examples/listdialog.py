@@ -7,6 +7,7 @@ from kiwi.ui.listdialog import ListDialog
 from kiwi.ui.objectlist import Column
 from kiwi.ui.widgets.contextmenu import ContextMenu, ContextMenuItem
 
+
 class Item(object):
     def __init__(self, name):
         self.name = name
@@ -14,11 +15,11 @@ class Item(object):
     def __repr__(self):
         return self.name
 
+
 class MyListDialog(ListDialog):
 
     columns = [Column('name')]
     list_type = ListType.UNEDITABLE
-
 
     def __init__(self):
         ListDialog.__init__(self)
@@ -65,5 +66,3 @@ class MyListDialog(ListDialog):
 
 dialog = MyListDialog()
 dialog.run()
-
-

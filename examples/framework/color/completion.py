@@ -6,6 +6,7 @@ import gtk
 from kiwi.ui.entry import KiwiEntry
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 
+
 def load_colors():
     filename = "/usr/X11R6/etc/X11/rgb.txt"
     try:
@@ -16,7 +17,8 @@ def load_colors():
     # the first line we don't want
     lines = lines[1:]
     s = Set([c.strip().split('\t')[2] for c in lines])
-    if '' in s: s.remove('')
+    if '' in s:
+        s.remove('')
     return list(s)
 
 
@@ -42,7 +44,7 @@ def main(args):
     sw = gtk.ScrolledWindow()
     sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_ALWAYS)
     vbox.pack_start(sw)
-    
+
     treeview = gtk.TreeView(model)
     treeview.append_column(
         gtk.TreeViewColumn('Completions', gtk.CellRendererText(), text=0))
@@ -54,7 +56,6 @@ def main(args):
     completion.set_property('minimum-key-length', 0)
     completion.set_model(model)
     completion.set_treeview(treeview)
-
 
     w.show_all()
     gtk.main()

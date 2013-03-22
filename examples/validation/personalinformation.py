@@ -12,6 +12,7 @@ from kiwi.ui.delegates import GladeDelegate
 class Person:
     pass
 
+
 class Form(GladeDelegate):
 
     def __init__(self):
@@ -51,7 +52,7 @@ class Form(GladeDelegate):
             # this is really not the type of validation that you would use :)
             # anyway, it's just for reference
             return ValidationError("Dude! You need to lose "
-                                             "some weight!")
+                                   "some weight!")
 
     def on_nationality__validate(self, widget, data):
         if data != 'Yankee':
@@ -81,6 +82,7 @@ proxy = form.add_proxy(person, ['name', 'age', 'birthdate',
                                 'height', 'weight', 'about',
                                 'nationality', 'status', 'gender', 'salary'])
 form.show_all()
+
 
 def on_ok_btn_clicked(widget):
     print "Name:", person.name

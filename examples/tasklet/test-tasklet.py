@@ -5,6 +5,7 @@ import gtk
 
 from kiwi import tasklet
 
+
 class Counter(tasklet.Tasklet):
     def __init__(self, dialog):
         self.dialog = dialog
@@ -28,6 +29,7 @@ class Counter(tasklet.Tasklet):
             else:
                 raise AssertionError
 
+
 def main():
     dialog = gtk.MessageDialog(parent=None, flags=0, type=gtk.MESSAGE_QUESTION,
                                buttons=gtk.BUTTONS_YES_NO,
@@ -44,7 +46,7 @@ def main():
     event = tasklet.get_event()
     if isinstance(event, tasklet.WaitForSignal):
         print "signal '%s', stopping counter" % event.signal
-        yield tasklet.Message("quit", dest=counter) # stop the counter
+        yield tasklet.Message("quit", dest=counter)  # stop the counter
 
         if event.signal == 'close':
             gtk.main_quit()

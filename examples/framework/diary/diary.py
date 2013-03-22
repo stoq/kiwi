@@ -2,10 +2,12 @@
 from kiwi.ui.delegates import ProxyDelegate
 from kiwi.ui.objectlist import Column, ObjectList
 
+
 class DiaryEntry:
     title = ''
     text = ''
     period = ''
+
 
 class Diary(ProxyDelegate):
     def __init__(self):

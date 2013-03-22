@@ -2,14 +2,15 @@ import gtk
 
 from kiwi.ui.objectlist import Column, ObjectList
 
+
 class Fruit:
     def __init__(self, name, cost):
         self.name = name
         self.cost = cost
 
 fruits = ObjectList([Column('name', data_type=str, editable=True,
-                      expand=True),
-               Column('cost', data_type=int, editable=True)])
+                            expand=True),
+                     Column('cost', data_type=int, editable=True)])
 
 for name, cost in [('Apple', 4),
                    ('Pineapple', 2),

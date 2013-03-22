@@ -4,11 +4,12 @@ import gtk
 from kiwi.controllers import BaseController
 from kiwi.ui.views import BaseView
 
+
 class FarenControl(BaseController):
 
     def convert_temperature(self, temp):
-        celsius = (temp - 32) * 5/9.0
-        farenheit = (temp * 9/5.0) + 32
+        celsius = (temp - 32) * 5 / 9.0
+        farenheit = (temp * 9 / 5.0) + 32
         return farenheit, celsius
 
     def on_quitbutton__clicked(self, *args):
@@ -17,15 +18,17 @@ class FarenControl(BaseController):
     # use changed instead of insert_text, since it catches deletes too
     def after_temperature__changed(self, entry, *args):
         temp = view.get_temp()
-        if temp == None:
+        if temp is None:
             self.view.clear_temp()
         else:
             farenheit, celsius = self.convert_temperature(float(temp))
             self.view.update_temp(farenheit, celsius)
 
+
 class FarenView(BaseView):
     widgets = ["quitbutton", "temperature", "celsius", "farenheit",
-               "celsius_label" , "farenheit_label", "temperature_label"]
+               "celsius_label", "farenheit_label", "temperature_label"]
+
     def __init__(self):
         BaseView.__init__(self, gladefile="faren",
                           delete_handler=self.quit_if_last)

@@ -5,6 +5,7 @@ from kiwi.datatypes import ValidationError
 from kiwi.ui.widgets.combo import ProxyComboEntry
 from kiwi.ui.delegates import GladeDelegate, SlaveDelegate
 
+
 class Dialog(GladeDelegate):
     def __init__(self):
         GladeDelegate.__init__(self, gladefile='lang',
@@ -16,6 +17,7 @@ class Dialog(GladeDelegate):
 
     def on_ok_button__clicked(self, button):
         raise SystemExit
+
 
 class English(SlaveDelegate):
     def __init__(self):
@@ -41,6 +43,7 @@ class English(SlaveDelegate):
         if data != 'Two':
             return ValidationError("foo")
 
+
 class Swedish(SlaveDelegate):
     def __init__(self):
         box = gtk.HBox(spacing=6)
@@ -65,8 +68,10 @@ class Swedish(SlaveDelegate):
         if data != 'Tre':
             return ValidationError("bar")
 
+
 class EnglishModel:
     pass
+
 
 class SwedishModel:
     # Sylvia Saint?

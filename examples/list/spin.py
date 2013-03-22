@@ -2,6 +2,7 @@ import gtk
 
 from kiwi.ui.objectlist import Column, ObjectList
 
+
 class Fruit:
     def __init__(self, name, status):
         self.name = name
@@ -15,10 +16,10 @@ fruits = ObjectList([Column('name', data_type=str),
 fruits.set_spinbutton_digits('quantity', 3)
 
 for name, quantity in [('Apple', 1),
-                     ('Pineapple', 2),
-                     ('Kiwi', 3),
-                     ('Banana', 4),
-                     ('Melon', 6)]:
+                       ('Pineapple', 2),
+                       ('Kiwi', 3),
+                       ('Banana', 4),
+                       ('Melon', 6)]:
     fruits.append(Fruit(name, quantity))
 
 window = gtk.Window()

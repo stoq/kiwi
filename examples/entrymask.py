@@ -4,6 +4,7 @@ import gtk
 
 from kiwi.ui.entry import KiwiEntry
 
+
 def main(args):
     w = gtk.Window()
     w.set_position(gtk.WIN_POS_CENTER)

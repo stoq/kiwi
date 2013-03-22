@@ -3,6 +3,7 @@ import gtk
 from kiwi.currency import currency
 from kiwi.ui.objectlist import Column, ObjectList
 
+
 class Product:
     def __init__(self, name, price):
         self.name = name
@@ -14,7 +15,7 @@ class Product:
 columns = [
     Column('name', data_type=str),
     Column('price', data_type=currency, sorted=True),
-    ]
+]
 
 data = (Product('Snacks', '3.50'),
         Product('Juice', '4.75'),
@@ -22,7 +23,7 @@ data = (Product('Snacks', '3.50'),
         Product('Chocolate bar', '8.5'),
         Product('Bubble gum', '0.3'),
         Product('Tutti-frutti', '1.50')
-       )
+        )
 
 win = gtk.Window()
 win.connect('destroy', gtk.main_quit)
@@ -32,10 +33,11 @@ win.set_size_request(650, 300)
 vbox = gtk.VBox()
 win.add(vbox)
 
+
 def entry_activate_cb(entry):
     text = entry.get_text()
     products = [product for product in data
-                            if text.lower() in product.name.lower()]
+                if text.lower() in product.name.lower()]
     l.add_list(products)
 
 entry = gtk.Entry()

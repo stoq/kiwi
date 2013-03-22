@@ -4,6 +4,7 @@ import gtk
 
 from kiwi.ui.comboentry import ComboEntry
 
+
 def main(args):
     w = gtk.Window()
     w.set_position(gtk.WIN_POS_CENTER)

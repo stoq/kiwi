@@ -17,15 +17,20 @@ from kiwi import tasklet
 
 try:
     import win32api
+
     def killproc(pid):
         """kill function for Win32"""
         handle = win32api.OpenProcess(1, 0, pid)
         return (0 != win32api.TerminateProcess(handle, 0))
 except ImportError:
     import signal
-    def killproc(pid):
+
+    def killproc_(pid):
         """kill function for POSIX"""
         return os.kill(pid, signal.SIGTERM)
+
+    killproc = killproc_  # pyflakes
+
 
 def process_stdout_sink(chan, buffer, view):
     timeout = tasklet.WaitForTimeout(200)
@@ -46,6 +51,7 @@ def process_stdout_sink(chan, buffer, view):
         ev = tasklet.get_event()
         assert ev is timeout
 
+
 def main():
     parser = OptionParser(usage="usage: %prog command")
     (options, args) = parser.parse_args()
@@ -61,15 +67,15 @@ def main():
     sw.add(textview)
     sw.show()
     win.add(sw)
-    win.set_default_size(gtk.gdk.screen_width()*2/3,
-                         gtk.gdk.screen_height()*2/3)
+    win.set_default_size(gtk.gdk.screen_width() * 2 / 3,
+                         gtk.gdk.screen_height() * 2 / 3)
     win.show()
 
     ## launch process
     proc = subprocess.Popen(args[0], shell=True, stdout=subprocess.PIPE,
                             bufsize=1, close_fds=True)
     win.set_title("%s (running)" % args[0])
-    #print proc.stdout, type(proc.stdout), dir(proc.stdout)
+    # print proc.stdout, type(proc.stdout), dir(proc.stdout)
     chan = gobject.IOChannel(filedes=proc.stdout.fileno())
     chan.set_flags(gobject.IO_FLAG_NONBLOCK)
     sink = tasklet.run(process_stdout_sink(chan, textview.get_buffer(),

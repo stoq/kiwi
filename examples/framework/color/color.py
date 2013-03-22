@@ -6,6 +6,7 @@ import gtk
 from kiwi.ui.views import BaseView
 from kiwi.ui.widgets.combobox import ComboBox
 
+
 def load_colors():
     filename = "/usr/X11R6/etc/X11/rgb.txt"
     try:
@@ -16,11 +17,14 @@ def load_colors():
     # the first line we don't want
     lines = lines[1:]
     s = Set([c.strip().split('\t')[2] for c in lines])
-    if '' in s: s.remove('')
+    if '' in s:
+        s.remove('')
     return list(s)
+
 
 class Color:
     color = 'blue'
+
 
 class FavouriteColor(BaseView):
     def __init__(self):

@@ -4,6 +4,8 @@ from kiwi.model import PickledModel
 from kiwi.ui.delegates import ProxyDelegate
 
 # define the class that holds our application data
+
+
 class Person(PickledModel):
     pass
 person = Person.unpickle()

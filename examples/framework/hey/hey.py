@@ -3,6 +3,7 @@ import gtk
 
 from kiwi.ui.views import BaseView
 
+
 class HeyPlanet(BaseView):
     def __init__(self):
         win = gtk.Window()

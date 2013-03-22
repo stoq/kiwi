@@ -2,8 +2,10 @@ import gtk
 
 from kiwi.ui.views import BaseView, quit_if_last
 
+
 class Person:
     gender = "Male"
+
 
 class GenderSelection(BaseView):
     gladefile = 'gender'

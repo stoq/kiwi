@@ -1,6 +1,7 @@
 import gtk
 from kiwi.ui.objectlist import Column, ObjectList
 
+
 class Object:
     def __init__(self, name, value):
         self.name, self.value = name, value

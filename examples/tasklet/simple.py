@@ -1,11 +1,13 @@
 import gobject
 
 from kiwi.tasklet import Tasklet, WaitForTimeout, WaitForMessages, Message, \
-     WaitForTasklet, get_event
+    WaitForTasklet, get_event
 
 ## ----------------------------
 ## And here's an example...
 ## ----------------------------
+
+
 class _CountSomeNumbers2(Tasklet):
     '''Counts numbers with at random time spacings'''
 
@@ -25,7 +27,8 @@ class _CountSomeNumbers2(Tasklet):
             if isinstance(event, Message) and event.name == 'quit':
                 ## this would be the place to do some cleanup.
                 return
-        raise StopIteration(self.count*2)
+        raise StopIteration(self.count * 2)
+
 
 def _count_some_numbers1(count):
     '''Counts numbers with at fixed time spacings'''
@@ -49,6 +52,7 @@ def _count_some_numbers1(count):
             assert False, "strange event"
 
     raise SystemExit
+
 
 def _test():
     '''a simple test/example'''
