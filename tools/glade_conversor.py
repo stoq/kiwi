@@ -19,11 +19,13 @@ filters = [
     ("kiwi+ui+widgets+combobox+ComboBoxEntry", "ProxyComboBoxEntry"),
 ]
 
+
 def apply_filter((first, second), line):
     if not first in line:
         return line
 
     return line.replace(first, second)
+
 
 def main(args):
     if len(args) < 2:
@@ -40,6 +42,7 @@ def main(args):
         out.write(line)
     os.unlink(filename)
     os.rename(tmp, filename)
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

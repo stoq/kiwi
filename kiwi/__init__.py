@@ -74,6 +74,7 @@ library.enable_translation()
 # Be careful to not export too much
 del Library, gobject
 
+
 class ValueUnset:
     """To differentiate from places where None is a valid default. Used
     mainly in the Kiwi Proxy"""
