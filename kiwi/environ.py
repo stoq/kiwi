@@ -69,10 +69,10 @@ class Environment:
         # "glade" resources
         self._add_extensions("glade", ".bz2", ".gz")
 
+        self._is_egg = sys.argv[0].endswith('.egg')
+
         self._add_resource_variable("glade", "KIWI_GLADE_PATH")
         self._add_resource_variable("image", "KIWI_IMAGE_PATH")
-
-        self._is_egg = sys.argv[0].endswith('.egg')
 
     def get_root(self):
         return self._root
