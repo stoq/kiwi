@@ -719,57 +719,6 @@ class SequentialColumn(Column):
                             (renderer, renderer_prop))
 
 
-class SearchColumn(Column):
-    """
-    I am a column that should be used in conjunction with
-    :class:`kiwi.ui.search.SearchSlaveDelegate`
-
-    :param long_title: The title to display in the combo for this field.
-                       This is usefull if you need to display a small
-                       description on the column header, but still want a full
-                       description on the advanced search.
-    :param valid_values: This should be a list of touples (display value, db
-                         value). If provided, then a combo with only this
-                         values will be shown, instead of a free text entry.
-    :param search_attribute: Use this if the name of the db column that should
-                             be searched is different than the attribute of
-                             the model.
-    """
-
-    #: overrides the function that generates the query to process the search
-    search_func = gobject.property(type=object, default=None)
-
-    #: names the search interface differently from the column
-    search_label = gobject.property(type=object, default=None)
-
-    #: use the query on the *having* part instead of the *where*'s on
-    use_having = gobject.property(type=bool, default=False)
-
-    def __init__(self, attribute, title=None, data_type=None,
-                 long_title=None, valid_values=None, search_attribute=None,
-                 **kwargs):
-        """
-        """
-        self.long_title = long_title
-        self.valid_values = valid_values
-        self.search_attribute = search_attribute
-        self.sensitive = True
-
-        Column.__init__(self, attribute, title, data_type, **kwargs)
-
-        search_func = kwargs.get('search_func')
-        if search_func and not callable(search_func):
-            raise TypeError("search_func must be callable")
-
-    def get_search_label(self):
-        """Get the search label for this column.
-          This is normally used when constructing a search filter for this
-          column.
-          :returns: the search label
-        """
-        return self.search_label or self.long_title or self.title
-
-
 class ColoredColumn(Column):
     """
     I am a column which can colorize the text of columns under

@@ -59,15 +59,3 @@ class ListType(enum):
      UNREMOVABLE,
      UNADDABLE,
      UNEDITABLE) = range(6)
-
-
-class SearchFilterPosition(enum):
-    """
-    An enum used to indicate where a search filter should be added to
-    a SearchContainer::
-
-      - TOP: top left corner
-      - BOTTOM: bottom
-    """
-    (TOP,
-     BOTTOM) = range(2)

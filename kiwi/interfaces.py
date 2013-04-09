@@ -177,12 +177,3 @@ class AbstractGladeAdaptor(Interface):
         """Connect the signals in the keys of dict with the objects in the
         values of dic
         """
-
-
-class ISearchFilter(Interface):
-
-    def get_state():
-        """
-        Gets the state.
-        :rtype: :class:`QueryState`
-        """
