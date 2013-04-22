@@ -276,6 +276,9 @@ class TextField(Field):
                 widget.set_mask(self.input_mask)
         else:
             widget = ProxyLabel()
+            # This label should be left aligned.
+            widget.set_alignment(0, 0.5)
+
         return widget
 
 gobject.type_register(TextField)
