@@ -42,7 +42,12 @@ class ComboDetailsCellRenderer(gtk.CellRenderer):
     label = gobject.property(type=str, default="")
     data = gobject.property(type=object)
 
-    def __init__(self):
+    def __init__(self, use_markup=False):
+        """
+        :param use_markup: wheter all strings we send in are already
+          in pango markup
+        """
+        self.use_markup = use_markup
         label = gtk.Label()
         self._label_layout = label.create_pango_layout('')
         self._details_callback = None
@@ -103,15 +108,19 @@ class ComboDetailsCellRenderer(gtk.CellRenderer):
     else:
         do_render = do_render_gtk2
 
+    def _escape(self, text):
+        if not self.use_markup:
+            text = glib.markup_escape_text(text)
+        return text
+
     def do_get_size(self, widget, cell_area):
         if self._details_callback:
             details = self._details_callback(self.data)
             mark_up = '%s\n<span foreground="%s">%s</span>'
             color = gdk_color_to_string(widget.style.fg[gtk.STATE_NORMAL])
-            text = mark_up % (self.label, color,
-                              glib.markup_escape_text(details))
+            text = mark_up % (self.label, color, self._escape(details))
         else:
-            text = glib.markup_escape_text(self.label)
+            text = self._escape(self.label)
 
         self._label_layout.set_markup(text)
         width, height = self._label_layout.get_pixel_size()
