@@ -30,6 +30,7 @@ Defines the View classes that are included in the Kiwi Framework, which
 are the base of Delegates and Proxies.
 """
 
+import inspect
 import os
 import re
 import string
@@ -95,25 +96,14 @@ class SignalBroker(object):
         methods = self._get_all_methods(controller)
         self._do_connections(view, methods)
 
-    def _get_all_methods(self, controller, klass=None):
-        klass = klass or controller.__class__
-        # Very poor simulation of inheritance, but WFM(tm)
-        classes = [klass]
-        # Collect bases for class, using a pretty evil recursion
-        for klass in classes:
-            map(classes.append, klass.__bases__)
-        # Order bases so that the class itself is the last one referred to
-        # in the loop. This guarantees that the inheritance ordering for the
-        # methods is preserved.
-        classes.reverse()
+    def _get_all_methods(self, controller):
         methods = {}
-        for c in classes:
-            for name in c.__dict__.keys():
+        for cls in inspect.getmro(type(controller)):
+            for attr in cls.__dict__:
                 # Need to use getattr() to ensure we get bound methods
-                try:
-                    methods[name] = getattr(controller, name)
-                except AttributeError:
-                    continue
+                method = getattr(controller, attr, None)
+                if method is not None:
+                    methods[attr] = method
         return methods
 
     def _do_connections(self, view, methods):
