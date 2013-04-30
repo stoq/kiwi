@@ -44,7 +44,7 @@ from kiwi.datatypes import ValidationError
 from kiwi.environ import environ
 from kiwi.interfaces import IValidatableProxyWidget
 from kiwi.log import Logger
-from kiwi.python import namedAny
+from kiwi.python import namedAny, Settable
 from kiwi.utils import gsignal, type_register
 from kiwi.ui.gadgets import quit_if_last, register_notebook_shortcuts
 from kiwi.ui.proxy import Proxy
@@ -89,10 +89,151 @@ color_black = gdk.color_parse('black')
 method_regex = re.compile(r'^(on|after)_(\w+)__(\w+)$')
 
 
+class SignalProxyObject(object):
+    """
+    I am a descriptor that connects and disconnects signals
+    for views containing GObjects.
+
+    I'll connect methods such as on_button__clicked to and make them
+    map to the clicked signal for view.button.
+
+    The magic I do is that that you can replace view.button with another
+    widget and it will replace the signal connections on the old object
+    and reconnect on the new object
+    """
+    def __init__(self, name, signals):
+        """
+        :param name: name of this object in the view
+        :param signals: list of signals (context, signal_name, method) to connect to,
+           - context is either "on" or "after" depending on connect or connect_after
+             should be used to connect the signal
+           - signal_name is the name of the signal we should connect
+           - method_name is the name of the method that should be our callback
+        """
+        self.object_name = name
+        self.signals = signals
+        self.used = False
+
+    def _connect_signals(self, state):
+        for context, signal_name, method_name in self.signals:
+            # We cannot pass in the callbacks from view in the constructor, since
+            # the view will eventually change, so instead of passing the function
+            # object we pass the name of the method and it will be fetched here.
+            callback = getattr(state.view, method_name)
+
+            # We catch TypeError and reraise it to get a nicer error message,
+            # PyGObject should ideally not raise TypeError, because we cannot
+            # know if TypeError comes from Python or PyGObject
+            try:
+                if context == 'on':
+                    signal_id = state.obj.connect(signal_name, callback)
+                elif context == 'after':
+                    signal_id = state.obj.connect_after(signal_name, callback)
+                else:
+                    raise AssertionError(context)
+            except TypeError:
+                raise TypeError("%s.%s doesn't provide a signal %s" % (
+                    state.view.__class__.__name__, self.object_name,
+                    signal_name))
+
+            # Save the name of the signal (for handler_block) and the
+            # the signal_id for disconnection purposes
+            state.connected_signals.append((signal_name, signal_id))
+
+    def _disconnect_signals(self, state):
+        # Don't even bother trying to disconnect signals if we don't have
+        # an object set, which will happen the first time a SignalProxyObject
+        # is instantiated
+        if state.obj is not None:
+            for signal_name, signal_id in state.connected_signals:
+                state.obj.disconnect(signal_id)
+
+        state.connected_signals = []
+
+    def _get_state(self, view):
+        # Since self is shared between different views we cannot
+        # store any state in there, instead store state inside
+        # the view. We currently use one dictionary per object
+        view_state = view.__dict__.setdefault('_SignalProxy_state_', {})
+
+        state = view_state.get(self.object_name)
+        if state is None:
+            # The state we need:
+            # - connected_signals, the signals we use
+            # - obj: used to connect/disconnect/block/unblock
+            # - view: for displaying nice error messages
+            view_state[self.object_name] = state = Settable(
+                obj=None,
+                view=view,
+                connected_signals=[])
+        return state
+
+    # This is part of the python descriptor protocol, it will be called
+    # when we do view.button = foo, which is usually done by the view for
+    # all widgets constructed by a GtkBuilder, but it might also be triggered
+    # manually for dynamic interfaces.
+    def __set__(self, view, value):
+        if view is None:
+            raise AttributeError(
+                "Can't set SignalProxyObject class attributes")
+
+        # Fetch the current state from the view
+        state = self._get_state(view)
+
+        # There's no need to do the disconnect/connect dance
+        # if the actual object didn't change, so skip out early
+        # in that case
+        if state.obj == value:
+            return
+
+        # First, we need to decouple the signal connections to
+        # the previously connected object
+        self._disconnect_signals(state)
+
+        # We got a new object
+        state.obj = value
+
+        # Listen to the signals on the new object
+        self._connect_signals(state)
+
+        if value is not None:
+            self.used = True
+
+    # This is also part of the python descriptor protocol and is called
+    # whenever an attribute is fetched.
+    def __get__(self, view, owner):
+        # This happens when we try to access the class attribute,
+        # for instance view.__class__.button, in that case we
+        # return ourselves so we can call handler_[un]block
+        if view is None:
+            return self
+
+        # Fetch the current state and return the object
+        state = self._get_state(view)
+        return state.obj
+
+    #
+    # Public API
+    #
+
+    def handler_block(self, instance, signal_name=None):
+        state = self._get_state(instance)
+        for signal, signal_id in state.connected_signals:
+            if signal_name is None or signal == signal_name:
+                state.obj.handler_block(signal_id)
+
+    def handler_unblock(self, instance, signal_name=None):
+        state = self._get_state(instance)
+        for signal, signal_id in state.connected_signals:
+            if signal_name is None or signal == signal_name:
+                state.obj.handler_unblock(signal_id)
+
+
 class SignalBroker(object):
     def __init__(self, view, controller=None):
         if controller is None:
             controller = view
+        self.signal_proxies = []
         methods = self._get_all_methods(controller)
         self._do_connections(view, methods)
 
@@ -123,61 +264,40 @@ class SignalBroker(object):
         are in the string, the last one is assumed to separate the
         signal name.
         """
-        self._autoconnected = {}
 
-        for fname in methods.keys():
+        # First extract the callbacks to connect and group by the
+        # object/attribute name
+        objects = {}
+        for method_name in methods:
             # `on_x__y' has 7 chars and is the smallest possible handler
-            if len(fname) < 7:
+            if len(method_name) < 7:
                 continue
-            match = method_regex.match(fname)
-            if match is None:
-                continue
-            on_after, w_name, signal = match.groups()
-            widget = getattr(view, w_name, None)
-            if widget is None:
-                raise AttributeError("couldn't find widget %s in %s"
-                                     % (w_name, view))
-            if not isinstance(widget, gobject.GObject):
-                raise AttributeError("%s (%s) is not a widget or an action "
-                                     "and can't be connected to"
-                                     % (w_name, widget))
-            # Must use getattr; using the class method ends up with it
-            # being called unbound and lacking, thus, "self".
-            try:
-                if on_after == 'on':
-                    signal_id = widget.connect(signal, methods[fname])
-                elif on_after == 'after':
-                    signal_id = widget.connect_after(signal, methods[fname])
-                else:
-                    raise AssertionError
-            except TypeError:
-                raise TypeError("Widget %s doesn't provide a signal %s" % (
-                                widget.__class__, signal))
-            self._autoconnected.setdefault(widget, []).append((
-                signal, signal_id))
+            match = method_regex.match(method_name)
+            if match is not None:
+                on_after, object_name, signal_name = match.groups()
+                signal = [on_after, signal_name, method_name]
+                objects.setdefault(object_name, []).append(signal)
 
-    def handler_block(self, widget, signal_name):
-        signals = self._autoconnected
-        if not widget in signals:
-            return
+        # For each object, replace the object with a SignalProxyObject
+        for object_name in objects:
+            # Extract the GObject from the view, before we replace it with
+            # the descriptor
+            obj = getattr(view, object_name, None)
 
-        for signal, signal_id in signals[widget]:
-            if signal_name is None or signal == signal_name:
-                widget.handler_block(signal_id)
+            # Replace the attribute on the view with a magic descriptor,
+            # note that this is done on the class and check if it's already
+            # set before
+            signal_proxy = getattr(view.__class__, object_name, None)
+            if signal_proxy is None:
+                signal_proxy = SignalProxyObject(object_name,
+                                                 objects[object_name])
+                setattr(view.__class__, object_name, signal_proxy)
+                # Store the signal_proxies so we can verify on view destruction
+                # time that there are no unused connections
+                self.signal_proxies.append(signal_proxy)
 
-    def handler_unblock(self, widget, signal_name):
-        signals = self._autoconnected
-        if not widget in signals:
-            return
-
-        for signal, signal_id in signals[widget]:
-            if signal_name is None or signal == signal_name:
-                widget.handler_unblock(signal_id)
-
-    def disconnect_autoconnected(self):
-        for widget, signals in self._autoconnected.items():
-            for signal in signals:
-                widget.disconnect(signal[1])
+            # Make sure the descritor has the old widget value set
+            setattr(view, object_name, obj)
 
 
 class GladeSignalBroker(SignalBroker):
@@ -278,6 +398,7 @@ class SlaveView(gobject.GObject):
 
         self._glade_adaptor = self.get_glade_adaptor()
         self.toplevel = self._get_toplevel()
+        self.toplevel.connect('destroy', self._on_toplevel__destroy)
 
         # grab the accel groups
         self._accel_groups = gtk.accel_groups_from_object(self.toplevel)
@@ -568,6 +689,19 @@ class SlaveView(gobject.GObject):
         # We have to wait until callbacks are connected to add the proxies
         self._attach_forms()
 
+    def _on_toplevel__destroy(self, window):
+        if not self._broker:
+            return
+
+        for signal_proxy in self._broker.signal_proxies:
+            if not signal_proxy.used:
+                for signal_info in signal_info.signals:
+                    raise ValueError(
+                        "Signal %s.%s was never used (%s)" % (
+                        self.__class__.__name__,
+                        signal_proxy.object_name,
+                        signal_info[2]))
+
     #
     # Slave handling
     #
@@ -787,22 +921,20 @@ class SlaveView(gobject.GObject):
             else:
                 widget.connect(signal, handler)
 
-    def disconnect_autoconnected(self):
-        """
-        Disconnect handlers previously connected with
-        autoconnect_signals()"""
-        self._broker.disconnect_autoconnected()
-
-    def handler_block(self, widget, signal_name=None):
+    def handler_block(self, object_name, signal_name=None):
         # XXX: Warning, or bail out?
         if not self._broker:
             return
-        self._broker.handler_block(widget, signal_name)
+        signal_proxy = getattr(self.__class__, object_name, None)
+        if signal_proxy is not None:
+            signal_proxy.handler_block(self, signal_name)
 
-    def handler_unblock(self, widget, signal_name=None):
+    def handler_unblock(self, object_name, signal_name=None):
         if not self._broker:
             return
-        self._broker.handler_unblock(widget, signal_name)
+        signal_proxy = getattr(self.__class__, object_name, None)
+        if signal_proxy is not None:
+            signal_proxy.handler_unblock(self, signal_name)
 
     #
     # Proxies

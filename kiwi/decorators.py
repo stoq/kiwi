@@ -99,8 +99,7 @@ class signal_block(object):
             retval = func(view, *args, **kwargs)
 
             for name, signal in self.signals:
-                widget = getattr(view, name, None)
-                view.handler_unblock(widget, signal)
+                self._view.handler_unblock(name, signal)
 
             return retval
         wrapper.__name__ = func.__name__
