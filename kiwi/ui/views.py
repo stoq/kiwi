@@ -112,7 +112,6 @@ class SignalProxyObject(object):
         """
         self.object_name = name
         self.signals = signals
-        self.used = False
 
     def _connect_signals(self, state):
         for context, signal_name, method_name in self.signals:
@@ -195,9 +194,6 @@ class SignalProxyObject(object):
 
         # Listen to the signals on the new object
         self._connect_signals(state)
-
-        if value is not None:
-            self.used = True
 
     # This is also part of the python descriptor protocol and is called
     # whenever an attribute is fetched.
@@ -398,7 +394,6 @@ class SlaveView(gobject.GObject):
 
         self._glade_adaptor = self.get_glade_adaptor()
         self.toplevel = self._get_toplevel()
-        self.toplevel.connect('destroy', self._on_toplevel__destroy)
 
         # grab the accel groups
         self._accel_groups = gtk.accel_groups_from_object(self.toplevel)
@@ -688,19 +683,6 @@ class SlaveView(gobject.GObject):
 
         # We have to wait until callbacks are connected to add the proxies
         self._attach_forms()
-
-    def _on_toplevel__destroy(self, window):
-        if not self._broker:
-            return
-
-        for signal_proxy in self._broker.signal_proxies:
-            if not signal_proxy.used:
-                for signal_info in signal_info.signals:
-                    raise ValueError(
-                        "Signal %s.%s was never used (%s)" % (
-                        self.__class__.__name__,
-                        signal_proxy.object_name,
-                        signal_info[2]))
 
     #
     # Slave handling
