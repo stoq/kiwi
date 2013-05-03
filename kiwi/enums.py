@@ -47,15 +47,17 @@ class Direction(enum):
 class ListType(enum):
     """
     - NORMAL: Add, Remove, Edit
+    - READONLY: No buttons
+    - ADDONLY: Add
     - REMOVEOLY: Remove
+    - UNREMOVABLE: Add, Edit
     - UNADDABLE: Remove, Edit
     - UNEDITABLE: Add, Remove
-    - UNREMOVABLE: Add, Edit
-    - READONLY: No buttons
     """
     (NORMAL,
      READONLY,
+     ADDONLY,
      REMOVEONLY,
      UNREMOVABLE,
      UNADDABLE,
-     UNEDITABLE) = range(6)
+     UNEDITABLE) = range(7)

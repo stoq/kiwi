@@ -210,18 +210,16 @@ class ListContainer(gtk.HBox):
 
         self.add_button.set_property(
             'visible',
-            (list_type != ListType.READONLY and
-             list_type != ListType.REMOVEONLY and
-             list_type != ListType.UNADDABLE))
+            list_type not in [ListType.READONLY, ListType.REMOVEONLY,
+                              ListType.UNADDABLE])
         self.remove_button.set_property(
             'visible',
-            (list_type != ListType.READONLY and
-             list_type != ListType.UNREMOVABLE))
+            list_type not in [ListType.READONLY, ListType.ADDONLY,
+                              ListType.UNREMOVABLE])
         self.edit_button.set_property(
             'visible',
-            (list_type != ListType.READONLY and
-             list_type != ListType.UNEDITABLE and
-             list_type != ListType.REMOVEONLY))
+            list_type not in [ListType.READONLY, ListType.ADDONLY,
+                              ListType.UNEDITABLE, ListType.REMOVEONLY])
         if list_type in [ListType.READONLY, ListType.REMOVEONLY]:
             padding = 0
         else:
@@ -242,8 +240,8 @@ class ListContainer(gtk.HBox):
         self.emit('selection-changed', selection)
 
     def _on_list__row_activated(self, list, item):
-        if (self._list_type != ListType.READONLY and
-            self._list_type != ListType.UNEDITABLE):
+        if self._list_type not in [ListType.READONLY, ListType.ADDONLY,
+                                   ListType.UNEDITABLE]:
             self._edit_item(item)
 
     def _on_add_button__clicked(self, button):
