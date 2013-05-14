@@ -537,6 +537,10 @@ class Column(gobject.GObject):
         obj = row[COL_MODEL]
         data = column.get_attribute(obj, column.attribute, None)
         text = column.as_string(data, obj)
+
+        if self._objectlist.cell_data_func and obj is not empty_marker:
+            text = self._objectlist.cell_data_func(self, renderer, obj, text)
+
         renderer.set_property(renderer_prop, text)
 
         if column.renderer_func:
