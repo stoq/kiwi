@@ -30,7 +30,7 @@ from kiwi.component import implements
 from kiwi.interfaces import IEasyCombo
 from kiwi.enums import ComboColumn, ComboMode
 from kiwi.log import Logger
-from kiwi.ui.entry import KiwiEntry
+from kiwi.ui.entry import KiwiEntry, ENTRY_MODE_DATA
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import gsignal, type_register
 
@@ -462,6 +462,7 @@ class ComboEntry(gtk.VBox):
         self.emit('activate')
 
     def _on_entry__changed(self, entry):
+        self._update_current_object()
         self.emit('changed')
 
     def _on_entry__scroll_event(self, entry, event):
@@ -517,6 +518,33 @@ class ComboEntry(gtk.VBox):
         self.popup()
 
     # Private
+
+    def _update_current_object(self):
+        if self.entry.get_mode() != ENTRY_MODE_DATA:
+            return
+
+        completion = self.entry.get_completion()
+        treeview = completion.get_treeview()
+        selection = treeview.get_selection()
+        current_object = self.entry.get_current_object()
+
+        if current_object is None:
+            selection.unselect_all()
+            return
+
+        model = treeview.get_model()
+        treeiter = self.entry.get_iter_by_data(current_object)
+        if treeiter and isinstance(model, gtk.TreeModelFilter):
+            # Just like we do in comboentry.py, convert iter between
+            # models. See #3099 for more information
+            tmodel = model.get_model()
+            if tmodel.iter_is_valid(treeiter):
+                treeview.set_model(tmodel)
+                selection = treeview.get_selection()
+            else:
+                treeiter = model.convert_child_iter_to_iter(treeiter)
+
+        selection.select_iter(treeiter)
 
     def _update(self):
         model = self._model

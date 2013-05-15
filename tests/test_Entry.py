@@ -102,6 +102,28 @@ class EntryTest(unittest.TestCase):
         entry.set_text('')
         self.assertEqual(entry.read(), ValueUnset)
 
+    def testDataMode(self):
+        entry = ProxyEntry()
+        entry.data_type = str
+        entry.set_exact_completion()
+        items = {'xxx': object(),
+                 'yyy': object()}
+        entry.prefill([(k, v) for k, v in items.items()])
+
+        entry.set_text('xxx')
+        self.assertIs(entry.read(), items['xxx'])
+        entry.set_text('x')
+        self.assertIs(entry.read(), None)
+        entry.set_text('xxxxx')
+        self.assertIs(entry.read(), None)
+
+        entry.set_text('yyy')
+        self.assertIs(entry.read(), items['yyy'])
+        entry.set_text('y')
+        self.assertIs(entry.read(), None)
+        entry.set_text('yyyyy')
+        self.assertIs(entry.read(), None)
+
     def testGobjectNew(self):
         entry = gobject.new(ProxyEntry)
         self.assertEqual(entry.get_property('data_type'), None)

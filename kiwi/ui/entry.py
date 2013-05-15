@@ -550,6 +550,20 @@ class KiwiEntry(gtk.Entry):
         completion = self._get_entry_completion()
         completion.set_match_func(self._completion_normal_match_func)
 
+    def get_current_object(self):
+        """Returns the current object on this entry
+
+        Note that this is only valid if the mode set here is
+        :mod:`.ENTRY_MODE_DATA`. At any other mode, this will
+        return ``None``.
+
+        :returns: the current object matched by the text entry.
+            ``None`` means the text didn't match any object.
+        """
+        if self._mode != ENTRY_MODE_DATA:
+            return None
+        return self._current_object
+
     def is_empty(self):
         text = self.get_text()
         if self._mask:
@@ -603,30 +617,11 @@ class KiwiEntry(gtk.Entry):
                 self._current_object = row[COL_OBJECT]
                 break
 
-        treeview = self.get_completion().get_treeview()
-        model = treeview.get_model()
-        selection = treeview.get_selection()
-        if self._current_object:
-            treeiter = row.iter
-
-            if isinstance(model, gtk.TreeModelFilter) and treeiter:
-                # Just like we do in comboentry.py, convert iter between
-                # models. See #3099 for mor information
-                tmodel = model.get_model()
-                if tmodel.iter_is_valid(treeiter):
-                    treeview.set_model(tmodel)
-                    selection = treeview.get_selection()
-                else:
-                    treeiter = model.convert_child_iter_to_iter(treeiter)
-
-            selection.select_iter(treeiter)
-
+        if self._current_object is not None:
             self.set_valid()
         elif text:
-            selection.unselect_all()
             self.set_invalid(_("'%s' is not a valid object" % text))
         elif self.mandatory:
-            selection.unselect_all()
             self.set_blank()
 
     def _get_text_from_object(self, obj):
