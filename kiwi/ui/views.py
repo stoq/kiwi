@@ -193,7 +193,8 @@ class SignalProxyObject(object):
         state.obj = value
 
         # Listen to the signals on the new object
-        self._connect_signals(state)
+        if value is not None:
+            self._connect_signals(state)
 
     # This is also part of the python descriptor protocol and is called
     # whenever an attribute is fetched.
