@@ -284,6 +284,19 @@ class TextField(Field):
 gobject.type_register(TextField)
 
 
+class IntegerField(Field):
+    """
+    I am a numeric field with one line, editable by the user,
+    rendered as an entry that allows only integer numbers
+    """
+
+    widget_data_type = int
+
+    def build_widget(self):
+        widget = ProxyEntry()
+        return widget
+
+
 class ChoiceField(Field):
     """
     I am a field representing a set of choices,
