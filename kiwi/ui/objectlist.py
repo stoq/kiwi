@@ -606,6 +606,17 @@ class Column(gobject.GObject):
         except ValidationError:
             return
 
+        # FIXME: There's something wrong on the spinbutton that lets the user
+        # type and confirm an invalid value (it's not possible to get using
+        # the mouse, just the keyboard). Mimic the normal spin behaviour that
+        # is to adjust the value to [lower, upper] range.
+        upper = self.spin_adjustment.get_upper()
+        lower = self.spin_adjustment.get_lower()
+        if value_model > upper:
+            value_model = upper
+        if value_model < lower:
+            value_model = lower
+
         setattr(obj, attr, value_model)
         self._objectlist.emit('cell-edited', obj, attr)
 
