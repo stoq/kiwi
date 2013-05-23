@@ -281,6 +281,9 @@ class Column(gobject.GObject):
 
     def __repr__(self):
         namespace = self.__dict__.copy()
+        # Dont know why yet, but we have to remove the compare key, otherwise,
+        # this may go into an infinite recursion
+        namespace.pop('compare')
         return "<%s: %s>" % (self.__class__.__name__, namespace)
 
     def _get_data_type(self):
