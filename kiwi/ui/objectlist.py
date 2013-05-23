@@ -2385,12 +2385,24 @@ class SummaryLabel(ListLabel):
     data types and I will complain if you give me something else."""
 
     def __init__(self, klist, column, label=_('Total:'), value_format='%s',
-                 font_desc=None):
+                 font_desc=None, data_func=None):
+        """
+        :param data_func: a function or method that can be used to determine
+        the signedness of the object being summed. Returns a bool, ``True``
+        means positive, ``False`` means negative.
+        """
+        if data_func and not callable(data_func):
+            raise ValueError("data_func must be callable, not %r"
+                             % (data_func,))
+
         ListLabel.__init__(self, klist, column, label, value_format, font_desc)
         if not issubclass(self._column.data_type, number):
             raise TypeError("data_type of column must be a number, not %r",
                             self._column.data_type)
         klist.connect('cell-edited', self._on_klist__cell_edited)
+
+        self._data_func = data_func
+
         self.update_total()
 
     # Public API
@@ -2401,8 +2413,13 @@ class SummaryLabel(ListLabel):
         attr = column.attribute
         get_attribute = column.get_attribute
 
-        value = sum([get_attribute(obj, attr, 0) or 0 for obj in self._klist],
-                    column.data_type('0'))
+        value = column.data_type('0')
+        for obj in self._klist:
+            attr_value = get_attribute(obj, attr, 0) or 0
+            if self._data_func and not self._data_func(obj):
+                value -= attr_value
+            else:
+                value += attr_value
 
         self.set_value(column.as_string(value))
 
