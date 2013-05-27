@@ -94,12 +94,12 @@ class signal_block(object):
                 widget = getattr(view, name, None)
                 if widget is None:
                     raise TypeError("Unknown widget %s in view " % name)
-                view.handler_block(widget, signal)
+                view.handler_block(name, signal)
 
             retval = func(view, *args, **kwargs)
 
             for name, signal in self.signals:
-                self._view.handler_unblock(name, signal)
+                view.handler_unblock(name, signal)
 
             return retval
         wrapper.__name__ = func.__name__
