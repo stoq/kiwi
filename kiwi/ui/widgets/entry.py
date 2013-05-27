@@ -102,7 +102,9 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         if self._block_changed:
             self.emit_stop_by_name('changed')
             return
-        self._update_current_object(self.get_text())
+        text = self.get_text()
+        self._has_been_updated = bool(text)
+        self._update_current_object(text)
         self.emit('content-changed')
 
     def _set_data_type(self, data_type):
