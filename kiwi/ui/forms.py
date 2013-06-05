@@ -284,6 +284,19 @@ class TextField(Field):
 gobject.type_register(TextField)
 
 
+class PasswordField(TextField):
+    """
+    I am a password field with one line, editable by the user,
+    rendered as an entry with invisible characters.
+    """
+    def build_widget(self):
+        widget = TextField.build_widget(self)
+        if self.editable:
+            widget.set_visibility(False)
+
+        return widget
+
+
 class IntegerField(Field):
     """
     I am a numeric field with one line, editable by the user,
