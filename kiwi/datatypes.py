@@ -503,11 +503,12 @@ class _BaseDateTimeConverter(BaseConverter):
             if '%S' in format:
                 format = format.replace('%S', '')
 
-        # Strip trailing characters
-        while format[-1] in ('.', ':', ' '):
-            format = format[:-1]
-
-        return format
+        # Strip trailing characters. This will strip trailing characters
+        # anywhere, like:
+        #   'hh:mm: %p' => 'hh:mm %p'
+        #   ':hh:mm %p. ' => 'hh:mm %p'
+        return ' '.join([f.strip('.: ') for f in
+                         format.split(' ') if f.strip('.: ')])
 
     def get_mask(self):
         mask = self.get_format()
@@ -529,7 +530,8 @@ class _BaseDateTimeConverter(BaseConverter):
                 raise ValidationError(
                     _("You cannot enter a year before 1900"))
 
-        return value.strftime(format)
+        # strftime is appending an empty space on some cases, so strip them
+        return value.strftime(format).strip()
 
     def _convert_format(self, format):
         "Convert the format string to a 'human-readable' format"

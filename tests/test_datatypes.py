@@ -82,6 +82,34 @@ class BoolTest(unittest.TestCase):
         self.assertEqual(self.conv.as_string(False), 'False')
 
 
+class DateTimeTest(unittest.TestCase):
+    def setUp(self):
+        set_locale(locale.LC_TIME, 'C')
+        self.dt = datetime.datetime(1979, 2, 12, 12, 15, 30)
+        self.conv = converter.get_converter(datetime.datetime)
+
+    def tearDown(self):
+        set_locale(locale.LC_TIME, 'C')
+
+    def testAsStringBR(self):
+        if not set_locale(locale.LC_TIME, 'pt_BR'):
+            return
+
+        self.assertEqual(self.conv.as_string(self.dt), "Seg 12 Fev 1979 12:15")
+        with mock.patch.object(self.conv, '_keep_seconds', True):
+            self.assertEqual(self.conv.as_string(self.dt),
+                             "Seg 12 Fev 1979 12:15:30")
+
+    def testAsStringUS(self):
+        if not set_locale(locale.LC_TIME, 'en_US'):
+            return
+
+        self.assertEqual(self.conv.as_string(self.dt), "Mon 12 Feb 1979 12:15")
+        with mock.patch.object(self.conv, '_keep_seconds', True):
+            self.assertEqual(self.conv.as_string(self.dt),
+                             "Mon 12 Feb 1979 12:15:30")
+
+
 class TimeTest(unittest.TestCase):
     def setUp(self):
         set_locale(locale.LC_TIME, 'C')
