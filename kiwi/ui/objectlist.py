@@ -46,6 +46,7 @@ from kiwi.log import Logger
 from kiwi.python import enum, slicerange
 from kiwi.utils import gsignal, type_register
 from kiwi.ui.widgets.contextmenu import ContextMenu
+from kiwi.ui.cellrenderer import EditableTextRenderer, EditableSpinRenderer
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
@@ -402,7 +403,7 @@ class Column(gobject.GObject):
         return treeview_column
 
     def create_renderer(self, model):
-        """Gusses which CellRenderer we should use for a given type.
+        """Guesses which CellRenderer we should use for a given type.
         It also set the property of the renderer that depends on the model,
         in the renderer.
         """
@@ -447,7 +448,7 @@ class Column(gobject.GObject):
                                  model, self.attribute, self)
             prop = 'model'
         elif issubclass(data_type, number) and self.spin_adjustment:
-            renderer = gtk.CellRendererSpin()
+            renderer = EditableSpinRenderer()
             if not self.editable:
                 raise TypeError("spin_adjustment columns must be editable")
 
@@ -459,16 +460,18 @@ class Column(gobject.GObject):
         elif issubclass(data_type, (datetime.date, datetime.time,
                                     basestring, number,
                                     currency)):
-            renderer = gtk.CellRendererText()
             if self.use_markup:
                 prop = 'markup'
             else:
                 prop = 'text'
             if self.editable:
+                renderer = EditableTextRenderer()
                 renderer.set_property('editable', True)
                 renderer.connect('edited', self._on_renderer_text__edited,
                                  model, self.attribute, self,
                                  self.from_string)
+            else:
+                renderer = gtk.CellRendererText()
             if self.width_chars != -1:
                 renderer.set_property('width-chars', self.width_chars)
         else:

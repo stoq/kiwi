@@ -25,7 +25,31 @@ import glib
 import gobject
 import gtk
 
-from kiwi.ui.gadgets import gdk_color_to_string
+from kiwi.ui.gadgets import gdk_color_to_string, draw_editable_border
+
+
+class EditableTextRenderer(gtk.CellRendererText):
+    """Adds a border to an editable text so it can be told apart from not-editable."""
+
+    def do_render(self, drawable, widget, background_area, cell_area, expose_area, flags):
+        draw_editable_border(widget, drawable, cell_area)
+        gtk.CellRendererText.do_render(self, drawable, widget, background_area,
+                                       cell_area, expose_area, flags)
+
+
+gobject.type_register(EditableTextRenderer)
+
+
+class EditableSpinRenderer(gtk.CellRendererSpin):
+    """Adds a border to an editable spin so it becomes easy to see it is editable."""
+
+    def do_render(self, drawable, widget, background_area, cell_area, expose_area, flags):
+        draw_editable_border(widget, drawable, cell_area)
+        gtk.CellRendererText.do_render(self, drawable, widget, background_area,
+                                       cell_area, expose_area, flags)
+
+
+gobject.type_register(EditableSpinRenderer)
 
 
 class ComboDetailsCellRenderer(gtk.CellRenderer):

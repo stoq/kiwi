@@ -209,6 +209,22 @@ type_register(FadeOut)
 _pixbuf_cache = {}
 
 
+def draw_editable_border(widget, drawable, cell_area):
+    """Draws a border around a widget, signalizing that it is editable"""
+    cr = drawable.cairo_create()
+    cr.set_line_width(0.5)
+    cr.rectangle(cell_area.x, cell_area.y,
+                 cell_area.width, cell_area.height)
+
+    style = widget.get_style()
+    # The gtk documentation says the dark colors are slightly darker than
+    # the bg colors and used for creating shadows. That's perfect here since
+    # it will indicate that the border is editable and won't "vanish"
+    # when the row is really activated
+    cr.set_source_color(style.dark[gtk.STATE_SELECTED])
+    cr.stroke()
+
+
 # Based on code from BillReminder by Og Maciel and
 # http://cairographics.org/cookbook/roundedrectangles/
 
