@@ -66,6 +66,10 @@ class ProxySpinButton(gtk.SpinButton, ValidatableProxyWidgetMixin):
         self.props.data_type = data_type
         self.set_property('xalign', 1.0)
 
+        # We need to do this because spinbuttons are supposed to accept only
+        # numbers.
+        self.set_numeric(True)
+
     gsignal('changed', 'override')
 
     def do_changed(self):
