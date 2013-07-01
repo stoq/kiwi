@@ -661,11 +661,10 @@ class Column(gobject.GObject):
         data_type = self.data_type
         if data is None and data_type != gdk.Pixbuf:
             text = ''
-        elif self.format_func:
-            if self.format_func_data is not None:
-                text = self.format_func(obj, self.format_func_data)
-            else:
-                text = self.format_func(data)
+        elif self.format_func and self.format_func_data is not None and obj:
+            text = self.format_func(obj, self.format_func_data)
+        elif self.format_func and self.format_func_data is None:
+            text = self.format_func(data)
         elif (self.format or
               data_type == float or
               data_type == decimal.Decimal or
