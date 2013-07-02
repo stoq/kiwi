@@ -1026,6 +1026,7 @@ class KiwiEntry(gtk.Entry):
     def _on_changed(self, widget):
         if self._block_changed:
             self.stop_emission('changed')
+        self._update_current_object(widget.get_text())
 
     def _on_focus_out_event(self, widget, event):
         if not self._mask:

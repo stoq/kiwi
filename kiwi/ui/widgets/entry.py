@@ -104,7 +104,6 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
             return
         text = self.get_text()
         self._has_been_updated = bool(text)
-        self._update_current_object(text)
         self.emit('content-changed')
 
     def _set_data_type(self, data_type):
