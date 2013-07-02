@@ -25,12 +25,12 @@
 """GtkEntry support for the Kiwi Framework"""
 
 import datetime
-
+import gettext
 import gobject
 import pango
 
 from kiwi.currency import currency
-from kiwi.datatypes import converter, number, ValueUnset
+from kiwi.datatypes import converter, number, ValueUnset, ValidationError
 from kiwi.decorators import deprecated
 from kiwi.enums import Alignment
 from kiwi.ui.proxywidget import ProxyWidgetMixin
@@ -41,6 +41,8 @@ from kiwi.ui.dateentry import DateEntry
 from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin, \
     VALIDATION_ICON_WIDTH
 from kiwi.utils import gsignal, type_register
+
+_ = lambda msg: gettext.dgettext('kiwi', msg)
 
 
 class ProxyEntryMeta(gobject.GObjectMeta):
@@ -184,6 +186,14 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         self.set_position(-1)
 
     # ProxyWidgetMixin implementation
+
+    def validate_value(self, value):
+        if self.get_mode() != ENTRY_MODE_DATA:
+            return
+
+        if self.get_text() and value is None:
+            raise ValidationError(
+                _("'%s' is not a valid object" % (self.get_text(), )))
 
     def read(self):
         mode = self._mode

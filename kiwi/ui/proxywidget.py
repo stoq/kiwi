@@ -265,6 +265,8 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
             data = self.read()
             log.debug('Read %r for %s' % (data, self.model_attribute))
 
+            self.validate_value(data)
+
             # check if we should draw the mandatory icon
             # this need to be done before any data conversion because we
             # we don't want to end drawing two icons
@@ -290,6 +292,16 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         except ValidationError, e:
             self.set_invalid(str(e))
             return ValueUnset
+
+    def validate_value(self, value):
+        """Extra validation for *value*
+
+        :meth:`.validate` will call this as soon as it calls :meth:`.read`
+        with it's return value. This should raise ValidationError if the
+        value should be considered invalid
+
+        :raises: :exc:`kiwi.datatypes.ValidationError`
+        """
 
     def set_valid(self):
         """Changes the validation state to valid, which will remove icons and

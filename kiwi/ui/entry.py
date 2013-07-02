@@ -618,13 +618,6 @@ class KiwiEntry(gtk.Entry):
                 self._current_object = row[COL_OBJECT]
                 break
 
-        if self._current_object is not None:
-            self.set_valid()
-        elif text:
-            self.set_invalid(_("'%s' is not a valid object" % text))
-        elif self.mandatory:
-            self.set_blank()
-
     def _get_text_from_object(self, obj):
         if self._mode != ENTRY_MODE_DATA:
             return

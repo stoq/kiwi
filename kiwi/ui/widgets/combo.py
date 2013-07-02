@@ -725,6 +725,9 @@ class ProxyComboEntry(ComboEntry, ValidatableProxyWidgetMixin):
 
     # IProxyWidget
 
+    def validate_value(self, data):
+        return self.entry.validate_value(data)
+
     def read(self):
         return self.get_selected()
 
