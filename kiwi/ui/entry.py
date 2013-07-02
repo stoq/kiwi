@@ -139,6 +139,7 @@ INPUT_CHAR_MAP = {
 (COL_TEXT,
  COL_OBJECT) = range(2)
 
+# FIXME: Remove this and replace with data_type str/objec
 (ENTRY_MODE_UNKNOWN,
  ENTRY_MODE_TEXT,
  ENTRY_MODE_DATA) = range(3)
@@ -1176,7 +1177,25 @@ class KiwiEntry(gtk.Entry):
             #      data mode
             raise TypeError("unknown Entry mode. Did you call prefill?")
 
+    def set_mode(self, mode):
+        """Set the entry mode
+
+        Use this if you need to set mode by hand for some reason,
+        but usually there's no reason to do so since the text mode is
+        set by default and updated to data mode if the entry gets prefilled
+
+        :param mode: one of :mod:`ENTRY_MODE_TEXT` or :mod:`ENTRY_MODE_DATA`
+        """
+        if mode not in [ENTRY_MODE_TEXT, ENTRY_MODE_DATA]:
+            raise TypeError("mode should be ENTRY_MODE_TEXT or "
+                            "ENTRY_MODE_DATA, got %r" % (mode, ))
+        self._mode = mode
+
     def get_mode(self):
+        """Returns the actual entry mode
+
+        :returns: one of :mod:`ENTRY_MODE_TEXT` or :mod:`ENTRY_MODE_DATA`
+        """
         return self._mode
 
 type_register(KiwiEntry)
