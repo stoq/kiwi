@@ -506,7 +506,7 @@ class BasicForm(SlaveDelegate):
         if not view:
             raise TypeError(
                 "Form %r requires a view, not %r" % (
-                self.__class__.__name__, view, ))
+                    self.__class__.__name__, view, ))
         self.proxy = None
         self.main_view = view
         # Just a simple GtkBin

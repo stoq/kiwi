@@ -430,7 +430,7 @@ class DateEntry(gtk.HBox):
         if not isinstance(date, datetime.date) and date is not None:
             raise TypeError(
                 "date must be a datetime.date instance or None, not %r" % (
-                date,))
+                    date,))
 
         if date is None:
             value = ''

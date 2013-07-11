@@ -486,7 +486,7 @@ class SlaveView(gobject.GObject):
             raise TypeError(
                 "%r is attached to %r, you need to specify "
                 "another holder name" % (
-                self._forms[holder_name], holder_name))
+                    self._forms[holder_name], holder_name))
         # To avoid a cyclic dependency between forms & views
         from kiwi.ui.forms import BasicForm
         form = BasicForm(self)

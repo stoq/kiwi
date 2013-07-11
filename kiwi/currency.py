@@ -70,7 +70,7 @@ class currency(decimal.Decimal):
         elif not isinstance(value, (int, long, decimal.Decimal)):
             raise TypeError(
                 "cannot convert %r of type %s to a currency" % (
-                value, type(value)))
+                    value, type(value)))
 
         return decimal.Decimal.__new__(cls, value)
 

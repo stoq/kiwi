@@ -296,7 +296,7 @@ class KiwiEntry(gtk.Entry):
           - 'A' alphanumeric, honors the locale
 
         This is similar to MaskedTextBox:
-        U{http://msdn2.microsoft.com/en-us/library/system.windows.forms.maskedtextbox.mask(VS.80).aspx}
+        U{http://tinyurl.com/one6c6r}
 
         Example mask for a ISO-8601 date
         >>> entry.set_mask('0000-00-00')

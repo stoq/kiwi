@@ -288,7 +288,9 @@ class WaitForCall(WaitCondition):
     '''
     def __init__(self, return_value=None):
         '''
-        Creates a wait condition that is actually a callable object, and waits for a call to be made on it.
+        Creates a wait condition that is actually a callable object, and
+        waits for a call to be made on it.
+
         :param return_value: value to return when called; can also be
         modified dynamically from the tasklet as the C{return_value}
         instance variable.

@@ -5,9 +5,9 @@ GREP_EXCLUDE='(tools/pep8.py)'
 PYFLAKES_BIN='pyflakes'
 PEP8_BIN=`dirname $0`/pep8.py
 # We probably don't want to fix these for now
-# E501 - line too long
 # E125 - continuation line does not distinguish itself from next logical line
-PEP8_ARGS="--count --repeat --ignore=E501,E125"
+PEP8_ARGS="--count --repeat \
+           --ignore=E125 --max-line-length=100"
 
 
 run() {

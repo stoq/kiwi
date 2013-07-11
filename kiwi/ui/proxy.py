@@ -342,9 +342,9 @@ class Proxy:
                 raise TypeError(
                     "attribute %s of model %r requires a value of "
                     "type %s, not %s" % (
-                    attribute, self._model,
-                    data_type.__name__,
-                    value_type.__name__))
+                        attribute, self._model,
+                        data_type.__name__,
+                        value_type.__name__))
 
         if block:
             block_widget(widget)

@@ -96,7 +96,7 @@ class AttributeForwarder(ClassInittableObject):
         if not 'attributes' in ns:
             raise TypeError(
                 "the class variable attributes needs to be set for %s" % (
-                cls.__name__))
+                    cls.__name__))
         if "target" in ns['attributes']:
             raise TypeError("'target' is a reserved attribute")
 
@@ -292,7 +292,7 @@ class enum(int):
             raise ValueError(
                 "Error while creating enum %s of type %s, "
                 "it has already been created as %s" % (
-                value, cls.__name__, cls.values[value]))
+                    value, cls.__name__, cls.values[value]))
 
         self = super(enum, cls).__new__(cls, value)
         self.name = name

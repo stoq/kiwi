@@ -640,7 +640,7 @@ class _EnumConverter(BaseConverter):
         if not isinstance(value, self.type):
             raise ValidationError(
                 "value must be an instance of %s, not %r" % (
-                self.type, value))
+                    self.type, value))
         return value.name
 
     def from_string(self, value):
