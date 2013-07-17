@@ -223,6 +223,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         self._fade = FadeOut(self)
         self._fade.connect('color-changed', self._on_fadeout__color_changed)
         self.connect('notify::mandatory', self._on_notify__mandatory)
+        self.connect('notify::sensitive', self._on_notify__sensitive)
 
     # Override in subclass
 
@@ -312,7 +313,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         self._set_valid_state(True)
 
         self._fade.stop()
-        self.set_pixbuf(None)
+        self._set_pixbuf(None)
 
     def set_invalid(self, text=None, fade=True):
         """Changes the validation state to invalid.
@@ -329,7 +330,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
             text = _("'%s' is not a valid value for this field") % self.read()
 
         if not fade:
-            self.set_pixbuf(_load_error_icon())
+            self._set_pixbuf(_load_error_icon())
             self.update_background(gtk.gdk.color_parse(self._fade.ERROR_COLOR))
             return
 
@@ -338,7 +339,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         # (which removes this timeout) is called as soon as the user
         # types valid data.
         def done(fadeout, c):
-            self.set_pixbuf(_load_error_icon())
+            self._set_pixbuf(_load_error_icon())
             self.queue_draw()
             fadeout.disconnect(c.signal_id)
 
@@ -348,7 +349,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         c.signal_id = self._fade.connect('done', done, c)
 
         if self._fade.start(self.get_background()):
-            self.set_pixbuf(None)
+            self._set_pixbuf(None)
 
         # If you try to set the tooltip before the icon in gtk.Entry, a
         # segfault happens.
@@ -372,6 +373,13 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
     # Private
 
+    def _set_pixbuf(self, pixbuf):
+        # If not sensitive, drawing the pixbuf will make it look weird
+        if not self.get_sensitive():
+            return
+
+        self.set_pixbuf(pixbuf)
+
     def _set_valid_state(self, state):
         """Updates the validation state and emits a signal if it changed"""
         # FIXME: This should not happen, but somehow, model_attribute is being
@@ -387,7 +395,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
     def _draw_stock_icon(self, stock_id):
         icon = self.render_icon(stock_id, gtk.ICON_SIZE_MENU)
-        self.set_pixbuf(icon)
+        self._set_pixbuf(icon)
         self.queue_draw()
 
     # Callbacks
@@ -396,4 +404,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         self.update_background(color)
 
     def _on_notify__mandatory(self, obj, pspec):
+        self.validate()
+
+    def _on_notify__sensitive(self, obj, pspec):
         self.validate()
