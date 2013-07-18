@@ -3,6 +3,7 @@
 import unittest
 
 from gtk import gdk
+import mock
 
 from kiwi import ValueUnset
 from kiwi.datatypes import ValidationError
@@ -179,6 +180,36 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(self.view.entry.get_text(), "")
         self.view.spinbutton.update(ValueUnset)
         self.assertEqual(self.view.spinbutton.get_text(), "")
+
+    def testValidationIcon(self):
+        def validate_entry(entry, value):
+            if value == 'error':
+                return ValidationError()
+
+        entry = self.view.entry
+        entry.connect('validate', validate_entry)
+
+        original_set_invalid = self.view.entry.set_invalid
+        with mock.patch.object(entry, 'set_invalid') as set_invalid:
+            # Avoid fading so we can check the icon at the same time the
+            # widget becomes invalid
+            set_invalid.side_effect = lambda text: original_set_invalid(
+                text=text, fade=False)
+
+            self.proxy.update('entry', 'ok')
+            self.assertEqual(entry.get_property("secondary-icon-pixbuf"), None)
+
+            self.proxy.update('entry', 'error')
+            # Making the widget invalid should put the validation icon on it
+            self.assertNotEqual(entry.get_property("secondary-icon-pixbuf"), None)
+
+            entry.set_sensitive(False)
+            # But if the widget becomes insensitive, the icon should be removed
+            self.assertEqual(entry.get_property("secondary-icon-pixbuf"), None)
+
+            entry.set_sensitive(True)
+            # And re-added when the widget becomes sensitive again
+            self.assertNotEqual(entry.get_property("secondary-icon-pixbuf"), None)
 
     def testValueChangeWhenWidgetInalid(self):
         def validate_entry(entry, value):

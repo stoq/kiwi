@@ -224,6 +224,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         self._fade.connect('color-changed', self._on_fadeout__color_changed)
         self.connect('notify::mandatory', self._on_notify__mandatory)
         self.connect('notify::sensitive', self._on_notify__sensitive)
+        self.connect('notify::visible', self._on_notify__visible)
 
     # Override in subclass
 
@@ -260,6 +261,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         # when forcing the validation
         if not force and (not self.get_property('visible') or
                           not self.get_property('sensitive')):
+            self._set_pixbuf(None)
             return ValueUnset
 
         try:
@@ -374,9 +376,13 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     # Private
 
     def _set_pixbuf(self, pixbuf):
-        # If not sensitive, drawing the pixbuf will make it look weird
+        # Even though self.validate will call this with None when not
+        # visible/sensitive, passing force=True to it will make it validate
+        # the widget. That's ok, since it will set self._valid right, but
+        # we don't want to draw a mandatory/validation_error icon on
+        # an insensitive widget
         if not self.get_sensitive():
-            return
+            pixbuf = None
 
         self.set_pixbuf(pixbuf)
 
@@ -407,4 +413,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         self.validate()
 
     def _on_notify__sensitive(self, obj, pspec):
+        self.validate()
+
+    def _on_notify__visible(self, obj, pspec):
         self.validate()
