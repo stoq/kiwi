@@ -64,9 +64,14 @@ class ComboDetailsCellRenderer(gtk.CellRenderer):
         # Center the label
         y_offset = cell_area.height / 2 - height / 2
 
+        if flags & gtk.CELL_RENDERER_SELECTED:
+            state = gtk.STATE_SELECTED
+        else:
+            state = gtk.STATE_ACTIVE
+
         # Draws label
         widget.style.paint_layout(window,
-                                  gtk.STATE_ACTIVE, False,
+                                  state, False,
                                   cell_area, widget, "",
                                   cell_area.x + x_offset,
                                   cell_area.y + y_offset,
@@ -116,7 +121,7 @@ class ComboDetailsCellRenderer(gtk.CellRenderer):
     def do_get_size(self, widget, cell_area):
         if self._details_callback:
             details = self._details_callback(self.data)
-            mark_up = '%s\n<span foreground="%s">%s</span>'
+            mark_up = '%s\n%s'
             color = gdk_color_to_string(widget.style.fg[gtk.STATE_NORMAL])
             text = mark_up % (self.label, color, self._escape(details))
         else:
