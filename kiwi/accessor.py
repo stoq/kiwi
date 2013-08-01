@@ -35,6 +35,7 @@ important differences:
 
 import string
 import types
+import warnings
 
 from kiwi.log import Logger
 
@@ -200,6 +201,11 @@ def kgetattr(
         except AttributeError:
             names = split(attr_name, ".")
 
+        if len(names) > 1:
+            warnings.warn(
+                'kgetattr dot-notation %s is deprecated, '
+                'replace it with a property' % (attr_name, ), DeprecationWarning,
+                stacklevel=2)
     # 2. Loop around main lookup code for each part:
     obj = model
     for name in names:
@@ -225,8 +231,10 @@ def kgetattr(
 
                 func = getattr(obj, "get_%s" % name, None)
                 if callable(func):
-                    log.info('kgetattr based get_%s method is deprecated, '
-                             'replace it with a property' % name)
+                    warnings.warn(
+                        'kgetattr based get_%s method is deprecated, '
+                        'replace it with a property' % name, DeprecationWarning,
+                        stacklevel=2)
                     icode = FAST_METHOD_ACCESS
                     data1 = func.im_func
                     data2 = None
