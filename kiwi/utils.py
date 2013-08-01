@@ -26,7 +26,12 @@
 
 import sys
 
-import gobject
+try:
+    import gobject
+    gobject  # pyflakes
+except ImportError:
+    raise SystemExit("python-gobject is required by kiwi.utils")
+
 
 # Monkey patch gobject to support enum properties
 import gobject.propertyhelper

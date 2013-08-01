@@ -181,7 +181,12 @@ Examples
 import types
 import warnings
 
-import gobject
+try:
+    import gobject
+    gobject  # pyflakes
+except:
+    raise SystemExit("python-gobject is required by kiwi.tasklet")
+
 
 _event = None
 

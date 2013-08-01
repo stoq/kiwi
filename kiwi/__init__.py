@@ -39,24 +39,6 @@ Kiwi includes a Framework and a set of enhanced widgets
     - Organization: Async Open Source
 """
 
-try:
-    import gobject
-    gobject  # pyflakes
-except ImportError, e:
-    try:
-        import pygtk
-        pygtk.require('2.0')
-    except:
-        pass
-
-    try:
-        import gobject
-        gobject  # pyflakes
-    except:
-        raise SystemExit(
-            "PyGTK 2.24 or higher is required by kiwi\n"
-            "Error was: %s" % e)
-
 from kiwi.__version__ import version as kiwi_version
 from kiwi.environ import EnvironmentError, Library
 
@@ -72,7 +54,7 @@ if library.uninstalled:
 library.enable_translation()
 
 # Be careful to not export too much
-del Library, gobject
+del Library
 
 
 class ValueUnset:
