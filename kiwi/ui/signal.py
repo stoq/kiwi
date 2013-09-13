@@ -186,11 +186,9 @@ class SignalBroker(object):
     def _get_all_methods(self, controller):
         methods = {}
         for cls in inspect.getmro(type(controller)):
-            for attr in cls.__dict__:
-                # Need to use getattr() to ensure we get bound methods
-                method = getattr(controller, attr, None)
-                if method is not None:
-                    methods[attr] = method
+            for attr, value in cls.__dict__.items():
+                if value is not None:
+                    methods[attr] = value
         return methods
 
     def _do_connections(self, view, methods):
