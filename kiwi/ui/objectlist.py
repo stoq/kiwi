@@ -1111,8 +1111,8 @@ class ObjectList(gtk.HBox):
             item = self._model[arg][COL_MODEL]
         elif isinstance(arg, slice):
             model = self._model
-            return [model[item][COL_MODEL]
-                    for item in slicerange(arg, len(self._model))]
+            return [model[i][COL_MODEL]
+                    for i in slicerange(arg, len(self._model))]
         else:
             raise TypeError("argument arg must be int, gtk.Treeiter or "
                             "slice, not %s" % type(arg))
@@ -1254,7 +1254,11 @@ class ObjectList(gtk.HBox):
         # do nothing if empty list or None provided
         model = self._model
         if clear:
-            if not instances:
+            if hasattr(instances, 'is_empty'):
+                is_empty = instances.is_empty()
+            else:
+                is_empty = not bool(instances)
+            if is_empty:
                 self.unselect_all()
                 self.clear()
                 return
