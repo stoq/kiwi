@@ -180,6 +180,7 @@ class ProxyWidgetMixin(object):
 
 VALIDATION_ICON_WIDTH = 16
 MANDATORY_ICON = gtk.STOCK_EDIT
+MANDATORY_COLOR = '#fcf6c6'
 
 VALIDATION_PNG = """iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAABGdBTUEAANbY1E9YMgAAABl0RVh0
 U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAFGSURBVHjaYmRAA/8ZGOyBlAMDbnCAkYHh
@@ -367,6 +368,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
             self._draw_stock_icon(MANDATORY_ICON)
             self.set_tooltip(_('This field is mandatory'))
             self._fade.stop()
+            self.update_background(gtk.gdk.color_parse(MANDATORY_COLOR))
             valid = False
         else:
             valid = True
