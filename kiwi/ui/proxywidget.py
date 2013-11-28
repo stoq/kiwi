@@ -317,6 +317,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
         self._fade.stop()
         self._set_pixbuf(None)
+        self.update_background(self.get_style().bg[gtk.STATE_NORMAL])
 
     def set_invalid(self, text=None, fade=True):
         """Changes the validation state to invalid.
