@@ -26,7 +26,7 @@
 """Graphical utilities: color management and eyecandy"""
 
 import math
-import StringIO
+import io
 
 import cairo
 import gobject
@@ -259,7 +259,7 @@ def render_pixbuf(color_name, width=16, height=16, radius=4):
     cr.set_line_width(1)
     cr.stroke()
 
-    buf = StringIO.StringIO()
+    buf = io.BytesIO()
     surface.write_to_png(buf)
 
     buf.seek(0)
