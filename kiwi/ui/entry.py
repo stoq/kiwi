@@ -217,6 +217,13 @@ class KiwiEntry(gtk.Entry):
         self._block_insert = False
         self._block_delete = False
 
+        # This are used to cache the data from the completion match funcions.
+        # The first time the completion is executed it doesnt make any
+        # difference, but for subsequent completions it improves considerably
+        self._last_key = None
+        self._fixed_key = None
+        self._cache = {}
+
     # Properties
 
     def _get_mask(self):
@@ -690,25 +697,48 @@ class KiwiEntry(gtk.Entry):
 
         cell.props.markup = markup.encode('utf-8')
 
+    def _get_key_for_completion(self, key):
+        if key == self._last_key:
+            return self._fixed_key
+
+        self._last_key = key
+        # We need to do strip_accents() before lower(), since
+        # lower() on win32 will corrupt the utf-8 encoded string
+        if self.completion_ignore_accents:
+            key = strip_accents(key)
+        if self.completion_ignore_case:
+            key = key.lower()
+
+        self._fixed_key = key
+        return self._fixed_key
+
+    def _get_content_for_completion(self, model, iter):
+        content = model[iter][COL_TEXT]
+        hit = self._cache.get(content)
+        if hit or content is None:
+            return hit
+
+        fixed = content
+        # We need to do strip_accents() before lower(), since
+        # lower() on win32 will corrupt the utf-8 encoded string
+        if self.completion_ignore_accents:
+            fixed = strip_accents(fixed)
+        if self.completion_ignore_case:
+            fixed = fixed.lower()
+        self._cache[content] = fixed
+        return fixed
+
     def _completion_exact_match_func(self, completion, key, iter):
         model = completion.get_model()
         if not len(model):
             return False
 
-        content = model[iter][COL_TEXT]
+        content = self._get_content_for_completion(model, iter)
         if content is None:
             # FIXME: Find out why this happens some times
             return False
 
-        # We need to do strip_accents() before lower(), since
-        # lower() on win32 will corrupt the utf-8 encoded string
-        if self.completion_ignore_accents:
-            key = strip_accents(key)
-            content = strip_accents(content)
-        if self.completion_ignore_case:
-            key = key.lower()
-            content = content.lower()
-
+        key = self._get_key_for_completion(key)
         return content.startswith(key)
 
     def _completion_normal_match_func(self, completion, key, iter):
@@ -716,20 +746,12 @@ class KiwiEntry(gtk.Entry):
         if not len(model):
             return False
 
-        content = model[iter][COL_TEXT]
+        content = self._get_content_for_completion(model, iter)
         if content is None:
             # FIXME: Find out why this happens some times
             return False
 
-        # We need to do strip_accents() before lower(), since
-        # lower() on win32 will corrupt the utf-8 encoded string
-        if self.completion_ignore_accents:
-            key = strip_accents(key)
-            content = strip_accents(content)
-        if self.completion_ignore_case:
-            key = key.lower()
-            content = content.lower()
-
+        key = self._get_key_for_completion(key)
         return key in content
 
     def _on_completion__match_selected(self, completion, model, iter):

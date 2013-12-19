@@ -40,7 +40,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
         self._inline_completion = False
         self._popup_completion = True
         self._entry = None
-        self._completion_timeout = 0
+        self._completion_timeout = -1
         self._match_function = None
         self._match_function_data = None
         self._key = None
@@ -104,10 +104,6 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
             self.popdown()
 
     def _on_completion_timeout(self):
-        if self._completion_timeout:
-            gobject.source_remove(self._completion_timeout)
-            self._completion_timeout = 0
-
         minimum_key_length = self.get_property('minimum-key-length')
         if (self._filter_model and
             len(self._entry.get_text()) >= minimum_key_length and
@@ -126,6 +122,9 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
             return
 
         self._selected_index = -1
+
+        if self._completion_timeout != -1:
+            gobject.source_remove(self._completion_timeout)
 
         timeout = gobject.timeout_add(COMPLETION_TIMEOUT,
                                       self._on_completion_timeout)
