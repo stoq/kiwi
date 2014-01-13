@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.com
+
+[kiwi.kiwipot]
+file_filter = po/<lang>.po
+source_file = po/kiwi.pot
+source_lang = en
+
