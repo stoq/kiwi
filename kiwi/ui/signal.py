@@ -230,9 +230,10 @@ class SignalBroker(object):
 
             # Replace the attribute on the view with a magic descriptor,
             # note that this is done on the class and check if it's already
-            # set before
-            signal_proxy = getattr(view.__class__, object_name, None)
-            if signal_proxy is None:
+            # set before. We are not using hasattr/getattr here because, if a
+            # parent class had a SignalProxyObject for object_name, it would
+            # cause new signals on this subclass to be ignored
+            if object_name not in view.__class__.__dict__:
                 signal_proxy = SignalProxyObject(object_name,
                                                  objects[object_name])
                 setattr(view.__class__, object_name, signal_proxy)
