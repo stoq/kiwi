@@ -198,11 +198,9 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     def read(self):
         mode = self._mode
         if mode == ENTRY_MODE_TEXT:
-            # Do not consider masks which only displays static
-            # characters invalid, instead return ValueUnset
             text = self.get_text()
             if self.mask and text == self.get_empty_mask():
-                return ValueUnset
+                text = ''
             if not self._has_been_updated:
                 return ValueUnset
             return self._from_string(text)

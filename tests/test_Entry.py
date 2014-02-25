@@ -95,12 +95,41 @@ class EntryTest(unittest.TestCase):
         self.assertEqual(gobject.type_name(entry), 'ProxyEntry')
 
     def testRead(self):
+        # int without mask
         entry = ProxyEntry()
         entry.set_text('1')
         entry.set_property("data-type", "int")
         self.assertEqual(entry.read(), 1)
         entry.set_text('')
+        # empty int reads as ValueUnset
         self.assertEqual(entry.read(), ValueUnset)
+
+        # int with mask
+        entry = ProxyEntry()
+        entry.set_property("data-type", "int")
+        entry.set_mask('00')
+        entry.set_text('12')
+        self.assertEqual(entry.read(), 12)
+        entry.set_text('')
+        # empty int reads as ValueUnset
+        self.assertEqual(entry.read(), ValueUnset)
+
+        # str without mask
+        entry = ProxyEntry()
+        entry.set_property("data-type", "str")
+        entry.set_text('123')
+        self.assertEqual(entry.read(), '123')
+        entry.set_text('')
+        self.assertEqual(entry.read(), '')
+
+        # str with mask
+        entry = ProxyEntry()
+        entry.set_property("data-type", "str")
+        entry.set_mask('00-00.00')
+        entry.set_text('123456')
+        self.assertEqual(entry.read(), '12-34.56')
+        entry.set_text('')
+        self.assertEqual(entry.read(), '')
 
     def testDataMode(self):
         entry = ProxyEntry()
