@@ -107,6 +107,13 @@ class Proxy:
         if value is ValueUnset:
             return
 
+        # Dont update the model if the widget is not sensitive, or if it is not
+        # editable.
+        if not widget.is_sensitive():
+            return
+        if isinstance(widget, gtk.Editable) and not widget.get_editable():
+            return
+
         model = self.model
         # XXX: One day we might want to queue and unique updates?
         if hasattr(model, "block_proxy"):
