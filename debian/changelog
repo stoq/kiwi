@@ -1,3 +1,9 @@
+kiwi (1.9.39) precise; urgency=low
+
+  * New Release
+
+ -- Thiago Bellini Ribeiro <hackedbellini@async.com.br>  Wed, 26 Feb 2014 17:05:57 -0300
+
 kiwi (1.9.38) precise; urgency=low
 
   * Improve compatibility with gtk3
