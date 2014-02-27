@@ -98,8 +98,11 @@ class Environment:
         return self._resources[resource]
 
     def add_resource(self, resource, path):
-        if self._is_egg:
-            return
+        # XXX. This is not as simple as just checkign if the file is a egg. We
+        # need to be sure that the current library is a egg itself, and not the
+        # current running program.
+        #if self._is_egg:
+        #    return
         path = os.path.join(self._root, path)
 
         if not os.path.isdir(path):
