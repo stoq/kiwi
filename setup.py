@@ -6,10 +6,17 @@
 # re-written various times by Johan Dahlin <jdahlin@async.com.br>
 
 """
-kiwi offers a set of enhanced widgets for
-Python based on PyGTK. It also includes a framework designed to make
-creating Python applications using PyGTK and libglade much
-simpler.
+Kiwi is a framework and a set of enhanced PyGTK widgets designed to
+make building programs with graphical interfaces both easy to write
+and easy to maintain.
+
+Kiwi consists of a set of classes and wrappers for PyGTK that were
+developed to provide a sort of framework for applications. Fully
+object-oriented, and roughly Smalltalk's MVC, Kiwi provides a simple,
+practical way to build forms, windows and widgets that transparently
+access and display your object data.
+
+Kiwi is inspired by Allen Holub's Visual Proxy.
 """
 
 import sys
@@ -24,6 +31,12 @@ if 'upload' in sys.argv:
     name = 'kiwi-gtk'
 else:
     name = 'kiwi'
+
+install_requires = [
+    'PyGTK >= 2.24.0',
+    'setuptools >= 0.6b3',
+]
+
 setup(name=name,
       version=".".join(map(str, kiwi_version)),
       description="A framework and a set of enhanced widgets based on PyGTK",
@@ -50,4 +63,5 @@ setup(name=name,
       packages=listpackages('kiwi'),
       test_requires=['mock'],
       resources=dict(locale='$prefix/share/locale'),
+      install_requires=install_requires,
       )

@@ -2,15 +2,20 @@ Source: kiwi
 Section: python
 Priority: optional
 Maintainer: Ronaldo Francisco Maia <romaia@async.com.br>
-Build-Depends: cdbs (>= 0.4.43), debhelper (>= 5.0.37.2), python, python-setuptools (>= 0.6b3-1~), python-support (>= 0.3), python-mock (>= 0.7)
-Build-Depends-Indep: python-dev (>= 2.6), python-gtk2 (>= 2.24.0), libgtk2.0-0 (>= 2.24.0), pkg-config, gettext, intltool
-Standards-Version: 3.8.3
+Build-Depends: debhelper (>= 8.0.0), python-all (>= 2.6), python-setuptools
+Build-Depends-Indep: gettext, intltool, python-mock (>= 0.7)
+Homepage: http://www.async.com.br/projects/kiwi/
+Vcs-Git: https://github.com/stoq/kiwi.git
+Vcs-Browser: https://github.com/stoq/kiwi/
+Standards-Version: 3.9.3
+X-Python-Version: >= 2.6
 
 Package: python-kiwi
 Architecture: all
-Depends: ${python:Depends}, ${misc:Depends}, python-gtk2 (>= 2.24.0), libgtk2.0-0 (>= 2.24.0), python-setuptools (>= 0.6b3-1)
+Depends: ${misc:Depends}, ${python:Depends}
 Breaks: stoq (<= 1.7.2)
 Replaces: kiwi
+Homepage: http://www.async.com.br/projects/kiwi/
 Description: a graphical framework to construct simple UI
  Kiwi is a framework and a set of enhanced PyGTK widgets designed to
  make building programs with graphical interfaces both easy to write
@@ -23,5 +28,3 @@ Description: a graphical framework to construct simple UI
  access and display your object data.
  .
  Kiwi is inspired by Allen Holub's Visual Proxy.
- .
-  Homepage: http://www.async.com.br/projects/kiwi/

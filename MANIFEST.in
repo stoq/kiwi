@@ -5,9 +5,9 @@ recursive-include examples *
 recursive-include glade *
 recursive-include glade-plugin *.png
 recursive-include po *.po kiwi.pot POTFILES.list
-include debian/changelog debian/compat debian/copyright debian/control debian/rules debian/pyversions
-include debian/pycompat debian/watch
-include debian/*.docs debian/*.install debian/*.examples debian/patches/*.diff
+recursive-include debian *
+include debian/changelog debian/clean debian/compat debian/control
+include debian/copyright debian/pydist-overrides debian/rules debian/watch
 include AUTHORS
 include COPYING
 include MANIFEST.in
