@@ -38,22 +38,13 @@ import atexit
 import sys
 import time
 
-from gtk import gdk
+from gobject import add_emission_hook
 import gtk
+from gtk import gdk
 
 from kiwi.log import Logger
 from kiwi.ui.test.common import WidgetIntrospecter
 from kiwi.ui.objectlist import ObjectList
-
-try:
-    from gobject import add_emission_hook
-    add_emission_hook  # pyflakes
-except ImportError:
-    try:
-        from kiwi._kiwi import add_emission_hook
-        add_emission_hook  # pyflakes
-    except ImportError:
-        add_emission_hook = None
 
 _events = []
 

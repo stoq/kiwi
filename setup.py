@@ -12,31 +12,11 @@ creating Python applications using PyGTK and libglade much
 simpler.
 """
 
-import commands
-from distutils.extension import Extension
 import sys
 
 from kiwi import kiwi_version
 from kiwi.dist import setup, listfiles, listpackages
 
-
-ext_modules = []
-
-# Build a helper module for testing on gtk+ versions lower than 2.10.
-# Don't build it on windows due to easy availability compilers and
-# the lack of pkg-config.
-if sys.platform != 'win32' and not 'bdist_wininst' in sys.argv:
-    exists = commands.getstatusoutput('pkg-config pygtk-2.0 --exists')[0] == 0
-    version = commands.getoutput('pkg-config pygtk-2.0 --modversion')
-    if exists and version and map(int, version.split('.')) < [2, 10]:
-        pkgs = 'gdk-2.0 gtk+-2.0 pygtk-2.0'
-        cflags = commands.getoutput('pkg-config --cflags %s' % pkgs)
-        libs = commands.getoutput('pkg-config --libs %s' % pkgs)
-        include_dirs = [part.strip() for part in cflags.split('-I') if part]
-        libraries = [part.strip() for part in libs.split('-l') if part]
-        ext_modules.append(Extension('kiwi/_kiwi', ['kiwi/_kiwi.c'],
-                                     include_dirs=include_dirs,
-                                     libraries=libraries))
 
 pixmaps = listfiles('glade-plugin', 'resources', 'kiwiwidgets', '*.png')
 # When uploading to pypi
@@ -68,7 +48,6 @@ setup(name=name,
       scripts=['bin/kiwi-i18n',
                'bin/kiwi-ui-test'],
       packages=listpackages('kiwi'),
-      ext_modules=ext_modules,
       test_requires=['mock'],
       resources=dict(locale='$prefix/share/locale'),
       )

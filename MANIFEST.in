@@ -13,7 +13,6 @@ include COPYING
 include MANIFEST.in
 include README
 include NEWS
-include kiwi/_kiwi.c
 include kiwi.spec
 include kiwiwidgets.xml
 include kiwiwidgets.py
