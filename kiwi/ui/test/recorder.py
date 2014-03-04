@@ -111,10 +111,10 @@ class Event(object):
         """
         Serialize the widget, write the code here which is
         used to reproduce the event, for a button which is clicked
-        the implementation looks like this:
+        the implementation looks like this::
 
-        >>> def serialize(self):
-        >>> ... return '%s.clicked' % self.name
+            >>> def serialize(self):
+            ...     return '%s.clicked' % self.name
 
         :returns: string to reproduce event
         Override this in a subclass.

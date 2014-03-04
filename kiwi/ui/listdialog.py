@@ -394,20 +394,23 @@ class ListDialog(gtk.Dialog, ListSlave):
     It's a simple Base class which needs to be subclassed to provide interesting
     functionality.
 
-    Example:
-    >>> class MyListDialog(ListDialog):
-    ...
-    ...     columns = [Column('name')]
-    ...     list_type = ListType.UNEDITABLE
-    ...
-    ...     def populate(self):
-    ...         return [Settable(name='test')]
-    ...
-    ...     def add_item(self):
-    ...         return Settable(name="added")
+    Example::
 
-    >>> dialog = MyListDialog()
-    >>> dialog.run()
+        >>> from kiwi.python import Settable
+        >>> from kiwi.ui.objectlist import Column
+        >>> class MyListDialog(ListDialog):
+        ...     columns = [Column('name')]
+        ...     list_type = ListType.UNEDITABLE
+        ...
+        ...     def populate(self):
+        ...         return [Settable(name='test')]
+        ...
+        ...     def add_item(self):
+        ...         return Settable(name="added")
+
+        >>> dialog = MyListDialog()
+        >>> dialog.run()
+
     """
     def __init__(self, columns=None):
         gtk.Dialog.__init__(self)

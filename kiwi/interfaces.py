@@ -85,12 +85,12 @@ class IEasyCombo(Interface):
           - itemdata is a list of strings or tuples, each item corresponding
             to a listitem. The simple list format is as follows::
 
-            >>> [ label0, label1, label2 ]
+                [label0, label1, label2, ...]
 
             If you require a data item to be specified for each item, use a
             2-item tuple for each element. The format is as follows::
 
-            >>> [ ( label0, data0 ), (label1, data1), ... ]
+                [(label0, data0), (label1, data1), ...]
 
           - Sort is a boolean that specifies if the list is to be sorted by
             label or not. By default it is not sorted

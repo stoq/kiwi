@@ -246,10 +246,8 @@ class enum(int):
 
     To use it, define an enum subclass like this:
 
-    >>> from kiwi.python import enum
-    >>>
     >>> class Status(enum):
-    >>>     OPEN, CLOSE = range(2)
+    ...     OPEN, CLOSE = range(2)
     >>> Status.OPEN
     '<Status value OPEN>'
 

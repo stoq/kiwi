@@ -67,6 +67,7 @@ class signal_block(object):
 
     For instance:
 
+        >>> from kiwi.ui.views import SlaveView
         >>> class MyView(SlaveView):
         ...     @signal_block('money.changed')
         ...     def update_money(self):

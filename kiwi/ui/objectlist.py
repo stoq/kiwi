@@ -893,23 +893,23 @@ class ObjectList(gtk.HBox):
     Items in an ObjectList is stored in objects. Each row represents an object
     and each column represents an attribute in the object.
     The column description object must be a subclass of :class:`Column`.
-    Simple example
+    Simple example::
 
-    >>> class Fruit:
-    >>>    pass
+        >>> class Fruit:
+        ...    pass
 
-    >>> apple = Fruit()
-    >>> apple.name = 'Apple'
-    >>> apple.description = 'Worm house'
+        >>> apple = Fruit()
+        >>> apple.name = 'Apple'
+        >>> apple.description = 'Worm house'
 
-    >>> banana = Fruit()
-    >>> banana.name = 'Banana'
-    >>> banana.description = 'Monkey food'
+        >>> banana = Fruit()
+        >>> banana.name = 'Banana'
+        >>> banana.description = 'Monkey food'
 
-    >>> fruits = ObjectList([Column('name'),
-    >>>                      Column('description')])
-    >>> fruits.append(apple)
-    >>> fruits.append(banana)
+        >>> fruits = ObjectList([Column('name'),
+        ...                      Column('description')])
+        >>> fruits.append(apple)
+        >>> fruits.append(banana)
 
     Signals
     =======

@@ -64,14 +64,16 @@ class argcheck(object):
 
     Usage:
 
-        >>> @argcheck(types...)
-        ... def function(args..)
+        >>> @argcheck(int, str)
+        ... def function(int_arg, str_arg):
+        ...     pass
 
     or
 
         >>> class Class:
-        ...     @argcheck(types..)
-        ...     def method(self, args)
+        ...     @argcheck(int, str)
+        ...     def method(self, int_arg, str_arg):
+        ...         pass
 
     You can customize the checks by subclassing your type from CustomType,
     there are two builtin types: number which is a float/int combined check

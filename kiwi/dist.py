@@ -219,11 +219,9 @@ def get_site_packages_dir(*dirs):
     """
     Gets the relative path of the site-packages directory
 
-    This is mainly useful for setup.py usage:
+    This is mainly useful for setup.py set usage:
 
-    >>> setup(...
-              data_files=[(get_site_packages_dir('foo'),
-                           files..)])
+        >>> data_files = [get_site_packages_dir('foo')]
 
     where files is a list of files to be installed in
     a directory called foo created in your site-packages directory

@@ -305,8 +305,10 @@ class KiwiEntry(gtk.Entry):
         This is similar to MaskedTextBox:
         U{http://tinyurl.com/one6c6r}
 
-        Example mask for a ISO-8601 date
-        >>> entry.set_mask('0000-00-00')
+        Example mask for a ISO-8601 date::
+
+            >>> entry = KiwiEntry()
+            >>> entry.set_mask('0000-00-00')
 
         :param mask: the mask to set
         """

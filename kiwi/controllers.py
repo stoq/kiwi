@@ -51,6 +51,8 @@ class BaseController:
             generated for that view. The handler definition should look like:
 
             >>> def my_A_handler(self, widget, event, args):
+            ...     pass
+
         """
 
         if not view and not self.view:

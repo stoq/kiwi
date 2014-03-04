@@ -199,23 +199,20 @@ class Library(Environment):
     >>> from kiwi.environ import Library
     >>> lib = Library('kiwi')
     >>> if lib.uninstalled:
-    >>>     lib.add_global_resource('glade', 'glade')
-    >>>     lib.add_global_resource('pixmap', 'pixmaps')
+    ...     lib.add_global_resource('glade', 'glade')
+    ...     lib.add_global_resource('pixmap', 'pixmaps')
 
     which is combined with the following class in setup.py:
 
-    >>> from kiwi.dist import InstallLib
-    >>> class InstallLib(TemplateInstallLib):
-    >>>    name = 'kiwi'
-    >>>    global_resources = dict(glade='$datadir/glade',
-    >>>                            pixmap='$datadir/pixmaps')
-    >>>
-    >>> setup(...,
-    >>>       data_files=[('share/kiwi/glade',
-    >>>                   listfiles('glade', '*.glade')),
-    >>>                   ('share/kiwi/pixmaps',
-    >>>                   listfiles('pixmaps', '*.png')),
-    >>>       cmdclass=dict(install_lib=InstallLib))
+    >>> from kiwi.dist import KiwiInstallLib, setup, listfiles
+    >>> class InstallLib(KiwiInstallLib):
+    ...     name = 'kiwi'
+    ...     global_resources = dict(glade='$datadir/glade',
+    ...                             pixmap='$datadir/pixmaps')
+    >>> setup(data_files=[
+    ...           ('share/kiwi/glade', listfiles('glade', '*.glade')),
+    ...           ('share/kiwi/pixmaps', listfiles('pixmaps', '*.png'))],
+    ...       cmdclass=dict(install_lib=InstallLib))
 
     It may seems like a bit of work, but this is everything that's needed
     for kiwi to figure out how to load resources when installed and when
@@ -413,8 +410,8 @@ class Application(Library):
     >>> from kiwi.environ import Application
     >>> app = Application('gnomovision')
     >>> if app.uninstalled:
-    >>>     app.add_global_resource('glade', 'glade')
-    >>>     app.add_global_resource('pixmap', 'pixmaps')
+    ...     app.add_global_resource('glade', 'glade')
+    ...     app.add_global_resource('pixmap', 'pixmaps')
 
     If you want to do translations, you also need to do the following:
 
