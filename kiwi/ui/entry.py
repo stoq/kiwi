@@ -22,68 +22,6 @@
 #            Ronaldo Maia <romaia@async.com.br>
 #            Thiago Bellini <hackedbellini@async.com.br>
 #
-# Design notes:
-#
-#   When inserting new text, supose, the entry, at some time is like this,
-#   ahd the user presses '0', for instance:
-#   --------------------------------
-#   | ( 1 2 )   3 4 5   - 6 7 8 9  |
-#   --------------------------------
-#              ^ ^     ^
-#              S P     E
-#
-#   S - start of the field (start)
-#   E - end of the field (end)
-#   P - pos - where the new text is being inserted. (pos)
-#
-#   So, the new text will be:
-#
-#     the old text, from 0 until P
-#   + the new text
-#   + the old text, from P until the end of the field, shifted to the
-#     right
-#   + the old text, from the end of the field, to the end of the text.
-#
-#   After inserting, the text will be this:
-#   --------------------------------
-#   | ( 1 2 )   3 0 4 5 - 6 7 8 9  |
-#   --------------------------------
-#              ^   ^   ^
-#              S   P   E
-#
-#
-#   When deleting some text, supose, the entry, at some time is like this:
-#   --------------------------------
-#   | ( 1 2 )   3 4 5 6 - 7 8 9 0  |
-#   --------------------------------
-#              ^ ^ ^   ^
-#              S s e   E
-#
-#   S - start of the field (_start)
-#   E - end of the field (_end)
-#   s - start of the text being deleted (start)
-#   e - end of the text being deleted (end)
-#
-#   end - start -> the number of characters being deleted.
-#
-#   So, the new text will be:
-#
-#     the old text, from 0 until the start of the text being deleted.
-#   + the old text, from the start of where the text is being deleted, until
-#     the end of the field, shifted to the left, end-start positions
-#   + the old text, from the end of the field, to the end of the text.
-#
-#   So, after the text is deleted, the entry will look like this:
-#
-#   --------------------------------
-#   | ( 1 2 )   3 5 6   - 7 8 9 0  |
-#   --------------------------------
-#                ^
-#                P
-#
-#   P = the position of the cursor after the deletion, witch is equal to
-#   start (s at the previous illustration)
-
 
 """
 An enchanced version of GtkEntry that supports icons and masks
@@ -122,11 +60,6 @@ INPUT_FORMATS = {
     'a': INPUT_ALPHANUMERIC,
     '&': INPUT_ALPHA,
 }
-
-# Todo list: Other usefull Masks
-#  9 - Digit, optional
-#  ? - Ascii letter, optional
-#  C - Alpha, optional
 
 INPUT_CHAR_MAP = {
     INPUT_ASCII_LETTER: lambda text: text in string.ascii_letters,
@@ -180,12 +113,7 @@ class KiwiEntry(gtk.Entry):
         self._update_position()
         self.connect('insert-text', self._on_insert_text)
         self.connect('delete-text', self._on_delete_text)
-        self.connect_after('grab-focus', self._after_grab_focus)
-
         self.connect('changed', self._on_changed)
-
-        self.connect('focus', self._on_focus)
-        self.connect('focus-out-event', self._on_focus_out_event)
         self.connect('move-cursor', self._on_move_cursor)
 
         # Ideally, this should be connected to notify::cursor-position, but
@@ -207,12 +135,8 @@ class KiwiEntry(gtk.Entry):
         #  int -> dynamic, according to constants above
         self._mask_validators = []
         self._mask = None
-        # Fields defined by mask
-        # each item is a tuble, containing the begining and the end of the
-        # field in the text
-        self._mask_fields = []
-        self._current_field = -1
-        self._pos = 0
+        self._keep_next_position = False
+        self._pos = None
         self._selecting = False
         self._block_insert = False
         self._block_delete = False
@@ -235,62 +159,29 @@ class KiwiEntry(gtk.Entry):
             return self.get_mask()
         except MaskError:
             pass
+
     mask = gobject.property(getter=_get_mask,
                             setter=_set_mask,
                             type=str, default='')
 
     # Public API
+
     def set_text(self, text):
         completion = self.get_completion()
 
         if isinstance(completion, KiwiEntryCompletion):
             self.handler_block(completion.changed_id)
 
-        gtk.Entry.set_text(self, text)
-
-        self._apply_set_text_workaround(text)
+        if self._mask:
+            # Reset the mask and call insert_text so our handler on
+            # _on_insert_text will take care of everything
+            self.set_mask(self._mask)
+            self.insert_text(text, 0)
+        else:
+            gtk.Entry.set_text(self, text)
 
         if isinstance(completion, KiwiEntryCompletion):
             self.handler_unblock(completion.changed_id)
-
-    def _apply_set_text_workaround(self, text):
-        # FIXME: When using gtk 2.18 and later our set_text method is
-        # broken because we edit the text that will stay in the entry (mask
-        # feature). My guess is that the signal 'insert-text' have not been
-        # emitted when calling gtk_entry_set_text method (but the signal is
-        # emitted in gtk_entry_insert_text method, see gtkentry.c in gtk+).
-
-        self._really_delete_text(0, -1)
-        if not self._mask:
-            self._really_insert_text(text, 0)
-            return
-
-        if not text:
-            # set_text used to clean the entry, but the mask must stay there.
-            self._really_insert_text(self.get_empty_mask(), 0)
-            return
-
-        to_insert = []
-        for i in self._mask_validators:
-            if isinstance(i, int):
-                # mark available positions with an empty string
-                to_insert.append('')
-            else:
-                to_insert.append(i)
-
-        for t in unicode(text):
-            # find the next position available for insertion
-            for pos, k in enumerate(to_insert):
-                if k == '':
-                    break
-
-            if self._confirms_to_mask(pos, t):
-                to_insert[pos] = t
-
-        self._really_insert_text(''.join(to_insert), 0)
-        self.set_position(pos + 1)
-
-    # Mask & Fields
 
     def set_mask(self, mask):
         """
@@ -312,7 +203,6 @@ class KiwiEntry(gtk.Entry):
 
         :param mask: the mask to set
         """
-
         if not mask:
             self.modify_font(pango.FontDescription("sans"))
             self._mask = mask
@@ -320,34 +210,20 @@ class KiwiEntry(gtk.Entry):
 
         # First, reset
         self._mask_validators = []
-        self._mask_fields = []
-        self._current_field = -1
 
-        mask = unicode(mask)
-        input_length = len(mask)
-        pos = 0
-        field_begin = 0
-        field_end = 0
-        while True:
-            if pos >= input_length:
-                break
-            if mask[pos] in INPUT_FORMATS:
-                self._mask_validators += [INPUT_FORMATS[mask[pos]]]
-                field_end += 1
+        for i, c in enumerate(unicode(mask)):
+            if c in INPUT_FORMATS:
+                self._mask_validators += [INPUT_FORMATS[c]]
             else:
-                self._mask_validators.append(mask[pos])
-                if field_begin != field_end:
-                    self._mask_fields.append((field_begin, field_end))
-                field_end += 1
-                field_begin = field_end
-            pos += 1
+                self._mask_validators.append(c)
 
-        self._mask_fields.append((field_begin, field_end))
         self.modify_font(pango.FontDescription("monospace"))
 
         self._really_delete_text(0, -1)
-        self._insert_mask(0, input_length)
         self._mask = mask
+        self._really_insert_text(self.get_empty_mask(), 0)
+
+        self._handle_position_change()
 
     def get_mask(self):
         """
@@ -355,37 +231,6 @@ class KiwiEntry(gtk.Entry):
         :returns: the mask
         """
         return self._mask
-
-    def get_field_text(self, field):
-        if not self._mask:
-            raise MaskError("a mask must be set before calling get_field_text")
-
-        text = self.get_text()
-        start, end = self._mask_fields[field]
-        return text[start: end].strip()
-
-    def get_fields(self):
-        """
-        Get the fields assosiated with the entry.
-        A field is dynamic content separated by static.
-        For example, the format string 000-000 has two fields
-        separated by a dash.
-        if a field is empty it'll return an empty string
-        otherwise it'll include the content
-
-        :returns: fields
-        :rtype: list of strings
-        """
-        if not self._mask:
-            raise MaskError("a mask must be set before calling get_fields")
-
-        fields = []
-
-        text = unicode(self.get_text())
-        for start, end in self._mask_fields:
-            fields.append(text[start:end].strip())
-
-        return fields
 
     def get_empty_mask(self, start=None, end=None):
         """
@@ -396,7 +241,6 @@ class KiwiEntry(gtk.Entry):
         :returns: mask
         :rtype: string
         """
-
         if start is None:
             start = 0
         if end is None:
@@ -411,136 +255,6 @@ class KiwiEntry(gtk.Entry):
             else:
                 raise AssertionError
         return s
-
-    def get_field_pos(self, field):
-        """
-        Get the position at the specified field.
-        """
-        if field >= len(self._mask_fields):
-            return None
-
-        start, end = self._mask_fields[field]
-
-        return start
-
-    def _get_field_ideal_pos(self, field):
-        start, end = self._mask_fields[field]
-        text = self.get_field_text(field)
-        pos = start + len(text)
-        return pos
-
-    def get_field(self):
-        if self._current_field >= 0:
-            return self._current_field
-        else:
-            return None
-
-    def set_field(self, field, select=False):
-        if field >= len(self._mask_fields):
-            return
-
-        pos = self._get_field_ideal_pos(field)
-        self.set_position(pos)
-
-        if select:
-            start, end = self._mask_fields[field]
-            self.select_region(start, pos)
-
-        self._current_field = field
-
-    def get_field_length(self, field):
-        if 0 <= field < len(self._mask_fields):
-            start, end = self._mask_fields[field]
-            return end - start
-
-    def _shift_text(self, start, end, direction=Direction.LEFT,
-                    positions=1):
-        """
-        Shift the text, to the right or left, n positions. Note that this
-        does not change the entry text. It returns the shifted text.
-
-        :param start:
-        :param end:
-        :param direction:   see :class:`kiwi.enums.Direction`
-        :param positions:   the number of positions to shift.
-
-        :return:        returns the text between start and end, shifted to
-                        the direction provided.
-        """
-        text = self.get_text()
-        new_text = ''
-        validators = self._mask_validators
-
-        if direction == Direction.LEFT:
-            i = start
-        else:
-            i = end - 1
-
-        # When shifting a text, we wanna keep the static chars where they
-        # are, and move the non-static chars to the right position.
-        while start <= i < end:
-            if isinstance(validators[i], int):
-                # Non-static char shoud be here. Get the next one (depending
-                # on the direction, and the number of positions to skip.)
-                #
-                # When shifting left, the next char will be on the right,
-                # so, it will be appended, to the new text.
-                # Otherwise, when shifting right, the char will be
-                # prepended.
-                next_pos = self._get_next_non_static_char_pos(i, direction,
-                                                              positions - 1)
-
-                # If its outside the bounds of the region, ignore it.
-                if not start <= next_pos <= end:
-                    next_pos = None
-
-                if next_pos is not None:
-                    if direction == Direction.LEFT:
-                        new_text = new_text + text[next_pos]
-                    else:
-                        new_text = text[next_pos] + new_text
-                else:
-                    if direction == Direction.LEFT:
-                        new_text = new_text + ' '
-                    else:
-                        new_text = ' ' + new_text
-
-            else:
-                # Keep the static char where it is.
-                if direction == Direction.LEFT:
-                    new_text = new_text + text[i]
-                else:
-                    new_text = text[i] + new_text
-            i += direction
-
-        return new_text
-
-    def _get_next_non_static_char_pos(self, pos, direction=Direction.LEFT,
-                                      skip=0):
-        """
-        Get next non-static char position, skiping some chars, if necessary.
-        :param skip:        skip first n chars
-        :param direction:   direction of the search.
-        """
-        text = self.get_text()
-        validators = self._mask_validators
-        i = pos + direction + skip
-        while 0 <= i < len(text):
-            if isinstance(validators[i], int):
-                return i
-            i += direction
-
-        return None
-
-    def _get_field_at_pos(self, pos, dir=None):
-        """
-        Return the field index at position pos.
-        """
-        for p in self._mask_fields:
-            if p[0] <= pos <= p[1]:
-                return self._mask_fields.index(p)
-
-        return None
 
     def set_exact_completion(self):
         """Enable exact entry completion.
@@ -585,6 +299,21 @@ class KiwiEntry(gtk.Entry):
 
     # Private
 
+    def _get_next_non_static_char_pos(self, pos, direction=Direction.LEFT):
+        text = unicode(self.get_text())
+
+        pos = pos + direction
+        while 0 <= pos < len(text):
+            char = text[pos]
+            validator = self._mask_validators[pos]
+
+            if isinstance(validator, int) and INPUT_CHAR_MAP[validator](char):
+                return pos
+
+            pos += direction
+
+        return None
+
     def _really_delete_text(self, start, end):
         # A variant of delete_text() that never is blocked by us
         self._block_delete = True
@@ -597,25 +326,75 @@ class KiwiEntry(gtk.Entry):
         self.insert_text(text, position)
         self._block_insert = False
 
-    def _insert_mask(self, start, end):
-        text = self.get_empty_mask(start, end)
-        self._really_insert_text(text, position=start)
+    def _insert_char_at_position(self, pos, char):
+        text = unicode(self.get_text())
+        if pos >= len(text):
+            return
+        validator = self._mask_validators[pos]
 
-    def _confirms_to_mask(self, position, text):
-        validators = self._mask_validators
-        if position < 0 or position >= len(validators):
-            return False
+        if isinstance(validator, unicode) and char == validator:
+            # Trying to insert the same static char. Nothing to do, but return
+            # pos to avoid the callsite thinking it was an error
+            return pos
+        elif isinstance(validator, unicode):
+            # This is a static char. Try to insert the char on next pos
+            return self._insert_char_at_position(pos + 1, char)
+        elif isinstance(validator, int) and INPUT_CHAR_MAP[validator](char):
+            old_char = text[pos]
+            # We cannot shift an existing char if there's no space left
+            if (old_char != ' ' and
+                    text.count(' ') - self._mask_validators.count(' ') == 0):
+                return
 
-        validator = validators[position]
-        if isinstance(validator, int):
-            if not INPUT_CHAR_MAP[validator](text):
-                return False
-        if isinstance(validator, unicode):
-            if validator == text:
-                return True
-            return False
+            self._block_changed = True
+            self._really_delete_text(pos, pos + 1)
+            self._block_changed = False
 
-        return True
+            self._really_insert_text(char, pos)
+
+            # If the old char was a valid one, shift it to the right. The
+            # validation and shifting will be done recursively
+            if old_char != ' ':
+                self._insert_char_at_position(pos + 1, old_char)
+
+            return pos
+
+    def _delete_char_at_position(self, pos):
+        text = unicode(self.get_text())
+        char = text[pos]
+        validator = self._mask_validators[pos]
+        assert 0 <= pos < len(text)
+
+        if char == ' ':
+            # Already removed
+            pass
+        elif isinstance(validator, unicode):
+            # We will not remove static chars so try to remove the next one.
+            # The callsite should handle to case where the char to remove is
+            # the previous one. We don't do it here to keep the recursion simple
+            pos += 1
+            if 0 <= pos < len(text):
+                self._delete_char_at_position(pos)
+        elif isinstance(validator, int):
+            next_char_pos = self._get_next_non_static_char_pos(pos)
+            if next_char_pos is None:
+                next_char = None
+            else:
+                next_char = unicode(text[next_char_pos])
+
+            self._block_changed = True
+            self._really_delete_text(pos, pos + 1)
+            self._block_changed = False
+
+            # If next char is valid, shift it to the left. This will be done
+            # recursively as needed
+            if next_char is None or next_char == ' ':
+                self._really_insert_text(' ', pos)
+            else:
+                self._really_insert_text(next_char, pos)
+                self._delete_char_at_position(next_char_pos)
+        else:
+            raise AssertionError
 
     def _update_current_object(self, text):
         if self._mode != ENTRY_MODE_DATA:
@@ -766,102 +545,6 @@ class KiwiEntry(gtk.Entry):
         # FIXME: Enable this at some point
         #self.activate()
 
-    def _appers_later(self, char, start):
-        """
-        Check if a char appers later on the mask. If it does, return
-        the field it appers at. returns False otherwise.
-        """
-        validators = self._mask_validators
-        i = start
-        while i < len(validators):
-            if self._mask_validators[i] == char:
-                field = self._get_field_at_pos(i)
-                if field is None:
-                    return False
-
-                return field
-
-            i += 1
-
-        return False
-
-    def _can_insert_at_pos(self, new, pos):
-        """
-        Check if a chararcter can be inserted at some position
-
-        :param new: The char that wants to be inserted.
-        :param pos: The position where it wants to be inserted.
-
-        :return: Returns None if it can be inserted. If it cannot be,
-                 return the next position where it can be successfuly
-                 inserted.
-        """
-        validators = self._mask_validators
-
-        # Do not let insert if the field is full
-        field = self._get_field_at_pos(pos)
-        if field is not None:
-            text = self.get_field_text(field)
-            length = self.get_field_length(field)
-            if len(text) == length:
-                gtk.gdk.beep()
-                return pos
-
-        # If the char confirms to the mask, but is a static char, return the
-        # position after that static char.
-        if (self._confirms_to_mask(pos, new) and
-            not isinstance(validators[pos], int)):
-            return pos + 1
-
-        # If does not confirms to mask:
-        #  - Check if the char the user just tried to enter appers later.
-        #  - If it does, Jump to the start of the field after that
-        if not self._confirms_to_mask(pos, new):
-            field = self._appers_later(new, pos)
-            if field is not False:
-                pos = self.get_field_pos(field + 1)
-                if pos is not None:
-                    gobject.idle_add(self.set_position, pos)
-            return pos
-
-        return None
-
-    def _insert_at_pos(self, text, new, pos):
-        """
-        Inserts the character at the give position in text. Note that the
-        insertion won't be applied to the entry, but to the text provided.
-
-        :param text:    Text that it will be inserted into.
-        :param new:     New text to insert.
-        :param pos:     Positon to insert at
-
-        :return:    Returns a tuple, with the position after the insetion
-                    and the new text.
-        """
-        field = self._get_field_at_pos(pos)
-        new_pos = pos
-        start, end = self._mask_fields[field]
-
-        # Shift Right
-        new_text = (text[:pos] + new +
-                    self._shift_text(pos, end, Direction.RIGHT)[1:] +
-                    text[end:])
-
-        # Overwrite Right
-        #length = len(new)
-        #new_text = (text[:pos] + new +
-        #            text[pos+length:end]+
-        #            text[end:])
-        new_pos = pos + 1
-        gobject.idle_add(self.set_position, new_pos)
-
-        # If the field is full, jump to the next field
-        if len(self.get_field_text(field)) == self.get_field_length(field) - 1:
-            gobject.idle_add(self.set_field, field + 1, True)
-            self.set_field(field + 1)
-
-        return new_pos, new_text
-
     def _update_position(self):
         if self.get_property('xalign') > 0.5:
             self._icon_pos = gtk.POS_LEFT
@@ -881,26 +564,69 @@ class KiwiEntry(gtk.Entry):
     def _on_insert_text(self, editable, new, length, position):
         if not self._mask or self._block_insert:
             return
-        new = unicode(new)
-        pos = self.get_position()
 
         self.stop_emission('insert-text')
 
         text = self.get_text()
-        # Insert one char at a time
-        for c in new:
-            _pos = self._can_insert_at_pos(c, pos)
-            if _pos is None:
-                pos, text = self._insert_at_pos(text, c, pos)
-            else:
-                pos = _pos
+        pos = self.get_position()
 
-        # Change the text with the new text.
-        self._block_changed = True
-        self._really_delete_text(0, -1)
-        self._block_changed = False
+        # self.set_text('') will fall into this
+        if not len(new):
+            return
 
-        self._really_insert_text(text, 0)
+        # If the first char on the mask is static and someone is trying to
+        # insert it again (via set_text, ctrl+v, etc), remove it or it will
+        # conflict with our optimization on _handle_position_change that
+        # doesn't allow the position to be on 0 on and mess things here
+        if self.is_empty() and pos != 0 and not self._selecting:
+            for pos_ in xrange(0, len(text)):
+                validator = self._mask_validators[pos_]
+                if isinstance(validator, unicode) and new[0] == validator:
+                    new = new[1:]
+                else:
+                    break
+        else:
+            pos = self.get_position()
+
+        if pos >= len(text):
+            gtk.gdk.beep()
+            return
+
+        for c in unicode(new):
+            pos = self._insert_char_at_position(pos, c)
+            # If pos is None, the char is not valid. When typing, it will just
+            # beep. When pasting something like 'vviv' (v for valid i for
+            # invalid), it will insert vv and stop after that, beeping.
+            # We cannot simply skip it as the order of a string matters
+            if pos is None:
+                gtk.gdk.beep()
+                return
+            pos += 1
+
+        # If the last char was inserted at a static char position (and thus,
+        # it was really inserted at that pos + 1), put the cursor after that
+        while pos < len(text):
+            validator = self._mask_validators[pos]
+            if not isinstance(validator, unicode):
+                break
+            pos += 1
+
+        # FIXME: gtk_entry.c sends the position arg as a pointer to call
+        # set_position later. We cannot modify the pointed value from here.
+        # Because of that, after this another call to set_position will be
+        # made to set the cursor on the pointed value that didn't change,
+        # so we just need to ignore that second call.
+        self._pos = None
+        self._keep_next_position = True
+        self.set_position(pos)
+
+        # This is a specific workaround to when text is pasted in the entry.
+        # When that happens, the call to set_position above will not notify
+        # cursor-position neither selectiuon-bound and thus,
+        # self._handle_position_change will not be called. By calling it by
+        # hand we will be sure that it will keep next position the right way
+        if self._pos is None:
+            self._handle_position_change()
 
     def _on_delete_text(self, editable, start, end):
         if not self._mask or self._block_delete:
@@ -908,94 +634,38 @@ class KiwiEntry(gtk.Entry):
 
         self.stop_emission('delete-text')
 
-        pos = self.get_position()
-        # Trying to delete an static char. Delete the char before that
-        if (0 < start < len(self._mask_validators)
-            and not isinstance(self._mask_validators[start], int)
-            and pos != start):
-            self._on_delete_text(editable, start - 1, start)
+        # When deleting with backspace just after a static char, we
+        # should delete the char before it. This is the only case that
+        # _delete_char_at_position will not handle for us
+        if end - start == 1 and not self._selecting:
+            for pos in reversed(xrange(0, self.get_position() + 1)):
+                validator = self._mask_validators[start]
+                if isinstance(validator, unicode) or validator == ' ':
+                    start -= 1
+                    end -= 1
+                else:
+                    break
+        else:
+            pos = self.get_position()
+
+        # This will happen if there was a static char at the beggining and
+        # someone pressed backspace on it. Nothing to do
+        if start < 0:
+            gtk.gdk.beep()
             return
+
+        for pos in reversed(xrange(start, end)):
+            validator = self._mask_validators[pos]
+            # Only delete the char if it's not a static char. Since we are
+            # threating the case where we are pressing del/backspace on that
+            # char above, this is for sure a selection deletion.
+            if isinstance(validator, unicode):
+                continue
+            self._delete_char_at_position(pos)
 
         # we just tried to delete, stop the selection.
         self._selecting = False
-
-        field = self._get_field_at_pos(end - 1)
-        # Outside a field. Cannot delete.
-        if field is None:
-            self.set_position(end - 1)
-            return
-        _start, _end = self._mask_fields[field]
-
-        # Deleting from outside the bounds of the field.
-        if start < _start or end > _end:
-            _start, _end = start, end
-
-        # Change the text
-        text = self.get_text()
-
-        # Shift Left
-        new_text = (text[:start] +
-                    self._shift_text(start, _end, Direction.LEFT,
-                                     end - start) +
-                    text[_end:])
-
-        # Overwrite Left
-        #empty_mask = self.get_empty_mask()
-        #new_text = (text[:_start] +
-        #            text[_start:start] +
-        #            empty_mask[start:start+(end-start)] +
-        #            text[start+(end-start):_end] +
-        #            text[_end:])
-
-        new_pos = start
-
-        self._block_changed = True
-        self._really_delete_text(0, -1)
-        self._block_changed = False
-        self._really_insert_text(new_text, 0)
-
-        # Position the cursor on the right place.
-        self.set_position(new_pos)
-        if pos == new_pos:
-            self._handle_position_change()
-
-    def _after_grab_focus(self, widget):
-        # The text is selectet in grab-focus, so this needs to be done after
-        # that:
-        if self.is_empty():
-            if self._mask:
-                self.set_field(0)
-            else:
-                self.set_position(0)
-
-    def _on_focus(self, widget, direction):
-        if not self._mask:
-            return
-
-        field = self._current_field
-
-        if (direction == gtk.DIR_TAB_FORWARD or
-            direction == gtk.DIR_DOWN):
-            field += 1
-        elif (direction == gtk.DIR_TAB_BACKWARD or
-              direction == gtk.DIR_UP):
-            field = -1
-
-        # Leaving the entry
-        if field == len(self._mask_fields) or field == -1:
-            self.select_region(0, 0)
-            self._current_field = -1
-            return False
-
-        if field < 0:
-            field = len(self._mask_fields) - 1
-
-        # grab_focus changes the selection, so we need to grab_focus before
-        # making the selection.
-        self.grab_focus()
-        self.set_field(field, select=True)
-
-        return True
+        self.set_position(start)
 
     def _on_notify_selection_bound(self, widget, pspec):
         if not self._mask:
@@ -1013,43 +683,41 @@ class KiwiEntry(gtk.Entry):
         self._update_position()
 
     def _handle_position_change(self):
-        pos = self.get_position()
-        field = self._get_field_at_pos(pos)
+        actual_pos = self.get_position()
+        text = self.get_text()
 
-        # Humm, the pos is not inside any field. Get the next pos inside
-        # some field, depending on the direction that the cursor is
-        # moving
-        diff = pos - self._pos
-        # but move only one position at a time.
-        if diff:
-            diff /= abs(diff)
+        # A simple optimization: If the first char(s) are static, put the
+        # cursor after it to make it look nicer
+        if actual_pos == 0 and isinstance(self._mask_validators[0], unicode):
+            for pos in xrange(0, len(self._mask_validators)):
+                if not isinstance(self._mask_validators[pos], unicode):
+                    self.set_position(pos)
+                    return
 
-        _field = field
-        if diff:
-            while _field is None and pos >= 0:
-                pos += diff
-                _field = self._get_field_at_pos(pos)
-                self._pos = pos
-            if pos < 0:
-                self._pos = self.get_field_pos(0)
-
-        if field is None:
-            self.set_position(self._pos)
+        for pos, c in enumerate(unicode(text)):
+            validator = self._mask_validators[pos]
+            if isinstance(validator, int) and c == ' ':
+                break
         else:
-            if self._current_field != -1:
-                self._current_field = field
-            self._pos = pos
+            pos = None
+
+        # Take a look on _on_insert_text to see why this is needed
+        if self._keep_next_position and self._pos is not None:
+            self.set_position(self._pos)
+            self._keep_next_position = False
+            self._pos = None
+        elif pos is not None and pos < actual_pos:
+            self.set_position(pos)
+            actual_pos = pos
+
+        # Take a look on _on_insert_text to see why this is needed
+        if self._keep_next_position:
+            self._pos = actual_pos
 
     def _on_changed(self, widget):
         if self._block_changed:
             self.stop_emission('changed')
         self._update_current_object(widget.get_text())
-
-    def _on_focus_out_event(self, widget, event):
-        if not self._mask:
-            return
-
-        self._current_field = -1
 
     def _on_move_cursor(self, entry, step, count, extend_selection):
         self._selecting = extend_selection
@@ -1219,17 +887,17 @@ class KiwiEntry(gtk.Entry):
 type_register(KiwiEntry)
 
 
-def main(args):
+if __name__ == '__main__':
     win = gtk.Window()
     win.set_title('gtk.Entry subclass')
 
     def cb(window, event):
-        print 'fields', widget.get_field_text()
         gtk.main_quit()
     win.connect('delete-event', cb)
 
     widget = KiwiEntry()
-    widget.set_mask('000.000.000.000')
+    #widget.set_mask('000.000.000.000')
+    widget.set_mask('(00) 0000-0000')
 
     win.add(widget)
 
@@ -1237,7 +905,3 @@ def main(args):
 
     widget.select_region(0, 0)
     gtk.main()
-
-if __name__ == '__main__':
-    import sys
-    sys.exit(main(sys.argv))

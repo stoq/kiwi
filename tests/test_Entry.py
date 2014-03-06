@@ -52,40 +52,31 @@ class EntryTest(unittest.TestCase):
         e = ProxyEntry()
         e.set_mask('000.000')
         self.assertEqual(e.get_text(), '   .   ')
-        self.assertEqual(e.get_fields(), ['', ''])
         e.set_text('123.456')
         self.assertEqual(e.get_text(), '123.456')
-        self.assertEqual(e.get_fields(), ['123', '456'])
         e.delete_text(0, 2)
-        self.assertEqual(e.get_text(), '3  .456')
-        self.assertEqual(e.get_fields(), ['3', '456'])
+        self.assertEqual(e.get_text(), '345.6  ')
 
     def testAsciiMask(self):
         e = ProxyEntry()
         e.set_mask('LLLL-L')
         self.assertEqual(e.get_text(), '    - ')
-        self.assertEqual(e.get_fields(), ['', ''])
         e.set_text('abcd-e')
         self.assertEqual(e.get_text(), 'abcd-e')
-        self.assertEqual(e.get_fields(), ['abcd', 'e'])
 
     def testAlphaNumericMask(self):
         e = ProxyEntry()
         e.set_mask('&&&-aaa')
         self.assertEqual(e.get_text(), '   -   ')
-        self.assertEqual(e.get_fields(), ['', ''])
         e.set_text('aáé-á1e')
         self.assertEqual(e.get_text(), 'aáé-á1e')
-        self.assertEqual(e.get_fields(), ['aáé', 'á1e'])
 
     def testMaskSmallFields(self):
         e = ProxyEntry()
         e.set_mask('0.0.0')
         self.assertEqual(e.get_text(), ' . . ')
-        self.assertEqual(e.get_fields(), ['', '', ''])
         e.set_text('1.2.3')
         self.assertEqual(e.get_text(), '1.2.3')
-        self.assertEqual(e.get_fields(), ['1', '2', '3'])
 
     def testGType(self):
         entry = KiwiEntry()

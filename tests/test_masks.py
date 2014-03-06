@@ -1,8 +1,9 @@
-from twisted.trial import unittest
-from utils import refresh_gui
+import sys
 
 import gtk
 from gtk import keysyms
+from twisted.trial import unittest
+from utils import refresh_gui
 
 from kiwi.ui.delegates import Delegate
 from kiwi.ui.entry import KiwiEntry
@@ -16,6 +17,11 @@ SPECIAL_KEYS = {
     ' ': 'space',
 }
 
+# FIXME: Even though we are calling refresh_gui(DELAY), when running a single
+# test on a powerful machine, this can return before the event is emitted
+# (tested by putting a print on the 'insert-text' callback and not seeing when
+# tests were executed very fast, but all otherwise). It's not obvious because
+# it _never_ happens when running the whole test suit.
 DELAY = 0.1
 
 
@@ -24,18 +30,16 @@ def send_backspace(widget):
     event.keyval = int(keysyms.BackSpace)
     event.hardware_keycode = 22
     event.window = widget.window
-    #widget.event(event)
-    gtk.main_do_event(event)
+    widget.event(event)
     refresh_gui(DELAY)
 
 
 def send_delete(widget):
     event = gtk.gdk.Event(gtk.gdk.KEY_PRESS)
     event.keyval = int(keysyms.Delete)
-    event.hardware_keycode = 107
+    event.hardware_keycode = 119
     event.window = widget.window
-    gtk.main_do_event(event)
-    #widget.event(event)
+    widget.event(event)
     refresh_gui(DELAY)
 
 
@@ -59,6 +63,8 @@ def send_key(widget, key):
 def insert_text(widget, text):
     for i in text:
         send_key(widget, i)
+
+    refresh_gui(DELAY)
 
 
 LEFT, RIGHT = -1, 1
@@ -126,31 +132,18 @@ class TestMasks(unittest.TestCase):
         self.assertEqual(entry.get_text(), '12/34/5678')
 
         entry.set_text('')
-        insert_text(entry, '1/2/3333')
-        self.assertEqual(entry.get_text(), '1 /2 /3333')
+        insert_text(entry, '12/34/5678')
+        self.assertEqual(entry.get_text(), '12/34/5678')
+
+        entry.set_text('')
+        insert_text(entry, '1234')
+        self.assertEqual(entry.get_text(), '12/34/    ')
 
         entry.set_mask('(00) 0000-0000')
         entry.emit('focus', gtk.DIR_TAB_FORWARD)
         refresh_gui(DELAY)
         insert_text(entry, '1234567890')
         self.assertEqual(entry.get_text(), '(12) 3456-7890')
-
-    def testMovementTabsEmptyMask(self):
-        entry = self.entry
-        entry.set_mask('(00) 0000-0000')
-        self.assertEqual(entry.get_field(), None)
-
-        entry.emit('focus', gtk.DIR_TAB_FORWARD)
-        self.assertEqual(entry.get_field(), 0)
-
-        entry.emit('focus', gtk.DIR_TAB_FORWARD)
-        self.assertEqual(entry.get_field(), 1)
-
-        entry.emit('focus', gtk.DIR_TAB_FORWARD)
-        self.assertEqual(entry.get_field(), 2)
-
-        entry.emit('focus', gtk.DIR_TAB_FORWARD)
-        self.assertEqual(entry.get_field(), None)
 
     def testMovementKeysEmptyMask(self):
         entry = self.entry
@@ -167,16 +160,7 @@ class TestMasks(unittest.TestCase):
 
         # Right
         move(entry, RIGHT)
-        self.assertEqual(entry.get_position(), 2)
-
-        move(entry, RIGHT)
-        self.assertEqual(entry.get_position(), 3)
-
-        move(entry, RIGHT)
-        self.assertEqual(entry.get_position(), 5)
-
-        move(entry, LEFT)
-        self.assertEqual(entry.get_position(), 3)
+        self.assertEqual(entry.get_position(), 1)
 
         # Home
         entry.emit('move-cursor', gtk.MOVEMENT_DISPLAY_LINE_ENDS, -1, False)
@@ -184,7 +168,7 @@ class TestMasks(unittest.TestCase):
 
         # End
         entry.emit('move-cursor', gtk.MOVEMENT_DISPLAY_LINE_ENDS, 1, False)
-        self.assertEqual(entry.get_position(), 14)
+        self.assertEqual(entry.get_position(), 1)
 
     def testInsertAndMovementKeys(self):
         entry = self.entry
@@ -193,6 +177,7 @@ class TestMasks(unittest.TestCase):
 
         insert_text(entry, '1')
         self.assertEqual(entry.get_text(), '(1 )     -    ')
+        self.assertEqual(entry.get_position(), 2)
 
         move(entry, LEFT)
         self.assertEqual(entry.get_position(), 1)
@@ -200,41 +185,49 @@ class TestMasks(unittest.TestCase):
         move(entry, RIGHT)
         self.assertEqual(entry.get_position(), 2)
 
+        # Can't enter an empty field
         move(entry, RIGHT)
-        self.assertEqual(entry.get_position(), 3)
+        self.assertEqual(entry.get_position(), 2)
 
+        insert_text(entry, '2')
+        self.assertEqual(entry.get_text(), '(12)     -    ')
+        # The position should be after the space in the mask
+        self.assertEqual(entry.get_position(), 5)
+
+        # Can't enter an empty field
         move(entry, RIGHT)
         self.assertEqual(entry.get_position(), 5)
 
-        insert_text(entry, '2')
-        self.assertEqual(entry.get_text(), '(1 ) 2   -    ')
+        # But we can move to the space in the mask
+        move(entry, LEFT)
+        self.assertEqual(entry.get_position(), 4)
 
-        move(entry, RIGHT)
-        self.assertEqual(entry.get_position(), 7)
+        # But trying to insert on it should insert after the space
+        insert_text(entry, '9')
+        self.assertEqual(entry.get_text(), '(12) 9   -    ')
+        self.assertEqual(entry.get_position(), 6)
 
-        insert_text(entry, '3')
-        self.assertEqual(entry.get_text(), '(1 ) 2 3 -    ')
+        # Even after moving to the static field ')'
+        move(entry, LEFT)
+        move(entry, LEFT)
+        move(entry, LEFT)
+        self.assertEqual(entry.get_position(), 3)
+        insert_text(entry, '8')
+        self.assertEqual(entry.get_text(), '(12) 89  -    ')
+        self.assertEqual(entry.get_position(), 6)
 
-        move(entry, RIGHT)
-        self.assertEqual(entry.get_position(), 9)
+        insert_text(entry, '345')
+        self.assertEqual(entry.get_text(), '(12) 8345-9   ')
 
-        move(entry, RIGHT)
-        self.assertEqual(entry.get_position(), 10)
-
-        insert_text(entry, '4')
-        self.assertEqual(entry.get_text(), '(1 ) 2 3 -4   ')
-
-    # FIXME: Delete/Backspace does not work on windows or xvfb
     def testBackspace(self):
-        if 1:
-            return
+        if sys.platform == 'win32':
+            raise unittest.SkipTest("Not supported on windows")
 
         entry = self.entry
         entry.set_mask('(00) 0000-0000')
         entry.grab_focus()
 
         insert_text(entry, '1234')
-        refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(12) 34  -    ')
 
         send_backspace(entry)
@@ -260,8 +253,8 @@ class TestMasks(unittest.TestCase):
         self.assertEqual(entry.get_position(), 1)
 
     def testDelete(self):
-        if 1:
-            return
+        if sys.platform == 'win32':
+            raise unittest.SkipTest("Not supported on windows")
 
         entry = self.entry
         entry.set_mask('(00) 0000-0000')
@@ -276,29 +269,29 @@ class TestMasks(unittest.TestCase):
 
         send_delete(entry)
         refresh_gui(DELAY)
-        self.assertEqual(entry.get_text(), '(2 ) 3456-78  ')
+        self.assertEqual(entry.get_text(), '(23) 4567-8   ')
 
         send_delete(entry)
         refresh_gui(DELAY)
-        self.assertEqual(entry.get_text(), '(  ) 3456-78  ')
+        self.assertEqual(entry.get_text(), '(34) 5678-    ')
 
         move(entry, RIGHT)
         move(entry, RIGHT)
         move(entry, RIGHT)
         move(entry, RIGHT)
-        self.assertEqual(entry.get_position(), 6)
-
-        send_delete(entry)
-        refresh_gui(DELAY)
-        self.assertEqual(entry.get_text(), '(  ) 356 -78  ')
+        self.assertEqual(entry.get_position(), 5)
 
         send_delete(entry)
         refresh_gui(DELAY)
-        self.assertEqual(entry.get_text(), '(  ) 36  -78  ')
+        self.assertEqual(entry.get_text(), '(34) 678 -    ')
+
+        send_delete(entry)
+        refresh_gui(DELAY)
+        self.assertEqual(entry.get_text(), '(34) 78  -    ')
 
     def testDeleteSelection(self):
-        if 1:
-            return
+        if sys.platform == 'win32':
+            raise unittest.SkipTest("Not supported on windows")
 
         entry = self.entry
         entry.set_mask('(00) 0000-0000')
@@ -309,15 +302,16 @@ class TestMasks(unittest.TestCase):
 
         select(entry, 2, 0)
         send_delete(entry)
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_position(), 1)
 
         insert_text(entry, '1234')
         self.assertEqual(entry.get_text(), '(12) 34  -    ')
 
         select(entry, 2, 0)
-        refresh_gui(2)
+        refresh_gui(DELAY)
         send_delete(entry)
-        refresh_gui(2)
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_position(), 1)
 
 
