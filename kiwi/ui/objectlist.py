@@ -1814,6 +1814,8 @@ class ObjectList(gtk.HBox):
             raise TypeError("You can only select multiple items with"
                             "selection mode set to gtk.SELECTION_MULTIPLE")
 
+        # FIXME: This is not working for multiple selections. Only the last item
+        # in the list remains selected
         for instance in instances:
             if not instance in self._iters:
                 raise ValueError("instance %s is not in the list" % repr(instance))
