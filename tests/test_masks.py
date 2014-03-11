@@ -190,6 +190,7 @@ class TestMasks(unittest.TestCase):
         self.assertEqual(entry.get_position(), 2)
 
         insert_text(entry, '2')
+        refresh_gui(DELAY)
         self.assertEqual(entry.get_text(), '(12)     -    ')
         # The position should be after the space in the mask
         self.assertEqual(entry.get_position(), 5)
@@ -301,6 +302,7 @@ class TestMasks(unittest.TestCase):
         self.assertEqual(entry.get_text(), '(1 )     -    ')
 
         select(entry, 2, 0)
+        refresh_gui(DELAY)
         send_delete(entry)
         refresh_gui(DELAY)
         self.assertEqual(entry.get_position(), 1)
