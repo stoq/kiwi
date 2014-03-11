@@ -173,9 +173,9 @@ class KiwiEntry(gtk.Entry):
             self.handler_block(completion.changed_id)
 
         if self._mask:
-            # Reset the mask and call insert_text so our handler on
-            # _on_insert_text will take care of everything
-            self.set_mask(self._mask)
+            # When using masks, let our _on_insert_text and _on_delete_text
+            # take care of things. They will do it right!
+            self.delete_text(0, -1)
             self.insert_text(text, 0)
         else:
             gtk.Entry.set_text(self, text)
@@ -633,6 +633,9 @@ class KiwiEntry(gtk.Entry):
             return
 
         self.stop_emission('delete-text')
+
+        if end == -1:
+            end = len(self.get_text())
 
         # When deleting with backspace just after a static char, we
         # should delete the char before it. This is the only case that
