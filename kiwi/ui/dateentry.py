@@ -329,9 +329,11 @@ class DateEntry(gtk.HBox):
         # we need to use a proxy entry because we want the mask
         from kiwi.ui.widgets.entry import ProxyEntry
         self.entry = ProxyEntry()
+        # Set datatype before connecting to change event, to not get when the
+        # mask is set
+        self.entry.set_property('data-type', datetime.date)
         self.entry.connect('changed', self._on_entry__changed)
         self.entry.connect('activate', self._on_entry__activate)
-        self.entry.set_property('data-type', datetime.date)
         mask = self.entry.get_mask()
         if mask:
             self.entry.set_width_chars(len(mask))

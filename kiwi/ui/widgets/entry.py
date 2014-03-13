@@ -290,6 +290,14 @@ class ProxyDateEntry(DateEntry, ValidatableProxyWidgetMixin):
         self.emit('content-changed')
         self._in_do_changed = False
 
+    def get_date(self):
+        date = DateEntry.get_date(self)
+        data_type = self.get_data_type()
+        # The widget has asked for a datetime, but the entry gives only a date.
+        if date and data_type == 'datetime':
+            return datetime.datetime(date.year, date.month, date.day)
+        return date
+
     # ProxyWidgetMixin implementation
 
     def read(self):
