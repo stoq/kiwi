@@ -1,9 +1,6 @@
 VERSION=$(shell python -c "execfile('kiwi/__version__.py'); print '.'.join(map(str, version))")
 PACKAGE=kiwi
-DEBPACKAGE=python-kiwi
 WEBDIR=/mondo/htdocs/async.com.br/www/projects/kiwi
-TARBALL_DIR=/mondo/htdocs/stoq.com.br/download/sources
-TARBALL=kiwi-$(VERSION).tar.gz
 
 all:
 	python setup.py build_ext -i
@@ -33,23 +30,9 @@ web: clean-docs docs
 	cd ${WEBDIR} && tar cfz howto.tar.gz howto
 	cd ${WEBDIR} && tar cfz api.tar.gz api
 
-bdist:
-	python setup.py -q bdist_wininst
-
-upload-release:
-	scp dist/$(TARBALL) johan@master.gnome.org:
-	ssh johan@master.gnome.org ftpadmin install $(TARBALL)
-	scp dist/kiwi-$(VERSION).win32.exe johan@master.gnome.org:/ftp/pub/GNOME/binaries/win32/kiwi/
-
-check-source:
-	tools/source-tests.sh --modified
-
-check-source-all:
-	tools/source-tests.sh
-
-check: check-source
+check: check-source-all
+	# FIXME: Move from trial to nosetests
 	trial tests
 
-include async.mk
-
-.PHONY: bdist upload-release
+include utils/utils.mk
+.PHONY: all clean-docs clean docs apidocs upload-apidocs web check
