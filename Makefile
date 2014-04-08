@@ -1,6 +1,8 @@
-VERSION=$(shell python -c "execfile('kiwi/__version__.py'); print '.'.join(map(str, version))")
 PACKAGE=kiwi
+TEST_PACKAGES=$(PACKAGE) tests
 WEBDIR=/mondo/htdocs/async.com.br/www/projects/kiwi
+# FIXME: This probably should be on utils.mk
+TESTS_RUNNER=nosetests --nocapture --nologcapture --verbose --detailed-errors
 
 all:
 	python setup.py build_ext -i
@@ -31,8 +33,15 @@ web: clean-docs docs
 	cd ${WEBDIR} && tar cfz api.tar.gz api
 
 check: check-source-all
-	# FIXME: Move from trial to nosetests
-	trial tests
+	@rm -f .noseids
+	$(TESTS_RUNNER) --failed $(TEST_PACKAGES)
+
+check-failed:
+	$(TESTS_RUNNER) --failed $(TEST_PACKAGES)
+
+coverage: check-source-all
+	$(TESTS_RUNNER) --with-xcoverage --with-xunit
+	                --cover-package=$(PACKAGE) --cover-erase $(TEST_PACKAGES)
 
 include utils/utils.mk
 .PHONY: all clean-docs clean docs apidocs upload-apidocs web check

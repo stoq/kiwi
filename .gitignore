@@ -1,5 +1,5 @@
-_trial_temp
 *.pyc
+.noseids
 tags
 TAGS
 locale
