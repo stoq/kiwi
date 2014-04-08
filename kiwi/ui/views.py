@@ -212,12 +212,19 @@ class SlaveView(gobject.GObject):
 
         return toplevel
 
+    def get_resource_string(self, domain, resource, name):
+        """ This method might be overriden by subclasses in order to use it's own
+        resource_string function (like accessing a resource from inside an egg)
+        """
+        return environ.get_resource_string(domain, resource, name)
+
     def get_glade_adaptor(self):
         """Special init code that subclasses may want to override."""
         if not self.gladefile:
             return
 
-        glade_adaptor = _open_glade(self, self.gladefile, self.domain)
+        glade_adaptor = _open_glade(self, self.gladefile, self.domain,
+                                    self.get_resource_string)
 
         container_name = self.toplevel_name
         if not container_name:
@@ -849,7 +856,8 @@ class BaseView(SlaveView):
         if not self.gladefile:
             return
 
-        return _open_glade(self, self.gladefile, self.domain)
+        return _open_glade(self, self.gladefile, self.domain,
+                           self.get_resource_string)
 
     #
     # Hook for keypress handling
@@ -979,7 +987,7 @@ def _get_builder():
     return BuilderWidgetTree
 
 
-def _open_glade(view, gladefile, domain):
+def _open_glade(view, gladefile, domain, resource_str_func):
     if not gladefile:
         raise ValueError("A gladefile wasn't provided.")
     elif not isinstance(gladefile, basestring):
@@ -987,7 +995,7 @@ def _open_glade(view, gladefile, domain):
             "gladefile should be a string, found %s" % type(gladefile))
 
     if _glade_loader_func:
-        return _glade_loader_func(view, gladefile, domain)
+        return _glade_loader_func(view, gladefile, domain, resource_str_func)
 
     if gladefile.endswith('.ui'):
         directory = os.path.dirname(namedAny(view.__module__).__file__)
