@@ -1,7 +1,7 @@
 Source: kiwi
 Section: python
 Priority: optional
-Maintainer: Ronaldo Francisco Maia <romaia@async.com.br>
+Maintainer: Stoq Team <stoq-devel@async.com.br>
 Build-Depends: debhelper (>= 8.0.0), python-all (>= 2.6), python-setuptools
 Build-Depends-Indep: gettext, intltool, python-mock (>= 0.7)
 Homepage: http://www.async.com.br/projects/kiwi/
