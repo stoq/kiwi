@@ -138,7 +138,8 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         """
         conv = converter.get_converter(data_type)
         mask = conv.get_mask()
-        self.set_mask(mask)
+        if mask:
+            self.set_mask(mask)
 
     #@deprecated('prefill')
     def set_completion_strings(self, strings=[], values=[]):
