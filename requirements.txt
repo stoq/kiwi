@@ -1,0 +1,7 @@
+#
+# This file contains a list of external dependencies
+# needed to run kiwi, they are processed by pip/easy_install
+#
+
+PyGTK >= 2.24.0
+setuptools >= 0.6b3

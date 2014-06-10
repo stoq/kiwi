@@ -32,10 +32,9 @@ if 'upload' in sys.argv:
 else:
     name = 'kiwi'
 
-install_requires = [
-    'PyGTK >= 2.24.0',
-    'setuptools >= 0.6b3',
-]
+with open('requirements.txt') as f:
+    install_requires = [l.strip() for l in f.readlines() if
+                        l.strip() and not l.startswith('#')]
 
 setup(name=name,
       version=".".join(map(str, kiwi_version)),
