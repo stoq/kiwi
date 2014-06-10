@@ -120,7 +120,7 @@ class KiwiInstallLib(install_lib):
             return fp.read().split()[0]
 
     def generate_template(self):
-        if 'bdist_wininst' in sys.argv:
+        if 'bdist_wininst' in sys.argv or 'bdist_wheel' in sys.argv:
             prefix = 'sys.prefix'
         else:
             install = self.distribution.get_command_obj('install')

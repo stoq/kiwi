@@ -26,8 +26,8 @@ from kiwi.dist import setup, listfiles, listpackages
 
 
 pixmaps = listfiles('glade-plugin', 'resources', 'kiwiwidgets', '*.png')
-# When uploading to pypi
-if 'upload' in sys.argv:
+# When uploading to pypi or building a wheel or an egg
+if 'upload' in sys.argv or 'bdist_wheel' in sys.argv or 'bdist_egg' in sys.argv:
     name = 'kiwi-gtk'
 else:
     name = 'kiwi'

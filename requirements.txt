@@ -4,4 +4,4 @@
 #
 
 PyGTK >= 2.24.0
-setuptools >= 0.6b3
+setuptools >= 0.8
