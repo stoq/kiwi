@@ -37,8 +37,6 @@ import gobject
 import gtk
 from gtk import gdk
 
-from kiwi import ValueUnset
-from kiwi.datatypes import ValidationError
 from kiwi.environ import environ
 from kiwi.interfaces import IValidatableProxyWidget
 from kiwi.log import Logger
@@ -717,6 +715,7 @@ class SlaveView(gobject.GObject):
             model and model.__class__.__name__))
 
         widgets = widgets or self.widgets
+        proxy_widgets = []
 
         for widget_name in widgets:
             widget = getattr(self, widget_name, None)
@@ -734,22 +733,25 @@ class SlaveView(gobject.GObject):
                 raise AssertionError("%r does not have a validation-changed "
                                      "signal." % widget)
 
-            if (widget.props.mandatory and
-                widget.props.sensitive and
-                widget.props.visible):
-                try:
-                    value = widget.read()
-                    empty = value is ValueUnset or value is None
-                    validation_log.info("%s: %s=%r (initial)" % (
-                        self.__class__.__name__, widget_name, value))
-                    if empty:
-                        self._validation[widget_name] = False
-                # FIXME: This is probably wrong, but we get improperly placed
-                #        thousand operators in other places that has to be fixed first
-                except ValidationError:
-                    pass
+            proxy_widgets.append((widget_name, widget))
+
         proxy = Proxy(self, model, widgets)
         self._proxies.append(proxy)
+
+        for widget_name, widget in proxy_widgets:
+            # Do not store validation value for invisible/insensitive widgets.
+            # If they turn visible/sensitive, _on_child__validation_changed
+            # will handle that
+            if (not widget.get_property('visible') or
+                not widget.get_property('sensitive')):
+                continue
+
+            # Proxy.__init__ will call widget.validate(force=True), so we
+            # can use rely on widget.is_valid() here
+            self._validation[widget_name] = widget.is_valid()
+            validation_log.info("%s: %s=%r (initial)" % (
+                self.__class__.__name__, widget_name, widget.is_valid()))
+
         return proxy
 
     #
