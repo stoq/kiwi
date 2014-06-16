@@ -31,10 +31,8 @@ import pango
 
 from kiwi.currency import currency
 from kiwi.datatypes import converter, number, ValueUnset, ValidationError
-from kiwi.decorators import deprecated
 from kiwi.enums import Alignment
 from kiwi.ui.proxywidget import ProxyWidgetMixin
-from kiwi.python import deprecationwarn
 from kiwi.ui.entry import MaskError, KiwiEntry, ENTRY_MODE_TEXT, \
     ENTRY_MODE_DATA
 from kiwi.ui.dateentry import DateEntry
@@ -141,31 +139,6 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         if mask:
             self.set_mask(mask)
 
-    #@deprecated('prefill')
-    def set_completion_strings(self, strings=[], values=[]):
-        """
-        Set strings used for entry completion.
-        If values are provided, each string will have an additional
-        data type.
-
-        :param strings:
-        :type  strings: list of strings
-        :param values:
-        :type  values: list of values
-        """
-
-        completion = self._get_entry_completion()
-        model = completion.get_model()
-        model.clear()
-
-        if values:
-            self._mode = ENTRY_MODE_DATA
-            self.prefill(zip(strings, values))
-        else:
-            self._mode = ENTRY_MODE_TEXT
-            self.prefill(strings)
-    set_completion_strings = deprecated('prefill')(set_completion_strings)
-
     def set_text(self, text):
         """
         Sets the text of the entry
@@ -231,15 +204,6 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
             self.set_text(text)
 
 type_register(ProxyEntry)
-
-
-class Entry(ProxyEntry):
-    def __init__(self, data_type=None):
-        deprecationwarn('Entry is deprecated, use ProxyEntry instead',
-                        stacklevel=3)
-        ProxyEntry.__init__(self, data_type)
-
-type_register(Entry)
 
 
 class ProxyDateEntry(DateEntry, ValidatableProxyWidgetMixin):

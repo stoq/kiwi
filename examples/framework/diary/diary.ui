@@ -36,7 +36,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="kiwi+ui+widgets+entry+Entry" id="title">
+                      <object class="ProxyEntry" id="title">
                         <property name="data_type">str</property>
                         <property name="model_attribute">title</property>
                         <property name="visible">True</property>
@@ -55,7 +55,7 @@
                     <property name="spacing">6</property>
                     <property name="visible">True</property>
                     <child>
-                      <object class="kiwi+ui+widgets+radiobutton+RadioButton" id="period">
+                      <object class="ProxyRadioButton" id="period">
                         <property name="data_type">str</property>
                         <property name="data_value">morning</property>
                         <property name="is_focus">True</property>
@@ -69,7 +69,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="kiwi+ui+widgets+radiobutton+RadioButton" id="afternoon">
+                      <object class="ProxyRadioButton" id="afternoon">
                         <property name="data_type">str</property>
                         <property name="data_value">afternoon</property>
                         <property name="group">period</property>
@@ -83,7 +83,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="kiwi+ui+widgets+radiobutton+RadioButton" id="evening">
+                      <object class="ProxyRadioButton" id="evening">
                         <property name="data_type">str</property>
                         <property name="data_value">evening</property>
                         <property name="group">period</property>
@@ -103,7 +103,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="kiwi+ui+widgets+textview+TextView" id="text">
+                  <object class="ProxyTextView" id="text">
                     <property name="data_type">str</property>
                     <property name="model_attribute">text</property>
                     <property name="visible">True</property>

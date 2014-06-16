@@ -32,9 +32,8 @@ import gobject
 import gtk
 
 from kiwi.datatypes import number, ValueUnset
-from kiwi.python import deprecationwarn
 from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
-from kiwi.utils import gsignal, type_register
+from kiwi.utils import gsignal
 
 
 class ProxySpinButton(gtk.SpinButton, ValidatableProxyWidgetMixin):
@@ -111,12 +110,4 @@ class ProxySpinButton(gtk.SpinButton, ValidatableProxyWidgetMixin):
     def get_background(self):
         return self.style.base[gtk.STATE_NORMAL]
 
-
-class SpinButton(ProxySpinButton):
-    def __init__(self):
-        deprecationwarn(
-            'SpinButton is deprecated, use ProxySpinButton instead',
-            stacklevel=3)
-        ProxySpinButton.__init__(self)
-
-type_register(SpinButton)
+gobject.type_register(ProxySpinButton)

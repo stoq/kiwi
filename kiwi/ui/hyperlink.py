@@ -34,7 +34,6 @@ from kiwi.utils import gsignal, type_register
 
 
 class HyperLink(gtk.EventBox):
-    __gtype_name__ = 'HyperLink'
     """
     A hyperlink widget.
 
@@ -46,6 +45,8 @@ class HyperLink(gtk.EventBox):
     Additionally, the user may set a menu that will be popped up when the user
     right clicks the hyperlink.
     """
+
+    __gtype_name__ = 'HyperLink'
 
     text = gobject.property(type=str, default='')
     normal_color = gobject.property(type=str, default='#0000c0')

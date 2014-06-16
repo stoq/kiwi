@@ -39,15 +39,12 @@ except AttributeError:
 
 import gobject
 import gtk
-from gtk import keysyms
 
 from kiwi import ValueUnset
 from kiwi.component import implements
 from kiwi.datatypes import number
 from kiwi.enums import ComboColumn, ComboMode
 from kiwi.interfaces import IEasyCombo
-from kiwi.python import deprecationwarn
-from kiwi.ui.comboboxentry import BaseComboBoxEntry
 from kiwi.ui.comboentry import ComboEntry
 from kiwi.ui.gadgets import render_pixbuf
 from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
@@ -443,228 +440,7 @@ class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
         """
         return self._helper.get_selected()
 
-
-class ProxyComboBoxEntry(BaseComboBoxEntry,
-                         ValidatableProxyWidgetMixin):
-    allowed_data_types = (basestring, object) + number
-    __gtype_name__ = 'ProxyComboBoxEntry'
-    data_type = gobject.property(
-        getter=ProxyWidgetMixin.get_data_type,
-        setter=ProxyWidgetMixin.set_data_type,
-        type=str, blurb='Data Type')
-    mandatory = gobject.property(type=bool, default=False)
-    model_attribute = gobject.property(type=str, blurb='Model attribute')
-    gsignal('content-changed')
-    gsignal('validation-changed', bool)
-    gsignal('validate', object, retval=object)
-
-    # it doesn't make sense to connect to this signal
-    # because we want to monitor the entry of the combo
-    # not the combo box itself.
-
-    def __init__(self, **kwargs):
-        deprecationwarn(
-            'ProxyComboBoxEntry is deprecated, use ProxyComboEntry instead',
-            stacklevel=3)
-
-        BaseComboBoxEntry.__init__(self)
-        ValidatableProxyWidgetMixin.__init__(self, widget=self.entry)
-
-        self._helper = _EasyComboBoxHelper(self)
-        for key, value in kwargs.items():
-            setattr(self.props, key, value)
-
-        self.set_text_column(ComboColumn.LABEL)
-
-        # here we connect the expose-event signal directly to the entry
-        self.child.connect('changed', self._on_child_entry__changed)
-
-        # HACK! we force a queue_draw because when the window is first
-        # displayed the icon is not drawn.
-        gobject.idle_add(self.queue_draw)
-
-        self.set_events(gtk.gdk.KEY_RELEASE_MASK)
-        self.connect("key-release-event", self._on__key_release_event)
-
-    def __nonzero__(self):
-        return True
-
-    def __len__(self):
-        return len(self.get_model())
-
-    # Properties
-
-    def _get_list_editable(self):
-        if self._helper.get_mode() == ComboMode.DATA:
-            return False
-
-        return self.entry.get_editable()
-
-    def _set_list_editable(self, value):
-        if self._helper.get_mode() != ComboMode.DATA:
-            self.entry.set_editable(value)
-
-    list_editable = gobject.property(getter=_get_list_editable,
-                                     setter=_set_list_editable,
-                                     type=bool, default=True,
-                                     nick="Editable")
-
-    # Private
-
-    def _update_selection(self, text=None):
-        if text is None:
-            text = self.entry.get_text()
-
-        self.select_item_by_label(text)
-
-    def _add_text_to_combo_list(self):
-        text = self.entry.get_text()
-        if not text.strip():
-            return
-
-        if text in self.get_model_strings():
-            return
-
-        self.entry.set_text('')
-        self.append_item(text)
-        self._update_selection(text)
-
-    # Callbacks
-
-    def _on__key_release_event(self, widget, event):
-        """Checks for "Enter" key presses and add the entry text to
-        the combo list if the combo list is set as editable.
-        """
-        if not self.list_editable:
-            return
-
-        if event.keyval in (keysyms.KP_Enter,
-                            keysyms.Return):
-            self._add_text_to_combo_list()
-
-    def _on_child_entry__changed(self, widget):
-        """Called when something on the entry changes"""
-        if not widget.get_text():
-            return
-
-        self.emit('content-changed')
-
-    # IProxyWidget
-
-    def read(self):
-        if self._helper.get_mode() == ComboMode.UNKNOWN:
-            return ValueUnset
-        return self.get_selected()
-
-    def update(self, data):
-        if data is ValueUnset or data is None:
-            self.entry.set_text("")
-        else:
-            self.select(data)
-
-    # IEasyCombo
-
-    def prefill(self, itemdata, sort=False, clear_entry=True):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.prefill`
-        """
-        self._helper.prefill(itemdata, sort)
-        if clear_entry:
-            self.entry.set_text("")
-
-        # setup the autocompletion
-        auto = gtk.EntryCompletion()
-        auto.set_model(self.get_model())
-        auto.set_text_column(ComboColumn.LABEL)
-        self.entry.set_completion(auto)
-
-        # we always have something selected, by default the first item
-        self.set_active(0)
-        self.emit('content-changed')
-
-    def clear(self):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.clear`
-        """
-        self._helper.clear()
-        self.entry.set_text("")
-
-    def append_item(self, label, data=None):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.append_item`
-        """
-        self._helper.append_item(label, data)
-
-    def insert_item(self, position, label, data=None):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.insert_item`
-        """
-        self._helper.insert_item(position, label, data)
-
-    def select(self, data):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.select`
-        """
-        self._helper.select(data)
-
-    def select_item_by_position(self, pos):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.select`
-        """
-        self._helper.select_item_by_position(pos)
-
-    def select_item_by_label(self, label):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.select_item_by_position`
-        """
-        self._helper.select_item_by_label(label)
-
-    def select_item_by_data(self, data):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.select_item_by_label`
-        """
-        self._helper.select_item_by_data(data)
-
-    def get_model_strings(self):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.select_item_by_data`
-        """
-        return self._helper.get_model_strings()
-
-    def get_model_items(self):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.get_model_strings`
-        """
-        return self._helper.get_model_items()
-
-    def get_selected_label(self):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.get_model_items`
-        """
-        return self._helper.get_selected_label()
-
-    def get_selected_data(self):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.get_selected_label`
-        """
-        return self._helper.get_selected_data()
-
-    def get_selected(self):
-        """
-        See :class:`kiwi.interfaces.IEasyCombo.get_selected_data`
-        """
-        return self._helper.get_selected()
-
-    # Public API
-
-    def set_mode(self, mode):
-        # If we're in the transition to go from
-        # unknown->label set editable to False
-        if (self._helper.get_mode() == ComboMode.UNKNOWN and
-            mode == ComboMode.DATA):
-            self.entry.set_editable(False)
-
-        self._helper.set_mode(self, mode)
+gobject.type_register(ProxyComboBox)
 
 
 class ProxyComboEntry(ComboEntry, ValidatableProxyWidgetMixin):
@@ -747,3 +523,5 @@ class ProxyComboEntry(ComboEntry, ValidatableProxyWidgetMixin):
     #       the method in superclass fails to retrieve the selected data.
     def get_selected_data(self):
         return self.entry.read()
+
+gobject.type_register(ProxyComboEntry)

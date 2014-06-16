@@ -34,7 +34,6 @@ import gtk
 from kiwi import ValueUnset
 from kiwi.accessor import kgetattr, ksetattr, clear_attr_cache
 from kiwi.datatypes import converter
-from kiwi.decorators import deprecated
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
 from kiwi.log import Logger
 
@@ -424,9 +423,3 @@ class Proxy:
             for data_name in ('notify-visible-id',
                               'notify-sensitive-id'):
                 widget.disconnect(widget.get_data(data_name))
-
-    # Backwards compatibility
-
-    def new_model(self, model, relax_type=False):
-        self.set_model(model)
-    new_model = deprecated('set_model', log)(new_model)

@@ -3,7 +3,7 @@ import unittest
 
 from kiwi.python import disabledeprecationcall, Settable
 from kiwi.ui.proxy import Proxy
-from kiwi.ui.widgets.combobox import ProxyComboBox, ProxyComboBoxEntry
+from kiwi.ui.widgets.combo import ProxyComboBox, ProxyComboEntry
 
 
 class TestComboBox(unittest.TestCase):
@@ -114,7 +114,7 @@ class ComboModelTest(BaseModelTest, unittest.TestCase):
 
 
 class ComboEntryModelTest(BaseModelTest, unittest.TestCase):
-    type = ProxyComboBoxEntry
+    type = ProxyComboEntry
 
 if __name__ == '__main__':
     unittest.main()

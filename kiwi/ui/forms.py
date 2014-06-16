@@ -42,8 +42,7 @@ from kiwi.interfaces import IProxyWidget
 from kiwi.ui.delegates import SlaveDelegate
 from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 from kiwi.ui.widgets.colorbutton import ProxyColorButton
-from kiwi.ui.widgets.combo import ProxyComboEntry
-from kiwi.ui.widgets.combobox import ProxyComboBox
+from kiwi.ui.widgets.combo import ProxyComboEntry, ProxyComboBox
 from kiwi.ui.widgets.entry import ProxyEntry, ProxyDateEntry
 from kiwi.ui.widgets.label import ProxyLabel
 from kiwi.ui.widgets.spinbutton import ProxySpinButton
@@ -256,6 +255,8 @@ class BoolField(Field):
     def build_label(self):
         return None
 
+gobject.type_register(BoolField)
+
 
 class TextField(Field):
     """
@@ -296,6 +297,8 @@ class PasswordField(TextField):
 
         return widget
 
+gobject.type_register(PasswordField)
+
 
 class IntegerField(Field):
     """
@@ -308,6 +311,8 @@ class IntegerField(Field):
     def build_widget(self):
         widget = ProxyEntry()
         return widget
+
+gobject.type_register(IntegerField)
 
 
 class ChoiceField(Field):
@@ -331,6 +336,8 @@ class ChoiceField(Field):
         if self.values:
             widget.prefill(self.values)
 
+gobject.type_register(ChoiceField)
+
 
 class PriceField(Field):
     """
@@ -342,6 +349,8 @@ class PriceField(Field):
     def build_widget(self):
         entry = ProxyEntry()
         return entry
+
+gobject.type_register(PriceField)
 
 
 class DateField(Field):
@@ -355,6 +364,8 @@ class DateField(Field):
         dateentry = ProxyDateEntry()
         return dateentry
 
+gobject.type_register(DateField)
+
 
 class ColorField(Field):
     """
@@ -366,6 +377,8 @@ class ColorField(Field):
     def build_widget(self):
         button = ProxyColorButton()
         return button
+
+gobject.type_register(ColorField)
 
 
 class NumericField(Field):
@@ -380,6 +393,8 @@ class NumericField(Field):
         entry.set_adjustment(gtk.Adjustment(lower=0, step_incr=1,
                                             upper=sys.maxint, page_incr=10))
         return entry
+
+gobject.type_register(NumericField)
 
 
 class PercentageField(Field):
@@ -396,6 +411,8 @@ class PercentageField(Field):
         entry.set_range(0, 100)
         entry.set_digits(2)
         return entry
+
+gobject.type_register(PercentageField)
 
 
 class MultiLineField(Field):
@@ -418,6 +435,8 @@ class MultiLineField(Field):
         sw.set_shadow_type(gtk.SHADOW_OUT)
         sw.show()
         return sw
+
+gobject.type_register(MultiLineField)
 
 
 class FormLayout(object):

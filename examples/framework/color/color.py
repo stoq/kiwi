@@ -4,7 +4,7 @@ from sets import Set
 import gtk
 
 from kiwi.ui.views import BaseView
-from kiwi.ui.widgets.combobox import ComboBox
+from kiwi.ui.widgets.combo import ComboBox
 
 
 def load_colors():

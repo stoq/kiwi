@@ -85,3 +85,6 @@ class ContextMenu(gtk.Menu):
 
             can_select = not menu_item.emit('can-disable')
             menu_item.set_sensitive(can_select)
+
+
+gobject.type_register(ContextMenu)

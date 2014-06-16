@@ -23,14 +23,14 @@
 import contextlib
 import os
 import gettext
-import warnings
 
 import glib
 import atk
 import gtk
 
 __all__ = ['error', 'info', 'messagedialog', 'warning', 'yesno', 'save',
-           'open', 'HIGAlertDialog', 'BaseDialog']
+           'selectfile', 'selectfolder', 'HIGAlertDialog', 'BaseDialog',
+           'ask_overwrite']
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
@@ -291,65 +291,6 @@ def selectfile(title='', parent=None, folder=None, filters=None):
         yield filechooser
     finally:
         filechooser.destroy()
-
-
-def open(title='', parent=None, patterns=None, folder=None, filters=None,
-         with_file_chooser=False, filter=None):
-    """Temporarily available to allow deprecated use of kiwi's open() function.
-      Will be removed eventually.
-    :param title: refer to selectfile()
-    :param parent: refer to selectfile()
-    :param folder: refer to selectfile()
-    :param filters: refer to selectfile()
-    :param with_file_chooser: returns filechooser with filename selected"""
-
-    warnings.warn('use selectfile() instead of open()', DeprecationWarning,
-                  stacklevel=2)
-
-    if filter:
-        if filters:
-            warnings.warn('do not use filter, being ignored',
-                          DeprecationWarning, stacklevel=2)
-        else:
-            warnings.warn('use argument filters instead of filter',
-                          DeprecationWarning, stacklevel=2)
-            filters = filter
-
-    if patterns:
-        if filters:
-            warnings.warn('do not use patterns, use gtk.FileFilter instead',
-                          DeprecationWarning, stacklevel=2)
-        else:
-            file_filter = gtk.FileFilter()
-            if type(patterns) != list:
-                patterns = [patterns]
-            for pattern in patterns:
-                file_filter.add_pattern(pattern)
-            filters = [file_filter]
-
-    with selectfile(title='', parent=parent, folder=folder,
-                    filters=filters) as sf:
-
-        response = sf.run()
-        if response != gtk.RESPONSE_OK:
-            if with_file_chooser:
-                return None, sf
-            return
-
-        path = sf.get_filename()
-        if os.access(path, os.R_OK):
-            if with_file_chooser:
-                return path, sf
-            return path
-
-        abspath = os.path.abspath(path)
-
-        error(_('Could not open file "%s"') % abspath,
-              _('The file "%s" could not be opened. '
-                'Permission denied.') % abspath)
-
-        if with_file_chooser:
-            return None, sf
 
 
 def selectfolder(title='', parent=None, folder=None):

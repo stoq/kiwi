@@ -30,9 +30,8 @@ import gobject
 import gtk
 
 from kiwi import ValueUnset
-from kiwi.python import deprecationwarn
 from kiwi.ui.proxywidget import ProxyWidgetMixin
-from kiwi.utils import gsignal, type_register
+from kiwi.utils import gsignal
 
 
 class ProxyCheckButton(gtk.CheckButton, ProxyWidgetMixin):
@@ -76,12 +75,4 @@ class ProxyCheckButton(gtk.CheckButton, ProxyWidgetMixin):
         # No conversion to string needed, we only accept bool
         self.set_active(data)
 
-
-class CheckButton(ProxyCheckButton):
-    def __init__(self):
-        deprecationwarn(
-            'CheckButton is deprecated, use ProxyCheckButton instead',
-            stacklevel=3)
-        ProxyCheckButton.__init__(self)
-
-type_register(CheckButton)
+gobject.type_register(ProxyCheckButton)

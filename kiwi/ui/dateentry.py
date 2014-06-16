@@ -309,6 +309,9 @@ class _DateEntryPopup(gtk.Window):
         self.calendar.mark_day(date.day)
 
 
+type_register(_DateEntryPopup)
+
+
 class DateEntry(gtk.HBox):
     """I am an entry which you can input a date on.
     In addition to an gtk.Entry I also contain a button

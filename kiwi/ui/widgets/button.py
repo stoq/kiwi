@@ -99,3 +99,5 @@ class ProxyButton(gtk.Button, ProxyWidgetMixin):
             self.set_label(text)
 
         self.emit('content-changed')
+
+gobject.type_register(ProxyButton)

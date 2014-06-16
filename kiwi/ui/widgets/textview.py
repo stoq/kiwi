@@ -32,9 +32,8 @@ import gtk
 
 from kiwi import ValueUnset
 from kiwi.datatypes import number
-from kiwi.python import deprecationwarn
 from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
-from kiwi.utils import gsignal, type_register
+from kiwi.utils import gsignal
 
 
 class ProxyTextView(gtk.TextView, ValidatableProxyWidgetMixin):
@@ -81,11 +80,4 @@ class ProxyTextView(gtk.TextView, ValidatableProxyWidgetMixin):
             self.emit('validation-changed', bool(text))
         self._textbuffer.set_text(text)
 
-
-class TextView(ProxyTextView):
-    def __init__(self):
-        deprecationwarn(
-            'TextView is deprecated, use ProxyTextView instead',
-            stacklevel=3)
-        ProxyTextView.__init__(self)
-type_register(TextView)
+gobject.type_register(ProxyTextView)

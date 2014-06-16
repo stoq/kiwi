@@ -36,7 +36,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="kiwi+ui+widgets+entry+Entry" id="title">
+                      <object class="ProxyEntry" id="title">
                         <property name="data_type">str</property>
                         <property name="model_attribute">title</property>
                         <property name="visible">True</property>
@@ -55,7 +55,7 @@
                     <property name="spacing">6</property>
                     <property name="visible">True</property>
                     <child>
-                      <object class="kiwi+ui+widgets+radiobutton+RadioButton" id="period">
+                      <object class="ProxyRadioButton" id="period">
                         <property name="data_type">str</property>
                         <property name="data_value">morning</property>
                         <property name="is_focus">True</property>
@@ -69,7 +69,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="kiwi+ui+widgets+radiobutton+RadioButton" id="afternoon">
+                      <object class="ProxyRadioButton" id="afternoon">
                         <property name="active">False</property>
                         <property name="data_type">str</property>
                         <property name="data_value">afternoon</property>
@@ -84,7 +84,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="kiwi+ui+widgets+radiobutton+RadioButton" id="evening">
+                      <object class="ProxyRadioButton" id="evening">
                         <property name="active">False</property>
                         <property name="data_type">str</property>
                         <property name="data_value">evening</property>
@@ -105,7 +105,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="kiwi+ui+widgets+textview+TextView" id="text">
+                  <object class="ProxyTextView" id="text">
                     <property name="data_type">str</property>
                     <property name="model_attribute">text</property>
                     <property name="visible">True</property>
@@ -144,7 +144,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="kiwi+ui+widgets+label+Label" id="words">
+                  <object class="ProxyLabel" id="words">
                     <property name="data_type">int</property>
                     <property context="yes" name="label" translatable="yes">0</property>
                     <property name="model_attribute">words</property>
@@ -168,7 +168,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="kiwi+ui+widgets+label+Label" id="chars">
+                  <object class="ProxyLabel" id="chars">
                     <property name="data_type">int</property>
                     <property context="yes" name="label" translatable="yes">0</property>
                     <property name="model_attribute">chars</property>

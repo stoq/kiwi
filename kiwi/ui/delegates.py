@@ -27,30 +27,21 @@
 
 from kiwi.ui.views import SlaveView, BaseView
 from kiwi.controllers import BaseController
-from kiwi.python import deprecationwarn
 
 
 class Delegate(BaseView, BaseController):
     """A class that combines view and controller functionality into a
     single package. The Delegate class possesses a top-level window.
     """
-    def __init__(self, toplevel=None, widgets=(), gladefile=None,
-                 toplevel_name=None,
+    def __init__(self, toplevel=None, widgets=None, toplevel_name=None,
                  delete_handler=None, keyactions=None):
         """Creates a new Delegate.
         The keyactions parameter is sent to :class:`kiwi.controllers.BaseController`,
         the rest are sent to :class:`kiwi.ui.views.BaseView`
         """
-        if gladefile:
-            deprecationwarn(
-                'gladefile is deprecated in Delegate, '
-                'use GladeDelegate instead',
-                stacklevel=3)
-
         BaseView.__init__(self,
                           toplevel=toplevel,
-                          widgets=widgets,
-                          gladefile=gladefile,
+                          widgets=widgets or [],
                           toplevel_name=toplevel_name,
                           delete_handler=delete_handler)
         BaseController.__init__(self, view=self, keyactions=keyactions)
@@ -80,19 +71,14 @@ class SlaveDelegate(SlaveView, BaseController):
     single package. It does not possess a top-level window, but is instead
     intended to be plugged in to a View or Delegate using attach_slave().
     """
-    def __init__(self, toplevel=None, widgets=(), gladefile=None,
+    def __init__(self, toplevel=None, widgets=None,
                  toplevel_name=None, keyactions=None):
         """
         The keyactions parameter is sent to :class:`kiwi.controllers.BaseController`,
         the rest are sent to :class:`kiwi.ui.views.SlaveView`
         """
-        if gladefile:
-            deprecationwarn(
-                'gladefile is deprecated in Delegate, '
-                'use GladeSlaveDelegate instead',
-                stacklevel=3)
-        SlaveView.__init__(self, toplevel, widgets, gladefile,
-                           toplevel_name)
+        widgets = widgets or []
+        SlaveView.__init__(self, toplevel, widgets, toplevel_name)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
 
@@ -123,7 +109,7 @@ class ProxyDelegate(Delegate):
     :ivar proxy: the proxy
     """
     def __init__(self, model, proxy_widgets=None, gladefile=None,
-                 toplevel=None, widgets=(),
+                 toplevel=None, widgets=None,
                  toplevel_name=None, domain=None, delete_handler=None,
                  keyactions=None):
         """Creates a new Delegate.
@@ -132,6 +118,7 @@ class ProxyDelegate(Delegate):
         The keyactions parameter is sent to :class:`kiwi.controllers.BaseController`,
         the rest are sent to :class:`kiwi.ui.views.BaseView`
         """
+        widgets = widgets or []
 
         BaseView.__init__(self, toplevel, widgets, gladefile,
                           toplevel_name, domain,

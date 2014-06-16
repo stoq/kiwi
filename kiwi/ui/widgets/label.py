@@ -33,7 +33,6 @@ import gobject
 import gtk
 
 from kiwi.datatypes import number, ValueUnset
-from kiwi.python import deprecationwarn
 from kiwi.ui.gadgets import set_foreground
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import gsignal, type_register
@@ -184,13 +183,3 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
         set_foreground(self, color)
 
 type_register(ProxyLabel)
-
-
-class Label(ProxyLabel):
-    def __init__(self, label='', data_type=None):
-        deprecationwarn(
-            'Label is deprecated, use ProxyLabel instead',
-            stacklevel=3)
-        ProxyLabel.__init__(self, label=label, data_type=data_type)
-
-type_register(Label)
