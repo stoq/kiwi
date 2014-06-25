@@ -628,6 +628,10 @@ class SlaveView(gobject.GObject):
                               (name, self))
         del self.slaves[name]
 
+        if name in self._validation:
+            del self._validation[name]
+            self.check_and_notify_validity(force=True)
+
     def _attach_groups(self, win, accel_groups):
         # get groups currently attached to the window; we use them
         # to avoid reattaching an accelerator to the same window, which
