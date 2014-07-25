@@ -1266,9 +1266,7 @@ class ObjectList(gtk.HBox):
                 self.clear()
                 return
 
-        model = self._model
         iters = self._iters
-
         old_instances = [row[COL_MODEL] for row in model]
 
         # Save selection
@@ -1279,6 +1277,13 @@ class ObjectList(gtk.HBox):
             if paths:
                 selected_instances = [model[path][COL_MODEL]
                                       for (path,) in paths]
+
+        # Remove sorting from the model to improve (significantly) performance
+        # http://www.pygtk.org/pygtk2tutorial/sec-TreeModelInterface.html#sec-LargeDataStores
+        if self._sortable:
+            for index, column in enumerate(self._columns):
+                model.set_sort_func(index, lambda *args: -1,
+                                    (column, column.attribute))
 
         iters = self._iters
         prev = None
@@ -1312,6 +1317,12 @@ class ObjectList(gtk.HBox):
         else:
             for instance in iter(instances):
                 self._iters[instance] = self._model_append(instance)
+
+        # Re-set the model for the treeview and the ordering
+        if self._sortable:
+            for index, column in enumerate(self._columns):
+                model.set_sort_func(index, self._model_sort_func,
+                                    (column, column.attribute))
 
         # Restore selection
         for instance in selected_instances:
