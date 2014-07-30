@@ -2135,8 +2135,10 @@ class ObjectTree(ObjectList):
         self.get_treeview().connect('row-expanded', self._on_treeview__row_expanded)
 
     def __iter__(self):
-        # FIXME: This should be sorted in the order the objects are displayed
-        return self._iters.iterkeys()
+        for obj in self._model:
+            yield obj[COL_MODEL]
+            for child in obj.iterchildren():
+                yield child[COL_MODEL]
 
     def _append_internal(self, parent, instance, select, prepend):
         iters = self._iters
