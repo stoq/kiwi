@@ -25,15 +25,15 @@
 
 """Graphical utilities: color management and eyecandy"""
 
-import math
 import io
+import logging
+import math
 
 import cairo
 import gobject
 import gtk
 from gtk import gdk
 
-from kiwi.log import Logger
 from kiwi.utils import gsignal, type_register
 from kiwi.ui.pixbufutils import pixbuf_from_string
 
@@ -122,7 +122,7 @@ class FadeOut(gobject.GObject):
         self._start_color = None
         self._background_timeout_id = -1
         self._countdown_timeout_id = -1
-        self._log = Logger('fade')
+        self._log = logging.getLogger('fade')
         self._done = False
 
     def _merge_colors(self, src_color, dst_color, steps=10):

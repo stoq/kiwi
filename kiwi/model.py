@@ -24,13 +24,13 @@
 
 """Holds the models part of the Kiwi Framework"""
 
+import logging
 import os
 import pickle
 
 from kiwi import ValueUnset
-from kiwi.log import Logger
 
-log = Logger('model')
+log = logging.getLogger('model')
 
 #
 # A model that implements half of an observer pattern; when its

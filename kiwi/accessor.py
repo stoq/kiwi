@@ -33,13 +33,12 @@ important differences:
       it the next time the value is retrieved.
 """
 
+import logging
 import string
 import types
 import warnings
 
-from kiwi.log import Logger
-
-log = Logger('kiwi.accessor')
+log = logging.getLogger('kiwi.accessor')
 
 
 def get_default_getter(model, attr_name, cache):

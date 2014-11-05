@@ -5,13 +5,13 @@ import sys
 import tempfile
 import unittest
 
-from kiwi.log import Logger, set_log_file
+from kiwi.log import set_log_file
 
 
 class LogTest(unittest.TestCase):
     def setUp(self):
         self.filename = tempfile.mktemp()
-        self.log = Logger('log')
+        self.log = logging.getLogger('log')
 
     def tearDown(self):
         if os.path.exists(self.filename):

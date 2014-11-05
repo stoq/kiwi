@@ -21,9 +21,9 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
-import gtk
+import logging
 
-from kiwi.log import Logger
+import gtk
 
 from kiwi.ui.hyperlink import HyperLink
 from kiwi.ui.objectlist import ObjectList, ObjectTree
@@ -54,7 +54,7 @@ ProxyTextView
 ProxyButton
 
 
-log = Logger('builderloader')
+log = logging.getLogger('builderloader')
 
 
 class BuilderWidgetTree:

@@ -35,6 +35,7 @@ back by simply executing the script through a standard python interpreter.
 """
 
 import atexit
+import logging
 import sys
 import time
 
@@ -42,13 +43,12 @@ from gobject import add_emission_hook
 import gtk
 from gtk import gdk
 
-from kiwi.log import Logger
 from kiwi.ui.test.common import WidgetIntrospecter
 from kiwi.ui.objectlist import ObjectList
 
 _events = []
 
-log = Logger('recorder')
+log = logging.getLogger('recorder')
 
 
 def register_event_type(event_type):
@@ -427,7 +427,7 @@ class Recorder(WidgetIntrospecter):
         return event_types
 
     def _add_event(self, event):
-        log("Added event %s" % event.serialize())
+        log.debug("Added event %s" % event.serialize())
         self._events.append((event, time.time()))
 
     def _listen_event(self, object, event_type):

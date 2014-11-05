@@ -22,10 +22,9 @@
 #
 
 from gaxml.parser import GAXParser
+import logging
 
-from kiwi.log import Logger
-
-log = Logger('gaxmlparser')
+log = logging.getLogger('gaxmlparser')
 
 
 class GAXMLWidgetTree(object):

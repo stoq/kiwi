@@ -29,6 +29,7 @@
 
 import base64
 import gettext
+import logging
 
 import gobject
 import gtk
@@ -38,11 +39,10 @@ from kiwi import ValueUnset
 from kiwi.component import implements
 from kiwi.datatypes import ValidationError, converter, BaseConverter
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
-from kiwi.log import Logger
 from kiwi.ui.gadgets import FadeOut
 from kiwi.ui.pixbufutils import pixbuf_from_string
 
-log = Logger('widget proxy')
+log = logging.getLogger('widget proxy')
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 

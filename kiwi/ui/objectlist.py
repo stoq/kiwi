@@ -30,6 +30,7 @@ import datetime
 import decimal
 import gettext
 import locale
+import logging
 import pickle
 
 import glib
@@ -42,7 +43,6 @@ from kiwi.accessor import kgetattr
 from kiwi.datatypes import converter, number, ValidationError
 from kiwi.currency import currency  # after datatypes
 from kiwi.enums import Alignment
-from kiwi.log import Logger
 from kiwi.python import enum, slicerange
 from kiwi.utils import gsignal, type_register
 from kiwi.ui.widgets.contextmenu import ContextMenu
@@ -50,7 +50,7 @@ from kiwi.ui.cellrenderer import EditableTextRenderer, EditableSpinRenderer
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
-log = Logger('objectlist')
+log = logging.getLogger('objectlist')
 
 
 def str2enum(value_name, enum_class):

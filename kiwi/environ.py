@@ -28,18 +28,18 @@ import errno
 import gettext
 import imp
 import locale
+import logging
 import os
 import platform
 import sys
 
-from kiwi.log import Logger
 from kiwi.python import namedAny
 
 import pkg_resources
 
 __all__ = ['Application', 'Library', 'app', 'environ']
 
-log = Logger('environ')
+log = logging.getLogger('environ')
 
 EnvironmentError = EnvironmentError
 

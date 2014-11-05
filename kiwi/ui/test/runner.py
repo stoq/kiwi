@@ -26,6 +26,7 @@ Runner - executes recorded scripts
 """
 
 import doctest
+import logging
 import os
 import sys
 import time
@@ -34,10 +35,9 @@ from StringIO import StringIO
 import gobject
 from gtk import gdk
 
-from kiwi.log import Logger
 from kiwi.ui.test.common import WidgetIntrospecter
 
-log = Logger('kiwi.ui.test.player')
+log = logging.getLogger('kiwi.ui.test.player')
 
 
 class NotReadyYet(Exception):

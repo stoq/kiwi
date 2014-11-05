@@ -30,6 +30,7 @@ Defines the View classes that are included in the Kiwi Framework, which
 are the base of Delegates and Proxies.
 """
 
+import logging
 import os
 import string
 
@@ -39,7 +40,6 @@ from gtk import gdk
 
 from kiwi.environ import environ
 from kiwi.interfaces import IValidatableProxyWidget
-from kiwi.log import Logger
 from kiwi.python import namedAny
 from kiwi.ui.signal import GladeSignalBroker, SignalBroker, SignalProxyObject
 from kiwi.utils import gsignal, type_register
@@ -49,9 +49,9 @@ from kiwi.ui.proxy import Proxy
 # backwards compatibility
 SignalProxyObject
 
-log = Logger('kiwi.view')
+log = logging.getLogger('kiwi.view')
 
-validation_log = Logger('kiwi.validation')
+validation_log = logging.getLogger('kiwi.validation')
 
 _non_interactive = [
     gtk.Label,
@@ -483,9 +483,8 @@ class SlaveView(gobject.GObject):
         instead of the eventbox) is still supported for compatibility
         reasons but will print a warning.
         """
-        log('%s: Attaching slave %s of type %s' % (self.__class__.__name__,
-                                                   name,
-                                                   slave.__class__.__name__))
+        log.debug('%s: Attaching slave %s of type %s' %
+                  (self.__class__.__name__, name, slave.__class__.__name__))
 
         if name in self.slaves:
             # XXX: TypeError
@@ -715,9 +714,8 @@ class SlaveView(gobject.GObject):
         updates or setting new models. Keep a reference to it since there is
         no way to get that proxy later on. You have been warned (tm)
         """
-        log('%s: adding proxy for %s' % (
-            self.__class__.__name__,
-            model and model.__class__.__name__))
+        log.debug('%s: adding proxy for %s' % (self.__class__.__name__,
+                                               model and model.__class__.__name__))
 
         widgets = widgets or self.widgets
         proxy_widgets = []

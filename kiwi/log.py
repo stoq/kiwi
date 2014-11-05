@@ -76,20 +76,6 @@ class LogError(Exception):
     pass
 
 
-class Logger(object):
-    # Backwards compatibility, we should probably replace the callsites
-    # with import logging; logging.getLogger(name)
-    def __new__(self, name):
-        return logging.getLogger(name)
-
-
-class _Logger(logging.Logger):
-    def __call__(self, message, *args, **kwargs):
-        self.info(message, *args, **kwargs)
-
-logging.setLoggerClass(_Logger)
-
-
 class ReversedGlobalFilter(logging.Filter):
     """
     It's like a reversed filter, the default behavior
@@ -199,4 +185,4 @@ def update_logger():
 
 _create_console()
 
-kiwi_log = Logger('kiwi')
+kiwi_log = logging.getLogger('kiwi')

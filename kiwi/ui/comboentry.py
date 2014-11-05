@@ -23,20 +23,21 @@
 
 """Widget for displaying a list of objects"""
 
+import logging
+
 import gtk
 from gtk import gdk, keysyms
 
 from kiwi.component import implements
 from kiwi.interfaces import IEasyCombo
 from kiwi.enums import ComboColumn, ComboMode
-from kiwi.log import Logger
 from kiwi.ui.entry import KiwiEntry, ENTRY_MODE_DATA
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import gsignal, type_register
 
 from kiwi.ui.cellrenderer import ComboDetailsCellRenderer
 
-log = Logger('kiwi.ui.combo')
+log = logging.getLogger('kiwi.ui.combo')
 
 
 class _ComboEntryPopup(gtk.Window):

@@ -21,11 +21,12 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
+import logging
+
 from gtk.glade import XML
 
-from kiwi.log import Logger
 
-log = Logger('libgladeloader')
+log = logging.getLogger('libgladeloader')
 
 
 class LibgladeWidgetTree(XML):

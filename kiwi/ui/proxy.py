@@ -28,6 +28,8 @@
 to keep the state of a model object synchronized with a View.
 """
 
+import logging
+
 import gobject
 import gtk
 
@@ -35,9 +37,8 @@ from kiwi import ValueUnset
 from kiwi.accessor import kgetattr, ksetattr, clear_attr_cache
 from kiwi.datatypes import converter
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
-from kiwi.log import Logger
 
-log = Logger('proxy')
+log = logging.getLogger('proxy')
 
 
 class ProxyError(Exception):
@@ -99,8 +100,8 @@ class Proxy:
     # Private API
 
     def _update_attribute(self, widget, attribute, value):
-        log('%s.%s = %r' %
-            (self._model.__class__.__name__, attribute, value))
+        log.debug('%s.%s = %r' %
+                  (self._model.__class__.__name__, attribute, value))
 
         # only update the model if the data is correct
         if value is ValueUnset:
