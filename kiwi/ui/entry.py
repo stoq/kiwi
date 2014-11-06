@@ -124,6 +124,8 @@ class KiwiEntry(gtk.Entry):
                      self._on_notify_selection_bound)
         self.connect('notify::xalign', self._on_notify_xalign)
 
+        self.set_property("truncate-multiline", True)
+
         self._block_changed = False
 
         self._current_object = None
