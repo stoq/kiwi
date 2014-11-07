@@ -1,3 +1,9 @@
+kiwi (1.9.40) precise; urgency=low
+
+  * New release
+
+ -- Thiago Bellini Ribeiro <hackedbellini@async.com.br>  Fri, 07 Nov 2014 13:37:53 -0200
+
 kiwi (1.9.39.2) precise; urgency=low
 
   * Bugfix release
