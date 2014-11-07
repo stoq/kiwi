@@ -65,6 +65,7 @@ U{GStreamer<http://www.gstreamer.net>} multimedia framework.
 import fnmatch
 import logging
 import os
+import warnings
 
 # Globals
 
@@ -74,6 +75,24 @@ _filter = None
 
 class LogError(Exception):
     pass
+
+
+class Logger(object):
+    # Backwards compatibility, we should probably replace the callsites
+    # with import logging; logging.getLogger(name)
+    def __new__(self, name):
+        warnings.warn("Replace usage of kiwi.log with python's logging",
+                      DeprecationWarning, stacklevel=2)
+        return logging.getLogger(name)
+
+
+class _Logger(logging.Logger):
+    def __call__(self, message, *args, **kwargs):
+        warnings.warn("Call log.info instead", DeprecationWarning, stacklevel=2)
+        self.info(message, *args, **kwargs)
+
+
+logging.setLoggerClass(_Logger)
 
 
 class ReversedGlobalFilter(logging.Filter):
