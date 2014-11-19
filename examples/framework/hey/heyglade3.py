@@ -6,7 +6,7 @@ from kiwi.ui.views import BaseView
 
 
 class MyView(BaseView):
-    gladefile = "hey"
+    gladefile = "hey.ui"
 
     def __init__(self):
         BaseView.__init__(self, delete_handler=quit_if_last)

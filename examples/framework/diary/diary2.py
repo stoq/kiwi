@@ -22,7 +22,7 @@ class Diary(ProxyDelegate):
                                    Column("text", expand=True, visible=False)])
         ProxyDelegate.__init__(self, DiaryEntry(),
                                ['title', 'period', 'text', 'chars', 'words'],
-                               gladefile="diary2",
+                               gladefile="diary2.ui",
                                delete_handler=self.quit_if_last)
         self.hbox.pack_start(self.entries)
         self.entries.show()

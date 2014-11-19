@@ -37,7 +37,7 @@ class Shell(Delegate):
     widgets = ["ok", "cancel", "header", "footer", "title"]
 
     def __init__(self):
-        Delegate.__init__(self, gladefile="news_shell",
+        Delegate.__init__(self, gladefile="news_shell.ui",
                           delete_handler=self.quit_if_last)
 
         # paint header and footer; they are eventboxes that hold a

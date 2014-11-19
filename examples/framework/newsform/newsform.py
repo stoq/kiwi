@@ -15,8 +15,8 @@ class NewsItem:
 
 item = NewsItem()
 my_widgets = ["title", "author", "url", "size"]
-view = BaseView(gladefile="newsform", widgets=my_widgets,
-                delete_handler=quit_if_last)
+view = BaseView(gladefile="newsform.ui",
+                widgets=my_widgets, delete_handler=quit_if_last)
 view.add_proxy(item, my_widgets)
 view.focus_topmost()
 view.show()

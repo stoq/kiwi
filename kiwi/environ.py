@@ -33,11 +33,9 @@ import os
 import platform
 import sys
 
-from kiwi.python import namedAny
-
 import pkg_resources
 
-__all__ = ['Application', 'Library', 'app', 'environ']
+__all__ = ['Library', 'environ']
 
 log = logging.getLogger('environ')
 
@@ -52,6 +50,23 @@ def _is_frozen():
             or imp.is_frozen("__main__"))  # tools/freeze
 
 
+class _KiwiProvider(pkg_resources.DefaultProvider):
+    _my_resources = {}
+
+    def __init__(self, module):
+        pkg_resources.DefaultProvider.__init__(self, module)
+
+        if module.__name__ in self._my_resources:
+            self.module_path = self._my_resources[module.__name__]
+
+    @classmethod
+    def add_resource(cls, name, path=None):
+        cls._my_resources[name] = path
+
+
+pkg_resources.register_loader_type(type(None), _KiwiProvider)
+
+
 class Environment:
     """Environment control
 
@@ -61,128 +76,30 @@ class Environment:
     External libraries or applications are free to add extra directories"""
 
     def __init__(self, root='.'):
-        self._resources = {}
-        self._extensions = {}
         self._root = root
 
-        # Add some compressed formats as alternative extensions to
-        # "glade" resources
-        self._add_extensions("glade", ".bz2", ".gz")
-
-        self._is_egg = sys.argv[0].endswith('.egg')
-
-        self._add_resource_variable("glade", "KIWI_GLADE_PATH")
-        self._add_resource_variable("image", "KIWI_IMAGE_PATH")
+    #
+    #  Public
+    #
 
     def get_root(self):
         return self._root
 
-    def get_log_level(self):
-        return os.environ.get('KIWI_LOG')
+    def get_resource_string(self, domain, *resource):
+        resource = '/'.join(resource)
+        return pkg_resources.resource_string(domain, resource)
 
-    def _add_extensions(self, resource, *args):
-        exts = self._extensions.setdefault(resource, [])
-        exts.extend(list(args))
+    def get_resource_filename(self, domain, *resource):
+        resource = '/'.join(resource)
+        return pkg_resources.resource_filename(domain, resource)
 
-    def _add_resource_variable(self, resource, variable):
-        """Add resources from an environment variable"""
-        env = os.environ.get(variable, '')
-        for path in env.split(os.pathsep):
-            if not path:
-                continue
-            self.add_resource(resource, env)
+    def get_resource_exists(self, domain, *resource):
+        resource = '/'.join(resource)
+        return pkg_resources.resource_exists(domain, resource)
 
-    def get_resource_paths(self, resource):
-        if not resource in self._resources:
-            raise EnvironmentError("No resource called: %s" % resource)
-        return self._resources[resource]
-
-    def add_resource(self, resource, path):
-        # XXX. This is not as simple as just checkign if the file is a egg. We
-        # need to be sure that the current library is a egg itself, and not the
-        # current running program.
-        #if self._is_egg:
-        #    return
-        path = os.path.join(self._root, path)
-
-        if not os.path.isdir(path):
-            raise EnvironmentError("path %s must be a directory" % path)
-
-        reslist = self._resources.setdefault(resource, [])
-        if not path in reslist:
-            reslist.append(path)
-
-    def add_resources(self, **kwargs):
-        for resource, path in kwargs.items():
-            if resource == 'locale':
-                try:
-                    self.add_resource(resource, path)
-                except EnvironmentError:
-                    continue
-
-            self.add_resource(resource, path)
-
-    def get_resource_string(self, domain, resource, name):
-        if self._is_egg:
-            return pkg_resources.resource_string(
-                domain, 'data/%s/%s' % (resource, name))
-        else:
-            fd = self.find_resource(resource, name)
-            # FIXME: add a parameter specifying if we need to read
-            #        files in a binary mode
-            suffix = name.rsplit('.', 1)[-1]
-            if suffix in ['png', 'jpeg', 'gif', 'ttf']:
-                mode = 'rb'
-            else:
-                mode = 'r'
-            return open(fd, mode).read()
-
-    def get_resource_filename(self, domain, resource, name):
-        if self._is_egg:
-            return pkg_resources.resource_filename(
-                domain, 'data/%s/%s' % (resource, name))
-        else:
-            return self.find_resource(resource, name)
-
-    def get_resource_names(self, domain, resource):
-        names = []
-        if self._is_egg:
-            return pkg_resources.resource_listdir(domain, 'data/%s' % (resource, ))
-        else:
-            for path in self.get_resource_paths(resource):
-                for dirname in os.listdir(path):
-                    names.append(dirname)
-        return names
-
-    def find_resource(self, resource, name):
-        """Locate a specific resource of called name of type resource"""
-
-        resource_paths = self.get_resource_paths(resource)
-
-        # Look for alternative extensions for this resource.
-        # But check without extensions first
-        exts = [""] + self._extensions.get(resource, [])
-
-        # Check "scriptdir", which is the directory the script is ran from
-        # and the working directory ("") after all the others fail
-        scriptdir = os.path.dirname(os.path.abspath(sys.argv[0]))
-        for path in resource_paths + [scriptdir, ""]:
-            for ext in exts:
-                filename = os.path.join(self._root, path, "".join((name, ext)))
-                if os.path.exists(filename) and os.path.isfile(filename):
-                    return filename
-
-        raise EnvironmentError("Could not find %s resource: %s" % (
-            resource, name))
-
-    def _get_epydoc(self):
-        if sys.argv == ['IGNORE']:
-            return True
-        elif os.path.basename(sys.argv[0]) == 'epyrun':
-            return True
-        return False
-
-    epydoc = property(_get_epydoc)
+    def get_resource_names(self, domain, *resource):
+        resource = '/'.join(resource)
+        return pkg_resources.resource_listdir(domain, resource)
 
 
 class Library(Environment):
@@ -228,6 +145,7 @@ class Library(Environment):
     in installed mode and from $builddir/pixmaps otherwise.
 
     """
+
     def __init__(self, name, root='..', dirname=None):
         """
         Creates a new library, this is usually called in __init__.py in a
@@ -254,6 +172,7 @@ class Library(Environment):
 
             dirname = os.path.realpath(os.path.abspath(dirname))
             root = os.path.abspath(os.path.join(dirname, root))
+
         Environment.__init__(self, root=root)
 
         basedir = os.path.join(root, 'lib', 'python%d.%d' %
@@ -271,21 +190,24 @@ class Library(Environment):
         try:
             module = __import__(name + '.__installed__', g, l, [name])
         except ImportError:
+            self.prefix = sys.prefix
             uninstalled = True
+            # FIXME: This is to support our development schema where data
+            # is on the source's toplevel dir inside 'data'
+            resource_path = os.path.join(root, 'data')
         else:
-            uninstalled = False
-            if not hasattr(module, 'resources'):
-                raise ValueError("module %s.__installed__ must define a "
-                                 "resources attribute" % name)
-            if not hasattr(module, 'global_resources'):
-                raise ValueError("module %s.__installed__ must define a "
-                                 "global_resources attribute" % name)
-            self.add_resources(**module.resources)
-            self.add_global_resources(**module.global_resources)
             self.prefix = module.prefix
+            uninstalled = False
+            resource_path = os.path.join(module.prefix, module.datadir)
 
         self.uninstalled = uninstalled
         self.module = module
+
+        _KiwiProvider.add_resource(name, path=resource_path)
+
+    #
+    #  Private
+    #
 
     def _check_translation(self, domain, directory):
         loc = locale.getlocale()[0]
@@ -306,41 +228,35 @@ class Library(Environment):
         else:
             log.warn('No %s translation found for domain %s' % (loc, domain))
 
-    def enable_translation(self, domain=None, localedir=None):
+    #
+    #  Public
+    #
+
+    def enable_translation(self, domain=None, enable_global=False):
         """
         Enables translation for a library
 
         :param domain: optional, if not specified name sent to constructor
           will be used
-        :param localedir: directory to get locales from when running in
-          uninstalled mode. If not specified a directory called 'locale' in
-          the root will be used.
+        :param enable_global: if we should set that domain as the
+          default domain when using gettext without one
         """
         if not domain:
             domain = self.name
 
-        if not localedir:
-            localedir = 'locale'
+        if (not self.uninstalled and
+                pkg_resources.resource_exists(domain, 'locale')):
+            localedir = pkg_resources.resource_filename(domain, 'locale')
+        elif not self.uninstalled:
+            localedir = None
+        else:
+            localedir = os.path.join(self.get_root(), 'locale')
 
-        if self.uninstalled:
-            try:
-                self.add_resource('locale', localedir)
-            except EnvironmentError:
-                pass
-
-        # XXX: locale should not be a list
-        localedir = self._resources.get('locale')
-        if not localedir:
-            # Only complain when running installed
-            if not self.uninstalled:
-                log.warn('no localedir for: %s' % domain)
-
-            return
-        directory = gettext.bindtextdomain(domain, localedir[0])
+        directory = gettext.bindtextdomain(domain, localedir)
         self._check_translation(domain, directory)
         # For libglade, but only on non-win32 systems
         if hasattr(locale, 'bindtextdomain'):
-            locale.bindtextdomain(domain, localedir[0])
+            locale.bindtextdomain(domain, localedir)
 
         # Gtk+ only supports utf-8, it makes no sense to support
         # other encodings in kiwi it self
@@ -348,41 +264,27 @@ class Library(Environment):
         if hasattr(gettext, 'bind_textdomain_codeset'):
             gettext.bind_textdomain_codeset(domain, 'utf-8')
 
+        # FIXME: There's a bug on gtkbuilder where it needs to have the
+        # textdomain set for translations to work, no matter what translation
+        # domain we set on it. We should try to find a way around this or else
+        # we won't be able to translate glades from a domain other than this one
+        if enable_global:
+            gettext.textdomain(domain)
+            # For libglade, but only on non-win32 systems
+            if hasattr(locale, 'textdomain'):
+                locale.textdomain(domain)
+
         if platform.system() == 'Windows':
             from ctypes import cdll
             libintl = cdll.intl
-            libintl.bindtextdomain(domain, localedir[0])
+            libintl.bindtextdomain(domain, localedir)
             libintl.bind_textdomain_codeset(domain, 'UTF-8')
+            if enable_global:
+                libintl.textdomain(domain)
             del libintl
-
-    def set_application_domain(self, domain):
-        """
-        Sets the default application domain
-        :param domain: the domain
-        """
-        gettext.textdomain(domain)
-        # For libglade, but only on non-win32 systems
-        if hasattr(locale, 'textdomain'):
-            locale.textdomain(domain)
-
-        if platform.system() == 'Windows':
-            from ctypes import cdll
-            libintl = cdll.intl
-            libintl.textdomain(domain)
-            del libintl
-
-    def add_global_resource(self, resource, path):
-        """Convenience method to add a global resource.
-        This is the same as calling kiwi.environ.environ.add_resource
-        """
-        global environ
-        environ.add_resource(resource, os.path.join(self._root, path))
-
-    def add_global_resources(self, **kwargs):
-        for resource, path in kwargs.items():
-            self.add_global_resource(resource, path)
 
     def get_revision(self):
+        """Get the current VCS revision"""
         if self.uninstalled:
             status, output = commands.getstatusoutput('git rev-parse --short HEAD')
             if status == 0:
@@ -400,73 +302,5 @@ class Library(Environment):
             return str(self.module.revision)
 
 
-class Application(Library):
-    """Application extends a :class:`Library`. It's meant to be used
-    by applications
-
-    Libraries are usually instantiated in __init__.py in the topmost package
-    in your library, an example usage is kiwi itself which does:
-
-    >>> from kiwi.environ import Application
-    >>> app = Application('gnomovision')
-    >>> if app.uninstalled:
-    ...     app.add_global_resource('glade', 'glade')
-    ...     app.add_global_resource('pixmap', 'pixmaps')
-
-    If you want to do translations, you also need to do the following:
-
-    >>> app.enable_translation()
-
-    @see: :class:`Library` for more information on how to integrate it with
-      the standard distutils configuration.
-    """
-
-    def __init__(self, name, root='..', path='main', dirname=None):
-        global app
-        if app is not None:
-            raise TypeError("Application is already set to %r" % app)
-        app = self
-
-        if not dirname:
-            dirname = os.path.abspath(os.path.dirname(sys.argv[0]))
-        Library.__init__(self, name, root, dirname)
-        self._path = path
-
-    def _get_main(self):
-        try:
-            module = namedAny(self._path)
-        except:
-            log.warn('importing %s' % self._path)
-            raise
-
-        main = getattr(module, 'main', None)
-        if not main or not callable(main):
-            raise SystemExit("ERROR: Could not find item '%s' in module %s" %
-                             'main', self._path)
-        return main
-
-    def enable_translation(self, domain=None, localedir=None):
-        """
-        Enables translation for a application
-        See :class:`Library.enable_translation`.
-
-        """
-        Library.enable_translation(self, domain, localedir)
-        old_domain = gettext.textdomain()
-        if old_domain != 'messages':
-            log.warn('overriding default domain, was %s' % old_domain)
-
-        self.set_application_domain(domain)
-
-    def run(self):
-        main = self._get_main()
-
-        try:
-            sys.exit(main(sys.argv))
-        except KeyboardInterrupt:
-            raise SystemExit
-
 # Global variables
 environ = Environment()
-
-app = None

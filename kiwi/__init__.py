@@ -40,17 +40,12 @@ Kiwi includes a Framework and a set of enhanced widgets
 """
 
 from kiwi.__version__ import version as kiwi_version
-from kiwi.environ import EnvironmentError, Library
+from kiwi.environ import Library
 
 
 assert kiwi_version  # pyflakes
 
 library = Library('kiwi')
-if library.uninstalled:
-    try:
-        library.add_global_resource('glade', 'glade')
-    except EnvironmentError:
-        pass
 library.enable_translation()
 
 # Be careful to not export too much

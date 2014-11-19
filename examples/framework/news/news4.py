@@ -54,7 +54,7 @@ class Shell(GladeDelegate):
             gtk.keysyms.b: self.on_cancel__clicked,
         }
 
-        GladeDelegate.__init__(self, gladefile="news_shell",
+        GladeDelegate.__init__(self, gladefile="news_shell.ui",
                                delete_handler=quit_if_last, keyactions=keyactions)
 
         # paint header and footer; they are eventboxes that hold a

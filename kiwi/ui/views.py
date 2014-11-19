@@ -102,6 +102,7 @@ class SlaveView(gobject.GObject):
     toplevel_name = None
     gladefile = None
     domain = None
+    translation_domain = None
     fields = None
     form_holder_name = 'toplevel'
     form_columns = 1
@@ -140,10 +141,18 @@ class SlaveView(gobject.GObject):
         self.toplevel = toplevel or getattr(self, 'toplevel', klass.toplevel)
         self.widgets = widgets or klass.widgets
         self.gladefile = gladefile or klass.gladefile
-        self.toplevel_name = (toplevel_name or
-                              klass.toplevel_name or
-                              self.gladefile)
+
+        self.toplevel_name = (
+            toplevel_name or
+            klass.toplevel_name)
+
+        if not self.toplevel_name and self.gladefile:
+            self.toplevel_name = os.path.splitext(
+                os.path.basename(self.gladefile))[0]
+
         self.domain = domain or klass.domain
+        # Fallback to domain if translation_domain is not provided
+        self.translation_domain = klass.translation_domain or self.domain
 
         self._check_reserved()
 
@@ -211,19 +220,13 @@ class SlaveView(gobject.GObject):
 
         return toplevel
 
-    def get_resource_string(self, domain, resource, name):
-        """ This method might be overriden by subclasses in order to use it's own
-        resource_string function (like accessing a resource from inside an egg)
-        """
-        return environ.get_resource_string(domain, resource, name)
-
     def get_glade_adaptor(self):
         """Special init code that subclasses may want to override."""
         if not self.gladefile:
             return
 
         glade_adaptor = _open_glade(self, self.gladefile, self.domain,
-                                    self.get_resource_string)
+                                    self.translation_domain)
 
         container_name = self.toplevel_name
         if not container_name:
@@ -862,7 +865,7 @@ class BaseView(SlaveView):
             return
 
         return _open_glade(self, self.gladefile, self.domain,
-                           self.get_resource_string)
+                           self.translation_domain)
 
     #
     # Hook for keypress handling
@@ -960,13 +963,6 @@ class BaseView(SlaveView):
         self.toplevel.hide()
         self.quit_if_last()
 
-_glade_loader_func = None
-
-
-def set_glade_loader_func(func):
-    global _glade_loader_func
-    _glade_loader_func = func
-
 
 def _get_libglade():
     try:
@@ -992,25 +988,26 @@ def _get_builder():
     return BuilderWidgetTree
 
 
-def _open_glade(view, gladefile, domain, resource_str_func):
+def _open_glade(view, gladefile, domain, translation_domain):
     if not gladefile:
         raise ValueError("A gladefile wasn't provided.")
     elif not isinstance(gladefile, basestring):
         raise TypeError(
             "gladefile should be a string, found %s" % type(gladefile))
 
-    if _glade_loader_func:
-        return _glade_loader_func(view, gladefile, domain, resource_str_func)
-
     if gladefile.endswith('.ui'):
         directory = os.path.dirname(namedAny(view.__module__).__file__)
         gladefile = os.path.join(directory, gladefile)
     else:
-        filename = os.path.splitext(os.path.basename(gladefile))[0]
-        try:
-            gladefile = environ.find_resource("glade", filename + '.glade')
-        except EnvironmentError:
-            gladefile = environ.find_resource("glade", filename + '.ui')
+        for ext in ['.glade', '.ui']:
+            if environ.get_resource_exists(domain, 'glade', gladefile + ext):
+                gladefile = environ.get_resource_filename(domain, 'glade',
+                                                          gladefile + ext)
+                break
+        else:
+            raise EnvironmentError(
+                "Glade resource %s was not found on domain %s" % (
+                    gladefile, domain))
 
     fp = open(gladefile)
     sniff = fp.read(200)
@@ -1039,4 +1036,4 @@ def _open_glade(view, gladefile, domain, resource_str_func):
             "Could not find %s, it needs to be installed to "
             "load the gladefile %r" % (loader_name, gladefile))
 
-    return WidgetTree(view, gladefile, domain)
+    return WidgetTree(view, gladefile, translation_domain)

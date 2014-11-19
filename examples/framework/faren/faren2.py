@@ -30,7 +30,7 @@ class FarenView(BaseView):
                "celsius_label", "farenheit_label", "temperature_label"]
 
     def __init__(self):
-        BaseView.__init__(self, gladefile="faren",
+        BaseView.__init__(self, gladefile="faren.ui",
                           delete_handler=self.quit_if_last)
 
     def get_temp(self):

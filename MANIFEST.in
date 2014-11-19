@@ -2,8 +2,8 @@ recursive-include tests *
 recursive-exclude tests *.pyc *.pyo
 recursive-include doc Makefile howto.tex *.txt  *.tmpl *.eps *.png *.dia
 recursive-include examples *
-recursive-include glade *
-recursive-include glade-plugin *.png
+recursive-include data/glade *
+recursive-include data/kiwiwidgets/glade-plugin *.png
 recursive-include po *.po kiwi.pot POTFILES.list
 recursive-include debian *
 include debian/changelog debian/clean debian/compat debian/control
@@ -14,6 +14,6 @@ include MANIFEST.in
 include README
 include NEWS
 include kiwi.spec
-include kiwiwidgets.xml
-include kiwiwidgets.py
+include data/kiwiwidgets/kiwiwidgets.xml
+include data/kiwiwidgets/kiwiwidgets.py
 include requirements.txt

@@ -4,7 +4,7 @@ import gtk
 from kiwi.ui.gadgets import quit_if_last
 from kiwi.ui.views import BaseView
 
-app = BaseView(gladefile="hey",
+app = BaseView(gladefile="hey.ui",
                delete_handler=quit_if_last)
 
 # the_label, a widget defined in glade, is

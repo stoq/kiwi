@@ -7,7 +7,7 @@ from kiwi.ui.delegates import Delegate
 class Farenheit(Delegate):
     widgets = ["quitbutton", "temperature", "celsius", "farenheit",
                "celsius_label", "farenheit_label", "temperature_label"]
-    gladefile = "faren"
+    gladefile = "faren.ui"
 
     def __init__(self):
         Delegate.__init__(self, delete_handler=self.quit_if_last)

@@ -17,7 +17,7 @@ class Form(GladeDelegate):
 
     def __init__(self):
         GladeDelegate.__init__(self,
-                               gladefile="personalinformation",
+                               gladefile="personalinformation.ui",
                                delete_handler=self.quit_if_last)
 
         self.nationality.prefill(['Brazilian',

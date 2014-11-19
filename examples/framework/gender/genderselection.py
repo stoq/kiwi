@@ -8,7 +8,7 @@ class Person:
 
 
 class GenderSelection(BaseView):
-    gladefile = 'gender'
+    gladefile = 'gender.ui'
     widgets = ['male', 'female', 'other']
 
     def __init__(self):

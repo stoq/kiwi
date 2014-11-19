@@ -8,7 +8,7 @@ from kiwi.ui.delegates import GladeDelegate, SlaveDelegate
 
 class Dialog(GladeDelegate):
     def __init__(self):
-        GladeDelegate.__init__(self, gladefile='lang',
+        GladeDelegate.__init__(self, gladefile='lang.ui',
                                delete_handler=self.quit_if_last)
         self.register_validate_function(self.validity)
 

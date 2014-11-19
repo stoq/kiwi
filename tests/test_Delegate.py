@@ -73,7 +73,8 @@ class ClickCounter(Delegate):
 
 class GladeClickCounter(GladeDelegate):
     def __init__(self):
-        GladeDelegate.__init__(self, gladefile="simple_button",
+        GladeDelegate.__init__(self, gladefile="tests/simple_button",
+                               domain='kiwi',
                                delete_handler=self.quit_if_last)
 
         self.clicks = 0

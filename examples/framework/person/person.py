@@ -11,7 +11,7 @@ class Person(PickledModel):
 person = Person.unpickle()
 
 # create and run a proxy interface attached to person
-view = ProxyDelegate(person, gladefile="Person",
+view = ProxyDelegate(person, gladefile="Person.ui",
                      widgets=["address", 'name', 'phone'],
                      delete_handler=gtk.main_quit)
 view.focus_topmost()

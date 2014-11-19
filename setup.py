@@ -25,7 +25,9 @@ from kiwi import kiwi_version
 from kiwi.dist import setup, listfiles, listpackages
 
 
-pixmaps = listfiles('glade-plugin', 'resources', 'kiwiwidgets', '*.png')
+pixmaps = listfiles('data', 'kiwiwidgets',
+                    'glade-plugin', 'resources', 'kiwiwidgets', '*.png')
+
 # When uploading to pypi or building a wheel or an egg
 if 'upload' in sys.argv or 'bdist_wheel' in sys.argv or 'bdist_egg' in sys.argv:
     name = 'kiwi-gtk'
@@ -37,6 +39,7 @@ with open('requirements.txt') as f:
                         l.strip() and not l.startswith('#')]
 
 setup(name=name,
+      packagename='kiwi',
       version=".".join(map(str, kiwi_version)),
       description="A framework and a set of enhanced widgets based on PyGTK",
       long_description=__doc__,
@@ -46,8 +49,8 @@ setup(name=name,
       license="GNU LGPL 2.1 (see COPYING)",
       data_files=[
           # Glade3
-          ('share/glade3/catalogs', ['kiwiwidgets.xml']),
-          ('$libdir/glade3/modules', ['kiwiwidgets.py']),
+          ('share/glade3/catalogs', ['data/kiwiwidgets/kiwiwidgets.xml']),
+          ('$libdir/glade3/modules', ['data/kiwiwidgets/kiwiwidgets.py']),
           ('share/glade3/pixmaps', pixmaps),
           # Documentation
           ('share/doc/kiwi',
@@ -61,6 +64,5 @@ setup(name=name,
                'bin/kiwi-ui-test'],
       packages=listpackages('kiwi'),
       test_requires=['mock'],
-      resources=dict(locale='$prefix/share/locale'),
       install_requires=install_requires,
       )

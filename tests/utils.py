@@ -13,7 +13,6 @@ except:
 from zope.interface import implementedBy, interface
 
 import kiwi
-from kiwi.environ import environ
 from kiwi.python import ClassInittableObject, namedAny
 
 
@@ -25,8 +24,6 @@ def refresh_gui(delay=0):
 dir = os.path.dirname(__file__)
 if not dir in sys.path:
     sys.path.insert(0, os.path.join(dir))
-
-environ.add_resource('glade', dir)
 
 
 def _list_recursively(directory, pattern):

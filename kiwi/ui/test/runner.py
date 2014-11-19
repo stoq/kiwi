@@ -267,5 +267,13 @@ def play_file(script, filename=None, args=None):
         if args is None:
             args = []
 
-    sys.argv = [filename] + args[:]
-    execfile(sys.argv[0], globals(), globals())
+    mod_path = os.path.dirname(filename)
+    mod_name = os.path.basename(filename)[:-3]
+
+    # We are running __import__ instead of execfile so the module will be
+    # the file itself, not this one (kiwi.ui.test.runner).
+    try:
+        sys.path.append(mod_path)
+        __import__(mod_name, locals(), globals())
+    finally:
+        sys.path.remove(mod_path)
