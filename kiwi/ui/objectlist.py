@@ -615,10 +615,12 @@ class Column(gobject.GObject):
         # is to adjust the value to [lower, upper] range.
         upper = self.spin_adjustment.get_upper()
         lower = self.spin_adjustment.get_lower()
+        # If 'upper' is bigger than MAX_INT gtk changes its type to float,
+        # So we need to cast back to its type
         if value_model > upper:
-            value_model = upper
+            value_model = column.data_type(upper)
         if value_model < lower:
-            value_model = lower
+            value_model = column.data_type(lower)
 
         setattr(obj, attr, value_model)
         self._objectlist.emit('cell-edited', obj, attr)
