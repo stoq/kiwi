@@ -2101,18 +2101,23 @@ class ObjectList(gtk.HBox):
                 titles.append(header_widget.get_text())
         return titles
 
-    def get_cell_contents(self):
+    def get_cell_contents(self, data=None):
+        """Returns cell contents from the object list
+
+        :param data: If data is None, we will return the cell contents for
+          the row currently in this object list. When not None, we will use
+          the values of data instead of the object list. This gives the
+          callsite an oportunity to override the values in the object list.
+          """
         attributes = []
         for column in self.get_visible_columns():
             attributes.append(column.attribute)
 
-        lines = []
-        for item in self:
+        for item in (data or self):
             row = []
             for attribute in attributes:
                 row.append(getattr(item, attribute, None))
-            lines.append(row)
-        return lines
+            yield row
 
 type_register(ObjectList)
 
