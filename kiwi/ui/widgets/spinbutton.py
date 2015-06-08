@@ -64,6 +64,7 @@ class ProxySpinButton(gtk.SpinButton, ValidatableProxyWidgetMixin):
         ValidatableProxyWidgetMixin.__init__(self)
         self.props.data_type = data_type
         self.set_property('xalign', 1.0)
+        self.set_property("truncate-multiline", True)
 
         # We need to do this because spinbuttons are supposed to accept only
         # numbers.
