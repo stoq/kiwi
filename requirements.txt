@@ -3,5 +3,4 @@
 # needed to run kiwi, they are processed by pip/easy_install
 #
 
-PyGTK >= 2.24.0
 setuptools >= 0.8
