@@ -167,7 +167,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
 
         if self.get_text() and value is None:
             raise ValidationError(
-                _("'%s' is not a valid object" % (self.get_text(), )))
+                _("'%s' is not a valid object") % self.get_text())
 
     def read(self):
         mode = self._mode
