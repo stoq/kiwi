@@ -112,9 +112,35 @@ class BaseModelTest:
 class ComboModelTest(BaseModelTest, unittest.TestCase):
     type = ProxyComboBox
 
+    def test_prefill_attr_none(self):
+        model = Settable(attr=None)
+        proxy = Proxy(FakeView(), model)
+        combo = ProxyComboBox()
+        combo.data_type = int
+        combo.model_attribute = 'attr'
+        combo.prefill([('foo', 10), ('bar', 20)])
+        proxy.add_widget('attr', combo)
+
+        # Even though attr is None, the combo doesn't allow something
+        # not prefilled in it to be selected. In this case, it will select
+        # the first item (prefill actually does that) instead.
+        self.assertEqual(model.attr, 10)
+
 
 class ComboEntryModelTest(BaseModelTest, unittest.TestCase):
     type = ProxyComboEntry
+
+    def test_prefill_attr_none(self):
+        model = Settable(attr=None)
+        proxy = Proxy(FakeView(), model)
+        combo = ProxyComboEntry()
+        combo.data_type = int
+        combo.model_attribute = 'attr'
+        combo.prefill([('foo', 10), ('bar', 20)])
+        proxy.add_widget('attr', combo)
+
+        self.assertEqual(model.attr, None)
+
 
 if __name__ == '__main__':
     unittest.main()

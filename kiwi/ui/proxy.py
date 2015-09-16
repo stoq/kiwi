@@ -138,6 +138,15 @@ class Proxy:
 
         self.update(attribute, value, block=True)
 
+        from kiwi.ui.widgets.combo import ProxyComboBox
+        # FIXME: If the initial value is None and it is not a valid option,
+        # the ProxyComboBox may ignore it and keep the currently selected
+        # value instead. See ProxyComboBox.update for more information.
+        # Remove this when fixing the callsites or finding a better solution
+        if (isinstance(widget, ProxyComboBox) and
+                self._model is not None and value is None):
+            self._update_attribute(widget, attribute, widget.read())
+
         # The initial value of the model is set, at this point
         # do a read, it'll trigger a validation for widgets who
         # supports it.

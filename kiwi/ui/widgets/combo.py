@@ -347,8 +347,19 @@ class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
         # We dont need validation because the user always
         # choose a valid value
 
+        # FIXME: This used to reject None/ValueUnset even if those values were
+        # valid ones. We are not rejecting them anymore, but if data is not
+        # valid, we will keep the old behavior. The right thing to do here
+        # would be to allow None and let a "item not prefilled" error be raised
+        # instead, but there are too much code depending on it right now.
         if data is None or data is ValueUnset:
-            return
+            model = self.get_model()
+            for row in model:
+                # If data is really a valid value, let it be selected bellow
+                if row[ComboColumn.DATA] is data:
+                    break
+            else:
+                return
 
         if self._helper.get_mode() == ComboMode.STRING:
             data = self._as_string(data)
