@@ -198,7 +198,8 @@ class Library(Environment):
         else:
             self.prefix = module.prefix
             uninstalled = False
-            resource_path = os.path.join(module.prefix, module.datadir)
+            prefix = module.prefix or sys.prefix
+            resource_path = os.path.join(prefix, module.datadir)
 
         self.uninstalled = uninstalled
         self.module = module

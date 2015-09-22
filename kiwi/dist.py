@@ -47,14 +47,14 @@ class _VariableExtender:
     def __init__(self, distribution):
         install = distribution.get_command_obj('install')
         name = distribution.get_name()
-        prefix = install.prefix
-        if not prefix:
-            prefix = sys.prefix
+
+        if 'bdist_wheel' in distribution.commands:
+            self.prefix = ''
+        else:
+            self.prefix = install.prefix or sys.prefix
 
         # Remove trailing /
-        if prefix[-1] == '/':
-            prefix = prefix[:-1]
-        self.prefix = prefix
+        self.prefix = self.prefix.rstrip('/')
 
         is_egg = 'bdist_egg' in distribution.commands
         if is_egg:
