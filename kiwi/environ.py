@@ -195,12 +195,15 @@ class Library(Environment):
             # FIXME: This is to support our development schema where data
             # is on the source's toplevel dir inside 'data'
             resource_path = os.path.join(root, 'data')
+            bdist_type = ''
         else:
             self.prefix = module.prefix
             uninstalled = False
             prefix = module.prefix or sys.prefix
             resource_path = os.path.join(prefix, module.datadir)
+            bdist_type = module.bdist_type
 
+        self.bdist_type = bdist_type
         self.uninstalled = uninstalled
         self.module = module
 
