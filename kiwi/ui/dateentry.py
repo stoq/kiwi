@@ -33,6 +33,7 @@ import gtk
 from gtk import gdk, keysyms
 
 from kiwi.datatypes import converter, ValueUnset, ValidationError
+from kiwi.ui.popup import PopupWindow
 from kiwi.utils import gsignal, type_register
 
 _ = lambda m: gettext.dgettext('kiwi', m)
@@ -40,24 +41,19 @@ _ = lambda m: gettext.dgettext('kiwi', m)
 date_converter = converter.get_converter(datetime.date)
 
 
-class _DateEntryPopup(gtk.Window):
+class _DateEntryPopup(PopupWindow):
+
+    # We will already have 6 at the bottom because of them buttons padding
+    FRAME_PADDING = (6, 0, 6, 6)
+
     gsignal('date-selected', object)
 
     def __init__(self, dateentry):
-        gtk.Window.__init__(self, gtk.WINDOW_POPUP)
-        self.add_events(gdk.BUTTON_PRESS_MASK)
-        self.connect('key-press-event', self._on__key_press_event)
-        self.connect('button-press-event', self._on__button_press_event)
         self._dateentry = dateentry
+        super(_DateEntryPopup, self).__init__(dateentry)
 
-        frame = gtk.Frame()
-        frame.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        self.add(frame)
-        frame.show()
-
+    def get_main_widget(self):
         vbox = gtk.VBox()
-        vbox.set_border_width(6)
-        frame.add(vbox)
         vbox.show()
         self._vbox = vbox
 
@@ -81,85 +77,10 @@ class _DateEntryPopup(gtk.Window):
             buttonbox.pack_start(button)
             button.show()
 
-        self.set_resizable(False)
-        self.set_screen(dateentry.get_screen())
-
-        self.realize()
-        req = self._vbox.size_request()
-        try:
-            height = req[1]
-        except TypeError:
-            height = req.height
-        self.height = height
+        return self._vbox
 
     def _on_calendar__day_selected_double_click(self, calendar):
         self.emit('date-selected', self.get_date())
-
-    def _on__button_press_event(self, window, event):
-        # If we're clicking outside of the window close the popup
-        hide = False
-
-        # Also if the intersection of self and the event is empty, hide
-        # the calendar
-
-        # Gtk 2.x
-        if hasattr(self, 'allocation'):
-            out = self.allocation.intersect(
-                gdk.Rectangle(x=int(event.x), y=int(event.y),
-                              width=1, height=1))
-        # Gtk 3.x
-        else:
-            rect = gdk.Rectangle()
-            rect.x = int(event.x)
-            rect.y = int(event.y)
-            rect.width = 1
-            rect.height = 1
-            out = gdk.Rectangle()
-            self.intersect(rect, out)
-        if (out.x == 0 and out.y == 0 and
-            out.width == 0 and out.height == 0):
-            hide = True
-
-        # Toplevel is the window that received the event, and parent is the
-        # calendar window. If they are not the same, means the popup should
-        # be hidden. This is necessary for when the event happens on another
-        # widget
-        toplevel = event.window.get_toplevel()
-        parent = self.calendar.get_parent_window()
-        if toplevel != parent:
-            hide = True
-
-        if hide:
-            self.popdown()
-
-    def _on__key_press_event(self, window, event):
-        """
-        Mimics Combobox behavior
-
-        Escape or Alt+Up: Close
-        Enter, Return or Space: Select
-        """
-
-        keyval = event.keyval
-        state = event.state & gtk.accelerator_get_default_mod_mask()
-        if (keyval == keysyms.Escape or
-            ((keyval == keysyms.Up or keyval == keysyms.KP_Up) and
-             state == gdk.MOD1_MASK)):
-            self.popdown()
-            return True
-        elif keyval == keysyms.Tab:
-            self.popdown()
-            # XXX: private member of dateentry
-            self._dateentry._button.grab_focus()
-            return True
-        elif (keyval == keysyms.Return or
-              keyval == keysyms.space or
-              keyval == keysyms.KP_Enter or
-              keyval == keysyms.KP_Space):
-            self.emit('date-selected', self.get_date())
-            return True
-
-        return False
 
     def _on_select__clicked(self, button):
         self.emit('date-selected', self.get_date())
@@ -170,95 +91,17 @@ class _DateEntryPopup(gtk.Window):
     def _on_today__clicked(self, button):
         self.set_date(datetime.date.today())
 
-    def _popup_grab_window(self):
-        activate_time = 0L
-        window = self.get_window()
-        if gdk.pointer_grab(window, True,
-                            (gdk.BUTTON_PRESS_MASK |
-                             gdk.BUTTON_RELEASE_MASK |
-                             gdk.POINTER_MOTION_MASK),
-                            None, None, activate_time) == 0:
-            if gdk.keyboard_grab(window, True, activate_time) == 0:
-                return True
-            else:
-                window.get_display().pointer_ungrab(activate_time)
-                return False
-        return False
-
-    def _get_position(self):
-        self.realize()
-        calendar = self
-
-        widget = self._dateentry
-
-        # We need to fetch the coordinates of the entry window
-        # since comboentry itself does not have a window
-        allocation = widget.get_allocation()
-        window = widget.get_window()
-        # Gtk+ 3.x
-        if hasattr(window, 'get_root_coords'):
-            x = 0
-            y = 0
-            if not widget.get_has_window():
-                x += allocation.x
-                y += allocation.y
-            x, y = window.get_root_coords(x, y)
-        # Gtk+ 2.x
-        else:
-            x, y = widget.entry.window.get_origin()
-
-        req = calendar.size_request()
-        try:
-            width, height = req
-        except:
-            width = req.width
-            height = req.height
-
-        height = self.height
-
-        screen = widget.get_screen()
-        monitor_num = screen.get_monitor_at_window(window)
-        monitor = screen.get_monitor_geometry(monitor_num)
-
-        if x < monitor.x:
-            x = monitor.x
-        elif x + width > monitor.x + monitor.width:
-            x = monitor.x + monitor.width - width
-
-        if y + allocation.height + height <= monitor.y + monitor.height:
-            y += allocation.height
-        elif y - height >= monitor.y:
-            y -= height
-        elif (monitor.y + monitor.height - (y + allocation.height) >
-              y - monitor.y):
-            y += allocation.height
-            height = monitor.y + monitor.height - y
-        else:
-            height = y - monitor.y
-            y = monitor.y
-
-        return x, y, width, height
+    def get_size(self, allocation, monitor):
+        return -1, -1
 
     def popup(self, date):
         """
         Shows the list of options. And optionally selects an item
         :param date: date to select
         """
-        combo = self._dateentry
-        if not combo.get_realized():
-            return
-
-        treeview = self.calendar
-        if treeview.get_mapped():
-            return
-        toplevel = combo.get_toplevel()
-        if isinstance(toplevel, (gtk.Window, gtk.Dialog)) and toplevel.get_group():
-            toplevel.get_group().add_window(self)
-
-        x, y, width, height = self._get_position()
-        self.set_size_request(width, height)
-        self.move(x, y)
-        self.show_all()
+        popped = super(_DateEntryPopup, self).popup()
+        if not popped:
+            return False
 
         if (date is not None and
             date is not ValueUnset):
@@ -268,22 +111,19 @@ class _DateEntryPopup(gtk.Window):
         if not self.calendar.has_focus():
             self.calendar.grab_focus()
 
-        if not self._popup_grab_window():
-            self.hide()
-            return
+    def handle_key_press_event(self, event):
+        if event.keyval == keysyms.Tab:
+            self.popdown()
+            # XXX: private member of dateentry
+            self._dateentry._button.grab_focus()
+            return True
+        return False
 
-        self.grab_add()
+    def get_widget_for_popup(self):
+        return self._dateentry.entry
 
-    def popdown(self):
-        """Hides the list of options"""
-        combo = self._dateentry
-        if not combo.get_realized():
-            return
-
-        self.grab_remove()
-        for child in self.get_children():
-            child.hide()
-        self.hide()
+    def confirm(self):
+        self.emit('date-selected', self.get_date())
 
     # month in gtk.Calendar is zero-based (i.e the allowed values are 0-11)
     # datetime one-based (i.e. the allowed values are 1-12)

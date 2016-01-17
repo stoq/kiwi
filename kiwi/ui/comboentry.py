@@ -29,41 +29,36 @@ import gtk
 from gtk import gdk, keysyms
 
 from kiwi.component import implements
-from kiwi.interfaces import IEasyCombo
 from kiwi.enums import ComboColumn, ComboMode
+from kiwi.interfaces import IEasyCombo
+from kiwi.ui.popup import PopupWindow
+from kiwi.ui.cellrenderer import ComboDetailsCellRenderer
 from kiwi.ui.entry import KiwiEntry, ENTRY_MODE_DATA
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import gsignal, type_register
 
-from kiwi.ui.cellrenderer import ComboDetailsCellRenderer
-
 log = logging.getLogger('kiwi.ui.combo')
 
 
-class _ComboEntryPopup(gtk.Window):
+class _ComboEntryPopup(PopupWindow):
+
+    FRAME_PADDING = (0, 0, 0, 0)
+
     gsignal('text-selected', str)
 
     def __init__(self, comboentry):
-        gtk.Window.__init__(self, gtk.WINDOW_POPUP)
-        self.add_events(gdk.BUTTON_PRESS_MASK)
-        self.connect('key-press-event', self._on__key_press_event)
-        self.connect('button-press-event', self._on__button_press_event)
         self._comboentry = comboentry
+
+        super(_ComboEntryPopup, self).__init__(comboentry)
 
         # Number of visible rows in the popup window, sensible
         # default value from other toolkits
         self._visible_rows = 10
         self._initial_text = None
-        self._popping_up = False
         self._filter_model = None
 
-        frame = gtk.Frame()
-        frame.set_shadow_type(gtk.SHADOW_ETCHED_OUT)
-        self.add(frame)
-        frame.show()
-
+    def get_main_widget(self):
         vbox = gtk.VBox()
-        frame.add(vbox)
         vbox.show()
 
         self._sw = gtk.ScrolledWindow()
@@ -90,10 +85,11 @@ class _ComboEntryPopup(gtk.Window):
         self._treeview.show()
 
         self._label = gtk.Label()
-        vbox.pack_start(self._label, False, False)
 
-        self.set_resizable(False)
-        self.set_screen(comboentry.get_screen())
+        return vbox
+
+    def get_widget_for_popup(self):
+        return self._comboentry.entry
 
     def popup(self, text=None, filter=False):
         """
@@ -102,10 +98,8 @@ class _ComboEntryPopup(gtk.Window):
         :param filter: filter the list of options. A filter_model must be
         set using :class:`set_model`()
         """
-        combo = self._comboentry
-        if not combo.get_realized():
-            return
-
+        self.GRAB_WINDOW = not filter
+        self.GRAB_ADD = not filter
         treeview = self._treeview
 
         if filter and self._filter_model:
@@ -117,21 +111,6 @@ class _ComboEntryPopup(gtk.Window):
             return
 
         treeview.set_model(model)
-
-        toplevel = combo.get_toplevel()
-        if (isinstance(toplevel, (gtk.Window, gtk.Dialog)) and
-            toplevel.get_group()):
-            toplevel.get_group().add_window(self)
-
-        # width is meant for the popup window
-        # height is meant for the treeview, since it calculates using
-        # the height of the cells on the rows
-        x, y, width, height = self._get_position()
-        self.set_size_request(width, -1)
-        treeview.set_size_request(-1, height)
-        self.move(x, y)
-        self.show()
-
         treeview.set_hover_expand(True)
         selection = treeview.get_selection()
         selection.unselect_all()
@@ -144,31 +123,18 @@ class _ComboEntryPopup(gtk.Window):
                     treeview.set_cursor(row.path)
                     break
 
-        self._popping_up = True
+        popped = super(_ComboEntryPopup, self).popup()
+        if not popped:
+            return False
 
-        if filter:
-            # do not grab if its a completion
-            return
+        treeview.set_size_request(-1, -1)
+        if not filter:
+            # Grab window
+            self.grab_focus()
+            if not self._treeview.has_focus():
+                self._treeview.grab_focus()
 
-        # Grab window
-        self.grab_focus()
-
-        if not self._treeview.has_focus():
-            self._treeview.grab_focus()
-
-        if not self._popup_grab_window():
-            self.hide()
-            return
-
-        self.grab_add()
-
-    def popdown(self):
-        combo = self._comboentry
-        if not combo.get_realized():
-            return
-
-        self.grab_remove()
-        self.hide()
+        return True
 
     def set_label_text(self, text):
         if text is None:
@@ -186,47 +152,20 @@ class _ComboEntryPopup(gtk.Window):
         self._treeview.set_model(model)
         self._model = model
 
-    # Callbacks
+    def confirm(self):
+        model, treeiter = self._selection.get_selected()
+        if treeiter:
+            self.emit('text-selected', model[treeiter][0])
 
-    def _on__key_press_event(self, window, event):
-        """
-        Mimics Combobox behavior
-
-        Escape or Alt+Up: Close
-        Enter, Return or Space: Select
-        """
-
-        keyval = event.keyval
-        state = event.state & gtk.accelerator_get_default_mod_mask()
-        if (keyval == keysyms.Escape or
-            ((keyval == keysyms.Up or keyval == keysyms.KP_Up) and
-             state == gdk.MOD1_MASK)):
-            self.popdown()
-            return True
-        elif keyval == keysyms.Tab:
+    def handle_key_press_event(self, event):
+        if event.keyval == keysyms.Tab:
             self.popdown()
             # XXX: private member of comboentry
             self._comboentry._button.grab_focus()
             return True
-        elif (keyval == keysyms.Return or
-              keyval == keysyms.space or
-              keyval == keysyms.KP_Enter or
-              keyval == keysyms.KP_Space):
-            model, treeiter = self._selection.get_selected()
-            if treeiter:
-                self.emit('text-selected', model[treeiter][0])
-            return True
-
         return False
 
-    def _on__button_press_event(self, window, event):
-        # If we're clicking outside of the window
-        # close the popup
-        if (event.window != self.get_window() or
-            (tuple(self.allocation.intersect(
-                   gdk.Rectangle(x=int(event.x), y=int(event.y),
-                                 width=1, height=1)))) == (0, 0, 0, 0)):
-            self.popdown()
+    # Callbacks
 
     def _on_treeview__motion_notify_event(self, treeview, event):
         retval = treeview.get_path_at_pos(int(event.x),
@@ -247,87 +186,19 @@ class _ComboEntryPopup(gtk.Window):
         model = treeview.get_model()
         self.emit('text-selected', model[path][0])
 
-    def _popup_grab_window(self):
-        activate_time = 0L
-        window = self.get_window()
-        if gdk.pointer_grab(window, True,
-                            (gdk.BUTTON_PRESS_MASK |
-                             gdk.BUTTON_RELEASE_MASK |
-                             gdk.POINTER_MOTION_MASK),
-                            None, None, activate_time) == 0:
-            if gdk.keyboard_grab(window, True, activate_time) == 0:
-                return True
-            else:
-                window.pointer_ungrab(activate_time)
-                return False
-        return False
-
-    def _get_position(self):
+    def get_size(self, allocation, monitor):
         treeview = self._treeview
         treeview.realize()
 
-        sample = self._comboentry
-        widget = sample.entry
-
-        allocation = widget.get_allocation()
-
-        window = widget.get_window()
-        # Gtk+ 3.x
-        if hasattr(window, 'get_root_coords'):
-            x = 0
-            y = 0
-            if not widget.get_has_window():
-                x += allocation.x
-                y += allocation.y
-            x, y = window.get_root_coords(x, y)
-        # Gtk+ 2.x
-        else:
-            x, y = widget.window.get_origin()
-
-        width = allocation.width
-
-        hpolicy = vpolicy = gtk.POLICY_NEVER
-        self._sw.set_policy(hpolicy, vpolicy)
-
-        req = self.size_request()
-        try:
-            pwidth = req[0]
-        except:
-            pwidth = req.width
-        if pwidth > width:
-            self._sw.set_policy(gtk.POLICY_ALWAYS, vpolicy)
-            pwidth, pheight = self.size_request()
-
         rows = len(self._treeview.get_model())
-
         if rows > self._visible_rows:
             rows = self._visible_rows
-            self._sw.set_policy(hpolicy, gtk.POLICY_ALWAYS)
+            self._sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
+        else:
+            self._sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_NEVER)
 
         cell_height = treeview.get_cell_area(0, treeview.get_column(0)).height
         height = cell_height * rows
-
-        screen = self._comboentry.get_screen()
-        monitor_num = screen.get_monitor_at_window(widget.get_window())
-        monitor = screen.get_monitor_geometry(monitor_num)
-
-        if x < monitor.x:
-            x = monitor.x
-        elif x + width > monitor.x + monitor.width:
-            x = monitor.x + monitor.width - width
-
-        if y + allocation.height + height <= monitor.y + monitor.height:
-            y += allocation.height
-        elif y - height >= monitor.y:
-            y -= height
-        elif (monitor.y + monitor.height - (y + allocation.height) >
-              y - monitor.y):
-            y += allocation.height
-            height = monitor.y + monitor.height - y
-        else:
-            height = y - monitor.y
-            y = monitor.y
-
         # Use half of the available screen space
         max_height = monitor.height / 2
         if height > max_height:
@@ -335,7 +206,7 @@ class _ComboEntryPopup(gtk.Window):
         elif height < 0:
             height = 0
 
-        return x, y, width, height
+        return allocation.width, height
 
     def get_selected_iter(self):
         model, treeiter = self._selection.get_selected()
