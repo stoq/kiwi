@@ -39,3 +39,16 @@ except ImportError, e:
         raise SystemExit(
             "PyGTK 2.6.0 or higher is required by kiwi.ui\n"
             "Error was: %s" % e)
+
+
+gtk.rc_parse_string("""
+# Make multicombo buttons have less padding then a normal button
+style "multicombo-close-button-style"
+{
+    GtkButton::focus-padding = 0
+    GtkButton::focus-line-width = 0
+    xthickness = 0
+    ythickness = 0
+}
+widget_class "*MultiComboCloseButton*" style "multicombo-close-button-style"
+""")

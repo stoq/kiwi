@@ -137,3 +137,12 @@ def gsignal(name, *args, **kwargs):
                 "gobject.SIGNAL_RUN_LAST")
 
         dict[name] = (flags, retval, args)
+
+
+def pango_pixels(value):
+    """Convert pango units to pixels.
+
+    Based on the *PANGO_PIXELS* macro:
+    http://developer.gnome.org/pango/stable/pango-Glyph-Storage.html#PANGO-PIXELS:CAPS
+    """
+    return (value + 512) >> 10

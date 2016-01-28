@@ -30,7 +30,7 @@ class PopupWindow(gtk.Window):
     PROPAGATE_KEY_PRESS = False
     GRAB_WINDOW = True
     GRAB_ADD = True
-    FRAME_PADDING = (6, 6, 2, 2)
+    FRAME_PADDING = (2, 2, 2, 2)
 
     def __init__(self, widget):
         self.visible = False
@@ -84,6 +84,19 @@ class PopupWindow(gtk.Window):
         """Check if we can popup or not."""
         return True
 
+    def adjust_position(self):
+        """Adjust the size and position of the popup.
+
+        This is automatically called by :meth:`.popup`, but one
+        can call it manually in case the widget which we are
+        popping from changed size.
+        """
+        # width is meant for the popup window
+        x, y, width, height = self._get_position()
+        self.set_size_request(width, height)
+        self.move(x, y)
+        self.show_all()
+
     def popup(self):
         """Display the popup."""
         if self.visible:
@@ -98,11 +111,7 @@ class PopupWindow(gtk.Window):
                 toplevel.get_group()):
             toplevel.get_group().add_window(self)
 
-        # width is meant for the popup window
-        x, y, width, height = self._get_position()
-        self.set_size_request(width, height)
-        self.move(x, y)
-        self.show_all()
+        self.adjust_position()
 
         if self.GRAB_WINDOW and not self._popup_grab_window():
             self.hide()
@@ -176,7 +185,9 @@ class PopupWindow(gtk.Window):
         alignment.show()
 
         self.main_widget = self.get_main_widget()
-        alignment.add(self.main_widget)
+        self.main_box = gtk.VBox()
+        self.main_box.add(self.main_widget)
+        alignment.add(self.main_box)
 
         self.set_resizable(False)
         self.set_screen(self.widget.get_screen())
@@ -201,7 +212,10 @@ class PopupWindow(gtk.Window):
     def _get_position(self):
         widget = self.get_widget_for_popup()
         allocation = widget.get_allocation()
-        window = widget.get_window()
+        if isinstance(widget, gtk.TextView):
+            window = widget.get_window(gtk.TEXT_WINDOW_WIDGET)
+        else:
+            window = widget.get_window()
         screen = widget.get_screen()
         monitor_num = screen.get_monitor_at_window(window)
         m = screen.get_monitor_geometry(monitor_num)
