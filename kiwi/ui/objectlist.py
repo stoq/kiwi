@@ -718,6 +718,7 @@ class SequentialColumn(Column):
 
     If you don't give me any argument I'll have the title of a hash (#) and
     right justify the sequences."""
+
     def __init__(self, title='#', justify=gtk.JUSTIFY_RIGHT, **kwargs):
         Column.__init__(self, '_kiwi_sequence_id',
                         title=title, justify=justify, data_type=int, **kwargs)
@@ -1823,7 +1824,7 @@ class ObjectList(gtk.HBox):
             raise TypeError("Selection not allowed")
 
         if (selection.get_mode() != gtk.SELECTION_MULTIPLE and
-            len(instances) > 1):
+                len(instances) > 1):
             raise TypeError("You can only select multiple items with"
                             "selection mode set to gtk.SELECTION_MULTIPLE")
 
@@ -1881,7 +1882,7 @@ class ObjectList(gtk.HBox):
 
         model, paths = selection.get_selected_rows()
         if paths:
-            return [model[path][COL_MODEL] for (path,) in paths]
+            return [model[path][COL_MODEL] for path in paths]
         return []
 
     def update_selection(self):
@@ -1895,7 +1896,7 @@ class ObjectList(gtk.HBox):
 
         # Skip emitting this
         if (item is empty_marker or
-            type(item) == list and empty_marker in item):
+                type(item) == list and empty_marker in item):
             return
         self.emit('selection-changed', item)
 
