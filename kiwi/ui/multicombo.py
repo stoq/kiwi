@@ -400,7 +400,12 @@ class MultiCombo(gtk.HBox):
         self.emit('item-added', row[COL_DATA])
 
         self._update_no_items_marker()
-        glib.idle_add(self.textview.scroll_to_iter, itr, 0.0)
+        # Acording to the documentation, PRIORITY_HIGH_IDLE + 20 is
+        # used by redrawing operations so PRIORITY_HIGH_IDLE + 25
+        # should be enought to make sure we call callback just after
+        # the widget finishes redrawing itself.
+        glib.timeout_add(100, self._scroll_to_item, row,
+                         priority=glib.PRIORITY_HIGH_IDLE + 25)
 
     def _remove_selection(self, row):
         assert row[COL_ATTACHED] is not None
@@ -480,6 +485,11 @@ class MultiCombo(gtk.HBox):
     def _update_no_items_marker(self):
         itr = self.get_iter_by_data(_NO_ITEMS_MARKER)
         self.model[itr][COL_ATTACHED] = self.has_items_to_select()
+
+    def _scroll_to_item(self, item):
+        itr = self.textbuffer.get_iter_at_child_anchor(item[COL_ATTACHED])
+        itr.forward_char()
+        self.textview.scroll_to_iter(itr, 0.0)
 
     #
     #  Callbacks
