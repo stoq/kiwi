@@ -95,7 +95,6 @@ class PopupWindow(gtk.Window):
         x, y, width, height = self._get_position()
         self.set_size_request(width, height)
         self.move(x, y)
-        self.show_all()
 
     def popup(self):
         """Display the popup."""
@@ -111,6 +110,7 @@ class PopupWindow(gtk.Window):
                 toplevel.get_group()):
             toplevel.get_group().add_window(self)
 
+        self.show_all()
         self.adjust_position()
 
         if self.GRAB_WINDOW and not self._popup_grab_window():
