@@ -201,7 +201,7 @@ class Library(Environment):
             uninstalled = False
             prefix = module.prefix or sys.prefix
             resource_path = os.path.join(prefix, module.datadir)
-            bdist_type = module.bdist_type
+            bdist_type = getattr(module, 'bdist_type', '')
 
         self.bdist_type = bdist_type
         self.uninstalled = uninstalled
