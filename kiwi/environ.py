@@ -268,10 +268,6 @@ class Library(Environment):
         if hasattr(gettext, 'bind_textdomain_codeset'):
             gettext.bind_textdomain_codeset(domain, 'utf-8')
 
-        # FIXME: There's a bug on gtkbuilder where it needs to have the
-        # textdomain set for translations to work, no matter what translation
-        # domain we set on it. We should try to find a way around this or else
-        # we won't be able to translate glades from a domain other than this one
         if enable_global:
             gettext.textdomain(domain)
             # For libglade, but only on non-win32 systems

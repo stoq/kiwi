@@ -62,15 +62,16 @@ class BuilderWidgetTree:
         self._view = view
         self._gladefile = gladefile
         self._builder = gtk.Builder()
+
+        if domain is not None:
+            self._builder.set_translation_domain(domain)
+
         if gladefile is not None:
             self._builder.add_from_file(gladefile)
         elif data is not None:
             self._builder.add_from_string(data)
         else:
             raise ValueError("need a gladefile or data")
-
-        if domain is not None:
-            self._builder.set_translation_domain(domain)
 
         self._attach_widgets()
 
