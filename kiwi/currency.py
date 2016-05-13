@@ -75,9 +75,14 @@ class currency(decimal.Decimal):
         return decimal.Decimal.__new__(cls, value)
 
     def format(self, symbol=True, precision=None):
-        value = decimal.Decimal(self)
-
         conv = get_localeconv()
+
+        frac_digits = precision or conv.get('frac_digits', 2)
+        # Decimal.quantize can't handle a precision of 127, which is
+        # the default value for glibc/python. Fallback to 2
+        if frac_digits == 127:
+            frac_digits = 2
+        value = self.quantize(decimal.Decimal('10') ** -frac_digits)
 
         # Grouping (eg thousand separator) of integer part
         groups = conv.get('mon_grouping', [])[:]
@@ -120,17 +125,11 @@ class currency(decimal.Decimal):
 
         # Only add decimal part if it has one, is this correct?
         if precision is not None or value % 1 != 0:
-            # Pythons string formatting can't handle %.127f
-            # 127 is the default value from glibc/python
-            if precision:
-                frac_digits = precision
-            else:
-                frac_digits = conv.get('frac_digits', 2)
-                if frac_digits == 127:
-                    frac_digits = 2
-
-            format = '%%.%sf' % (frac_digits + 1)
-            dec_part = (format % value)[-(frac_digits + 1):-1]
+            sign_, digits, exponent = value.as_tuple()
+            frac = digits[exponent:] if exponent != 0 else (0, )
+            dec_part = ''.join(str(i) for i in frac)
+            # Add 0s to complete the required precision
+            dec_part = dec_part.ljust(frac_digits, '0')
 
             mon_decimal_point = conv.get('mon_decimal_point', '.')
             currency += mon_decimal_point + dec_part
