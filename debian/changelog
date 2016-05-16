@@ -1,3 +1,9 @@
+kiwi (1.10.2) trusty; urgency=low
+
+  * Bugfix release
+
+ -- Thiago Bellini Ribeiro <hackedbellini@async.com.br>  Mon, 16 May 2016 14:09:26 -0300
+
 kiwi (1.10.1) trusty; urgency=low
 
   * Bugfix release
