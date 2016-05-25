@@ -129,7 +129,7 @@ class currency(decimal.Decimal):
             frac = digits[exponent:] if exponent != 0 else (0, )
             dec_part = ''.join(str(i) for i in frac)
             # Add 0s to complete the required precision
-            dec_part = dec_part.ljust(frac_digits, '0')
+            dec_part = dec_part.rjust(frac_digits, '0')
 
             mon_decimal_point = conv.get('mon_decimal_point', '.')
             currency += mon_decimal_point + dec_part

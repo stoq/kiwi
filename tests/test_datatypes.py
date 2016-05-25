@@ -276,6 +276,9 @@ class CurrencyTest(unittest.TestCase):
         self.assertEqual(currency('100').format(), '$100')
         self.assertEqual(currency('199').format(), '$199')
 
+        self.assertEqual(currency('0.05').format(), '$0.05')
+        self.assertEqual(currency('0.10').format(), '$0.10')
+        self.assertEqual(currency('1.05').format(), '$1.05')
         self.assertEqual(currency('1.99').format(), '$1.99')
         self.assertEqual(currency('1.994').format(), '$1.99')
         self.assertEqual(currency('1.995').format(), '$2')
@@ -286,6 +289,9 @@ class CurrencyTest(unittest.TestCase):
         if not set_locale(locale.LC_ALL, 'pt_BR'):
             return
 
+        self.assertEqual(currency('0.05').format(), 'R$ 0,05')
+        self.assertEqual(currency('0.10').format(), 'R$ 0,10')
+        self.assertEqual(currency('1.05').format(), 'R$ 1,05')
         self.assertEqual(currency(100).format(), 'R$ 100')
         self.assertEqual(currency('123,45').format(), 'R$ 123,45')
         self.assertEqual(currency(12345).format(), 'R$ 12.345')
@@ -306,6 +312,9 @@ class CurrencyTest(unittest.TestCase):
         if not set_locale(locale.LC_MONETARY, 'en_US'):
             return
 
+        self.assertEqual(currency('0.05').format(), '$0.05')
+        self.assertEqual(currency('0.10').format(), '$0.10')
+        self.assertEqual(currency('1.05').format(), '$1.05')
         self.assertEqual(currency(100).format(), '$100')
         self.assertEqual(currency('123.45').format(), '$123.45')
         self.assertEqual(currency(12345).format(), '$12,345')
