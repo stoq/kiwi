@@ -2143,10 +2143,16 @@ class ObjectTree(ObjectList):
         self.get_treeview().connect('row-expanded', self._on_treeview__row_expanded)
 
     def __iter__(self):
-        for obj in self._model:
-            yield obj[COL_MODEL]
+        def _iter_children(obj):
             for child in obj.iterchildren():
                 yield child[COL_MODEL]
+                for inner_child in _iter_children(child):
+                    yield inner_child
+
+        for obj in self._model:
+            yield obj[COL_MODEL]
+            for child in _iter_children(obj):
+                yield child
 
     def _append_internal(self, parent, instance, select, prepend):
         iters = self._iters
