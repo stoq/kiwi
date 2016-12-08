@@ -421,7 +421,7 @@ class Column(gobject.GObject):
                     cb = self._on_renderer_toggle_radio__toggled
                 else:
                     cb = self._on_renderer_toggle_check__toggled
-                renderer.connect('toggled', cb, model, self.attribute)
+                renderer.connect('toggled', cb, model, self)
             prop = 'active'
         elif self.use_stock or data_type == gdk.Pixbuf:
             renderer = gtk.CellRendererPixbuf()
@@ -445,7 +445,7 @@ class Column(gobject.GObject):
             if self.editable:
                 renderer.set_property('editable', True)
                 renderer.connect('edited', self._on_renderer_combo__edited,
-                                 model, self.attribute, self)
+                                 model, self)
             prop = 'model'
         elif issubclass(data_type, number) and self.spin_adjustment:
             renderer = EditableSpinRenderer()
@@ -455,7 +455,7 @@ class Column(gobject.GObject):
             renderer.set_property('editable', True)
             renderer.set_property('adjustment', self.spin_adjustment)
             renderer.connect('edited', self._on_renderer_spin__edited,
-                             model, self.attribute, self, self.from_string)
+                             model, self, self.from_string)
             prop = 'text'
         elif issubclass(data_type, (datetime.date, datetime.time,
                                     basestring, number,
@@ -468,7 +468,7 @@ class Column(gobject.GObject):
                 renderer = EditableTextRenderer()
                 renderer.set_property('editable', True)
                 renderer.connect('edited', self._on_renderer_text__edited,
-                                 model, self.attribute, self,
+                                 model, self,
                                  self.from_string)
             else:
                 renderer = gtk.CellRendererText()
@@ -556,13 +556,13 @@ class Column(gobject.GObject):
         setattr(self._model[path][COL_MODEL], column.attribute,
                 not renderer.get_active())
 
-    def _on_renderer_toggle_check__toggled(self, renderer, path, model, attr):
+    def _on_renderer_toggle_check__toggled(self, renderer, path, model, column):
         obj = model[path][COL_MODEL]
-        value = not getattr(obj, attr, None)
-        setattr(obj, attr, value)
-        self._objectlist.emit('cell-edited', obj, attr)
+        value = not getattr(obj, column.attribute, None)
+        setattr(obj, column.attribute, value)
+        self._objectlist.emit('cell-edited', obj, column)
 
-    def _on_renderer_toggle_radio__toggled(self, renderer, path, model, attr):
+    def _on_renderer_toggle_radio__toggled(self, renderer, path, model, column):
         # Deactive old one
         old = renderer.get_data('kiwilist::radio-active')
 
@@ -574,19 +574,19 @@ class Column(gobject.GObject):
             #      algorithm just takes the first one it finds
             for row in model:
                 obj = row[COL_MODEL]
-                value = getattr(obj, attr)
+                value = getattr(obj, column.attribute)
                 if value:
                     old = obj
                     break
         if old:
-            setattr(old, attr, False)
+            setattr(old, column.attribute, False)
 
         # Active new and save a reference to the object of the
         # previously selected row
         new = model[path][COL_MODEL]
-        setattr(new, attr, True)
+        setattr(new, column.attribute, True)
         renderer.set_data('kiwilist::radio-active', new)
-        self._objectlist.emit('cell-edited', new, attr)
+        self._objectlist.emit('cell-edited', new, column)
 
     def _on_renderer__editing_started(self, renderer, editable, path,
                                       model, attr):
@@ -595,14 +595,17 @@ class Column(gobject.GObject):
                               renderer, editable)
 
     def _on_renderer_text__edited(self, renderer, path, text,
-                                  model, attr, column, from_string):
+                                  model, column, from_string):
         obj = model[path][COL_MODEL]
-        value = from_string(text)
-        setattr(obj, attr, value)
-        self._objectlist.emit('cell-edited', obj, attr)
+        try:
+            value = from_string(text)
+        except ValidationError:
+            return
+        setattr(obj, column.attribute, value)
+        self._objectlist.emit('cell-edited', obj, column)
 
     def _on_renderer_spin__edited(self, renderer, path, value,
-                                  model, attr, column, from_string):
+                                  model, column, from_string):
         obj = model[path][COL_MODEL]
         try:
             value_model = from_string(value)
@@ -622,11 +625,11 @@ class Column(gobject.GObject):
         if value_model < lower:
             value_model = column.data_type(lower)
 
-        setattr(obj, attr, value_model)
-        self._objectlist.emit('cell-edited', obj, attr)
+        setattr(obj, column.attribute, value_model)
+        self._objectlist.emit('cell-edited', obj, column)
 
     def _on_renderer_combo__edited(self, renderer, path, text,
-                                   model, attr, column):
+                                   model, column):
         obj = model[path][COL_MODEL]
         if not text:
             return
@@ -638,16 +641,8 @@ class Column(gobject.GObject):
                 break
         else:
             raise AssertionError
-        setattr(obj, attr, value)
-        self._objectlist.emit('cell-edited', obj, attr)
-
-    def _on_renderer__edited(self, renderer, path, value, column):
-        data_type = column.data_type
-        if data_type in number:
-            value = data_type(value)
-
-        # XXX convert new_text to the proper data type
-        setattr(self._model[path][COL_MODEL], column.attribute, value)
+        setattr(obj, column.attribute, value)
+        self._objectlist.emit('cell-edited', obj, column)
 
     # Public API
 
@@ -928,7 +923,7 @@ class ObjectList(gtk.HBox):
           the row-activated signal instead to be able catch keyboard events.
       - B{right-click} (list, object):
         - Emitted when a row is clicked with the right mouse button.
-      - B{cell-edited} (list, object, attribute):
+      - B{cell-edited} (list, object, column):
         - Emitted when a cell is edited.
       - B{cell-editing-started} (list, object, attribute, renderer, editable):
         - Emitted when the user starts to edit a cell
@@ -961,8 +956,8 @@ class ObjectList(gtk.HBox):
     # row middle-clicked
     gsignal('middle-click', object, gtk.gdk.Event)
 
-    # edited object, attribute name
-    gsignal('cell-edited', object, str)
+    # edited object, column
+    gsignal('cell-edited', object, object)
 
     # object to edit, attribute name, renderer, renderers' editable
     gsignal('cell-editing-started', object, str, object, object)
@@ -2471,5 +2466,5 @@ class SummaryLabel(ListLabel):
 
     # Callbacks
 
-    def _on_klist__cell_edited(self, klist, object, attribute):
+    def _on_klist__cell_edited(self, klist, obj, column):
         self.update_total()
