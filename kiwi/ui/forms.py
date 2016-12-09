@@ -103,6 +103,12 @@ class Field(gobject.GObject):
         self.edit_button = None
         self.delete_button = None
 
+        # FIXME: widget_data_type should be a gobject.property, but it's not
+        # accepting some data types.
+        data_type = kwargs.pop('widget_data_type', None)
+        if data_type is not None:
+            self.widget_data_type = data_type
+
         # Label is a positional argument for convienience, convert it to
         # a keyword argument so it can be set via GObject.__init__
         kwargs['label'] = label
