@@ -25,8 +25,7 @@
 
 import datetime
 
-from gi.repository import Gtk, GObject
-from gi.repository import Gdk
+from gi.repository import GObject, Gtk, GdkPixbuf
 
 from kiwi import ValueUnset
 from kiwi.datatypes import number
@@ -45,7 +44,7 @@ class ProxyButton(Gtk.Button, ProxyWidgetMixin):
     """
 
     allowed_data_types = (basestring, datetime.date, datetime.datetime,
-                          datetime.time, Gdk.Pixbuf) + number
+                          datetime.time, GdkPixbuf.Pixbuf) + number
     __gtype_name__ = 'ProxyButton'
 
     data_type = GObject.Property(

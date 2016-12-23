@@ -77,7 +77,7 @@ class ListContainer(Gtk.HBox):
         """
         self._list_type = None
 
-        Gtk.HBox.__init__(self)
+        super(ListContainer, self).__init__()
 
         self._orientation = orientation
 
@@ -116,7 +116,7 @@ class ListContainer(Gtk.HBox):
             self.list.show()
             hbox = Gtk.HBox(spacing=6)
             self._add_buttons_to_box(hbox)
-            self._vbox.pack_start(hbox, False, False, 0)
+            self._vbox.pack_start(hbox, False, True, 0)
             hbox.show()
             self._pack_vbox()
         else:
@@ -125,19 +125,19 @@ class ListContainer(Gtk.HBox):
                 " or Gtk.Orientation.HORIZONTAL")
 
     def _add_buttons_to_box(self, box):
-        box.pack_start(self.add_button, False, False, 0)
-        box.pack_start(self.remove_button, False, False, 0)
-        box.pack_start(self.edit_button, False, False, 0)
+        box.pack_start(self.add_button, False, True, 0)
+        box.pack_start(self.remove_button, False, True, 0)
+        box.pack_start(self.edit_button, False, True, 0)
 
     def _pack_vbox(self):
-        self.pack_start(self._vbox, False, False, 6)
+        self.pack_start(self._vbox, False, True, 6)
         self._vbox.show()
 
     def _set_child_packing(self, padding):
         expand = self._orientation == Gtk.Orientation.HORIZONTAL
 
         self.set_child_packing(self._vbox, expand, True, padding,
-                               Gtk.PACK_START)
+                               Gtk.PackType.START)
 
     def _add_item(self):
         retval = self.emit('add-item')

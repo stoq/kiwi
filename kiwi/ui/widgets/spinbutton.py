@@ -69,16 +69,20 @@ class ProxySpinButton(Gtk.SpinButton, ValidatableProxyWidgetMixin):
         # numbers.
         self.set_numeric(True)
 
-    gsignal('changed', 'override')
+        # This used to be an override, but after the gtk3 migration if we
+        # use the override or create a do_changed method GObject will break
+        # the object in a way that it will be considered a Gtk.SpinButton
+        # directly instead of a ProxySpinButton. The side effect of that
+        # would be that out custom events (e.g. validate) would not exist.
+        self.connect('changed', self._on_changed)
 
-    def do_changed(self):
+    def _on_changed(self, widget):
         """Called when the content of the spinbutton changes.
         """
         # This is a work around, because GtkEditable.changed is called too
         # often, as reported here: http://bugzilla.gnome.org/show_bug.cgi?id=64998
         if self.get_text() != '':
             self.emit('content-changed')
-            self.chain()
 
     def read(self):
         return self._from_string(self.get_text())
@@ -105,9 +109,10 @@ class ProxySpinButton(Gtk.SpinButton, ValidatableProxyWidgetMixin):
         self.set_property('primary-icon-pixbuf', pixbuf)
 
     def update_background(self, color):
-        self.modify_base(Gtk.StateType.NORMAL, color)
+        self.override_background_color(Gtk.StateFlags.NORMAL, color)
 
     def get_background(self):
-        return self.style.base[Gtk.StateType.NORMAL]
+        sc = self.get_style_context()
+        return sc.get_background_color(Gtk.StateFlags.NORMAL)
 
 GObject.type_register(ProxySpinButton)

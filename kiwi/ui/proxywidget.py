@@ -30,7 +30,7 @@ import base64
 import gettext
 import logging
 
-from gi.repository import Gtk, GObject, Gdk
+from gi.repository import Gtk, GObject, Gdk, GdkPixbuf
 
 from kiwi import ValueUnset
 from kiwi.component import implements
@@ -45,16 +45,16 @@ _ = lambda m: gettext.dgettext('kiwi', m)
 
 
 class _PixbufConverter(BaseConverter):
-    type = Gdk.Pixbuf
+    type = GdkPixbuf.Pixbuf
     name = 'Pixbuf'
 
     def as_string(self, value, format='png'):
         if value is ValueUnset:
             return ''
-        buffer = []
-        value.save_to_callback(buffer.append, format)
-        string = ''.join(buffer)
-        return string
+
+        success, buffer_ = value.save_to_bufferv(format, [], [])
+        assert success
+        return buffer_
 
     def from_string(self, value, format='png'):
         try:
@@ -314,8 +314,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
         self._fade.stop()
         self._set_pixbuf(None)
-        style = Gtk.widget_get_default_style()
-        self.update_background(style.base[Gtk.StateType.NORMAL])
+        self.update_background(None)
 
     def set_invalid(self, text=None, fade=True):
         """Changes the validation state to invalid.
@@ -333,7 +332,9 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
         if not fade:
             self._set_pixbuf(_load_error_icon())
-            self.update_background(Gdk.color_parse(self._fade.ERROR_COLOR))
+            color = Gdk.RGBA()
+            color.parse(self._fade.ERROR_COLOR)
+            self.update_background(color)
             return
 
         # When the fading animation is finished, set the error icon
@@ -367,7 +368,9 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
             self._draw_stock_icon(MANDATORY_ICON)
             self.set_tooltip(_('This field is mandatory'))
             self._fade.stop()
-            self.update_background(Gdk.color_parse(MANDATORY_COLOR))
+            color = Gdk.RGBA()
+            color.parse(MANDATORY_COLOR)
+            self.update_background(color)
             valid = False
         else:
             valid = True

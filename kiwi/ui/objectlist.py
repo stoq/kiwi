@@ -33,7 +33,7 @@ import locale
 import logging
 import pickle
 
-from gi.repository import Gtk, GLib, GObject, Gdk, Pango
+from gi.repository import Gtk, GLib, GObject, Gdk, Pango, GdkPixbuf
 
 from kiwi.accessor import kgetattr
 from kiwi.datatypes import converter, number, ValidationError
@@ -75,7 +75,7 @@ class Column(GObject.GObject):
         - the type of the attribute that will be inserted into the column.
           Supported data types: bool, int, float, str, unicode,
           decimal.Decimal, datetime.date, datetime.time, datetime.datetime,
-          Gdk.Pixbuf, :class:`kiwi.currency.currency`, L{kiwi.python.enum}.
+          GdkPixbuf.Pixbuf, :class:`kiwi.currency.currency`, L{kiwi.python.enum}.
       - B{visible}: bool I{True}
         - specifying if it is initially hidden or shown.
       - B{justify}: Gtk.Justification I{None}
@@ -354,12 +354,12 @@ class Column(GObject.GObject):
         # This is a bit hackish, we should probably
         # add a proper api to determine the expanding of
         # individual cells.
-        if self.data_type == Gdk.Pixbuf or self.use_stock:
+        if self.data_type == GdkPixbuf.Pixbuf or self.use_stock:
             expand = False
         else:
             expand = True
 
-        if self.data_type == Gdk.Pixbuf:
+        if self.data_type == GdkPixbuf.Pixbuf:
             renderer.set_padding(2, 0)
 
         if self.pack_end:
@@ -419,7 +419,7 @@ class Column(GObject.GObject):
                     cb = self._on_renderer_toggle_check__toggled
                 renderer.connect('toggled', cb, model, self)
             prop = 'active'
-        elif self.use_stock or data_type == Gdk.Pixbuf:
+        elif self.use_stock or data_type == GdkPixbuf.Pixbuf:
             renderer = Gtk.CellRendererPixbuf()
             prop = 'pixbuf'
             if self.editable:
@@ -504,7 +504,10 @@ class Column(GObject.GObject):
             if isinstance(renderer, Gtk.CellRendererText):
                 renderer.set_property(renderer_prop, '')
         else:
-            renderer.set_property(renderer_prop, text)
+            try:
+                renderer.set_property(renderer_prop, text)
+            except TypeError:
+                renderer.set_property(renderer_prop, str(text))
 
         if column.renderer_func:
             column.renderer_func(renderer, obj)
@@ -560,7 +563,7 @@ class Column(GObject.GObject):
 
     def _on_renderer_toggle_radio__toggled(self, renderer, path, model, column):
         # Deactive old one
-        old = renderer.get_data('kiwilist::radio-active')
+        old = getattr(renderer, '_kiwilist_radio_active', None)
 
         # If we don't have the radio-active set it means we're doing
         # This for the first time, so scan and see which one is currently
@@ -581,7 +584,7 @@ class Column(GObject.GObject):
         # previously selected row
         new = model[path][COL_MODEL]
         setattr(new, column.attribute, True)
-        renderer.set_data('kiwilist::radio-active', new)
+        renderer._kiwilist_radio_active = new
         self._objectlist.emit('cell-edited', new, column)
 
     def _on_renderer__editing_started(self, renderer, editable, path,
@@ -655,7 +658,7 @@ class Column(GObject.GObject):
                     format_func receive I{obj} instead of I{data}
         """
         data_type = self.data_type
-        if data is None and data_type != Gdk.Pixbuf:
+        if data is None and data_type != GdkPixbuf.Pixbuf:
             text = ''
         elif self.format_func and self.format_func_data is not None and obj:
             text = self.format_func(obj, self.format_func_data)
@@ -725,6 +728,10 @@ class SequentialColumn(Column):
             sequence_id = row.path[0] + 1
 
         row[COL_MODEL]._kiwi_sequence_id = sequence_id
+
+        # FIXME: Can we do this for all props or only for text?
+        if renderer_prop == 'text':
+            sequence_id = str(sequence_id)
 
         try:
             renderer.set_property(renderer_prop, sequence_id)
@@ -815,7 +822,7 @@ class _ContextMenu(Gtk.Menu):
 
     def popup(self, event):
         self._create()
-        Gtk.Menu.popup(self, None, None, None,
+        Gtk.Menu.popup(self, None, None, None, None,
                        event.button, event.time)
 
     def _create(self):
@@ -878,7 +885,8 @@ _marker = object()
 empty_marker = object()
 
 
-class ObjectList(Gtk.HBox):
+# FIXME: This could be a Gtk.Bin
+class ObjectList(Gtk.Box):
     """
     An enhanced version of GtkTreeView, which provides pythonic wrappers
     for accessing rows, and optional facilities for column sorting (with
@@ -1007,7 +1015,7 @@ class ObjectList(Gtk.HBox):
         self._message_label = None
         self.cell_data_func = None
 
-        Gtk.HBox.__init__(self)
+        Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL)
         # we always want a vertical scrollbar. Otherwise the button on top
         # of it doesn't make sense. This button is used to display the popup
         # menu
@@ -1214,7 +1222,7 @@ class ObjectList(Gtk.HBox):
         :param order: one of Gtk.SortType.ASCENDING, Gtk.SortType.DESCENDING
         :type order: Gtk.SortType
         """
-        def _sort_func(model, iter1, iter2):
+        def _sort_func(model, iter1, iter2, data):
             return cmp(
                 getattr(model[iter1][0], attribute, None),
                 getattr(model[iter2][0], attribute, None))
@@ -1361,7 +1369,7 @@ class ObjectList(Gtk.HBox):
         # we need to set our own widget because otherwise
         # __get_column_button won't work
 
-        label = Gtk.Label(column.title)
+        label = Gtk.Label(label=column.title)
         label.show()
         treeview_column.set_widget(label)
         treeview_column.set_resizable(True)
@@ -1373,7 +1381,7 @@ class ObjectList(Gtk.HBox):
 
         # setup the button to show the popup menu
         button = self._get_column_button(treeview_column)
-        button.connect('button-release-event',
+        button.connect('button-press-event',
                        self._on_treeview_header__button_release_event)
 
         index = self._columns.index(column)
@@ -1446,9 +1454,8 @@ class ObjectList(Gtk.HBox):
         """
         old_alloc = self._vscrollbar.get_allocation()
         height = self._get_header_height()
-        new_alloc = Gdk.Rectangle(old_alloc.x, old_alloc.y + height,
-                                  old_alloc.width,
-                                  old_alloc.height - height)
+        new_alloc = (old_alloc.x, old_alloc.y + height,
+                     old_alloc.width, old_alloc.height - height)
         self._vscrollbar.size_allocate(new_alloc)
         # put the popup_window in its position
         gdk_window = self.window
@@ -1469,6 +1476,7 @@ class ObjectList(Gtk.HBox):
     def _on_treeview_header__button_release_event(self, button, event):
         if event.button == 3:
             self._popup.popup(event)
+            return True
 
         return False
 
@@ -1518,7 +1526,7 @@ class ObjectList(Gtk.HBox):
             GObject.idle_add(self._emit_button_press_signal, signal_name,
                              event.copy())
         # Double left click
-        elif event.type == Gdk._2BUTTON_PRESS and event.button == 1:
+        elif event.type == Gdk.EventType._2BUTTON_PRESS and event.button == 1:
             item = self._get_selection_or_selected_rows()
             if item:
                 self.emit('double-click', item)
@@ -1671,7 +1679,7 @@ class ObjectList(Gtk.HBox):
         model = self._model
         for i, column in enumerate(self._columns):
             # Bug in PyGTK, it should be possible to remove a sort func.
-            model.set_sort_func(i, lambda m, i1, i2: -1)
+            model.set_sort_func(i, lambda m, i1, i2, *args: -1)
 
         # Remove all columns
         treeview = self._treeview
@@ -1985,6 +1993,9 @@ class ObjectList(Gtk.HBox):
             raise AssertionError(
                 "%s has no columns" % self.get_name())
 
+        if isinstance(rowno, (int, tuple)):
+            rowno = Gtk.TreePath(rowno)
+
         self._treeview.row_activated(rowno, columns[0])
 
     def set_headers_visible(self, value):
@@ -2030,7 +2041,7 @@ class ObjectList(Gtk.HBox):
         Get a list of dnd targets ObjectList supports
         """
         return [
-            ('OBJECTLIST_ROW', 0, 10),
+            Gtk.TargetEntry.new('OBJECTLIST_ROW', 0, 10),
         ]
 
     def set_message(self, markup):
@@ -2080,7 +2091,7 @@ class ObjectList(Gtk.HBox):
                 continue
             # Skip pixbuf columns for now, we don't really
             # care about colors in this kind of output
-            if column.data_type == Gdk.Pixbuf:
+            if column.data_type == GdkPixbuf.Pixbuf:
                 continue
             columns.append(column)
         return columns

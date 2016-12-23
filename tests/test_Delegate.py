@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 import unittest
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.delegates import Delegate, GladeDelegate
 from utils import refresh_gui
 
 
-class A:
+class A(object):
     def on_foo__clicked(self, *args):
         self.x = "FOO in A"
 
 
-class B:
+class B(object):
     def on_foo__clicked(self, *args):
         self.x = "FOO in B"
 
@@ -19,7 +19,7 @@ class B:
         self.y = "BAR in B"
 
 
-class C:
+class C(object):
     def on_foo__clicked(self, *args):
         self.x = "FOO in C"
 
@@ -29,7 +29,7 @@ class X(A, B, C):
         self.x = "FOO in X"
 
 
-class Y:
+class Y(object):
     def on_foo__clicked(self, *args):
         self.x = "FOO in Y"
 
@@ -38,10 +38,10 @@ class Foo(X, Y, Delegate):
     widget = ["foo"]
 
     def __init__(self):
-        self.win = gtk.Window()
-        self.foo = gtk.Button("CLICK ME AND BE HAPPY")
-        self.bar = gtk.Button("CLICK ME AND BE HAPPY")
-        v = gtk.VBox()
+        self.win = Gtk.Window()
+        self.foo = Gtk.Button("CLICK ME AND BE HAPPY")
+        self.bar = Gtk.Button("CLICK ME AND BE HAPPY")
+        v = Gtk.VBox()
         v.add(self.foo)
         v.add(self.bar)
         self.win.add(v)
@@ -59,8 +59,8 @@ class Foo(X, Y, Delegate):
 class ClickCounter(Delegate):
     """In this delegate we count the number of clicks we do"""
     def __init__(self):
-        self.win = gtk.Window()
-        self.button = gtk.Button('Click me!')
+        self.win = Gtk.Window()
+        self.button = Gtk.Button('Click me!')
         self.win.add(self.button)
         Delegate.__init__(self, toplevel=self.win,
                           delete_handler=self.quit_if_last)

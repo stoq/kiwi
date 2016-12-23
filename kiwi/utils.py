@@ -33,10 +33,9 @@ except ImportError:
     raise SystemExit("python-gobject is required by kiwi.utils")
 
 
+# FIXME gtk3: Is this still necessary?
 # Monkey patch gobject to support enum properties
-gprop = getattr(GObject.propertyhelper, "property", None)
-if gprop is None:
-    gprop = GObject.Property
+gprop = GObject.Property
 parent_type_from_parent = gprop._type_from_python
 parent_get_pspec_args = gprop.get_pspec_args
 
@@ -101,13 +100,13 @@ def gsignal(name, *args, **kwargs):
         if the first one is a string 'override', the signal will be
         overridden and must therefor exists in the parent GObject.
     @note: flags: A combination of;
-      - GObject.SIGNAL_RUN_FIRST
-      - GObject.SIGNAL_RUN_LAST
-      - GObject.SIGNAL_RUN_CLEANUP
-      - GObject.SIGNAL_NO_RECURSE
-      - GObject.SIGNAL_DETAILED
-      - GObject.SIGNAL_ACTION
-      - GObject.SIGNAL_NO_HOOKS
+      - GObject.SignalFlags.RUN_FIRST
+      - GObject.SignalFlags.RUN_LAST
+      - GObject.SignalFlags.RUN_CLEANUP
+      - GObject.SignalFlags.NO_RECURSE
+      - GObject.SignalFlags.DETAILED
+      - GObject.SignalFlags.ACTION
+      - GObject.SignalFlags.NO_HOOKS
     @note: retval: return value in signal callback
     """
 
@@ -124,15 +123,15 @@ def gsignal(name, *args, **kwargs):
     else:
         retval = kwargs.get('retval', None)
         if retval is None:
-            default_flags = GObject.SIGNAL_RUN_FIRST
+            default_flags = GObject.SignalFlags.RUN_FIRST
         else:
-            default_flags = GObject.SIGNAL_RUN_LAST
+            default_flags = GObject.SignalFlags.RUN_LAST
 
         flags = kwargs.get('flags', default_flags)
-        if retval is not None and flags != GObject.SIGNAL_RUN_LAST:
+        if retval is not None and flags != GObject.SignalFlags.RUN_LAST:
             raise TypeError(
                 "You cannot use a return value without setting flags to "
-                "GObject.SIGNAL_RUN_LAST")
+                "GObject.SignalFlags.RUN_LAST")
 
         dict[name] = (flags, retval, args)
 

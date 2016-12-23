@@ -8,7 +8,7 @@ class HeyPlanet(BaseView):
     def __init__(self):
         win = Gtk.Window()
         win.set_title("I'm coming to London")
-        label = Gtk.Label("Anything to declare?")
+        label = Gtk.Label(label="Anything to declare?")
         win.add(label)
         win.set_default_size(200, 50)
         BaseView.__init__(self, toplevel=win,

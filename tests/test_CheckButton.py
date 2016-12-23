@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import unittest
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 
@@ -9,7 +9,7 @@ from kiwi.ui.widgets.checkbutton import ProxyCheckButton
 class CheckButtonTest(unittest.TestCase):
     def testForBool(self):
         myChkBtn = ProxyCheckButton()
-        assert isinstance(myChkBtn, gtk.CheckButton)
+        assert isinstance(myChkBtn, Gtk.CheckButton)
         # PyGObject bug, we cannot set bool in the constructor with
         # introspection
         #self.assertEqual(myChkBtn.props.data_type, 'bool')

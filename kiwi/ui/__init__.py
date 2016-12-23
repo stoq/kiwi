@@ -23,32 +23,23 @@
 
 
 try:
-    from gi.repository import Gtk
-    Gtk  # pyflakes
-except ImportError, e:
-    try:
-        import pygtk
-        pygtk.require('2.0')
-    except:
-        pass
+    import gi
+    # This will raise ValueError if the required version was not found
+    gi.require_version('Gtk', '3.0')
+except (ImportError, ValueError) as e:
+    raise SystemExit(
+        "GTK+ 3.0.0 or higher is required by kiwi.ui\n"
+        "Error was: {}".format(e))
 
-    try:
-        from gi.repository import Gtk
-        Gtk  # pyflakes
-    except:
-        raise SystemExit(
-            "PyGTK 2.6.0 or higher is required by kiwi.ui\n"
-            "Error was: %s" % e)
+from gi.repository import Gtk, Gdk
+
+from kiwi.environ import environ
 
 
-Gtk.rc_parse_string("""
-# Make multicombo buttons have less padding then a normal button
-style "multicombo-close-button-style"
-{
-    GtkButton::focus-padding = 0
-    GtkButton::focus-line-width = 0
-    xthickness = 0
-    ythickness = 0
-}
-widget_class "*MultiComboCloseButton*" style "multicombo-close-button-style"
-""")
+style_provider = Gtk.CssProvider()
+style_provider.load_from_path(
+    environ.get_resource_filename('kiwi', 'css', 'kiwi.css'))
+Gtk.StyleContext.add_provider_for_screen(
+    Gdk.Screen.get_default(),
+    style_provider,
+    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)

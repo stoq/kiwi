@@ -104,10 +104,11 @@ class KiwiEntry(Gtk.Entry):
     completion_ignore_accents = GObject.Property(type=bool, default=True)
     completion_hightlight_match = GObject.Property(type=bool, default=True)
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._completion = None
 
-        Gtk.Entry.__init__(self)
+        super(KiwiEntry, self).__init__(**kwargs)
+
         self._update_position()
         self.connect('insert-text', self._on_insert_text)
         self.connect('delete-text', self._on_delete_text)
@@ -552,7 +553,7 @@ class KiwiEntry(Gtk.Entry):
             self._icon_pos = Gtk.PositionType.RIGHT
 
         # If the text is right to left, we have to use the oposite side
-        RTL = Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL
+        RTL = Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL
         if RTL:
             if self._icon_pos == Gtk.PositionType.LEFT:
                 self._icon_pos = Gtk.PositionType.RIGHT
@@ -742,10 +743,11 @@ class KiwiEntry(Gtk.Entry):
         self.set_property(icon, pixbuf)
 
     def update_background(self, color):
-        self.modify_base(Gtk.StateType.NORMAL, color)
+        self.override_background_color(Gtk.StateFlags.NORMAL, color)
 
     def get_background(self):
-        return self.style.base[Gtk.StateType.NORMAL]
+        sc = self.get_style_context()
+        return sc.get_background_color(Gtk.StateFlags.NORMAL)
 
     # IComboMixin
 
@@ -818,7 +820,7 @@ class KiwiEntry(Gtk.Entry):
                 break
         else:
             raise KeyError("No item correspond to data %r in the combo %s"
-                           % (data, self.name))
+                           % (data, self.__class__.__name__))
 
     def get_iter_by_label(self, label):
         completion = self._get_entry_completion()
@@ -828,7 +830,7 @@ class KiwiEntry(Gtk.Entry):
                 return row.iter
         else:
             raise KeyError("No item correspond to label %r in the combo %s"
-                           % (label, self.name))
+                           % (label, self.__class__.__name__))
 
     def get_selected_by_iter(self, treeiter):
         completion = self._get_entry_completion()

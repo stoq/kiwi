@@ -182,8 +182,9 @@ import types
 import warnings
 
 try:
-    from gi.repository import GObject
+    from gi.repository import GObject, GLib
     GObject  # pyflakes
+    GLib  # pyflakes
 except:
     raise SystemExit("python-gobject is required by kiwi.tasklet")
 
@@ -356,7 +357,7 @@ class WaitForIO(WaitCondition):
         if self._id is None:
             try:
                 ## http://bugzilla.gnome.org/show_bug.cgi?id=139176
-                iochan = isinstance(self.filedes, GObject.IOChannel)
+                iochan = isinstance(self.filedes, GLib.IOChannel)
             except AttributeError:
                 iochan = False
             if iochan:

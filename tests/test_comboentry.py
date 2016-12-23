@@ -1,6 +1,6 @@
 import unittest
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.enums import ComboMode
 from kiwi.ui.comboentry import ComboEntry
@@ -17,7 +17,7 @@ class TestComboEntry(unittest.TestCase):
 
     def testPopup(self):
         entry = ComboEntry()
-        win = gtk.Window()
+        win = Gtk.Window()
         win.add(entry)
         win.show_all()
         entry.hide()

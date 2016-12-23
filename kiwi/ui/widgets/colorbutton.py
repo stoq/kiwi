@@ -38,13 +38,10 @@ class ProxyColorButton(Gtk.ColorButton, ProxyWidgetMixin):
 
     def __init__(self, color=Gdk.Color(0, 0, 0)):
         ProxyWidgetMixin.__init__(self)
-        Gtk.ColorButton.__init__(self, color)
-
-    gsignal('color-set', 'override')
+        Gtk.ColorButton.__init__(self, color=color)
 
     def do_color_set(self):
         self.emit('content-changed')
-        self.chain()
 
     def read(self):
         color = self.get_color()

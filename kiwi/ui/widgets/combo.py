@@ -288,8 +288,9 @@ class ProxyComboBox(Gtk.ComboBox, ProxyWidgetMixin):
         self.connect('changed', self._on__changed)
 
         self._text_renderer = Gtk.CellRendererText()
-        self.pack_start(self._text_renderer)
+        self.pack_start(self._text_renderer, True)
         self.add_attribute(self._text_renderer, 'text', ComboColumn.LABEL)
+        self.set_valign(Gtk.Align.CENTER)
 
     def __len__(self):
         # GtkComboBox is a GtkContainer subclass which implements __len__ in

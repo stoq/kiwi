@@ -67,8 +67,8 @@ def main():
     sw.add(textview)
     sw.show()
     win.add(sw)
-    win.set_default_size(Gdk.screen_width() * 2 / 3,
-                         Gdk.screen_height() * 2 / 3)
+    win.set_default_size(Gdk.Screen.width() * 2 / 3,
+                         Gdk.Screen.height() * 2 / 3)
     win.show()
 
     ## launch process

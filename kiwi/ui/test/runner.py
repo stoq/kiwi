@@ -32,11 +32,7 @@ import sys
 import time
 from StringIO import StringIO
 
-from kiwi import compat
-sys.modules['gi'] = compat
-
-from gi.repository import GObject
-from gi.repository import Gdk
+from gi.repository import GObject, Gdk
 
 from kiwi.ui.test.common import WidgetIntrospecter
 
@@ -57,7 +53,7 @@ class MagicWindowWrapper(object):
         self.ns = ns
 
     def delete(self):
-        self.window.emit('delete-event', Gdk.Event(Gdk.DELETE))
+        self.window.emit('delete-event', Gdk.Event.new(Gdk.DELETE))
 
     def __getattr__(self, attr):
         if not attr in self.ns:

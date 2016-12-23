@@ -34,7 +34,7 @@ class PopupWindow(Gtk.Window):
 
     def __init__(self, widget):
         self.visible = False
-        self.widget = widget
+        self.attached_widget = widget
         super(PopupWindow, self).__init__(Gtk.WindowType.POPUP)
         self._setup()
 
@@ -66,7 +66,7 @@ class PopupWindow(Gtk.Window):
 
         :return: the widget used to calculate the popup properties
         """
-        return self.widget
+        return self.attached_widget
 
     def get_size(self, allocation, monitor):
         """Get the size that should be used for the popup.
@@ -100,12 +100,12 @@ class PopupWindow(Gtk.Window):
         """Display the popup."""
         if self.visible:
             return False
-        if not self.widget.get_realized():
+        if not self.attached_widget.get_realized():
             return False
         if not self.validate_popup():
             return False
 
-        toplevel = self.widget.get_toplevel().get_toplevel()
+        toplevel = self.attached_widget.get_toplevel().get_toplevel()
         if (isinstance(toplevel, (Gtk.Window, Gtk.Dialog)) and
                 toplevel.get_group()):
             toplevel.get_group().add_window(self)
@@ -127,14 +127,14 @@ class PopupWindow(Gtk.Window):
         """Hide the popup."""
         if not self.visible:
             return False
-        if not self.widget.get_realized():
+        if not self.attached_widget.get_realized():
             return False
 
         if self.GRAB_ADD:
             self.grab_remove()
 
         self.hide()
-        self.widget.grab_focus()
+        self.attached_widget.grab_focus()
 
         self.visible = False
         return True
@@ -149,8 +149,11 @@ class PopupWindow(Gtk.Window):
         :param event: the gdk event
         :returns: ``True`` if the event was handled, ``False`` otherwise
         """
-        keyval = event.keyval
-        state = event.state & Gtk.accelerator_get_default_mod_mask()
+        keyval = event.get_keyval()[1]
+        state = event.get_state()
+        if state:
+            state &= Gtk.accelerator_get_default_mod_mask()
+
         if (keyval == Gdk.KEY_Escape or
             (state == Gdk.ModifierType.MOD1_MASK and
              (keyval == Gdk.KEY_Up or keyval == Gdk.KEY_KP_Up))):
@@ -179,7 +182,7 @@ class PopupWindow(Gtk.Window):
         self.add(frame)
         frame.show()
 
-        alignment = Gtk.Alignment(0.5, 0.5, 1.0, 1.0)
+        alignment = Gtk.Alignment.new(0.5, 0.5, 1.0, 1.0)
         alignment.set_padding(*self.FRAME_PADDING)
         frame.add(alignment)
         alignment.show()
@@ -190,7 +193,7 @@ class PopupWindow(Gtk.Window):
         alignment.add(self.main_box)
 
         self.set_resizable(False)
-        self.set_screen(self.widget.get_screen())
+        self.set_screen(self.attached_widget.get_screen())
 
     def _popup_grab_window(self):
         activate_time = 0L
@@ -220,21 +223,20 @@ class PopupWindow(Gtk.Window):
         monitor_num = screen.get_monitor_at_window(window)
         m = screen.get_monitor_geometry(monitor_num)
 
-        # Gtk+ 3.x
-        if hasattr(window, 'get_root_coords'):
-            x, y = 0, 0
-            if not widget.get_has_window():
-                x += allocation.x
-                y += allocation.y
-            x, y = window.get_root_coords(x, y)
-        # Gtk+ 2.x
-        else:
-            # PyGTK lacks gdk_window_get_root_coords(),
-            # but we can use get_origin() instead, which is the
-            # same thing in our case.
-            x, y = widget.window.get_origin()
+        x, y = 0, 0
+        if not widget.get_has_window():
+            x += allocation.x
+            y += allocation.y
+        x, y = window.get_root_coords(x, y)
 
         width, height = self.get_size(allocation, m)
+        # We need real values for the computation here. If we got -1 for
+        # width or height get their values from main_widget since
+        main_allocation = self.main_widget.get_allocation()
+        if width == -1:
+            width = main_allocation.width
+        if height == -1:
+            height = main_allocation.height
 
         if x < m.x:
             # Prevent x being outside the left side of the monitor
@@ -266,8 +268,8 @@ class PopupWindow(Gtk.Window):
         rv = self.handle_key_press_event(event)
 
         if not rv and self.PROPAGATE_KEY_PRESS:
-            # Let the widget handle the event,
-            self.widget.emit('key-press-event', event)
+            # Let the widget handle the event
+            self.attached_widget.event(event)
             rv = True
 
         return rv
@@ -281,19 +283,20 @@ class PopupWindow(Gtk.Window):
             self.popdown()
             return True
 
-        # Gtk 2.x
-        if hasattr(self, 'allocation'):
-            out = self.allocation.intersect(
-                Gdk.Rectangle(x=int(event.x), y=int(event.y),
-                              width=1, height=1))
-        else:
-            rect = Gdk.Rectangle()
-            (rect.x, rect.y,
-             rect.width, rect.height) = (int(event.x), int(event.y), 1, 1)
-            out = Gdk.Rectangle()
-            self.intersect(rect, out)
+        event_rect = Gdk.Rectangle()
+        event_rect.x, event_rect.y = event.get_root_coords()
+        event_rect.width = 1
+        event_rect.height = 1
 
-        if (out.x, out.y, out.width, out.height) == (0, 0, 0, 0):
+        window_rect = Gdk.Rectangle()
+        (window_rect.x,
+         window_rect.y,
+         window_rect.width,
+         window_rect.height) = self._get_position()
+
+        intersection = Gdk.rectangle_intersect(event_rect, window_rect)
+        # if the click was outside this window, hide it
+        if not intersection[0]:
             self.popdown()
             return True
 

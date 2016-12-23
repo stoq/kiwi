@@ -1,8 +1,7 @@
 import sys
 import unittest
 
-import gtk
-from gtk import keysyms
+from gi.repository import Gtk, Gdk
 from nose.exc import SkipTest
 from utils import refresh_gui
 
@@ -27,19 +26,19 @@ DELAY = 0.1
 
 
 def send_backspace(widget):
-    event = gtk.gdk.Event(gtk.gdk.KEY_PRESS)
-    event.keyval = int(keysyms.BackSpace)
+    event = Gdk.Event.new(Gdk.EventType.KEY_PRESS)
+    event.keyval = int(Gdk.KEY_BackSpace)
     event.hardware_keycode = 22
-    event.window = widget.window
+    event.window = widget.get_window()
     widget.event(event)
     refresh_gui(DELAY)
 
 
 def send_delete(widget):
-    event = gtk.gdk.Event(gtk.gdk.KEY_PRESS)
-    event.keyval = int(keysyms.Delete)
+    event = Gdk.Event.new(Gdk.EventType.KEY_PRESS)
+    event.keyval = int(Gdk.KEY_Delete)
     event.hardware_keycode = 119
-    event.window = widget.window
+    event.window = widget.get_window()
     widget.event(event)
     refresh_gui(DELAY)
 
@@ -50,12 +49,12 @@ def send_key(widget, key):
     elif isinstance(key, str) and key in SPECIAL_KEYS:
         key = SPECIAL_KEYS[key]
 
-    keysym = getattr(keysyms, key)
+    keysym = getattr(Gdk, 'KEY_' + key)
 
     # Key press
-    event = gtk.gdk.Event(gtk.gdk.KEY_PRESS)
+    event = Gdk.Event.new(Gdk.EventType.KEY_PRESS)
     event.keyval = int(keysym)
-    event.window = widget.window
+    event.window = widget.get_window()
     widget.event(event)
 
     refresh_gui(DELAY)
@@ -72,17 +71,17 @@ LEFT, RIGHT = -1, 1
 
 
 def move(entry, direction):
-    entry.emit('move-cursor', gtk.MOVEMENT_VISUAL_POSITIONS, direction, False)
+    entry.emit('move-cursor', Gtk.MovementStep.VISUAL_POSITIONS, direction, False)
 
 
 def select(entry, start, end):
     entry.set_position(start)
-    entry.emit('move-cursor', gtk.MOVEMENT_VISUAL_POSITIONS, end - start, True)
+    entry.emit('move-cursor', Gtk.MovementStep.VISUAL_POSITIONS, end - start, True)
 
 
 class MasksDelegate(Delegate):
     def __init__(self):
-        self.win = gtk.Window()
+        self.win = Gtk.Window()
         self.entry = KiwiEntry()
         self.win.add(self.entry)
 
@@ -141,7 +140,7 @@ class TestMasks(unittest.TestCase):
         self.assertEqual(entry.get_text(), '12/34/    ')
 
         entry.set_mask('(00) 0000-0000')
-        entry.emit('focus', gtk.DIR_TAB_FORWARD)
+        entry.emit('focus', Gtk.DirectionType.TAB_FORWARD)
         refresh_gui(DELAY)
         insert_text(entry, '1234567890')
         self.assertEqual(entry.get_text(), '(12) 3456-7890')
@@ -150,7 +149,7 @@ class TestMasks(unittest.TestCase):
         entry = self.entry
         entry.set_mask('(00) 0000-0000')
 
-        entry.emit('focus', gtk.DIR_TAB_FORWARD)
+        entry.emit('focus', Gtk.DirectionType.TAB_FORWARD)
         refresh_gui(DELAY)
 
         self.assertEqual(entry.get_position(), 1)
@@ -164,11 +163,11 @@ class TestMasks(unittest.TestCase):
         self.assertEqual(entry.get_position(), 1)
 
         # Home
-        entry.emit('move-cursor', gtk.MOVEMENT_DISPLAY_LINE_ENDS, -1, False)
+        entry.emit('move-cursor', Gtk.MovementStep.DISPLAY_LINE_ENDS, -1, False)
         self.assertEqual(entry.get_position(), 1)
 
         # End
-        entry.emit('move-cursor', gtk.MOVEMENT_DISPLAY_LINE_ENDS, 1, False)
+        entry.emit('move-cursor', Gtk.MovementStep.DISPLAY_LINE_ENDS, 1, False)
         self.assertEqual(entry.get_position(), 1)
 
     def testInsertAndMovementKeys(self):
@@ -266,7 +265,7 @@ class TestMasks(unittest.TestCase):
         self.assertEqual(entry.get_text(), '(12) 3456-78  ')
 
         # Home
-        entry.emit('move-cursor', gtk.MOVEMENT_DISPLAY_LINE_ENDS, -1, False)
+        entry.emit('move-cursor', Gtk.MovementStep.DISPLAY_LINE_ENDS, -1, False)
         self.assertEqual(entry.get_position(), 1)
 
         send_delete(entry)

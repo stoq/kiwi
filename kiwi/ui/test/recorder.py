@@ -39,9 +39,7 @@ import logging
 import sys
 import time
 
-from gobject import add_emission_hook
-from gi.repository import Gtk
-from gi.repository import Gdk
+from gi.repository import Gtk, Gdk, GObject
 
 from kiwi.ui.test.common import WidgetIntrospecter
 from kiwi.ui.objectlist import ObjectList
@@ -197,7 +195,7 @@ class ImageMenuItemButtonReleaseEvent(SignalEvent):
     def get_toplevel(self, widget):
         parent = widget
         while True:
-            widget = parent.get_data('parent-menu')
+            widget = parent._parent_menu
             if not widget:
                 break
             parent = widget
@@ -331,7 +329,7 @@ class ObjectListDoubleClick(SignalEvent):
 
     def __init__(self, objectlist, name, args):
         event, = args
-        if event.type != Gdk._2BUTTON_PRESS:
+        if event.type != Gdk.EventType._2BUTTON_PRESS:
             raise SkipEvent
 
         SignalEvent.__init__(self, objectlist, name, args)
@@ -398,9 +396,8 @@ class Recorder(WidgetIntrospecter):
         # Register a hook that is called before normal delete-events
         # because if it's connected using a normal callback it will not
         # be called if the application returns True in it's signal handler.
-        if add_emission_hook:
-            add_emission_hook(Gtk.Window, 'delete-event',
-                              self._emission_window__delete_event)
+        GObject.add_emission_hook(
+            Gtk.Window, 'delete-event', self._emission_window__delete_event)
 
     def execute(self, args):
         self._start_timestamp = time.time()
@@ -451,10 +448,6 @@ class Recorder(WidgetIntrospecter):
         event_type.connect(object, event_type.signal_name, on_signal)
 
     def window_removed(self, wi, window, name):
-        # It'll already be trapped if we can use an emission hook
-        # skip it here to avoid duplicates
-        if not add_emission_hook:
-            return
         self._add_event(WindowDeleteEvent(window))
 
     def parse_one(self, toplevel, gobj):

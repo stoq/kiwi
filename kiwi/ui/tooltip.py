@@ -33,7 +33,7 @@ BORDER_WIDTH = 4
 
 class Tooltip(Gtk.Window):
     def __init__(self, widget):
-        Gtk.Window.__init__(self, Gtk.WindowType.POPUP)
+        super(Tooltip, self).__init__(Gtk.WindowType.POPUP)
         # from gtktooltips.c:gtk_tooltips_force_window
         self.set_app_paintable(True)
         self.set_resizable(False)

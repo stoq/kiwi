@@ -51,13 +51,15 @@ def set_foreground(widget, color, state=Gtk.StateType.NORMAL):
       - color: a hexadecimal code or a well known color name
       - state: the state we are afecting, see Gtk.StateType.*
     """
-    widget.modify_fg(state, Gdk.color_parse(color))
+    c = Gdk.RGBA()
+    c.parse(color)
+    widget.override_color(state, c)
 
 
 def get_foreground(widget, state=Gtk.StateType.NORMAL):
     """Return the foreground color of the widget as a string"""
-    style = widget.get_style()
-    color = style.fg[state]
+    sc = widget.get_style_context()
+    color = sc.get_color(state)
     return gdk_color_to_string(color)
 
 
@@ -69,22 +71,21 @@ def set_background(widget, color, state=Gtk.StateType.NORMAL):
       - color: a hexadecimal code or a well known color name
       - state: the state we are afecting, see Gtk.StateType.*
     """
-    if isinstance(widget, Gtk.Entry):
-        widget.modify_base(state, Gdk.color_parse(color))
-    else:
-        widget.modify_bg(state, Gdk.color_parse(color))
+    c = Gdk.RGBA()
+    c.parse(color)
+    widget.override_background_color(state, c)
 
 
 def get_background(widget, state=Gtk.StateType.NORMAL):
     """Return the background color of the widget as a string"""
-    style = widget.get_style()
-    color = style.bg[state]
+    sc = widget.get_style_context()
+    color = sc.get_background_color(state)
     return gdk_color_to_string(color)
 
 
 def quit_if_last(*args):
     windows = [toplevel
-               for toplevel in Gtk.window_list_toplevels()
+               for toplevel in Gtk.Window.list_toplevels()
                if toplevel.get_property('type') == Gtk.WindowType.TOPLEVEL]
     if len(windows) == 1:
         Gtk.main_quit()
@@ -92,7 +93,7 @@ def quit_if_last(*args):
 
 def _select_notebook_tab(widget, event, notebook):
     val = event.keyval - 48
-    if event.state & Gdk.MOD1_MASK and 1 <= val <= 9:
+    if event.get_state() & Gdk.ModifierType.MOD1_MASK and 1 <= val <= 9:
         notebook.set_current_page(val - 1)
 
 
@@ -105,7 +106,7 @@ class FadeOut(GObject.GObject):
     Call my methods start() and stop() to control the fading.
     """
     gsignal('done')
-    gsignal('color-changed', Gdk.Color)
+    gsignal('color-changed', Gdk.RGBA)
 
     # How long time it'll take before we start (in ms)
     COMPLAIN_DELAY = 500
@@ -143,10 +144,10 @@ class FadeOut(GObject.GObject):
             rs += rinc
             gs += ginc
             bs += binc
-            col = Gdk.color_parse("#%02X%02X%02X" % (int(rs) >> 8,
-                                                     int(gs) >> 8,
-                                                     int(bs) >> 8))
-            self.emit('color-changed', col)
+            c = Gdk.RGBA()
+            c.parse("#%02X%02X%02X" % (
+                int(rs) >> 8, int(gs) >> 8, int(bs) >> 8))
+            self.emit('color-changed', c)
             yield True
 
         self.emit('done')
@@ -207,19 +208,15 @@ type_register(FadeOut)
 _pixbuf_cache = {}
 
 
-def draw_editable_border(widget, drawable, cell_area):
+def draw_editable_border(widget, cr, cell_area):
     """Draws a border around a widget, signalizing that it is editable"""
-    cr = drawable.cairo_create()
     cr.set_line_width(0.5)
     cr.rectangle(cell_area.x, cell_area.y,
                  cell_area.width, cell_area.height)
 
-    style = widget.get_style()
-    # The gtk documentation says the dark colors are slightly darker than
-    # the bg colors and used for creating shadows. That's perfect here since
-    # it will indicate that the border is editable and won't "vanish"
-    # when the row is really activated
-    cr.set_source_color(style.dark[Gtk.StateType.SELECTED])
+    sc = widget.get_style_context()
+    color = sc.get_border_color(Gtk.StateFlags.SELECTED)
+    cr.set_source_rgba(color.red, color.green, color.blue, color.alpha)
     cr.stroke()
 
 

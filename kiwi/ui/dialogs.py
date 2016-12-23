@@ -24,8 +24,7 @@ import contextlib
 import os
 import gettext
 
-import atk
-from gi.repository import Gtk, GLib
+from gi.repository import Atk, Gtk, GLib
 
 __all__ = ['error', 'info', 'messagedialog', 'warning', 'yesno', 'save',
            'selectfile', 'selectfolder', 'HIGAlertDialog', 'BaseDialog',
@@ -62,7 +61,8 @@ class HIGAlertDialog(Gtk.Dialog):
             raise TypeError(
                 "buttons be one of: %s", ', '.join(_BUTTON_TYPES.keys()))
 
-        Gtk.Dialog.__init__(self, '', parent, flags)
+        super(HIGAlertDialog, self).__init__('', parent, flags)
+
         self.set_deletable(False)
         self.set_border_width(5)
         self.set_resizable(False)
@@ -74,12 +74,12 @@ class HIGAlertDialog(Gtk.Dialog):
 
         # It seems like get_accessible is not available on windows, go figure
         if hasattr(self, 'get_accessible'):
-            self.get_accessible().set_role(atk.ROLE_ALERT)
+            self.get_accessible().set_role(Atk.Role.ALERT)
 
         self._primary_label = Gtk.Label()
         self._secondary_label = Gtk.Label()
         self._details_label = Gtk.Label()
-        self._image = Gtk.image_new_from_stock(_IMAGE_TYPES[type],
+        self._image = Gtk.Image.new_from_stock(_IMAGE_TYPES[type],
                                                Gtk.IconSize.DIALOG)
         self._image.set_alignment(0.5, 0.0)
 
@@ -100,7 +100,7 @@ class HIGAlertDialog(Gtk.Dialog):
         vbox.pack_start(self._secondary_label, False, False, 0)
         self.main_vbox = vbox
 
-        self._expander = Gtk.expander_new_with_mnemonic(
+        self._expander = Gtk.Expander.new_with_mnemonic(
             _("Show more _details"))
         self._expander.set_spacing(6)
         self._expander.add(self._details_label)
@@ -146,8 +146,9 @@ class BaseDialog(Gtk.Dialog):
             flags &= (Gtk.DialogFlags.MODAL |
                       Gtk.DialogFlags.DESTROY_WITH_PARENT)
 
-        Gtk.Dialog.__init__(self, title=title, parent=parent,
-                            flags=flags, buttons=buttons)
+        super(BaseDialog, self).__init__(
+            title=title, parent=parent, flags=flags, buttons=buttons)
+
         self.set_border_width(6)
         self.set_has_separator(False)
         self.vbox.set_spacing(6)
@@ -403,7 +404,7 @@ def password(primary='', secondary='', parent=None):
     hbox.show()
     d.label_vbox.pack_start(hbox, True, True, 0)
 
-    label = Gtk.Label(_('Password:'))
+    label = Gtk.Label(label=_('Password:'))
     label.show()
     hbox.pack_start(label, False, False, 0)
 

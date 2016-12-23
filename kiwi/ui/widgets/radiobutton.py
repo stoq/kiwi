@@ -46,10 +46,8 @@ class ProxyRadioButton(Gtk.RadioButton, ProxyWidgetMixin):
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
 
-    def __init__(self, group=None, label=None, use_underline=True):
-        Gtk.RadioButton.__init__(self, None, label, use_underline)
-        if group:
-            self.set_group(group)
+    def __init__(self, group=None, label=None):
+        Gtk.RadioButton.__init__(self, label=label or '', group=group)
         ProxyWidgetMixin.__init__(self)
         self.connect('group-changed', self._on_group_changed)
 
@@ -59,6 +57,13 @@ class ProxyRadioButton(Gtk.RadioButton, ProxyWidgetMixin):
     def _on_group_changed(self, radio):
         for radio in radio.get_group():
             radio.connect('toggled', self._on_radio__toggled)
+
+    def set_group(self, group):
+        # For some reason the Gtk.RadioButton is making this segfault when
+        # we set a ProxyRadioButton in it. This will do basically the same,
+        # but it would be nice to discover the reason of the failure
+        group = group[0] if group else None
+        self.set_property('group', group)
 
     def get_selected(self):
         """

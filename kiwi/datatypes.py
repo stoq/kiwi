@@ -259,7 +259,7 @@ class _UnicodeConverter(BaseConverter):
         return format % value
 
     def from_string(self, value):
-        return unicode(value)
+        return value.decode('utf-8')
 
 converter.add(_UnicodeConverter)
 

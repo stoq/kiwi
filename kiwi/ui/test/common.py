@@ -25,7 +25,7 @@
 Common routines used by other parts of the ui test framework.
 """
 
-from gi.repository import Gtk, GObject, Gdk
+from gi.repository import GObject, Gtk, Gdk
 
 from kiwi.utils import gsignal
 
@@ -46,10 +46,10 @@ class WidgetIntrospecter(GObject.GObject):
         Gtk.main_do_event(event)
 
     def _check_event(self, event):
-        if not event.window:
+        window = event.get_window()
+        if not window:
             return
 
-        window = event.window
         event_type = event.type
         window_type = window.get_window_type()
         try:
@@ -65,13 +65,13 @@ class WidgetIntrospecter(GObject.GObject):
             if window_type != Gdk.WINDOW_TOPLEVEL:
                 # For non toplevels we only care about those which has a menu
                 # as the child
-                child = widget.child
+                child = widget.get_child()
                 if not child or not isinstance(child, Gtk.Menu):
                     return
 
                 # Hack to get all the children of a popup menu in
                 # the same namespace as the window they were launched in.
-                parent_menu = child.get_data('parent-menu')
+                parent_menu = child._parent_menu
                 if parent_menu:
                     main = parent_menu.get_toplevel()
                     widget_name = main.get_name()
@@ -80,7 +80,7 @@ class WidgetIntrospecter(GObject.GObject):
                 self._id_to_obj[window] = widget
         elif (event_type == Gdk.DELETE or
               (event_type == Gdk.WINDOW_STATE and
-               event.new_window_state == Gdk.WINDOW_STATE_WITHDRAWN)):
+               event.new_window_state == Gdk.WindowState.WITHDRAWN)):
             self._window_removed(widget, widget_name)
 
     def _window_added(self, window, name):
@@ -202,12 +202,12 @@ class WidgetIntrospecter(GObject.GObject):
         """
         submenu = item.get_submenu()
         if submenu:
-            submenu.set_data('parent-menu', item)
+            submenu._parent_menu = item
             for child_item in submenu.get_children():
-                child_item.set_data('parent-menu', item)
+                child_item._parent_menu = item
             self.parse_one(toplevel, submenu)
 
     def GtkToolButton(self, toplevel, item):
-        item.child.set_name(item.get_name())
+        item.get_child().set_name(item.get_name())
 
 GObject.type_register(WidgetIntrospecter)

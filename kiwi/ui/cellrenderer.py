@@ -29,10 +29,10 @@ from kiwi.ui.gadgets import gdk_color_to_string, draw_editable_border
 class EditableTextRenderer(Gtk.CellRendererText):
     """Adds a border to an editable text so it can be told apart from not-editable."""
 
-    def do_render(self, drawable, widget, background_area, cell_area, expose_area, flags):
+    def do_render(self, drawable, widget, background_area, cell_area, flags):
         draw_editable_border(widget, drawable, cell_area)
         Gtk.CellRendererText.do_render(self, drawable, widget, background_area,
-                                       cell_area, expose_area, flags)
+                                       cell_area, flags)
 
 
 GObject.type_register(EditableTextRenderer)
@@ -41,10 +41,10 @@ GObject.type_register(EditableTextRenderer)
 class EditableSpinRenderer(Gtk.CellRendererSpin):
     """Adds a border to an editable spin so it becomes easy to see it is editable."""
 
-    def do_render(self, drawable, widget, background_area, cell_area, expose_area, flags):
+    def do_render(self, drawable, widget, background_area, cell_area, flags):
         draw_editable_border(widget, drawable, cell_area)
         Gtk.CellRendererText.do_render(self, drawable, widget, background_area,
-                                       cell_area, expose_area, flags)
+                                       cell_area, flags)
 
 
 GObject.type_register(EditableSpinRenderer)
@@ -74,43 +74,12 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
         self._label_layout = label.create_pango_layout('')
         self._details_callback = None
 
-        Gtk.CellRenderer.__init__(self)
+        super(ComboDetailsCellRenderer, self).__init__()
 
     def set_details_callback(self, callable):
         self._details_callback = callable
 
-    def do_render_gtk2(self, window, widget, background_area, cell_area,
-                       expose_area, flags):
-        x_offset, y_offset, width, height = self.do_get_size(widget, cell_area)
-
-        # Center the label
-        y_offset = cell_area.height / 2 - height / 2
-
-        if flags & Gtk.CELL_RENDERER_SELECTED:
-            state = Gtk.StateType.SELECTED
-        else:
-            state = Gtk.StateType.ACTIVE
-
-        # Draws label
-        widget.style.paint_layout(window,
-                                  state, False,
-                                  cell_area, widget, "",
-                                  cell_area.x + x_offset,
-                                  cell_area.y + y_offset,
-                                  self._label_layout)
-
-        if not self._details_callback:
-            return
-
-        # Draw a separator to easily distinguish between options
-        widget.style.paint_hline(window,
-                                 Gtk.StateType.ACTIVE,
-                                 cell_area, widget, "",
-                                 cell_area.x,
-                                 cell_area.x + cell_area.width,
-                                 cell_area.y + cell_area.height - 1)
-
-    def do_render_gtk3(self, cr, widget, background_area, cell_area, flags):
+    def do_render(self, cr, widget, background_area, cell_area, flags):
         x_offset, y_offset, width, height = self.do_get_size(widget, cell_area)
 
         # Center the label
@@ -129,11 +98,6 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
                         cell_area.x, cell_area.y,
                         cell_area.x + cell_area.width,
                         cell_area.y + cell_area.height - 1)
-
-    if Gtk.gtk_version >= (3, 0):
-        do_render = do_render_gtk3
-    else:
-        do_render = do_render_gtk2
 
     def _escape(self, text):
         if not self.use_markup:

@@ -151,7 +151,7 @@ class _DateEntryPopup(PopupWindow):
 type_register(_DateEntryPopup)
 
 
-class DateEntry(Gtk.HBox):
+class DateEntry(Gtk.Box):
     """I am an entry which you can input a date on.
     In addition to an Gtk.Entry I also contain a button
     with an arrow you can click to get popup window with a Gtk.Calendar
@@ -161,11 +161,14 @@ class DateEntry(Gtk.HBox):
     gsignal('activate')
 
     def __init__(self):
-        Gtk.HBox.__init__(self)
+        super(DateEntry, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
 
         self._popping_down = False
         self._old_date = None
         self._block_changed = False
+
+        # This will force both the entry and the button have the same height
+        self._sizegroup = Gtk.SizeGroup.new(Gtk.SizeGroupMode.VERTICAL)
 
         # bootstrap problems, kiwi.ui.widgets.entry imports dateentry
         # we need to use a proxy entry because we want the mask
@@ -179,14 +182,18 @@ class DateEntry(Gtk.HBox):
         mask = self.entry.get_mask()
         if mask:
             self.entry.set_width_chars(len(mask))
-        self.pack_start(self.entry, False, False, 0)
+        self.pack_start(self.entry, True, True, 0)
+        self.entry.set_valign(Gtk.Align.CENTER)
+        self._sizegroup.add_widget(self.entry)
         self.entry.show()
 
         self._button = Gtk.ToggleButton()
+        self._button.set_valign(Gtk.Align.CENTER)
         self._button.connect('scroll-event', self._on_entry__scroll_event)
         self._button.connect('toggled', self._on_button__toggled)
         self._button.set_focus_on_click(False)
         self.pack_start(self._button, False, False, 0)
+        self._sizegroup.add_widget(self._button)
         self._button.show()
 
         arrow = Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.NONE)
@@ -197,6 +204,8 @@ class DateEntry(Gtk.HBox):
         self._popup.connect('date-selected', self._on_popup__date_selected)
         self._popup.connect('hide', self._on_popup__hide)
         self._popup.set_size_request(-1, 24)
+
+        self.set_valign(Gtk.Align.CENTER)
 
     # Virtual methods
 

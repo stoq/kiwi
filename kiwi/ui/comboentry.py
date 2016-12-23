@@ -72,7 +72,7 @@ class _ComboEntryPopup(PopupWindow):
                                self._on_treeview__motion_notify_event)
         self._treeview.connect('button-release-event',
                                self._on_treeview__button_release_event)
-        self._treeview.add_events(Gdk.BUTTON_PRESS_MASK)
+        self._treeview.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
         self._selection = self._treeview.get_selection()
         self._selection.set_mode(Gtk.SelectionMode.BROWSE)
         self._renderer = ComboDetailsCellRenderer()
@@ -245,7 +245,8 @@ class _ComboEntryPopup(PopupWindow):
 type_register(_ComboEntryPopup)
 
 
-class ComboEntry(Gtk.VBox):
+# FIXME: This could be a Gtk.Bin
+class ComboEntry(Gtk.Box):
 
     implements(IEasyCombo)
 
@@ -257,18 +258,25 @@ class ComboEntry(Gtk.VBox):
         Create a new ComboEntry object.
         :param entry: a Gtk.Entry subclass to use
         """
-        Gtk.VBox.__init__(self)
+        super(ComboEntry, self).__init__(orientation=Gtk.Orientation.VERTICAL)
         self._popping_down = False
+
+        # This will force both the entry and the button have the same height
+        self._sizegroup = Gtk.SizeGroup.new(Gtk.SizeGroupMode.VERTICAL)
 
         if not entry:
             entry = KiwiEntry()
+        self._sizegroup.add_widget(entry)
 
         if isinstance(entry, KiwiEntry):
             entry.set_normal_completion()
 
         self.hbox = Gtk.HBox()
+        self.hbox.set_valign(Gtk.Align.CENTER)
+
+        # FIXME: Why are those EventBox here?
         self.pack_start(Gtk.EventBox(), True, True, 0)
-        self.pack_start(self.hbox, False, True, 0)
+        self.pack_start(self.hbox, True, True, 0)
         self.pack_start(Gtk.EventBox(), True, True, 0)
 
         self.mode = ComboMode.UNKNOWN
@@ -288,11 +296,14 @@ class ComboEntry(Gtk.VBox):
         self.hbox.show_all()
 
         self._button = Gtk.ToggleButton()
+        self._button.set_vexpand_set(True)
+        self._button.set_vexpand(False)
         self._button.connect('scroll-event', self._on_entry__scroll_event)
         self._button.connect('toggled', self._on_button__toggled)
         self._button.set_focus_on_click(False)
         self.hbox.pack_end(self._button, False, False, 0)
         self._button.show()
+        self._sizegroup.add_widget(self._button)
 
         arrow = Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.NONE)
         self._button.add(arrow)
@@ -364,10 +375,10 @@ class ComboEntry(Gtk.VBox):
 
         Alt+Down: Open popup
         """
-        keyval, state = event.keyval, event.state
+        keyval, state = event.keyval, event.get_state()
         state &= Gtk.accelerator_get_default_mod_mask()
         if ((keyval == Gdk.KEY_Down or keyval == Gdk.KEY_KP_Down) and
-            state == Gdk.MOD1_MASK):
+                state == Gdk.ModifierType.MOD1_MASK):
             self.popup()
             return True
 

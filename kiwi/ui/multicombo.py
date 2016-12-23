@@ -23,7 +23,7 @@
 
 import gettext
 
-from gi.repository import Gtk, GLib, GObject, Gdk, Pango
+from gi.repository import Gtk, GLib, GObject, Gdk, Pango, GdkPixbuf
 
 from kiwi.ui.cellrenderer import ComboDetailsCellRenderer
 from kiwi.ui.popup import PopupWindow
@@ -75,8 +75,8 @@ class _MultiComboPopup(PopupWindow):
         self._treeview.add_events(
             Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.KEY_PRESS_MASK)
 
-        self._treeview.modify_base(Gtk.StateType.ACTIVE,
-                                   self._get_selection_color())
+        self._treeview.override_background_color(Gtk.StateFlags.ACTIVE,
+                                                 self._get_selection_color())
 
         self._selection = self._treeview.get_selection()
         self._selection.set_mode(Gtk.SelectionMode.BROWSE)
@@ -90,7 +90,7 @@ class _MultiComboPopup(PopupWindow):
             Gtk.TreeViewColumn('', text_renderer, label=COL_LABEL, data=COL_DATA))
 
         self._model.set_visible_func(
-            lambda model, itr: not model[itr][COL_ATTACHED])
+            lambda model, itr, data: not model[itr][COL_ATTACHED])
 
         self._treeview.set_headers_visible(False)
         self._sw.add(self._treeview)
@@ -102,12 +102,12 @@ class _MultiComboPopup(PopupWindow):
         # FIXME: self.widget should work, but for some reason it is making
         # the popup calculation for the position be wrong.
         # Because of that we are getting the widget's allocation om get_size
-        return self.widget.textview
+        return self.attached_widget.textview
 
     def get_size(self, allocation, monitor):
         # FIXME: We should use the provided allocation, but it is not the one
         # we want. See the comment on get_widget_for_popup for more details
-        allocation = self.widget.get_allocation()
+        allocation = self.attached_widget.get_allocation()
         self._treeview.realize()
 
         rows = len(self._treeview.get_model())
@@ -118,7 +118,7 @@ class _MultiComboPopup(PopupWindow):
             self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
 
         cell_area = self._treeview.get_background_area(
-            0, self._treeview.get_column(0))
+            Gtk.TreePath(0), self._treeview.get_column(0))
         cell_height = cell_area.height
         # Use half of the available screen space
         height = min(max(cell_height * rows, cell_height), monitor.height / 2)
@@ -129,18 +129,18 @@ class _MultiComboPopup(PopupWindow):
 
     def popup(self):
         super(_MultiComboPopup, self).popup()
-        self.widget.dropbutton.set_property('active', True)
+        self.attached_widget.dropbutton.set_property('active', True)
 
     def popdown(self):
         super(_MultiComboPopup, self).popdown()
-        self.widget.dropbutton.set_property('active', False)
+        self.attached_widget.dropbutton.set_property('active', False)
 
     #
     #  Private
     #
 
     def _resize(self):
-        widget = self.widget
+        widget = self.attached_widget
         allocation = widget.get_allocation()
         screen = widget.get_screen()
         window = widget.get_window()
@@ -155,14 +155,15 @@ class _MultiComboPopup(PopupWindow):
         self.set_size_request(*self.get_size(allocation, monitor))
 
     def _get_selection_color(self):
-        settings = Gtk.settings_get_default()
+        settings = Gtk.Settings.get_default()
         for line in settings.props.gtk_color_scheme.split('\n'):
             if not line:
                 continue
             key, value = line.split(' ')
             if key == 'selected_bg_color:':
-                return Gdk.color_parse(value)
-        return self.widget.style.base[Gtk.StateType.SELECTED]
+                color = Gdk.RGBA
+                color.parse(value)
+                return color
 
     def _select_path_for_event(self, event):
         path = self._treeview.get_path_at_pos(int(event.x), int(event.y))
@@ -180,7 +181,7 @@ class _MultiComboPopup(PopupWindow):
             self.emit('item-selected', self._combo_model[itr])
 
     def _update_ui(self):
-        self._treeview.set_sensitive(self.widget.has_items_to_select())
+        self._treeview.set_sensitive(self.attached_widget.has_items_to_select())
         GLib.idle_add(self._resize)
 
     #
@@ -212,7 +213,7 @@ class _MultiComboCloseButton(Gtk.Button):
         super(_MultiComboCloseButton, self).__init__(**kwargs)
 
         self.set_relief(Gtk.ReliefStyle.NONE)
-        image = Gtk.image_new_from_stock(Gtk.STOCK_CLOSE, Gtk.IconSize.MENU)
+        image = Gtk.Image.new_from_stock(Gtk.STOCK_CLOSE, Gtk.IconSize.MENU)
         self.add(image)
 
 
@@ -239,23 +240,16 @@ class MultiCombo(Gtk.HBox):
     scrolling_threshold = GObject.Property(type=int, default=3)
 
     def __init__(self, **kwargs):
-        super(MultiCombo, self).__init__()
+        super(MultiCombo, self).__init__(**kwargs)
 
-        # FIXME: Gtk.HBox doesn't support kwargs on __init__ on gtk2.
-        # Put it there when we migrate to gtk3
-        for k, v in kwargs.iteritems():
-            self.set_property(k, v)
-
-        self.model = Gtk.ListStore(str, object, Gdk.Pixbuf, object)
+        self.model = Gtk.ListStore(str, object, GdkPixbuf.Pixbuf, object)
+        self._row_height = None
         self._setup_ui()
 
         self.popup = _MultiComboPopup(self, self.model)
         self.popup.connect('item-selected', self._on_popup__item_selected)
 
         self.set_size_request(self.width, -1)
-
-        itr = self.textbuffer.get_end_iter()
-        self._row_height = self.textview.get_line_yrange(itr)[1]
 
         self.connect('notify::width', self._on__notify_width)
         self.connect('notify::scrolling_threshold',
@@ -426,14 +420,18 @@ class MultiCombo(Gtk.HBox):
 
         pixbuf = row[COL_PIXBUF]
         if pixbuf is not None:
-            img = Gtk.image_new_from_pixbuf(pixbuf)
+            img = Gtk.Image.new_from_pixbuf(pixbuf)
             hbox.add(img)
 
         label = Gtk.Label()
         label.set_padding(2, 0)
+        text = str(row[COL_LABEL])
+        # For some reason, if we don't set the width-chars here it will
+        # ellipsize the full string.
+        label.set_width_chars(min(len(text), self.max_label_chars))
         label.set_max_width_chars(self.max_label_chars)
         label.set_ellipsize(Pango.EllipsizeMode.END)
-        markup = '<u>%s</u>' % (GLib.markup_escape_text(row[COL_LABEL]), )
+        markup = '<u>%s</u>' % (GLib.markup_escape_text(text), )
         label.set_tooltip_markup(markup)
         label.set_markup(markup)
         hbox.add(label)
@@ -450,7 +448,7 @@ class MultiCombo(Gtk.HBox):
 
         self.textbuffer = Gtk.TextBuffer()
         self.textbuffer.connect('changed', self._on_textbuffer__changed)
-        self.textview = Gtk.TextView(self.textbuffer)
+        self.textview = Gtk.TextView.new_with_buffer(self.textbuffer)
         self.textview.set_wrap_mode(Gtk.WrapMode.WORD)
         self.textview.set_editable(False)
         self.textview.set_cursor_visible(False)
@@ -463,7 +461,12 @@ class MultiCombo(Gtk.HBox):
 
     def _adjust_size(self):
         itr = self.textbuffer.get_end_iter()
-        line_count = self.textview.get_line_yrange(itr)[1] / self._row_height
+        line_range = self.textview.get_line_yrange(itr)
+        if self._row_height is None:
+            self._row_height = line_range[1] or None
+            line_count = 0
+        else:
+            line_count = line_range[1] / self._row_height
 
         if line_count > self.scrolling_threshold:
             self.scrolled_window.set_property('vscrollbar-policy',
@@ -477,7 +480,12 @@ class MultiCombo(Gtk.HBox):
             self.set_size_request(self.width, -1)
 
         if self.popup.visible:
-            GLib.idle_add(self.popup.adjust_position)
+            # Acording to the documentation, PRIORITY_HIGH_IDLE + 20 is
+            # used by redrawing operations so PRIORITY_HIGH_IDLE + 25
+            # should be enought to make sure we call callback just after
+            # the widget finishes redrawing itself.
+            GLib.timeout_add(50, self.popup.adjust_position,
+                             priority=GLib.PRIORITY_HIGH_IDLE + 25)
 
     def _update_no_items_marker(self):
         itr = self.get_iter_by_data(_NO_ITEMS_MARKER)
@@ -486,7 +494,7 @@ class MultiCombo(Gtk.HBox):
     def _scroll_to_item(self, item):
         itr = self.textbuffer.get_iter_at_child_anchor(item[COL_ATTACHED])
         itr.forward_char()
-        self.textview.scroll_to_iter(itr, 0.0)
+        self.textview.scroll_to_iter(itr, 0.0, False, 0.5, 0.5)
 
     #
     #  Callbacks

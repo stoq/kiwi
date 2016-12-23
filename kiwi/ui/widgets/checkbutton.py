@@ -57,11 +57,8 @@ class ProxyCheckButton(Gtk.CheckButton, ProxyWidgetMixin):
     def __post_init__(self):
         self.props.data_type = bool
 
-    gsignal('toggled', 'override')
-
     def do_toggled(self):
         self.emit('content-changed')
-        self.chain()
 
     def read(self):
         return self.get_active()

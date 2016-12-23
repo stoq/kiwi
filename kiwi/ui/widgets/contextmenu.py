@@ -53,7 +53,7 @@ class ContextMenuItem(Gtk.ImageMenuItem):
                 except AttributeError:
                     label = info[1]
 
-        lbl = Gtk.AccelLabel(label)
+        lbl = Gtk.AccelLabel(label=label)
         lbl.set_alignment(0, 0.5)
         lbl.set_use_underline(True)
         lbl.set_use_markup(True)

@@ -24,7 +24,7 @@
 from gi.repository import Gtk, GObject, Gdk
 
 from kiwi.python import strip_accents
-from kiwi.utils import gsignal, type_register
+from kiwi.utils import type_register
 
 COMPLETION_TIMEOUT = 300
 PAGE_INCREMENT = 14
@@ -49,9 +49,8 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
         self._popup_window = None
         self._selected_index = -1
 
-    gsignal('match-selected', 'override')
-
-    def do_match_selected(self, model, iter):
+    @GObject.SignalOverride
+    def match_selected(self, model, iter):
         self._entry.set_text(model[iter][0])
         return True
 
@@ -142,7 +141,7 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
 
     def _on_completion_key_press(self, entry, event):
         window = self._popup_window
-        if window and not window.flags() & Gtk.VISIBLE:
+        if window and not window.get_visible():
             return False
 
         if not self._treeview:
@@ -220,9 +219,9 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
         activate_time = 0L
         window = self._entry.get_window()
         if Gdk.pointer_grab(window, True,
-                            (Gdk.BUTTON_PRESS_MASK |
-                             Gdk.BUTTON_RELEASE_MASK |
-                             Gdk.POINTER_MOTION_MASK),
+                            (Gdk.EventMask.BUTTON_PRESS_MASK |
+                             Gdk.EventMask.BUTTON_RELEASE_MASK |
+                             Gdk.EventMask.POINTER_MOTION_MASK),
                             None, None, activate_time) == 0:
             if Gdk.keyboard_grab(window, True, activate_time) == 0:
                 return True
@@ -245,7 +244,7 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
         self._key = self._entry.get_text()
         self._filter_model.refilter()
         self._treeview.set_model(self._filter_model)
-        if self._treeview.flags() & Gtk.REALIZED:
+        if self._treeview.get_realized():
             self._treeview.scroll_to_point(0, 0)
 
     def set_entry(self, entry):

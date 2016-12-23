@@ -27,32 +27,11 @@
 from gi.repository import Gtk, GObject
 
 from kiwi.ui.proxywidget import ProxyWidgetMixin
-from kiwi.utils import gsignal
 
 
-class _FileChooserMixin(object):
-    """Mixin to use common methods of the FileChooser interface"""
-
-    allowed_data_types = basestring,
-
-    gsignal('selection_changed', 'override')
-
-    def do_selection_changed(self):
-        self.emit('content-changed')
-        self.chain()
-
-    def read(self):
-        return self.get_filename()
-
-    def update(self, data):
-        if data is None:
-            return
-        self.set_filename(data)
-
-
-class ProxyFileChooserWidget(_FileChooserMixin, Gtk.FileChooserWidget,
-                             ProxyWidgetMixin):
+class ProxyFileChooserWidget(Gtk.FileChooserWidget, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFileChooserWidget'
+    allowed_data_types = (basestring, )
 
     def __init__(self, action=Gtk.FileChooserAction.OPEN, backend=None):
         """
@@ -64,12 +43,21 @@ class ProxyFileChooserWidget(_FileChooserMixin, Gtk.FileChooserWidget,
         self.props.data_type = str
         Gtk.FileChooserWidget.__init__(self, action=action, backend=backend)
 
-GObject.type_register(ProxyFileChooserWidget)
+    def do_selection_changed(self):
+        self.emit('content-changed')
+
+    def read(self):
+        return self.get_filename()
+
+    def update(self, data):
+        if data is None:
+            return
+        self.set_filename(data)
 
 
-class ProxyFileChooserButton(_FileChooserMixin, Gtk.FileChooserButton,
-                             ProxyWidgetMixin):
+class ProxyFileChooserButton(Gtk.FileChooserButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFileChooserButton'
+    allowed_data_types = (basestring, )
 
     def __init__(self, title=None, backend=None, dialog=None):
         """
@@ -80,11 +68,18 @@ class ProxyFileChooserButton(_FileChooserMixin, Gtk.FileChooserButton,
         """
         ProxyWidgetMixin.__init__(self)
         self.props.data_type = str
+        Gtk.FileChooserWidget.__init__(
+            self, title=title, action=backend, dialog=dialog)
 
-        # Broken, Broken PyGTK
-        if isinstance(title, str):
-            Gtk.FileChooserButton.__init__(self, title, backend)
-        else:
-            Gtk.FileChooserButton.__init__(self, dialog or title)
+    def do_selection_changed(self):
+        self.emit('content-changed')
+
+    def read(self):
+        return self.get_filename()
+
+    def update(self, data):
+        if data is None:
+            return
+        self.set_filename(data)
 
 GObject.type_register(ProxyFileChooserButton)

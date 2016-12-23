@@ -190,8 +190,7 @@ class Field(GObject.GObject):
 
     def create_button(self, stock_id):
         button = Gtk.Button()
-        image = Gtk.image_new_from_stock(
-            stock_id, Gtk.IconSize.MENU)
+        image = Gtk.Image.new_from_stock(stock_id, Gtk.IconSize.MENU)
         button.set_image(image)
         image.show()
         button.set_relief(Gtk.ReliefStyle.NONE)
@@ -258,7 +257,7 @@ class EmptyField(Field):
     """
 
     def build_widget(self):
-        return Gtk.Label('')
+        return Gtk.Label(label='')
 
     def build_label(self):
         return None
@@ -566,7 +565,7 @@ class FormTableLayout(FormLayout):
             # Attach the field widget
             table.attach(field.get_attachable_widget(),
                          x, x + extra_x, y, y + 1,
-                         Gtk.EXPAND | Gtk.AttachOptions.FILL, 0, 0, 0)
+                         Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL, 0, 0, 0)
 
             # Build and attach the extra buttons
             hbox = Gtk.HBox(spacing=0)
@@ -579,7 +578,7 @@ class FormTableLayout(FormLayout):
             hbox.show_all()
             table.attach(hbox,
                          x, x + 1, y, y + 1,
-                         0, 0, 0, 0)
+                         Gtk.AttachOptions.FILL, 0, 0, 0)
 
             focus_widgets.append(field.widget)
 
@@ -609,7 +608,7 @@ class BasicForm(SlaveDelegate):
         self.proxy = None
         self.main_view = view
         # Just a simple GtkBin
-        self.toplevel = Gtk.Alignment(xscale=1)
+        self.toplevel = Gtk.Alignment.new(0.5, 0.5, 1, 1)
         SlaveDelegate.__init__(self)
 
     def __repr__(self):

@@ -4,13 +4,13 @@ import unittest
 import os
 import sys
 
-from gi.repository import GObject
+from gi.repository import GObject, GLib
 
 from kiwi import tasklet
 
 
 class C(GObject.GObject):
-    __gsignals__ = {'my-signal': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE,
+    __gsignals__ = {'my-signal': (GObject.SignalFlags.RUN_FIRST, None,
                                   (GObject.TYPE_INT,))}
 
     def do_my_signal(self, arg):
@@ -38,19 +38,18 @@ class TestWaitForSignal(unittest.TestCase):
         self.assertEqual(task.state, tasklet.Tasklet.STATE_ZOMBIE)
         self.assertEqual(task.return_value, "return-val")
 
-    if hasattr(GObject, 'add_emission_hook'):
-        def testEmissionHook(self):
-            obj = C()
+    def testEmissionHook(self):
+        obj = C()
 
-            def some_task():
-                yield tasklet.WaitForSignal(C, 'my-signal')
-                tasklet.get_event()
-                raise StopIteration("return-val")
+        def some_task():
+            yield tasklet.WaitForSignal(C, 'my-signal')
+            tasklet.get_event()
+            raise StopIteration("return-val")
 
-            task = tasklet.run(some_task())
-            obj.emit("my-signal", 1)
-            self.assertEqual(task.state, tasklet.Tasklet.STATE_ZOMBIE)
-            self.assertEqual(task.return_value, "return-val")
+        task = tasklet.run(some_task())
+        obj.emit("my-signal", 1)
+        self.assertEqual(task.state, tasklet.Tasklet.STATE_ZOMBIE)
+        self.assertEqual(task.return_value, "return-val")
 
 
 class TestWaitForTimeout(unittest.TestCase):
@@ -130,11 +129,11 @@ class TestIO(unittest.TestCase):
 
         read_fd, write_fd = os.pipe()
 
-        read_chan = GObject.IOChannel(read_fd)
+        read_chan = GLib.IOChannel(read_fd)
         read_chan.set_flags(GObject.IO_FLAG_NONBLOCK)
         reader = tasklet.run(pipe_reader(read_chan))
 
-        write_chan = GObject.IOChannel(write_fd)
+        write_chan = GLib.IOChannel(write_fd)
         write_chan.set_flags(GObject.IO_FLAG_NONBLOCK)
         write_chan.set_encoding(None)
         write_chan.set_buffered(False)

@@ -25,7 +25,7 @@ class English(SlaveDelegate):
         box.set_border_width(6)
         box.show()
 
-        label = Gtk.Label("Number:")
+        label = Gtk.Label(label="Number:")
         label.show()
         box.pack_start(label, False, False, 0)
 
@@ -50,7 +50,7 @@ class Swedish(SlaveDelegate):
         box.set_border_width(6)
         box.show()
 
-        label = Gtk.Label("Nummer:")
+        label = Gtk.Label(label="Nummer:")
         label.show()
         box.pack_start(label, False, False, 0)
 

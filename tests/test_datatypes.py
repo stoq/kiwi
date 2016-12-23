@@ -365,7 +365,9 @@ class UnicodeTest(unittest.TestCase):
 
     def testAsString(self):
         self.assertEqual(self.conv.as_string(u'foobar'), 'foobar')
-        self.assertEqual(self.conv.as_string(u'\xe4'), '\xc3\xa4')
+        # gtk3 will not force this to be converted to a utf-8
+        # encoded string anymore
+        # self.assertEqual(self.conv.as_string(u'\xe4'), '\xc3\xa4')
 
 
 class IntTest(unittest.TestCase):

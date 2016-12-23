@@ -48,6 +48,8 @@ setup(name=name,
       url="http://www.async.com.br/projects/kiwi/",
       license="GNU LGPL 2.1 (see COPYING)",
       data_files=[
+          # Data
+          ('$datadir/css', ['data/css/kiwi.css']),
           # Glade3
           ('share/glade3/catalogs', ['data/kiwiwidgets/kiwiwidgets.xml']),
           ('$libdir/glade3/modules', ['data/kiwiwidgets/kiwiwidgets.py']),

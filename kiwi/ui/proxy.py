@@ -30,7 +30,7 @@ to keep the state of a model object synchronized with a View.
 
 import logging
 
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk
 
 from kiwi import ValueUnset
 from kiwi.accessor import kgetattr, ksetattr, clear_attr_cache
@@ -46,14 +46,14 @@ class ProxyError(Exception):
 
 def block_widget(widget):
     """Blocks the signal handler of the 'content-changed' signal on widget"""
-    connection_id = widget.get_data('content-changed-id')
+    connection_id = widget._content_changed_id
     if connection_id:
         widget.handler_block(connection_id)
 
 
 def unblock_widget(widget):
     """Unblocks the signal handler of the 'content-changed' signal on widget"""
-    connection_id = widget.get_data('content-changed-id')
+    connection_id = widget._content_changed_id
     if connection_id:
         widget.handler_unblock(connection_id)
 
@@ -179,30 +179,30 @@ class Proxy:
             self._on_widget__content_changed,
             attribute,
             IValidatableProxyWidget.providedBy(widget))
-        widget.set_data('content-changed-id', connection_id)
+        widget._content_changed_id = connection_id
 
         if IValidatableProxyWidget.providedBy(widget):
             connection_id = widget.connect(
                 'notify::visible',
                 self._on_widget__notify)
-            widget.set_data('notify-visible-id', connection_id)
+            widget._notify_visible_id = connection_id
 
             connection_id = widget.connect(
                 'notify::sensitive',
                 self._on_widget__notify)
-            widget.set_data('notify-sensitive-id', connection_id)
+            widget._notify_sensitive_id = connection_id
 
             connection_id = widget.connect(
                 'validation-changed',
                 self._on_widget__validation_changed,
                 attribute)
-            widget.set_data('validation-changed-id', connection_id)
+            widget._validation_changed_id = connection_id
 
         model_attributes = self._model_attributes
         # save this widget in our map
         if (attribute in model_attributes and
-            # RadioButtons are allowed several times
-            not GObject.type_is_a(widget, 'GtkRadioButton')):
+                # RadioButtons are allowed several times
+                not isinstance(widget, Gtk.RadioButton)):
             old_widget = model_attributes[attribute]
             raise KeyError("The widget %s (%r) in view %s is already in "
                            "the proxy, defined by widget %s (%r)" % (
@@ -426,9 +426,9 @@ class Proxy:
             raise TypeError("there is no widget called %s" % name)
 
         widget = self._model_attributes.pop(name)
-        widget.disconnect(widget.get_data('content-changed-id'))
+        widget.disconnect(widget._content_changed_id)
 
         if IValidatableProxyWidget.providedBy(widget):
-            for data_name in ('notify-visible-id',
-                              'notify-sensitive-id'):
-                widget.disconnect(widget.get_data(data_name))
+            for data_name in ['_notify_visible_id',
+                              '_notify_sensitive_id']:
+                widget.disconnect(getattr(widget, data_name))

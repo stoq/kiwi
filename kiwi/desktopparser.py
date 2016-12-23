@@ -52,7 +52,7 @@ def _frombool(s):
 class DesktopParser(ConfigParser):
     """
     A DesktopParser for GNOME/KDE .desktop files.
-    The API is similar to GKeyFile from Glib.
+    The API is similar to GKeyFile from GLib.
 
     Example:
 

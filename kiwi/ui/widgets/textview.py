@@ -51,9 +51,9 @@ class ProxyTextView(Gtk.TextView, ValidatableProxyWidgetMixin):
 
     def __init__(self):
         Gtk.TextView.__init__(self)
-        self.props.data_type = str
         ValidatableProxyWidgetMixin.__init__(self)
 
+        self.data_type = str
         self._textbuffer = Gtk.TextBuffer()
         self._textbuffer.connect('changed',
                                  self._on_textbuffer__changed)
@@ -66,7 +66,8 @@ class ProxyTextView(Gtk.TextView, ValidatableProxyWidgetMixin):
     def read(self):
         textbuffer = self._textbuffer
         data = textbuffer.get_text(textbuffer.get_start_iter(),
-                                   textbuffer.get_end_iter())
+                                   textbuffer.get_end_iter(),
+                                   True)
         return self._from_string(data)
 
     def update(self, data):

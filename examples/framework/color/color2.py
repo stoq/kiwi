@@ -31,7 +31,7 @@ class FavouriteColor(BaseView):
         win = Gtk.Window()
         win.set_title("Silly question")
         win.set_border_width(12)
-        label = Gtk.Label("What is your favourite color?")
+        label = Gtk.Label(label="What is your favourite color?")
         box = Gtk.VBox(spacing=6)
         box.pack_start(label, False, True, 0)
         self.combo = ProxyComboEntry()

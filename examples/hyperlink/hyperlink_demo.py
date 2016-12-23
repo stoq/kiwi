@@ -63,9 +63,9 @@ class App(object):
         vb.pack_start(self._hl1, False, True, 0)
         self._hl1.connect('clicked', self._on_hl1__clicked)
         self._hl1.connect('right-clicked', self._on_hl1__right_clicked)
-        d1 = Gtk.Label(
-            'I am a basic hyperlink. The signals I emit are "clicked" and'
-            ' "right-clicked". Try me out')
+        lbl = ('I am a basic hyperlink. The signals I emit are "clicked" and '
+               ' "right-clicked". Try me out')
+        d1 = Gtk.Label(label=lbl)
         d1.set_line_wrap(True)
         vb.pack_start(d1, False, True, 0)
 
@@ -79,9 +79,9 @@ class App(object):
         self._hl2.active_bold = True
         self._hl2.connect('clicked', self._on_hl2__clicked)
         self._hl2.connect('right-clicked', self._on_hl2__right_clicked)
-        d1 = Gtk.Label(
-            'I am a formatted hyperlink. I can be modified by setting'
-            ' my properties like normal-color. Click me to change me!')
+        lbl = ('I am a formatted hyperlink. I can be modified by setting '
+               'my properties like normal-color. Click me to change me!')
+        d1 = Gtk.Label(label=lbl)
         d1.set_line_wrap(True)
         vb.pack_start(d1, False, True, 0)
 
@@ -94,17 +94,17 @@ class App(object):
         self._hl3.active_underline = False
         menu = Gtk.Menu()
         m1 = Gtk.MenuItem()
-        m1.add(Gtk.Label('toggle bold'))
+        m1.add(Gtk.Label(label='toggle bold'))
         menu.add(m1)
         m1.connect('activate', self._on_m1_activated)
         m2 = Gtk.MenuItem()
-        m2.add(Gtk.Label('toggle underline'))
+        m2.add(Gtk.Label(label='toggle underline'))
         menu.add(m2)
         m2.connect('activate', self._on_m2_activated)
         menu.show_all()
         self._hl3.set_menu(menu)
         d1 = Gtk.Label(
-            'I am a hyperlink with a menu. Right click me to pop it up.')
+            label='I am a hyperlink with a menu. Right click me to pop it up.')
         d1.set_line_wrap(True)
         vb.pack_start(d1, False, True, 0)
 

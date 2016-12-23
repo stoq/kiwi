@@ -2,6 +2,7 @@ recursive-include tests *
 recursive-exclude tests *.pyc *.pyo
 recursive-include doc Makefile howto.tex *.txt  *.tmpl *.eps *.png *.dia
 recursive-include examples *
+recursive-include data/css *.css
 recursive-include data/glade *
 recursive-include data/kiwiwidgets/glade-plugin *.png
 recursive-include po *.po kiwi.pot POTFILES.list

@@ -57,6 +57,30 @@ ProxyButton
 log = logging.getLogger('builderloader')
 
 
+def _fix_widget(widget):
+    # FIXME: There's a bug in GtkTable in versions before 3.22
+    # that was making it expand in some ocasions that it shouldn't.
+    # We should actually migrate to GtkGrid because GtkTable is deprecated
+    # and will be removed in gtk4.
+    # More info at: https://bugzilla.gnome.org/show_bug.cgi?id=769162
+    if isinstance(widget, Gtk.Table):
+        if not widget.get_vexpand_set():
+            widget.set_vexpand_set(True)
+            widget.set_vexpand(False)
+        if not widget.get_hexpand_set():
+            widget.set_hexpand_set(True)
+            widget.set_hexpand(False)
+
+    # FIXME: The overlay scrolling when a TextView is inside a ScrolledWindow
+    # is somewhat broken in a way that it would make it get a height of 0 when
+    # being displayed. This happens even in the glade so it is probably a gtk
+    # issue. For now lets disable them until we find a better solution
+    if isinstance(widget, Gtk.ScrolledWindow):
+        widget.set_property('overlay_scrolling', False)
+
+    return widget
+
+
 class BuilderWidgetTree:
     def __init__(self, view, gladefile=None, domain=None, data=None):
         self._view = view
@@ -82,7 +106,7 @@ class BuilderWidgetTree:
         for obj in self._builder.get_objects():
             if isinstance(obj, Gtk.Buildable):
                 object_name = Gtk.Buildable.get_name(obj)
-                setattr(self._view, object_name, obj)
+                setattr(self._view, object_name, _fix_widget(obj))
 
     def get_widget(self, name):
         """Retrieves the named widget from the View (or glade tree)"""
@@ -92,13 +116,13 @@ class BuilderWidgetTree:
         if widget is None:
             raise AttributeError(
                 "Widget %s not found in view %s" % (name, self._view))
-        return widget
+        return _fix_widget(widget)
 
     def get_widgets(self):
-        return self._builder.get_objects()
+        return [_fix_widget(w) for w in self._builder.get_objects()]
 
     def get_sizegroups(self):
-        return [obj for obj in self._builder.get_objects()
+        return [obj for obj in self.get_widgets()
                 if isinstance(obj, Gtk.SizeGroup)]
 
     def signal_autoconnect(self, obj):

@@ -27,7 +27,7 @@ from gi.repository import Gdk
 """Holds the base controller class for the Kiwi Framework"""
 
 
-class BaseController:
+class BaseController(object):
     """
     A generic controller that can be attached to any View
 
@@ -80,11 +80,11 @@ class BaseController:
 
         # Order is important, we want control_shift_alt_XXX
         method_name = 'key_'
-        if event.state & Gdk.CONTROL_MASK:
+        if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
             method_name += 'control_'
-        if event.state & Gdk.SHIFT_MASK:
+        if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
             method_name += 'shift_'
-        if event.state & Gdk.MOD1_MASK:
+        if event.get_state() & Gdk.ModifierType.MOD1_MASK:
             method_name += 'alt_'
 
         method_name += keyval

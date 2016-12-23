@@ -67,7 +67,8 @@ class HyperLink(Gtk.EventBox):
         :param text: The text of the hyperlink.
         :type text: str
         """
-        Gtk.EventBox.__init__(self)
+        super(HyperLink, self).__init__()
+
         self.set_above_child(False)
         self.set_visible_window(False)
         self._gproperties = {}
@@ -250,7 +251,7 @@ class HyperLink(Gtk.EventBox):
 
         Used here to set the cursor type.
         """
-        cursor = Gdk.Cursor(Gdk.HAND1)
+        cursor = Gdk.Cursor.new(Gdk.HAND1)
         self.window.set_cursor(cursor)
 
 type_register(HyperLink)

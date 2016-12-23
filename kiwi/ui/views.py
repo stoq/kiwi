@@ -77,8 +77,8 @@ _non_interactive = [
 if hasattr(Gtk, 'Progress'):
     _non_interactive.append(Gtk.Progress)
 
-color_red = Gdk.color_parse('red')
-color_black = Gdk.color_parse('black')
+_color_red = Gdk.RGBA()
+_color_red.from_color(Gdk.color_parse('red'))
 
 
 class SlaveView(GObject.GObject):
@@ -407,7 +407,8 @@ class SlaveView(GObject.GObject):
             widget = getattr(self, widget_name)
             if not isinstance(widget, Gtk.Widget):
                 continue
-            if not widget.flags() & Gtk.REALIZED:
+
+            if not widget.get_realized():
                 # If widget isn't realized but we have a toplevel
                 # window, it's safe to realize it. If this check isn't
                 # performed, we get a crash as per
@@ -506,7 +507,7 @@ class SlaveView(GObject.GObject):
             new_widget = shell
 
         placeholder = placeholder_widget or self.get_widget(name)
-        placeholder.set_data('kiwi::slave', self)
+        placeholder._kiwi_slave = self
 
         if not placeholder:
             raise AttributeError(
@@ -540,12 +541,6 @@ class SlaveView(GObject.GObject):
                 log.warn("attached slave %s to parent %s, but parent lacked "
                          "a window and was not a slave view" % (slave, self))
             slave._accel_groups = []
-
-        # Merge the sizegroups of the slave that is being attached  with the
-        # sizegroups of where it is being attached to. Only the sizegroups
-        # with the same name will be merged.
-        for sizegroup in slave.get_sizegroups():
-            self._merge_sizegroup(sizegroup)
 
         if isinstance(placeholder, Gtk.EventBox):
             # standard mechanism
@@ -601,24 +596,6 @@ class SlaveView(GObject.GObject):
             return []
 
         return self._glade_adaptor.get_sizegroups()
-
-    def _merge_sizegroup(self, other_sizegroup):
-        # Merge sizegroup from other with self that have the same name.
-        # Actually, no merging is being done, since the old group is preserved
-
-        name = other_sizegroup.get_data('gazpacho::object-id')
-        if name is None:
-            return
-        sizegroup = getattr(self, name, None)
-        if not sizegroup:
-            return
-
-        widgets = other_sizegroup.get_data('gazpacho::sizegroup-widgets')
-        if not widgets:
-            return
-
-        for widget in widgets:
-            sizegroup.add_widget(widget)
 
     def detach_slave(self, name):
         """
@@ -791,14 +768,14 @@ class SlaveView(GObject.GObject):
             is_valid = False
 
         if is_valid:
-            color = color_black
+            color = None
         else:
-            color = color_red
+            color = _color_red
 
         # Only modify active state, since that's the (somewhat badly named)
         # state used for the pages which are not selected.
-        label.modify_fg(Gtk.StateType.ACTIVE, color)
-        label.modify_fg(Gtk.StateType.NORMAL, color)
+        label.override_color(Gtk.StateFlags.ACTIVE, color)
+        label.override_color(Gtk.StateFlags.NORMAL, color)
 
     def check_and_notify_validity(self, force=False):
         # Current view is only valid if we have no invalid children

@@ -24,6 +24,8 @@
 
 """GtkHScale and GtkVScale support for the Kiwi Framework"""
 
+import sys
+
 from gi.repository import Gtk, GObject
 
 from kiwi import ValueUnset
@@ -31,16 +33,27 @@ from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import gsignal, type_register
 
 
-class _ProxyScale:
-    # changed allowed data types because scales can only
-    # accept float values
-    allowed_data_types = float,
+class ProxyHScale(Gtk.HScale, ProxyWidgetMixin):
+    __gtype_name__ = 'ProxyHScale'
+    allowed_data_types = (float, )
+    data_type = GObject.Property(
+        getter=ProxyWidgetMixin.get_data_type,
+        setter=ProxyWidgetMixin.set_data_type,
+        type=str, blurb='Data Type')
+    model_attribute = GObject.Property(type=str, blurb='Model attribute')
+    gsignal('content-changed')
+    gsignal('validation-changed', bool)
+    gsignal('validate', object, retval=object)
 
-    gsignal('value_changed', 'override')
+    def __init__(self, adjustment=None):
+        if not adjustment:
+            adjustment = Gtk.Adjustment(
+                lower=-sys.maxint, upper=sys.maxint, value=0)
+        Gtk.HScale.__init__(self, adjustment=adjustment)
+        ProxyWidgetMixin.__init__(self)
 
-    def do_value_changed(self):
-        self.emit('content-changed')
-        self.chain()
+        self.props.data_type = float
+        # self.connect_after('value-changed', self._on_value_changed)
 
     def read(self):
         return self.get_value()
@@ -51,28 +64,15 @@ class _ProxyScale:
         else:
             self.set_value(data)
 
-
-class ProxyHScale(_ProxyScale, ProxyWidgetMixin, Gtk.HScale):
-    __gtype_name__ = 'ProxyHScale'
-    data_type = GObject.Property(
-        getter=ProxyWidgetMixin.get_data_type,
-        setter=ProxyWidgetMixin.set_data_type,
-        type=str, blurb='Data Type')
-    model_attribute = GObject.Property(type=str, blurb='Model attribute')
-    gsignal('content-changed')
-    gsignal('validation-changed', bool)
-    gsignal('validate', object, retval=object)
-
-    def __init__(self):
-        Gtk.HScale.__init__(self)
-        ProxyWidgetMixin.__init__(self)
-        self.props.data_type = float
+    def do_value_changed(self):
+        self.emit('content-changed')
 
 type_register(ProxyHScale)
 
 
-class ProxyVScale(_ProxyScale, ProxyWidgetMixin, Gtk.VScale):
+class ProxyVScale(Gtk.VScale, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyVScale'
+    allowed_data_types = (float, )
     data_type = GObject.Property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
@@ -82,9 +82,26 @@ class ProxyVScale(_ProxyScale, ProxyWidgetMixin, Gtk.VScale):
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
 
-    def __init__(self):
-        Gtk.VScale.__init__(self)
+    def __init__(self, adjustment=None):
+        if not adjustment:
+            adjustment = Gtk.Adjustment(
+                lower=-sys.maxint, upper=sys.maxint, value=0)
+        Gtk.VScale.__init__(self, adjustment=adjustment)
         ProxyWidgetMixin.__init__(self)
+
         self.props.data_type = float
+        # self.connect_after('value-changed', self._on_value_changed)
+
+    def read(self):
+        return self.get_value()
+
+    def update(self, data):
+        if data is None or data is ValueUnset:
+            self.set_value(0.)
+        else:
+            self.set_value(data)
+
+    def do_value_changed(self):
+        self.emit('content-changed')
 
 type_register(ProxyVScale)

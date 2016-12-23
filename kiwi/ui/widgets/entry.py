@@ -43,13 +43,6 @@ from kiwi.utils import gsignal, type_register
 _ = lambda msg: gettext.dgettext('kiwi', msg)
 
 
-class ProxyEntryMeta(GObject.GObjectMeta):
-    def __call__(self, *args, **kwargs):
-        rv = super(ProxyEntryMeta, self).__call__(*args, **kwargs)
-        rv.__post_init__()
-        return rv
-
-
 class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     """The Kiwi Entry widget has many special features that extend the basic
     gtk entry.
@@ -66,8 +59,6 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
     how to fill these entries is displayed according to the current locale.
     """
 
-    __class__ = ProxyEntryMeta
-
     allowed_data_types = (basestring, datetime.date, datetime.time,
                           datetime.datetime, object) + number
 
@@ -83,22 +74,18 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         self._has_been_updated = False
         KiwiEntry.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
-        self._entry_data_type = data_type
-        # XXX: Sales -> New Loan Item requires this, figure out why
-        try:
-            self.props.data_type = data_type
-        except (AttributeError, TypeError):
-            pass
+        self._set_data_type(data_type)
         # Hide currency symbol from the entry.
         self.set_options_for_datatype(currency, symbol=False)
 
-    def __post_init__(self):
-        self.props.data_type = self._entry_data_type
+        # This used to be an override, but after the gtk3 migration if we
+        # use the override or create a do_changed method GObject will break
+        # the object in a way that it will be considered a Gtk.SpinButton
+        # directly instead of a ProxySpinButton. The side effect of that
+        # would be that out custom events (e.g. validate) would not exist.
+        self.connect('changed', self._on_changed)
 
-    # Virtual methods
-    gsignal('changed', 'override')
-
-    def do_changed(self):
+    def _on_changed(self, widget):
         if self._block_changed:
             self.emit_stop_by_name('changed')
             return
@@ -245,13 +232,10 @@ class ProxyDateEntry(DateEntry, ValidatableProxyWidgetMixin):
         self.entry.set_width_chars(current_width
                                    + int(icon_width / char_width))
 
-    gsignal('changed', 'override')
-
     def do_changed(self):
         if self._in_do_changed:
             return
         self._in_do_changed = True
-        self.chain()
         self.emit('content-changed')
         self._in_do_changed = False
 

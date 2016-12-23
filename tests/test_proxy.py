@@ -2,7 +2,7 @@
 
 import unittest
 
-from gtk import gdk
+from gi.repository import GdkPixbuf
 import mock
 
 from kiwi import ValueUnset
@@ -67,13 +67,13 @@ class TestProxy(unittest.TestCase):
         self.view.add('hscale', float, ProxyHScale)
         self.view.add('vscale', float, ProxyVScale)
         self.view.add('button', str, ProxyButton)
-        self.view.add('buttonpixbuf', gdk.Pixbuf, ProxyButton)
+        self.view.add('buttonpixbuf', GdkPixbuf.Pixbuf, ProxyButton)
 
         self.view.add('textview', str, ProxyTextView)
         self.radio_first = self.view.add('radiobutton', str, ProxyRadioButton)
         self.radio_first.set_property('data_value', 'first')
         self.radio_second = ProxyRadioButton()
-        self.radio_second.set_group(self.radio_first)
+        self.radio_second.set_group([self.radio_first])
         self.radio_second.set_property('data_value', 'second')
 
         self.view.hscale.get_adjustment().upper = 200
@@ -239,7 +239,7 @@ class TestProxy(unittest.TestCase):
         self.view.entry.set_property('data-type', unicode)
         with self.assertRaises(TypeError) as te:
             # encode to iso-8859-1 so it will produce an UnicodeDecodeError
-            self.proxy.update('entry', 'não'.encode('iso-8859-1'))
+            self.proxy.update('entry', u'não'.encode('iso-8859-1'))
         self.assertEqual(
             te.exception.message,
             ("attribute entry of model <Model button='button', "

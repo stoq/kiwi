@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from gi.repository import GObject
-import gtk
+from gi.repository import GObject, Gtk
 
 from kiwi import ValueUnset
 from kiwi import datatypes
@@ -151,27 +150,27 @@ class EntryTest(unittest.TestCase):
         entry = GObject.new(ProxyEntry, data_type=int)
         entry.set_property("data-type", str)
         self.assertEqual(entry.get_property('data_type'), 'str')
-        while gtk.events_pending():
-            gtk.main_iteration()
+        while Gtk.events_pending():
+            Gtk.main_iteration()
         self.assertEqual(entry.get_property('data_type'), 'str')
 
         entry = GObject.new(ProxyEntry, data_type=int)
         self.assertEqual(entry.get_property('data_type'), 'int')
         entry.set_property("data-type", str)
-        while gtk.events_pending():
-            gtk.main_iteration()
+        while Gtk.events_pending():
+            Gtk.main_iteration()
         self.assertEqual(entry.get_property('data_type'), 'str')
 
     def testIdleAddedProperly(self):
         entry = ProxyEntry()
         entry.set_property("data-type", "int")
-        while gtk.events_pending():
-            gtk.main_iteration()
+        while Gtk.events_pending():
+            Gtk.main_iteration()
         self.assertEqual(entry.get_property('data_type'), 'int')
 
         entry = ProxyEntry(data_type=str)
-        while gtk.events_pending():
-            gtk.main_iteration()
+        while Gtk.events_pending():
+            Gtk.main_iteration()
         self.assertEqual(entry.get_property('data_type'), 'str')
         entry.set_property("data-type", int)
         self.assertEqual(entry.get_property('data_type'), 'int')
@@ -179,8 +178,8 @@ class EntryTest(unittest.TestCase):
         entry = ProxyEntry(data_type=str)
         self.assertEqual(entry.get_property('data_type'), 'str')
         entry.set_property("data-type", int)
-        while gtk.events_pending():
-            gtk.main_iteration()
+        while Gtk.events_pending():
+            Gtk.main_iteration()
         self.assertEqual(entry.get_property('data_type'), 'int')
 
     def testCorrectlySetsEmptyString(self):
