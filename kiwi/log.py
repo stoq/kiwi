@@ -101,6 +101,7 @@ class ReversedGlobalFilter(logging.Filter):
     is to not show the message, you need to add custom filters for all
     the records you wish to see
     """
+
     def __init__(self):
         logging.Filter.__init__(self)
         self.filters = []
@@ -111,7 +112,7 @@ class ReversedGlobalFilter(logging.Filter):
     def filter(self, record):
         for f, level in self.filters:
             if (record.levelno >= level and
-                fnmatch.fnmatch(record.name, f)):
+                    fnmatch.fnmatch(record.name, f)):
                 return True
 
         return False
@@ -182,7 +183,7 @@ def _create_console():
 
     console = logging.StreamHandler()
     console.setFormatter(logging.Formatter(
-        "%(asctime)s %(name)-20s %(message)s", datefmt='%T'))
+        "%(asctime)s %(name)-20s %(message)s", datefmt='%H:%M:%S'))
     root = logging.getLogger()
     root.addHandler(console)
     root.setLevel(logging.DEBUG)
