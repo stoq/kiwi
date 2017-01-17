@@ -411,11 +411,13 @@ class NumericField(Field):
     rendered as a spin button.
     """
     widget_data_type = Decimal
+    digits = gobject.property(type=int, default=0)
 
     def build_widget(self):
         entry = ProxySpinButton()
         entry.set_adjustment(gtk.Adjustment(lower=0, step_incr=1,
                                             upper=sys.maxint, page_incr=10))
+        entry.set_digits(self.digits)
         return entry
 
 gobject.type_register(NumericField)
