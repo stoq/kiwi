@@ -36,8 +36,7 @@ except NameError:
     from sets import Set as set
 
 import gobject
-import pango
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, Pango
 
 from kiwi.enums import Direction
 from kiwi.python import strip_accents
@@ -206,7 +205,7 @@ class KiwiEntry(Gtk.Entry):
         :param mask: the mask to set
         """
         if not mask:
-            self.modify_font(pango.FontDescription("sans"))
+            self.modify_font(Pango.FontDescription("sans"))
             self._mask = mask
             return
 
@@ -219,7 +218,7 @@ class KiwiEntry(Gtk.Entry):
             else:
                 self._mask_validators.append(c)
 
-        self.modify_font(pango.FontDescription("monospace"))
+        self.modify_font(Pango.FontDescription("monospace"))
 
         self._really_delete_text(0, -1)
         self._mask = mask
@@ -549,17 +548,17 @@ class KiwiEntry(Gtk.Entry):
 
     def _update_position(self):
         if self.get_property('xalign') > 0.5:
-            self._icon_pos = Gtk.POS_LEFT
+            self._icon_pos = Gtk.PositionType.LEFT
         else:
-            self._icon_pos = Gtk.POS_RIGHT
+            self._icon_pos = Gtk.PositionType.RIGHT
 
         # If the text is right to left, we have to use the oposite side
-        RTL = Gtk.widget_get_default_direction() == Gtk.TEXT_DIR_RTL
+        RTL = Gtk.widget_get_default_direction() == Gtk.TextDirection.RTL
         if RTL:
-            if self._icon_pos == Gtk.POS_LEFT:
-                self._icon_pos = Gtk.POS_RIGHT
+            if self._icon_pos == Gtk.PositionType.LEFT:
+                self._icon_pos = Gtk.PositionType.RIGHT
             else:
-                self._icon_pos = Gtk.POS_LEFT
+                self._icon_pos = Gtk.PositionType.LEFT
 
     # Callbacks
 
@@ -730,24 +729,24 @@ class KiwiEntry(Gtk.Entry):
     # Old IconEntry API
 
     def set_tooltip(self, text):
-        if self._icon_pos == Gtk.POS_LEFT:
+        if self._icon_pos == Gtk.PositionType.LEFT:
             icon = 'primary-icon-tooltip-text'
         else:
             icon = 'secondary-icon-tooltip-text'
         self.set_property(icon, text)
 
     def set_pixbuf(self, pixbuf):
-        if self._icon_pos == Gtk.POS_LEFT:
+        if self._icon_pos == Gtk.PositionType.LEFT:
             icon = 'primary-icon-pixbuf'
         else:
             icon = 'secondary-icon-pixbuf'
         self.set_property(icon, pixbuf)
 
     def update_background(self, color):
-        self.modify_base(Gtk.STATE_NORMAL, color)
+        self.modify_base(Gtk.StateType.NORMAL, color)
 
     def get_background(self):
-        return self.style.base[Gtk.STATE_NORMAL]
+        return self.style.base[Gtk.StateType.NORMAL]
 
     # IComboMixin
 

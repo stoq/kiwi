@@ -106,9 +106,9 @@ class ProxySpinButton(Gtk.SpinButton, ValidatableProxyWidgetMixin):
         self.set_property('primary-icon-pixbuf', pixbuf)
 
     def update_background(self, color):
-        self.modify_base(Gtk.STATE_NORMAL, color)
+        self.modify_base(Gtk.StateType.NORMAL, color)
 
     def get_background(self):
-        return self.style.base[Gtk.STATE_NORMAL]
+        return self.style.base[Gtk.StateType.NORMAL]
 
 gobject.type_register(ProxySpinButton)

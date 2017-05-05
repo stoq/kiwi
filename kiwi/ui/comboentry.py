@@ -62,7 +62,7 @@ class _ComboEntryPopup(PopupWindow):
         vbox.show()
 
         self._sw = Gtk.ScrolledWindow()
-        self._sw.set_policy(Gtk.POLICY_NEVER, Gtk.POLICY_NEVER)
+        self._sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
         vbox.pack_start(self._sw, True, True, 0)
         self._sw.show()
 
@@ -75,7 +75,7 @@ class _ComboEntryPopup(PopupWindow):
                                self._on_treeview__button_release_event)
         self._treeview.add_events(gdk.BUTTON_PRESS_MASK)
         self._selection = self._treeview.get_selection()
-        self._selection.set_mode(Gtk.SELECTION_BROWSE)
+        self._selection.set_mode(Gtk.SelectionMode.BROWSE)
         self._renderer = ComboDetailsCellRenderer()
         self._treeview.append_column(
             Gtk.TreeViewColumn('Foo', self._renderer,
@@ -193,9 +193,9 @@ class _ComboEntryPopup(PopupWindow):
         rows = len(self._treeview.get_model())
         if rows > self._visible_rows:
             rows = self._visible_rows
-            self._sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_ALWAYS)
+            self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
         else:
-            self._sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_NEVER)
+            self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
 
         cell_height = treeview.get_cell_area(0, treeview.get_column(0)).height
         height = cell_height * rows
@@ -295,7 +295,7 @@ class ComboEntry(Gtk.VBox):
         self.hbox.pack_end(self._button, False, False, 0)
         self._button.show()
 
-        arrow = Gtk.Arrow(Gtk.ARROW_DOWN, Gtk.SHADOW_NONE)
+        arrow = Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.NONE)
         self._button.add(arrow)
         arrow.show()
 

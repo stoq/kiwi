@@ -66,7 +66,7 @@ class ListContainer(Gtk.HBox):
     gsignal('edit-item', object, retval=bool)
     gsignal('selection-changed', object)
 
-    def __init__(self, columns, orientation=Gtk.ORIENTATION_VERTICAL):
+    def __init__(self, columns, orientation=Gtk.Orientation.VERTICAL):
         """
         Create a new ListContainer object.
         :param columns: columns for the :class:`kiwi.ui.objectlist.ObjectList`
@@ -74,7 +74,7 @@ class ListContainer(Gtk.HBox):
         :param orientation: the position where the buttons will be
             placed: at the right (vertically) or at the bottom (horizontally)
             of the list. Defaults to the right of the list.
-        :type: Gtk.ORIENTATION_HORIZONTAL or Gtk.ORIENTATION_VERTICAL
+        :type: Gtk.Orientation.HORIZONTAL or Gtk.Orientation.VERTICAL
         """
         self._list_type = None
 
@@ -107,12 +107,12 @@ class ListContainer(Gtk.HBox):
 
         self._vbox = Gtk.VBox(spacing=6)
 
-        if self._orientation == Gtk.ORIENTATION_VERTICAL:
+        if self._orientation == Gtk.Orientation.VERTICAL:
             self.pack_start(self.list, True, True, 0)
             self.list.show()
             self._add_buttons_to_box(self._vbox)
             self._pack_vbox()
-        elif self._orientation == Gtk.ORIENTATION_HORIZONTAL:
+        elif self._orientation == Gtk.Orientation.HORIZONTAL:
             self._vbox.pack_start(self.list, True, True, 0)
             self.list.show()
             hbox = Gtk.HBox(spacing=6)
@@ -122,8 +122,8 @@ class ListContainer(Gtk.HBox):
             self._pack_vbox()
         else:
             raise TypeError(
-                "buttons_orientation must be Gtk.ORIENTATION_VERTICAL "
-                " or Gtk.ORIENTATION_HORIZONTAL")
+                "buttons_orientation must be Gtk.Orientation.VERTICAL "
+                " or Gtk.Orientation.HORIZONTAL")
 
     def _add_buttons_to_box(self, box):
         box.pack_start(self.add_button, False, False, 0)
@@ -135,7 +135,7 @@ class ListContainer(Gtk.HBox):
         self._vbox.show()
 
     def _set_child_packing(self, padding):
-        expand = self._orientation == Gtk.ORIENTATION_HORIZONTAL
+        expand = self._orientation == Gtk.Orientation.HORIZONTAL
 
         self.set_child_packing(self._vbox, expand, True, padding,
                                Gtk.PACK_START)
@@ -196,10 +196,10 @@ class ListContainer(Gtk.HBox):
         response = yesno(_('Do you want to remove %s ?') %
                         (glib.markup_escape_text(str(item)),),
                          parent=None,
-                         default=Gtk.RESPONSE_OK,
-                         buttons=((Gtk.STOCK_CANCEL, Gtk.RESPONSE_CANCEL),
-                                  (Gtk.STOCK_REMOVE, Gtk.RESPONSE_OK)))
-        return response == Gtk.RESPONSE_OK
+                         default=Gtk.ResponseType.OK,
+                         buttons=((Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL),
+                                  (Gtk.STOCK_REMOVE, Gtk.ResponseType.OK)))
+        return response == Gtk.ResponseType.OK
 
     def set_list_type(self, list_type):
         """Sets the kind of list type.
@@ -260,7 +260,7 @@ class ListSlave(SlaveDelegate):
     columns = None
     list_type = ListType.NORMAL
 
-    def __init__(self, columns=None, orientation=Gtk.ORIENTATION_VERTICAL):
+    def __init__(self, columns=None, orientation=Gtk.Orientation.VERTICAL):
         columns = columns or self.columns
         if not columns:
             raise ValueError("columns cannot be empty")
@@ -414,7 +414,7 @@ class ListDialog(Gtk.Dialog, ListSlave):
     """
     def __init__(self, columns=None):
         Gtk.Dialog.__init__(self)
-        self.add_button(Gtk.STOCK_CLOSE, Gtk.RESPONSE_CLOSE)
+        self.add_button(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
 
         ListSlave.__init__(self, columns)
         self.vbox.pack_start(self.listcontainer, True, True, 0)

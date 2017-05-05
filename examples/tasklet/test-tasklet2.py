@@ -11,7 +11,7 @@ import sys
 
 import gobject
 import gtk
-import pango
+from gi.repository import Pango
 
 from kiwi import tasklet
 
@@ -61,7 +61,7 @@ def main():
 
     win = gtk.Window()
     textview = gtk.TextView()
-    textview.modify_font(pango.FontDescription("Monospace"))
+    textview.modify_font(Pango.FontDescription("Monospace"))
     textview.show()
     sw = gtk.ScrolledWindow()
     sw.add(textview)

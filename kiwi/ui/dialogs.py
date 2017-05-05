@@ -35,27 +35,27 @@ __all__ = ['error', 'info', 'messagedialog', 'warning', 'yesno', 'save',
 _ = lambda m: gettext.dgettext('kiwi', m)
 
 _IMAGE_TYPES = {
-    Gtk.MESSAGE_INFO: Gtk.STOCK_DIALOG_INFO,
-    Gtk.MESSAGE_WARNING: Gtk.STOCK_DIALOG_WARNING,
-    Gtk.MESSAGE_QUESTION: Gtk.STOCK_DIALOG_QUESTION,
-    Gtk.MESSAGE_ERROR: Gtk.STOCK_DIALOG_ERROR,
+    Gtk.MessageType.INFO: Gtk.STOCK_DIALOG_INFO,
+    Gtk.MessageType.WARNING: Gtk.STOCK_DIALOG_WARNING,
+    Gtk.MessageType.QUESTION: Gtk.STOCK_DIALOG_QUESTION,
+    Gtk.MessageType.ERROR: Gtk.STOCK_DIALOG_ERROR,
 }
 
 _BUTTON_TYPES = {
-    Gtk.BUTTONS_NONE: (),
-    Gtk.BUTTONS_OK: (Gtk.STOCK_OK, Gtk.RESPONSE_OK,),
-    Gtk.BUTTONS_CLOSE: (Gtk.STOCK_CLOSE, Gtk.RESPONSE_CLOSE,),
-    Gtk.BUTTONS_CANCEL: (Gtk.STOCK_CANCEL, Gtk.RESPONSE_CANCEL,),
-    Gtk.BUTTONS_YES_NO: (Gtk.STOCK_NO, Gtk.RESPONSE_NO,
-                         Gtk.STOCK_YES, Gtk.RESPONSE_YES),
-    Gtk.BUTTONS_OK_CANCEL: (Gtk.STOCK_CANCEL, Gtk.RESPONSE_CANCEL,
-                            Gtk.STOCK_OK, Gtk.RESPONSE_OK)
+    Gtk.ButtonsType.NONE: (),
+    Gtk.ButtonsType.OK: (Gtk.STOCK_OK, Gtk.ResponseType.OK,),
+    Gtk.ButtonsType.CLOSE: (Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE,),
+    Gtk.ButtonsType.CANCEL: (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,),
+    Gtk.ButtonsType.YES_NO: (Gtk.STOCK_NO, Gtk.ResponseType.NO,
+                             Gtk.STOCK_YES, Gtk.ResponseType.YES),
+    Gtk.ButtonsType.OK_CANCEL: (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                Gtk.STOCK_OK, Gtk.ResponseType.OK)
 }
 
 
 class HIGAlertDialog(Gtk.Dialog):
     def __init__(self, parent, flags,
-                 type=Gtk.MESSAGE_INFO, buttons=Gtk.BUTTONS_NONE):
+                 type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.NONE):
         if not type in _IMAGE_TYPES:
             raise TypeError(
                 "type must be one of: %s", ', '.join(_IMAGE_TYPES.keys()))
@@ -81,7 +81,7 @@ class HIGAlertDialog(Gtk.Dialog):
         self._secondary_label = Gtk.Label()
         self._details_label = Gtk.Label()
         self._image = Gtk.image_new_from_stock(_IMAGE_TYPES[type],
-                                               Gtk.ICON_SIZE_DIALOG)
+                                               Gtk.IconSize.DIALOG)
         self._image.set_alignment(0.5, 0.0)
 
         self._primary_label.set_use_markup(True)
@@ -144,8 +144,8 @@ class BaseDialog(Gtk.Dialog):
             raise TypeError("parent needs to be None or a Gtk.Window subclass")
 
         if not flags and parent:
-            flags &= (Gtk.DIALOG_MODAL |
-                      Gtk.DIALOG_DESTROY_WITH_PARENT)
+            flags &= (Gtk.DialogFlags.MODAL |
+                      Gtk.DialogFlags.DESTROY_WITH_PARENT)
 
         Gtk.Dialog.__init__(self, title=title, parent=parent,
                             flags=flags, buttons=buttons)
@@ -155,46 +155,46 @@ class BaseDialog(Gtk.Dialog):
 
 
 def messagedialog(dialog_type, short, long=None, parent=None,
-                  buttons=Gtk.BUTTONS_OK, default=-1, bold=True):
+                  buttons=Gtk.ButtonsType.OK, default=-1, bold=True):
     """Create and show a MessageDialog.
 
     :param dialog_type: one of constants
-      - Gtk.MESSAGE_INFO
-      - Gtk.MESSAGE_WARNING
-      - Gtk.MESSAGE_QUESTION
-      - Gtk.MESSAGE_ERROR
+      - Gtk.MessageType.INFO
+      - Gtk.MessageType.WARNING
+      - Gtk.MessageType.QUESTION
+      - Gtk.MessageType.ERROR
     :param short:       A header text to be inserted in the dialog.
     :param long:        A long description of message.
     :param parent:      The parent widget of this dialog
     :type parent:       a Gtk.Window subclass
     :param buttons:     The button type that the dialog will be display,
       one of the constants:
-       - Gtk.BUTTONS_NONE
-       - Gtk.BUTTONS_OK
-       - Gtk.BUTTONS_CLOSE
-       - Gtk.BUTTONS_CANCEL
-       - Gtk.BUTTONS_YES_NO
-       - Gtk.BUTTONS_OK_CANCEL
+       - Gtk.ButtonsType.NONE
+       - Gtk.ButtonsType.OK
+       - Gtk.ButtonsType.CLOSE
+       - Gtk.ButtonsType.CANCEL
+       - Gtk.ButtonsType.YES_NO
+       - Gtk.ButtonsType.OK_CANCEL
       or a tuple or 2-sized tuples representing label and response. If label
       is a stock-id a stock icon will be displayed.
     :param default: optional default response id
     :param bold: If the short message should be formatted to bold
     """
-    if buttons in (Gtk.BUTTONS_NONE, Gtk.BUTTONS_OK, Gtk.BUTTONS_CLOSE,
-                   Gtk.BUTTONS_CANCEL, Gtk.BUTTONS_YES_NO,
-                   Gtk.BUTTONS_OK_CANCEL):
+    if buttons in (Gtk.ButtonsType.NONE, Gtk.ButtonsType.OK, Gtk.ButtonsType.CLOSE,
+                   Gtk.ButtonsType.CANCEL, Gtk.ButtonsType.YES_NO,
+                   Gtk.ButtonsType.OK_CANCEL):
         dialog_buttons = buttons
         buttons = []
     else:
         if buttons is not None and type(buttons) != tuple:
             raise TypeError(
                 "buttons must be a GtkButtonsTypes constant or a tuple")
-        dialog_buttons = Gtk.BUTTONS_NONE
+        dialog_buttons = Gtk.ButtonsType.NONE
 
     if parent and not isinstance(parent, (Gtk.Window, Gtk.Dialog)):
         raise TypeError("parent must be a Gtk.Window subclass")
 
-    d = HIGAlertDialog(parent=parent, flags=Gtk.DIALOG_MODAL,
+    d = HIGAlertDialog(parent=parent, flags=Gtk.DialogFlags.MODAL,
                        type=dialog_type, buttons=dialog_buttons)
     if buttons:
         for text, response in buttons:
@@ -223,33 +223,33 @@ def messagedialog(dialog_type, short, long=None, parent=None,
     return response
 
 
-def _simple(type, short, long=None, parent=None, buttons=Gtk.BUTTONS_OK,
+def _simple(type, short, long=None, parent=None, buttons=Gtk.ButtonsType.OK,
             default=-1):
-    if buttons == Gtk.BUTTONS_OK:
-        default = Gtk.RESPONSE_OK
+    if buttons == Gtk.ButtonsType.OK:
+        default = Gtk.ResponseType.OK
     return messagedialog(type, short, long,
                          parent=parent, buttons=buttons,
                          default=default)
 
 
-def error(short, long=None, parent=None, buttons=Gtk.BUTTONS_OK, default=-1):
-    return _simple(Gtk.MESSAGE_ERROR, short, long, parent=parent,
+def error(short, long=None, parent=None, buttons=Gtk.ButtonsType.OK, default=-1):
+    return _simple(Gtk.MessageType.ERROR, short, long, parent=parent,
                    buttons=buttons, default=default)
 
 
-def info(short, long=None, parent=None, buttons=Gtk.BUTTONS_OK, default=-1):
-    return _simple(Gtk.MESSAGE_INFO, short, long, parent=parent,
+def info(short, long=None, parent=None, buttons=Gtk.ButtonsType.OK, default=-1):
+    return _simple(Gtk.MessageType.INFO, short, long, parent=parent,
                    buttons=buttons, default=default)
 
 
-def warning(short, long=None, parent=None, buttons=Gtk.BUTTONS_OK, default=-1):
-    return _simple(Gtk.MESSAGE_WARNING, short, long, parent=parent,
+def warning(short, long=None, parent=None, buttons=Gtk.ButtonsType.OK, default=-1):
+    return _simple(Gtk.MessageType.WARNING, short, long, parent=parent,
                    buttons=buttons, default=default)
 
 
-def yesno(text, parent=None, default=Gtk.RESPONSE_YES,
-          buttons=Gtk.BUTTONS_YES_NO):
-    return messagedialog(Gtk.MESSAGE_WARNING, text, None, parent,
+def yesno(text, parent=None, default=Gtk.ResponseType.YES,
+          buttons=Gtk.ButtonsType.YES_NO):
+    return messagedialog(Gtk.MessageType.WARNING, text, None, parent,
                          buttons=buttons, default=default)
 
 
@@ -261,7 +261,7 @@ def selectfile(title='', parent=None, folder=None, filters=None):
 
         >>> with selectfile() as sf:
         ...     response = sf.run()
-        ...     if response != Gtk.RESPONSE_OK:
+        ...     if response != Gtk.ResponseType.OK:
         ...         return
         ...     filename = sf.get_filename()
 
@@ -273,9 +273,9 @@ def selectfile(title='', parent=None, folder=None, filters=None):
 
     filechooser = Gtk.FileChooserDialog(title or _('Select file'),
                                         parent,
-                                        Gtk.FILE_CHOOSER_ACTION_OPEN,
-                                        (Gtk.STOCK_CANCEL, Gtk.RESPONSE_CANCEL,
-                                         Gtk.STOCK_OPEN, Gtk.RESPONSE_OK))
+                                        Gtk.FileChooserAction.OPEN,
+                                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                         Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
 
     if filters is None:
         filters = []
@@ -285,7 +285,7 @@ def selectfile(title='', parent=None, folder=None, filters=None):
     if folder:
         filechooser.set_current_folder(folder)
 
-    filechooser.set_default_response(Gtk.RESPONSE_OK)
+    filechooser.set_default_response(Gtk.ResponseType.OK)
 
     try:
         yield filechooser
@@ -303,17 +303,17 @@ def selectfolder(title='', parent=None, folder=None):
     filechooser = Gtk.FileChooserDialog(
         title or _('Select folder'),
         parent,
-        Gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
-        (Gtk.STOCK_CANCEL, Gtk.RESPONSE_CANCEL,
-         Gtk.STOCK_OK, Gtk.RESPONSE_OK))
+        Gtk.FileChooserAction.SELECT_FOLDER,
+        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+         Gtk.STOCK_OK, Gtk.ResponseType.OK))
 
     if folder:
         filechooser.set_current_folder(folder)
 
-    filechooser.set_default_response(Gtk.RESPONSE_OK)
+    filechooser.set_default_response(Gtk.ResponseType.OK)
 
     response = filechooser.run()
-    if response != Gtk.RESPONSE_OK:
+    if response != Gtk.ResponseType.OK:
         filechooser.destroy()
         return
 
@@ -337,25 +337,25 @@ def ask_overwrite(filename, parent=None):
     submsg2 = _('Do you wish to replace it with the current one?')
     text = ('<span weight="bold" size="larger">%s</span>\n\n%s\n'
             % (submsg1, submsg2))
-    result = messagedialog(Gtk.MESSAGE_ERROR, text, parent=parent,
+    result = messagedialog(Gtk.MessageType.ERROR, text, parent=parent,
                            bold=False,
                            buttons=((Gtk.STOCK_CANCEL,
-                                     Gtk.RESPONSE_CANCEL),
+                                     Gtk.ResponseType.CANCEL),
                                     (_("Replace"),
-                                     Gtk.RESPONSE_YES)))
-    return result == Gtk.RESPONSE_YES
+                                     Gtk.ResponseType.YES)))
+    return result == Gtk.ResponseType.YES
 
 
 def save(title='', parent=None, current_name='', folder=None):
     """Displays a save dialog."""
     filechooser = Gtk.FileChooserDialog(title or _('Save'),
                                         parent,
-                                        Gtk.FILE_CHOOSER_ACTION_SAVE,
-                                        (Gtk.STOCK_CANCEL, Gtk.RESPONSE_CANCEL,
-                                         Gtk.STOCK_SAVE, Gtk.RESPONSE_OK))
+                                        Gtk.FileChooserAction.SAVE,
+                                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                         Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
     if current_name:
         filechooser.set_current_name(current_name)
-    filechooser.set_default_response(Gtk.RESPONSE_OK)
+    filechooser.set_default_response(Gtk.ResponseType.OK)
 
     if folder:
         filechooser.set_current_folder(folder)
@@ -363,7 +363,7 @@ def save(title='', parent=None, current_name='', folder=None):
     path = None
     while True:
         response = filechooser.run()
-        if response != Gtk.RESPONSE_OK:
+        if response != Gtk.ResponseType.OK:
             path = None
             break
 
@@ -389,10 +389,10 @@ def password(primary='', secondary='', parent=None):
     if not primary:
         raise ValueError("primary cannot be empty")
 
-    d = HIGAlertDialog(parent=parent, flags=Gtk.DIALOG_MODAL,
-                       type=Gtk.MESSAGE_QUESTION,
-                       buttons=Gtk.BUTTONS_OK_CANCEL)
-    d.set_default_response(Gtk.RESPONSE_OK)
+    d = HIGAlertDialog(parent=parent, flags=Gtk.DialogFlags.MODAL,
+                       type=Gtk.MessageType.QUESTION,
+                       buttons=Gtk.ButtonsType.OK_CANCEL)
+    d.set_default_response(Gtk.ResponseType.OK)
 
     d.set_primary(primary + '\n')
     if secondary:
@@ -413,14 +413,14 @@ def password(primary='', secondary='', parent=None):
     entry.set_visibility(False)
     entry.show()
 
-    d.add_action_widget(entry, Gtk.RESPONSE_OK)
+    d.add_action_widget(entry, Gtk.ResponseType.OK)
     # FIXME: Is there another way of connecting widget::activate to a response?
     d.action_area.remove(entry)
     hbox.pack_start(entry, True, True, 12)
 
     response = d.run()
 
-    if response == Gtk.RESPONSE_OK:
+    if response == Gtk.ResponseType.OK:
         password = entry.get_text()
     else:
         password = None
@@ -429,14 +429,14 @@ def password(primary='', secondary='', parent=None):
 
 
 def _test():
-    yesno('Kill?', default=Gtk.RESPONSE_NO)
+    yesno('Kill?', default=Gtk.ResponseType.NO)
 
     info('Some information displayed not too long\nbut not too short',
          long=('foobar ba asdjaiosjd oiadjoisjaoi aksjdasdasd kajsdhakjsdh\n'
                'askdjhaskjdha skjdhasdasdjkasldj alksdjalksjda lksdjalksdj\n'
                'asdjaslkdj alksdj lkasjdlkjasldkj alksjdlkasjd jklsdjakls\n'
                'ask;ldjaklsjdlkasjd alksdj laksjdlkasjd lkajs kjaslk jkl\n'),
-         default=Gtk.RESPONSE_OK,
+         default=Gtk.ResponseType.OK,
          )
 
     error('An error occurred', Gtk.Button('Woho'))

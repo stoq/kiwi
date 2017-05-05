@@ -294,7 +294,7 @@ class ObjectListSelectionChanged(SignalEvent):
     def _get_rows(self):
         selection = self._objectlist.get_treeview().get_selection()
 
-        if selection.get_mode() == Gtk.SELECTION_MULTIPLE:
+        if selection.get_mode() == Gtk.SelectionMode.MULTIPLE:
             # get_selected_rows() returns a list of paths
             iters = selection.get_selected_rows()[1]
             if iters:

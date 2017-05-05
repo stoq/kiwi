@@ -45,31 +45,31 @@ def gdk_color_to_string(color):
                               int(color.blue) >> 8)
 
 
-def set_foreground(widget, color, state=Gtk.STATE_NORMAL):
+def set_foreground(widget, color, state=Gtk.StateType.NORMAL):
     """
     Set the foreground color of a widget:
 
       - widget: the widget we are changing the color
       - color: a hexadecimal code or a well known color name
-      - state: the state we are afecting, see Gtk.STATE_*
+      - state: the state we are afecting, see Gtk.StateType.*
     """
     widget.modify_fg(state, gdk.color_parse(color))
 
 
-def get_foreground(widget, state=Gtk.STATE_NORMAL):
+def get_foreground(widget, state=Gtk.StateType.NORMAL):
     """Return the foreground color of the widget as a string"""
     style = widget.get_style()
     color = style.fg[state]
     return gdk_color_to_string(color)
 
 
-def set_background(widget, color, state=Gtk.STATE_NORMAL):
+def set_background(widget, color, state=Gtk.StateType.NORMAL):
     """
     Set the background color of a widget:
 
       - widget: the widget we are changing the color
       - color: a hexadecimal code or a well known color name
-      - state: the state we are afecting, see Gtk.STATE_*
+      - state: the state we are afecting, see Gtk.StateType.*
     """
     if isinstance(widget, Gtk.Entry):
         widget.modify_base(state, gdk.color_parse(color))
@@ -77,7 +77,7 @@ def set_background(widget, color, state=Gtk.STATE_NORMAL):
         widget.modify_bg(state, gdk.color_parse(color))
 
 
-def get_background(widget, state=Gtk.STATE_NORMAL):
+def get_background(widget, state=Gtk.StateType.NORMAL):
     """Return the background color of the widget as a string"""
     style = widget.get_style()
     color = style.bg[state]
@@ -87,7 +87,7 @@ def get_background(widget, state=Gtk.STATE_NORMAL):
 def quit_if_last(*args):
     windows = [toplevel
                for toplevel in Gtk.window_list_toplevels()
-               if toplevel.get_property('type') == Gtk.WINDOW_TOPLEVEL]
+               if toplevel.get_property('type') == Gtk.WindowType.TOPLEVEL]
     if len(windows) == 1:
         Gtk.main_quit()
 
@@ -221,7 +221,7 @@ def draw_editable_border(widget, drawable, cell_area):
     # the bg colors and used for creating shadows. That's perfect here since
     # it will indicate that the border is editable and won't "vanish"
     # when the row is really activated
-    cr.set_source_color(style.dark[Gtk.STATE_SELECTED])
+    cr.set_source_color(style.dark[Gtk.StateType.SELECTED])
     cr.stroke()
 
 

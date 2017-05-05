@@ -35,8 +35,7 @@ import pickle
 
 import glib
 import gobject
-import pango
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, Pango
 from gtk import gdk
 
 from kiwi.accessor import kgetattr
@@ -83,7 +82,7 @@ class Column(gobject.GObject):
       - B{visible}: bool I{True}
         - specifying if it is initially hidden or shown.
       - B{justify}: Gtk.Justification I{None}
-        - one of Gtk.JUSTIFY_LEFT, Gtk.JUSTIFY_RIGHT or Gtk.JUSTIFY_CENTER
+        - one of Gtk.Justification.LEFT, Gtk.Justification.RIGHT or Gtk.Justification.CENTER
           or None. If None, the justification will be determined by the type
           of the attribute value of the first instance to be inserted in the
           ObjectList (for instance numbers will be right-aligned).
@@ -98,7 +97,7 @@ class Column(gobject.GObject):
         - whether or not the ObjectList is to be sorted by this column.
           If no Columns are sorted, the ObjectList will be created unsorted.
       - B{order}: GtkSortType I{-1}
-        - one of Gtk.SORT_ASCENDING, Gtk.SORT_DESCENDING or -1
+        - one of Gtk.SortType.ASCENDING, Gtk.SortType.DESCENDING or -1
           The value -1 is mean that the column is not sorted.
       - B{expand}: bool I{False}
         - if set column will expand. Note: this space is shared equally amongst
@@ -131,7 +130,7 @@ class Column(gobject.GObject):
       - B{use_stock}: bool I{False}
         - If true, this will be rendered as pixbuf from the value which
           should be a stock id.
-      - B{icon_size}: Gtk.IconSize I{Gtk.ICON_SIZE_MENU}
+      - B{icon_size}: Gtk.IconSize I{Gtk.IconSize.MENU}
       - B{editable_attribute}: string I{""}
         - a string which is the attribute which should decide if the
           cell is editable or not.
@@ -139,12 +138,12 @@ class Column(gobject.GObject):
         - If true, the text will be rendered with markup
       - B{expander}: bool I{False}
         - If True, this column will be used as the tree expander column
-      - B{ellipsize}: pango.EllipsizeMode I{pango.ELLIPSIZE_NONE}
-        - One of pango.ELLIPSIZE_{NONE, START, MIDDLE or END}, it describes
+      - B{ellipsize}: Pango.EllipsizeMode I{Pango.EllipsizeMode.NONE}
+        - One of Pango.EllipsizeMode.{NONE, START, MIDDLE or END}, it describes
           where characters should be removed in case ellipsization
           (where to put the ...) is needed.
       - B{font-desc}: str I{""}
-        - A string passed to pango.FontDescription, for instance "Sans" or
+        - A string passed to Pango.FontDescription, for instance "Sans" or
       - B{column}: str None
         - A string referencing to another column. If this is set a new column
           will not be created and the column will be packed into the other.
@@ -165,11 +164,11 @@ class Column(gobject.GObject):
                                         gobject.PARAM_CONSTRUCT_ONLY))
     title = gobject.property(type=str)
     visible = gobject.property(type=bool, default=True)
-    justify = gobject.property(type=Gtk.Justification, default=Gtk.JUSTIFY_LEFT)
+    justify = gobject.property(type=Gtk.Justification, default=Gtk.Justification.LEFT)
     format = gobject.property(type=str)
     width = gobject.property(type=int, maximum=2 ** 16)
     sorted = gobject.property(type=bool, default=False)
-    order = gobject.property(type=Gtk.SortType, default=Gtk.SORT_ASCENDING)
+    order = gobject.property(type=Gtk.SortType, default=Gtk.SortType.ASCENDING)
     expand = gobject.property(type=bool, default=False)
     tooltip = gobject.property(type=str)
     format_func = gobject.property(type=object)
@@ -180,10 +179,10 @@ class Column(gobject.GObject):
     spin_adjustment = gobject.property(type=object)
     use_stock = gobject.property(type=bool, default=False)
     use_markup = gobject.property(type=bool, default=False)
-    icon_size = gobject.property(type=Gtk.IconSize, default=Gtk.ICON_SIZE_MENU)
+    icon_size = gobject.property(type=Gtk.IconSize, default=Gtk.IconSize.MENU)
     editable_attribute = gobject.property(type=str)
     expander = gobject.property(type=bool, default=False)
-    ellipsize = gobject.property(type=pango.EllipsizeMode, default=pango.ELLIPSIZE_NONE)
+    ellipsize = gobject.property(type=Pango.EllipsizeMode, default=Pango.EllipsizeMode.NONE)
     font_desc = gobject.property(type=str)
     column = gobject.property(type=str)
     sort_func = gobject.property(type=object, default=None)
@@ -241,9 +240,9 @@ class Column(gobject.GObject):
             if data_type:
                 conv = converter.get_converter(data_type)
                 if issubclass(data_type, bool):
-                    kwargs['justify'] = Gtk.JUSTIFY_CENTER
+                    kwargs['justify'] = Gtk.Justification.CENTER
                 elif conv.align == Alignment.RIGHT:
-                    kwargs['justify'] = Gtk.JUSTIFY_RIGHT
+                    kwargs['justify'] = Gtk.Justification.RIGHT
 
         format_func = kwargs.get('format_func')
         if format_func:
@@ -278,7 +277,7 @@ class Column(gobject.GObject):
         # a column which expands so it doesn't end up using more space
         # than there is available
         if not 'ellipsize' in kwargs and self.expand:
-            self.ellipsize = pango.ELLIPSIZE_END
+            self.ellipsize = Pango.EllipsizeMode.END
 
     def __repr__(self):
         namespace = self.__dict__.copy()
@@ -326,12 +325,12 @@ class Column(gobject.GObject):
         if self.on_attach_renderer:
             self.on_attach_renderer(renderer)
         justify = self.justify
-        if justify == Gtk.JUSTIFY_RIGHT:
+        if justify == Gtk.Justification.RIGHT:
             xalign = 1.0
-        elif justify == Gtk.JUSTIFY_CENTER:
+        elif justify == Gtk.Justification.CENTER:
             xalign = 0.5
-        elif justify in (Gtk.JUSTIFY_LEFT,
-                         Gtk.JUSTIFY_FILL):
+        elif justify in (Gtk.Justification.LEFT,
+                         Gtk.Justification.FILL):
             xalign = 0.0
         else:
             raise AssertionError
@@ -342,7 +341,7 @@ class Column(gobject.GObject):
             renderer.set_property('ellipsize', self.ellipsize)
         if self.font_desc:
             renderer.set_property('font-desc',
-                                  pango.FontDescription(self.font_desc))
+                                  Pango.FontDescription(self.font_desc))
         if self.use_stock:
             cell_data_func = self._cell_data_pixbuf_func
         elif issubclass(self.data_type, enum):
@@ -376,11 +375,11 @@ class Column(gobject.GObject):
         treeview_column.set_visible(self.visible)
 
         if self.width:
-            treeview_column.set_sizing(Gtk.TREE_VIEW_COLUMN_FIXED)
+            treeview_column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
             treeview_column.set_fixed_width(self.width)
 
         if self.expand:
-            treeview_column.set_sizing(Gtk.TREE_VIEW_COLUMN_FIXED)
+            treeview_column.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
             treeview_column.set_expand(True)
 
         if self.sorted:
@@ -714,13 +713,13 @@ class SequentialColumn(Column):
     If you don't give me any argument I'll have the title of a hash (#) and
     right justify the sequences."""
 
-    def __init__(self, title='#', justify=Gtk.JUSTIFY_RIGHT, **kwargs):
+    def __init__(self, title='#', justify=Gtk.Justification.RIGHT, **kwargs):
         Column.__init__(self, '_kiwi_sequence_id',
                         title=title, justify=justify, data_type=int, **kwargs)
 
     def cell_data_func(self, tree_column, renderer, model, treeiter,
                        (column, renderer_prop)):
-        reversed = tree_column.get_sort_order() == Gtk.SORT_DESCENDING
+        reversed = tree_column.get_sort_order() == Gtk.SortType.DESCENDING
 
         row = model[treeiter]
         if reversed:
@@ -935,7 +934,7 @@ class ObjectList(Gtk.HBox):
 
     Properties
     ==========
-      - B{selection-mode}: Gtk.SelectionMode I{Gtk.SELECTION_BROWSE}
+      - B{selection-mode}: Gtk.SelectionMode I{Gtk.SelectionMode.BROWSE}
         - Represents the selection-mode of a GtkTreeSelection of a GtkTreeView.
     """
 
@@ -973,7 +972,7 @@ class ObjectList(Gtk.HBox):
 
     def __init__(self, columns=None,
                  objects=None,
-                 mode=Gtk.SELECTION_BROWSE,
+                 mode=Gtk.SelectionMode.BROWSE,
                  sortable=False,
                  model=None):
         """
@@ -996,10 +995,10 @@ class ObjectList(Gtk.HBox):
         if not isinstance(mode, Gtk.SelectionMode):
             raise TypeError(
                 "mode must be an Gtk.SelectionMode enum, not %r" % (mode,))
-        # Gtk.SELECTION_EXTENDED & Gtk.SELECTION_MULTIPLE are both 3.
+        # Gtk.SelectionMode.EXTENDED & Gtk.SelectionMode.MULTIPLE are both 3.
         # so we can't do this check.
-        #elif mode == Gtk.SELECTION_EXTENDED:
-        #    raise TypeError("Gtk.SELECTION_EXTENDED is deprecated")
+        #elif mode == Gtk.SelectionMode.EXTENDED:
+        #    raise TypeError("Gtk.SelectionMode.EXTENDED is deprecated")
 
         self._sortable = sortable
 
@@ -1017,8 +1016,8 @@ class ObjectList(Gtk.HBox):
         # menu
 
         self._sw = Gtk.ScrolledWindow()
-        self._sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_ALWAYS)
-        self._sw.set_shadow_type(Gtk.SHADOW_ETCHED_IN)
+        self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
+        self._sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         # This is required for gobject.new to work, since scrolledwindow.add
         # requires valid adjustments and they are for some reason not
         # properly set when using gobject.new.
@@ -1056,7 +1055,7 @@ class ObjectList(Gtk.HBox):
         selection.connect("changed", self._on_selection__changed)
 
         # Select the first item if no items are selected
-        if mode != Gtk.SELECTION_NONE and objects:
+        if mode != Gtk.SelectionMode.NONE and objects:
             selection.select_iter(self._model[COL_MODEL].iter)
 
         self.set_selection_mode(mode)
@@ -1209,13 +1208,13 @@ class ObjectList(Gtk.HBox):
         cmp(x, y) -> -1, 0, 1"""
         raise NotImplementedError
 
-    def sort_by_attribute(self, attribute, order=Gtk.SORT_ASCENDING):
+    def sort_by_attribute(self, attribute, order=Gtk.SortType.ASCENDING):
         """
         Sort by an attribute in the object model.
 
         :param attribute: attribute to sort on
         :type attribute: string
-        :param order: one of Gtk.SORT_ASCENDING, Gtk.SORT_DESCENDING
+        :param order: one of Gtk.SortType.ASCENDING, Gtk.SortType.DESCENDING
         :type order: Gtk.SortType
         """
         def _sort_func(model, iter1, iter2):
@@ -1246,7 +1245,7 @@ class ObjectList(Gtk.HBox):
     selection_mode = gobject.property(getter=_get_selection_mode,
                                       setter=_set_selection_mode,
                                       type=Gtk.SelectionMode,
-                                      default=Gtk.SELECTION_BROWSE,
+                                      default=Gtk.SelectionMode.BROWSE,
                                       nick="SelectionMode")
 
     # Columns handling
@@ -1493,9 +1492,9 @@ class ObjectList(Gtk.HBox):
         if selection is None:
             return
         mode = selection.get_mode()
-        if mode == Gtk.SELECTION_MULTIPLE:
+        if mode == Gtk.SelectionMode.MULTIPLE:
             item = self.get_selected_rows()
-        elif mode == Gtk.SELECTION_NONE:
+        elif mode == Gtk.SelectionMode.NONE:
             return
         else:
             item = self.get_selected()
@@ -1510,7 +1509,7 @@ class ObjectList(Gtk.HBox):
         "Generic button-press-event handler to be able to catch double clicks"
 
         # Right and Middle click
-        if event.type == Gdk.BUTTON_PRESS:
+        if event.type == Gdk.EventType.BUTTON_PRESS:
             if event.button == 3:
                 signal_name = 'right-click'
                 if self._context_menu:
@@ -1567,7 +1566,7 @@ class ObjectList(Gtk.HBox):
         menu.
         Internally it uses a POPUP window so you can tell how *Evil* is this.
         """
-        self._popup_window = Gtk.Window(Gtk.WINDOW_POPUP)
+        self._popup_window = Gtk.Window(Gtk.WindowType.POPUP)
         self._popup_button = Gtk.Button('*')
         self._popup_window.add(self._popup_button)
         self._popup_window.show_all()
@@ -1799,7 +1798,7 @@ class ObjectList(Gtk.HBox):
         """
 
         selection = self._treeview.get_selection()
-        if selection.get_mode() == Gtk.SELECTION_NONE:
+        if selection.get_mode() == Gtk.SelectionMode.NONE:
             raise TypeError("Selection not allowed")
 
         selection.unselect_all()
@@ -1815,13 +1814,13 @@ class ObjectList(Gtk.HBox):
             return
 
         selection = self._treeview.get_selection()
-        if selection.get_mode() == Gtk.SELECTION_NONE:
+        if selection.get_mode() == Gtk.SelectionMode.NONE:
             raise TypeError("Selection not allowed")
 
-        if (selection.get_mode() != Gtk.SELECTION_MULTIPLE and
+        if (selection.get_mode() != Gtk.SelectionMode.MULTIPLE and
                 len(instances) > 1):
             raise TypeError("You can only select multiple items with"
-                            "selection mode set to Gtk.SELECTION_MULTIPLE")
+                            "selection mode set to Gtk.SelectionMode.MULTIPLE")
 
         # FIXME: This is not working for multiple selections. Only the last item
         # in the list remains selected
@@ -1849,9 +1848,9 @@ class ObjectList(Gtk.HBox):
             return
 
         mode = selection.get_mode()
-        if mode == Gtk.SELECTION_NONE:
+        if mode == Gtk.SelectionMode.NONE:
             raise TypeError("Selection not allowed in %r mode" % mode)
-        elif mode not in (Gtk.SELECTION_SINGLE, Gtk.SELECTION_BROWSE):
+        elif mode not in (Gtk.SelectionMode.SINGLE, Gtk.SelectionMode.BROWSE):
             log.warn('get_selected() called when multiple rows '
                      'can be selected')
 
@@ -1869,9 +1868,9 @@ class ObjectList(Gtk.HBox):
             return
 
         mode = selection.get_mode()
-        if mode == Gtk.SELECTION_NONE:
+        if mode == Gtk.SelectionMode.NONE:
             raise TypeError("Selection not allowed in %r mode" % mode)
-        elif mode in (Gtk.SELECTION_SINGLE, Gtk.SELECTION_BROWSE):
+        elif mode in (Gtk.SelectionMode.SINGLE, Gtk.SelectionMode.BROWSE):
             log.warn('get_selected_rows() called when only a single row '
                      'can be selected')
 
@@ -1882,9 +1881,9 @@ class ObjectList(Gtk.HBox):
 
     def update_selection(self):
         mode = self._treeview.get_selection().get_mode()
-        if mode == Gtk.SELECTION_MULTIPLE:
+        if mode == Gtk.SelectionMode.MULTIPLE:
             item = self.get_selected_rows()
-        elif mode in (Gtk.SELECTION_SINGLE, Gtk.SELECTION_BROWSE):
+        elif mode in (Gtk.SelectionMode.SINGLE, Gtk.SelectionMode.BROWSE):
             item = self.get_selected()
         else:
             raise AssertionError
@@ -1969,7 +1968,7 @@ class ObjectList(Gtk.HBox):
         Get the selected row number or None if no rows were selected
         """
         selection = self._treeview.get_selection()
-        if selection.get_mode() == Gtk.SELECTION_MULTIPLE:
+        if selection.get_mode() == Gtk.SelectionMode.MULTIPLE:
             model, paths = selection.get_selected_rows()
             if paths:
                 return paths[0][0]
@@ -2026,8 +2025,8 @@ class ObjectList(Gtk.HBox):
         self._treeview.connect('drag-data-get',
                                self._on_treeview__source_drag_data_get)
         self._treeview.drag_source_set(
-            Gdk.BUTTON1_MASK, self.get_dnd_targets(),
-            Gdk.ACTION_LINK)
+            Gdk.ModifierType.BUTTON1_MASK, self.get_dnd_targets(),
+            Gdk.DragAction.LINK)
 
     def get_dnd_targets(self):
         """
@@ -2044,12 +2043,12 @@ class ObjectList(Gtk.HBox):
 
         if self._message_label is None:
             self._viewport = Gtk.Viewport()
-            self._viewport.set_shadow_type(Gtk.SHADOW_ETCHED_IN)
+            self._viewport.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
             self.pack_start(self._viewport, True, True, 0)
 
             self._message_box = Gtk.EventBox()
             self._message_box.modify_bg(
-                Gtk.STATE_NORMAL, Gdk.color_parse('white'))
+                Gtk.StateType.NORMAL, Gdk.color_parse('white'))
             self._viewport.add(self._message_box)
             self._message_box.show()
 
@@ -2130,7 +2129,7 @@ class ObjectTree(ObjectList):
 
     gsignal('row-expanded', object)
 
-    def __init__(self, columns=[], objects=None, mode=Gtk.SELECTION_BROWSE,
+    def __init__(self, columns=[], objects=None, mode=Gtk.SelectionMode.BROWSE,
                  sortable=False, model=None):
         if not model:
             model = Gtk.TreeStore(object)

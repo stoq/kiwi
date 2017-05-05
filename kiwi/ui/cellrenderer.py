@@ -89,9 +89,9 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
         y_offset = cell_area.height / 2 - height / 2
 
         if flags & Gtk.CELL_RENDERER_SELECTED:
-            state = Gtk.STATE_SELECTED
+            state = Gtk.StateType.SELECTED
         else:
-            state = Gtk.STATE_ACTIVE
+            state = Gtk.StateType.ACTIVE
 
         # Draws label
         widget.style.paint_layout(window,
@@ -106,7 +106,7 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
 
         # Draw a separator to easily distinguish between options
         widget.style.paint_hline(window,
-                                 Gtk.STATE_ACTIVE,
+                                 Gtk.StateType.ACTIVE,
                                  cell_area, widget, "",
                                  cell_area.x,
                                  cell_area.x + cell_area.width,
@@ -146,7 +146,7 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
         if self._details_callback:
             details = self._details_callback(self.data)
             mark_up = '%s\n%s'
-            color = gdk_color_to_string(widget.style.fg[Gtk.STATE_NORMAL])
+            color = gdk_color_to_string(widget.style.fg[Gtk.StateType.NORMAL])
             text = mark_up % (self.label, color, self._escape(details))
         else:
             text = self._escape(self.label)

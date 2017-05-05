@@ -318,7 +318,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         self._fade.stop()
         self._set_pixbuf(None)
         style = Gtk.widget_get_default_style()
-        self.update_background(style.base[Gtk.STATE_NORMAL])
+        self.update_background(style.base[Gtk.StateType.NORMAL])
 
     def set_invalid(self, text=None, fade=True):
         """Changes the validation state to invalid.
@@ -404,7 +404,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         self._valid = state
 
     def _draw_stock_icon(self, stock_id):
-        icon = self.render_icon(stock_id, Gtk.ICON_SIZE_MENU)
+        icon = self.render_icon(stock_id, Gtk.IconSize.MENU)
         self._set_pixbuf(icon)
         self.queue_draw()
 

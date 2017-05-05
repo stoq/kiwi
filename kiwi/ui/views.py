@@ -308,7 +308,7 @@ class SlaveView(gobject.GObject):
         This method should be called before the window becomes visible.
         """
         toplevel = self.get_toplevel()
-        toplevel.set_type_hint(Gdk.WINDOW_TYPE_HINT_NORMAL)
+        toplevel.set_type_hint(Gdk.WindowTypeHint.NORMAL)
 
     def get_widget(self, name):
         """Retrieves the named widget from the View"""
@@ -799,8 +799,8 @@ class SlaveView(gobject.GObject):
 
         # Only modify active state, since that's the (somewhat badly named)
         # state used for the pages which are not selected.
-        label.modify_fg(Gtk.STATE_ACTIVE, color)
-        label.modify_fg(Gtk.STATE_NORMAL, color)
+        label.modify_fg(Gtk.StateType.ACTIVE, color)
+        label.modify_fg(Gtk.StateType.NORMAL, color)
 
     def check_and_notify_validity(self, force=False):
         # Current view is only valid if we have no invalid children

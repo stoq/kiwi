@@ -55,7 +55,7 @@ class ProxyFileChooserWidget(_FileChooserMixin, Gtk.FileChooserWidget,
                              ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFileChooserWidget'
 
-    def __init__(self, action=Gtk.FILE_CHOOSER_ACTION_OPEN, backend=None):
+    def __init__(self, action=Gtk.FileChooserAction.OPEN, backend=None):
         """
         Create a new ProxyFileChooserWidget object.
         :param action:

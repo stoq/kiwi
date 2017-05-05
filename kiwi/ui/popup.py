@@ -35,7 +35,7 @@ class PopupWindow(Gtk.Window):
     def __init__(self, widget):
         self.visible = False
         self.widget = widget
-        super(PopupWindow, self).__init__(Gtk.WINDOW_POPUP)
+        super(PopupWindow, self).__init__(Gtk.WindowType.POPUP)
         self._setup()
 
     #
@@ -152,7 +152,7 @@ class PopupWindow(Gtk.Window):
         keyval = event.keyval
         state = event.state & Gtk.accelerator_get_default_mod_mask()
         if (keyval == Gtk.keysyms.Escape or
-            (state == Gdk.MOD1_MASK and
+            (state == Gdk.ModifierType.MOD1_MASK and
              (keyval == Gtk.keysyms.Up or keyval == Gtk.keysyms.KP_Up))):
             self.popdown()
             return True
@@ -170,12 +170,12 @@ class PopupWindow(Gtk.Window):
     #
 
     def _setup(self):
-        self.add_events(Gdk.BUTTON_PRESS_MASK | Gdk.KEY_PRESS_MASK)
+        self.add_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.KEY_PRESS_MASK)
         self.connect('key-press-event', self._on__key_press_event)
         self.connect('button-press-event', self._on__button_press_event)
 
         frame = Gtk.Frame()
-        frame.set_shadow_type(Gtk.SHADOW_ETCHED_OUT)
+        frame.set_shadow_type(Gtk.ShadowType.ETCHED_OUT)
         self.add(frame)
         frame.show()
 
@@ -196,11 +196,11 @@ class PopupWindow(Gtk.Window):
         activate_time = 0L
         window = self.get_window()
         grab_status = Gdk.pointer_grab(window, True,
-                                       (Gdk.BUTTON_PRESS_MASK |
-                                        Gdk.BUTTON_RELEASE_MASK |
-                                        Gdk.POINTER_MOTION_MASK),
+                                       (Gdk.EventMask.BUTTON_PRESS_MASK |
+                                        Gdk.EventMask.BUTTON_RELEASE_MASK |
+                                        Gdk.EventMask.POINTER_MOTION_MASK),
                                        None, None, activate_time)
-        if grab_status == Gdk.GRAB_SUCCESS:
+        if grab_status == Gdk.GrabStatus.SUCCESS:
             if Gdk.keyboard_grab(window, True, activate_time) == 0:
                 return True
             else:
@@ -213,7 +213,7 @@ class PopupWindow(Gtk.Window):
         widget = self.get_widget_for_popup()
         allocation = widget.get_allocation()
         if isinstance(widget, Gtk.TextView):
-            window = widget.get_window(Gtk.TEXT_WINDOW_WIDGET)
+            window = widget.get_window(Gtk.TextWindowType.WIDGET)
         else:
             window = widget.get_window()
         screen = widget.get_screen()

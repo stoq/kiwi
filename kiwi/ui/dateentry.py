@@ -65,7 +65,7 @@ class _DateEntryPopup(PopupWindow):
 
         buttonbox = Gtk.HButtonBox()
         buttonbox.set_border_width(6)
-        buttonbox.set_layout(Gtk.BUTTONBOX_SPREAD)
+        buttonbox.set_layout(Gtk.ButtonBoxStyle.SPREAD)
         vbox.pack_start(buttonbox, False, False, 0)
         buttonbox.show()
 
@@ -190,7 +190,7 @@ class DateEntry(Gtk.HBox):
         self.pack_start(self._button, False, False, 0)
         self._button.show()
 
-        arrow = Gtk.Arrow(Gtk.ARROW_DOWN, Gtk.SHADOW_NONE)
+        arrow = Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.NONE)
         self._button.add(arrow)
         arrow.show()
 

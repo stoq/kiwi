@@ -70,7 +70,7 @@ class ProxyButton(Gtk.Button, ProxyWidgetMixin):
                 return
 
             storage_type = image.get_storage_type()
-            if storage_type != Gtk.IMAGE_PIXBUF:
+            if storage_type != Gtk.ImageType.PIXBUF:
                 raise ValueError(
                     "the image of a ProxyButton must be loaded "
                     "from a pixbuf, not %s" % storage_type)

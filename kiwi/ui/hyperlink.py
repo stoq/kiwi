@@ -80,10 +80,10 @@ class HyperLink(Gtk.EventBox):
         self._menu = menu
         self._label = Gtk.Label()
         self.add(self._label)
-        self.add_events(Gdk.BUTTON_PRESS_MASK |
-                        Gdk.BUTTON_RELEASE_MASK |
-                        Gdk.ENTER_NOTIFY_MASK |
-                        Gdk.LEAVE_NOTIFY_MASK)
+        self.add_events(Gdk.EventMask.BUTTON_PRESS_MASK |
+                        Gdk.EventMask.BUTTON_RELEASE_MASK |
+                        Gdk.EventMask.ENTER_NOTIFY_MASK |
+                        Gdk.EventMask.LEAVE_NOTIFY_MASK)
         self.connect('button-press-event', self._on_button_press_event)
         self.connect('button-release-event', self._on_button_release_event)
         self.connect('enter-notify-event', self._on_hover_changed, True)
@@ -207,7 +207,7 @@ class HyperLink(Gtk.EventBox):
             self._is_active = True
             self._update_look()
         elif event.button == 3:
-            if event.type == Gdk.BUTTON_PRESS:
+            if event.type == Gdk.EventType.BUTTON_PRESS:
                 self.popup(button=event.button, etime=event.time)
 
     def _on_button_release_event(self, eventbox, event):

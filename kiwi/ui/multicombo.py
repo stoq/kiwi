@@ -25,8 +25,7 @@ import gettext
 
 import glib
 import gobject
-from gi.repository import Gtk, Gdk
-import pango
+from gi.repository import Gtk, Gdk, Pango
 
 from kiwi.ui.cellrenderer import ComboDetailsCellRenderer
 from kiwi.ui.popup import PopupWindow
@@ -67,7 +66,7 @@ class _MultiComboPopup(PopupWindow):
         vbox = Gtk.VBox()
 
         self._sw = Gtk.ScrolledWindow()
-        self._sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_NEVER)
+        self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
         vbox.pack_start(self._sw, True, True, 0)
 
         self._treeview = Gtk.TreeView(self._model)
@@ -76,13 +75,13 @@ class _MultiComboPopup(PopupWindow):
         self._treeview.connect('button-release-event',
                                self._on_treeview__button_release_event)
         self._treeview.add_events(
-            Gdk.BUTTON_PRESS_MASK | Gdk.KEY_PRESS_MASK)
+            Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.KEY_PRESS_MASK)
 
-        self._treeview.modify_base(Gtk.STATE_ACTIVE,
+        self._treeview.modify_base(Gtk.StateType.ACTIVE,
                                    self._get_selection_color())
 
         self._selection = self._treeview.get_selection()
-        self._selection.set_mode(Gtk.SELECTION_BROWSE)
+        self._selection.set_mode(Gtk.SelectionMode.BROWSE)
 
         pixbuf_renderer = Gtk.CellRendererPixbuf()
         self._treeview.append_column(
@@ -116,9 +115,9 @@ class _MultiComboPopup(PopupWindow):
         rows = len(self._treeview.get_model())
         if rows > self.MAX_VISIBLE_ROWS:
             rows = self.MAX_VISIBLE_ROWS
-            self._sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_ALWAYS)
+            self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
         else:
-            self._sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_NEVER)
+            self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
 
         cell_area = self._treeview.get_background_area(
             0, self._treeview.get_column(0))
@@ -165,7 +164,7 @@ class _MultiComboPopup(PopupWindow):
             key, value = line.split(' ')
             if key == 'selected_bg_color:':
                 return Gdk.color_parse(value)
-        return self.widget.style.base[Gtk.STATE_SELECTED]
+        return self.widget.style.base[Gtk.StateType.SELECTED]
 
     def _select_path_for_event(self, event):
         path = self._treeview.get_path_at_pos(int(event.x), int(event.y))
@@ -214,8 +213,8 @@ class _MultiComboCloseButton(Gtk.Button):
     def __init__(self, **kwargs):
         super(_MultiComboCloseButton, self).__init__(**kwargs)
 
-        self.set_relief(Gtk.RELIEF_NONE)
-        image = Gtk.image_new_from_stock(Gtk.STOCK_CLOSE, Gtk.ICON_SIZE_MENU)
+        self.set_relief(Gtk.ReliefStyle.NONE)
+        image = Gtk.image_new_from_stock(Gtk.STOCK_CLOSE, Gtk.IconSize.MENU)
         self.add(image)
 
 
@@ -435,7 +434,7 @@ class MultiCombo(Gtk.HBox):
         label = Gtk.Label()
         label.set_padding(2, 0)
         label.set_max_width_chars(self.max_label_chars)
-        label.set_ellipsize(pango.ELLIPSIZE_END)
+        label.set_ellipsize(Pango.EllipsizeMode.END)
         markup = '<u>%s</u>' % (glib.markup_escape_text(row[COL_LABEL]), )
         label.set_tooltip_markup(markup)
         label.set_markup(markup)
@@ -446,21 +445,21 @@ class MultiCombo(Gtk.HBox):
 
     def _setup_ui(self):
         self.scrolled_window = Gtk.ScrolledWindow()
-        self.scrolled_window.set_shadow_type(Gtk.SHADOW_ETCHED_IN)
-        self.scrolled_window.set_policy(Gtk.POLICY_NEVER,
-                                        Gtk.POLICY_NEVER)
+        self.scrolled_window.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
+        self.scrolled_window.set_policy(Gtk.PolicyType.NEVER,
+                                        Gtk.PolicyType.NEVER)
         self.pack_start(self.scrolled_window, True, True, 0)
 
         self.textbuffer = Gtk.TextBuffer()
         self.textbuffer.connect('changed', self._on_textbuffer__changed)
         self.textview = Gtk.TextView(self.textbuffer)
-        self.textview.set_wrap_mode(Gtk.WRAP_WORD)
+        self.textview.set_wrap_mode(Gtk.WrapMode.WORD)
         self.textview.set_editable(False)
         self.textview.set_cursor_visible(False)
         self.scrolled_window.add(self.textview)
 
         self.dropbutton = Gtk.ToggleButton()
-        self.dropbutton.add(Gtk.Arrow(Gtk.ARROW_DOWN, Gtk.SHADOW_OUT))
+        self.dropbutton.add(Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.OUT))
         self.dropbutton.connect('clicked', self._on_dropbbutton__toggled)
         self.pack_start(self.dropbutton, False, True, 0)
 
@@ -470,13 +469,13 @@ class MultiCombo(Gtk.HBox):
 
         if line_count > self.scrolling_threshold:
             self.scrolled_window.set_property('vscrollbar-policy',
-                                              Gtk.POLICY_AUTOMATIC)
+                                              Gtk.PolicyType.AUTOMATIC)
             self.set_size_request(
                 self.width,
                 self._row_height * self.scrolling_threshold)
         else:
             self.scrolled_window.set_property('vscrollbar-policy',
-                                              Gtk.POLICY_NEVER)
+                                              Gtk.PolicyType.NEVER)
             self.set_size_request(self.width, -1)
 
         if self.popup.visible:

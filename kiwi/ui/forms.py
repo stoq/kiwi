@@ -192,10 +192,10 @@ class Field(gobject.GObject):
     def create_button(self, stock_id):
         button = Gtk.Button()
         image = Gtk.image_new_from_stock(
-            stock_id, Gtk.ICON_SIZE_MENU)
+            stock_id, Gtk.IconSize.MENU)
         button.set_image(image)
         image.show()
-        button.set_relief(Gtk.RELIEF_NONE)
+        button.set_relief(Gtk.ReliefStyle.NONE)
         button.show()
         return button
 
@@ -452,14 +452,14 @@ class MultiLineField(Field):
     def build_widget(self):
         from kiwi.ui.widgets.textview import ProxyTextView
         widget = ProxyTextView()
-        widget.set_wrap_mode(Gtk.WRAP_WORD)
+        widget.set_wrap_mode(Gtk.WrapMode.WORD)
         return widget
 
     def get_attachable_widget(self):
         sw = Gtk.ScrolledWindow()
         sw.add(self.widget)
-        sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(Gtk.SHADOW_OUT)
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        sw.set_shadow_type(Gtk.ShadowType.OUT)
         sw.show()
         return sw
 
@@ -556,7 +556,7 @@ class FormTableLayout(FormLayout):
             if field.label_widget:
                 table.attach(field.label_widget,
                              x, x + 1, y, y + 1,
-                             Gtk.FILL, 0, 0, 0)
+                             Gtk.AttachOptions.FILL, 0, 0, 0)
 
             x += 1
             if field.colspan > 1:
@@ -567,7 +567,7 @@ class FormTableLayout(FormLayout):
             # Attach the field widget
             table.attach(field.get_attachable_widget(),
                          x, x + extra_x, y, y + 1,
-                         Gtk.EXPAND | Gtk.FILL, 0, 0, 0)
+                         Gtk.EXPAND | Gtk.AttachOptions.FILL, 0, 0, 0)
 
             # Build and attach the extra buttons
             hbox = Gtk.HBox(spacing=0)
