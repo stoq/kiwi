@@ -1024,7 +1024,7 @@ class ObjectList(gtk.HBox):
         # properly set when using gobject.new.
         self._sw.set_hadjustment(gtk.Adjustment())
         self._sw.set_vadjustment(gtk.Adjustment())
-        self.pack_start(self._sw)
+        self.pack_start(self._sw, True, True, 0)
         self._sw.show()
 
         if not model:
@@ -2045,7 +2045,7 @@ class ObjectList(gtk.HBox):
         if self._message_label is None:
             self._viewport = gtk.Viewport()
             self._viewport.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-            self.pack_start(self._viewport)
+            self.pack_start(self._viewport, True, True, 0)
 
             self._message_box = gtk.EventBox()
             self._message_box.modify_bg(
@@ -2387,13 +2387,13 @@ class ListLabel(gtk.HBox):
         layout = self._label_widget.get_layout()
         self._label_width = layout.get_pixel_size()[0]
         self._label_widget.set_alignment(1.0, 0.5)
-        self.pack_start(self._label_widget, True, True, padding=6)
+        self.pack_start(self._label_widget, True, True, 6)
         self._label_widget.show()
 
         self._value_widget = gtk.Label()
         xalign = tree_column.get_property('alignment')
         self._value_widget.set_alignment(xalign, 0.5)
-        self.pack_start(self._value_widget, False, False)
+        self.pack_start(self._value_widget, False, False, 0)
         self._value_widget.show()
 
     def _resize(self, position=-1, width=-1):

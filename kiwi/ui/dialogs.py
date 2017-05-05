@@ -93,20 +93,20 @@ class HIGAlertDialog(gtk.Dialog):
 
         hbox = gtk.HBox(False, 12)
         hbox.set_border_width(5)
-        hbox.pack_start(self._image, False, False)
+        hbox.pack_start(self._image, False, False, 0)
 
         vbox = gtk.VBox(False, 0)
-        hbox.pack_start(vbox, False, False)
-        vbox.pack_start(self._primary_label, False, False)
-        vbox.pack_start(self._secondary_label, False, False)
+        hbox.pack_start(vbox, False, False, 0)
+        vbox.pack_start(self._primary_label, False, False, 0)
+        vbox.pack_start(self._secondary_label, False, False, 0)
         self.main_vbox = vbox
 
         self._expander = gtk.expander_new_with_mnemonic(
             _("Show more _details"))
         self._expander.set_spacing(6)
         self._expander.add(self._details_label)
-        vbox.pack_start(self._expander, False, False)
-        self.get_content_area().pack_start(hbox, False, False)
+        vbox.pack_start(self._expander, False, False, 0)
+        self.get_content_area().pack_start(hbox, False, False, 0)
         hbox.show_all()
         self._expander.hide()
         self.add_buttons(*_BUTTON_TYPES[buttons])
@@ -402,11 +402,11 @@ def password(primary='', secondary='', parent=None):
     hbox = gtk.HBox()
     hbox.set_border_width(6)
     hbox.show()
-    d.label_vbox.pack_start(hbox)
+    d.label_vbox.pack_start(hbox, True, True, 0)
 
     label = gtk.Label(_('Password:'))
     label.show()
-    hbox.pack_start(label, False, False)
+    hbox.pack_start(label, False, False, 0)
 
     entry = gtk.Entry()
     entry.set_invisible_char(u'\u2022')

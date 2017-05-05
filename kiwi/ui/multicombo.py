@@ -68,7 +68,7 @@ class _MultiComboPopup(PopupWindow):
 
         self._sw = gtk.ScrolledWindow()
         self._sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_NEVER)
-        vbox.pack_start(self._sw)
+        vbox.pack_start(self._sw, True, True, 0)
 
         self._treeview = gtk.TreeView(self._model)
         self._treeview.connect('motion-notify-event',

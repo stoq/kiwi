@@ -32,6 +32,9 @@ import sys
 import time
 from StringIO import StringIO
 
+from kiwi import compat
+sys.modules['gi'] = compat
+
 import gobject
 from gtk import gdk
 
@@ -88,6 +91,7 @@ class Runner(object):
     Create a new Runner object.
     :ivar parser:
     """
+
     def __init__(self, filename):
         self.parser = doctest.DocTestParser()
         self.retval = 0

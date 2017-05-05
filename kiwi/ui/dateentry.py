@@ -60,13 +60,13 @@ class _DateEntryPopup(PopupWindow):
         self.calendar = gtk.Calendar()
         self.calendar.connect('day-selected-double-click',
                               self._on_calendar__day_selected_double_click)
-        vbox.pack_start(self.calendar, False, False)
+        vbox.pack_start(self.calendar, False, False, 0)
         self.calendar.show()
 
         buttonbox = gtk.HButtonBox()
         buttonbox.set_border_width(6)
         buttonbox.set_layout(gtk.BUTTONBOX_SPREAD)
-        vbox.pack_start(buttonbox, False, False)
+        vbox.pack_start(buttonbox, False, False, 0)
         buttonbox.show()
 
         for label, callback in [(_('_Today'), self._on_today__clicked),
@@ -74,7 +74,7 @@ class _DateEntryPopup(PopupWindow):
                                 (_('_Select'), self._on_select__clicked)]:
             button = gtk.Button(label, use_underline=True)
             button.connect('clicked', callback)
-            buttonbox.pack_start(button)
+            buttonbox.pack_start(button, True, True, 0)
             button.show()
 
         return self._vbox
@@ -180,14 +180,14 @@ class DateEntry(gtk.HBox):
         mask = self.entry.get_mask()
         if mask:
             self.entry.set_width_chars(len(mask))
-        self.pack_start(self.entry, False, False)
+        self.pack_start(self.entry, False, False, 0)
         self.entry.show()
 
         self._button = gtk.ToggleButton()
         self._button.connect('scroll-event', self._on_entry__scroll_event)
         self._button.connect('toggled', self._on_button__toggled)
         self._button.set_focus_on_click(False)
-        self.pack_start(self._button, False, False)
+        self.pack_start(self._button, False, False, 0)
         self._button.show()
 
         arrow = gtk.Arrow(gtk.ARROW_DOWN, gtk.SHADOW_NONE)

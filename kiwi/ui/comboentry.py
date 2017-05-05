@@ -63,7 +63,7 @@ class _ComboEntryPopup(PopupWindow):
 
         self._sw = gtk.ScrolledWindow()
         self._sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_NEVER)
-        vbox.pack_start(self._sw)
+        vbox.pack_start(self._sw, True, True, 0)
         self._sw.show()
 
         self._model = gtk.ListStore(str)
@@ -268,9 +268,9 @@ class ComboEntry(gtk.VBox):
             entry.set_normal_completion()
 
         self.hbox = gtk.HBox()
-        self.pack_start(gtk.EventBox())
-        self.pack_start(self.hbox, expand=False)
-        self.pack_start(gtk.EventBox())
+        self.pack_start(gtk.EventBox(), True, True, 0)
+        self.pack_start(self.hbox, False, True, 0)
+        self.pack_start(gtk.EventBox(), True, True, 0)
 
         self.mode = ComboMode.UNKNOWN
         self.entry = entry
@@ -285,14 +285,14 @@ class ComboEntry(gtk.VBox):
         self.entry.connect('focus-out-event',
                            self._on_entry__focus_out_event)
 
-        self.hbox.pack_start(self.entry, True, True)
+        self.hbox.pack_start(self.entry, True, True, 0)
         self.hbox.show_all()
 
         self._button = gtk.ToggleButton()
         self._button.connect('scroll-event', self._on_entry__scroll_event)
         self._button.connect('toggled', self._on_button__toggled)
         self._button.set_focus_on_click(False)
-        self.hbox.pack_end(self._button, False, False)
+        self.hbox.pack_end(self._button, False, False, 0)
         self._button.show()
 
         arrow = gtk.Arrow(gtk.ARROW_DOWN, gtk.SHADOW_NONE)

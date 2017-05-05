@@ -314,6 +314,7 @@ class PasswordField(TextField):
     I am a password field with one line, editable by the user,
     rendered as an entry with invisible characters.
     """
+
     def build_widget(self):
         widget = TextField.build_widget(self)
         if self.editable:
@@ -573,7 +574,7 @@ class FormTableLayout(FormLayout):
             for button in [field.add_button, field.edit_button, field.delete_button]:
                 if not button:
                     continue
-                hbox.pack_start(button, expand=False, fill=False)
+                hbox.pack_start(button, False, False, 0)
 
             x += extra_x
             hbox.show_all()

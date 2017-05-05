@@ -38,6 +38,11 @@ Kiwi includes a Framework and a set of enhanced widgets
     - Website: U{http://www.async.com.br/projects/kiwi/}
     - Organization: Async Open Source
 """
+import sys
+from kiwi import compat
+
+sys.modules['gi'] = compat
+
 
 from kiwi.__version__ import version as kiwi_version
 from kiwi.environ import Library

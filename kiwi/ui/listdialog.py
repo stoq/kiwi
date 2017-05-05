@@ -108,16 +108,16 @@ class ListContainer(gtk.HBox):
         self._vbox = gtk.VBox(spacing=6)
 
         if self._orientation == gtk.ORIENTATION_VERTICAL:
-            self.pack_start(self.list)
+            self.pack_start(self.list, True, True, 0)
             self.list.show()
             self._add_buttons_to_box(self._vbox)
             self._pack_vbox()
         elif self._orientation == gtk.ORIENTATION_HORIZONTAL:
-            self._vbox.pack_start(self.list)
+            self._vbox.pack_start(self.list, True, True, 0)
             self.list.show()
             hbox = gtk.HBox(spacing=6)
             self._add_buttons_to_box(hbox)
-            self._vbox.pack_start(hbox, expand=False)
+            self._vbox.pack_start(hbox, False, False, 0)
             hbox.show()
             self._pack_vbox()
         else:
@@ -126,12 +126,12 @@ class ListContainer(gtk.HBox):
                 " or gtk.ORIENTATION_HORIZONTAL")
 
     def _add_buttons_to_box(self, box):
-        box.pack_start(self.add_button, expand=False)
-        box.pack_start(self.remove_button, expand=False)
-        box.pack_start(self.edit_button, expand=False)
+        box.pack_start(self.add_button, False, False, 0)
+        box.pack_start(self.remove_button, False, False, 0)
+        box.pack_start(self.edit_button, False, False, 0)
 
     def _pack_vbox(self):
-        self.pack_start(self._vbox, expand=False, padding=6)
+        self.pack_start(self._vbox, False, False, 6)
         self._vbox.show()
 
     def _set_child_packing(self, padding):
@@ -417,4 +417,4 @@ class ListDialog(gtk.Dialog, ListSlave):
         self.add_button(gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE)
 
         ListSlave.__init__(self, columns)
-        self.vbox.pack_start(self.listcontainer)
+        self.vbox.pack_start(self.listcontainer, True, True, 0)
