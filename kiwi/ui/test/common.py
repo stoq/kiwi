@@ -26,9 +26,7 @@ Common routines used by other parts of the ui test framework.
 """
 
 import gobject
-import gtk
-from gtk import gdk
-from gtk.gdk import event_handler_set
+from gi.repository import Gtk, Gdk
 
 from kiwi.utils import gsignal
 
@@ -46,7 +44,7 @@ class WidgetIntrospecter(gobject.GObject):
     def _event_handler(self, event):
         # Separate method so we can use return inside
         self._check_event(event)
-        gtk.main_do_event(event)
+        Gtk.main_do_event(event)
 
     def _check_event(self, event):
         if not event.window:
@@ -60,16 +58,16 @@ class WidgetIntrospecter(gobject.GObject):
         except ValueError:
             widget = self._id_to_obj.get(window)
 
-        if not isinstance(widget, gtk.Window):
+        if not isinstance(widget, Gtk.Window):
             return
         widget_name = widget.get_name()
 
-        if event_type == gdk.MAP:
-            if window_type != gdk.WINDOW_TOPLEVEL:
+        if event_type == Gdk.MAP:
+            if window_type != Gdk.WINDOW_TOPLEVEL:
                 # For non toplevels we only care about those which has a menu
                 # as the child
                 child = widget.child
-                if not child or not isinstance(child, gtk.Menu):
+                if not child or not isinstance(child, Gtk.Menu):
                     return
 
                 # Hack to get all the children of a popup menu in
@@ -81,9 +79,9 @@ class WidgetIntrospecter(gobject.GObject):
             else:
                 self._window_added(widget, widget_name)
                 self._id_to_obj[window] = widget
-        elif (event_type == gdk.DELETE or
-              (event_type == gdk.WINDOW_STATE and
-               event.new_window_state == gdk.WINDOW_STATE_WITHDRAWN)):
+        elif (event_type == Gdk.DELETE or
+              (event_type == Gdk.WINDOW_STATE and
+               event.new_window_state == Gdk.WINDOW_STATE_WITHDRAWN)):
             self._window_removed(widget, widget_name)
 
     def _window_added(self, window, name):
@@ -134,9 +132,9 @@ class WidgetIntrospecter(gobject.GObject):
     # Public API
 
     def register_event_handler(self):
-        if not event_handler_set:
+        if not Gdk.event_handler_set:
             raise NotImplementedError
-        event_handler_set(self._event_handler)
+        Gdk.event_handler_set(self._event_handler)
 
     def parse_one(self, toplevel, gobj):
         if not isinstance(gobj, gobject.GObject):
@@ -168,7 +166,7 @@ class WidgetIntrospecter(gobject.GObject):
         Called when a GtkWidget is about to be traversed
         """
         # Workaround to support gtkbuilder and gazpacho
-        name = gtk.Buildable.get_name(widget)
+        name = Gtk.Buildable.get_name(widget)
         if not name:
             name = widget.get_name()
         self._add_widget(toplevel, widget, name)

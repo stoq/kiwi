@@ -21,13 +21,13 @@
 # Author(s): Ronaldo Maia <romaia@async.com.br>
 #
 
-import gtk
+from gi.repository import Gtk
 import gobject
 
 from kiwi.utils import gsignal
 
 
-class ContextMenuItem(gtk.ImageMenuItem):
+class ContextMenuItem(Gtk.ImageMenuItem):
     gsignal('can-disable', retval=bool)
 
     def __init__(self, label, stock=None):
@@ -36,17 +36,17 @@ class ContextMenuItem(gtk.ImageMenuItem):
         you can use this in three different ways:
 
         ContextMenuItem('foo')
-        ContextMenuItem('foo', gtk.STOCK_PASTE)
-        ContextMenuItem(gtk.STOCK_PASTE)
+        ContextMenuItem('foo', Gtk.STOCK_PASTE)
+        ContextMenuItem(Gtk.STOCK_PASTE)
 
         The first will display an label 'foo'. The second will display the same label with the
         paste icon, and the last will display the paste icon with the default paste label
         """
-        gtk.ImageMenuItem.__init__(self)
+        Gtk.ImageMenuItem.__init__(self)
 
         if not stock:
             stock = label
-            info = gtk.stock_lookup(label)
+            info = Gtk.stock_lookup(label)
             if info:
                 try:
                     label = info.label
@@ -54,29 +54,29 @@ class ContextMenuItem(gtk.ImageMenuItem):
                 except AttributeError:
                     label = info[1]
 
-        lbl = gtk.AccelLabel(label)
+        lbl = Gtk.AccelLabel(label)
         lbl.set_alignment(0, 0.5)
         lbl.set_use_underline(True)
         lbl.set_use_markup(True)
         self.add(lbl)
 
-        image = gtk.Image()
-        image.set_from_stock(stock, gtk.ICON_SIZE_MENU)
+        image = Gtk.Image()
+        image.set_from_stock(stock, Gtk.ICON_SIZE_MENU)
         self.set_image(image)
 
 
 gobject.type_register(ContextMenuItem)
 
 
-class ContextMenu(gtk.Menu):
+class ContextMenu(Gtk.Menu):
 
     def append_separator(self):
-        sep = gtk.SeparatorMenuItem()
+        sep = Gtk.SeparatorMenuItem()
         self.append(sep)
 
     def popup(self, button, time):
         self._filter_require_items()
-        gtk.Menu.popup(self, None, None, None, button, time)
+        Gtk.Menu.popup(self, None, None, None, button, time)
 
     def _filter_require_items(self):
         for menu_item in self.get_children():

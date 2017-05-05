@@ -38,7 +38,7 @@ except AttributeError:
     from sets import Set as set
 
 import gobject
-import gtk
+from gi.repository import Gtk
 
 from kiwi import ValueUnset
 from kiwi.component import implements
@@ -58,12 +58,12 @@ class _EasyComboBoxHelper(object):
 
     def __init__(self, combobox):
         """Call this constructor after the Combo one"""
-        if not isinstance(combobox, (gtk.ComboBox, ComboEntry)):
+        if not isinstance(combobox, (Gtk.ComboBox, ComboEntry)):
             raise TypeError(
-                "combo needs to be a gtk.ComboBox or ComboEntry instance")
+                "combo needs to be a Gtk.ComboBox or ComboEntry instance")
         self._combobox = combobox
 
-        model = gtk.ListStore(str, object)
+        model = Gtk.ListStore(str, object)
         self._combobox.set_model(model)
 
         self.mode = ComboMode.UNKNOWN
@@ -267,7 +267,7 @@ class _EasyComboBoxHelper(object):
         return None
 
 
-class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
+class ProxyComboBox(Gtk.ComboBox, ProxyWidgetMixin):
 
     __gtype_name__ = 'ProxyComboBox'
     allowed_data_types = (basestring, object) + number
@@ -283,12 +283,12 @@ class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
 
     def __init__(self):
         self._color_attribute = None
-        gtk.ComboBox.__init__(self)
+        Gtk.ComboBox.__init__(self)
         ProxyWidgetMixin.__init__(self)
         self._helper = _EasyComboBoxHelper(self)
         self.connect('changed', self._on__changed)
 
-        self._text_renderer = gtk.CellRendererText()
+        self._text_renderer = Gtk.CellRendererText()
         self.pack_start(self._text_renderer)
         self.add_attribute(self._text_renderer, 'text', ComboColumn.LABEL)
 
@@ -318,7 +318,7 @@ class ProxyComboBox(gtk.ComboBox, ProxyWidgetMixin):
             renderer.set_property('pixbuf',
                                   render_pixbuf(category and category.color))
 
-        renderer = gtk.CellRendererPixbuf()
+        renderer = Gtk.CellRendererPixbuf()
         self.pack_start(renderer, False)
         self.reorder(renderer, 0)
         self.set_cell_data_func(renderer, cell_data_func)

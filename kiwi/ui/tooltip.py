@@ -22,19 +22,19 @@
 #
 
 """A tooltip popup window which only pop ups on demand, which
-makes it possible for us to tie it to a specific gtk.gdk.Window
+makes it possible for us to tie it to a specific Gdk.Window
 """
 
 import gobject
-import gtk
+from gi.repository import Gtk
 
 DEFAULT_DELAY = 500
 BORDER_WIDTH = 4
 
 
-class Tooltip(gtk.Window):
+class Tooltip(Gtk.Window):
     def __init__(self, widget):
-        gtk.Window.__init__(self, gtk.WINDOW_POPUP)
+        Gtk.Window.__init__(self, Gtk.WINDOW_POPUP)
         # from gtktooltips.c:gtk_tooltips_force_window
         self.set_app_paintable(True)
         self.set_resizable(False)
@@ -42,7 +42,7 @@ class Tooltip(gtk.Window):
         self.set_border_width(BORDER_WIDTH)
         self.connect('expose-event', self._on__expose_event)
 
-        self._label = gtk.Label()
+        self._label = Gtk.Label()
         self.add(self._label)
         self._show_timeout_id = -1
 
@@ -54,7 +54,7 @@ class Tooltip(gtk.Window):
 
         x, y = widget.window.get_origin()
 
-        if widget.flags() & gtk.NO_WINDOW:
+        if widget.flags() & Gtk.NO_WINDOW:
             x += widget.allocation.x
             y += widget.allocation.y
 
@@ -86,7 +86,7 @@ class Tooltip(gtk.Window):
     def _on__expose_event(self, window, event):
         w, h = window.size_request()
         window.style.paint_flat_box(window.window,
-                                    gtk.STATE_NORMAL, gtk.SHADOW_OUT,
+                                    Gtk.STATE_NORMAL, Gtk.SHADOW_OUT,
                                     None, window, "tooltip",
                                     0, 0, w, h)
         return False
@@ -103,7 +103,7 @@ class Tooltip(gtk.Window):
         self._label.set_text(text)
 
     def hide(self):
-        gtk.Window.hide(self)
+        Gtk.Window.hide(self)
         gobject.source_remove(self._show_timeout_id)
         self._show_timeout_id = -1
 

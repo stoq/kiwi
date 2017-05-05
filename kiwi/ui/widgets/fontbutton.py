@@ -15,20 +15,20 @@
 
 """FontButton proxy for the kiwi framework"""
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import gsignal, type_register
 
 
-class ProxyFontButton(gtk.FontButton, ProxyWidgetMixin):
+class ProxyFontButton(Gtk.FontButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFontButton'
 
     allowed_data_types = basestring,
 
     def __init__(self, fontname=None):
         ProxyWidgetMixin.__init__(self)
-        gtk.FontButton.__init__(self, fontname)
+        Gtk.FontButton.__init__(self, fontname)
         self.props.data_type = str
 
     gsignal('font-set', 'override')

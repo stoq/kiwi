@@ -27,14 +27,14 @@
 """GtkCheckButton support for the Kiwi Framework"""
 
 import gobject
-import gtk
+from gi.repository import Gtk
 
 from kiwi import ValueUnset
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import gsignal
 
 
-class ProxyCheckButton(gtk.CheckButton, ProxyWidgetMixin):
+class ProxyCheckButton(Gtk.CheckButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyCheckButton'
 
     data_type = gobject.property(
@@ -51,7 +51,7 @@ class ProxyCheckButton(gtk.CheckButton, ProxyWidgetMixin):
     allowed_data_types = bool,
 
     def __init__(self, label=None, use_underline=True):
-        gtk.CheckButton.__init__(self, label=label,
+        Gtk.CheckButton.__init__(self, label=label,
                                  use_underline=use_underline)
         ProxyWidgetMixin.__init__(self)
 

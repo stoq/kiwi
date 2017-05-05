@@ -29,14 +29,14 @@
 """
 
 import gobject
-import gtk
+from gi.repository import Gtk
 
 from kiwi.datatypes import number, ValueUnset
 from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
 from kiwi.utils import gsignal
 
 
-class ProxySpinButton(gtk.SpinButton, ValidatableProxyWidgetMixin):
+class ProxySpinButton(Gtk.SpinButton, ValidatableProxyWidgetMixin):
     """
     A SpinButton subclass which adds supports for the Kiwi Framework.
     This widget supports validation
@@ -60,7 +60,7 @@ class ProxySpinButton(gtk.SpinButton, ValidatableProxyWidgetMixin):
     def __init__(self, data_type=int):
         # since the default data_type is str we need to set it to int
         # or float for spinbuttons
-        gtk.SpinButton.__init__(self)
+        Gtk.SpinButton.__init__(self)
         ValidatableProxyWidgetMixin.__init__(self)
         self.props.data_type = data_type
         self.set_property('xalign', 1.0)
@@ -106,9 +106,9 @@ class ProxySpinButton(gtk.SpinButton, ValidatableProxyWidgetMixin):
         self.set_property('primary-icon-pixbuf', pixbuf)
 
     def update_background(self, color):
-        self.modify_base(gtk.STATE_NORMAL, color)
+        self.modify_base(Gtk.STATE_NORMAL, color)
 
     def get_background(self):
-        return self.style.base[gtk.STATE_NORMAL]
+        return self.style.base[Gtk.STATE_NORMAL]
 
 gobject.type_register(ProxySpinButton)

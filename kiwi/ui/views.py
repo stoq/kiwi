@@ -35,7 +35,7 @@ import os
 import string
 
 import gobject
-import gtk
+from gi.repository import Gtk, Gdk
 from gtk import gdk
 
 from kiwi.environ import environ
@@ -54,30 +54,30 @@ log = logging.getLogger('kiwi.view')
 validation_log = logging.getLogger('kiwi.validation')
 
 _non_interactive = [
-    gtk.Label,
-    gtk.Alignment,
-    gtk.AccelLabel,
-    gtk.Arrow,
-    gtk.EventBox,
-    gtk.Fixed,
-    gtk.Frame,
-    gtk.HBox,
-    gtk.HButtonBox,
-    gtk.HPaned,
-    gtk.HSeparator,
-    gtk.Layout,
-    gtk.ProgressBar,
-    gtk.ScrolledWindow,
-    gtk.Table,
-    gtk.VBox,
-    gtk.VButtonBox,
-    gtk.VPaned,
-    gtk.VSeparator,
-    gtk.Window,
+    Gtk.Label,
+    Gtk.Alignment,
+    Gtk.AccelLabel,
+    Gtk.Arrow,
+    Gtk.EventBox,
+    Gtk.Fixed,
+    Gtk.Frame,
+    Gtk.HBox,
+    Gtk.HButtonBox,
+    Gtk.HPaned,
+    Gtk.HSeparator,
+    Gtk.Layout,
+    Gtk.ProgressBar,
+    Gtk.ScrolledWindow,
+    Gtk.Table,
+    Gtk.VBox,
+    Gtk.VButtonBox,
+    Gtk.VPaned,
+    Gtk.VSeparator,
+    Gtk.Window,
 ]
 
-if hasattr(gtk, 'Progress'):
-    _non_interactive.append(gtk.Progress)
+if hasattr(Gtk, 'Progress'):
+    _non_interactive.append(Gtk.Progress)
 
 color_red = gdk.color_parse('red')
 color_black = gdk.color_parse('black')
@@ -159,7 +159,7 @@ class SlaveView(gobject.GObject):
         # Make it possible to run a view without a glade file, to be able
         # to attach slaves we need the toplevel widget to be an EventBox.
         if not self.gladefile and self.toplevel is None:
-            self.toplevel = gtk.Window()
+            self.toplevel = Gtk.Window()
             self.toplevel.set_name('KiwiViewWindow')
 
         # Forms create widgets that we want to connect signals to,
@@ -171,7 +171,7 @@ class SlaveView(gobject.GObject):
         self.toplevel = self._get_toplevel()
 
         # grab the accel groups
-        self._accel_groups = gtk.accel_groups_from_object(self.toplevel)
+        self._accel_groups = Gtk.accel_groups_from_object(self.toplevel)
 
         # XXX: support normal widgets
         # notebook page label widget ->
@@ -192,7 +192,7 @@ class SlaveView(gobject.GObject):
             return []
 
         return [widget for widget in self._glade_adaptor.get_widgets()
-                if isinstance(widget, gtk.Notebook)]
+                if isinstance(widget, Gtk.Notebook)]
 
     def _check_reserved(self):
         for reserved in ["widgets", "toplevel", "gladefile",
@@ -213,7 +213,7 @@ class SlaveView(gobject.GObject):
                             "called toplevel that specifies the "
                             "toplevel widget in it")
 
-        if isinstance(toplevel, (gtk.Window, gtk.Dialog)):
+        if isinstance(toplevel, (Gtk.Window, Gtk.Dialog)):
             if toplevel.get_visible():
                 log.warn("Toplevel widget %s (%s) is visible; that's probably "
                          "wrong" % (toplevel, toplevel.get_name()))
@@ -239,7 +239,7 @@ class SlaveView(gobject.GObject):
         # window, so we pull our slave out from it, grab its groups and
         # muerder it later
         shell = glade_adaptor.get_widget(container_name)
-        if not isinstance(shell, (gtk.Window, gtk.Dialog)):
+        if not isinstance(shell, (Gtk.Window, Gtk.Dialog)):
             raise TypeError("Container %s should be a Window, found %s" % (
                 container_name, type(shell)))
 
@@ -308,7 +308,7 @@ class SlaveView(gobject.GObject):
         This method should be called before the window becomes visible.
         """
         toplevel = self.get_toplevel()
-        toplevel.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_NORMAL)
+        toplevel.set_type_hint(Gdk.WINDOW_TYPE_HINT_NORMAL)
 
     def get_widget(self, name):
         """Retrieves the named widget from the View"""
@@ -322,7 +322,7 @@ class SlaveView(gobject.GObject):
         if widget is None:
             raise AttributeError("Widget %s not found in view %s"
                                  % (name, self))
-        if not isinstance(widget, gtk.Widget):
+        if not isinstance(widget, Gtk.Widget):
             raise TypeError("%s in view %s is not a Widget"
                             % (name, self))
         return widget
@@ -353,7 +353,7 @@ class SlaveView(gobject.GObject):
         self.show()
         if parent:
             self.set_transient_for(parent)
-        gtk.main()
+        Gtk.main()
 
     def show(self, *args):
         """Shows the toplevel widget"""
@@ -407,15 +407,15 @@ class SlaveView(gobject.GObject):
         top_widget = None
         for widget_name in widgets:
             widget = getattr(self, widget_name)
-            if not isinstance(widget, gtk.Widget):
+            if not isinstance(widget, Gtk.Widget):
                 continue
-            if not widget.flags() & gtk.REALIZED:
+            if not widget.flags() & Gtk.REALIZED:
                 # If widget isn't realized but we have a toplevel
                 # window, it's safe to realize it. If this check isn't
                 # performed, we get a crash as per
                 # http://bugzilla.gnome.org/show_bug.cgi?id=107872
-                if isinstance(widget.get_toplevel(), (gtk.Window,
-                                                      gtk.Dialog)):
+                if isinstance(widget.get_toplevel(), (Gtk.Window,
+                                                      Gtk.Dialog)):
                     widget.realize()
                 else:
                     log.warn("get_topmost_widget: widget %s was not realized"
@@ -423,12 +423,12 @@ class SlaveView(gobject.GObject):
                     continue
             if can_focus:
                 # Combos don't focus, but their entries do
-                if isinstance(widget, gtk.Combo):
+                if isinstance(widget, Gtk.Combo):
                     widget = widget.entry
-                if not widget.flags() & gtk.CAN_FOCUS or \
-                    isinstance(widget, (gtk.Label, gtk.HSeparator,
-                                        gtk.VSeparator, gtk.Window,
-                                        gtk.Dialog)):
+                if not widget.flags() & Gtk.CAN_FOCUS or \
+                    isinstance(widget, (Gtk.Label, Gtk.HSeparator,
+                                        Gtk.VSeparator, Gtk.Window,
+                                        Gtk.Dialog)):
                     continue
 
             if top_widget:
@@ -501,7 +501,7 @@ class SlaveView(gobject.GObject):
 
         shell = slave.get_toplevel()
 
-        if isinstance(shell, (gtk.Window, gtk.Dialog)):  # view with toplevel window
+        if isinstance(shell, (Gtk.Window, Gtk.Dialog)):  # view with toplevel window
             new_widget = shell.get_child()
             shell.remove(new_widget)  # remove from window to allow reparent
         else:  # slaveview
@@ -516,9 +516,9 @@ class SlaveView(gobject.GObject):
 
         # This is for glade-less Views, create an EventBox automatically
         # for a holder
-        if isinstance(placeholder, gtk.Window):
+        if isinstance(placeholder, Gtk.Window):
             parent = placeholder
-            placeholder = gtk.EventBox()
+            placeholder = Gtk.EventBox()
             placeholder.set_border_width(6)
             parent.add(placeholder)
             placeholder.show()
@@ -531,11 +531,11 @@ class SlaveView(gobject.GObject):
             # accel groups; otherwise complain if we're dropping the
             # accelerators
             win = parent.get_toplevel()
-            if isinstance(win, (gtk.Window, gtk.Dialog)):
+            if isinstance(win, (Gtk.Window, Gtk.Dialog)):
                 # use idle_add to be sure we attach the groups as late
                 # as possible and avoid reattaching groups -- see
                 # comment in _attach_groups.
-                gtk.idle_add(self._attach_groups, win, slave._accel_groups)
+                Gtk.idle_add(self._attach_groups, win, slave._accel_groups)
             elif isinstance(self, SlaveView):
                 self._accel_groups.extend(slave._accel_groups)
             else:
@@ -549,14 +549,14 @@ class SlaveView(gobject.GObject):
         for sizegroup in slave.get_sizegroups():
             self._merge_sizegroup(sizegroup)
 
-        if isinstance(placeholder, gtk.EventBox):
+        if isinstance(placeholder, Gtk.EventBox):
             # standard mechanism
             child = placeholder.get_child()
             if child is not None:
                 placeholder.remove(child)
             placeholder.set_visible_window(False)
             placeholder.add(new_widget)
-        elif isinstance(parent, gtk.EventBox):
+        elif isinstance(parent, Gtk.EventBox):
             # backwards compatibility
             log.warn("attach_slave's api has changed: read docs, update code!")
             parent.remove(placeholder)
@@ -647,7 +647,7 @@ class SlaveView(gobject.GObject):
         # interestingly, this happens many times with notebook,
         # because libglade creates and attaches groups in runtime to
         # its toplevel window.
-        current_groups = gtk.accel_groups_from_object(win)
+        current_groups = Gtk.accel_groups_from_object(win)
         for group in accel_groups:
             if group in current_groups:
                 # skip group already attached
@@ -674,7 +674,7 @@ class SlaveView(gobject.GObject):
         if not isinstance(widgets, (list, tuple)):
             raise TypeError("widgets must be a list, found %s" % widgets)
         for widget in widgets:
-            if not isinstance(widget, gtk.Widget):
+            if not isinstance(widget, Gtk.Widget):
                 raise TypeError(
                     "Only Gtk widgets may be passed in list, found\n%s" % widget)
             if after:
@@ -768,7 +768,7 @@ class SlaveView(gobject.GObject):
         # Children of the view, eg slaves or widgets are connected to
         # this signal. When validation changes of a validatable child
         # this callback is called
-        if isinstance(child, gtk.Widget):
+        if isinstance(child, Gtk.Widget):
             # Force invisible and insensitive widgets to be valid
             if (not child.get_property('visible') or
                 not child.get_property('sensitive')):
@@ -799,8 +799,8 @@ class SlaveView(gobject.GObject):
 
         # Only modify active state, since that's the (somewhat badly named)
         # state used for the pages which are not selected.
-        label.modify_fg(gtk.STATE_ACTIVE, color)
-        label.modify_fg(gtk.STATE_NORMAL, color)
+        label.modify_fg(Gtk.STATE_ACTIVE, color)
+        label.modify_fg(Gtk.STATE_NORMAL, color)
 
     def check_and_notify_validity(self, force=False):
         # Current view is only valid if we have no invalid children
@@ -848,7 +848,7 @@ class BaseView(SlaveView):
         SlaveView.__init__(self, toplevel, widgets, gladefile, toplevel_name,
                            domain)
 
-        if not isinstance(self.toplevel, (gtk.Window, gtk.Dialog)):
+        if not isinstance(self.toplevel, (Gtk.Window, Gtk.Dialog)):
             raise TypeError("toplevel widget must be a Window "
                             "(or inherit from it),\nfound `%s' %s"
                             % (toplevel, self.toplevel))
@@ -886,14 +886,14 @@ class BaseView(SlaveView):
         for dialogs, so the dialog window is managed differently than a
         top-level one.
         """
-        if hasattr(view, 'toplevel') and isinstance(view.toplevel, gtk.Window):
+        if hasattr(view, 'toplevel') and isinstance(view.toplevel, Gtk.Window):
             self.toplevel.set_transient_for(view.toplevel)
         # In certain cases, it is more convenient to send in a window;
         # for instance, in a deep slaveview hierarchy, getting the
         # top view is difficult. We used to print a warning here, I
         # removed it for convenience; we might want to put it back when
         # http://bugs.async.com.br/show_bug.cgi?id=682 is fixed
-        elif isinstance(view, (gtk.Window, gtk.Dialog)):
+        elif isinstance(view, (Gtk.Window, Gtk.Dialog)):
             self.toplevel.set_transient_for(view)
         else:
             raise TypeError("Parameter to set_transient_for should "
@@ -922,7 +922,7 @@ class BaseView(SlaveView):
         interactive = None
         # Check if any of the widgets is interactive
         for v in values:
-            if (isinstance(v, gtk.Widget) and not
+            if (isinstance(v, Gtk.Widget) and not
                 isinstance(v, tuple(_non_interactive))):
                 interactive = v
         if interactive:

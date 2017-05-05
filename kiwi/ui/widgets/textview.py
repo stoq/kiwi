@@ -28,7 +28,7 @@
 import datetime
 
 import gobject
-import gtk
+from gi.repository import Gtk
 
 from kiwi import ValueUnset
 from kiwi.datatypes import number
@@ -36,7 +36,7 @@ from kiwi.ui.proxywidget import ValidatableProxyWidgetMixin
 from kiwi.utils import gsignal
 
 
-class ProxyTextView(gtk.TextView, ValidatableProxyWidgetMixin):
+class ProxyTextView(Gtk.TextView, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyTextView'
     data_value = gobject.property(type=str, nick='Data Value')
     data_type = gobject.property(
@@ -51,11 +51,11 @@ class ProxyTextView(gtk.TextView, ValidatableProxyWidgetMixin):
     allowed_data_types = (basestring, datetime.date) + number
 
     def __init__(self):
-        gtk.TextView.__init__(self)
+        Gtk.TextView.__init__(self)
         self.props.data_type = str
         ValidatableProxyWidgetMixin.__init__(self)
 
-        self._textbuffer = gtk.TextBuffer()
+        self._textbuffer = Gtk.TextBuffer()
         self._textbuffer.connect('changed',
                                  self._on_textbuffer__changed)
         self.set_buffer(self._textbuffer)

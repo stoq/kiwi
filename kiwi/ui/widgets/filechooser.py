@@ -25,7 +25,7 @@
 """Filechooser widgets for the kiwi framework"""
 
 import gobject
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import gsignal
@@ -51,11 +51,11 @@ class _FileChooserMixin(object):
         self.set_filename(data)
 
 
-class ProxyFileChooserWidget(_FileChooserMixin, gtk.FileChooserWidget,
+class ProxyFileChooserWidget(_FileChooserMixin, Gtk.FileChooserWidget,
                              ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFileChooserWidget'
 
-    def __init__(self, action=gtk.FILE_CHOOSER_ACTION_OPEN, backend=None):
+    def __init__(self, action=Gtk.FILE_CHOOSER_ACTION_OPEN, backend=None):
         """
         Create a new ProxyFileChooserWidget object.
         :param action:
@@ -63,12 +63,12 @@ class ProxyFileChooserWidget(_FileChooserMixin, gtk.FileChooserWidget,
         """
         ProxyWidgetMixin.__init__(self)
         self.props.data_type = str
-        gtk.FileChooserWidget.__init__(self, action=action, backend=backend)
+        Gtk.FileChooserWidget.__init__(self, action=action, backend=backend)
 
 gobject.type_register(ProxyFileChooserWidget)
 
 
-class ProxyFileChooserButton(_FileChooserMixin, gtk.FileChooserButton,
+class ProxyFileChooserButton(_FileChooserMixin, Gtk.FileChooserButton,
                              ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFileChooserButton'
 
@@ -84,8 +84,8 @@ class ProxyFileChooserButton(_FileChooserMixin, gtk.FileChooserButton,
 
         # Broken, Broken PyGTK
         if isinstance(title, str):
-            gtk.FileChooserButton.__init__(self, title, backend)
+            Gtk.FileChooserButton.__init__(self, title, backend)
         else:
-            gtk.FileChooserButton.__init__(self, dialog or title)
+            Gtk.FileChooserButton.__init__(self, dialog or title)
 
 gobject.type_register(ProxyFileChooserButton)

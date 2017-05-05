@@ -32,7 +32,7 @@ import gettext
 import logging
 
 import gobject
-import gtk
+from gi.repository import Gtk, Gdk
 from gtk import gdk
 
 from kiwi import ValueUnset
@@ -179,7 +179,7 @@ class ProxyWidgetMixin(object):
         return conv.from_string(data)
 
 VALIDATION_ICON_WIDTH = 16
-MANDATORY_ICON = gtk.STOCK_EDIT
+MANDATORY_ICON = Gtk.STOCK_EDIT
 MANDATORY_COLOR = '#fcf6c6'
 
 VALIDATION_PNG = """iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAABGdBTUEAANbY1E9YMgAAABl0RVh0
@@ -317,8 +317,8 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
         self._fade.stop()
         self._set_pixbuf(None)
-        style = gtk.widget_get_default_style()
-        self.update_background(style.base[gtk.STATE_NORMAL])
+        style = Gtk.widget_get_default_style()
+        self.update_background(style.base[Gtk.STATE_NORMAL])
 
     def set_invalid(self, text=None, fade=True):
         """Changes the validation state to invalid.
@@ -336,7 +336,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
         if not fade:
             self._set_pixbuf(_load_error_icon())
-            self.update_background(gtk.gdk.color_parse(self._fade.ERROR_COLOR))
+            self.update_background(Gdk.color_parse(self._fade.ERROR_COLOR))
             return
 
         # When the fading animation is finished, set the error icon
@@ -356,7 +356,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         if self._fade.start(self.get_background()):
             self._set_pixbuf(None)
 
-        # If you try to set the tooltip before the icon in gtk.Entry, a
+        # If you try to set the tooltip before the icon in Gtk.Entry, a
         # segfault happens.
         self.set_tooltip(text)
 
@@ -370,7 +370,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
             self._draw_stock_icon(MANDATORY_ICON)
             self.set_tooltip(_('This field is mandatory'))
             self._fade.stop()
-            self.update_background(gtk.gdk.color_parse(MANDATORY_COLOR))
+            self.update_background(Gdk.color_parse(MANDATORY_COLOR))
             valid = False
         else:
             valid = True
@@ -404,7 +404,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         self._valid = state
 
     def _draw_stock_icon(self, stock_id):
-        icon = self.render_icon(stock_id, gtk.ICON_SIZE_MENU)
+        icon = self.render_icon(stock_id, Gtk.ICON_SIZE_MENU)
         self._set_pixbuf(icon)
         self.queue_draw()
 

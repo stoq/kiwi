@@ -25,7 +25,7 @@
 """GtkHScale and GtkVScale support for the Kiwi Framework"""
 
 import gobject
-import gtk
+from gi.repository import Gtk
 
 from kiwi import ValueUnset
 from kiwi.ui.proxywidget import ProxyWidgetMixin
@@ -53,7 +53,7 @@ class _ProxyScale:
             self.set_value(data)
 
 
-class ProxyHScale(_ProxyScale, ProxyWidgetMixin, gtk.HScale):
+class ProxyHScale(_ProxyScale, ProxyWidgetMixin, Gtk.HScale):
     __gtype_name__ = 'ProxyHScale'
     data_type = gobject.property(
         getter=ProxyWidgetMixin.get_data_type,
@@ -65,14 +65,14 @@ class ProxyHScale(_ProxyScale, ProxyWidgetMixin, gtk.HScale):
     gsignal('validate', object, retval=object)
 
     def __init__(self):
-        gtk.HScale.__init__(self)
+        Gtk.HScale.__init__(self)
         ProxyWidgetMixin.__init__(self)
         self.props.data_type = float
 
 type_register(ProxyHScale)
 
 
-class ProxyVScale(_ProxyScale, ProxyWidgetMixin, gtk.VScale):
+class ProxyVScale(_ProxyScale, ProxyWidgetMixin, Gtk.VScale):
     __gtype_name__ = 'ProxyVScale'
     data_type = gobject.property(
         getter=ProxyWidgetMixin.get_data_type,
@@ -84,7 +84,7 @@ class ProxyVScale(_ProxyScale, ProxyWidgetMixin, gtk.VScale):
     gsignal('validate', object, retval=object)
 
     def __init__(self):
-        gtk.VScale.__init__(self)
+        Gtk.VScale.__init__(self)
         ProxyWidgetMixin.__init__(self)
         self.props.data_type = float
 

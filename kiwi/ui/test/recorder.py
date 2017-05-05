@@ -40,7 +40,7 @@ import sys
 import time
 
 from gobject import add_emission_hook
-import gtk
+from gi.repository import Gtk
 from gtk import gdk
 
 from kiwi.ui.test.common import WidgetIntrospecter
@@ -175,7 +175,7 @@ class MenuItemActivateEvent(SignalEvent):
     It could be a toplevel or a normal entry in a submenu.
     """
     signal_name = 'activate'
-    object_type = gtk.MenuItem
+    object_type = Gtk.MenuItem
 
     def serialize(self):
         return '%s.activate()' % self.name
@@ -192,7 +192,7 @@ class ImageMenuItemButtonReleaseEvent(SignalEvent):
     it is already too late.
     """
     signal_name = 'button-release-event'
-    object_type = gtk.ImageMenuItem
+    object_type = Gtk.ImageMenuItem
 
     def get_toplevel(self, widget):
         parent = widget
@@ -216,7 +216,7 @@ class ToolButtonReleaseEvent(SignalEvent):
     Hackish, see :class:`ImageMenuItemButtonReleaseEvent` for more details.
     """
     signal_name = 'button-release-event'
-    object_type = gtk.Button
+    object_type = Gtk.Button
 
     def serialize(self):
         return '%s.activate()' % self.name
@@ -231,7 +231,7 @@ class EntrySetTextEvent(SignalEvent):
     event will be created.
     """
     signal_name = 'notify::text'
-    object_type = gtk.Entry
+    object_type = Gtk.Entry
 
     def __init__(self, object, name, args):
         SignalEvent.__init__(self, object, name, args)
@@ -250,7 +250,7 @@ class EntryActivateEvent(SignalEvent):
     """
 
     signal_name = 'activate'
-    object_type = gtk.Entry
+    object_type = Gtk.Entry
 
     def serialize(self):
         return '%s.activate()' % (self.name)
@@ -266,7 +266,7 @@ class ButtonClickedEvent(SignalEvent):
     and GtkCheckButton.
     """
     signal_name = 'clicked'
-    object_type = gtk.Button
+    object_type = Gtk.Button
 
     def serialize(self):
         return '%s.clicked()' % self.name
@@ -294,7 +294,7 @@ class ObjectListSelectionChanged(SignalEvent):
     def _get_rows(self):
         selection = self._objectlist.get_treeview().get_selection()
 
-        if selection.get_mode() == gtk.SELECTION_MULTIPLE:
+        if selection.get_mode() == Gtk.SELECTION_MULTIPLE:
             # get_selected_rows() returns a list of paths
             iters = selection.get_selected_rows()[1]
             if iters:
@@ -399,7 +399,7 @@ class Recorder(WidgetIntrospecter):
         # because if it's connected using a normal callback it will not
         # be called if the application returns True in it's signal handler.
         if add_emission_hook:
-            add_emission_hook(gtk.Window, 'delete-event',
+            add_emission_hook(Gtk.Window, 'delete-event',
                               self._emission_window__delete_event)
 
     def execute(self, args):
@@ -473,13 +473,13 @@ class Recorder(WidgetIntrospecter):
             for event_type in event_types:
                 # These 3 hacks should move into the event class itself
                 if event_type == MenuItemActivateEvent:
-                    if not isinstance(gobj.get_parent(), gtk.MenuBar):
+                    if not isinstance(gobj.get_parent(), Gtk.MenuBar):
                         continue
                 elif event_type == ToolButtonReleaseEvent:
-                    if not isinstance(gobj.get_parent(), gtk.ToolButton):
+                    if not isinstance(gobj.get_parent(), Gtk.ToolButton):
                         continue
                 elif event_type == ButtonClickedEvent:
-                    if isinstance(gobj.get_parent(), gtk.ToolButton):
+                    if isinstance(gobj.get_parent(), Gtk.ToolButton):
                         continue
                 if issubclass(event_type, SignalEvent):
                     self._listen_event(gobj, event_type)

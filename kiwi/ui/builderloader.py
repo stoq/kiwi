@@ -23,7 +23,7 @@
 
 import logging
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.hyperlink import HyperLink
 from kiwi.ui.objectlist import ObjectList, ObjectTree
@@ -61,7 +61,7 @@ class BuilderWidgetTree:
     def __init__(self, view, gladefile=None, domain=None, data=None):
         self._view = view
         self._gladefile = gladefile
-        self._builder = gtk.Builder()
+        self._builder = Gtk.Builder()
 
         if domain is not None:
             self._builder.set_translation_domain(domain)
@@ -80,8 +80,8 @@ class BuilderWidgetTree:
         # widgets = [label1, button1] -> view.label1, view.button1
 
         for obj in self._builder.get_objects():
-            if isinstance(obj, gtk.Buildable):
-                object_name = gtk.Buildable.get_name(obj)
+            if isinstance(obj, Gtk.Buildable):
+                object_name = Gtk.Buildable.get_name(obj)
                 setattr(self._view, object_name, obj)
 
     def get_widget(self, name):
@@ -99,7 +99,7 @@ class BuilderWidgetTree:
 
     def get_sizegroups(self):
         return [obj for obj in self._builder.get_objects()
-                if isinstance(obj, gtk.SizeGroup)]
+                if isinstance(obj, Gtk.SizeGroup)]
 
     def signal_autoconnect(self, obj):
         self._builder.connect_signals(obj)

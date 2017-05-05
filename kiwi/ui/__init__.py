@@ -23,8 +23,8 @@
 
 
 try:
-    import gtk
-    gtk  # pyflakes
+    from gi.repository import Gtk
+    Gtk  # pyflakes
 except ImportError, e:
     try:
         import pygtk
@@ -33,15 +33,15 @@ except ImportError, e:
         pass
 
     try:
-        import gtk
-        gtk  # pyflakes
+        from gi.repository import Gtk
+        Gtk  # pyflakes
     except:
         raise SystemExit(
             "PyGTK 2.6.0 or higher is required by kiwi.ui\n"
             "Error was: %s" % e)
 
 
-gtk.rc_parse_string("""
+Gtk.rc_parse_string("""
 # Make multicombo buttons have less padding then a normal button
 style "multicombo-close-button-style"
 {

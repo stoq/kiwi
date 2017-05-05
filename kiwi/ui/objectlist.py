@@ -36,7 +36,7 @@ import pickle
 import glib
 import gobject
 import pango
-import gtk
+from gi.repository import Gtk, Gdk
 from gtk import gdk
 
 from kiwi.accessor import kgetattr
@@ -79,11 +79,11 @@ class Column(gobject.GObject):
         - the type of the attribute that will be inserted into the column.
           Supported data types: bool, int, float, str, unicode,
           decimal.Decimal, datetime.date, datetime.time, datetime.datetime,
-          gtk.gdk.Pixbuf, :class:`kiwi.currency.currency`, L{kiwi.python.enum}.
+          Gdk.Pixbuf, :class:`kiwi.currency.currency`, L{kiwi.python.enum}.
       - B{visible}: bool I{True}
         - specifying if it is initially hidden or shown.
-      - B{justify}: gtk.Justification I{None}
-        - one of gtk.JUSTIFY_LEFT, gtk.JUSTIFY_RIGHT or gtk.JUSTIFY_CENTER
+      - B{justify}: Gtk.Justification I{None}
+        - one of Gtk.JUSTIFY_LEFT, Gtk.JUSTIFY_RIGHT or Gtk.JUSTIFY_CENTER
           or None. If None, the justification will be determined by the type
           of the attribute value of the first instance to be inserted in the
           ObjectList (for instance numbers will be right-aligned).
@@ -98,7 +98,7 @@ class Column(gobject.GObject):
         - whether or not the ObjectList is to be sorted by this column.
           If no Columns are sorted, the ObjectList will be created unsorted.
       - B{order}: GtkSortType I{-1}
-        - one of gtk.SORT_ASCENDING, gtk.SORT_DESCENDING or -1
+        - one of Gtk.SORT_ASCENDING, Gtk.SORT_DESCENDING or -1
           The value -1 is mean that the column is not sorted.
       - B{expand}: bool I{False}
         - if set column will expand. Note: this space is shared equally amongst
@@ -125,13 +125,13 @@ class Column(gobject.GObject):
       - B{radio}: bool I{False}
         -  If true render the column as a radio instead of toggle.
            Only applicable for columns with boolean data types.
-      - B{spin_adjustment}: gtk.Adjustment I{None}
-        -  A gtk.Adjustment instance. If set, render the column cell as
+      - B{spin_adjustment}: Gtk.Adjustment I{None}
+        -  A Gtk.Adjustment instance. If set, render the column cell as
            a spinbutton.
       - B{use_stock}: bool I{False}
         - If true, this will be rendered as pixbuf from the value which
           should be a stock id.
-      - B{icon_size}: gtk.IconSize I{gtk.ICON_SIZE_MENU}
+      - B{icon_size}: Gtk.IconSize I{Gtk.ICON_SIZE_MENU}
       - B{editable_attribute}: string I{""}
         - a string which is the attribute which should decide if the
           cell is editable or not.
@@ -165,11 +165,11 @@ class Column(gobject.GObject):
                                         gobject.PARAM_CONSTRUCT_ONLY))
     title = gobject.property(type=str)
     visible = gobject.property(type=bool, default=True)
-    justify = gobject.property(type=gtk.Justification, default=gtk.JUSTIFY_LEFT)
+    justify = gobject.property(type=Gtk.Justification, default=Gtk.JUSTIFY_LEFT)
     format = gobject.property(type=str)
     width = gobject.property(type=int, maximum=2 ** 16)
     sorted = gobject.property(type=bool, default=False)
-    order = gobject.property(type=gtk.SortType, default=gtk.SORT_ASCENDING)
+    order = gobject.property(type=Gtk.SortType, default=Gtk.SORT_ASCENDING)
     expand = gobject.property(type=bool, default=False)
     tooltip = gobject.property(type=str)
     format_func = gobject.property(type=object)
@@ -180,7 +180,7 @@ class Column(gobject.GObject):
     spin_adjustment = gobject.property(type=object)
     use_stock = gobject.property(type=bool, default=False)
     use_markup = gobject.property(type=bool, default=False)
-    icon_size = gobject.property(type=gtk.IconSize, default=gtk.ICON_SIZE_MENU)
+    icon_size = gobject.property(type=Gtk.IconSize, default=Gtk.ICON_SIZE_MENU)
     editable_attribute = gobject.property(type=str)
     expander = gobject.property(type=bool, default=False)
     ellipsize = gobject.property(type=pango.EllipsizeMode, default=pango.ELLIPSIZE_NONE)
@@ -241,9 +241,9 @@ class Column(gobject.GObject):
             if data_type:
                 conv = converter.get_converter(data_type)
                 if issubclass(data_type, bool):
-                    kwargs['justify'] = gtk.JUSTIFY_CENTER
+                    kwargs['justify'] = Gtk.JUSTIFY_CENTER
                 elif conv.align == Alignment.RIGHT:
-                    kwargs['justify'] = gtk.JUSTIFY_RIGHT
+                    kwargs['justify'] = Gtk.JUSTIFY_RIGHT
 
         format_func = kwargs.get('format_func')
         if format_func:
@@ -262,9 +262,9 @@ class Column(gobject.GObject):
 
         if 'spin_adjustment' in kwargs:
             adjustment = kwargs.get('spin_adjustment')
-            if not isinstance(adjustment, gtk.Adjustment):
+            if not isinstance(adjustment, Gtk.Adjustment):
                 raise TypeError(
-                    "spin_adjustment must be a gtk.Adjustment instance")
+                    "spin_adjustment must be a Gtk.Adjustment instance")
 
         sort_func = kwargs.get('sort_func')
         if sort_func:
@@ -316,7 +316,7 @@ class Column(gobject.GObject):
             raise TypeError("format is not supported for boolean columns")
 
         if not self.column:
-            treeview_column = gtk.TreeViewColumn()
+            treeview_column = Gtk.TreeViewColumn()
         else:
             other_column = objectlist.get_column_by_name(self.column)
             treeview_column = objectlist.get_treeview_column(other_column)
@@ -326,12 +326,12 @@ class Column(gobject.GObject):
         if self.on_attach_renderer:
             self.on_attach_renderer(renderer)
         justify = self.justify
-        if justify == gtk.JUSTIFY_RIGHT:
+        if justify == Gtk.JUSTIFY_RIGHT:
             xalign = 1.0
-        elif justify == gtk.JUSTIFY_CENTER:
+        elif justify == Gtk.JUSTIFY_CENTER:
             xalign = 0.5
-        elif justify in (gtk.JUSTIFY_LEFT,
-                         gtk.JUSTIFY_FILL):
+        elif justify in (Gtk.JUSTIFY_LEFT,
+                         Gtk.JUSTIFY_FILL):
             xalign = 0.0
         else:
             raise AssertionError
@@ -358,12 +358,12 @@ class Column(gobject.GObject):
         # This is a bit hackish, we should probably
         # add a proper api to determine the expanding of
         # individual cells.
-        if self.data_type == gtk.gdk.Pixbuf or self.use_stock:
+        if self.data_type == Gdk.Pixbuf or self.use_stock:
             expand = False
         else:
             expand = True
 
-        if self.data_type == gtk.gdk.Pixbuf:
+        if self.data_type == Gdk.Pixbuf:
             renderer.set_padding(2, 0)
 
         if self.pack_end:
@@ -376,11 +376,11 @@ class Column(gobject.GObject):
         treeview_column.set_visible(self.visible)
 
         if self.width:
-            treeview_column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+            treeview_column.set_sizing(Gtk.TREE_VIEW_COLUMN_FIXED)
             treeview_column.set_fixed_width(self.width)
 
         if self.expand:
-            treeview_column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+            treeview_column.set_sizing(Gtk.TREE_VIEW_COLUMN_FIXED)
             treeview_column.set_expand(True)
 
         if self.sorted:
@@ -410,7 +410,7 @@ class Column(gobject.GObject):
 
         data_type = self.data_type
         if data_type is bool:
-            renderer = gtk.CellRendererToggle()
+            renderer = Gtk.CellRendererToggle()
             if self.editable:
                 renderer.set_property('activatable', True)
                 # Boolean can be either a radio or a checkbox.
@@ -424,7 +424,7 @@ class Column(gobject.GObject):
                 renderer.connect('toggled', cb, model, self)
             prop = 'active'
         elif self.use_stock or data_type == gdk.Pixbuf:
-            renderer = gtk.CellRendererPixbuf()
+            renderer = Gtk.CellRendererPixbuf()
             prop = 'pixbuf'
             if self.editable:
                 raise TypeError("use-stock columns cannot be editable")
@@ -432,13 +432,13 @@ class Column(gobject.GObject):
             if data_type is enum:
                 raise TypeError("data_type must be a subclass of enum")
 
-            enum_model = gtk.ListStore(str, object)
+            enum_model = Gtk.ListStore(str, object)
             items = data_type.names.items()
             items.sort()
             for key, value in items:
                 enum_model.append((key.lower().capitalize(), value))
 
-            renderer = gtk.CellRendererCombo()
+            renderer = Gtk.CellRendererCombo()
             renderer.set_property('model', enum_model)
             renderer.set_property('text-column', 0)
             renderer.set_property('has-entry', True)
@@ -471,7 +471,7 @@ class Column(gobject.GObject):
                                  model, self,
                                  self.from_string)
             else:
-                renderer = gtk.CellRendererText()
+                renderer = Gtk.CellRendererText()
             if self.width_chars != -1:
                 renderer.set_property('width-chars', self.width_chars)
         else:
@@ -491,9 +491,9 @@ class Column(gobject.GObject):
         if column.editable_attribute and obj is not empty_marker:
             data = column.get_attribute(obj,
                                         column.editable_attribute, None)
-            if isinstance(renderer, gtk.CellRendererToggle):
+            if isinstance(renderer, Gtk.CellRendererToggle):
                 renderer.set_property('activatable', data)
-            elif isinstance(renderer, gtk.CellRendererText):
+            elif isinstance(renderer, Gtk.CellRendererText):
                 renderer.set_property('editable', data)
             else:
                 raise AssertionError
@@ -505,7 +505,7 @@ class Column(gobject.GObject):
             text = self._objectlist.cell_data_func(self, renderer, obj, text)
 
         if obj is empty_marker:
-            if isinstance(renderer, gtk.CellRendererText):
+            if isinstance(renderer, Gtk.CellRendererText):
                 renderer.set_property(renderer_prop, '')
         else:
             renderer.set_property(renderer_prop, text)
@@ -714,13 +714,13 @@ class SequentialColumn(Column):
     If you don't give me any argument I'll have the title of a hash (#) and
     right justify the sequences."""
 
-    def __init__(self, title='#', justify=gtk.JUSTIFY_RIGHT, **kwargs):
+    def __init__(self, title='#', justify=Gtk.JUSTIFY_RIGHT, **kwargs):
         Column.__init__(self, '_kiwi_sequence_id',
                         title=title, justify=justify, data_type=int, **kwargs)
 
     def cell_data_func(self, tree_column, renderer, model, treeiter,
                        (column, renderer_prop)):
-        reversed = tree_column.get_sort_order() == gtk.SORT_DESCENDING
+        reversed = tree_column.get_sort_order() == Gtk.SORT_DESCENDING
 
         row = model[treeiter]
         if reversed:
@@ -791,7 +791,7 @@ class ColoredColumn(Column):
         renderer.set_property('foreground-gdk', color)
 
 
-class _ContextMenu(gtk.Menu):
+class _ContextMenu(Gtk.Menu):
 
     """
     ContextMenu is a wrapper for the menu that's displayed when right
@@ -800,7 +800,7 @@ class _ContextMenu(gtk.Menu):
     """
 
     def __init__(self, treeview):
-        gtk.Menu.__init__(self)
+        Gtk.Menu.__init__(self)
 
         self._dirty = True
         self._signal_ids = []
@@ -819,7 +819,7 @@ class _ContextMenu(gtk.Menu):
 
     def popup(self, event):
         self._create()
-        gtk.Menu.popup(self, None, None, None,
+        Gtk.Menu.popup(self, None, None, None,
                        event.button, event.time)
 
     def _create(self):
@@ -836,7 +836,7 @@ class _ContextMenu(gtk.Menu):
             if not title.strip():
                 title = column.attribute.capitalize()
 
-            menuitem = gtk.CheckMenuItem(title)
+            menuitem = Gtk.CheckMenuItem(title)
             menuitem.set_active(column.get_visible())
             signal_id = menuitem.connect("activate",
                                          self._on_menuitem__activate,
@@ -882,7 +882,7 @@ _marker = object()
 empty_marker = object()
 
 
-class ObjectList(gtk.HBox):
+class ObjectList(Gtk.HBox):
     """
     An enhanced version of GtkTreeView, which provides pythonic wrappers
     for accessing rows, and optional facilities for column sorting (with
@@ -935,7 +935,7 @@ class ObjectList(gtk.HBox):
 
     Properties
     ==========
-      - B{selection-mode}: gtk.SelectionMode I{gtk.SELECTION_BROWSE}
+      - B{selection-mode}: Gtk.SelectionMode I{Gtk.SELECTION_BROWSE}
         - Represents the selection-mode of a GtkTreeSelection of a GtkTreeView.
     """
 
@@ -951,10 +951,10 @@ class ObjectList(gtk.HBox):
     gsignal('double-click', object)
 
     # row right-clicked
-    gsignal('right-click', object, gtk.gdk.Event)
+    gsignal('right-click', object, Gdk.Event)
 
     # row middle-clicked
-    gsignal('middle-click', object, gtk.gdk.Event)
+    gsignal('middle-click', object, Gdk.Event)
 
     # edited object, column
     gsignal('cell-edited', object, object)
@@ -966,14 +966,14 @@ class ObjectList(gtk.HBox):
     gsignal('has-rows', bool)
 
     # emitted when the user sorts a column
-    gsignal('sorting-changed', object, gtk.SortType)
+    gsignal('sorting-changed', object, Gtk.SortType)
 
     # emitted when the user clicks on a message link
     gsignal('activate-link', str)
 
     def __init__(self, columns=None,
                  objects=None,
-                 mode=gtk.SELECTION_BROWSE,
+                 mode=Gtk.SELECTION_BROWSE,
                  sortable=False,
                  model=None):
         """
@@ -982,7 +982,7 @@ class ObjectList(gtk.HBox):
         :param objects:       a list of objects to be inserted or None
         :param mode:          selection mode
         :param sortable:      whether the user can sort the list
-        :param model:         gtk.TreeModel to use or None to create one
+        :param model:         Gtk.TreeModel to use or None to create one
         """
         if columns is None:
             columns = []
@@ -993,13 +993,13 @@ class ObjectList(gtk.HBox):
             raise TypeError(
                 "columns must be a list or a Column, not %r" % (columns,))
 
-        if not isinstance(mode, gtk.SelectionMode):
+        if not isinstance(mode, Gtk.SelectionMode):
             raise TypeError(
-                "mode must be an gtk.SelectionMode enum, not %r" % (mode,))
-        # gtk.SELECTION_EXTENDED & gtk.SELECTION_MULTIPLE are both 3.
+                "mode must be an Gtk.SelectionMode enum, not %r" % (mode,))
+        # Gtk.SELECTION_EXTENDED & Gtk.SELECTION_MULTIPLE are both 3.
         # so we can't do this check.
-        #elif mode == gtk.SELECTION_EXTENDED:
-        #    raise TypeError("gtk.SELECTION_EXTENDED is deprecated")
+        #elif mode == Gtk.SELECTION_EXTENDED:
+        #    raise TypeError("Gtk.SELECTION_EXTENDED is deprecated")
 
         self._sortable = sortable
 
@@ -1011,28 +1011,28 @@ class ObjectList(gtk.HBox):
         self._message_label = None
         self.cell_data_func = None
 
-        gtk.HBox.__init__(self)
+        Gtk.HBox.__init__(self)
         # we always want a vertical scrollbar. Otherwise the button on top
         # of it doesn't make sense. This button is used to display the popup
         # menu
 
-        self._sw = gtk.ScrolledWindow()
-        self._sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
-        self._sw.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        self._sw = Gtk.ScrolledWindow()
+        self._sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_ALWAYS)
+        self._sw.set_shadow_type(Gtk.SHADOW_ETCHED_IN)
         # This is required for gobject.new to work, since scrolledwindow.add
         # requires valid adjustments and they are for some reason not
         # properly set when using gobject.new.
-        self._sw.set_hadjustment(gtk.Adjustment())
-        self._sw.set_vadjustment(gtk.Adjustment())
+        self._sw.set_hadjustment(Gtk.Adjustment())
+        self._sw.set_vadjustment(Gtk.Adjustment())
         self.pack_start(self._sw, True, True, 0)
         self._sw.show()
 
         if not model:
-            model = gtk.ListStore(object)
+            model = Gtk.ListStore(object)
         self._model = model
         self._model.connect('row-inserted', self._on_model__row_inserted)
         self._model.connect('row-deleted', self._on_model__row_deleted)
-        self._treeview = gtk.TreeView()
+        self._treeview = Gtk.TreeView()
         self._treeview.set_model(model)
         self._treeview.connect('button-press-event',
                                self._on_treeview__button_press_event)
@@ -1056,7 +1056,7 @@ class ObjectList(gtk.HBox):
         selection.connect("changed", self._on_selection__changed)
 
         # Select the first item if no items are selected
-        if mode != gtk.SELECTION_NONE and objects:
+        if mode != Gtk.SELECTION_NONE and objects:
             selection.select_iter(self._model[COL_MODEL].iter)
 
         self.set_selection_mode(mode)
@@ -1108,20 +1108,20 @@ class ObjectList(gtk.HBox):
 
     def __getitem__(self, arg):
         "list[n]"
-        if isinstance(arg, (int, gtk.TreeIter, str)):
+        if isinstance(arg, (int, Gtk.TreeIter, str)):
             item = self._model[arg][COL_MODEL]
         elif isinstance(arg, slice):
             model = self._model
             return [model[i][COL_MODEL]
                     for i in slicerange(arg, len(self._model))]
         else:
-            raise TypeError("argument arg must be int, gtk.Treeiter or "
+            raise TypeError("argument arg must be int, Gtk.Treeiter or "
                             "slice, not %s" % type(arg))
         return item
 
     def __setitem__(self, arg, item):
         "list[n] = m"
-        if isinstance(arg, (int, gtk.TreeIter, str)):
+        if isinstance(arg, (int, Gtk.TreeIter, str)):
             model = self._model
             olditem = model[arg][COL_MODEL]
             model[arg] = (item,)
@@ -1134,7 +1134,7 @@ class ObjectList(gtk.HBox):
         elif isinstance(arg, slice):
             raise NotImplementedError("slices for list are not implemented")
         else:
-            raise TypeError("argument arg must be int or gtk.Treeiter,"
+            raise TypeError("argument arg must be int or Gtk.Treeiter,"
                             " not %s" % type(arg))
 
     # append and remove are below
@@ -1209,14 +1209,14 @@ class ObjectList(gtk.HBox):
         cmp(x, y) -> -1, 0, 1"""
         raise NotImplementedError
 
-    def sort_by_attribute(self, attribute, order=gtk.SORT_ASCENDING):
+    def sort_by_attribute(self, attribute, order=Gtk.SORT_ASCENDING):
         """
         Sort by an attribute in the object model.
 
         :param attribute: attribute to sort on
         :type attribute: string
-        :param order: one of gtk.SORT_ASCENDING, gtk.SORT_DESCENDING
-        :type order: gtk.SortType
+        :param order: one of Gtk.SORT_ASCENDING, Gtk.SORT_DESCENDING
+        :type order: Gtk.SortType
         """
         def _sort_func(model, iter1, iter2):
             return cmp(
@@ -1245,8 +1245,8 @@ class ObjectList(gtk.HBox):
         self.set_selection_mode(mode)
     selection_mode = gobject.property(getter=_get_selection_mode,
                                       setter=_set_selection_mode,
-                                      type=gtk.SelectionMode,
-                                      default=gtk.SELECTION_BROWSE,
+                                      type=Gtk.SelectionMode,
+                                      default=Gtk.SELECTION_BROWSE,
                                       nick="SelectionMode")
 
     # Columns handling
@@ -1277,7 +1277,7 @@ class ObjectList(gtk.HBox):
                                       for (path,) in paths]
 
         # Remove sorting from the model to improve (significantly) performance
-        # http://www.pygtk.org/pygtk2tutorial/sec-TreeModelInterface.html#sec-LargeDataStores
+        # http://www.pyGtk.org/pygtk2tutorial/sec-TreeModelInterface.html#sec-LargeDataStores
         if self._sortable:
             for index, column in enumerate(self._columns):
                 model.set_sort_func(index, lambda *args: -1,
@@ -1354,7 +1354,7 @@ class ObjectList(gtk.HBox):
             self._attach_column(column)
 
         if not expand:
-            column = gtk.TreeViewColumn()
+            column = Gtk.TreeViewColumn()
             self._treeview.append_column(column)
 
     def _attach_column(self, column):
@@ -1365,7 +1365,7 @@ class ObjectList(gtk.HBox):
         # we need to set our own widget because otherwise
         # __get_column_button won't work
 
-        label = gtk.Label(column.title)
+        label = Gtk.Label(column.title)
         label.show()
         treeview_column.set_widget(label)
         treeview_column.set_resizable(True)
@@ -1450,9 +1450,9 @@ class ObjectList(gtk.HBox):
         """
         old_alloc = self._vscrollbar.get_allocation()
         height = self._get_header_height()
-        new_alloc = gtk.gdk.Rectangle(old_alloc.x, old_alloc.y + height,
-                                      old_alloc.width,
-                                      old_alloc.height - height)
+        new_alloc = Gdk.Rectangle(old_alloc.x, old_alloc.y + height,
+                                  old_alloc.width,
+                                  old_alloc.height - height)
         self._vscrollbar.size_allocate(new_alloc)
         # put the popup_window in its position
         gdk_window = self.window
@@ -1493,9 +1493,9 @@ class ObjectList(gtk.HBox):
         if selection is None:
             return
         mode = selection.get_mode()
-        if mode == gtk.SELECTION_MULTIPLE:
+        if mode == Gtk.SELECTION_MULTIPLE:
             item = self.get_selected_rows()
-        elif mode == gtk.SELECTION_NONE:
+        elif mode == Gtk.SELECTION_NONE:
             return
         else:
             item = self.get_selected()
@@ -1510,7 +1510,7 @@ class ObjectList(gtk.HBox):
         "Generic button-press-event handler to be able to catch double clicks"
 
         # Right and Middle click
-        if event.type == gtk.gdk.BUTTON_PRESS:
+        if event.type == Gdk.BUTTON_PRESS:
             if event.button == 3:
                 signal_name = 'right-click'
                 if self._context_menu:
@@ -1522,7 +1522,7 @@ class ObjectList(gtk.HBox):
             gobject.idle_add(self._emit_button_press_signal, signal_name,
                              event.copy())
         # Double left click
-        elif event.type == gtk.gdk._2BUTTON_PRESS and event.button == 1:
+        elif event.type == Gdk._2BUTTON_PRESS and event.button == 1:
             item = self._get_selection_or_selected_rows()
             if item:
                 self.emit('double-click', item)
@@ -1556,7 +1556,7 @@ class ObjectList(gtk.HBox):
         assert button is not None, ("You must call column.set_widget() "
                                     "before calling _get_column_button")
 
-        while not isinstance(button, gtk.Button):
+        while not isinstance(button, Gtk.Button):
             button = button.get_parent()
 
         return button
@@ -1567,8 +1567,8 @@ class ObjectList(gtk.HBox):
         menu.
         Internally it uses a POPUP window so you can tell how *Evil* is this.
         """
-        self._popup_window = gtk.Window(gtk.WINDOW_POPUP)
-        self._popup_button = gtk.Button('*')
+        self._popup_window = Gtk.Window(Gtk.WINDOW_POPUP)
+        self._popup_button = Gtk.Button('*')
         self._popup_window.add(self._popup_button)
         self._popup_window.show_all()
 
@@ -1581,7 +1581,7 @@ class ObjectList(gtk.HBox):
         It just save a reference to the vertical scrollbar for doing evil
         things later.
         """
-        if isinstance(widget, gtk.VScrollbar):
+        if isinstance(widget, Gtk.VScrollbar):
             self._vscrollbar = widget
 
     def _get_header_height(self):
@@ -1769,7 +1769,7 @@ class ObjectList(gtk.HBox):
         if view_only:
             self._treeview.queue_draw()
         else:
-            self._model.foreach(gtk.TreeModel.row_changed)
+            self._model.foreach(Gtk.TreeModel.row_changed)
 
     def set_column_visibility(self, column_index, visibility):
         treeview_column = self._treeview.get_column(column_index)
@@ -1799,7 +1799,7 @@ class ObjectList(gtk.HBox):
         """
 
         selection = self._treeview.get_selection()
-        if selection.get_mode() == gtk.SELECTION_NONE:
+        if selection.get_mode() == Gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed")
 
         selection.unselect_all()
@@ -1815,13 +1815,13 @@ class ObjectList(gtk.HBox):
             return
 
         selection = self._treeview.get_selection()
-        if selection.get_mode() == gtk.SELECTION_NONE:
+        if selection.get_mode() == Gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed")
 
-        if (selection.get_mode() != gtk.SELECTION_MULTIPLE and
+        if (selection.get_mode() != Gtk.SELECTION_MULTIPLE and
                 len(instances) > 1):
             raise TypeError("You can only select multiple items with"
-                            "selection mode set to gtk.SELECTION_MULTIPLE")
+                            "selection mode set to Gtk.SELECTION_MULTIPLE")
 
         # FIXME: This is not working for multiple selections. Only the last item
         # in the list remains selected
@@ -1849,9 +1849,9 @@ class ObjectList(gtk.HBox):
             return
 
         mode = selection.get_mode()
-        if mode == gtk.SELECTION_NONE:
+        if mode == Gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed in %r mode" % mode)
-        elif mode not in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
+        elif mode not in (Gtk.SELECTION_SINGLE, Gtk.SELECTION_BROWSE):
             log.warn('get_selected() called when multiple rows '
                      'can be selected')
 
@@ -1869,9 +1869,9 @@ class ObjectList(gtk.HBox):
             return
 
         mode = selection.get_mode()
-        if mode == gtk.SELECTION_NONE:
+        if mode == Gtk.SELECTION_NONE:
             raise TypeError("Selection not allowed in %r mode" % mode)
-        elif mode in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
+        elif mode in (Gtk.SELECTION_SINGLE, Gtk.SELECTION_BROWSE):
             log.warn('get_selected_rows() called when only a single row '
                      'can be selected')
 
@@ -1882,9 +1882,9 @@ class ObjectList(gtk.HBox):
 
     def update_selection(self):
         mode = self._treeview.get_selection().get_mode()
-        if mode == gtk.SELECTION_MULTIPLE:
+        if mode == Gtk.SELECTION_MULTIPLE:
             item = self.get_selected_rows()
-        elif mode in (gtk.SELECTION_SINGLE, gtk.SELECTION_BROWSE):
+        elif mode in (Gtk.SELECTION_SINGLE, Gtk.SELECTION_BROWSE):
             item = self.get_selected()
         else:
             raise AssertionError
@@ -1969,7 +1969,7 @@ class ObjectList(gtk.HBox):
         Get the selected row number or None if no rows were selected
         """
         selection = self._treeview.get_selection()
-        if selection.get_mode() == gtk.SELECTION_MULTIPLE:
+        if selection.get_mode() == Gtk.SELECTION_MULTIPLE:
             model, paths = selection.get_selected_rows()
             if paths:
                 return paths[0][0]
@@ -2026,8 +2026,8 @@ class ObjectList(gtk.HBox):
         self._treeview.connect('drag-data-get',
                                self._on_treeview__source_drag_data_get)
         self._treeview.drag_source_set(
-            gtk.gdk.BUTTON1_MASK, self.get_dnd_targets(),
-            gtk.gdk.ACTION_LINK)
+            Gdk.BUTTON1_MASK, self.get_dnd_targets(),
+            Gdk.ACTION_LINK)
 
     def get_dnd_targets(self):
         """
@@ -2043,17 +2043,17 @@ class ObjectList(gtk.HBox):
         """
 
         if self._message_label is None:
-            self._viewport = gtk.Viewport()
-            self._viewport.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+            self._viewport = Gtk.Viewport()
+            self._viewport.set_shadow_type(Gtk.SHADOW_ETCHED_IN)
             self.pack_start(self._viewport, True, True, 0)
 
-            self._message_box = gtk.EventBox()
+            self._message_box = Gtk.EventBox()
             self._message_box.modify_bg(
-                gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
+                Gtk.STATE_NORMAL, Gdk.color_parse('white'))
             self._viewport.add(self._message_box)
             self._message_box.show()
 
-            self._message_label = gtk.Label()
+            self._message_label = Gtk.Label()
             self._message_label.connect(
                 'activate-link', self._on_message_label__activate_link)
             self._message_label.set_use_markup(True)
@@ -2130,10 +2130,10 @@ class ObjectTree(ObjectList):
 
     gsignal('row-expanded', object)
 
-    def __init__(self, columns=[], objects=None, mode=gtk.SELECTION_BROWSE,
+    def __init__(self, columns=[], objects=None, mode=Gtk.SELECTION_BROWSE,
                  sortable=False, model=None):
         if not model:
-            model = gtk.TreeStore(object)
+            model = Gtk.TreeStore(object)
         ObjectList.__init__(self, columns, objects, mode, sortable, model)
         self.get_treeview().connect('row-expanded', self._on_treeview__row_expanded)
 
@@ -2312,7 +2312,7 @@ class ObjectTree(ObjectList):
 type_register(ObjectTree)
 
 
-class ListLabel(gtk.HBox):
+class ListLabel(Gtk.HBox):
     """I am a subclass of a GtkHBox which you can use if you want
     to vertically align a label with a column
     """
@@ -2342,7 +2342,7 @@ class ListLabel(gtk.HBox):
         self._column = klist.get_column_by_name(column)
         self._value_format = value_format
 
-        gtk.HBox.__init__(self)
+        Gtk.HBox.__init__(self)
 
         self._create_ui()
 
@@ -2381,7 +2381,7 @@ class ListLabel(gtk.HBox):
         button.connect('size-allocate',
                        self._on_treeview_column_button__size_allocate)
 
-        self._label_widget = gtk.Label()
+        self._label_widget = Gtk.Label()
         self._label_widget.set_markup(self._label)
 
         layout = self._label_widget.get_layout()
@@ -2390,7 +2390,7 @@ class ListLabel(gtk.HBox):
         self.pack_start(self._label_widget, True, True, 6)
         self._label_widget.show()
 
-        self._value_widget = gtk.Label()
+        self._value_widget = Gtk.Label()
         xalign = tree_column.get_property('alignment')
         self._value_widget.set_alignment(xalign, 0.5)
         self.pack_start(self._value_widget, False, False, 0)

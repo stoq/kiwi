@@ -27,14 +27,14 @@
 """GtkRadioButton support for the Kiwi Framework"""
 
 import gobject
-import gtk
+from gi.repository import Gtk
 
 from kiwi import ValueUnset
 from kiwi.utils import gsignal
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 
 
-class ProxyRadioButton(gtk.RadioButton, ProxyWidgetMixin):
+class ProxyRadioButton(Gtk.RadioButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyRadioButton'
     allowed_data_types = object,
     data_value = gobject.property(type=str, nick='Data Value')
@@ -48,7 +48,7 @@ class ProxyRadioButton(gtk.RadioButton, ProxyWidgetMixin):
     gsignal('validate', object, retval=object)
 
     def __init__(self, group=None, label=None, use_underline=True):
-        gtk.RadioButton.__init__(self, None, label, use_underline)
+        Gtk.RadioButton.__init__(self, None, label, use_underline)
         if group:
             self.set_group(group)
         ProxyWidgetMixin.__init__(self)

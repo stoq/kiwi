@@ -22,7 +22,7 @@
 #
 
 import gobject
-import gtk
+from gi.repository import Gtk
 from gtk import gdk
 from gtk import keysyms
 
@@ -33,9 +33,9 @@ COMPLETION_TIMEOUT = 300
 PAGE_INCREMENT = 14
 
 
-class KiwiEntryCompletion(gtk.EntryCompletion):
+class KiwiEntryCompletion(Gtk.EntryCompletion):
     def __init__(self):
-        gtk.EntryCompletion.__init__(self)
+        Gtk.EntryCompletion.__init__(self)
 
         self._inline_completion = False
         self._popup_completion = True
@@ -145,7 +145,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
 
     def _on_completion_key_press(self, entry, event):
         window = self._popup_window
-        if window and not window.flags() & gtk.VISIBLE:
+        if window and not window.flags() & Gtk.VISIBLE:
             return False
 
         if not self._treeview:
@@ -248,7 +248,7 @@ class KiwiEntryCompletion(gtk.EntryCompletion):
         self._key = self._entry.get_text()
         self._filter_model.refilter()
         self._treeview.set_model(self._filter_model)
-        if self._treeview.flags() & gtk.REALIZED:
+        if self._treeview.flags() & Gtk.REALIZED:
             self._treeview.scroll_to_point(0, 0)
 
     def set_entry(self, entry):

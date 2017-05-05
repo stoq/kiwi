@@ -23,7 +23,7 @@
 
 import logging
 
-from gtk.glade import XML
+from Gtk.glade import XML
 
 
 log = logging.getLogger('libgladeloader')

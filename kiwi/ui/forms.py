@@ -36,7 +36,7 @@ import math
 import sys
 
 import gobject
-import gtk
+from gi.repository import Gtk
 
 from kiwi.currency import currency
 from kiwi.interfaces import IProxyWidget
@@ -156,7 +156,7 @@ class Field(gobject.GObject):
         if not self.has_add_button:
             return
 
-        self.add_button = self.create_button(gtk.STOCK_ADD)
+        self.add_button = self.create_button(Gtk.STOCK_ADD)
         self.add_button.set_use_stock(True)
         self.add_button.set_tooltip_text(_("Add a %s") % (
             self.label.lower(), ))
@@ -166,7 +166,7 @@ class Field(gobject.GObject):
         if not self.has_edit_button:
             return
 
-        self.edit_button = self.create_button(gtk.STOCK_EDIT)
+        self.edit_button = self.create_button(Gtk.STOCK_EDIT)
         self.edit_button.connect('clicked', self.edit_button_clicked)
         self.edit_button.set_use_stock(True)
         self.edit_button.set_tooltip_text(_("Edit the selected %s") % (
@@ -177,7 +177,7 @@ class Field(gobject.GObject):
         if not self.has_delete_button:
             return
 
-        self.delete_button = self.create_button(gtk.STOCK_DELETE)
+        self.delete_button = self.create_button(Gtk.STOCK_DELETE)
         self.delete_button.connect('clicked', self.delete_button_clicked)
         self.delete_button.set_use_stock(True)
         self.delete_button.set_tooltip_text(_("Delete the selected %s") % (
@@ -190,12 +190,12 @@ class Field(gobject.GObject):
     # Public API
 
     def create_button(self, stock_id):
-        button = gtk.Button()
-        image = gtk.image_new_from_stock(
-            stock_id, gtk.ICON_SIZE_MENU)
+        button = Gtk.Button()
+        image = Gtk.image_new_from_stock(
+            stock_id, Gtk.ICON_SIZE_MENU)
         button.set_image(image)
         image.show()
-        button.set_relief(gtk.RELIEF_NONE)
+        button.set_relief(Gtk.RELIEF_NONE)
         button.show()
         return button
 
@@ -224,7 +224,7 @@ class Field(gobject.GObject):
         """Returns the widget that should be attached in the form
 
         Subclasses can overwrite this if they need to create a parent container
-        for the widget (Like a gtk.ScrolledWindow)
+        for the widget (Like a Gtk.ScrolledWindow)
         """
         return self.widget
 
@@ -259,7 +259,7 @@ class EmptyField(Field):
     """
 
     def build_widget(self):
-        return gtk.Label('')
+        return Gtk.Label('')
 
     def build_label(self):
         return None
@@ -416,7 +416,7 @@ class NumericField(Field):
 
     def build_widget(self):
         entry = ProxySpinButton()
-        entry.set_adjustment(gtk.Adjustment(lower=0, step_incr=1,
+        entry.set_adjustment(Gtk.Adjustment(lower=0, step_incr=1,
                                             upper=sys.maxint, page_incr=10))
         entry.set_digits(self.digits)
         return entry
@@ -433,7 +433,7 @@ class PercentageField(Field):
 
     def build_widget(self):
         entry = ProxySpinButton()
-        entry.set_adjustment(gtk.Adjustment(lower=0, step_incr=1,
+        entry.set_adjustment(Gtk.Adjustment(lower=0, step_incr=1,
                                             upper=100, page_incr=10))
         entry.set_range(0, 100)
         entry.set_digits(2)
@@ -452,14 +452,14 @@ class MultiLineField(Field):
     def build_widget(self):
         from kiwi.ui.widgets.textview import ProxyTextView
         widget = ProxyTextView()
-        widget.set_wrap_mode(gtk.WRAP_WORD)
+        widget.set_wrap_mode(Gtk.WRAP_WORD)
         return widget
 
     def get_attachable_widget(self):
-        sw = gtk.ScrolledWindow()
+        sw = Gtk.ScrolledWindow()
         sw.add(self.widget)
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_OUT)
+        sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_AUTOMATIC)
+        sw.set_shadow_type(Gtk.SHADOW_OUT)
         sw.show()
         return sw
 
@@ -519,7 +519,7 @@ class FormTableLayout(FormLayout):
         #   11 required_spaces, 3 column = 4 rows (4 x 3 = 12 spaces)
         rows = int(math.ceil(required_spaces / float(columns)))
 
-        table = gtk.Table(rows, columns * self.COLUMNS_PER_FIELD, False)
+        table = Gtk.Table(rows, columns * self.COLUMNS_PER_FIELD, False)
         table.props.row_spacing = 6
         table.props.column_spacing = 6
 
@@ -556,7 +556,7 @@ class FormTableLayout(FormLayout):
             if field.label_widget:
                 table.attach(field.label_widget,
                              x, x + 1, y, y + 1,
-                             gtk.FILL, 0, 0, 0)
+                             Gtk.FILL, 0, 0, 0)
 
             x += 1
             if field.colspan > 1:
@@ -567,10 +567,10 @@ class FormTableLayout(FormLayout):
             # Attach the field widget
             table.attach(field.get_attachable_widget(),
                          x, x + extra_x, y, y + 1,
-                         gtk.EXPAND | gtk.FILL, 0, 0, 0)
+                         Gtk.EXPAND | Gtk.FILL, 0, 0, 0)
 
             # Build and attach the extra buttons
-            hbox = gtk.HBox(spacing=0)
+            hbox = Gtk.HBox(spacing=0)
             for button in [field.add_button, field.edit_button, field.delete_button]:
                 if not button:
                     continue
@@ -610,7 +610,7 @@ class BasicForm(SlaveDelegate):
         self.proxy = None
         self.main_view = view
         # Just a simple GtkBin
-        self.toplevel = gtk.Alignment(xscale=1)
+        self.toplevel = Gtk.Alignment(xscale=1)
         SlaveDelegate.__init__(self)
 
     def __repr__(self):

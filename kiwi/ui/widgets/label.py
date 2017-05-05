@@ -30,7 +30,7 @@ The :class:`Label` is also extended to support some basic markup like
 import datetime
 
 import gobject
-import gtk
+from gi.repository import Gtk
 
 from kiwi.datatypes import number, ValueUnset
 from kiwi.ui.gadgets import set_foreground
@@ -38,7 +38,7 @@ from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import gsignal, type_register
 
 
-class ProxyLabel(gtk.Label, ProxyWidgetMixin):
+class ProxyLabel(Gtk.Label, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyLabel'
     model_attribute = gobject.property(type=str, blurb='Model attribute')
     # We wont emmit content-changed, but kiwi.proxy still relies on this.
@@ -54,7 +54,7 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
         :param label: initial text
         :param data_type: data type of label
         """
-        gtk.Label.__init__(self, label)
+        Gtk.Label.__init__(self, label)
         ProxyWidgetMixin.__init__(self)
         self.props.data_type = data_type
         self.set_use_markup(True)
@@ -171,12 +171,12 @@ class ProxyLabel(gtk.Label, ProxyWidgetMixin):
         self._apply_attributes()
 
     def set_text(self, text):
-        """ Overrides gtk.Label set_text method. Sets the new text of
+        """ Overrides Gtk.Label set_text method. Sets the new text of
         the label but keeps the formating
         :param text: label
         :type text: string
         """
-        gtk.Label.set_text(self, text)
+        Gtk.Label.set_text(self, text)
         self._apply_attributes()
 
     def set_color(self, color):

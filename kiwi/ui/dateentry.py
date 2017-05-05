@@ -29,7 +29,7 @@
 import gettext
 import datetime
 
-import gtk
+from gi.repository import Gtk
 from gtk import gdk, keysyms
 
 from kiwi.datatypes import converter, ValueUnset, ValidationError
@@ -53,26 +53,26 @@ class _DateEntryPopup(PopupWindow):
         super(_DateEntryPopup, self).__init__(dateentry)
 
     def get_main_widget(self):
-        vbox = gtk.VBox()
+        vbox = Gtk.VBox()
         vbox.show()
         self._vbox = vbox
 
-        self.calendar = gtk.Calendar()
+        self.calendar = Gtk.Calendar()
         self.calendar.connect('day-selected-double-click',
                               self._on_calendar__day_selected_double_click)
         vbox.pack_start(self.calendar, False, False, 0)
         self.calendar.show()
 
-        buttonbox = gtk.HButtonBox()
+        buttonbox = Gtk.HButtonBox()
         buttonbox.set_border_width(6)
-        buttonbox.set_layout(gtk.BUTTONBOX_SPREAD)
+        buttonbox.set_layout(Gtk.BUTTONBOX_SPREAD)
         vbox.pack_start(buttonbox, False, False, 0)
         buttonbox.show()
 
         for label, callback in [(_('_Today'), self._on_today__clicked),
                                 (_('_Cancel'), self._on_cancel__clicked),
                                 (_('_Select'), self._on_select__clicked)]:
-            button = gtk.Button(label, use_underline=True)
+            button = Gtk.Button(label, use_underline=True)
             button.connect('clicked', callback)
             buttonbox.pack_start(button, True, True, 0)
             button.show()
@@ -125,7 +125,7 @@ class _DateEntryPopup(PopupWindow):
     def confirm(self):
         self.emit('date-selected', self.get_date())
 
-    # month in gtk.Calendar is zero-based (i.e the allowed values are 0-11)
+    # month in Gtk.Calendar is zero-based (i.e the allowed values are 0-11)
     # datetime one-based (i.e. the allowed values are 1-12)
     # So convert between them
 
@@ -152,17 +152,17 @@ class _DateEntryPopup(PopupWindow):
 type_register(_DateEntryPopup)
 
 
-class DateEntry(gtk.HBox):
+class DateEntry(Gtk.HBox):
     """I am an entry which you can input a date on.
-    In addition to an gtk.Entry I also contain a button
-    with an arrow you can click to get popup window with a gtk.Calendar
+    In addition to an Gtk.Entry I also contain a button
+    with an arrow you can click to get popup window with a Gtk.Calendar
     for which you can use to select the date
     """
     gsignal('changed')
     gsignal('activate')
 
     def __init__(self):
-        gtk.HBox.__init__(self)
+        Gtk.HBox.__init__(self)
 
         self._popping_down = False
         self._old_date = None
@@ -183,14 +183,14 @@ class DateEntry(gtk.HBox):
         self.pack_start(self.entry, False, False, 0)
         self.entry.show()
 
-        self._button = gtk.ToggleButton()
+        self._button = Gtk.ToggleButton()
         self._button.connect('scroll-event', self._on_entry__scroll_event)
         self._button.connect('toggled', self._on_button__toggled)
         self._button.set_focus_on_click(False)
         self.pack_start(self._button, False, False, 0)
         self._button.show()
 
-        arrow = gtk.Arrow(gtk.ARROW_DOWN, gtk.SHADOW_NONE)
+        arrow = Gtk.Arrow(Gtk.ARROW_DOWN, Gtk.SHADOW_NONE)
         self._button.add(arrow)
         arrow.show()
 

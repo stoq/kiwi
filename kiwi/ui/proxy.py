@@ -31,7 +31,7 @@ to keep the state of a model object synchronized with a View.
 import logging
 
 import gobject
-import gtk
+from gi.repository import Gtk
 
 from kiwi import ValueUnset
 from kiwi.accessor import kgetattr, ksetattr, clear_attr_cache
@@ -111,7 +111,7 @@ class Proxy:
         # editable.
         if not widget.is_sensitive():
             return
-        if isinstance(widget, gtk.Editable) and not widget.get_editable():
+        if isinstance(widget, Gtk.Editable) and not widget.get_editable():
             return
 
         model = self.model
@@ -407,13 +407,13 @@ class Proxy:
         Adds a new widget to the proxy
 
         :param name: name of the widget
-        :param widget: widget, must be a gtk.Widget subclass
+        :param widget: widget, must be a Gtk.Widget subclass
         """
         if name in self._model_attributes:
             raise TypeError("there is already a widget called %s" % name)
 
-        if not isinstance(widget, gtk.Widget):
-            raise TypeError("%r must be a gtk.Widget subclass" % widget)
+        if not isinstance(widget, Gtk.Widget):
+            raise TypeError("%r must be a Gtk.Widget subclass" % widget)
 
         self._setup_widget(name, widget)
 
