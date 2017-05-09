@@ -44,6 +44,9 @@ constants = [
     ('Gtk', 'WIN_POS_', 'WindowPosition'),
     ('Gtk', 'WRAP_', 'WrapMode'),
     ('Gtk', 'UI_MANAGER_', 'UIManagerItemType'),
+    ('Gtk', 'FILL', 'AttachOptions'),
+    ('Gtk', 'EXPAND', 'AttachOptions'),
+    ('Gtk', 'SHRINK', 'AttachOptions'),
 
     ("Gdk", "WINDOW_TYPE_HINT_", "WindowTypeHint"),
     ("Gdk", "SHIFT_MASK", "ModifierType"),
