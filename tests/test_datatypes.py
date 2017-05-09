@@ -197,22 +197,22 @@ class DateTest(unittest.TestCase):
         if not set_locale(locale.LC_TIME, 'pt_BR'):
             return
 
-        self.assertEqual(self.conv.from_string("12-2-1979"), self.date)
-        self.assertEqual(self.conv.from_string("12-02-1979"), self.date)
+        self.assertEqual(self.conv.from_string("12/2/1979"), self.date)
+        self.assertEqual(self.conv.from_string("12/02/1979"), self.date)
 
         # test some invalid dates
         self.assertRaises(ValidationError,
-                          self.conv.from_string, "40-10-2005")
+                          self.conv.from_string, "40/10/2005")
         self.assertRaises(ValidationError,
-                          self.conv.from_string, "30-02-2005")
+                          self.conv.from_string, "30/02/2005")
         self.assertRaises(ValidationError,
-                          self.conv.from_string, '01-01-1899')
+                          self.conv.from_string, '01/01/1899')
 
     def testAsStringBR(self):
         if not set_locale(locale.LC_TIME, 'pt_BR'):
             return
 
-        self.assertEqual(self.conv.as_string(self.date), "12-02-1979")
+        self.assertEqual(self.conv.as_string(self.date), "12/02/1979")
 
     def testFromStringUS(self):
         if not set_locale(locale.LC_TIME, 'en_US'):
