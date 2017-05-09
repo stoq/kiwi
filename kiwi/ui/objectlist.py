@@ -2316,6 +2316,8 @@ class ListLabel(Gtk.HBox):
     to vertically align a label with a column
     """
 
+    __gtype_name__ = 'ListLabel'
+
     def __init__(self, klist, column, label='', value_format='%s',
                  font_desc=None):
         """
@@ -2418,11 +2420,16 @@ class ListLabel(Gtk.HBox):
         self._resize(position=rect.x, width=rect.width)
 
 
+type_register(ListLabel)
+
+
 class SummaryLabel(ListLabel):
     """I am a subclass of ListLabel which you can use if you want
     to summarize all the values of a specific column.
     Please note that I only know how to handle number column
     data types and I will complain if you give me something else."""
+
+    __gtype_name__ = 'SummaryLabel'
 
     def __init__(self, klist, column, label=_('Total:'), value_format='%s',
                  font_desc=None, data_func=None):
@@ -2467,3 +2474,6 @@ class SummaryLabel(ListLabel):
 
     def _on_klist__cell_edited(self, klist, obj, column):
         self.update_total()
+
+
+type_register(SummaryLabel)
