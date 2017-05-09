@@ -61,6 +61,7 @@ class ListContainer(Gtk.HBox):
     :type edit_button: :class:`Gtk.Button`
     """
 
+    __gtype_name__ = 'ListContainer'
     gsignal('add-item', retval=object)
     gsignal('remove-item', object, retval=bool)
     gsignal('edit-item', object, retval=bool)
