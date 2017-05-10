@@ -1,7 +1,7 @@
 """
 kiwi.tasklet demo program
 """
-import gtk
+from gi.repository import Gtk
 
 from kiwi import tasklet
 
@@ -31,8 +31,8 @@ class Counter(tasklet.Tasklet):
 
 
 def main():
-    dialog = gtk.MessageDialog(parent=None, flags=0, type=gtk.MESSAGE_QUESTION,
-                               buttons=gtk.BUTTONS_YES_NO,
+    dialog = Gtk.MessageDialog(parent=None, flags=0, type=Gtk.MessageType.QUESTION,
+                               buttons=Gtk.ButtonsType.YES_NO,
                                message_format="Please answer Yes or No")
     dialog.format_secondary_markup("Time left: <b>??</b> seconds")
     dialog.show()
@@ -49,27 +49,27 @@ def main():
         yield tasklet.Message("quit", dest=counter)  # stop the counter
 
         if event.signal == 'close':
-            gtk.main_quit()
+            Gtk.main_quit()
             return
 
         response = event.signal_args[0]
-        msgbox = gtk.MessageDialog(parent=dialog,
-                                   flags=gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   type=gtk.MESSAGE_INFO,
-                                   buttons=gtk.BUTTONS_OK,
+        msgbox = Gtk.MessageDialog(parent=dialog,
+                                   flags=Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                   type=Gtk.MessageType.INFO,
+                                   buttons=Gtk.ButtonsType.OK,
                                    message_format=("Thank you "
                                                    "for your kind answer!"))
         print "response was", response
-        if response == gtk.RESPONSE_YES:
+        if response == Gtk.ResponseType.YES:
             msgbox.format_secondary_markup(
                 "Your response was <i><b>Yes</b></i>")
-        elif response == gtk.RESPONSE_NO:
+        elif response == Gtk.ResponseType.NO:
             msgbox.format_secondary_markup(
                 "Your response was <i><b>No</b></i>")
         else:
             ## must have been a delete event
             print "response was delete event"
-            gtk.main_quit()
+            Gtk.main_quit()
             return
         msgbox.show()
 
@@ -81,18 +81,18 @@ def main():
     else:
         ## timeout must have exausted..
         assert isinstance(event, tasklet.WaitForTasklet)
-        msgbox = gtk.MessageDialog(parent=dialog,
-                                   flags=gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   type=gtk.MESSAGE_WARNING,
-                                   buttons=gtk.BUTTONS_OK,
+        msgbox = Gtk.MessageDialog(parent=dialog,
+                                   flags=Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                   type=Gtk.MessageType.WARNING,
+                                   buttons=Gtk.ButtonsType.OK,
                                    message_format="You're too slow!!")
         msgbox.show()
 
         yield (tasklet.WaitForSignal(msgbox, "response"),
                tasklet.WaitForSignal(msgbox, "close"))
 
-    gtk.main_quit()
+    Gtk.main_quit()
 
 if __name__ == '__main__':
     tasklet.run(main())
-    gtk.main()
+    Gtk.main()

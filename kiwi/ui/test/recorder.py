@@ -41,7 +41,7 @@ import time
 
 from gobject import add_emission_hook
 from gi.repository import Gtk
-from gtk import gdk
+from gi.repository import Gdk
 
 from kiwi.ui.test.common import WidgetIntrospecter
 from kiwi.ui.objectlist import ObjectList
@@ -331,7 +331,7 @@ class ObjectListDoubleClick(SignalEvent):
 
     def __init__(self, objectlist, name, args):
         event, = args
-        if event.type != gdk._2BUTTON_PRESS:
+        if event.type != Gdk._2BUTTON_PRESS:
             raise SkipEvent
 
         SignalEvent.__init__(self, objectlist, name, args)

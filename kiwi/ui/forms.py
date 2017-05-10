@@ -35,8 +35,7 @@ import gettext
 import math
 import sys
 
-import gobject
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 
 from kiwi.currency import currency
 from kiwi.interfaces import IProxyWidget
@@ -52,7 +51,7 @@ from kiwi.utils import gsignal
 _ = lambda m: gettext.dgettext('kiwi', m)
 
 
-class Field(gobject.GObject):
+class Field(GObject.GObject):
 
     #: This is used to sort class variables in creation order
     #: which is essentially the same thing as the order in the
@@ -60,34 +59,34 @@ class Field(gobject.GObject):
     global_sort_key = 0
 
     #: Used by proxy_widgets
-    data_type = gobject.property(type=object)
+    data_type = GObject.property(type=object)
 
     #: Used by proxy_widgets
-    mandatory = gobject.property(type=bool, default=False)
+    mandatory = GObject.property(type=bool, default=False)
 
     #: Text of the label that will be next to the field,
     #: Can be None for not displaying any label at all
-    label = gobject.property(type=str)
+    label = GObject.property(type=str)
 
     #: Name of the label widget inside the view, None
     #: means it should be model_attribute + '_lbl'
-    label_attribute = gobject.property(type=str)
+    label_attribute = GObject.property(type=str)
 
     #: If we should add an add button next to the widget
-    has_add_button = gobject.property(type=bool, default=False)
+    has_add_button = GObject.property(type=bool, default=False)
 
     #: If we should add an edit button next to the widget
-    has_edit_button = gobject.property(type=bool, default=False)
+    has_edit_button = GObject.property(type=bool, default=False)
 
     #: If we should add a delete button next to the widget
-    has_delete_button = gobject.property(type=bool, default=False)
+    has_delete_button = GObject.property(type=bool, default=False)
 
     #: If this field should be added to a proxy
-    proxy = gobject.property(type=bool, default=False)
+    proxy = GObject.property(type=bool, default=False)
 
     #: When attaching this field to a form, span that much on the
     #: table. Analogous to html columns' colspan property
-    colspan = gobject.property(type=int, default=1)
+    colspan = GObject.property(type=int, default=1)
 
     #: This can be used by subclasses to override the default
     #: values for properties
@@ -103,7 +102,7 @@ class Field(gobject.GObject):
         self.edit_button = None
         self.delete_button = None
 
-        # FIXME: widget_data_type should be a gobject.property, but it's not
+        # FIXME: widget_data_type should be a GObject.property, but it's not
         # accepting some data types.
         data_type = kwargs.pop('widget_data_type', None)
         if data_type is not None:
@@ -115,7 +114,7 @@ class Field(gobject.GObject):
         for key, value in self.default_overrides.items():
             if key not in kwargs:
                 kwargs[key] = value
-        gobject.GObject.__init__(self, **kwargs)
+        GObject.GObject.__init__(self, **kwargs)
 
         self.sort_key = Field.global_sort_key
         Field.global_sort_key += 1
@@ -249,7 +248,7 @@ class Field(gobject.GObject):
     def content_changed(self):
         pass
 
-gobject.type_register(Field)
+GObject.type_register(Field)
 
 
 class EmptyField(Field):
@@ -279,7 +278,7 @@ class BoolField(Field):
     def build_label(self):
         return None
 
-gobject.type_register(BoolField)
+GObject.type_register(BoolField)
 
 
 class TextField(Field):
@@ -287,9 +286,9 @@ class TextField(Field):
     I am a text field with one line, editable by the user,
     rendered as an entry.
     """
-    editable = gobject.property(type=bool, default=True)
-    input_mask = gobject.property(type=object)
-    max_length = gobject.property(type=int, default=0)
+    editable = GObject.property(type=bool, default=True)
+    input_mask = GObject.property(type=object)
+    max_length = GObject.property(type=int, default=0)
     widget_data_type = unicode
 
     def build_widget(self):
@@ -306,7 +305,7 @@ class TextField(Field):
 
         return widget
 
-gobject.type_register(TextField)
+GObject.type_register(TextField)
 
 
 class PasswordField(TextField):
@@ -322,7 +321,7 @@ class PasswordField(TextField):
 
         return widget
 
-gobject.type_register(PasswordField)
+GObject.type_register(PasswordField)
 
 
 class IntegerField(Field):
@@ -337,7 +336,7 @@ class IntegerField(Field):
         widget = ProxyEntry()
         return widget
 
-gobject.type_register(IntegerField)
+GObject.type_register(IntegerField)
 
 
 class ChoiceField(Field):
@@ -345,8 +344,8 @@ class ChoiceField(Field):
     I am a field representing a set of choices,
     rendered as a ComboBox or ComboEntry.
     """
-    values = gobject.property(type=object)
-    use_entry = gobject.property(type=bool, default=False)
+    values = GObject.property(type=object)
+    use_entry = GObject.property(type=bool, default=False)
     widget_data_type = object
 
     def build_widget(self):
@@ -361,7 +360,7 @@ class ChoiceField(Field):
         if self.values:
             widget.prefill(self.values)
 
-gobject.type_register(ChoiceField)
+GObject.type_register(ChoiceField)
 
 
 class PriceField(Field):
@@ -375,7 +374,7 @@ class PriceField(Field):
         entry = ProxyEntry()
         return entry
 
-gobject.type_register(PriceField)
+GObject.type_register(PriceField)
 
 
 class DateField(Field):
@@ -389,7 +388,7 @@ class DateField(Field):
         dateentry = ProxyDateEntry()
         return dateentry
 
-gobject.type_register(DateField)
+GObject.type_register(DateField)
 
 
 class ColorField(Field):
@@ -403,7 +402,7 @@ class ColorField(Field):
         button = ProxyColorButton()
         return button
 
-gobject.type_register(ColorField)
+GObject.type_register(ColorField)
 
 
 class NumericField(Field):
@@ -412,7 +411,7 @@ class NumericField(Field):
     rendered as a spin button.
     """
     widget_data_type = Decimal
-    digits = gobject.property(type=int, default=0)
+    digits = GObject.property(type=int, default=0)
 
     def build_widget(self):
         entry = ProxySpinButton()
@@ -421,7 +420,7 @@ class NumericField(Field):
         entry.set_digits(self.digits)
         return entry
 
-gobject.type_register(NumericField)
+GObject.type_register(NumericField)
 
 
 class PercentageField(Field):
@@ -439,7 +438,7 @@ class PercentageField(Field):
         entry.set_digits(2)
         return entry
 
-gobject.type_register(PercentageField)
+GObject.type_register(PercentageField)
 
 
 class MultiLineField(Field):
@@ -463,7 +462,7 @@ class MultiLineField(Field):
         sw.show()
         return sw
 
-gobject.type_register(MultiLineField)
+GObject.type_register(MultiLineField)
 
 
 class FormLayout(object):

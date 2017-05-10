@@ -1,16 +1,16 @@
 import sys
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.comboentry import ComboEntry
 
 
 def main(args):
-    w = gtk.Window()
-    w.set_position(gtk.WIN_POS_CENTER)
+    w = Gtk.Window()
+    w.set_position(Gtk.WindowPosition.CENTER)
     w.set_size_request(250, -1)
     w.set_title('ComboEntry example')
-    w.connect('delete-event', gtk.main_quit)
+    w.connect('delete-event', Gtk.main_quit)
 
     e = ComboEntry()
     e.prefill(['foo', 'bar', 'baz', 'biz', 'boz',
@@ -19,7 +19,7 @@ def main(args):
     w.add(e)
 
     w.show_all()
-    gtk.main()
+    Gtk.main()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

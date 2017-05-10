@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import gtk
+from gi.repository import Gtk
 
 from kiwi.controllers import BaseController
 from kiwi.ui.views import BaseView
@@ -47,4 +47,4 @@ class FarenView(BaseView):
 view = FarenView()
 ctl = FarenControl(view)
 view.show()
-gtk.main()
+Gtk.main()

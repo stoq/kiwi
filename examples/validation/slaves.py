@@ -1,5 +1,5 @@
 # encoding: iso-8859-1
-import gtk
+from gi.repository import Gtk
 
 from kiwi.datatypes import ValidationError
 from kiwi.ui.widgets.combo import ProxyComboEntry
@@ -21,20 +21,20 @@ class Dialog(GladeDelegate):
 
 class English(SlaveDelegate):
     def __init__(self):
-        box = gtk.HBox(spacing=6)
+        box = Gtk.HBox(spacing=6)
         box.set_border_width(6)
         box.show()
 
-        label = gtk.Label("Number:")
+        label = Gtk.Label("Number:")
         label.show()
-        box.pack_start(label, False, False)
+        box.pack_start(label, False, False, 0)
 
         combo = ProxyComboEntry()
         combo.set_property('model-attribute', 'number')
         combo.set_property('data-type', 'str')
         combo.prefill(['One', 'Two', 'Three'])
         combo.show()
-        box.pack_start(combo)
+        box.pack_start(combo, True, True, 0)
         self.combo = combo
 
         SlaveDelegate.__init__(self, toplevel=box, widgets=['combo'])
@@ -46,20 +46,20 @@ class English(SlaveDelegate):
 
 class Swedish(SlaveDelegate):
     def __init__(self):
-        box = gtk.HBox(spacing=6)
+        box = Gtk.HBox(spacing=6)
         box.set_border_width(6)
         box.show()
 
-        label = gtk.Label("Nummer:")
+        label = Gtk.Label("Nummer:")
         label.show()
-        box.pack_start(label, False, False)
+        box.pack_start(label, False, False, 0)
 
         combo = ProxyComboEntry()
         combo.set_property('model-attribute', 'nummer')
         combo.set_property('data-type', 'str')
         combo.prefill(['Ett', u'Två', 'Tre'])
         combo.show()
-        box.pack_start(combo)
+        box.pack_start(combo, True, True, 0)
         self.combo = combo
 
         SlaveDelegate.__init__(self, toplevel=box, widgets=['combo'])
@@ -98,4 +98,4 @@ dialog.attach_slave("swedish", swe)
 swe.add_proxy(brud, ['combo'])
 dialog.show_all()
 
-gtk.main()
+Gtk.main()

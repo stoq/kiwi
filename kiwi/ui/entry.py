@@ -35,8 +35,7 @@ try:
 except NameError:
     from sets import Set as set
 
-import gobject
-from gi.repository import Gtk, Gdk, Pango
+from gi.repository import Gtk, GObject, Gdk, Pango
 
 from kiwi.enums import Direction
 from kiwi.python import strip_accents
@@ -101,9 +100,9 @@ class KiwiEntry(Gtk.Entry):
     """
     __gtype_name__ = 'KiwiEntry'
 
-    completion_ignore_case = gobject.property(type=bool, default=True)
-    completion_ignore_accents = gobject.property(type=bool, default=True)
-    completion_hightlight_match = gobject.property(type=bool, default=True)
+    completion_ignore_case = GObject.property(type=bool, default=True)
+    completion_ignore_accents = GObject.property(type=bool, default=True)
+    completion_hightlight_match = GObject.property(type=bool, default=True)
 
     def __init__(self):
         self._completion = None
@@ -161,7 +160,7 @@ class KiwiEntry(Gtk.Entry):
         except MaskError:
             pass
 
-    mask = gobject.property(getter=_get_mask,
+    mask = GObject.property(getter=_get_mask,
                             setter=_set_mask,
                             type=str, default='')
 

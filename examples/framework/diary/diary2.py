@@ -24,7 +24,7 @@ class Diary(ProxyDelegate):
                                ['title', 'period', 'text', 'chars', 'words'],
                                gladefile="diary2.ui",
                                delete_handler=self.quit_if_last)
-        self.hbox.pack_start(self.entries)
+        self.hbox.pack_start(self.entries, True, True, 0)
         self.entries.show()
         self.entries.grab_focus()
         self.set_editable(False)

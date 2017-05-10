@@ -1,16 +1,16 @@
 import sys
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.entry import KiwiEntry
 
 
 def main(args):
-    w = gtk.Window()
-    w.set_position(gtk.WIN_POS_CENTER)
+    w = Gtk.Window()
+    w.set_position(Gtk.WindowPosition.CENTER)
     w.set_size_request(250, -1)
     w.set_title('ComboEntry example')
-    w.connect('delete-event', gtk.main_quit)
+    w.connect('delete-event', Gtk.main_quit)
 
     e = KiwiEntry()
     e.set_mask('0000-00-00')
@@ -18,7 +18,7 @@ def main(args):
 
     w.show_all()
     e.set_position(0)
-    gtk.main()
+    Gtk.main()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

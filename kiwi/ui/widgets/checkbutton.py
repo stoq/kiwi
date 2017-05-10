@@ -26,8 +26,7 @@
 
 """GtkCheckButton support for the Kiwi Framework"""
 
-import gobject
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 
 from kiwi import ValueUnset
 from kiwi.ui.proxywidget import ProxyWidgetMixin
@@ -37,11 +36,11 @@ from kiwi.utils import gsignal
 class ProxyCheckButton(Gtk.CheckButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyCheckButton'
 
-    data_type = gobject.property(
+    data_type = GObject.property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    model_attribute = GObject.property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
@@ -75,4 +74,4 @@ class ProxyCheckButton(Gtk.CheckButton, ProxyWidgetMixin):
         # No conversion to string needed, we only accept bool
         self.set_active(data)
 
-gobject.type_register(ProxyCheckButton)
+GObject.type_register(ProxyCheckButton)

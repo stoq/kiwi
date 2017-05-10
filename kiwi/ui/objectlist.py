@@ -33,10 +33,7 @@ import locale
 import logging
 import pickle
 
-import glib
-import gobject
-from gi.repository import Gtk, Gdk, Pango
-from gtk import gdk
+from gi.repository import Gtk, Glib, GObject, Gdk, Pango
 
 from kiwi.accessor import kgetattr
 from kiwi.datatypes import converter, number, ValidationError
@@ -64,7 +61,7 @@ def str2bool(value, from_string=converter.from_string):
     return from_string(bool, value)
 
 
-class Column(gobject.GObject):
+class Column(GObject.GObject):
     """
     Specifies a column for an :class:`ObjectList`, see the ObjectList documentation
     for a simple example.
@@ -159,35 +156,35 @@ class Column(gobject.GObject):
           for the cells in this column.
     """
     __gtype_name__ = 'Column'
-    attribute = gobject.property(type=str,
-                                 flags=(gobject.PARAM_READWRITE |
-                                        gobject.PARAM_CONSTRUCT_ONLY))
-    title = gobject.property(type=str)
-    visible = gobject.property(type=bool, default=True)
-    justify = gobject.property(type=Gtk.Justification, default=Gtk.Justification.LEFT)
-    format = gobject.property(type=str)
-    width = gobject.property(type=int, maximum=2 ** 16)
-    sorted = gobject.property(type=bool, default=False)
-    order = gobject.property(type=Gtk.SortType, default=Gtk.SortType.ASCENDING)
-    expand = gobject.property(type=bool, default=False)
-    tooltip = gobject.property(type=str)
-    format_func = gobject.property(type=object)
-    format_func_data = gobject.property(type=object, default=None)
-    editable = gobject.property(type=bool, default=False)
-    searchable = gobject.property(type=bool, default=False)
-    radio = gobject.property(type=bool, default=False)
-    spin_adjustment = gobject.property(type=object)
-    use_stock = gobject.property(type=bool, default=False)
-    use_markup = gobject.property(type=bool, default=False)
-    icon_size = gobject.property(type=Gtk.IconSize, default=Gtk.IconSize.MENU)
-    editable_attribute = gobject.property(type=str)
-    expander = gobject.property(type=bool, default=False)
-    ellipsize = gobject.property(type=Pango.EllipsizeMode, default=Pango.EllipsizeMode.NONE)
-    font_desc = gobject.property(type=str)
-    column = gobject.property(type=str)
-    sort_func = gobject.property(type=object, default=None)
-    pack_end = gobject.property(type=bool, default=False)
-    width_chars = gobject.property(type=int, default=-1)
+    attribute = GObject.property(type=str,
+                                 flags=(GObject.PARAM_READWRITE |
+                                        GObject.PARAM_CONSTRUCT_ONLY))
+    title = GObject.property(type=str)
+    visible = GObject.property(type=bool, default=True)
+    justify = GObject.property(type=Gtk.Justification, default=Gtk.Justification.LEFT)
+    format = GObject.property(type=str)
+    width = GObject.property(type=int, maximum=2 ** 16)
+    sorted = GObject.property(type=bool, default=False)
+    order = GObject.property(type=Gtk.SortType, default=Gtk.SortType.ASCENDING)
+    expand = GObject.property(type=bool, default=False)
+    tooltip = GObject.property(type=str)
+    format_func = GObject.property(type=object)
+    format_func_data = GObject.property(type=object, default=None)
+    editable = GObject.property(type=bool, default=False)
+    searchable = GObject.property(type=bool, default=False)
+    radio = GObject.property(type=bool, default=False)
+    spin_adjustment = GObject.property(type=object)
+    use_stock = GObject.property(type=bool, default=False)
+    use_markup = GObject.property(type=bool, default=False)
+    icon_size = GObject.property(type=Gtk.IconSize, default=Gtk.IconSize.MENU)
+    editable_attribute = GObject.property(type=str)
+    expander = GObject.property(type=bool, default=False)
+    ellipsize = GObject.property(type=Pango.EllipsizeMode, default=Pango.EllipsizeMode.NONE)
+    font_desc = GObject.property(type=str)
+    column = GObject.property(type=str)
+    sort_func = GObject.property(type=object, default=None)
+    pack_end = GObject.property(type=bool, default=False)
+    width_chars = GObject.property(type=int, default=-1)
 
     # This can be set in subclasses, to be able to allow custom
     # cell_data_functions, used by SequentialColumn
@@ -271,7 +268,7 @@ class Column(gobject.GObject):
                 raise TypeError("sort_func must be callable")
             self.compare = sort_func
 
-        gobject.GObject.__init__(self, **kwargs)
+        GObject.GObject.__init__(self, **kwargs)
 
         # It makes sense to set the default ellipsize to end if we have
         # a column which expands so it doesn't end up using more space
@@ -302,7 +299,7 @@ class Column(gobject.GObject):
             self.compare = self.compare or compare_func
             self.from_string = conv.from_string
         self._data_type = data
-    data_type = gobject.property(getter=_get_data_type,
+    data_type = GObject.property(getter=_get_data_type,
                                  setter=_set_data_type,
                                  type=object)
 
@@ -422,7 +419,7 @@ class Column(gobject.GObject):
                     cb = self._on_renderer_toggle_check__toggled
                 renderer.connect('toggled', cb, model, self)
             prop = 'active'
-        elif self.use_stock or data_type == gdk.Pixbuf:
+        elif self.use_stock or data_type == Gdk.Pixbuf:
             renderer = Gtk.CellRendererPixbuf()
             prop = 'pixbuf'
             if self.editable:
@@ -658,7 +655,7 @@ class Column(gobject.GObject):
                     format_func receive I{obj} instead of I{data}
         """
         data_type = self.data_type
-        if data is None and data_type != gdk.Pixbuf:
+        if data is None and data_type != Gdk.Pixbuf:
             text = ''
         elif self.format_func and self.format_func_data is not None and obj:
             text = self.format_func(obj, self.format_func_data)
@@ -758,7 +755,7 @@ class ColoredColumn(Column):
 
         self._color = None
         if color:
-            self._color = gdk.color_parse(color)
+            self._color = Gdk.color_parse(color)
 
         self._color_normal = None
 
@@ -782,7 +779,7 @@ class ColoredColumn(Column):
 
         if ret and self._color:
             color = self._color
-        elif isinstance(ret, gdk.Color):
+        elif isinstance(ret, Gdk.Color):
             color = ret
         else:
             color = self._color_normal
@@ -1018,9 +1015,9 @@ class ObjectList(Gtk.HBox):
         self._sw = Gtk.ScrolledWindow()
         self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
         self._sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
-        # This is required for gobject.new to work, since scrolledwindow.add
+        # This is required for GObject.new to work, since scrolledwindow.add
         # requires valid adjustments and they are for some reason not
-        # properly set when using gobject.new.
+        # properly set when using GObject.new.
         self._sw.set_hadjustment(Gtk.Adjustment())
         self._sw.set_vadjustment(Gtk.Adjustment())
         self.pack_start(self._sw, True, True, 0)
@@ -1242,7 +1239,7 @@ class ObjectList(Gtk.HBox):
 
     def _set_selection_mode(self, mode):
         self.set_selection_mode(mode)
-    selection_mode = gobject.property(getter=_get_selection_mode,
+    selection_mode = GObject.property(getter=_get_selection_mode,
                                       setter=_set_selection_mode,
                                       type=Gtk.SelectionMode,
                                       default=Gtk.SelectionMode.BROWSE,
@@ -1518,7 +1515,7 @@ class ObjectList(Gtk.HBox):
                 signal_name = 'middle-click'
             else:
                 return
-            gobject.idle_add(self._emit_button_press_signal, signal_name,
+            GObject.idle_add(self._emit_button_press_signal, signal_name,
                              event.copy())
         # Double left click
         elif event.type == Gdk._2BUTTON_PRESS and event.button == 1:
@@ -2083,7 +2080,7 @@ class ObjectList(Gtk.HBox):
                 continue
             # Skip pixbuf columns for now, we don't really
             # care about colors in this kind of output
-            if column.data_type == gdk.Pixbuf:
+            if column.data_type == Gdk.Pixbuf:
                 continue
             columns.append(column)
         return columns
@@ -2360,7 +2357,7 @@ class ListLabel(Gtk.HBox):
         I also support the GMarkup syntax, so you can use "<b>%d</b>" if
         you want."""
         self._value_widget.set_markup(
-            self._value_format % glib.markup_escape_text(value))
+            self._value_format % Glib.markup_escape_text(value))
 
     def get_value_widget(self):
         return self._value_widget

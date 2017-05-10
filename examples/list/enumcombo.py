@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from kiwi.python import enum
 from kiwi.ui.objectlist import Column, ObjectList
@@ -26,12 +26,12 @@ for name, status in [('Apple', FruitStatus.AVAILABLE),
                      ('Melon', FruitStatus.AVAILABLE)]:
     fruits.append(Fruit(name, status))
 
-window = gtk.Window()
-window.connect('delete-event', gtk.main_quit)
+window = Gtk.Window()
+window.connect('delete-event', Gtk.main_quit)
 window.set_title('Fruits')
 window.set_size_request(200, 180)
 
 window.add(fruits)
 window.show_all()
 
-gtk.main()
+Gtk.main()

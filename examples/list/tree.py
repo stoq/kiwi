@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.objectlist import Column, ObjectTree
 
@@ -25,12 +25,12 @@ for name, price in [('Apple', 4),
     fruits.append(row, Fruit('Before taxes', price * 0.25))
     fruits.append(row, Fruit('After taxes', price))
 
-window = gtk.Window()
-window.connect('delete-event', gtk.main_quit)
+window = Gtk.Window()
+window.connect('delete-event', Gtk.main_quit)
 window.set_title('Fruits')
 window.set_size_request(150, 180)
 
 window.add(fruits)
 window.show_all()
 
-gtk.main()
+Gtk.main()

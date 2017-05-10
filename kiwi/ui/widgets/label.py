@@ -29,8 +29,7 @@ The :class:`Label` is also extended to support some basic markup like
 
 import datetime
 
-import gobject
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 
 from kiwi.datatypes import number, ValueUnset
 from kiwi.ui.gadgets import set_foreground
@@ -40,7 +39,7 @@ from kiwi.utils import gsignal, type_register
 
 class ProxyLabel(Gtk.Label, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyLabel'
-    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    model_attribute = GObject.property(type=str, blurb='Model attribute')
     # We wont emmit content-changed, but kiwi.proxy still relies on this.
     gsignal('content-changed')
 
@@ -74,7 +73,7 @@ class ProxyLabel(Gtk.Label, ProxyWidgetMixin):
         if not ProxyWidgetMixin.set_data_type(self, data_type):
             return
 
-    data_type = gobject.property(
+    data_type = GObject.property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=_set_data_type,
         type=str, blurb='Data Type')

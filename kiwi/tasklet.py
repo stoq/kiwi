@@ -126,10 +126,10 @@ Examples
   Background timeout task
   -----------------------
     This example demonstrates basic tasklet structure and timeout events::
-      import gobject
+      from gi.repository import GObject
       from kiwi import tasklet
 
-      mainloop = gobject.MainLoop()
+      mainloop = GObject.MainLoop()
 
       def simple_counter(numbers):
           timeout = tasklet.WaitForTimeout(1000)
@@ -146,10 +146,10 @@ Examples
   ---------------
     This example extends the previous one and demonstrates message passing::
 
-      import gobject
+      from gi.repository import GObject
       from kiwi import tasklet
 
-      mainloop = gobject.MainLoop()
+      mainloop = GObject.MainLoop()
 
       @tasklet.task
       def printer():
@@ -182,8 +182,8 @@ import types
 import warnings
 
 try:
-    import gobject
-    gobject  # pyflakes
+    from gi.repository import GObject
+    GObject  # pyflakes
 except:
     raise SystemExit("python-gobject is required by kiwi.tasklet")
 
@@ -274,14 +274,14 @@ class WaitForCall(WaitCondition):
     '''An object that waits until it is called.
 
       This example demonstrates how a tasklet waits for a callback::
-        import gobject
+        from gi.repository import GObject
         from kiwi import tasklet
 
-        mainloop = gobject.MainLoop()
+        mainloop = GObject.MainLoop()
 
         def my_task():
             callback = tasklet.WaitForCall()
-            gobject.timeout_add(1000, callback)
+            GObject.timeout_add(1000, callback)
             yield callback
             mainloop.quit()
 
@@ -327,18 +327,18 @@ class WaitForIO(WaitCondition):
     '''An object that waits for IO conditions on sockets or file
     descriptors.
     '''
-    def __init__(self, filedes, condition=gobject.IO_IN,
-                 priority=gobject.PRIORITY_DEFAULT):
+    def __init__(self, filedes, condition=GObject.IO_IN,
+                 priority=GObject.PRIORITY_DEFAULT):
         '''
         Create a new WaitForIO object.
 
         :param filedes: object to monitor for IO
         :type filedes: int file descriptor, or a
-            gobject.IOChannel, or an object with a C{fileno()}
+            GObject.IOChannel, or an object with a C{fileno()}
             method, such as socket or unix file.
 
         :param condition: IO event mask
-        :type condition: a set of C{gobject.IO_*} flags ORed together
+        :type condition: a set of C{GObject.IO_*} flags ORed together
         :param priority: mainloop source priority
         '''
 
@@ -356,7 +356,7 @@ class WaitForIO(WaitCondition):
         if self._id is None:
             try:
                 ## http://bugzilla.gnome.org/show_bug.cgi?id=139176
-                iochan = isinstance(self.filedes, gobject.IOChannel)
+                iochan = isinstance(self.filedes, GObject.IOChannel)
             except AttributeError:
                 iochan = False
             if iochan:
@@ -368,14 +368,14 @@ class WaitForIO(WaitCondition):
                     filedes = self.filedes
                 else:
                     filedes = self.filedes.fileno()
-                self._id = gobject.io_add_watch(filedes, self._condition,
+                self._id = GObject.io_add_watch(filedes, self._condition,
                                                 self._io_cb,
                                                 priority=self._priority)
 
     def disarm(self):
         '''Overrides WaitCondition.disarm'''
         if self._id is not None:
-            gobject.source_remove(self._id)
+            GObject.source_remove(self._id)
             self._id = None
             self._callback = None
 
@@ -391,7 +391,7 @@ class WaitForIO(WaitCondition):
 
 class WaitForTimeout(WaitCondition):
     '''An object that waits for a specified ammount of time (a timeout)'''
-    def __init__(self, timeout, priority=gobject.PRIORITY_DEFAULT):
+    def __init__(self, timeout, priority=GObject.PRIORITY_DEFAULT):
         '''An object that waits for a specified ammount of time.
 
         :param timeout: ammount of time to wait, in miliseconds
@@ -408,13 +408,13 @@ class WaitForTimeout(WaitCondition):
         '''See :class:`WaitCondition.arm`'''
         if self._id is None:
             self._tasklet = tasklet
-            self._id = gobject.timeout_add(self.timeout, self._timeout_cb,
+            self._id = GObject.timeout_add(self.timeout, self._timeout_cb,
                                            priority=self._priority)
 
     def disarm(self):
         '''See :class:`WaitCondition.disarm`'''
         if self._id is not None:
-            gobject.source_remove(self._id)
+            GObject.source_remove(self._id)
             self._id = None
             self._tasklet = None
 
@@ -437,7 +437,7 @@ class WaitForTimeout(WaitCondition):
 class WaitForIdle(WaitCondition):
     '''An object that waits for the main loop to become idle'''
 
-    def __init__(self, priority=gobject.PRIORITY_DEFAULT_IDLE):
+    def __init__(self, priority=GObject.PRIORITY_DEFAULT_IDLE):
         '''An object that waits for the main loop to become idle, with a
         priority indicated by @priority'''
         WaitCondition.__init__(self)
@@ -449,12 +449,12 @@ class WaitForIdle(WaitCondition):
         '''See :class:`WaitCondition.arm`'''
         if self._id is None:
             self._callback = tasklet.wait_condition_fired
-            self._id = gobject.idle_add(self._idle_cb, self._priority)
+            self._id = GObject.idle_add(self._idle_cb, self._priority)
 
     def disarm(self):
         '''See :class:`WaitCondition.disarm`'''
         if self._id is not None:
-            gobject.source_remove(self._id)
+            GObject.source_remove(self._id)
             self._id = None
             self._callback = None
 
@@ -491,7 +491,7 @@ class WaitForTasklet(WaitCondition):
     def disarm(self):
         '''See :class:`WaitCondition.disarm`'''
         if self._idle_id is not None:
-            gobject.source_remove(self._idle_id)
+            GObject.source_remove(self._idle_id)
             self._idle_id = None
         if self._id is not None:
             self._tasklet.remove_join_callback(self._id)
@@ -502,7 +502,7 @@ class WaitForTasklet(WaitCondition):
         assert tasklet is self._tasklet
         assert self._idle_id is None
         self._id = None
-        self._idle_id = gobject.idle_add(self._idle_cb)
+        self._idle_id = GObject.idle_add(self._idle_cb)
         self.retval = retval
 
     def _idle_cb(self):
@@ -523,22 +523,22 @@ class WaitForSignal(WaitCondition):
         '''Waits for a signal to be emitted on a specific GObject instance or class.
 
         :param obj: object monitor for the signal
-        :type obj: gobject.GObject
+        :type obj: GObject.GObject
         :param signal: signal name
         :type signal: str
         '''
         WaitCondition.__init__(self)
         if isinstance(obj, type):
-            if not issubclass(obj, gobject.GObject):
+            if not issubclass(obj, GObject.GObject):
                 raise TypeError("obj must be a GObject instance or class")
             self.object = None
             self.class_ = obj
         else:
-            if not isinstance(obj, gobject.GObject):
+            if not isinstance(obj, GObject.GObject):
                 raise TypeError("obj must be a GObject instance or class")
             self.object = obj
             self.class_ = None
-        if not gobject.signal_lookup(signal, obj):
+        if not GObject.signal_lookup(signal, obj):
             raise ValueError("gobject %r does not have a signal called %r" %
                              (obj, signal))
         self.signal = signal
@@ -552,10 +552,10 @@ class WaitForSignal(WaitCondition):
         if self._id is None:
             self._callback = tasklet.wait_condition_fired
             if self.class_ is not None:
-                self._id = gobject.add_emission_hook(self.class_, self.signal, self._signal_cb)
+                self._id = GObject.add_emission_hook(self.class_, self.signal, self._signal_cb)
             else:
                 self._id = self.object.connect(self.signal, self._signal_cb)
-                if gobject.signal_lookup("destroy", self.object):
+                if GObject.signal_lookup("destroy", self.object):
                     self._destroy_id = self.object.connect("destroy",
                                                            self._object_destroyed)
 
@@ -569,7 +569,7 @@ class WaitForSignal(WaitCondition):
         '''See WaitCondition.disarm'''
         if self._id is not None:
             if self.class_ is not None:
-                gobject.remove_emission_hook(self.class_, self.signal, self._id)
+                GObject.remove_emission_hook(self.class_, self.signal, self._id)
             else:
                 self.object.disconnect(self._id)
             self._id = None
@@ -613,12 +613,12 @@ class WaitForProcess(WaitCondition):
         '''See :class:`WaitCondition.arm`'''
         self._callback = tasklet.wait_condition_fired
         if self._id is None:
-            self._id = gobject.child_watch_add(self.pid, self._child_cb)
+            self._id = GObject.child_watch_add(self.pid, self._child_cb)
 
     def disarm(self):
         '''See :class:`WaitCondition.disarm`'''
         if self._id is not None:
-            gobject.source_remove(self._id)
+            GObject.source_remove(self._id)
             self._id = None
             self._callback = None
 

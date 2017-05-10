@@ -34,9 +34,7 @@ import logging
 import os
 import string
 
-import gobject
-from gi.repository import Gtk, Gdk
-from gtk import gdk
+from gi.repository import Gtk, GObject, Gdk
 
 from kiwi.environ import environ
 from kiwi.interfaces import IValidatableProxyWidget
@@ -79,11 +77,11 @@ _non_interactive = [
 if hasattr(Gtk, 'Progress'):
     _non_interactive.append(Gtk.Progress)
 
-color_red = gdk.color_parse('red')
-color_black = gdk.color_parse('black')
+color_red = Gdk.color_parse('red')
+color_black = Gdk.color_parse('black')
 
 
-class SlaveView(gobject.GObject):
+class SlaveView(GObject.GObject):
     """
     Base class for all View classes. Defines the essential class
     attributes (controller, toplevel, widgets) and handles
@@ -119,7 +117,7 @@ class SlaveView(gobject.GObject):
         """ Creates a new SlaveView. Sets up self.toplevel and self.widgets
         and checks for reserved names.
         """
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
 
         self._broker = None
         self.slaves = {}

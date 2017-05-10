@@ -25,8 +25,7 @@
 makes it possible for us to tie it to a specific Gdk.Window
 """
 
-import gobject
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 
 DEFAULT_DELAY = 500
 BORDER_WIDTH = 4
@@ -104,7 +103,7 @@ class Tooltip(Gtk.Window):
 
     def hide(self):
         Gtk.Window.hide(self)
-        gobject.source_remove(self._show_timeout_id)
+        GObject.source_remove(self._show_timeout_id)
         self._show_timeout_id = -1
 
     def display(self, widget):
@@ -114,6 +113,6 @@ class Tooltip(Gtk.Window):
         if self._show_timeout_id != -1:
             return
 
-        self._show_timeout_id = gobject.timeout_add(DEFAULT_DELAY,
+        self._show_timeout_id = GObject.timeout_add(DEFAULT_DELAY,
                                                     self._real_display,
                                                     widget)

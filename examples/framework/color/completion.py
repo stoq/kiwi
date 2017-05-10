@@ -1,7 +1,7 @@
 import sys
 from sets import Set
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.entry import KiwiEntry
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
@@ -23,31 +23,31 @@ def load_colors():
 
 
 def main(args):
-    w = gtk.Window()
-    w.set_position(gtk.WIN_POS_CENTER)
+    w = Gtk.Window()
+    w.set_position(Gtk.WindowPosition.CENTER)
     w.set_size_request(250, 300)
     w.set_title('KiwiEntryCompletion example')
-    w.connect('delete-event', gtk.main_quit)
+    w.connect('delete-event', Gtk.main_quit)
 
-    vbox = gtk.VBox()
+    vbox = Gtk.VBox()
     w.add(vbox)
 
-    model = gtk.ListStore(str)
+    model = Gtk.ListStore(str)
     list = load_colors()
     list.sort()
     for i in list:
         model.append((i,))
 
     entry = KiwiEntry()
-    vbox.pack_start(entry, False)
+    vbox.pack_start(entry, False, True, 0)
 
-    sw = gtk.ScrolledWindow()
-    sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_ALWAYS)
-    vbox.pack_start(sw)
+    sw = Gtk.ScrolledWindow()
+    sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.ALWAYS)
+    vbox.pack_start(sw, True, True, 0)
 
-    treeview = gtk.TreeView(model)
+    treeview = Gtk.TreeView(model)
     treeview.append_column(
-        gtk.TreeViewColumn('Completions', gtk.CellRendererText(), text=0))
+        Gtk.TreeViewColumn('Completions', Gtk.CellRendererText(), text=0))
 
     sw.add(treeview)
 
@@ -58,7 +58,7 @@ def main(args):
     completion.set_treeview(treeview)
 
     w.show_all()
-    gtk.main()
+    Gtk.main()
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

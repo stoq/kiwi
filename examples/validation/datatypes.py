@@ -1,15 +1,15 @@
 import datetime
-import gtk
+from gi.repository import Gtk
 
 from kiwi.currency import currency
 from kiwi.ui.widgets.entry import ProxyEntry
 from kiwi.ui.widgets.label import ProxyLabel
 
-window = gtk.Window()
-window.connect('delete-event', gtk.main_quit)
+window = Gtk.Window()
+window.connect('delete-event', Gtk.main_quit)
 window.set_border_width(6)
 
-vbox = gtk.VBox()
+vbox = Gtk.VBox()
 window.add(vbox)
 
 data_types = [
@@ -25,12 +25,12 @@ data_types = [
 ]
 
 for data, data_type in data_types:
-    hbox = gtk.HBox(True)
+    hbox = Gtk.HBox(True)
     vbox.pack_start(hbox, False, False, 6)
 
     label = ProxyLabel(data_type.__name__.capitalize())
     label.set_bold(True)
-    hbox.pack_start(label)
+    hbox.pack_start(label, True, True, 0)
 
     label = ProxyLabel(data_type=data_type)
     label.update(data)
@@ -43,4 +43,4 @@ for data, data_type in data_types:
 
 window.show_all()
 
-gtk.main()
+Gtk.main()

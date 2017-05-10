@@ -35,8 +35,8 @@ from StringIO import StringIO
 from kiwi import compat
 sys.modules['gi'] = compat
 
-import gobject
-from gtk import gdk
+from gi.repository import GObject
+from gi.repository import Gdk
 
 from kiwi.ui.test.common import WidgetIntrospecter
 
@@ -57,7 +57,7 @@ class MagicWindowWrapper(object):
         self.ns = ns
 
     def delete(self):
-        self.window.emit('delete-event', gdk.Event(gdk.DELETE))
+        self.window.emit('delete-event', Gdk.Event(Gdk.DELETE))
 
     def __getattr__(self, attr):
         if not attr in self.ns:
@@ -213,7 +213,7 @@ class Runner(object):
         delta = (self._last + duration) - time.time()
         if delta > 0:
             ms = int(delta * 1000)
-            self._source_id = gobject.timeout_add(ms, _iter)
+            self._source_id = GObject.timeout_add(ms, _iter)
             raise NotReadyYet
 
         # Okay, we've waited enough, let's go back to business

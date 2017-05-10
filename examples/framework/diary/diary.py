@@ -18,7 +18,7 @@ class Diary(ProxyDelegate):
         ProxyDelegate.__init__(self, DiaryEntry(), ['title', 'period', 'text'],
                                gladefile="diary.ui",
                                delete_handler=self.quit_if_last)
-        self.hbox.pack_start(self.entries)
+        self.hbox.pack_start(self.entries, True, True, 0)
         self.entries.show()
         self.entries.grab_focus()
 

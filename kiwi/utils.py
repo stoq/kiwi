@@ -27,24 +27,22 @@
 import sys
 
 try:
-    import gobject
-    gobject  # pyflakes
+    from gi.repository import GObject
+    GObject  # pyflakes
 except ImportError:
     raise SystemExit("python-gobject is required by kiwi.utils")
 
 
 # Monkey patch gobject to support enum properties
-import gobject.propertyhelper
-
-gprop = getattr(gobject.propertyhelper, "property", None)
+gprop = getattr(GObject.propertyhelper, "property", None)
 if gprop is None:
-    gprop = gobject.Property
+    gprop = GObject.Property
 parent_type_from_parent = gprop._type_from_python
 parent_get_pspec_args = gprop.get_pspec_args
 
 
 def _type_from_python(self, type_):
-    if issubclass(type_, gobject.GEnum):
+    if issubclass(type_, GObject.GEnum):
         return type_.__gtype__
     else:
         return parent_type_from_parent(self, type_)
@@ -53,7 +51,7 @@ gprop._type_from_python = _type_from_python
 
 
 def _get_pspec_args(self):
-    if gobject.type_is_a(self.type, gobject.GEnum):
+    if GObject.type_is_a(self.type, GObject.GEnum):
         return (self.type, self.nick, self.blurb, self.default, self.flags)
     else:
         return parent_get_pspec_args(self)
@@ -66,13 +64,13 @@ def list_properties(gtype, parent=True):
     Return a list of all properties for GType gtype, excluding
     properties in parent classes
     """
-    pspecs = gobject.list_properties(gtype)
+    pspecs = GObject.list_properties(gtype)
     if parent:
         return pspecs
 
-    parent = gobject.type_parent(gtype)
+    parent = GObject.type_parent(gtype)
 
-    parent_pspecs = gobject.list_properties(parent)
+    parent_pspecs = GObject.list_properties(parent)
     return [pspec for pspec in pspecs
             if pspec not in parent_pspecs]
 
@@ -87,7 +85,7 @@ def type_register(gtype):
         getattr(gtype.__base__, '__gtype__', None)):
         return False
 
-    gobject.type_register(gtype)
+    GObject.type_register(gtype)
 
     return True
 
@@ -103,13 +101,13 @@ def gsignal(name, *args, **kwargs):
         if the first one is a string 'override', the signal will be
         overridden and must therefor exists in the parent GObject.
     @note: flags: A combination of;
-      - gobject.SIGNAL_RUN_FIRST
-      - gobject.SIGNAL_RUN_LAST
-      - gobject.SIGNAL_RUN_CLEANUP
-      - gobject.SIGNAL_NO_RECURSE
-      - gobject.SIGNAL_DETAILED
-      - gobject.SIGNAL_ACTION
-      - gobject.SIGNAL_NO_HOOKS
+      - GObject.SIGNAL_RUN_FIRST
+      - GObject.SIGNAL_RUN_LAST
+      - GObject.SIGNAL_RUN_CLEANUP
+      - GObject.SIGNAL_NO_RECURSE
+      - GObject.SIGNAL_DETAILED
+      - GObject.SIGNAL_ACTION
+      - GObject.SIGNAL_NO_HOOKS
     @note: retval: return value in signal callback
     """
 
@@ -126,15 +124,15 @@ def gsignal(name, *args, **kwargs):
     else:
         retval = kwargs.get('retval', None)
         if retval is None:
-            default_flags = gobject.SIGNAL_RUN_FIRST
+            default_flags = GObject.SIGNAL_RUN_FIRST
         else:
-            default_flags = gobject.SIGNAL_RUN_LAST
+            default_flags = GObject.SIGNAL_RUN_LAST
 
         flags = kwargs.get('flags', default_flags)
-        if retval is not None and flags != gobject.SIGNAL_RUN_LAST:
+        if retval is not None and flags != GObject.SIGNAL_RUN_LAST:
             raise TypeError(
                 "You cannot use a return value without setting flags to "
-                "gobject.SIGNAL_RUN_LAST")
+                "GObject.SIGNAL_RUN_LAST")
 
         dict[name] = (flags, retval, args)
 

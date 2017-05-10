@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.gadgets import quit_if_last
 from kiwi.ui.views import BaseView
@@ -17,4 +17,4 @@ class MyView(BaseView):
 
 app = MyView()
 app.show()
-gtk.main()
+Gtk.main()

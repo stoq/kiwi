@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.objectlist import ObjectList, Column
 
@@ -28,17 +28,17 @@ news = [
 # Specify the columns: one for each attribute of NewsItem, the URL
 # column invisible by default
 my_columns = [Column("title", sorted=True),
-              Column("author", justify=gtk.JUSTIFY_RIGHT),
+              Column("author", justify=Gtk.Justification.RIGHT),
               Column("url", title="URL", visible=False)]
 
 objectlist = ObjectList(my_columns)
 objectlist.add_list(news)
 
-w = gtk.Window()
-w.connect('delete-event', gtk.main_quit)
+w = Gtk.Window()
+w.connect('delete-event', Gtk.main_quit)
 w.set_size_request(600, 250)
 
 w.add(objectlist)
 
 w.show_all()
-gtk.main()
+Gtk.main()

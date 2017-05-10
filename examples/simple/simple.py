@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.delegates import Delegate
 
@@ -10,9 +10,9 @@ class Hello(Delegate):
         self.text = ["I've decided to take my work back underground",
                      "To keep it from falling into the wrong hands."]
 
-        topwidget = gtk.Window()
+        topwidget = Gtk.Window()
         topwidget.set_title("So...")
-        self.button = gtk.Button(self.text[self.index])
+        self.button = Gtk.Button(self.text[self.index])
         topwidget.add(self.button)
 
         Delegate.__init__(self, topwidget, delete_handler=self.quit_if_last)
@@ -30,4 +30,4 @@ class Hello(Delegate):
 
 app = Hello()
 app.show_all()
-gtk.main()
+Gtk.main()

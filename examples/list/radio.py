@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 from kiwi.ui.objectlist import Column, ObjectList
 
 
@@ -9,9 +9,9 @@ class Object:
 columns = [Column('name'),
            Column('value', data_type=bool, radio=True, editable=True)]
 
-win = gtk.Window()
+win = Gtk.Window()
 win.set_size_request(300, 120)
-win.connect('delete-event', gtk.main_quit)
+win.connect('delete-event', Gtk.main_quit)
 
 list = ObjectList(columns)
 win.add(list)
@@ -24,4 +24,4 @@ for name, value in [('First', False),
     list.append(Object(name, value))
 win.show_all()
 
-gtk.main()
+Gtk.main()

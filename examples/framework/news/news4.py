@@ -2,7 +2,7 @@
 
 import os
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.delegates import GladeDelegate, SlaveDelegate
 from kiwi.ui.gadgets import quit_if_last, set_background, set_foreground
@@ -50,8 +50,8 @@ class ListSlave(SlaveDelegate):
 class Shell(GladeDelegate):
     def __init__(self):
         keyactions = {
-            gtk.keysyms.a: self.on_ok__clicked,
-            gtk.keysyms.b: self.on_cancel__clicked,
+            Gtk.keysyms.a: self.on_ok__clicked,
+            Gtk.keysyms.b: self.on_cancel__clicked,
         }
 
         GladeDelegate.__init__(self, gladefile="news_shell.ui",
@@ -88,7 +88,7 @@ def get_url(view, result):
 
 shell.connect('result', get_url)
 
-gtk.main()
+Gtk.main()
 
 if url is not None:
     # Try to run BROWSER (or lynx) on the URL returned

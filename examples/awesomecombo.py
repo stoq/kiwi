@@ -1,7 +1,7 @@
 # encoding: utf-8
 import random
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.comboentry import ComboEntry
 
@@ -27,11 +27,11 @@ def details_callback(data):
     return "<small><b>city:</b> <span foreground='#0000FF'>%s</span> \n" \
            "<b>age:</b> %s</small>" % (data.city, data.age)
 
-win = gtk.Window()
-win.set_position(gtk.WIN_POS_CENTER)
-win.connect('destroy', gtk.main_quit)
+win = Gtk.Window()
+win.set_position(Gtk.WindowPosition.CENTER)
+win.connect('destroy', Gtk.main_quit)
 
-vbox = gtk.VBox()
+vbox = Gtk.VBox()
 win.add(vbox)
 
 e = ComboEntry()
@@ -40,7 +40,7 @@ e.set_details_callback(details_callback)
 for d in data:
     e.append_item(d.name, d)
 
-vbox.pack_start(e)
+vbox.pack_start(e, True, True, 0)
 win.show_all()
 
-gtk.main()
+Gtk.main()

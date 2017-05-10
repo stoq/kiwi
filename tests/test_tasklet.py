@@ -4,14 +4,14 @@ import unittest
 import os
 import sys
 
-import gobject
+from gi.repository import GObject
 
 from kiwi import tasklet
 
 
-class C(gobject.GObject):
-    __gsignals__ = {'my-signal': (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
-                                  (gobject.TYPE_INT,))}
+class C(GObject.GObject):
+    __gsignals__ = {'my-signal': (GObject.SIGNAL_RUN_FIRST, GObject.TYPE_NONE,
+                                  (GObject.TYPE_INT,))}
 
     def do_my_signal(self, arg):
         self.arg = arg
@@ -20,10 +20,10 @@ class C(gobject.GObject):
 class TestWaitForSignal(unittest.TestCase):
     def testBadArguments(self):
         self.assertRaises(TypeError, tasklet.WaitForSignal, '', '')
-        self.assertRaises(ValueError, tasklet.WaitForSignal, gobject.GObject(), 'foo')
+        self.assertRaises(ValueError, tasklet.WaitForSignal, GObject.GObject(), 'foo')
 
     def testGoodArguments(self):
-        tasklet.WaitForSignal(gobject.GObject(), 'notify')
+        tasklet.WaitForSignal(GObject.GObject(), 'notify')
 
     def testSignal(self):
         obj = C()
@@ -38,7 +38,7 @@ class TestWaitForSignal(unittest.TestCase):
         self.assertEqual(task.state, tasklet.Tasklet.STATE_ZOMBIE)
         self.assertEqual(task.return_value, "return-val")
 
-    if hasattr(gobject, 'add_emission_hook'):
+    if hasattr(GObject, 'add_emission_hook'):
         def testEmissionHook(self):
             obj = C()
 
@@ -66,7 +66,7 @@ class TestWaitForTimeout(unittest.TestCase):
             tasklet.get_event()
             raise StopIteration("return-val")
 
-        mainloop = gobject.MainLoop()
+        mainloop = GObject.MainLoop()
         t1 = self.time()
         task = tasklet.run(some_task())
         task.add_join_callback(lambda task, retval: mainloop.quit())
@@ -106,7 +106,7 @@ class TestIO(unittest.TestCase):
         # Disable this test for win32, because it fails and warns:
         #
         # File "tests\test_tasklet.py", line 81, in pipe_reader
-        #    assert chan.get_flags() & gobject.IO_FLAG_IS_READABLE
+        #    assert chan.get_flags() & GObject.IO_FLAG_IS_READABLE
         #
         # ???:81: g_io_channel_get_flags: assertion `channel != NULL' failed
         # ???:95: giowin32.c:1669: 4 is neither a file descriptor or a socket
@@ -116,31 +116,31 @@ class TestIO(unittest.TestCase):
             return
 
         def pipe_reader(chan):
-            assert chan.get_flags() & gobject.IO_FLAG_IS_READABLE
-            yield tasklet.WaitForIO(chan, gobject.IO_IN)
+            assert chan.get_flags() & GObject.IO_FLAG_IS_READABLE
+            yield tasklet.WaitForIO(chan, GObject.IO_IN)
             tasklet.get_event()
             c = chan.read(1)
             raise StopIteration(c)
 
         def pipe_writer(chan, c):
-            assert chan.get_flags() & gobject.IO_FLAG_IS_WRITEABLE
-            yield tasklet.WaitForIO(chan, gobject.IO_OUT)
+            assert chan.get_flags() & GObject.IO_FLAG_IS_WRITEABLE
+            yield tasklet.WaitForIO(chan, GObject.IO_OUT)
             tasklet.get_event()
             chan.write(c)
 
         read_fd, write_fd = os.pipe()
 
-        read_chan = gobject.IOChannel(read_fd)
-        read_chan.set_flags(gobject.IO_FLAG_NONBLOCK)
+        read_chan = GObject.IOChannel(read_fd)
+        read_chan.set_flags(GObject.IO_FLAG_NONBLOCK)
         reader = tasklet.run(pipe_reader(read_chan))
 
-        write_chan = gobject.IOChannel(write_fd)
-        write_chan.set_flags(gobject.IO_FLAG_NONBLOCK)
+        write_chan = GObject.IOChannel(write_fd)
+        write_chan.set_flags(GObject.IO_FLAG_NONBLOCK)
         write_chan.set_encoding(None)
         write_chan.set_buffered(False)
         tasklet.run(pipe_writer(write_chan, chr(123)))
 
-        mainloop = gobject.MainLoop()
+        mainloop = GObject.MainLoop()
         reader.add_join_callback(lambda task, retval: mainloop.quit())
         mainloop.run()
 
@@ -156,7 +156,7 @@ class TestCallback(unittest.TestCase):
             return False
 
         def register_callback(callback):
-            gobject.timeout_add(100, dispatch_callback, callback)
+            GObject.timeout_add(100, dispatch_callback, callback)
 
         def task_func():
             callback = tasklet.WaitForCall()
@@ -169,7 +169,7 @@ class TestCallback(unittest.TestCase):
 
         task = tasklet.run(task_func())
 
-        mainloop = gobject.MainLoop()
+        mainloop = GObject.MainLoop()
         mainloop.run()
 
         self.assertEqual(task.state, tasklet.Tasklet.STATE_ZOMBIE)
@@ -192,7 +192,7 @@ class TestWaitForTasklet(unittest.TestCase):
             taskwait = tasklet.get_event()
             raise StopIteration(taskwait.retval)
 
-        mainloop = gobject.MainLoop()
+        mainloop = GObject.MainLoop()
         task = tasklet.run(task_waiter())
         task.add_join_callback(lambda task, retval: mainloop.quit())
         mainloop.run()

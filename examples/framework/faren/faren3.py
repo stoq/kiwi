@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.delegates import Delegate
 
@@ -40,4 +40,4 @@ class Farenheit(Delegate):
 
 delegate = Farenheit()
 delegate.show()
-gtk.main()
+Gtk.main()

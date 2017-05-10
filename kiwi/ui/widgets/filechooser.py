@@ -24,8 +24,7 @@
 
 """Filechooser widgets for the kiwi framework"""
 
-import gobject
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 
 from kiwi.ui.proxywidget import ProxyWidgetMixin
 from kiwi.utils import gsignal
@@ -65,7 +64,7 @@ class ProxyFileChooserWidget(_FileChooserMixin, Gtk.FileChooserWidget,
         self.props.data_type = str
         Gtk.FileChooserWidget.__init__(self, action=action, backend=backend)
 
-gobject.type_register(ProxyFileChooserWidget)
+GObject.type_register(ProxyFileChooserWidget)
 
 
 class ProxyFileChooserButton(_FileChooserMixin, Gtk.FileChooserButton,
@@ -88,4 +87,4 @@ class ProxyFileChooserButton(_FileChooserMixin, Gtk.FileChooserButton,
         else:
             Gtk.FileChooserButton.__init__(self, dialog or title)
 
-gobject.type_register(ProxyFileChooserButton)
+GObject.type_register(ProxyFileChooserButton)

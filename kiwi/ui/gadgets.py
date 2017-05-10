@@ -30,9 +30,7 @@ import logging
 import math
 
 import cairo
-import gobject
-from gi.repository import Gtk, Gdk
-from gtk import gdk
+from gi.repository import Gtk, GObject, Gdk
 
 from kiwi.utils import gsignal, type_register
 from kiwi.ui.pixbufutils import pixbuf_from_string
@@ -53,7 +51,7 @@ def set_foreground(widget, color, state=Gtk.StateType.NORMAL):
       - color: a hexadecimal code or a well known color name
       - state: the state we are afecting, see Gtk.StateType.*
     """
-    widget.modify_fg(state, gdk.color_parse(color))
+    widget.modify_fg(state, Gdk.color_parse(color))
 
 
 def get_foreground(widget, state=Gtk.StateType.NORMAL):
@@ -72,9 +70,9 @@ def set_background(widget, color, state=Gtk.StateType.NORMAL):
       - state: the state we are afecting, see Gtk.StateType.*
     """
     if isinstance(widget, Gtk.Entry):
-        widget.modify_base(state, gdk.color_parse(color))
+        widget.modify_base(state, Gdk.color_parse(color))
     else:
-        widget.modify_bg(state, gdk.color_parse(color))
+        widget.modify_bg(state, Gdk.color_parse(color))
 
 
 def get_background(widget, state=Gtk.StateType.NORMAL):
@@ -94,7 +92,7 @@ def quit_if_last(*args):
 
 def _select_notebook_tab(widget, event, notebook):
     val = event.keyval - 48
-    if event.state & gdk.MOD1_MASK and 1 <= val <= 9:
+    if event.state & Gdk.MOD1_MASK and 1 <= val <= 9:
         notebook.set_current_page(val - 1)
 
 
@@ -102,12 +100,12 @@ def register_notebook_shortcuts(dialog, notebook):
     dialog.toplevel.connect('key-press-event', _select_notebook_tab, notebook)
 
 
-class FadeOut(gobject.GObject):
+class FadeOut(GObject.GObject):
     """I am a helper class to draw the fading effect of the background
     Call my methods start() and stop() to control the fading.
     """
     gsignal('done')
-    gsignal('color-changed', gdk.Color)
+    gsignal('color-changed', Gdk.Color)
 
     # How long time it'll take before we start (in ms)
     COMPLAIN_DELAY = 500
@@ -117,7 +115,7 @@ class FadeOut(gobject.GObject):
     ERROR_COLOR = "#ffd5d5"
 
     def __init__(self, widget):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self._widget = widget
         self._start_color = None
         self._background_timeout_id = -1
@@ -145,7 +143,7 @@ class FadeOut(gobject.GObject):
             rs += rinc
             gs += ginc
             bs += binc
-            col = gdk.color_parse("#%02X%02X%02X" % (int(rs) >> 8,
+            col = Gdk.color_parse("#%02X%02X%02X" % (int(rs) >> 8,
                                                      int(gs) >> 8,
                                                      int(bs) >> 8))
             self.emit('color-changed', col)
@@ -164,9 +162,9 @@ class FadeOut(gobject.GObject):
 
         self._log.debug('_start_merging: Starting')
         func = self._merge_colors(self._start_color,
-                                  gdk.color_parse(FadeOut.ERROR_COLOR)).next
+                                  Gdk.color_parse(FadeOut.ERROR_COLOR)).next
         self._background_timeout_id = (
-            gobject.timeout_add(FadeOut.MERGE_COLORS_DELAY, func))
+            GObject.timeout_add(FadeOut.MERGE_COLORS_DELAY, func))
         self._countdown_timeout_id = -1
 
     def start(self, color):
@@ -186,7 +184,7 @@ class FadeOut(gobject.GObject):
 
         self._start_color = color
         self._log.debug('start: Scheduling')
-        self._countdown_timeout_id = gobject.timeout_add(
+        self._countdown_timeout_id = GObject.timeout_add(
             FadeOut.COMPLAIN_DELAY, self._start_merging)
 
         return True
@@ -195,10 +193,10 @@ class FadeOut(gobject.GObject):
         """Stops the fadeout and restores the background color"""
         self._log.debug('Stopping')
         if self._background_timeout_id != -1:
-            gobject.source_remove(self._background_timeout_id)
+            GObject.source_remove(self._background_timeout_id)
             self._background_timeout_id = -1
         if self._countdown_timeout_id != -1:
-            gobject.source_remove(self._countdown_timeout_id)
+            GObject.source_remove(self._countdown_timeout_id)
             self._countdown_timeout_id = -1
 
         self._widget.update_background(self._start_color)

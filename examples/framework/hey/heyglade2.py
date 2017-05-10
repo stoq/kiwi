@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.gadgets import quit_if_last
 from kiwi.ui.views import BaseView
@@ -13,4 +13,4 @@ text = app.the_label.get_text()
 app.the_label.set_markup('<b>%s</b>' % text)
 app.the_label.set_use_markup(True)
 app.show()
-gtk.main()
+Gtk.main()

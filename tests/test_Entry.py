@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-import gobject
+from gi.repository import GObject
 import gtk
 
 from kiwi import ValueUnset
@@ -80,10 +80,10 @@ class EntryTest(unittest.TestCase):
 
     def testGType(self):
         entry = KiwiEntry()
-        self.assertEqual(gobject.type_name(entry), 'KiwiEntry')
+        self.assertEqual(GObject.type_name(entry), 'KiwiEntry')
 
         entry = ProxyEntry()
-        self.assertEqual(gobject.type_name(entry), 'ProxyEntry')
+        self.assertEqual(GObject.type_name(entry), 'ProxyEntry')
 
     def testRead(self):
         # int without mask
@@ -145,17 +145,17 @@ class EntryTest(unittest.TestCase):
         self.assertIs(entry.read(), None)
 
     def testGobjectNew(self):
-        entry = gobject.new(ProxyEntry)
+        entry = GObject.new(ProxyEntry)
         self.assertEqual(entry.get_property('data_type'), None)
 
-        entry = gobject.new(ProxyEntry, data_type=int)
+        entry = GObject.new(ProxyEntry, data_type=int)
         entry.set_property("data-type", str)
         self.assertEqual(entry.get_property('data_type'), 'str')
         while gtk.events_pending():
             gtk.main_iteration()
         self.assertEqual(entry.get_property('data_type'), 'str')
 
-        entry = gobject.new(ProxyEntry, data_type=int)
+        entry = GObject.new(ProxyEntry, data_type=int)
         self.assertEqual(entry.get_property('data_type'), 'int')
         entry.set_property("data-type", str)
         while gtk.events_pending():

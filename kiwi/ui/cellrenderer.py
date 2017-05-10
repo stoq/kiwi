@@ -21,9 +21,7 @@
 # Author(s): Ronaldo Maia <romaia@async.com.br>
 #
 
-import glib
-import gobject
-from gi.repository import Gtk
+from gi.repository import Gtk, Glib, GObject
 
 from kiwi.ui.gadgets import gdk_color_to_string, draw_editable_border
 
@@ -37,7 +35,7 @@ class EditableTextRenderer(Gtk.CellRendererText):
                                        cell_area, expose_area, flags)
 
 
-gobject.type_register(EditableTextRenderer)
+GObject.type_register(EditableTextRenderer)
 
 
 class EditableSpinRenderer(Gtk.CellRendererSpin):
@@ -49,7 +47,7 @@ class EditableSpinRenderer(Gtk.CellRendererSpin):
                                        cell_area, expose_area, flags)
 
 
-gobject.type_register(EditableSpinRenderer)
+GObject.type_register(EditableSpinRenderer)
 
 
 class ComboDetailsCellRenderer(Gtk.CellRenderer):
@@ -63,8 +61,8 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
     don't make sense).
     """
 
-    label = gobject.property(type=str, default="")
-    data = gobject.property(type=object)
+    label = GObject.property(type=str, default="")
+    data = GObject.property(type=object)
 
     def __init__(self, use_markup=False):
         """
@@ -139,7 +137,7 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
 
     def _escape(self, text):
         if not self.use_markup:
-            text = glib.markup_escape_text(text)
+            text = Glib.markup_escape_text(text)
         return text
 
     def do_get_size(self, widget, cell_area):
@@ -157,4 +155,4 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
         return 0, 0, width, height + 2
 
 
-gobject.type_register(ComboDetailsCellRenderer)
+GObject.type_register(ComboDetailsCellRenderer)

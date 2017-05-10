@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from kiwi.currency import currency
 from kiwi.ui.objectlist import Column, ObjectList
@@ -25,12 +25,12 @@ data = (Product('Snacks', '3.50'),
         Product('Tutti-frutti', '1.50')
         )
 
-win = gtk.Window()
-win.connect('destroy', gtk.main_quit)
+win = Gtk.Window()
+win.connect('destroy', Gtk.main_quit)
 win.set_border_width(6)
 win.set_size_request(650, 300)
 
-vbox = gtk.VBox()
+vbox = Gtk.VBox()
 win.add(vbox)
 
 
@@ -40,14 +40,14 @@ def entry_activate_cb(entry):
                 if text.lower() in product.name.lower()]
     l.add_list(products)
 
-entry = gtk.Entry()
+entry = Gtk.Entry()
 entry.connect('activate', entry_activate_cb)
 vbox.pack_start(entry, False, False, 6)
 
 l = ObjectList(columns)
 l.extend(data)
-vbox.pack_start(l)
+vbox.pack_start(l, True, True, 0)
 
 win.show_all()
 
-gtk.main()
+Gtk.main()

@@ -28,8 +28,7 @@
 
 """
 
-import gobject
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 
 from kiwi.datatypes import number, ValueUnset
 from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
@@ -45,12 +44,12 @@ class ProxySpinButton(Gtk.SpinButton, ValidatableProxyWidgetMixin):
     """
     __gtype_name__ = 'ProxySpinButton'
 
-    data_type = gobject.property(
+    data_type = GObject.property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    mandatory = gobject.property(type=bool, default=False)
-    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    mandatory = GObject.property(type=bool, default=False)
+    model_attribute = GObject.property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
@@ -111,4 +110,4 @@ class ProxySpinButton(Gtk.SpinButton, ValidatableProxyWidgetMixin):
     def get_background(self):
         return self.style.base[Gtk.StateType.NORMAL]
 
-gobject.type_register(ProxySpinButton)
+GObject.type_register(ProxySpinButton)

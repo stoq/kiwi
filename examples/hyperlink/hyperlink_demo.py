@@ -30,7 +30,7 @@
 
 import time
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui import hyperlink
 
@@ -38,40 +38,40 @@ from kiwi.ui import hyperlink
 class App(object):
 
     def __init__(self):
-        self._window = gtk.Window()
+        self._window = Gtk.Window()
         self._window.connect('destroy', self._on_window__destroy)
         self._window.set_title('Hyperlink Widget Demo')
-        vb = gtk.VBox(spacing=3)
+        vb = Gtk.VBox(spacing=3)
         vb.set_border_width(12)
         self._window.add(vb)
         self._build_basic_hyperlink(vb)
-        vb.pack_start(gtk.HSeparator(), expand=False, padding=6)
+        vb.pack_start(Gtk.HSeparator(), False, True, 6)
         self._build_formatted_hyperlink(vb)
-        vb.pack_start(gtk.HSeparator(), expand=False, padding=6)
+        vb.pack_start(Gtk.HSeparator(), False, True, 6)
         self._build_menu_hyperlink(vb)
-        vb.pack_start(gtk.HSeparator(), expand=False, padding=6)
-        sw = gtk.ScrolledWindow()
-        vb.pack_start(sw)
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_ALWAYS)
-        self._logger = gtk.TextView()
+        vb.pack_start(Gtk.HSeparator(), False, True, 6)
+        sw = Gtk.ScrolledWindow()
+        vb.pack_start(sw, True, True, 0)
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
+        self._logger = Gtk.TextView()
         sw.add(self._logger)
         self._logger.set_editable(False)
         self._window.show_all()
 
     def _build_basic_hyperlink(self, vb):
         self._hl1 = hyperlink.HyperLink('basic hyperlink')
-        vb.pack_start(self._hl1, expand=False)
+        vb.pack_start(self._hl1, False, True, 0)
         self._hl1.connect('clicked', self._on_hl1__clicked)
         self._hl1.connect('right-clicked', self._on_hl1__right_clicked)
-        d1 = gtk.Label(
+        d1 = Gtk.Label(
             'I am a basic hyperlink. The signals I emit are "clicked" and'
             ' "right-clicked". Try me out')
         d1.set_line_wrap(True)
-        vb.pack_start(d1, expand=False)
+        vb.pack_start(d1, False, True, 0)
 
     def _build_formatted_hyperlink(self, vb):
         self._hl2 = hyperlink.HyperLink('hyperlink with formatting')
-        vb.pack_start(self._hl2, expand=False)
+        vb.pack_start(self._hl2, False, True, 0)
         self._hl2.normal_color = '#c000c0'
         self._hl2.hover_color = '#00c0c0'
         self._hl2.active_color = '#000000'
@@ -79,40 +79,40 @@ class App(object):
         self._hl2.active_bold = True
         self._hl2.connect('clicked', self._on_hl2__clicked)
         self._hl2.connect('right-clicked', self._on_hl2__right_clicked)
-        d1 = gtk.Label(
+        d1 = Gtk.Label(
             'I am a formatted hyperlink. I can be modified by setting'
             ' my properties like normal-color. Click me to change me!')
         d1.set_line_wrap(True)
-        vb.pack_start(d1, expand=False)
+        vb.pack_start(d1, False, True, 0)
 
     def _build_menu_hyperlink(self, vb):
         self._hl3 = hyperlink.HyperLink('menu hyperlink')
-        vb.pack_start(self._hl3, expand=False)
+        vb.pack_start(self._hl3, False, True, 0)
         self._hl3.connect('clicked', self._on_hl3__clicked)
         self._hl3.connect('right-clicked', self._on_hl3__right_clicked)
         self._hl3.hover_underline = False
         self._hl3.active_underline = False
-        menu = gtk.Menu()
-        m1 = gtk.MenuItem()
-        m1.add(gtk.Label('toggle bold'))
+        menu = Gtk.Menu()
+        m1 = Gtk.MenuItem()
+        m1.add(Gtk.Label('toggle bold'))
         menu.add(m1)
         m1.connect('activate', self._on_m1_activated)
-        m2 = gtk.MenuItem()
-        m2.add(gtk.Label('toggle underline'))
+        m2 = Gtk.MenuItem()
+        m2.add(Gtk.Label('toggle underline'))
         menu.add(m2)
         m2.connect('activate', self._on_m2_activated)
         menu.show_all()
         self._hl3.set_menu(menu)
-        d1 = gtk.Label(
+        d1 = Gtk.Label(
             'I am a hyperlink with a menu. Right click me to pop it up.')
         d1.set_line_wrap(True)
-        vb.pack_start(d1, expand=False)
+        vb.pack_start(d1, False, True, 0)
 
     def start(self):
-        gtk.main()
+        Gtk.main()
 
     def stop(self):
-        gtk.main_quit()
+        Gtk.main_quit()
 
     def _on_window__destroy(self, window):
         self.stop()

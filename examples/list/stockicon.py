@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.objectlist import Column, ObjectList
 
@@ -9,23 +9,23 @@ class Fruit:
         self.name = name
 
 fruits = ObjectList([Column('icon', use_stock=True,
-                            justify=gtk.JUSTIFY_CENTER,
-                            icon_size=gtk.ICON_SIZE_LARGE_TOOLBAR),
+                            justify=Gtk.Justification.CENTER,
+                            icon_size=Gtk.IconSize.LARGE_TOOLBAR),
                      Column('name', column='icon')])
 
-for icon, name in [(gtk.STOCK_OK, 'Apple'),
-                   (gtk.STOCK_CANCEL, 'Pineapple'),
-                   (gtk.STOCK_HELP, 'Kiwi'),
-                   (gtk.STOCK_DELETE, 'Banana'),
-                   (gtk.STOCK_HOME, 'Melon')]:
+for icon, name in [(Gtk.STOCK_OK, 'Apple'),
+                   (Gtk.STOCK_CANCEL, 'Pineapple'),
+                   (Gtk.STOCK_HELP, 'Kiwi'),
+                   (Gtk.STOCK_DELETE, 'Banana'),
+                   (Gtk.STOCK_HOME, 'Melon')]:
     fruits.append(Fruit(icon, name))
 
-window = gtk.Window()
-window.connect('delete-event', gtk.main_quit)
+window = Gtk.Window()
+window.connect('delete-event', Gtk.main_quit)
 window.set_title('Fruits')
 window.set_size_request(150, 180)
 
 window.add(fruits)
 window.show_all()
 
-gtk.main()
+Gtk.main()

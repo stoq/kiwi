@@ -21,8 +21,7 @@
 # Author(s): Ronaldo Maia <romaia@async.com.br>
 #
 
-from gi.repository import Gtk
-import gobject
+from gi.repository import Gtk, GObject
 
 from kiwi.utils import gsignal
 
@@ -65,7 +64,7 @@ class ContextMenuItem(Gtk.ImageMenuItem):
         self.set_image(image)
 
 
-gobject.type_register(ContextMenuItem)
+GObject.type_register(ContextMenuItem)
 
 
 class ContextMenu(Gtk.Menu):
@@ -87,4 +86,4 @@ class ContextMenu(Gtk.Menu):
             menu_item.set_sensitive(can_select)
 
 
-gobject.type_register(ContextMenu)
+GObject.type_register(ContextMenu)

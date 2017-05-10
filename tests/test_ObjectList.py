@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import unittest
 
-import gobject
+from gi.repository import GObject
 import gtk
 
 from kiwi.datatypes import converter
@@ -51,7 +51,7 @@ class ColumnTests(unittest.TestCase):
         self.assertEquals(column.attribute, "foo")
 
     def testGObjectNew(self):
-        column = gobject.new(Column, attribute='foo')
+        column = GObject.new(Column, attribute='foo')
         self.assertEquals(column.attribute, "foo")
 
     def testCompareFunc(self):
@@ -305,7 +305,7 @@ class ConstructorTest(unittest.TestCase):
         self.assertEqual(len(columns), 1)
 
     def testGObjectNew(self):
-        olist = gobject.new(ObjectList)
+        olist = GObject.new(ObjectList)
         self.assertTrue(isinstance(olist, ObjectList))
 
 

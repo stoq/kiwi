@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.objectlist import Column, ObjectList
 
@@ -19,12 +19,12 @@ for name, cost in [('Apple', 4),
                    ('Melon', 5)]:
     fruits.append(Fruit(name, cost))
 
-window = gtk.Window()
-window.connect('delete-event', gtk.main_quit)
+window = Gtk.Window()
+window.connect('delete-event', Gtk.main_quit)
 window.set_title('Editable Fruit List')
 window.set_size_request(230, 150)
 
 window.add(fruits)
 window.show_all()
 
-gtk.main()
+Gtk.main()

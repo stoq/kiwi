@@ -21,9 +21,8 @@
 # Author(s): Ronaldo Maia <romaia@async.com.br>
 #
 
-import gobject
-from gi.repository import Gtk
-from gtk import gdk
+from gi.repository import Gtk, GObject
+from gi.repository import Gdk
 from gtk import keysyms
 
 from kiwi.python import strip_accents
@@ -99,7 +98,7 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
 
         if (event.window != self._popup_window.get_window() or
             (tuple(self._popup_window.allocation.intersect(
-                   gdk.Rectangle(x=int(event.x), y=int(event.y),
+                   Gdk.Rectangle(x=int(event.x), y=int(event.y),
                                  width=1, height=1)))) == (0, 0, 0, 0)):
             self.popdown()
 
@@ -124,9 +123,9 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
         self._selected_index = -1
 
         if self._completion_timeout != -1:
-            gobject.source_remove(self._completion_timeout)
+            GObject.source_remove(self._completion_timeout)
 
-        timeout = gobject.timeout_add(COMPLETION_TIMEOUT,
+        timeout = GObject.timeout_add(COMPLETION_TIMEOUT,
                                       self._on_completion_timeout)
         self._completion_timeout = timeout
         return True
@@ -222,12 +221,12 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
     def _popup_grab_window(self):
         activate_time = 0L
         window = self._entry.get_window()
-        if gdk.pointer_grab(window, True,
-                            (gdk.BUTTON_PRESS_MASK |
-                             gdk.BUTTON_RELEASE_MASK |
-                             gdk.POINTER_MOTION_MASK),
+        if Gdk.pointer_grab(window, True,
+                            (Gdk.BUTTON_PRESS_MASK |
+                             Gdk.BUTTON_RELEASE_MASK |
+                             Gdk.POINTER_MOTION_MASK),
                             None, None, activate_time) == 0:
-            if gdk.keyboard_grab(window, True, activate_time) == 0:
+            if Gdk.keyboard_grab(window, True, activate_time) == 0:
                 return True
             else:
                 window.get_display().pointer_ungrab(activate_time)

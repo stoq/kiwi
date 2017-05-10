@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.views import BaseView, SlaveView
 from kiwi.ui.gadgets import quit_if_last
@@ -25,14 +25,14 @@ news = [
 
 class News(SlaveView):
     def __init__(self):
-        model = gtk.ListStore(str, str)
-        treeview = gtk.TreeView(model)
-        renderer = gtk.CellRendererText()
-        col1 = gtk.TreeViewColumn('News', renderer, text=0)
-        col2 = gtk.TreeViewColumn('Author', renderer, text=1)
+        model = Gtk.ListStore(str, str)
+        treeview = Gtk.TreeView(model)
+        renderer = Gtk.CellRendererText()
+        col1 = Gtk.TreeViewColumn('News', renderer, text=0)
+        col2 = Gtk.TreeViewColumn('Author', renderer, text=1)
         treeview.append_column(col1)
         treeview.append_column(col2)
-        treeview.get_selection().set_mode(gtk.SELECTION_BROWSE)
+        treeview.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         for item in news:
             model.append(item[:-1])
         SlaveView.__init__(self, treeview)
@@ -46,4 +46,4 @@ shell.attach_slave("placeholder", news)
 news.show_all()
 news.focus_toplevel()  # explained next section, don't worry
 shell.show()
-gtk.main()
+Gtk.main()

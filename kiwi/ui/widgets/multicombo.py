@@ -15,7 +15,7 @@
 
 """Multicombo proxy for the kiwi framework"""
 
-import gobject
+from gi.repository import GObject
 
 from kiwi.datatypes import ValueUnset
 from kiwi.ui.multicombo import MultiCombo
@@ -27,11 +27,11 @@ class ProxyMultiCombo(MultiCombo, ProxyWidgetMixin):
 
     __gtype_name__ = 'ProxyMultiCombo'
 
-    data_type = gobject.property(
+    data_type = GObject.property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    model_attribute = GObject.property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)

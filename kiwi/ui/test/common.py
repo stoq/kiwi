@@ -25,18 +25,17 @@
 Common routines used by other parts of the ui test framework.
 """
 
-import gobject
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, GObject, Gdk
 
 from kiwi.utils import gsignal
 
 
-class WidgetIntrospecter(gobject.GObject):
+class WidgetIntrospecter(GObject.GObject):
     gsignal('window-added', object, str, object)
     gsignal('window-removed', object, str)
 
     def __init__(self):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self._objects = {}
         self._id_to_obj = {}  # GdkWindow -> GtkWindow
         self._windows = {}  # toplevels ?
@@ -137,20 +136,20 @@ class WidgetIntrospecter(gobject.GObject):
         Gdk.event_handler_set(self._event_handler)
 
     def parse_one(self, toplevel, gobj):
-        if not isinstance(gobj, gobject.GObject):
+        if not isinstance(gobj, GObject.GObject):
             raise TypeError
 
         gtype = gobj
         while True:
-            name = gobject.type_name(gtype)
+            name = GObject.type_name(gtype)
             func = getattr(self, name, None)
             if func:
                 if func(toplevel, gobj):
                     break
-            if gtype == gobject.GObject.__gtype__:
+            if gtype == GObject.GObject.__gtype__:
                 break
 
-            gtype = gobject.type_parent(gtype)
+            gtype = GObject.type_parent(gtype)
 
     #
     # Special widget handling
@@ -211,4 +210,4 @@ class WidgetIntrospecter(gobject.GObject):
     def GtkToolButton(self, toplevel, item):
         item.child.set_name(item.get_name())
 
-gobject.type_register(WidgetIntrospecter)
+GObject.type_register(WidgetIntrospecter)

@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.objectlist import Column, ObjectList
 
@@ -8,7 +8,7 @@ class Fruit:
         self.name = name
         self.status = status
 
-adjustment = gtk.Adjustment(step_incr=1, upper=15)
+adjustment = Gtk.Adjustment(step_incr=1, upper=15)
 fruits = ObjectList([Column('name', data_type=str),
                      Column('quantity', title="Quantity",
                             spin_adjustment=adjustment, data_type=float,
@@ -22,12 +22,12 @@ for name, quantity in [('Apple', 1),
                        ('Melon', 6)]:
     fruits.append(Fruit(name, quantity))
 
-window = gtk.Window()
-window.connect('delete-event', gtk.main_quit)
+window = Gtk.Window()
+window.connect('delete-event', Gtk.main_quit)
 window.set_title('Fruits')
 window.set_size_request(200, 180)
 
 window.add(fruits)
 window.show_all()
 
-gtk.main()
+Gtk.main()

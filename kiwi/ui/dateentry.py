@@ -29,8 +29,8 @@
 import gettext
 import datetime
 
-from gi.repository import Gtk
-from gtk import gdk, keysyms
+from gi.repository import Gtk, Gdk
+from gtk import keysyms
 
 from kiwi.datatypes import converter, ValueUnset, ValidationError
 from kiwi.ui.popup import PopupWindow
@@ -217,9 +217,9 @@ class DateEntry(Gtk.HBox):
         self.emit('activate')
 
     def _on_entry__scroll_event(self, entry, event):
-        if event.direction == gdk.SCROLL_UP:
+        if event.direction == Gdk.SCROLL_UP:
             days = 1
-        elif event.direction == gdk.SCROLL_DOWN:
+        elif event.direction == Gdk.SCROLL_DOWN:
             days = -1
         else:
             return

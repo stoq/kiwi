@@ -22,9 +22,7 @@
 """
 import gettext
 
-import glib
-import gobject
-from gi.repository import Gtk
+from gi.repository import Gtk, Glib, GObject
 
 from kiwi.enums import ListType
 from kiwi.ui.delegates import SlaveDelegate
@@ -195,7 +193,7 @@ class ListContainer(Gtk.HBox):
         :returns: True if the user confirm the removal, False otherwise
         """
         response = yesno(_('Do you want to remove %s ?') %
-                        (glib.markup_escape_text(str(item)),),
+                        (Glib.markup_escape_text(str(item)),),
                          parent=None,
                          default=Gtk.ResponseType.OK,
                          buttons=((Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL),
@@ -254,7 +252,7 @@ class ListContainer(Gtk.HBox):
     def _on_edit_button__clicked(self, button):
         self._edit_item(self.list.get_selected())
 
-gobject.type_register(ListContainer)
+GObject.type_register(ListContainer)
 
 
 class ListSlave(SlaveDelegate):

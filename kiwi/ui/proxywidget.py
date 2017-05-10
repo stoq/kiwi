@@ -1,4 +1,3 @@
-#
 # Kiwi: a Framework and Enhanced Widgets for Python
 #
 # Copyright (C) 2003-2005 Async Open Source
@@ -31,9 +30,7 @@ import base64
 import gettext
 import logging
 
-import gobject
-from gi.repository import Gtk, Gdk
-from gtk import gdk
+from gi.repository import Gtk, GObject, Gdk
 
 from kiwi import ValueUnset
 from kiwi.component import implements
@@ -48,7 +45,7 @@ _ = lambda m: gettext.dgettext('kiwi', m)
 
 
 class _PixbufConverter(BaseConverter):
-    type = gdk.Pixbuf
+    type = Gdk.Pixbuf
     name = 'Pixbuf'
 
     def as_string(self, value, format='png'):
@@ -62,7 +59,7 @@ class _PixbufConverter(BaseConverter):
     def from_string(self, value, format='png'):
         try:
             return pixbuf_from_string(value, format)
-        except gobject.GError, e:
+        except GObject.GError, e:
             raise ValidationError(_("Could not load image: %s") % e)
 
 converter.add(_PixbufConverter)

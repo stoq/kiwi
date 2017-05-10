@@ -24,8 +24,7 @@
 
 """GtkHScale and GtkVScale support for the Kiwi Framework"""
 
-import gobject
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 
 from kiwi import ValueUnset
 from kiwi.ui.proxywidget import ProxyWidgetMixin
@@ -55,11 +54,11 @@ class _ProxyScale:
 
 class ProxyHScale(_ProxyScale, ProxyWidgetMixin, Gtk.HScale):
     __gtype_name__ = 'ProxyHScale'
-    data_type = gobject.property(
+    data_type = GObject.property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    model_attribute = GObject.property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
@@ -74,11 +73,11 @@ type_register(ProxyHScale)
 
 class ProxyVScale(_ProxyScale, ProxyWidgetMixin, Gtk.VScale):
     __gtype_name__ = 'ProxyVScale'
-    data_type = gobject.property(
+    data_type = GObject.property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    model_attribute = GObject.property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)

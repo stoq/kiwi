@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui.delegates import GladeDelegate, GladeSlaveDelegate
 from kiwi.ui.gadgets import quit_if_last
@@ -45,4 +45,4 @@ class Shell(GladeDelegate):
 shell = Shell()
 shell.show()
 
-gtk.main()
+Gtk.main()

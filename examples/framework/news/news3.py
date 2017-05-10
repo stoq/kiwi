@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.ui import gadgets
 from kiwi.ui.delegates import Delegate, SlaveDelegate
@@ -86,7 +86,7 @@ def get_url(view, result):
 
 shell.connect('result', get_url)
 
-gtk.main()
+Gtk.main()
 
 if url is not None:
     # Try to run BROWSER (or lynx) on the URL returned

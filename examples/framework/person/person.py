@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import gtk
+from gi.repository import Gtk
 from kiwi.model import PickledModel
 from kiwi.ui.delegates import ProxyDelegate
 
@@ -13,7 +13,7 @@ person = Person.unpickle()
 # create and run a proxy interface attached to person
 view = ProxyDelegate(person, gladefile="Person.ui",
                      widgets=["address", 'name', 'phone'],
-                     delete_handler=gtk.main_quit)
+                     delete_handler=Gtk.main_quit)
 view.focus_topmost()
 view.show_and_loop()
 

@@ -21,16 +21,16 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
-from gtk import gdk
+from gi.repository import Gdk
 
 
 def pixbuf_from_string(pixbuf_data, format='png', width=None, height=None):
-    loader = gdk.PixbufLoader(format)
+    loader = Gdk.PixbufLoader(format)
     loader.write(pixbuf_data)
     loader.close()
     pixbuf = loader.get_pixbuf()
     if width is not None or height is not None:
-        scaled_pixbuf = pixbuf.scale_simple(width, height, gdk.INTERP_BILINEAR)
+        scaled_pixbuf = pixbuf.scale_simple(width, height, Gdk.INTERP_BILINEAR)
         if scaled_pixbuf is None:
             print 'Warning: could not scale image'
         else:

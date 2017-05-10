@@ -3,7 +3,7 @@ import datetime
 import random
 import time
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.currency import currency
 from kiwi.ui.objectlist import (Column, ObjectList, SequentialColumn,
@@ -68,26 +68,26 @@ data = (Person('Evandro', 23, 'Belo Horizonte'),
         Person('Lorenzo', 26, 'Granada')
         )
 
-win = gtk.Window()
+win = Gtk.Window()
 win.set_size_request(850, 300)
-win.connect('destroy', gtk.main_quit)
+win.connect('destroy', Gtk.main_quit)
 
-vbox = gtk.VBox()
+vbox = Gtk.VBox()
 win.add(vbox)
 
-l = ObjectList(columns, mode=gtk.SELECTION_MULTIPLE)
+l = ObjectList(columns, mode=Gtk.SelectionMode.MULTIPLE)
 l.extend(data)
 l.append(Person('Nando', 29 + len(l), 'Santos'))
 
 
 # add an extra person
 
-vbox.pack_start(l)
+vbox.pack_start(l, True, True, 0)
 
 label = SummaryLabel(klist=l, column='salary', label='<b>Total:</b>',
                      value_format='<b>%s</b>')
-vbox.pack_start(label, expand=False, padding=6)
+vbox.pack_start(label, False, True, 6)
 
 win.show_all()
 
-gtk.main()
+Gtk.main()

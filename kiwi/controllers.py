@@ -22,7 +22,7 @@
 #            Lorenzo Gil Sanchez <lgs@sicem.biz>
 #
 
-from gtk import gdk
+from gi.repository import Gdk
 
 """Holds the base controller class for the Kiwi Framework"""
 
@@ -74,17 +74,17 @@ class BaseController:
         The keypress handler, which dispatches keypresses to the
         functions mapped to in self.keyactions"""
 
-        keyval = gdk.keyval_name(event.keyval)
+        keyval = Gdk.keyval_name(event.keyval)
         if keyval is None:
             return
 
         # Order is important, we want control_shift_alt_XXX
         method_name = 'key_'
-        if event.state & gdk.CONTROL_MASK:
+        if event.state & Gdk.CONTROL_MASK:
             method_name += 'control_'
-        if event.state & gdk.SHIFT_MASK:
+        if event.state & Gdk.SHIFT_MASK:
             method_name += 'shift_'
-        if event.state & gdk.MOD1_MASK:
+        if event.state & Gdk.MOD1_MASK:
             method_name += 'alt_'
 
         method_name += keyval

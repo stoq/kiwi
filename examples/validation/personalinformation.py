@@ -2,7 +2,7 @@
 
 import datetime
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.datatypes import ValidationError
 from kiwi.currency import currency
@@ -94,7 +94,7 @@ def on_ok_btn_clicked(widget):
     print "About Your self:", person.about
     print "Status:", person.status
 
-    gtk.main_quit()
+    Gtk.main_quit()
 
 form.ok_btn.connect("clicked", on_ok_btn_clicked)
-gtk.main()
+Gtk.main()

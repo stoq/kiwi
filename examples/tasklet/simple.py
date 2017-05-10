@@ -1,4 +1,4 @@
-import gobject
+from gi.repository import GObject
 
 from kiwi.tasklet import Tasklet, WaitForTimeout, WaitForMessages, Message, \
     WaitForTasklet, get_event
@@ -57,7 +57,7 @@ def _count_some_numbers1(count):
 def _test():
     '''a simple test/example'''
     Tasklet(_count_some_numbers1(5))
-    gobject.MainLoop().run()
+    GObject.MainLoop().run()
 
 
 if __name__ == '__main__':

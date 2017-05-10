@@ -23,9 +23,7 @@
 
 import gettext
 
-import glib
-import gobject
-from gi.repository import Gtk, Gdk, Pango
+from gi.repository import Gtk, Glib, GObject, Gdk, Pango
 
 from kiwi.ui.cellrenderer import ComboDetailsCellRenderer
 from kiwi.ui.popup import PopupWindow
@@ -183,7 +181,7 @@ class _MultiComboPopup(PopupWindow):
 
     def _update_ui(self):
         self._treeview.set_sensitive(self.widget.has_items_to_select())
-        glib.idle_add(self._resize)
+        Glib.idle_add(self._resize)
 
     #
     #  Callbacks
@@ -236,9 +234,9 @@ class MultiCombo(Gtk.HBox):
     gsignal('item-added', object)
     gsignal('item-removed', object)
 
-    width = gobject.property(type=int, default=200)
-    max_label_chars = gobject.property(type=int, default=50)
-    scrolling_threshold = gobject.property(type=int, default=3)
+    width = GObject.property(type=int, default=200)
+    max_label_chars = GObject.property(type=int, default=50)
+    scrolling_threshold = GObject.property(type=int, default=3)
 
     def __init__(self, **kwargs):
         super(MultiCombo, self).__init__()
@@ -403,8 +401,8 @@ class MultiCombo(Gtk.HBox):
         # used by redrawing operations so PRIORITY_HIGH_IDLE + 25
         # should be enought to make sure we call callback just after
         # the widget finishes redrawing itself.
-        glib.timeout_add(100, self._scroll_to_item, row,
-                         priority=glib.PRIORITY_HIGH_IDLE + 25)
+        Glib.timeout_add(100, self._scroll_to_item, row,
+                         priority=Glib.PRIORITY_HIGH_IDLE + 25)
 
     def _remove_selection(self, row):
         assert row[COL_ATTACHED] is not None
@@ -435,7 +433,7 @@ class MultiCombo(Gtk.HBox):
         label.set_padding(2, 0)
         label.set_max_width_chars(self.max_label_chars)
         label.set_ellipsize(Pango.EllipsizeMode.END)
-        markup = '<u>%s</u>' % (glib.markup_escape_text(row[COL_LABEL]), )
+        markup = '<u>%s</u>' % (Glib.markup_escape_text(row[COL_LABEL]), )
         label.set_tooltip_markup(markup)
         label.set_markup(markup)
         hbox.add(label)
@@ -479,7 +477,7 @@ class MultiCombo(Gtk.HBox):
             self.set_size_request(self.width, -1)
 
         if self.popup.visible:
-            glib.idle_add(self.popup.adjust_position)
+            Glib.idle_add(self.popup.adjust_position)
 
     def _update_no_items_marker(self):
         itr = self.get_iter_by_data(_NO_ITEMS_MARKER)
@@ -501,7 +499,7 @@ class MultiCombo(Gtk.HBox):
         self._adjust_size()
 
     def _on_textbuffer__changed(self, textbuffer):
-        glib.idle_add(self._adjust_size)
+        Glib.idle_add(self._adjust_size)
 
     def _on_dropbbutton__toggled(self, button):
         if button.get_active():

@@ -1,6 +1,6 @@
 # A simple example to demonstrate the ListDialog dialog
 
-import gtk
+from gi.repository import Gtk
 
 from kiwi.enums import ListType
 from kiwi.ui.listdialog import ListDialog
@@ -28,7 +28,7 @@ class MyListDialog(ListDialog):
     def _create_menu(self):
         menu = ContextMenu()
 
-        item = ContextMenuItem('_Foo', gtk.STOCK_COPY)
+        item = ContextMenuItem('_Foo', Gtk.STOCK_COPY)
         item.connect('activate', self._on_foo_activate)
         item.connect('can-disable', self._on_foo_can_disable)
         menu.append(item)
@@ -39,7 +39,7 @@ class MyListDialog(ListDialog):
 
         menu.append_separator()
 
-        item = ContextMenuItem(gtk.STOCK_PASTE)
+        item = ContextMenuItem(Gtk.STOCK_PASTE)
         item.connect('activate', self._on_paste_activate)
         menu.append(item)
 

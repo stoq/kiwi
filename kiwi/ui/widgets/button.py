@@ -25,9 +25,8 @@
 
 import datetime
 
-import gobject
-from gi.repository import Gtk
-from gtk import gdk
+from gi.repository import Gtk, GObject
+from gi.repository import Gdk
 
 from kiwi import ValueUnset
 from kiwi.datatypes import number
@@ -46,14 +45,14 @@ class ProxyButton(Gtk.Button, ProxyWidgetMixin):
     """
 
     allowed_data_types = (basestring, datetime.date, datetime.datetime,
-                          datetime.time, gdk.Pixbuf) + number
+                          datetime.time, Gdk.Pixbuf) + number
     __gtype_name__ = 'ProxyButton'
 
-    data_type = gobject.property(
+    data_type = GObject.property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    model_attribute = gobject.property(type=str, blurb='Model attribute')
+    model_attribute = GObject.property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
@@ -100,4 +99,4 @@ class ProxyButton(Gtk.Button, ProxyWidgetMixin):
 
         self.emit('content-changed')
 
-gobject.type_register(ProxyButton)
+GObject.type_register(ProxyButton)

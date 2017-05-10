@@ -25,8 +25,8 @@
 
 import logging
 
-from gi.repository import Gtk
-from gtk import gdk, keysyms
+from gi.repository import Gtk, Gdk
+from gtk import keysyms
 
 from kiwi.component import implements
 from kiwi.enums import ComboColumn, ComboMode
@@ -73,7 +73,7 @@ class _ComboEntryPopup(PopupWindow):
                                self._on_treeview__motion_notify_event)
         self._treeview.connect('button-release-event',
                                self._on_treeview__button_release_event)
-        self._treeview.add_events(gdk.BUTTON_PRESS_MASK)
+        self._treeview.add_events(Gdk.BUTTON_PRESS_MASK)
         self._selection = self._treeview.get_selection()
         self._selection.set_mode(Gtk.SelectionMode.BROWSE)
         self._renderer = ComboDetailsCellRenderer()
@@ -349,12 +349,12 @@ class ComboEntry(Gtk.VBox):
 
         curr = model[treeiter].path[0]
         # Scroll up, select the previous item
-        if event.direction == gdk.SCROLL_UP:
+        if event.direction == Gdk.SCROLL_UP:
             curr -= 1
             if curr >= 0:
                 self.set_active_iter(model[curr].iter)
         # Scroll down, select the next item
-        elif event.direction == gdk.SCROLL_DOWN:
+        elif event.direction == Gdk.SCROLL_DOWN:
             curr += 1
             if curr < len(model):
                 self.set_active_iter(model[curr].iter)
@@ -368,7 +368,7 @@ class ComboEntry(Gtk.VBox):
         keyval, state = event.keyval, event.state
         state &= Gtk.accelerator_get_default_mod_mask()
         if ((keyval == keysyms.Down or keyval == keysyms.KP_Down) and
-            state == gdk.MOD1_MASK):
+            state == Gdk.MOD1_MASK):
             self.popup()
             return True
 
