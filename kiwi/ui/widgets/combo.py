@@ -271,11 +271,11 @@ class ProxyComboBox(Gtk.ComboBox, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyComboBox'
     allowed_data_types = (basestring, object) + number
 
-    data_type = GObject.property(
+    data_type = GObject.Property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    model_attribute = GObject.property(type=str, blurb='Model attribute')
+    model_attribute = GObject.Property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
@@ -325,7 +325,7 @@ class ProxyComboBox(Gtk.ComboBox, ProxyWidgetMixin):
 
     def get_color_attribute(self):
         return self._color_attribute
-    color_attribute = GObject.property(
+    color_attribute = GObject.Property(
         getter=get_color_attribute,
         setter=set_color_attribute,
         type=str, blurb='Color attribute')
@@ -457,12 +457,12 @@ class ProxyComboEntry(ComboEntry, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyComboEntry'
     allowed_data_types = (basestring, object) + number
 
-    data_type = GObject.property(
+    data_type = GObject.Property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    mandatory = GObject.property(type=bool, default=False)
-    model_attribute = GObject.property(type=str, blurb='Model attribute')
+    mandatory = GObject.Property(type=bool, default=False)
+    model_attribute = GObject.Property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
@@ -488,7 +488,7 @@ class ProxyComboEntry(ComboEntry, ValidatableProxyWidgetMixin):
 
     def _set_list_editable(self, value):
         self.entry.set_editable(value)
-    list_editable = GObject.property(getter=_get_list_editable,
+    list_editable = GObject.Property(getter=_get_list_editable,
                                      setter=_set_list_editable,
                                      type=bool, default=True,
                                      nick="Editable")

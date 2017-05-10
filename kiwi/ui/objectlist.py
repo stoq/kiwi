@@ -33,7 +33,7 @@ import locale
 import logging
 import pickle
 
-from gi.repository import Gtk, Glib, GObject, Gdk, Pango
+from gi.repository import Gtk, GLib, GObject, Gdk, Pango
 
 from kiwi.accessor import kgetattr
 from kiwi.datatypes import converter, number, ValidationError
@@ -156,35 +156,35 @@ class Column(GObject.GObject):
           for the cells in this column.
     """
     __gtype_name__ = 'Column'
-    attribute = GObject.property(type=str,
+    attribute = GObject.Property(type=str,
                                  flags=(GObject.PARAM_READWRITE |
                                         GObject.PARAM_CONSTRUCT_ONLY))
-    title = GObject.property(type=str)
-    visible = GObject.property(type=bool, default=True)
-    justify = GObject.property(type=Gtk.Justification, default=Gtk.Justification.LEFT)
-    format = GObject.property(type=str)
-    width = GObject.property(type=int, maximum=2 ** 16)
-    sorted = GObject.property(type=bool, default=False)
-    order = GObject.property(type=Gtk.SortType, default=Gtk.SortType.ASCENDING)
-    expand = GObject.property(type=bool, default=False)
-    tooltip = GObject.property(type=str)
-    format_func = GObject.property(type=object)
-    format_func_data = GObject.property(type=object, default=None)
-    editable = GObject.property(type=bool, default=False)
-    searchable = GObject.property(type=bool, default=False)
-    radio = GObject.property(type=bool, default=False)
-    spin_adjustment = GObject.property(type=object)
-    use_stock = GObject.property(type=bool, default=False)
-    use_markup = GObject.property(type=bool, default=False)
-    icon_size = GObject.property(type=Gtk.IconSize, default=Gtk.IconSize.MENU)
-    editable_attribute = GObject.property(type=str)
-    expander = GObject.property(type=bool, default=False)
-    ellipsize = GObject.property(type=Pango.EllipsizeMode, default=Pango.EllipsizeMode.NONE)
-    font_desc = GObject.property(type=str)
-    column = GObject.property(type=str)
-    sort_func = GObject.property(type=object, default=None)
-    pack_end = GObject.property(type=bool, default=False)
-    width_chars = GObject.property(type=int, default=-1)
+    title = GObject.Property(type=str)
+    visible = GObject.Property(type=bool, default=True)
+    justify = GObject.Property(type=Gtk.Justification, default=Gtk.Justification.LEFT)
+    format = GObject.Property(type=str)
+    width = GObject.Property(type=int, maximum=2 ** 16)
+    sorted = GObject.Property(type=bool, default=False)
+    order = GObject.Property(type=Gtk.SortType, default=Gtk.SortType.ASCENDING)
+    expand = GObject.Property(type=bool, default=False)
+    tooltip = GObject.Property(type=str)
+    format_func = GObject.Property(type=object)
+    format_func_data = GObject.Property(type=object, default=None)
+    editable = GObject.Property(type=bool, default=False)
+    searchable = GObject.Property(type=bool, default=False)
+    radio = GObject.Property(type=bool, default=False)
+    spin_adjustment = GObject.Property(type=object)
+    use_stock = GObject.Property(type=bool, default=False)
+    use_markup = GObject.Property(type=bool, default=False)
+    icon_size = GObject.Property(type=Gtk.IconSize, default=Gtk.IconSize.MENU)
+    editable_attribute = GObject.Property(type=str)
+    expander = GObject.Property(type=bool, default=False)
+    ellipsize = GObject.Property(type=Pango.EllipsizeMode, default=Pango.EllipsizeMode.NONE)
+    font_desc = GObject.Property(type=str)
+    column = GObject.Property(type=str)
+    sort_func = GObject.Property(type=object, default=None)
+    pack_end = GObject.Property(type=bool, default=False)
+    width_chars = GObject.Property(type=int, default=-1)
 
     # This can be set in subclasses, to be able to allow custom
     # cell_data_functions, used by SequentialColumn
@@ -299,7 +299,7 @@ class Column(GObject.GObject):
             self.compare = self.compare or compare_func
             self.from_string = conv.from_string
         self._data_type = data
-    data_type = GObject.property(getter=_get_data_type,
+    data_type = GObject.Property(getter=_get_data_type,
                                  setter=_set_data_type,
                                  type=object)
 
@@ -1239,7 +1239,7 @@ class ObjectList(Gtk.HBox):
 
     def _set_selection_mode(self, mode):
         self.set_selection_mode(mode)
-    selection_mode = GObject.property(getter=_get_selection_mode,
+    selection_mode = GObject.Property(getter=_get_selection_mode,
                                       setter=_set_selection_mode,
                                       type=Gtk.SelectionMode,
                                       default=Gtk.SelectionMode.BROWSE,
@@ -2357,7 +2357,7 @@ class ListLabel(Gtk.HBox):
         I also support the GMarkup syntax, so you can use "<b>%d</b>" if
         you want."""
         self._value_widget.set_markup(
-            self._value_format % Glib.markup_escape_text(value))
+            self._value_format % GLib.markup_escape_text(value))
 
     def get_value_widget(self):
         return self._value_widget

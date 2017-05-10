@@ -48,11 +48,11 @@ class ProxyButton(Gtk.Button, ProxyWidgetMixin):
                           datetime.time, Gdk.Pixbuf) + number
     __gtype_name__ = 'ProxyButton'
 
-    data_type = GObject.property(
+    data_type = GObject.Property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    model_attribute = GObject.property(type=str, blurb='Model attribute')
+    model_attribute = GObject.Property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)

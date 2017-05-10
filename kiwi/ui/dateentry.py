@@ -30,7 +30,6 @@ import gettext
 import datetime
 
 from gi.repository import Gtk, Gdk
-from gtk import keysyms
 
 from kiwi.datatypes import converter, ValueUnset, ValidationError
 from kiwi.ui.popup import PopupWindow
@@ -112,7 +111,7 @@ class _DateEntryPopup(PopupWindow):
             self.calendar.grab_focus()
 
     def handle_key_press_event(self, event):
-        if event.keyval == keysyms.Tab:
+        if event.keyval == Gdk.KEY_Tab:
             self.popdown()
             # XXX: private member of dateentry
             self._dateentry._button.grab_focus()
@@ -217,9 +216,9 @@ class DateEntry(Gtk.HBox):
         self.emit('activate')
 
     def _on_entry__scroll_event(self, entry, event):
-        if event.direction == Gdk.SCROLL_UP:
+        if event.direction == Gdk.ScrollDirection.UP:
             days = 1
-        elif event.direction == Gdk.SCROLL_DOWN:
+        elif event.direction == Gdk.ScrollDirection.DOWN:
             days = -1
         else:
             return

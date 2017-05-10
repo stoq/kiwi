@@ -37,13 +37,13 @@ from kiwi.utils import gsignal
 
 class ProxyTextView(Gtk.TextView, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyTextView'
-    data_value = GObject.property(type=str, nick='Data Value')
-    data_type = GObject.property(
+    data_value = GObject.Property(type=str, nick='Data Value')
+    data_type = GObject.Property(
         getter=ValidatableProxyWidgetMixin.get_data_type,
         setter=ValidatableProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    mandatory = GObject.property(type=bool, default=False)
-    model_attribute = GObject.property(type=str, blurb='Model attribute')
+    mandatory = GObject.Property(type=bool, default=False)
+    model_attribute = GObject.Property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)

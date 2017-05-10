@@ -44,12 +44,12 @@ class ProxySpinButton(Gtk.SpinButton, ValidatableProxyWidgetMixin):
     """
     __gtype_name__ = 'ProxySpinButton'
 
-    data_type = GObject.property(
+    data_type = GObject.Property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    mandatory = GObject.property(type=bool, default=False)
-    model_attribute = GObject.property(type=str, blurb='Model attribute')
+    mandatory = GObject.Property(type=bool, default=False)
+    model_attribute = GObject.Property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)

@@ -91,10 +91,12 @@ constants = [
 if True:
     import gtk as Gtk
     import gtk.gdk as Gdk
-    import glib as Glib
+    import glib as GLib
     import gobject as GObject
     import pango as Pango
     import gio as Gio
+
+    GObject.Property = GObject.property
 
     if not _installed_constants:
         for module, original, new in constants:
@@ -109,8 +111,14 @@ if True:
                 setattr(enum, name, value)
         _installed_constants = True
 
+        # keysyms is a lazy module. Access some attributes just to make sure it
+        # loads
+        Gtk.keysyms.a
+        for key in Gtk.keysyms.__dict__:
+            setattr(Gdk, 'KEY_' + key, getattr(Gtk.keysyms, key))
+
 else:
-    from gi.repository import Gtk, Gdk, Glib, GObject, Gio, Pango
+    from gi.repository import Gtk, Gdk, GLib, GObject, Gio, Pango
 
 
-__all__ = [Gtk, Gdk, Glib, GObject, Gio, Pango]
+__all__ = [Gtk, Gdk, GLib, GObject, Gio, Pango]

@@ -26,7 +26,6 @@
 import logging
 
 from gi.repository import Gtk, Gdk
-from gtk import keysyms
 
 from kiwi.component import implements
 from kiwi.enums import ComboColumn, ComboMode
@@ -158,7 +157,7 @@ class _ComboEntryPopup(PopupWindow):
             self.emit('text-selected', model[treeiter][0])
 
     def handle_key_press_event(self, event):
-        if event.keyval == keysyms.Tab:
+        if event.keyval == Gdk.KEY_Tab:
             self.popdown()
             # XXX: private member of comboentry
             self._comboentry._button.grab_focus()
@@ -349,12 +348,12 @@ class ComboEntry(Gtk.VBox):
 
         curr = model[treeiter].path[0]
         # Scroll up, select the previous item
-        if event.direction == Gdk.SCROLL_UP:
+        if event.direction == Gdk.ScrollDirection.UP:
             curr -= 1
             if curr >= 0:
                 self.set_active_iter(model[curr].iter)
         # Scroll down, select the next item
-        elif event.direction == Gdk.SCROLL_DOWN:
+        elif event.direction == Gdk.ScrollDirection.DOWN:
             curr += 1
             if curr < len(model):
                 self.set_active_iter(model[curr].iter)
@@ -367,7 +366,7 @@ class ComboEntry(Gtk.VBox):
         """
         keyval, state = event.keyval, event.state
         state &= Gtk.accelerator_get_default_mod_mask()
-        if ((keyval == keysyms.Down or keyval == keysyms.KP_Down) and
+        if ((keyval == Gdk.KEY_Down or keyval == Gdk.KEY_KP_Down) and
             state == Gdk.MOD1_MASK):
             self.popup()
             return True

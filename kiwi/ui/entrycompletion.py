@@ -21,9 +21,7 @@
 # Author(s): Ronaldo Maia <romaia@async.com.br>
 #
 
-from gi.repository import Gtk, GObject
-from gi.repository import Gdk
-from gtk import keysyms
+from gi.repository import Gtk, GObject, Gdk
 
 from kiwi.python import strip_accents
 from kiwi.utils import gsignal, type_register
@@ -154,7 +152,7 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
         keyval = event.keyval
         index = self._selected_index
 
-        if keyval == keysyms.Up or keyval == keysyms.KP_Up:
+        if keyval == Gdk.KEY_Up or keyval == Gdk.KEY_KP_Up:
             index -= 1
             if index < -1:
                 index = matches - 1
@@ -162,7 +160,7 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
             self._select_item(index)
             return True
 
-        elif keyval == keysyms.Down or keyval == keysyms.KP_Down:
+        elif keyval == Gdk.KEY_Down or keyval == Gdk.KEY_KP_Down:
             index += 1
             if index > matches - 1:
                 index = -1
@@ -170,7 +168,7 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
             self._select_item(index)
             return True
 
-        elif keyval == keysyms.Page_Up:
+        elif keyval == Gdk.KEY_Page_Up:
             if index < 0:
                 index = matches - 1
             elif index > 0 and index - PAGE_INCREMENT < 0:
@@ -184,7 +182,7 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
             self._select_item(index)
             return True
 
-        elif keyval == keysyms.Page_Down:
+        elif keyval == Gdk.KEY_Page_Down:
             if index < 0:
                 index = 0
             elif index < matches - 1 and index + PAGE_INCREMENT > matches - 1:
@@ -198,12 +196,12 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
             self._select_item(index)
             return True
 
-        elif keyval == keysyms.Escape:
+        elif keyval == Gdk.KEY_Escape:
             self.popdown()
             return True
 
-        elif (keyval == keysyms.Return or
-              keyval == keysyms.KP_Enter):
+        elif (keyval == Gdk.KEY_Return or
+              keyval == Gdk.KEY_KP_Enter):
             self.popdown()
             selection = self._treeview.get_selection()
             model, titer = selection.get_selected()

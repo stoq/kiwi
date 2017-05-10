@@ -59,34 +59,34 @@ class Field(GObject.GObject):
     global_sort_key = 0
 
     #: Used by proxy_widgets
-    data_type = GObject.property(type=object)
+    data_type = GObject.Property(type=object)
 
     #: Used by proxy_widgets
-    mandatory = GObject.property(type=bool, default=False)
+    mandatory = GObject.Property(type=bool, default=False)
 
     #: Text of the label that will be next to the field,
     #: Can be None for not displaying any label at all
-    label = GObject.property(type=str)
+    label = GObject.Property(type=str)
 
     #: Name of the label widget inside the view, None
     #: means it should be model_attribute + '_lbl'
-    label_attribute = GObject.property(type=str)
+    label_attribute = GObject.Property(type=str)
 
     #: If we should add an add button next to the widget
-    has_add_button = GObject.property(type=bool, default=False)
+    has_add_button = GObject.Property(type=bool, default=False)
 
     #: If we should add an edit button next to the widget
-    has_edit_button = GObject.property(type=bool, default=False)
+    has_edit_button = GObject.Property(type=bool, default=False)
 
     #: If we should add a delete button next to the widget
-    has_delete_button = GObject.property(type=bool, default=False)
+    has_delete_button = GObject.Property(type=bool, default=False)
 
     #: If this field should be added to a proxy
-    proxy = GObject.property(type=bool, default=False)
+    proxy = GObject.Property(type=bool, default=False)
 
     #: When attaching this field to a form, span that much on the
     #: table. Analogous to html columns' colspan property
-    colspan = GObject.property(type=int, default=1)
+    colspan = GObject.Property(type=int, default=1)
 
     #: This can be used by subclasses to override the default
     #: values for properties
@@ -102,7 +102,7 @@ class Field(GObject.GObject):
         self.edit_button = None
         self.delete_button = None
 
-        # FIXME: widget_data_type should be a GObject.property, but it's not
+        # FIXME: widget_data_type should be a GObject.Property, but it's not
         # accepting some data types.
         data_type = kwargs.pop('widget_data_type', None)
         if data_type is not None:
@@ -286,9 +286,9 @@ class TextField(Field):
     I am a text field with one line, editable by the user,
     rendered as an entry.
     """
-    editable = GObject.property(type=bool, default=True)
-    input_mask = GObject.property(type=object)
-    max_length = GObject.property(type=int, default=0)
+    editable = GObject.Property(type=bool, default=True)
+    input_mask = GObject.Property(type=object)
+    max_length = GObject.Property(type=int, default=0)
     widget_data_type = unicode
 
     def build_widget(self):
@@ -344,8 +344,8 @@ class ChoiceField(Field):
     I am a field representing a set of choices,
     rendered as a ComboBox or ComboEntry.
     """
-    values = GObject.property(type=object)
-    use_entry = GObject.property(type=bool, default=False)
+    values = GObject.Property(type=object)
+    use_entry = GObject.Property(type=bool, default=False)
     widget_data_type = object
 
     def build_widget(self):
@@ -411,7 +411,7 @@ class NumericField(Field):
     rendered as a spin button.
     """
     widget_data_type = Decimal
-    digits = GObject.property(type=int, default=0)
+    digits = GObject.Property(type=int, default=0)
 
     def build_widget(self):
         entry = ProxySpinButton()

@@ -26,7 +26,7 @@
 """A hyper link widget."""
 
 
-from gi.repository import Gtk, Glib, GObject, Gdk
+from gi.repository import Gtk, GLib, GObject, Gdk
 
 from kiwi.utils import gsignal, type_register
 
@@ -46,16 +46,16 @@ class HyperLink(Gtk.EventBox):
 
     __gtype_name__ = 'HyperLink'
 
-    text = GObject.property(type=str, default='')
-    normal_color = GObject.property(type=str, default='#0000c0')
-    normal_underline = GObject.property(type=bool, default=False)
-    normal_bold = GObject.property(type=bool, default=False)
-    hover_color = GObject.property(type=str, default='#0000c0')
-    hover_underline = GObject.property(type=bool, default=True)
-    hover_bold = GObject.property(type=bool, default=False)
-    active_color = GObject.property(type=str, default='#c00000')
-    active_underline = GObject.property(type=bool, default=True)
-    active_bold = GObject.property(type=bool, default=False)
+    text = GObject.Property(type=str, default='')
+    normal_color = GObject.Property(type=str, default='#0000c0')
+    normal_underline = GObject.Property(type=bool, default=False)
+    normal_bold = GObject.Property(type=bool, default=False)
+    hover_color = GObject.Property(type=str, default='#0000c0')
+    hover_underline = GObject.Property(type=bool, default=True)
+    hover_bold = GObject.Property(type=bool, default=False)
+    active_color = GObject.Property(type=str, default='#c00000')
+    active_underline = GObject.Property(type=bool, default=True)
+    active_bold = GObject.Property(type=bool, default=False)
 
     gsignal('clicked')
     gsignal('right-clicked')
@@ -181,7 +181,7 @@ class HyperLink(Gtk.EventBox):
         """
         Build a marked up string depending on parameters.
         """
-        out = '<span color="%s">%s</span>' % (color, Glib.markup_escape_text(text))
+        out = '<span color="%s">%s</span>' % (color, GLib.markup_escape_text(text))
         if underline:
             out = '<u>%s</u>' % out
         if bold:

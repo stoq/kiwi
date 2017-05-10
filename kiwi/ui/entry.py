@@ -100,9 +100,9 @@ class KiwiEntry(Gtk.Entry):
     """
     __gtype_name__ = 'KiwiEntry'
 
-    completion_ignore_case = GObject.property(type=bool, default=True)
-    completion_ignore_accents = GObject.property(type=bool, default=True)
-    completion_hightlight_match = GObject.property(type=bool, default=True)
+    completion_ignore_case = GObject.Property(type=bool, default=True)
+    completion_ignore_accents = GObject.Property(type=bool, default=True)
+    completion_hightlight_match = GObject.Property(type=bool, default=True)
 
     def __init__(self):
         self._completion = None
@@ -160,7 +160,7 @@ class KiwiEntry(Gtk.Entry):
         except MaskError:
             pass
 
-    mask = GObject.property(getter=_get_mask,
+    mask = GObject.Property(getter=_get_mask,
                             setter=_set_mask,
                             type=str, default='')
 

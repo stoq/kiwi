@@ -36,12 +36,12 @@ from kiwi.ui.proxywidget import ProxyWidgetMixin
 class ProxyRadioButton(Gtk.RadioButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyRadioButton'
     allowed_data_types = object,
-    data_value = GObject.property(type=str, nick='Data Value')
-    data_type = GObject.property(
+    data_value = GObject.Property(type=str, nick='Data Value')
+    data_type = GObject.Property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    model_attribute = GObject.property(type=str, blurb='Model attribute')
+    model_attribute = GObject.Property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)

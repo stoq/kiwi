@@ -2,7 +2,7 @@
 
 import os
 
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 
 from kiwi.ui.delegates import GladeDelegate, SlaveDelegate
 from kiwi.ui.gadgets import quit_if_last, set_background, set_foreground
@@ -50,8 +50,8 @@ class ListSlave(SlaveDelegate):
 class Shell(GladeDelegate):
     def __init__(self):
         keyactions = {
-            Gtk.keysyms.a: self.on_ok__clicked,
-            Gtk.keysyms.b: self.on_cancel__clicked,
+            Gdk.KEY_a: self.on_ok__clicked,
+            Gdk.KEY_b: self.on_cancel__clicked,
         }
 
         GladeDelegate.__init__(self, gladefile="news_shell.ui",

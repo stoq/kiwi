@@ -151,15 +151,15 @@ class PopupWindow(Gtk.Window):
         """
         keyval = event.keyval
         state = event.state & Gtk.accelerator_get_default_mod_mask()
-        if (keyval == Gtk.keysyms.Escape or
+        if (keyval == Gdk.KEY_Escape or
             (state == Gdk.ModifierType.MOD1_MASK and
-             (keyval == Gtk.keysyms.Up or keyval == Gtk.keysyms.KP_Up))):
+             (keyval == Gdk.KEY_Up or keyval == Gdk.KEY_KP_Up))):
             self.popdown()
             return True
-        elif keyval in [Gtk.keysyms.Return,
-                        Gtk.keysyms.KP_Enter,
-                        Gtk.keysyms.KP_Space,
-                        Gtk.keysyms.Tab]:
+        elif keyval in [Gdk.KEY_Return,
+                        Gdk.KEY_KP_Enter,
+                        Gdk.KEY_KP_Space,
+                        Gdk.KEY_Tab]:
             self.confirm()
             return True
 

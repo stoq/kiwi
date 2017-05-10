@@ -72,8 +72,8 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
                           datetime.datetime, object) + number
 
     __gtype_name__ = 'ProxyEntry'
-    mandatory = GObject.property(type=bool, default=False)
-    model_attribute = GObject.property(type=str, blurb='Model attribute')
+    mandatory = GObject.Property(type=bool, default=False)
+    model_attribute = GObject.Property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
@@ -122,7 +122,7 @@ class ProxyEntry(KiwiEntry, ValidatableProxyWidgetMixin):
         except MaskError:
             pass
 
-    data_type = GObject.property(
+    data_type = GObject.Property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=_set_data_type,
         type=str, blurb='Data Type')
@@ -213,11 +213,11 @@ class ProxyDateEntry(DateEntry, ValidatableProxyWidgetMixin):
     # accept bool values
     allowed_data_types = datetime.date,
 
-    data_type = GObject.property(
+    data_type = GObject.Property(
         getter=ProxyWidgetMixin.get_data_type,
         setter=ProxyWidgetMixin.set_data_type,
         type=str, blurb='Data Type')
-    model_attribute = GObject.property(type=str, blurb='Model attribute')
+    model_attribute = GObject.Property(type=str, blurb='Model attribute')
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
@@ -279,7 +279,7 @@ class ProxyDateEntry(DateEntry, ValidatableProxyWidgetMixin):
 
     def _set_mandatory(self, value):
         self.entry.props.mandatory = value
-    mandatory = GObject.property(getter=_get_mandatory,
+    mandatory = GObject.Property(getter=_get_mandatory,
                                  setter=_set_mandatory,
                                  type=bool, default=False)
 

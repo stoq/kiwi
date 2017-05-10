@@ -21,7 +21,7 @@
 # Author(s): Ronaldo Maia <romaia@async.com.br>
 #
 
-from gi.repository import Gtk, Glib, GObject
+from gi.repository import Gtk, GLib, GObject
 
 from kiwi.ui.gadgets import gdk_color_to_string, draw_editable_border
 
@@ -61,8 +61,8 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
     don't make sense).
     """
 
-    label = GObject.property(type=str, default="")
-    data = GObject.property(type=object)
+    label = GObject.Property(type=str, default="")
+    data = GObject.Property(type=object)
 
     def __init__(self, use_markup=False):
         """
@@ -137,7 +137,7 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
 
     def _escape(self, text):
         if not self.use_markup:
-            text = Glib.markup_escape_text(text)
+            text = GLib.markup_escape_text(text)
         return text
 
     def do_get_size(self, widget, cell_area):

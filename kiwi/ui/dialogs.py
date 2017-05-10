@@ -25,7 +25,7 @@ import os
 import gettext
 
 import atk
-from gi.repository import Gtk, Glib
+from gi.repository import Gtk, GLib
 
 __all__ = ['error', 'info', 'messagedialog', 'warning', 'yesno', 'save',
            'selectfile', 'selectfolder', 'HIGAlertDialog', 'BaseDialog',
@@ -114,7 +114,7 @@ class HIGAlertDialog(Gtk.Dialog):
     def set_primary(self, text, bold=True):
         if bold:
             text = "<span weight=\"bold\" size=\"larger\">%s</span>" % (
-                Glib.markup_escape_text(text))
+                GLib.markup_escape_text(text))
         self._primary_label.set_markup(text)
 
     def set_secondary(self, text):
@@ -125,7 +125,7 @@ class HIGAlertDialog(Gtk.Dialog):
 
     def set_details(self, text, use_markup=False):
         if use_markup:
-            self._details_label.set_markup(Glib.markup_escape_text(text))
+            self._details_label.set_markup(GLib.markup_escape_text(text))
         else:
             self._details_label.set_text(text)
         self._expander.show()
