@@ -13,8 +13,8 @@ X-Python-Version: >= 2.6
 Package: python-kiwi
 Architecture: all
 Depends: ${misc:Depends}, ${python:Depends},
- python-gtk2 (>= 2.24.0), libgtk2.0-0 (>= 2.24.0), python-setuptools (>= 0.6b3-1)
-Breaks: stoq (< 1.12.90)
+ python-gi (>= 3.12), python-gi-cairo (>= 3.12), gir1.2-gtk-3.0 (>= 3.10), python-setuptools (>= 0.6b3-1)
+Breaks: stoq (< 2.1.90)
 Replaces: kiwi
 Homepage: http://www.async.com.br/projects/kiwi/
 Description: a graphical framework to construct simple UI
