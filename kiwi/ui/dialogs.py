@@ -89,6 +89,7 @@ class HIGAlertDialog(Gtk.Dialog):
             label.set_line_wrap(True)
             label.set_selectable(True)
             label.set_alignment(0.0, 0.5)
+            label.set_max_width_chars(80)
 
         hbox = Gtk.HBox(False, 12)
         hbox.set_border_width(5)
