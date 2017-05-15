@@ -742,12 +742,13 @@ class KiwiEntry(Gtk.Entry):
             icon = 'secondary-icon-pixbuf'
         self.set_property(icon, pixbuf)
 
-    def update_background(self, color):
-        self.override_background_color(Gtk.StateFlags.NORMAL, color)
-
-    def get_background(self):
+    def add_css_class(self, css_class):
         sc = self.get_style_context()
-        return sc.get_background_color(Gtk.StateFlags.NORMAL)
+        sc.add_class(css_class)
+
+    def remove_css_class(self, css_class):
+        sc = self.get_style_context()
+        sc.remove_class(css_class)
 
     # IComboMixin
 

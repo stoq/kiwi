@@ -1,7 +1,14 @@
 @define-color kiwi_error_color #ffd5d5;
+@define-color kiwi_mandatory_color #fcf6c6;
 
-.kiwi-validation-error {
+.kiwi-validation-error-bg {
+    background: @kiwi_error_color;
     background-color: @kiwi_error_color;
+}
+
+.kiwi-validation-mandatory-bg {
+    background: @kiwi_mandatory_color;
+    background-color: @kiwi_mandatory_color;
 }
 
 MultiComboCloseButton {

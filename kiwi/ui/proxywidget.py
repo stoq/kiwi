@@ -30,13 +30,12 @@ import base64
 import gettext
 import logging
 
-from gi.repository import Gtk, GObject, Gdk, GdkPixbuf
+from gi.repository import Gtk, GObject, GdkPixbuf
 
 from kiwi import ValueUnset
 from kiwi.component import implements
 from kiwi.datatypes import ValidationError, converter, BaseConverter
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
-from kiwi.ui.gadgets import FadeOut
 from kiwi.ui.pixbufutils import pixbuf_from_string
 
 log = logging.getLogger('widget proxy')
@@ -218,18 +217,17 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         # Inicial valid state is unkown (None), so that when _set_valid_state is
         # called for the first time, the signal gets emitted
         self._valid = None
-        self._fade = FadeOut(self)
-        self._fade.connect('color-changed', self._on_fadeout__color_changed)
+        self._css_class = None
         self.connect('notify::mandatory', self._on_notify__mandatory)
         self.connect('notify::sensitive', self._on_notify__sensitive)
         self.connect('notify::visible', self._on_notify__visible)
 
     # Override in subclass
 
-    def update_background(self, color):
+    def add_css_class(self, css_class):
         "Implement in subclass"
 
-    def get_background(self):
+    def remove_css_class(self, css_class):
         "Implement in subclass"
 
     def set_pixbuf(self, pixbuf):
@@ -312,9 +310,8 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         log.debug('Setting state for %s to VALID' % self.model_attribute)
         self._set_valid_state(True)
 
-        self._fade.stop()
         self._set_pixbuf(None)
-        self.update_background(None)
+        self._set_css(None)
 
     def set_invalid(self, text=None, fade=True):
         """Changes the validation state to invalid.
@@ -330,29 +327,8 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         if not text:
             text = _("'%s' is not a valid value for this field") % self.read()
 
-        if not fade:
-            self._set_pixbuf(_load_error_icon())
-            color = Gdk.RGBA()
-            color.parse(self._fade.ERROR_COLOR)
-            self.update_background(color)
-            return
-
-        # When the fading animation is finished, set the error icon
-        # We don't need to check if the state is valid, since stop()
-        # (which removes this timeout) is called as soon as the user
-        # types valid data.
-        def done(fadeout, c):
-            self._set_pixbuf(_load_error_icon())
-            self.queue_draw()
-            fadeout.disconnect(c.signal_id)
-
-        class SignalContainer:
-            pass
-        c = SignalContainer()
-        c.signal_id = self._fade.connect('done', done, c)
-
-        if self._fade.start(self.get_background()):
-            self._set_pixbuf(None)
+        self._set_css('kiwi-validation-error-bg')
+        self._set_pixbuf(_load_error_icon())
 
         # If you try to set the tooltip before the icon in Gtk.Entry, a
         # segfault happens.
@@ -367,10 +343,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         if self.mandatory:
             self._draw_stock_icon(MANDATORY_ICON)
             self.set_tooltip(_('This field is mandatory'))
-            self._fade.stop()
-            color = Gdk.RGBA()
-            color.parse(MANDATORY_COLOR)
-            self.update_background(color)
+            self._set_css('kiwi-validation-mandatory-bg')
             valid = False
         else:
             valid = True
@@ -378,6 +351,14 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         self._set_valid_state(valid)
 
     # Private
+
+    def _set_css(self, css_class):
+        if self._css_class is not None:
+            self.remove_css_class(self._css_class)
+            self._css_class = None
+        if css_class is not None:
+            self.add_css_class(css_class)
+            self._css_class = css_class
 
     def _set_pixbuf(self, pixbuf):
         # Even though self.validate will call this with None when not
@@ -409,9 +390,6 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
         self.queue_draw()
 
     # Callbacks
-
-    def _on_fadeout__color_changed(self, fadeout, color):
-        self.update_background(color)
 
     def _on_notify__mandatory(self, obj, pspec):
         self.validate()

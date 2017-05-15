@@ -283,9 +283,6 @@ class ProxyDateEntry(DateEntry, ValidatableProxyWidgetMixin):
         ValidatableProxyWidgetMixin.set_blank(self)
         self.entry.set_blank()
 
-    def get_background(self):
-        return self.entry.get_background()
-
     def set_pixbuf(self, pixbuf):
         self.entry.set_pixbuf(pixbuf)
 

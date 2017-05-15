@@ -664,10 +664,12 @@ class ComboEntry(Gtk.Box):
     def set_pixbuf(self, pixbuf):
         self.entry.set_pixbuf(pixbuf)
 
-    def update_background(self, color):
-        self.entry.update_background(color)
+    def add_css_class(self, css_class):
+        sc = self.entry.get_style_context()
+        sc.add_class(css_class)
 
-    def get_background(self):
-        return self.entry.get_background()
+    def remove_css_class(self, css_class):
+        sc = self.entry.get_style_context()
+        sc.remove_class(css_class)
 
 type_register(ComboEntry)
