@@ -75,9 +75,6 @@ class _MultiComboPopup(PopupWindow):
         self._treeview.add_events(
             Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.KEY_PRESS_MASK)
 
-        self._treeview.override_background_color(Gtk.StateFlags.ACTIVE,
-                                                 self._get_selection_color())
-
         self._selection = self._treeview.get_selection()
         self._selection.set_mode(Gtk.SelectionMode.BROWSE)
 
@@ -153,17 +150,6 @@ class _MultiComboPopup(PopupWindow):
         monitor = screen.get_monitor_geometry(monitor_num)
 
         self.set_size_request(*self.get_size(allocation, monitor))
-
-    def _get_selection_color(self):
-        settings = Gtk.Settings.get_default()
-        for line in settings.props.gtk_color_scheme.split('\n'):
-            if not line:
-                continue
-            key, value = line.split(' ')
-            if key == 'selected_bg_color:':
-                color = Gdk.RGBA
-                color.parse(value)
-                return color
 
     def _select_path_for_event(self, event):
         path = self._treeview.get_path_at_pos(int(event.x), int(event.y))

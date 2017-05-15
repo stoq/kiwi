@@ -77,9 +77,6 @@ _non_interactive = [
 if hasattr(Gtk, 'Progress'):
     _non_interactive.append(Gtk.Progress)
 
-_color_red = Gdk.RGBA()
-_color_red.from_color(Gdk.color_parse('red'))
-
 
 class SlaveView(GObject.GObject):
     """
@@ -767,15 +764,13 @@ class SlaveView(GObject.GObject):
         if False in validation.values():
             is_valid = False
 
-        if is_valid:
-            color = None
-        else:
-            color = _color_red
+        sc = label.get_style_context()
+        css_class = 'kiwi-validation-error-fg'
 
-        # Only modify active state, since that's the (somewhat badly named)
-        # state used for the pages which are not selected.
-        label.override_color(Gtk.StateFlags.ACTIVE, color)
-        label.override_color(Gtk.StateFlags.NORMAL, color)
+        if is_valid:
+            sc.remove_class(css_class)
+        else:
+            sc.add_class(css_class)
 
     def check_and_notify_validity(self, force=False):
         # Current view is only valid if we have no invalid children
