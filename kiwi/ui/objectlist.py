@@ -157,8 +157,8 @@ class Column(GObject.GObject):
     """
     __gtype_name__ = 'Column'
     attribute = GObject.Property(type=str,
-                                 flags=(GObject.PARAM_READWRITE |
-                                        GObject.PARAM_CONSTRUCT_ONLY))
+                                 flags=(GObject.ParamFlags.READWRITE |
+                                        GObject.ParamFlags.CONSTRUCT_ONLY))
     title = GObject.Property(type=str)
     visible = GObject.Property(type=bool, default=True)
     justify = GObject.Property(type=Gtk.Justification, default=Gtk.Justification.LEFT)
