@@ -276,7 +276,7 @@ class Library(Environment):
 
         if platform.system() == 'Windows':
             from ctypes import cdll
-            libintl = cdll.intl
+            libintl = cdll.LoadLibrary("libintl-8.dll")
             libintl.bindtextdomain(domain, localedir)
             libintl.bind_textdomain_codeset(domain, 'UTF-8')
             if enable_global:
