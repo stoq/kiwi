@@ -280,12 +280,12 @@ class DateEntry(Gtk.Box):
         :param date: date to set
         :type date: a datetime.date instance or None
         """
-        if not isinstance(date, datetime.date) and date is not None:
+        if not isinstance(date, datetime.date) and date not in [None, ValueUnset]:
             raise TypeError(
                 "date must be a datetime.date instance or None, not %r" % (
                     date,))
 
-        if date is None:
+        if date in [None, ValueUnset]:
             value = ''
         else:
             value = date_converter.as_string(date)
