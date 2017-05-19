@@ -157,7 +157,8 @@ class Column(GObject.GObject):
     """
     __gtype_name__ = 'Column'
     attribute = GObject.Property(type=str,
-                                 flags=(GObject.ParamFlags.READWRITE |
+                                 flags=(GObject.ParamFlags.READABLE |
+                                        GObject.ParamFlags.WRITABLE |
                                         GObject.ParamFlags.CONSTRUCT_ONLY))
     title = GObject.Property(type=str)
     visible = GObject.Property(type=bool, default=True)
