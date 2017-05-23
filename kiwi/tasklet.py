@@ -961,7 +961,7 @@ class Tasklet(object):
         self.return_value = retval
         self.wait_list = []
 
-        callbacks = self._join_callbacks.values()
+        callbacks = list(self._join_callbacks.values())
         self._join_callbacks.clear()
         for callback, args in callbacks:
             callback(self, retval, *args)

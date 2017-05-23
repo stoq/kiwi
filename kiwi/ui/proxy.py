@@ -335,7 +335,7 @@ class Proxy:
                                  "forgetten to add `:' to the name in "
                                  "the widgets list)"
                                  % (attribute, self,
-                                    self._model_attributes.keys()))
+                                    list(self._model_attributes.keys())))
 
         # The type of value should match the data-type property. The two
         # exceptions to this rule are ValueUnset and None

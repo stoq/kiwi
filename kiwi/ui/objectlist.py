@@ -431,7 +431,7 @@ class Column(GObject.GObject):
                 raise TypeError("data_type must be a subclass of enum")
 
             enum_model = Gtk.ListStore(str, object)
-            items = data_type.names.items()
+            items = list(data_type.names.items())
             items.sort()
             for key, value in items:
                 enum_model.append((key.lower().capitalize(), value))

@@ -127,7 +127,7 @@ class ConverterRegistry:
 
     def get_converters(self, base_classes=None):
         if base_classes is None:
-            return self._converters.values()
+            return list(self._converters.values())
 
         converters = []
         if object in base_classes:

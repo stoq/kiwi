@@ -159,9 +159,9 @@ class Settable:
     some attributes; for example, C{X()(y=z,a=b)}.
     """
     def __init__(self, **kw):
-        self._attrs = kw.keys()
+        self._attrs = list(kw.keys())
         self._attrs.sort()
-        for k, v in kw.iteritems():
+        for k, v in kw.items():
             setattr(self, k, v)
 
     def getattributes(self):

@@ -398,7 +398,7 @@ class SlaveView(GObject.GObject):
         """
         # XXX: recurse through containers from toplevel widget, better
         # idea and will work.
-        widgets = widgets or self.widgets or self.__dict__.keys()
+        widgets = widgets or self.widgets or list(self.__dict__.keys())
         top_widget = None
         for widget_name in widgets:
             widget = getattr(self, widget_name)
