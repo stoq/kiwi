@@ -136,7 +136,7 @@ class DesktopParser(ConfigParser):
         :param section: section name
         :param option: an option
         """
-        return map(int, self.get_string_list(section, option))
+        return list(map(int, self.get_string_list(section, option)))
 
     def set_integer_list(self, section, option, values):
         """
@@ -146,7 +146,7 @@ class DesktopParser(ConfigParser):
         :param option: an option
         :param values: list of integer values
         """
-        self.set_string_list(section, option, map(str, values))
+        self.set_string_list(section, option, list(map(str, values)))
 
     def get_boolean_list(self, section, option):
         """
@@ -155,7 +155,7 @@ class DesktopParser(ConfigParser):
         :param section: section name
         :param option: an option
         """
-        return map(_tobool, self.get_string_list(section, option))
+        return list(map(_tobool, self.get_string_list(section, option)))
 
     def set_boolean_list(self, section, option, values):
         """
@@ -165,7 +165,7 @@ class DesktopParser(ConfigParser):
         :param option: an option
         :param values: list of boolean values
         """
-        self.set_string_list(section, option, map(_frombool, values))
+        self.set_string_list(section, option, list(map(_frombool, values)))
 
     def set_string_list_locale(self, section, option, locale, values):
         """

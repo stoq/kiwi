@@ -73,7 +73,7 @@ class TestComboBox(unittest.TestCase):
     def testClear(self):
         self._prefill()
         self.combo.clear()
-        self.assertEqual(map(list, self.combo.get_model()), [])
+        self.assertEqual(list(map(list, self.combo.get_model())), [])
 
 
 class FakeView:

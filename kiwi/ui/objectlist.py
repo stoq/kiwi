@@ -1489,7 +1489,7 @@ class ObjectList(Gtk.Box):
             row = self._model[path]
         except IndexError:
             print('path %s was not found in model: %s' % (
-                path, map(list, self._model)))
+                path, list(map(list, self._model))))
             return
         item = row[COL_MODEL]
         self.emit('row-activated', item)
