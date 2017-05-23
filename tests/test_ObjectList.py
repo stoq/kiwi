@@ -7,7 +7,7 @@ from kiwi.datatypes import converter
 from kiwi.ui.objectlist import ObjectList, ObjectTree, Column
 from kiwi.python import Settable
 
-from utils import refresh_gui
+from .utils import refresh_gui
 
 
 class Person:
@@ -47,27 +47,27 @@ class ColumnTests(unittest.TestCase):
 
     def testAttribute(self):
         column = Column('foo')
-        self.assertEquals(column.attribute, "foo")
+        self.assertEqual(column.attribute, "foo")
 
     def testGObjectNew(self):
         column = GObject.new(Column, attribute='foo')
-        self.assertEquals(column.attribute, "foo")
+        self.assertEqual(column.attribute, "foo")
 
     def testCompareFunc(self):
         def sort_func():
             return True
 
         column = Column('foo', data_type=str, sort_func=sort_func)
-        self.assertEquals(column.compare, sort_func)
+        self.assertEqual(column.compare, sort_func)
 
         column = Column('foo', data_type=str)
-        self.assertEquals(column.compare, column._str_compare)
+        self.assertEqual(column.compare, column._str_compare)
 
         data_type = int
         conv = converter.get_converter(data_type)
 
         column = Column('foo', data_type=data_type)
-        self.assertEquals(column.compare, conv.get_compare_function())
+        self.assertEqual(column.compare, conv.get_compare_function())
 
 
 class DataTests(unittest.TestCase):

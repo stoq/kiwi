@@ -43,7 +43,7 @@ class ProxyLabel(Gtk.Label, ProxyWidgetMixin):
     # We wont emmit content-changed, but kiwi.proxy still relies on this.
     gsignal('content-changed')
 
-    allowed_data_types = (basestring, datetime.date, datetime.datetime,
+    allowed_data_types = (str, datetime.date, datetime.datetime,
                           datetime.time) + number
     _label_replacements = {}
 
@@ -109,8 +109,7 @@ class ProxyLabel(Gtk.Label, ProxyWidgetMixin):
         # sorting is been done so we can be sure of the order of the
         # attributes. Helps writing tests cases
         attrs = self._attr_dic
-        keys = list(attrs.keys())
-        keys.sort()
+        keys = sorted(attrs.keys())
 
         attr_pairs = ['%s="%s"' % (key, attrs[key]) for key in keys
                       if attrs[key]]

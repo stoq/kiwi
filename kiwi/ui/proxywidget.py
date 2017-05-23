@@ -33,7 +33,7 @@ import logging
 from gi.repository import Gtk, GObject, GdkPixbuf
 
 from kiwi import ValueUnset
-from kiwi.component import implements
+from kiwi.component import implementer
 from kiwi.datatypes import ValidationError, converter, BaseConverter
 from kiwi.interfaces import IProxyWidget, IValidatableProxyWidget
 from kiwi.ui.pixbufutils import pixbuf_from_string
@@ -64,6 +64,7 @@ class _PixbufConverter(BaseConverter):
 converter.add(_PixbufConverter)
 
 
+@implementer(IProxyWidget)
 class ProxyWidgetMixin(object):
     """This class is a mixin that provide a common interface for KiwiWidgets.
 
@@ -74,8 +75,6 @@ class ProxyWidgetMixin(object):
       in this class.
     """
 
-    implements(IProxyWidget)
-
     allowed_data_types = ()
 
     # To be able to call the as/from_string without setting the data_type
@@ -83,7 +82,7 @@ class ProxyWidgetMixin(object):
     _converter = None
 
     def __init__(self):
-        if not type(self.allowed_data_types) == tuple:
+        if not isinstance(self.allowed_data_types, tuple):
             raise TypeError("%s.allowed_data_types must be a tuple" % (
                 self.allowed_data_types))
         self._data_format = None
@@ -106,12 +105,6 @@ class ProxyWidgetMixin(object):
             return data_type
         elif data_type == '':
             return None
-
-        # FIXME: This is to make the python3 transition easier for stoq
-        if data_type == 'str':
-            data_type = 'unicode'
-        elif data_type == 'bytes':
-            data_type = 'str'
 
         # This may convert from string to type,
         # A type object will always be returned
@@ -184,7 +177,8 @@ VALIDATION_ICON_WIDTH = 16
 MANDATORY_ICON = Gtk.STOCK_EDIT
 MANDATORY_COLOR = '#fcf6c6'
 
-VALIDATION_PNG = """iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAABGdBTUEAANbY1E9YMgAAABl0RVh0
+VALIDATION_PNG = b"""\
+iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAABGdBTUEAANbY1E9YMgAAABl0RVh0
 U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAFGSURBVHjaYmRAA/8ZGOyBlAMDbnCAkYHh
 ILIAQAAxohkw/5+CYsJ/BUWcJjDduMbA+OJFAlDjQpgYQAAxohhgYJjwNyCEAS/48Z2BZcEcFIMA
 AoiRJANwGAQQQIxAA/z/aWhu+BsRw0AqYAYatFVHJwAggJiAbIP/EpIM5ABQ2P3g5CwACCAmBioA
@@ -205,6 +199,7 @@ def _load_error_icon():
     return _error_icon
 
 
+@implementer(IValidatableProxyWidget)
 class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     """Class used by some Kiwi Widgets that need to support mandatory
     input and validation features such as custom validation and data-type
@@ -214,8 +209,6 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
     The validatation feature provides a way to check the data entered and to
     display information about what is wrong.
     """
-
-    implements(IValidatableProxyWidget)
 
     def __init__(self, widget=None):
         ProxyWidgetMixin.__init__(self)

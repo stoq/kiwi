@@ -47,7 +47,7 @@ import time
 
 from kiwi import ValueUnset
 from kiwi.enums import Alignment
-from kiwi.python import enum
+from kiwi.python import enum, cmp
 
 if sys.platform == 'win32':
     try:
@@ -67,7 +67,7 @@ __all__ = ['ValidationError', 'lformat', 'converter']
 
 _ = lambda m: gettext.dgettext('kiwi', m)
 
-number = (int, float, long, decimal.Decimal)
+number = (int, float, decimal.Decimal)
 
 
 class ValidationError(Exception):
@@ -234,6 +234,21 @@ class BaseConverter(object):
         return None
 
 
+class _BytesConverter(BaseConverter):
+    type = bytes
+    name = _('Bytes')
+
+    def as_string(self, value, format=None):
+        if format:
+            value = format % value
+        return ''.join(chr(i) for i in value)
+
+    def from_string(self, value):
+        return bytes(ord(i) for i in value)
+
+converter.add(_BytesConverter)
+
+
 class _StringConverter(BaseConverter):
     type = str
     name = _('String')
@@ -244,24 +259,11 @@ class _StringConverter(BaseConverter):
         return format % value
 
     def from_string(self, value):
+        if isinstance(value, bytes):
+            value = value.decode('utf-8')
         return str(value)
 
 converter.add(_StringConverter)
-
-
-class _UnicodeConverter(BaseConverter):
-    type = unicode
-    name = _('Unicode')
-
-    def as_string(self, value, format=None):
-        if format is None:
-            format = u'%s'
-        return format % value
-
-    def from_string(self, value):
-        return value.decode('utf-8')
-
-converter.add(_UnicodeConverter)
 
 
 class _IntConverter(BaseConverter):
@@ -292,13 +294,6 @@ class _IntConverter(BaseConverter):
                 _("%s could not be converted to an integer") % value)
 
 converter.add(_IntConverter)
-
-
-class _LongConverter(_IntConverter):
-    type = long
-    name = _('Long')
-
-converter.add(_LongConverter)
 
 
 class _BoolConverter(BaseConverter):

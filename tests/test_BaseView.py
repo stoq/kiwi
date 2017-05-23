@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 import unittest
 from gi.repository import Gtk, Gdk
 
-from utils import refresh_gui
+from .utils import refresh_gui
 
 from kiwi.controllers import BaseController
 from kiwi.ui.gadgets import set_foreground, get_foreground, \

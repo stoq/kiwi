@@ -30,15 +30,11 @@ An enchanced version of GtkEntry that supports icons and masks
 import gettext
 import re
 import string
-try:
-    set
-except NameError:
-    from sets import Set as set
 
 from gi.repository import Gtk, GObject, Gdk, Pango
 
 from kiwi.enums import Direction
-from kiwi.python import strip_accents
+from kiwi.python import cmp, strip_accents
 from kiwi.ui.entrycompletion import KiwiEntryCompletion
 from kiwi.utils import type_register
 
@@ -61,9 +57,9 @@ INPUT_FORMATS = {
 
 INPUT_CHAR_MAP = {
     INPUT_ASCII_LETTER: lambda text: text in string.ascii_letters,
-    INPUT_ALPHA: unicode.isalpha,
-    INPUT_ALPHANUMERIC: unicode.isalnum,
-    INPUT_DIGIT: unicode.isdigit,
+    INPUT_ALPHA: str.isalpha,
+    INPUT_ALPHANUMERIC: str.isalnum,
+    INPUT_DIGIT: str.isdigit,
 }
 
 
@@ -212,7 +208,7 @@ class KiwiEntry(Gtk.Entry):
         # First, reset
         self._mask_validators = []
 
-        for i, c in enumerate(unicode(mask)):
+        for i, c in enumerate(mask):
             if c in INPUT_FORMATS:
                 self._mask_validators += [INPUT_FORMATS[c]]
             else:
@@ -251,7 +247,7 @@ class KiwiEntry(Gtk.Entry):
         for validator in self._mask_validators[start:end]:
             if isinstance(validator, int):
                 s += ' '
-            elif isinstance(validator, unicode):
+            elif isinstance(validator, str):
                 s += validator
             else:
                 raise AssertionError
@@ -301,7 +297,7 @@ class KiwiEntry(Gtk.Entry):
     # Private
 
     def _get_next_non_static_char_pos(self, pos, direction=Direction.LEFT):
-        text = unicode(self.get_text())
+        text = self.get_text()
 
         pos = pos + direction
         while 0 <= pos < len(text):
@@ -328,16 +324,16 @@ class KiwiEntry(Gtk.Entry):
         self._block_insert = False
 
     def _insert_char_at_position(self, pos, char):
-        text = unicode(self.get_text())
+        text = self.get_text()
         if pos >= len(text):
             return
         validator = self._mask_validators[pos]
 
-        if isinstance(validator, unicode) and char == validator:
+        if isinstance(validator, str) and char == validator:
             # Trying to insert the same static char. Nothing to do, but return
             # pos to avoid the callsite thinking it was an error
             return pos
-        elif isinstance(validator, unicode):
+        elif isinstance(validator, str):
             # This is a static char. Try to insert the char on next pos
             return self._insert_char_at_position(pos + 1, char)
         elif isinstance(validator, int) and INPUT_CHAR_MAP[validator](char):
@@ -361,7 +357,7 @@ class KiwiEntry(Gtk.Entry):
             return pos
 
     def _delete_char_at_position(self, pos):
-        text = unicode(self.get_text())
+        text = self.get_text()
         char = text[pos]
         validator = self._mask_validators[pos]
         assert 0 <= pos < len(text)
@@ -369,7 +365,7 @@ class KiwiEntry(Gtk.Entry):
         if char == ' ':
             # Already removed
             pass
-        elif isinstance(validator, unicode):
+        elif isinstance(validator, str):
             # We will not remove static chars so try to remove the next one.
             # The callsite should handle to case where the char to remove is
             # the previous one. We don't do it here to keep the recursion simple
@@ -381,7 +377,7 @@ class KiwiEntry(Gtk.Entry):
             if next_char_pos is None:
                 next_char = None
             else:
-                next_char = unicode(text[next_char_pos])
+                next_char = text[next_char_pos]
 
             self._block_changed = True
             self._really_delete_text(pos, pos + 1)
@@ -464,8 +460,8 @@ class KiwiEntry(Gtk.Entry):
         if not self.completion_hightlight_match:
             return
 
-        text = unicode(model[iter_][COL_TEXT])
-        search_str = unicode(self.get_text())
+        text = model[iter_][COL_TEXT]
+        search_str = self.get_text()
 
         if self._exact_completion:
             markup = '<b>%s</b>%s' % (text[:len(search_str)],
@@ -477,7 +473,7 @@ class KiwiEntry(Gtk.Entry):
             markup = re.sub('(%s)' % search_str, '<b>\\1</b>', text,
                             flags=re.IGNORECASE)
 
-        cell.props.markup = markup.encode('utf-8')
+        cell.props.markup = markup
 
     def _get_key_for_completion(self, key):
         if key == self._last_key:
@@ -582,7 +578,7 @@ class KiwiEntry(Gtk.Entry):
         if self.is_empty() and pos != 0 and not self._selecting:
             for pos_ in range(0, len(text)):
                 validator = self._mask_validators[pos_]
-                if isinstance(validator, unicode) and new[0] == validator:
+                if isinstance(validator, str) and new[0] == validator:
                     new = new[1:]
                 else:
                     break
@@ -593,7 +589,7 @@ class KiwiEntry(Gtk.Entry):
             Gdk.beep()
             return
 
-        for c in unicode(new):
+        for c in new:
             pos = self._insert_char_at_position(pos, c)
             # If pos is None, the char is not valid. When typing, it will just
             # beep. When pasting something like 'vviv' (v for valid i for
@@ -608,7 +604,7 @@ class KiwiEntry(Gtk.Entry):
         # it was really inserted at that pos + 1), put the cursor after that
         while pos < len(text):
             validator = self._mask_validators[pos]
-            if not isinstance(validator, unicode):
+            if not isinstance(validator, str):
                 break
             pos += 1
 
@@ -644,7 +640,7 @@ class KiwiEntry(Gtk.Entry):
         if end - start == 1 and not self._selecting:
             for pos in reversed(range(0, self.get_position() + 1)):
                 validator = self._mask_validators[start]
-                if isinstance(validator, unicode) or validator == ' ':
+                if isinstance(validator, str) or validator == ' ':
                     start -= 1
                     end -= 1
                 else:
@@ -663,7 +659,7 @@ class KiwiEntry(Gtk.Entry):
             # Only delete the char if it's not a static char. Since we are
             # threating the case where we are pressing del/backspace on that
             # char above, this is for sure a selection deletion.
-            if isinstance(validator, unicode):
+            if isinstance(validator, str):
                 continue
             self._delete_char_at_position(pos)
 
@@ -692,13 +688,13 @@ class KiwiEntry(Gtk.Entry):
 
         # A simple optimization: If the first char(s) are static, put the
         # cursor after it to make it look nicer
-        if actual_pos == 0 and isinstance(self._mask_validators[0], unicode):
+        if actual_pos == 0 and isinstance(self._mask_validators[0], str):
             for pos in range(0, len(self._mask_validators)):
-                if not isinstance(self._mask_validators[pos], unicode):
+                if not isinstance(self._mask_validators[pos], str):
                     self.set_position(pos)
                     return
 
-        for pos, c in enumerate(unicode(text)):
+        for pos, c in enumerate(text):
             validator = self._mask_validators[pos]
             if isinstance(validator, int) and c == ' ':
                 break

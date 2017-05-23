@@ -13,7 +13,7 @@ class TestComboEntry(unittest.TestCase):
 
     def testSimple(self):
         entry = ComboEntry()
-        self.failUnless(isinstance(entry, ComboEntry))
+        self.assertTrue(isinstance(entry, ComboEntry))
 
     def testPopup(self):
         entry = ComboEntry()

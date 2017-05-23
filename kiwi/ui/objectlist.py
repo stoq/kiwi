@@ -26,9 +26,10 @@
 
 """High level wrapper for GtkTreeView"""
 
-from __future__ import print_function
+
 import datetime
 import decimal
+import collections
 import gettext
 import locale
 import logging
@@ -40,7 +41,7 @@ from kiwi.accessor import kgetattr
 from kiwi.datatypes import converter, number, ValidationError
 from kiwi.currency import currency  # after datatypes
 from kiwi.enums import Alignment
-from kiwi.python import enum, slicerange
+from kiwi.python import cmp, enum, slicerange
 from kiwi.utils import gsignal, type_register
 from kiwi.ui.widgets.contextmenu import ContextMenu
 from kiwi.ui.cellrenderer import EditableTextRenderer, EditableSpinRenderer
@@ -245,7 +246,7 @@ class Column(GObject.GObject):
 
         format_func = kwargs.get('format_func')
         if format_func:
-            if not callable(format_func):
+            if not isinstance(format_func, collections.Callable):
                 raise TypeError("format_func must be callable")
             if 'format' in kwargs:
                 raise TypeError(
@@ -266,7 +267,7 @@ class Column(GObject.GObject):
 
         sort_func = kwargs.get('sort_func')
         if sort_func:
-            if not callable(sort_func):
+            if not isinstance(sort_func, collections.Callable):
                 raise TypeError("sort_func must be callable")
             self.compare = sort_func
 
@@ -431,8 +432,7 @@ class Column(GObject.GObject):
                 raise TypeError("data_type must be a subclass of enum")
 
             enum_model = Gtk.ListStore(str, object)
-            items = list(data_type.names.items())
-            items.sort()
+            items = sorted(data_type.names.items())
             for key, value in items:
                 enum_model.append((key.lower().capitalize(), value))
 
@@ -456,7 +456,7 @@ class Column(GObject.GObject):
                              model, self, self.from_string)
             prop = 'text'
         elif issubclass(data_type, (datetime.date, datetime.time,
-                                    basestring, number,
+                                    str, number,
                                     currency)):
             if self.use_markup:
                 prop = 'markup'
@@ -759,7 +759,7 @@ class ColoredColumn(Column):
 
     def __init__(self, attribute, title=None, data_type=None,
                  color=None, data_func=None, use_data_model=False, **kwargs):
-        if not callable(data_func):
+        if not isinstance(data_func, collections.Callable):
             raise TypeError("data func must be callable")
 
         self._color = None
@@ -1011,7 +1011,7 @@ class ObjectList(Gtk.Box):
 
         self._columns = []
         # Mapping of instance id -> treeiter
-        self._iters = {}
+        self._iters = collections.OrderedDict()
         self._autosize = True
         self._vscrollbar = None
         self._message_label = None
@@ -1086,7 +1086,7 @@ class ObjectList(Gtk.Box):
         "len(list)"
         return len(self._model)
 
-    def __nonzero__(self):
+    def __bool__(self):
         "if list"
         return True
 
@@ -1103,7 +1103,7 @@ class ObjectList(Gtk.Box):
             def __iter__(self):
                 return self
 
-            def next(self, model=self._model):
+            def __next__(self, model=self._model):
                 try:
                     self._index += 1
                     return model[self._index][COL_MODEL]
@@ -1397,7 +1397,7 @@ class ObjectList(Gtk.Box):
             self._model.set_sort_column_id(index, column.order)
 
         if column.searchable:
-            if not issubclass(column.data_type, basestring):
+            if not issubclass(column.data_type, str):
                 raise TypeError("Unsupported data type for "
                                 "searchable column: %s" % column.data_type)
             self._treeview.set_search_column(index)
@@ -1438,6 +1438,16 @@ class ObjectList(Gtk.Box):
         column, attr = col_data
         a = column.get_attribute(model[iter1][COL_MODEL], attr)
         b = column.get_attribute(model[iter2][COL_MODEL], attr)
+
+        # FIXME: We have some objectlist sorting in Stoq that have NULLs
+        # in it. How to properly fix that?
+        if a is None and b is None:
+            return 0
+        elif a is None and b is not None:
+            return 1
+        elif a is not None and b is None:
+            return -1
+
         return column.compare(a, b)
 
     # Selection
@@ -1898,7 +1908,7 @@ class ObjectList(Gtk.Box):
 
         # Skip emitting this
         if (item is empty_marker or
-                type(item) == list and empty_marker in item):
+                isinstance(item, list) and empty_marker in item):
             return
         self.emit('selection-changed', item)
 
@@ -1923,7 +1933,7 @@ class ObjectList(Gtk.Box):
     def clear(self):
         """Removes all the instances of the list"""
         self._model.clear()
-        self._iters = {}
+        self._iters = collections.OrderedDict()
         self.clear_message()
 
     def get_next(self, instance):
@@ -2449,7 +2459,7 @@ class SummaryLabel(ListLabel):
         the signedness of the object being summed. Returns a bool, ``True``
         means positive, ``False`` means negative.
         """
-        if data_func and not callable(data_func):
+        if data_func and not isinstance(data_func, collections.Callable):
             raise ValueError("data_func must be callable, not %r"
                              % (data_func,))
 

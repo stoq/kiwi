@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 from gi.repository import GObject
 
 from kiwi.tasklet import Tasklet, WaitForTimeout, WaitForMessages, Message, \

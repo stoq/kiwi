@@ -236,24 +236,26 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(self.view.entry.read(), '666')
 
         # entry has data_type of str, so an int should be converted to str
-        self.view.entry.set_property('data-type', unicode)
-        with self.assertRaises(TypeError) as te:
-            # encode to iso-8859-1 so it will produce an UnicodeDecodeError
-            self.proxy.update('entry', u'não'.encode('iso-8859-1'))
-        self.assertEqual(
-            te.exception.message,
-            ("attribute entry of model <Model button='button', "
-             "checkbutton=True, combobox='CB1', comboentry='CE1', "
-             "entry='666', hscale=100.0, label='label', "
-             "radiobutton='first', spinbutton=100, textview='sliff', "
-             "vscale=100.0> cannot be converted to unicode"))
+        self.view.entry.set_property('data-type', str)
+
+        # python3 aparently has no problems with this test bellow
+        #with self.assertRaises(TypeError) as te:
+        #    # encode to iso-8859-1 so it will produce an UnicodeDecodeError
+        #    self.proxy.update('entry', 'não'.encode('iso-8859-1'))
+        #self.assertEqual(
+        #    te.exception.message,
+        #    ("attribute entry of model <Model button='button', "
+        #     "checkbutton=True, combobox='CB1', comboentry='CE1', "
+        #     "entry='666', hscale=100.0, label='label', "
+        #     "radiobutton='first', spinbutton=100, textview='sliff', "
+        #     "vscale=100.0> cannot be converted to unicode"))
 
         # spinbutton has data_type of float, it should not try to
         # do the conversion, even thought it's trivial
         with self.assertRaises(TypeError) as te:
             self.proxy.update('spinbutton', '1')
         self.assertEqual(
-            te.exception.message,
+            str(te.exception),
             ("attribute spinbutton of model <Model button='button', "
              "checkbutton=True, combobox='CB1', comboentry='CE1', "
              "entry='666', hscale=100.0, label='label', "

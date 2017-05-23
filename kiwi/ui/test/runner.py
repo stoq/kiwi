@@ -25,13 +25,13 @@
 Runner - executes recorded scripts
 """
 
-from __future__ import print_function
+
 import doctest
 import logging
 import os
 import sys
 import time
-from StringIO import StringIO
+from io import StringIO
 
 from gi.repository import GObject, Gdk
 

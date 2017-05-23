@@ -75,8 +75,9 @@ class TestWaitForTimeout(unittest.TestCase):
         self.assertEqual(task.return_value, "return-val")
         ## check that elapsed time aproximately 100 ms second, give or take 50 ms
         ## (glib doesn't guarantee precise timing)
-        self.assert_(math.fabs((t2 - t1) - 0.1) < 0.05, "elapsed time was %f, expected 0.1" %
-                     ((t2 - t1),))
+        self.assertTrue(
+            math.fabs((t2 - t1) - 0.1) < 0.05,
+            "elapsed time was %f, expected 0.1" % ((t2 - t1), ))
 
 
 class TestMessages(unittest.TestCase):
@@ -137,14 +138,14 @@ class TestIO(unittest.TestCase):
         write_chan.set_flags(GObject.IO_FLAG_NONBLOCK)
         write_chan.set_encoding(None)
         write_chan.set_buffered(False)
-        tasklet.run(pipe_writer(write_chan, chr(123)))
+        tasklet.run(pipe_writer(write_chan, b'{'))
 
         mainloop = GObject.MainLoop()
         reader.add_join_callback(lambda task, retval: mainloop.quit())
         mainloop.run()
 
         self.assertEqual(reader.state, tasklet.Tasklet.STATE_ZOMBIE)
-        self.assertEqual(reader.return_value, chr(123))
+        self.assertEqual(reader.return_value, b'{')
 
 
 class TestCallback(unittest.TestCase):

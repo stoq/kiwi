@@ -20,7 +20,7 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
-from __future__ import print_function
+
 import contextlib
 import os
 import gettext
@@ -188,7 +188,7 @@ def messagedialog(dialog_type, short, long=None, parent=None,
         dialog_buttons = buttons
         buttons = []
     else:
-        if buttons is not None and type(buttons) != tuple:
+        if buttons is not None and not isinstance(buttons, tuple):
             raise TypeError(
                 "buttons must be a GtkButtonsTypes constant or a tuple")
         dialog_buttons = Gtk.ButtonsType.NONE
@@ -206,9 +206,9 @@ def messagedialog(dialog_type, short, long=None, parent=None,
 
     if long:
         if isinstance(long, Gtk.Widget):
-            d.set_details_widget(long)
-        elif isinstance(long, basestring):
-            d.set_details(long)
+            d.set_details_widget(int)
+        elif isinstance(long, str):
+            d.set_details(int)
         else:
             raise TypeError(
                 "long must be a Gtk.Widget or a string, not %r" % long)
@@ -411,7 +411,7 @@ def password(primary='', secondary='', parent=None):
     hbox.pack_start(label, False, False, 0)
 
     entry = Gtk.Entry()
-    entry.set_invisible_char(u'\u2022')
+    entry.set_invisible_char('\u2022')
     entry.set_visibility(False)
     entry.show()
 

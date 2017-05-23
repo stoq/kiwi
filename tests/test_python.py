@@ -41,18 +41,18 @@ class Color(enum):
 
 class EnumTest(unittest.TestCase):
     def testEnums(self):
-        self.failUnless(issubclass(enum, int))
-        self.failUnless(isinstance(Color.RED, Color))
-        self.failUnless(isinstance(Color.RED, int))
-        self.failUnless('RED' in repr(Color.RED), repr(Color.RED))
-        self.failUnless(int(Color.RED) is not None)
+        self.assertTrue(issubclass(enum, int))
+        self.assertTrue(isinstance(Color.RED, Color))
+        self.assertTrue(isinstance(Color.RED, int))
+        self.assertTrue('RED' in repr(Color.RED), repr(Color.RED))
+        self.assertTrue(int(Color.RED) is not None)
 
     def testComparision(self):
-        self.assertEquals(Color.RED, 0)
-        self.assertNotEquals(Color.RED, 1)
-        self.assertNotEquals(Color.RED, -1)
-        self.assertNotEquals(Color.RED, Color.GREEN)
-        self.assertNotEquals(Color.GREEN, Status.OPEN)
+        self.assertEqual(Color.RED, 0)
+        self.assertNotEqual(Color.RED, 1)
+        self.assertNotEqual(Color.RED, -1)
+        self.assertNotEqual(Color.RED, Color.GREEN)
+        self.assertNotEqual(Color.GREEN, Status.OPEN)
 
     def testGet(self):
         self.assertEqual(Color.get(0), Color.RED)
@@ -60,8 +60,8 @@ class EnumTest(unittest.TestCase):
 
     def testNew(self):
         yellow = Color(3, 'YELLOW')
-        self.failUnless(isinstance(yellow, Color))
-        self.assertEquals(Color.YELLOW, yellow)
+        self.assertTrue(isinstance(yellow, Color))
+        self.assertEqual(Color.YELLOW, yellow)
         self.assertRaises(ValueError, Color, 3, 'AGAIN')
         self.assertRaises(ValueError, Color, 4, 'RED')
 
@@ -86,20 +86,20 @@ class AttributeForwarderTest(unittest.TestCase):
 class StripAccentsTest(unittest.TestCase):
     def testStripAccents(self):
         for string, string_without_accentuation in [
-            # normal strings
+            # bytes
+            ('áâãäåāăąàÁÂÃÄÅĀĂĄÀ'.encode(), b'aaaaaaaaaAAAAAAAAA'),
+            ('èééêëēĕėęěĒĔĖĘĚ'.encode(), b'eeeeeeeeeeEEEEE'),
+            ('ìíîïìĩīĭÌÍÎÏÌĨĪĬ'.encode(), b'iiiiiiiiIIIIIIII'),
+            ('óôõöōŏőÒÓÔÕÖŌŎŐ'.encode(), b'oooooooOOOOOOOO'),
+            ('ùúûüũūŭůÙÚÛÜŨŪŬŮ'.encode(), b'uuuuuuuuUUUUUUUU'),
+            ('çÇ'.encode(), b'cC'),
+            # strings
             ('áâãäåāăąàÁÂÃÄÅĀĂĄÀ', 'aaaaaaaaaAAAAAAAAA'),
             ('èééêëēĕėęěĒĔĖĘĚ', 'eeeeeeeeeeEEEEE'),
             ('ìíîïìĩīĭÌÍÎÏÌĨĪĬ', 'iiiiiiiiIIIIIIII'),
             ('óôõöōŏőÒÓÔÕÖŌŎŐ', 'oooooooOOOOOOOO'),
             ('ùúûüũūŭůÙÚÛÜŨŪŬŮ', 'uuuuuuuuUUUUUUUU'),
             ('çÇ', 'cC'),
-            # unicode strings
-            (u'áâãäåāăąàÁÂÃÄÅĀĂĄÀ', u'aaaaaaaaaAAAAAAAAA'),
-            (u'èééêëēĕėęěĒĔĖĘĚ', u'eeeeeeeeeeEEEEE'),
-            (u'ìíîïìĩīĭÌÍÎÏÌĨĪĬ', u'iiiiiiiiIIIIIIII'),
-            (u'óôõöōŏőÒÓÔÕÖŌŎŐ', u'oooooooOOOOOOOO'),
-            (u'ùúûüũūŭůÙÚÛÜŨŪŬŮ', u'uuuuuuuuUUUUUUUU'),
-            (u'çÇ', u'cC'),
         ]:
             self.assertEqual(strip_accents(string),
                              string_without_accentuation)

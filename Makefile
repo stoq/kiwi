@@ -2,7 +2,7 @@ PACKAGE=kiwi
 TEST_PACKAGES=$(PACKAGE) tests
 WEBDIR=/mondo/htdocs/async.com.br/www/projects/kiwi
 # FIXME: This probably should be on utils.mk
-TESTS_RUNNER=nosetests --nocapture --nologcapture --verbose --detailed-errors
+TESTS_RUNNER=python3 -m nose --nocapture --nologcapture --verbose --detailed-errors
 
 all:
 	python setup.py build_ext -i
@@ -40,7 +40,7 @@ check-failed:
 	$(TESTS_RUNNER) --failed $(TEST_PACKAGES)
 
 coverage: check-source-all
-	$(TESTS_RUNNER) --with-xcoverage --with-xunit \
+	$(TESTS_RUNNER) --with-coverage --with-xunit \
 	                --cover-package=$(PACKAGE) --cover-erase $(TEST_PACKAGES)
 
 include utils/utils.mk

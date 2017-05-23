@@ -216,7 +216,7 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
         return False
 
     def _popup_grab_window(self):
-        activate_time = 0L
+        activate_time = 0
         window = self._entry.get_window()
         if Gdk.pointer_grab(window, True,
                             (Gdk.EventMask.BUTTON_PRESS_MASK |
@@ -231,7 +231,7 @@ class KiwiEntryCompletion(Gtk.EntryCompletion):
         return False
 
     def _popup_ungrab_window(self):
-        activate_time = 0L
+        activate_time = 0
         display = self._entry.get_window().get_display()
         display.pointer_ungrab(activate_time)
         display.keyboard_ungrab(activate_time)

@@ -32,18 +32,14 @@ The GtkComboBox and GtkComboBoxEntry classes here are also slightly extended
 they contain methods to easily insert and retrieve data from combos.
 """
 
-try:
-    set
-except AttributeError:
-    from sets import Set as set
-
 from gi.repository import Gtk, GObject
 
 from kiwi import ValueUnset
-from kiwi.component import implements
+from kiwi.component import implementer
 from kiwi.datatypes import number
 from kiwi.enums import ComboColumn, ComboMode
 from kiwi.interfaces import IEasyCombo
+from kiwi.python import cmp
 from kiwi.ui.comboentry import ComboEntry
 from kiwi.ui.gadgets import render_pixbuf
 from kiwi.ui.proxywidget import ProxyWidgetMixin, ValidatableProxyWidgetMixin
@@ -51,9 +47,8 @@ from kiwi.ui.widgets.entry import ProxyEntry
 from kiwi.utils import gsignal
 
 
+@implementer(IEasyCombo)
 class _EasyComboBoxHelper(object):
-
-    implements(IEasyCombo)
 
     def __init__(self, combobox):
         """Call this constructor after the Combo one"""
@@ -91,7 +86,7 @@ class _EasyComboBoxHelper(object):
 
         if self.mode == ComboMode.UNKNOWN:
             first = itemdata[0]
-            if isinstance(first, basestring):
+            if isinstance(first, str):
                 self.set_mode(ComboMode.STRING)
             elif isinstance(first, (tuple, list)):
                 self.set_mode(ComboMode.DATA)
@@ -137,7 +132,7 @@ class _EasyComboBoxHelper(object):
         - label: a string with the text to be added
         - data: the data to be associated with that item
         """
-        if not isinstance(label, basestring):
+        if not isinstance(label, str):
             raise TypeError("label must be string, found %s" % (label,))
 
         if self.mode == ComboMode.UNKNOWN:
@@ -164,7 +159,7 @@ class _EasyComboBoxHelper(object):
         :param label: a string with the text to be added
         :param data: the data to be associated with that item
         """
-        if not isinstance(label, basestring):
+        if not isinstance(label, str):
             raise TypeError("label must be string, found %s" % (label,))
 
         if self.mode == ComboMode.UNKNOWN:
@@ -269,7 +264,7 @@ class _EasyComboBoxHelper(object):
 class ProxyComboBox(Gtk.ComboBox, ProxyWidgetMixin):
 
     __gtype_name__ = 'ProxyComboBox'
-    allowed_data_types = (basestring, object) + number
+    allowed_data_types = (str, object) + number
 
     data_type = GObject.Property(
         getter=ProxyWidgetMixin.get_data_type,
@@ -299,7 +294,7 @@ class ProxyComboBox(Gtk.ComboBox, ProxyWidgetMixin):
         # behavior in 2.8
         return len(self.get_model())
 
-    def __nonzero__(self):
+    def __bool__(self):
         return True
 
     # Callbacks
@@ -456,7 +451,7 @@ GObject.type_register(ProxyComboBox)
 
 class ProxyComboEntry(ComboEntry, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyComboEntry'
-    allowed_data_types = (basestring, object) + number
+    allowed_data_types = (str, object) + number
 
     data_type = GObject.Property(
         getter=ProxyWidgetMixin.get_data_type,
@@ -476,7 +471,7 @@ class ProxyComboEntry(ComboEntry, ValidatableProxyWidgetMixin):
         entry.connect('validation-changed',
                       self._on_entry__validation_changed)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return True
 
     def __len__(self):

@@ -34,7 +34,7 @@ class ProxyColorButton(Gtk.ColorButton, ProxyWidgetMixin):
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
 
-    allowed_data_types = (basestring, )
+    allowed_data_types = (str, )
 
     def __init__(self, color=Gdk.Color(0, 0, 0)):
         ProxyWidgetMixin.__init__(self)

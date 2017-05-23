@@ -21,36 +21,12 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #            Ali Afshar <aafshar@gmail.com>
 
-import sys
+from zope.interface import implementer, Attribute, Interface
 
 from kiwi import ValueUnset
 
-try:
-    from zope.interface import implements, Attribute, Interface
-    # pyflakes
-    implements, Attribute, Interface
-except ImportError:
-    class Interface(object):
-        @classmethod
-        def providedBy(cls, impl):
-            candidates = (impl,) + impl.__class__.__bases__
-            for candidate in candidates:
-                for iface in getattr(candidate, '__interfaces__', []):
-                    if issubclass(iface, cls):
-                        return True
-            return False
-
-    class Attribute(object):
-        def __init__(self, __name__, __doc__=''):
-            self.__name__ = __name__
-            self.__doc__ = __doc__
-
-    def implements(iface):
-        frame = sys._getframe(1)
-        try:
-            frame.f_locals.setdefault('__interfaces__', []).append(iface)
-        finally:
-            del frame
+# pyflakes
+implementer, Attribute, Interface
 
 
 class AlreadyImplementedError(Exception):

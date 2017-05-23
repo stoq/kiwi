@@ -47,7 +47,7 @@ class ProxyTextView(Gtk.TextView, ValidatableProxyWidgetMixin):
     gsignal('content-changed')
     gsignal('validation-changed', bool)
     gsignal('validate', object, retval=object)
-    allowed_data_types = (basestring, datetime.date) + number
+    allowed_data_types = (str, datetime.date) + number
 
     def __init__(self):
         Gtk.TextView.__init__(self)

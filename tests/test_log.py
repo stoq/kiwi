@@ -1,4 +1,4 @@
-import cStringIO
+import io
 import logging
 import os
 import sys
@@ -25,16 +25,16 @@ class LogTest(unittest.TestCase):
         self.log.info("sliff")
         lines = open(self.filename).readlines()
         self.assertEqual(len(lines), 1)
-        self.failUnless('sliff' in lines[0])
+        self.assertTrue('sliff' in lines[0])
 
     def testStdErr(self):
         root = logging.getLogger()
         stream = root.handlers[0]
-        fd = cStringIO.StringIO()
+        fd = io.StringIO()
         stream.stream = fd
         self.log.warning("this is a warning")
         stream.stream = sys.stderr
         fd.seek(0)
         lines = fd.readlines()
         self.assertEqual(len(lines), 1)
-        self.failUnless('this is a warning' in lines[0])
+        self.assertTrue('this is a warning' in lines[0])

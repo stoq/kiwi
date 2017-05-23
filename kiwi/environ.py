@@ -23,7 +23,7 @@
 
 """Environment helpers: path mangling and resource management"""
 
-import commands
+import subprocess
 import errno
 import gettext
 import imp
@@ -64,7 +64,7 @@ class _KiwiProvider(pkg_resources.DefaultProvider):
         cls._my_resources[name] = path
 
 
-pkg_resources.register_loader_type(type(None), _KiwiProvider)
+_KiwiProvider._register()
 
 
 class Environment:
@@ -286,7 +286,7 @@ class Library(Environment):
     def get_revision(self):
         """Get the current VCS revision"""
         if self.uninstalled:
-            status, output = commands.getstatusoutput('git rev-parse --short HEAD')
+            status, output = subprocess.getstatusoutput('git rev-parse --short HEAD')
             if status == 0:
                 return output
             revision = os.path.join(

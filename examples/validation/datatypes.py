@@ -16,7 +16,7 @@ data_types = [
     (True, bool),
     (42, int),
     (22.0 / 7.0, float),
-    (3000L, long),
+    (3000, int),
     ('THX', str),
     (datetime.datetime.now(), datetime.datetime),
     (datetime.date.today(), datetime.date),

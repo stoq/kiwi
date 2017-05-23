@@ -32,7 +32,6 @@ are the base of Delegates and Proxies.
 
 import logging
 import os
-import string
 
 from gi.repository import Gtk, GObject, Gdk
 
@@ -307,7 +306,7 @@ class SlaveView(GObject.GObject):
 
     def get_widget(self, name):
         """Retrieves the named widget from the View"""
-        name = string.replace(name, '.', '_')
+        name = name.replace('.', '_')
 
         if self._glade_adaptor:
             widget = self._glade_adaptor.get_widget(name)
@@ -961,7 +960,7 @@ def _get_builder():
 def _open_glade(view, gladefile, domain, translation_domain):
     if not gladefile:
         raise ValueError("A gladefile wasn't provided.")
-    elif not isinstance(gladefile, basestring):
+    elif not isinstance(gladefile, str):
         raise TypeError(
             "gladefile should be a string, found %s" % type(gladefile))
 

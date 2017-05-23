@@ -3,7 +3,7 @@ import unittest
 from gi.repository import Gtk
 
 from kiwi.ui.delegates import Delegate, GladeDelegate
-from utils import refresh_gui
+from .utils import refresh_gui
 
 
 class A(object):

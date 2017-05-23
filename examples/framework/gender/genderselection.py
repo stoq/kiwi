@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 from gi.repository import Gtk
 
 from kiwi.ui.views import BaseView, quit_if_last

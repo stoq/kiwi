@@ -34,9 +34,9 @@ important differences:
 """
 
 import logging
-import string
 import types
 import warnings
+import collections
 
 log = logging.getLogger('kiwi.accessor')
 
@@ -49,7 +49,7 @@ def get_default_getter(model, attr_name, cache):
     if getattr() is to be used a tuple in the format (model,
     attr_name) is returned."""
     func = getattr(model, "get_%s" % attr_name, None)
-    if callable(func):
+    if isinstance(func, collections.Callable):
         log.info('kgetattr based get_%s method is deprecated, '
                  'replace it with a property' % attr_name)
         return func
@@ -65,7 +65,7 @@ def get_default_setter(model, attr_name, cache):
     if setattr() is to be used a tuple in the format (model,
     attr_name) is returned."""
     func = getattr(model, "set_%s" % attr_name, None)
-    if callable(func):
+    if isinstance(func, collections.Callable):
         log.info('ksetattr based set_%s method is deprecated, '
                  'replace it with a property' % attr_name)
         return func
@@ -170,7 +170,7 @@ def kgetattr(
     ref=weakref.ref,
     TupleType=tuple,
     MethodType=types.MethodType,
-    split=string.split,
+    split=str.split,
     kgetattr_guard=kgetattr_guard,
     getattr=getattr,
     dummycache=CacheControl((None, None)),
@@ -229,7 +229,7 @@ def kgetattr(
                 get_getter = None
 
                 func = getattr(obj, "get_%s" % name, None)
-                if callable(func):
+                if isinstance(func, collections.Callable):
                     warnings.warn(
                         'kgetattr based get_%s method is deprecated, '
                         'replace it with a property' % name, DeprecationWarning,
@@ -381,7 +381,7 @@ def ksetattr(
     # the attribute name and the model we want.
 
     if not flat:
-        lastdot = string.rfind(attr_name, ".")
+        lastdot = attr_name.rfind(".")
         if lastdot != -1:
             model = kgetattr(model, attr_name[:lastdot])
             attr_name = attr_name[lastdot + 1:]
@@ -406,7 +406,7 @@ def ksetattr(
             cache = dummycache
 
             func = getattr(model, "set_%s" % attr_name, None)
-            if callable(func):
+            if isinstance(func, collections.Callable):
                 log.info('ksetattr based set_%s method is deprecated, '
                          'replace it with a property' % attr_name)
                 icode = FAST_METHOD_ACCESS

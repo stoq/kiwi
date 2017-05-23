@@ -163,7 +163,7 @@ class FadeOut(GObject.GObject):
 
         self._log.debug('_start_merging: Starting')
         func = self._merge_colors(self._start_color,
-                                  Gdk.color_parse(FadeOut.ERROR_COLOR)).next
+                                  Gdk.color_parse(FadeOut.ERROR_COLOR)).__next__
         self._background_timeout_id = (
             GObject.timeout_add(FadeOut.MERGE_COLORS_DELAY, func))
         self._countdown_timeout_id = -1

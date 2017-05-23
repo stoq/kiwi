@@ -1,5 +1,5 @@
-from __future__ import print_function
-import cPickle
+
+import pickle
 import datetime
 import decimal
 import locale
@@ -284,7 +284,7 @@ class CurrencyTest(unittest.TestCase):
         self.assertEqual(currency('1.994').format(), '$1.99')
         self.assertEqual(currency('1.995').format(), '$2')
         self.assertEqual(currency('1.996').format(), '$2')
-        self.assertEqual(currency(u'1.996').format(), u'$2')
+        self.assertEqual(currency('1.996').format(), '$2')
 
     def testFormatBR(self):
         if not set_locale(locale.LC_ALL, 'pt_BR'):
@@ -334,38 +334,39 @@ class CurrencyTest(unittest.TestCase):
         #self.assertEqual(ValidationError, self.conv.as_string, object)
 
     def testPickle(self):
-        pickled_var = cPickle.dumps(currency("123.45"))
-        recoverd_var = cPickle.loads(pickled_var)
+        pickled_var = pickle.dumps(currency("123.45"))
+        recoverd_var = pickle.loads(pickled_var)
         self.assertEqual(recoverd_var.format(), '$123.45')
 
     def testPickleBR(self):
         if not set_locale(locale.LC_ALL, 'pt_BR'):
             return
 
-        pickled_var = cPickle.dumps(currency("123.45"))
-        recoverd_var = cPickle.loads(pickled_var)
+        pickled_var = pickle.dumps(currency("123.45"))
+        recoverd_var = pickle.loads(pickled_var)
         self.assertEqual(recoverd_var.format(), 'R$ 123,45')
 
     def testPickleUS(self):
         if not set_locale(locale.LC_ALL, 'en_US'):
             return
 
-        pickled_var = cPickle.dumps(currency("12123.45"))
-        recoverd_var = cPickle.loads(pickled_var)
+        pickled_var = pickle.dumps(currency("12123.45"))
+        recoverd_var = pickle.loads(pickled_var)
         self.assertEqual(recoverd_var.format(), '$12,123.45')
 
 
 class UnicodeTest(unittest.TestCase):
     def setUp(self):
-        self.conv = converter.get_converter(unicode)
+        self.conv = converter.get_converter(str)
 
     def testFromString(self):
-        self.assertEqual(self.conv.from_string('foobar'), u'foobar')
+        self.assertEqual(self.conv.from_string('foobar'), 'foobar')
         # utf-8 encoded, as default after importing gtk
-        self.assertEqual(self.conv.from_string('\xc3\xa4'), u'\xe4')
+        # b'\xc3\xa4'.decode('utf8') == 'ä'
+        self.assertEqual(self.conv.from_string(b'\xc3\xa4'), 'ä')
 
     def testAsString(self):
-        self.assertEqual(self.conv.as_string(u'foobar'), 'foobar')
+        self.assertEqual(self.conv.as_string('foobar'), 'foobar')
         # gtk3 will not force this to be converted to a utf-8
         # encoded string anymore
         # self.assertEqual(self.conv.as_string(u'\xe4'), '\xc3\xa4')

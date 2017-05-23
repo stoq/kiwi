@@ -1,7 +1,7 @@
 import unittest
 
 from kiwi.component import AlreadyImplementedError, Interface, \
-    get_utility, provide_utility, remove_utility, implements, utilities
+    get_utility, provide_utility, remove_utility, implementer, utilities
 
 o = object()
 
@@ -55,8 +55,9 @@ class TestUtilities(unittest.TestCase):
         class I1(Interface):
             pass
 
+        @implementer(I1)
         class C(object):
-            implements(I1)
+            pass
 
         c = C()
         x = object()
@@ -71,11 +72,13 @@ class TestUtilities(unittest.TestCase):
         class I2(I1):
             pass
 
+        @implementer(I2)
         class C(object):
-            implements(I2)
+            pass
 
+        @implementer(I1)
         class D(object):
-            implements(I1)
+            pass
 
         c = C()
         self.assertEqual(I1.providedBy(c), True)
@@ -86,15 +89,16 @@ class TestUtilities(unittest.TestCase):
 
     def testZImplements(self):
         try:
-            from zope.interface import Interface, implements
+            from zope.interface import Interface, implementer
         except ImportError:
             return
 
         class I1(Interface):
             pass
 
+        @implementer(I1)
         class C(object):
-            implements(I1)
+            pass
 
         c = C()
         x = object()
@@ -104,7 +108,7 @@ class TestUtilities(unittest.TestCase):
 
     def testZInterfaceSub(self):
         try:
-            from zope.interface import Interface, implements
+            from zope.interface import Interface, implementer
         except ImportError:
             return
 
@@ -114,11 +118,13 @@ class TestUtilities(unittest.TestCase):
         class I2(I1):
             pass
 
+        @implementer(I2)
         class C(object):
-            implements(I2)
+            pass
 
+        @implementer(I1)
         class D(object):
-            implements(I1)
+            pass
 
         c = C()
         self.assertEqual(I1.providedBy(c), True)

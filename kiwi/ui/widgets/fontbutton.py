@@ -24,7 +24,7 @@ from kiwi.utils import type_register
 class ProxyFontButton(Gtk.FontButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFontButton'
 
-    allowed_data_types = basestring,
+    allowed_data_types = str,
 
     def __init__(self, fontname=None):
         ProxyWidgetMixin.__init__(self)

@@ -39,8 +39,6 @@ Kiwi includes a Framework and a set of enhanced widgets
     - Organization: Async Open Source
 """
 
-import sys
-
 from kiwi.__version__ import version as kiwi_version
 from kiwi.environ import Library
 
@@ -60,9 +58,6 @@ class ValueUnset:
     pass
 
 __all__ = ['ValueUnset', 'kiwi_version']
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 # by default locale uses the C locale but our date conversions use the user
 # locale so we need to set the locale to that one

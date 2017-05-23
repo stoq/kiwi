@@ -654,7 +654,7 @@ class Message(object):
         '''
         assert isinstance(sender, (Tasklet, type(None)))
         assert isinstance(dest, (Tasklet, type(None)))
-        assert isinstance(name, basestring)
+        assert isinstance(name, str)
         self.name = name
         self.value = value
         self.sender = sender
@@ -681,7 +681,7 @@ def _normalize_list_argument(arg, name):
 
     if arg is None:
         return []
-    elif isinstance(arg, basestring):
+    elif isinstance(arg, str):
         return [arg]
     elif isinstance(arg, (list, tuple)):
         return arg

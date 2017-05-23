@@ -57,7 +57,7 @@ class Swedish(SlaveDelegate):
         combo = ProxyComboEntry()
         combo.set_property('model-attribute', 'nummer')
         combo.set_property('data-type', 'str')
-        combo.prefill(['Ett', u'Två', 'Tre'])
+        combo.prefill(['Ett', 'Två', 'Tre'])
         combo.show()
         box.pack_start(combo, True, True, 0)
         self.combo = combo

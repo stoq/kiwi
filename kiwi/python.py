@@ -37,7 +37,7 @@ class ClassInittableMetaType(type):
         self.__class_init__(namespace)
 
 
-class ClassInittableObject(object):
+class ClassInittableObject(object, metaclass=ClassInittableMetaType):
     """
     I am an object which will call a classmethod called
     __class_init__ when I am created.
@@ -48,7 +48,6 @@ class ClassInittableObject(object):
     It's called after the class is created, but before it is put
     in the namespace of the module where it is defined.
     """
-    __metaclass__ = ClassInittableMetaType
 
     @classmethod
     def __class_init__(cls, namespace):
@@ -140,7 +139,7 @@ def namedAny(name):
                 except KeyError:
                     # Python 2.4 has fixed this.  Yay!
                     pass
-                raise exc_info[0], exc_info[1], exc_info[2]
+                raise exc_info[0](exc_info[1]).with_traceback(exc_info[2])
             moduleNames.pop()
 
     obj = topLevelPackage
@@ -159,8 +158,7 @@ class Settable:
     some attributes; for example, C{X()(y=z,a=b)}.
     """
     def __init__(self, **kw):
-        self._attrs = list(kw.keys())
-        self._attrs.sort()
+        self._attrs = sorted(kw.keys())
         for k, v in kw.items():
             setattr(self, k, v)
 
@@ -240,7 +238,7 @@ def disabledeprecationcall(func, *args, **kwargs):
     return retval
 
 
-class enum(int):
+class enum(int, metaclass=ClassInittableMetaType):
     """
     enum is an enumered type implementation in python.
 
@@ -254,8 +252,6 @@ class enum(int):
     All the integers defined in the class are assumed to be enums and
     values cannot be duplicated
     """
-
-    __metaclass__ = ClassInittableMetaType
 
     @classmethod
     def __class_init__(cls, ns):
@@ -329,6 +325,11 @@ def any(seq):
     return False
 
 
+def cmp(a, b):
+    """Compare function that behaves like cmp in python2."""
+    return (a > b) - (a < b)
+
+
 def strip_accents(string):
     """Remove the accentuantion of a string
 
@@ -337,9 +338,20 @@ def strip_accents(string):
     :param string: a string, either in str or unicode format
     :returns: the string without accentuantion
     """
-    if isinstance(string, str):
+    # FIXME: Probably no one should be using this with bytes.
+    if isinstance(string, bytes):
         # unicode don't need this
-        string = string.decode('utf-8')
+        string = string.decode()
+        is_bytes = True
+    else:
+        is_bytes = False
 
     string = unicodedata.normalize('NFKD', string)
-    return string.encode('ASCII', 'ignore')
+    string = string.encode('ASCII', 'ignore')
+
+    # After the encode above, the string would become a byte.
+    # Convert back to string if it was one before to keep the same type
+    if not is_bytes:
+        string = string.decode()
+
+    return string

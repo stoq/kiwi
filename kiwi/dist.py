@@ -23,7 +23,6 @@
 
 """Distutils extensions and utilities"""
 
-import commands
 from distutils.command.clean import clean
 from distutils.command.install_data import install_data
 from distutils.command.install_lib import install_lib
@@ -34,7 +33,6 @@ import errno
 from fnmatch import fnmatch
 from shutil import copyfile
 import os
-import new
 import subprocess
 import sys
 
@@ -105,7 +103,7 @@ class KiwiInstallLib(install_lib):
             '__installed__.py')
 
     def _get_revision(self):
-        status, output = commands.getstatusoutput(
+        status, output = subprocess.getstatusoutput(
             'git rev-parse --short HEAD')
         if status == 0:
             return output
@@ -189,7 +187,7 @@ class KiwiClean(clean):
         git_src = os.path.join(top_dir, '.git', 'HEAD')
         bzr_src = os.path.join(top_dir, '.bzr', 'branch', 'last-revision')
         if os.path.exists(git_src):
-            status, output = commands.getstatusoutput(
+            status, output = subprocess.getstatusoutput(
                 'git rev-parse --short HEAD')
             if status == 0:
                 info("Writing git revision file")
@@ -334,11 +332,8 @@ def setup(**kwargs):
             self.data_files.extend(compile_po_files(domain, datadir=datadir))
         KiwiInstallData.run(self)
 
-    # distutils uses old style classes
-    InstallData = new.classobj('InstallData', (KiwiInstallData,),
-                               dict(run=run_install))
-    InstallLib = new.classobj('InstallLib', (KiwiInstallLib,),
-                              dict())
+    InstallData = type('InstallData', (KiwiInstallData, ), dict(run=run_install))
+    InstallLib = type('InstallLib', (KiwiInstallLib, ), dict())
     cmdclass = dict(install_data=InstallData, install_lib=InstallLib,
                     clean=KiwiClean)
     kwargs.setdefault('cmdclass', cmdclass).update(cmdclass)

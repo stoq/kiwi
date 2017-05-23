@@ -26,7 +26,7 @@
 #   Matthias Clasen <mclasen@redhat.com>
 #
 
-from ConfigParser import ConfigParser, NoOptionError
+from configparser import ConfigParser, NoOptionError
 
 # Private
 

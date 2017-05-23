@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 from sets import Set
 
 from gi.repository import Gtk

@@ -342,8 +342,8 @@ class Proxy:
         if not (value is ValueUnset or value is None):
             data_type = _get_widget_data_type(widget)
             if (not isinstance(value, data_type) and
-                    issubclass(data_type, basestring)):
-                if data_type is basestring:
+                    issubclass(data_type, str)):
+                if data_type is str:
                     # basestring cannot be instantiated, so use str instead
                     data_type = str
                 try:
@@ -382,8 +382,9 @@ class Proxy:
         """
         if self._model is not None and model is not None:
             if (not relax_type and
-                type(model) != type(self._model) and
-                not isinstance(model, self._model.__class__)):
+                    (issubclass(type(model), type(self._model)) or
+                     issubclass(type(self._model), type(model))) and
+                    not isinstance(model, self._model.__class__)):
                 raise TypeError("model has wrong type %s, expected %s"
                                 % (type(model), type(self._model)))
 

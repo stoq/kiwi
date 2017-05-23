@@ -1,5 +1,5 @@
 # encoding: iso-8859-1
-from __future__ import print_function
+
 from gi.repository import Gtk
 
 from kiwi.ui.widgets.entry import ProxyEntry
@@ -19,9 +19,9 @@ win.add(vbox)
 entry = ProxyEntry()
 entry.data_type = str
 entry.connect('activate', on_entry_activate)
-entry.prefill(['Belo Horizonte', u'São Carlos',
-               u'São Paulo', u'Båstad',
-               u'Örnsköldsvik', 'sanca', 'sampa'])
+entry.prefill(['Belo Horizonte', 'São Carlos',
+               'São Paulo', 'Båstad',
+               'Örnsköldsvik', 'sanca', 'sampa'])
 vbox.pack_start(entry, True, True, 0)
 
 entry = ProxyEntry()

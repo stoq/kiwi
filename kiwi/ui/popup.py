@@ -196,7 +196,7 @@ class PopupWindow(Gtk.Window):
         self.set_screen(self.attached_widget.get_screen())
 
     def _popup_grab_window(self):
-        activate_time = 0L
+        activate_time = 0
         window = self.get_window()
         grab_status = Gdk.pointer_grab(window, True,
                                        (Gdk.EventMask.BUTTON_PRESS_MASK |

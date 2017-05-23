@@ -1,7 +1,7 @@
 """
 kiwi.tasklet demo program
 """
-from __future__ import print_function
+
 from gi.repository import Gtk
 
 from kiwi import tasklet

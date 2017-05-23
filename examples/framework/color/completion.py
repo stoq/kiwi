@@ -33,8 +33,7 @@ def main(args):
     w.add(vbox)
 
     model = Gtk.ListStore(str)
-    list = load_colors()
-    list.sort()
+    list = sorted(load_colors())
     for i in list:
         model.append((i,))
 

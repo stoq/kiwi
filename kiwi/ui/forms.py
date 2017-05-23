@@ -288,7 +288,7 @@ class TextField(Field):
     editable = GObject.Property(type=bool, default=True)
     input_mask = GObject.Property(type=object)
     max_length = GObject.Property(type=int, default=0)
-    widget_data_type = unicode
+    widget_data_type = str
 
     def build_widget(self):
         if self.editable:
@@ -395,7 +395,7 @@ class ColorField(Field):
     I am a field representing a color,
     rendered as a color button.
     """
-    widget_data_type = unicode
+    widget_data_type = str
 
     def build_widget(self):
         button = ProxyColorButton()
@@ -445,7 +445,7 @@ class MultiLineField(Field):
     I am a text field with multiple lines,
     rendered as a text view.
     """
-    widget_data_type = unicode
+    widget_data_type = str
 
     def build_widget(self):
         from kiwi.ui.widgets.textview import ProxyTextView

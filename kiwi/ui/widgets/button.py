@@ -43,7 +43,7 @@ class ProxyButton(Gtk.Button, ProxyWidgetMixin):
     pixbuf and be set as a child for the Button
     """
 
-    allowed_data_types = (basestring, datetime.date, datetime.datetime,
+    allowed_data_types = (str, datetime.date, datetime.datetime,
                           datetime.time, GdkPixbuf.Pixbuf) + number
     __gtype_name__ = 'ProxyButton'
 

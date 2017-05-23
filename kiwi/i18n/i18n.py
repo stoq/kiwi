@@ -21,7 +21,7 @@
 
 """Internationalization utilities. Requires intltool and gettext"""
 
-from __future__ import print_function
+
 from distutils.dep_util import newer
 from distutils.filelist import FileList, findall
 from optparse import OptionParser

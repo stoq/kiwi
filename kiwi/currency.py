@@ -23,7 +23,7 @@
 
 """Currency and datatype converter"""
 
-from __future__ import print_function
+
 import gettext
 import decimal
 
@@ -47,7 +47,7 @@ class currency(decimal.Decimal):
         :param value: value to convert
         :type value: string or number
         """
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             conv = get_localeconv()
             currency_symbol = conv.get('currency_symbol')
             text = value.strip(currency_symbol)
@@ -67,8 +67,8 @@ class currency(decimal.Decimal):
         elif isinstance(value, float):
             print('Warning: losing precision converting float %r to currency'
                   % value)
-            value = unicode(value)
-        elif not isinstance(value, (int, long, decimal.Decimal)):
+            value = str(value)
+        elif not isinstance(value, (int, decimal.Decimal)):
             raise TypeError(
                 "cannot convert %r of type %s to a currency" % (
                     value, type(value)))

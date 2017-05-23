@@ -26,9 +26,9 @@ Argument checking decorator and support
 """
 
 import inspect
-from types import ClassType
 
 from kiwi.datatypes import number as number_type
+import collections
 
 _NoValue = object()
 
@@ -84,7 +84,7 @@ class argcheck(object):
 
     def __init__(self, *types):
         for argtype in types:
-            if not isinstance(argtype, (type, ClassType)):
+            if not isinstance(argtype, type):
                 raise TypeError("must be a type or class instance, not %r" % argtype)
         self.types = types
 
@@ -103,7 +103,7 @@ class argcheck(object):
         cls.__enabled__ = False
 
     def __call__(self, func):
-        if not callable(func):
+        if not isinstance(func, collections.Callable):
             raise TypeError("%r must be callable" % func)
 
         # Useful for optimized runs

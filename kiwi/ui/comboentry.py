@@ -27,7 +27,7 @@ import logging
 
 from gi.repository import Gtk, Gdk
 
-from kiwi.component import implements
+from kiwi.component import implementer
 from kiwi.enums import ComboColumn, ComboMode
 from kiwi.interfaces import IEasyCombo
 from kiwi.ui.popup import PopupWindow
@@ -246,9 +246,8 @@ type_register(_ComboEntryPopup)
 
 
 # FIXME: This could be a Gtk.Bin
+@implementer(IEasyCombo)
 class ComboEntry(Gtk.Box):
-
-    implements(IEasyCombo)
 
     gsignal('changed')
     gsignal('activate')
@@ -618,7 +617,7 @@ class ComboEntry(Gtk.Box):
         """
         See :class:`kiwi.interfaces.IEasyCombo.append_item`
         """
-        if not isinstance(label, basestring):
+        if not isinstance(label, str):
             raise TypeError("label must be string, found %s" % label)
 
         if self.mode == ComboMode.UNKNOWN:

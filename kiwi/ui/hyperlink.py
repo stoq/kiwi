@@ -127,7 +127,7 @@ class HyperLink(Gtk.EventBox):
         """
         return self._menu is not None
 
-    def popup(self, menu=None, button=3, etime=0L):
+    def popup(self, menu=None, button=3, etime=0):
         """
         Popup the menu and emit the popup signal.
 

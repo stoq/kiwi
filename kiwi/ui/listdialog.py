@@ -290,13 +290,13 @@ class ListSlave(SlaveDelegate):
 
     def _on_listcontainer__remove_item(self, listcontainer, item):
         retval = self.remove_item(item)
-        if type(retval) is not bool:
+        if not isinstance(retval, bool):
             raise ValueError("remove-item must return a bool")
         return retval
 
     def _on_listcontainer__edit_item(self, listcontainer, item):
         retval = self.edit_item(item)
-        if type(retval) is not bool:
+        if not isinstance(retval, bool):
             raise ValueError("edit-item must return a bool")
         return retval
 

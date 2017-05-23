@@ -126,7 +126,7 @@ class ArgTest(unittest.TestCase):
             return n
         func = argcheck(number)(func)
         self.assertEqual(func(0), 0)
-        self.assertEqual(func(0L), 0L)
+        self.assertEqual(func(0), 0)
         self.assertEqual(func(0.0), 0.0)
         self.assertEqual(func(decimal.Decimal(0)), decimal.Decimal(0))
 
@@ -135,15 +135,15 @@ class ArgTest(unittest.TestCase):
             return n
         func = argcheck(percent)(func)
         self.assertEqual(func(50), 50)
-        self.assertEqual(func(50L), 50L)
+        self.assertEqual(func(50), 50)
         self.assertEqual(func(50.0), 50.0)
         self.assertEqual(func(decimal.Decimal(50)), decimal.Decimal(50))
         self.assertRaises(ValueError, func, -1)
-        self.assertRaises(ValueError, func, -1L)
+        self.assertRaises(ValueError, func, -1)
         self.assertRaises(ValueError, func, -1.0)
         self.assertRaises(ValueError, func, decimal.Decimal(-1))
         self.assertRaises(ValueError, func, 101)
-        self.assertRaises(ValueError, func, 101L)
+        self.assertRaises(ValueError, func, 101)
         self.assertRaises(ValueError, func, 101.0)
         self.assertRaises(ValueError, func, decimal.Decimal(101))
 

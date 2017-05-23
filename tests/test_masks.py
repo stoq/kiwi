@@ -3,7 +3,7 @@ import unittest
 
 from gi.repository import Gtk, Gdk
 from nose.exc import SkipTest
-from utils import refresh_gui
+from .utils import refresh_gui
 
 from kiwi.ui.delegates import Delegate
 from kiwi.ui.entry import KiwiEntry

@@ -1,6 +1,6 @@
 # A simple example to demonstrate the ListDialog dialog
 
-from __future__ import print_function
+
 from gi.repository import Gtk
 
 from kiwi.enums import ListType

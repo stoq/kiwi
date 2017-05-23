@@ -1,6 +1,6 @@
 # This example illustrates the use of entries with validations
 
-from __future__ import print_function
+
 import datetime
 
 from gi.repository import Gtk
@@ -67,7 +67,7 @@ class Form(GladeDelegate):
             return ValidationError("use a better language")
 
 person = Person()
-person.name = u'John Doe'
+person.name = 'John Doe'
 person.age = 36
 person.birthdate = datetime.datetime(year=1969, month=2, day=20)
 person.height = 183.0

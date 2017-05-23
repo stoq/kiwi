@@ -31,7 +31,7 @@ from kiwi.ui.proxywidget import ProxyWidgetMixin
 
 class ProxyFileChooserWidget(Gtk.FileChooserWidget, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFileChooserWidget'
-    allowed_data_types = (basestring, )
+    allowed_data_types = (str, )
 
     def __init__(self, action=Gtk.FileChooserAction.OPEN, backend=None):
         """
@@ -57,7 +57,7 @@ class ProxyFileChooserWidget(Gtk.FileChooserWidget, ProxyWidgetMixin):
 
 class ProxyFileChooserButton(Gtk.FileChooserButton, ProxyWidgetMixin):
     __gtype_name__ = 'ProxyFileChooserButton'
-    allowed_data_types = (basestring, )
+    allowed_data_types = (str, )
 
     def __init__(self, title=None, backend=None, dialog=None):
         """

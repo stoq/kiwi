@@ -2,7 +2,7 @@
 # -*- coding: iso-8859-1 -*-
 # Written by Martin v. Löwis <loewis@informatik.hu-berlin.de>
 
-from __future__ import print_function
+
 doc = """Generate binary message catalog from textual translation description.
 
 This program converts a textual Uniforum-style message catalog (.po file) into
@@ -81,7 +81,7 @@ def generate():
         voffsets += [l2, o2 + valuestart]
     offsets = koffsets + voffsets
     output = struct.pack("Iiiiiii",
-                         0x950412deL,           # Magic
+                         0x950412de,            # Magic
                          0,                     # Version
                          len(keys),             # # of entries
                          7 * 4,                 # start of key index
