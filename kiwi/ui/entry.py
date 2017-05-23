@@ -580,7 +580,7 @@ class KiwiEntry(Gtk.Entry):
         # conflict with our optimization on _handle_position_change that
         # doesn't allow the position to be on 0 on and mess things here
         if self.is_empty() and pos != 0 and not self._selecting:
-            for pos_ in xrange(0, len(text)):
+            for pos_ in range(0, len(text)):
                 validator = self._mask_validators[pos_]
                 if isinstance(validator, unicode) and new[0] == validator:
                     new = new[1:]
@@ -642,7 +642,7 @@ class KiwiEntry(Gtk.Entry):
         # should delete the char before it. This is the only case that
         # _delete_char_at_position will not handle for us
         if end - start == 1 and not self._selecting:
-            for pos in reversed(xrange(0, self.get_position() + 1)):
+            for pos in reversed(range(0, self.get_position() + 1)):
                 validator = self._mask_validators[start]
                 if isinstance(validator, unicode) or validator == ' ':
                     start -= 1
@@ -658,7 +658,7 @@ class KiwiEntry(Gtk.Entry):
             Gdk.beep()
             return
 
-        for pos in reversed(xrange(start, end)):
+        for pos in reversed(range(start, end)):
             validator = self._mask_validators[pos]
             # Only delete the char if it's not a static char. Since we are
             # threating the case where we are pressing del/backspace on that
@@ -693,7 +693,7 @@ class KiwiEntry(Gtk.Entry):
         # A simple optimization: If the first char(s) are static, put the
         # cursor after it to make it look nicer
         if actual_pos == 0 and isinstance(self._mask_validators[0], unicode):
-            for pos in xrange(0, len(self._mask_validators)):
+            for pos in range(0, len(self._mask_validators)):
                 if not isinstance(self._mask_validators[pos], unicode):
                     self.set_position(pos)
                     return

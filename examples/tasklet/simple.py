@@ -20,7 +20,7 @@ class _CountSomeNumbers2(Tasklet):
     def run(self):
         '''Execute the task.'''
         import random
-        for i in xrange(self.count):
+        for i in range(self.count):
             print(">> _count_some_numbers2", i)
             yield (WaitForTimeout(random.randint(70, self.timeout)),
                    WaitForMessages(accept='quit'))
@@ -34,7 +34,7 @@ class _CountSomeNumbers2(Tasklet):
 def _count_some_numbers1(count):
     '''Counts numbers with at fixed time spacings'''
     timeout = WaitForTimeout(500)
-    for i in xrange(count):
+    for i in range(count):
         print("_count_some_numbers1", i)
         task2 = _CountSomeNumbers2(10, 70)
         yield timeout, task2

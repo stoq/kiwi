@@ -212,7 +212,7 @@ def slicerange(slice, limit):
     :returns: iterator
     """
 
-    return xrange(*slice.indices(limit))
+    return range(*slice.indices(limit))
 
 _no_deprecation = False
 

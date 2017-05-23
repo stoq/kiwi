@@ -140,7 +140,7 @@ class FadeOut(GObject.GObject):
         rinc = (rd - rs) / float(steps)
         ginc = (gd - gs) / float(steps)
         binc = (bd - bs) / float(steps)
-        for dummy in xrange(steps):
+        for dummy in range(steps):
             rs += rinc
             gs += ginc
             bs += binc

@@ -133,7 +133,7 @@ Examples
 
       def simple_counter(numbers):
           timeout = tasklet.WaitForTimeout(1000)
-          for x in xrange(numbers):
+          for x in range(numbers):
               print x
               yield timeout
               tasklet.get_event()
@@ -165,7 +165,7 @@ Examples
       @tasklet.task
       def simple_counter(numbers, task):
           timeout = tasklet.WaitForTimeout(1000)
-          for x in xrange(numbers):
+          for x in range(numbers):
               yield tasklet.Message('print', dest=task, value=x)
               yield timeout
               tasklet.get_event()

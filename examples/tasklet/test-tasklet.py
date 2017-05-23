@@ -16,7 +16,7 @@ class Counter(tasklet.Tasklet):
         timeout = tasklet.WaitForTimeout(1000)
         msgwait = tasklet.WaitForMessages(accept='quit')
 
-        for i in xrange(10, 0, -1):
+        for i in range(10, 0, -1):
             self.dialog.format_secondary_markup(
                 "Time left: <b>%i</b> seconds" % i)
 
