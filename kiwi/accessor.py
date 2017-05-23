@@ -168,7 +168,7 @@ def kgetattr(
     flat=0,
     # bind to local variables for speed:
     ref=weakref.ref,
-    TupleType=types.TupleType,
+    TupleType=tuple,
     MethodType=types.MethodType,
     split=string.split,
     kgetattr_guard=kgetattr_guard,
@@ -235,7 +235,7 @@ def kgetattr(
                         'replace it with a property' % name, DeprecationWarning,
                         stacklevel=2)
                     icode = FAST_METHOD_ACCESS
-                    data1 = func.im_func
+                    data1 = func.__func__
                     data2 = None
                 else:
                     icode = FAST_TUPLE_ACCESS
@@ -264,18 +264,18 @@ def kgetattr(
                             icode = NWR_TUPLE_ACCESS
 
                 elif isinstance(func, MethodType):
-                    data1 = func.im_func
-                    data2 = func.im_self
+                    data1 = func.__func__
+                    data2 = func.__self__
                     if data2 == obj:
                         data2 = None
                         icode = FAST_METHOD_ACCESS
                     else:
                         try:
-                            data2 = ref(func.im_self, kgetattr_guard)
+                            data2 = ref(func.__self__, kgetattr_guard)
                             _kgetattr_wref[id(data2)] = (key, data2)
                             icode = METHOD_ACCESS
                         except TypeError:
-                            data2 = func.im_self
+                            data2 = func.__self__
                             icode = NWR_METHOD_ACCESS
                 else:
                     icode = LAMBDA_ACCESS
@@ -356,7 +356,7 @@ def ksetattr(
 
     # bind to local variables for speed:
     ref=weakref.ref,
-    TupleType=types.TupleType,
+    TupleType=tuple,
     MethodType=types.MethodType,
     ksetattr_guard=ksetattr_guard,
     getattr=getattr,
@@ -410,7 +410,7 @@ def ksetattr(
                 log.info('ksetattr based set_%s method is deprecated, '
                          'replace it with a property' % attr_name)
                 icode = FAST_METHOD_ACCESS
-                data1 = func.im_func
+                data1 = func.__func__
                 data2 = None
             else:
                 icode = FAST_TUPLE_ACCESS
@@ -433,8 +433,8 @@ def ksetattr(
                     except TypeError:
                         icode = NWR_TUPLE_ACCESS
             elif isinstance(func, MethodType):
-                data1 = func.im_func
-                data2 = func.im_self
+                data1 = func.__func__
+                data2 = func.__self__
                 if data2 == model:
                     data2 = None
                     icode = FAST_METHOD_ACCESS
@@ -444,7 +444,7 @@ def ksetattr(
                         _ksetattr_wref[id(data2)] = (key, data2)
                         icode = METHOD_ACCESS
                     except TypeError:
-                        data2 = func.im_self
+                        data2 = func.__self__
                         icode = NWR_METHOD_ACCESS
             else:
                 icode = LAMBDA_ACCESS

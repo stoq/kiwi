@@ -1,11 +1,12 @@
 # encoding: iso-8859-1
+from __future__ import print_function
 from gi.repository import Gtk
 
 from kiwi.ui.widgets.entry import ProxyEntry
 
 
 def on_entry_activate(entry):
-    print 'You selected:', entry.read()
+    print('You selected:', entry.read())
     Gtk.main_quit()
 
 win = Gtk.Window()

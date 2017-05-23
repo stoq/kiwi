@@ -10,7 +10,7 @@ from kiwi.ui.entrycompletion import KiwiEntryCompletion
 def load_colors():
     filename = "/usr/X11R6/etc/X11/rgb.txt"
     try:
-        lines = file(filename).readlines()
+        lines = open(filename).readlines()
     except IOError:
         return ['red', 'blue', 'yellow', 'green']
 

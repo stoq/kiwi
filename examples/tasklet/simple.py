@@ -1,3 +1,4 @@
+from __future__ import print_function
 from gi.repository import GObject
 
 from kiwi.tasklet import Tasklet, WaitForTimeout, WaitForMessages, Message, \
@@ -20,7 +21,7 @@ class _CountSomeNumbers2(Tasklet):
         '''Execute the task.'''
         import random
         for i in xrange(self.count):
-            print ">> _count_some_numbers2", i
+            print(">> _count_some_numbers2", i)
             yield (WaitForTimeout(random.randint(70, self.timeout)),
                    WaitForMessages(accept='quit'))
             event = get_event()
@@ -34,16 +35,16 @@ def _count_some_numbers1(count):
     '''Counts numbers with at fixed time spacings'''
     timeout = WaitForTimeout(500)
     for i in xrange(count):
-        print "_count_some_numbers1", i
+        print("_count_some_numbers1", i)
         task2 = _CountSomeNumbers2(10, 70)
         yield timeout, task2
         event = get_event()
         if event is timeout:
-            print ">>> Got tired of waiting for task!! Canceling!"
+            print(">>> Got tired of waiting for task!! Canceling!")
             ## send a message asking the tasklet to stop
             yield Message('quit', dest=task2)
         elif isinstance(event, WaitForTasklet):
-            print ">>> task returned %r, good task!" % event.retval
+            print(">>> task returned %r, good task!" % event.retval)
             ## restart timeout from scratch, otherwise it keeps
             ## running and we end up giving the next task too little
             ## time.

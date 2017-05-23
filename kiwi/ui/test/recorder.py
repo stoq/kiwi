@@ -405,7 +405,7 @@ class Recorder(WidgetIntrospecter):
 
         # Run the script
         sys.argv = args
-        execfile(sys.argv[0], globals(), globals())
+        exec(compile(open(sys.argv[0]).read(), sys.argv[0], 'exec'), globals(), globals())
 
     def _emission_window__delete_event(self, window, event, *args):
         self._add_event(WindowDeleteEvent(window))

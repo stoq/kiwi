@@ -1,3 +1,4 @@
+from __future__ import print_function
 import cPickle
 import datetime
 import decimal
@@ -25,7 +26,7 @@ def set_locale(category, name):
         try:
             locale.setlocale(category, name + '.UTF-8')
         except locale.Error:
-            print 'skipping %s, locale not available' % name
+            print('skipping %s, locale not available' % name)
             return False
     return True
 

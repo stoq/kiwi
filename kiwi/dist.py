@@ -123,7 +123,7 @@ class KiwiInstallLib(install_lib):
 
         try:
             fp = open(last_revision)
-        except OSError, e:
+        except OSError as e:
             if e.errno != errno.ENOENT:
                 raise
         else:

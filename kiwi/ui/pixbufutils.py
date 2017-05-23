@@ -21,6 +21,7 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
+from __future__ import print_function
 from gi.repository import GdkPixbuf
 
 
@@ -32,7 +33,7 @@ def pixbuf_from_string(pixbuf_data, format='png', width=None, height=None):
     if width is not None or height is not None:
         scaled_pixbuf = pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
         if scaled_pixbuf is None:
-            print 'Warning: could not scale image'
+            print('Warning: could not scale image')
         else:
             pixbuf = scaled_pixbuf
     return pixbuf

@@ -26,6 +26,7 @@
 
 """High level wrapper for GtkTreeView"""
 
+from __future__ import print_function
 import datetime
 import decimal
 import gettext
@@ -480,9 +481,9 @@ class Column(GObject.GObject):
         return renderer, prop
 
     # CellRenderers
-    def _cell_data_text_func(self, tree_column, renderer, model, treeiter,
-                             (column, renderer_prop)):
+    def _cell_data_text_func(self, tree_column, renderer, model, treeiter, col_data):
         "To render the data of a cell renderer text"
+        column, renderer_prop = col_data
         row = model[treeiter]
         obj = row[COL_MODEL]
         if column.editable_attribute and obj is not empty_marker:
@@ -513,9 +514,9 @@ class Column(GObject.GObject):
         if column.renderer_func:
             column.renderer_func(renderer, obj)
 
-    def _cell_data_pixbuf_func(self, tree_column, renderer, model, treeiter,
-                               (column, renderer_prop)):
+    def _cell_data_pixbuf_func(self, tree_column, renderer, model, treeiter, col_data):
         "To render the data of a cell renderer pixbuf"
+        column, renderer_prop = col_data
         row = model[treeiter]
         data = column.get_attribute(row[COL_MODEL],
                                     column.attribute, None)
@@ -523,17 +524,17 @@ class Column(GObject.GObject):
             pixbuf = self._objectlist.render_icon(data, column.icon_size)
             renderer.set_property(renderer_prop, pixbuf)
 
-    def _cell_data_combo_func(self, tree_column, renderer, model, treeiter,
-                              (column, renderer_prop)):
+    def _cell_data_combo_func(self, tree_column, renderer, model, treeiter, col_data):
+        column, renderer_prop = col_data
         row = model[treeiter]
         obj = row[COL_MODEL]
         data = column.get_attribute(obj, column.attribute, None)
         text = column.as_string(data, obj)
         renderer.set_property('text', text.lower().capitalize())
 
-    def _cell_data_spin_func(self, tree_column, renderer, model, treeiter,
-                             (column, renderer_prop)):
+    def _cell_data_spin_func(self, tree_column, renderer, model, treeiter, col_data):
         "To render the data of a cell renderer spin"
+        column, renderer_prop = col_data
         row = model[treeiter]
         if column.editable_attribute:
             data = column.get_attribute(row[COL_MODEL],
@@ -718,8 +719,8 @@ class SequentialColumn(Column):
         Column.__init__(self, '_kiwi_sequence_id',
                         title=title, justify=justify, data_type=int, **kwargs)
 
-    def cell_data_func(self, tree_column, renderer, model, treeiter,
-                       (column, renderer_prop)):
+    def cell_data_func(self, tree_column, renderer, model, treeiter, col_data):
+        column, renderer_prop = col_data
         reversed = tree_column.get_sort_order() == Gtk.SortType.DESCENDING
 
         row = model[treeiter]
@@ -1432,8 +1433,9 @@ class ObjectList(Gtk.Box):
     def _model_insert_after(self, prev, instance):
         return self._model.insert_after(prev, (instance,))
 
-    def _model_sort_func(self, model, iter1, iter2, (column, attr)):
+    def _model_sort_func(self, model, iter1, iter2, col_data):
         "This method is used to sort the GtkTreeModel"
+        column, attr = col_data
         a = column.get_attribute(model[iter1][COL_MODEL], attr)
         b = column.get_attribute(model[iter2][COL_MODEL], attr)
         return column.compare(a, b)
@@ -1486,8 +1488,8 @@ class ObjectList(Gtk.Box):
         try:
             row = self._model[path]
         except IndexError:
-            print 'path %s was not found in model: %s' % (
-                path, map(list, self._model))
+            print('path %s was not found in model: %s' % (
+                path, map(list, self._model)))
             return
         item = row[COL_MODEL]
         self.emit('row-activated', item)

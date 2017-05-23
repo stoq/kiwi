@@ -20,6 +20,7 @@
 # Author(s): Johan Dahlin <jdahlin@async.com.br>
 #
 
+from __future__ import print_function
 import contextlib
 import os
 import gettext
@@ -443,13 +444,13 @@ def _test():
     error('An error occurred', Gtk.Button('Woho'))
     error('Unable to mount the selected volume.',
           'mount: can\'t find /media/cdrom0 in /etc/fstab or /etc/mtab')
-    print open(title='Open a file', patterns=['*.py'])
-    print save(title='Save a file', current_name='foobar.py')
+    print(open(title='Open a file', patterns=['*.py']))
+    print(save(title='Save a file', current_name='foobar.py'))
 
-    print password('Administrator password',
+    print(password('Administrator password',
                    'To be able to continue the wizard you need to enter the '
-                   'administrator password for the database on host anthem')
-    print selectfolder()
+                   'administrator password for the database on host anthem'))
+    print(selectfolder())
 
 if __name__ == '__main__':
     _test()

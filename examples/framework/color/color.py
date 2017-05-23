@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 from sets import Set
 
 from gi.repository import Gtk
@@ -10,7 +11,7 @@ from kiwi.ui.widgets.combo import ComboBox
 def load_colors():
     filename = "/usr/X11R6/etc/X11/rgb.txt"
     try:
-        lines = file(filename).readlines()
+        lines = open(filename).readlines()
     except IOError:
         return ['red', 'blue', 'yellow', 'green']
 
@@ -48,4 +49,4 @@ app = FavouriteColor()
 app.add_proxy(the_color, ['combo'])
 app.show_all()
 Gtk.main()
-print 'Your favourite color is', the_color.color
+print('Your favourite color is', the_color.color)

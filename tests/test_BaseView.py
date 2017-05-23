@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import unittest
 from gi.repository import Gtk, Gdk
 
@@ -75,7 +76,7 @@ class NotWidgetFoo(FooView, BaseController):
         BaseController.__init__(self, view=self)
 
     def on_noogie__haxored(self, *args):
-        print "I AM NOT A NUMBER I AM A FREE MAN"
+        print("I AM NOT A NUMBER I AM A FREE MAN")
 
 
 class BaseViewTest(unittest.TestCase):

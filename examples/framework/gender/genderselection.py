@@ -1,3 +1,4 @@
+from __future__ import print_function
 from gi.repository import Gtk
 
 from kiwi.ui.views import BaseView, quit_if_last
@@ -19,4 +20,4 @@ class GenderSelection(BaseView):
 view = GenderSelection()
 view.show_all()
 Gtk.main()
-print view.model.gender
+print(view.model.gender)

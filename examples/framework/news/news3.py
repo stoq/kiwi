@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import os
 
 from gi.repository import Gtk
@@ -59,7 +60,7 @@ class Shell(Delegate):
 
     def news_selected(self, the_list, item):
         self.slave.get_toplevel()
-        print "%s %s %s\n" % (item.title, item.author, item.url)
+        print("%s %s %s\n" % (item.title, item.author, item.url))
 
     def double_click(self, the_list, selected_object):
         self.emit('result', selected_object.url)

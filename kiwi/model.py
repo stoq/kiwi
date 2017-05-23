@@ -205,7 +205,7 @@ class PickledModel(Model):
         try:
             try:
                 pickle.dump(self, fh)
-            except pickle.PicklingError, e:
+            except pickle.PicklingError as e:
                 raise AttributeError(
                     "Tried to pickle an instance variable that isn't "
                     "supported by pickle.dump(). To work around this, you "

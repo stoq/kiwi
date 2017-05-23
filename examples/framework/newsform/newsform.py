@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 from gi.repository import Gtk
 
 from kiwi.ui.gadgets import quit_if_last
@@ -22,4 +23,4 @@ view.focus_topmost()
 view.show()
 Gtk.main()  # runs till window is closed as per delete_handler
 
-print 'Item: "%s" (%s) %s %d' % (item.title, item.author, item.url, item.size)
+print('Item: "%s" (%s) %s %d' % (item.title, item.author, item.url, item.size))

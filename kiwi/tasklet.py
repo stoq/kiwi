@@ -810,8 +810,8 @@ class Tasklet(object):
         _event = self._event
         self.state = Tasklet.STATE_RUNNING
         try:
-            gen_value = self.gen.next()
-        except StopIteration, ex:
+            gen_value = next(self.gen)
+        except StopIteration as ex:
             self.state = Tasklet.STATE_ZOMBIE
             if ex.args:
                 retval, = ex.args

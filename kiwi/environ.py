@@ -293,7 +293,7 @@ class Library(Environment):
                 self._root, '.bzr', 'branch', 'last-revision')
             try:
                 fp = open(revision)
-            except IOError, e:
+            except IOError as e:
                 if e.errno != errno.ENOENT:
                     raise
             else:

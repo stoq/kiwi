@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import os
 
 from gi.repository import Gtk, Gdk
@@ -41,7 +42,7 @@ class ListSlave(SlaveDelegate):
         self.news_list.select(self.news_list[0])
 
     def on_news_list__selection_changed(self, list, item):
-        print "%s %s %s\n" % (item.title, item.author, item.url)
+        print("%s %s %s\n" % (item.title, item.author, item.url))
 
     def on_news_list__double_click(self, the_list, selected_object):
         self.parent.ok.clicked()

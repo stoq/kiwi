@@ -1,5 +1,6 @@
 # A simple example to demonstrate the ListDialog dialog
 
+from __future__ import print_function
 from gi.repository import Gtk
 
 from kiwi.enums import ListType
@@ -47,16 +48,16 @@ class MyListDialog(ListDialog):
         menu.show_all()
 
     def _on_foo_activate(self, menu_item):
-        print 'foo'
+        print('foo')
 
     def _on_foo_can_disable(self, menu_item):
         return True
 
     def _on_bar_activate(self, menu_item):
-        print 'bar'
+        print('bar')
 
     def _on_paste_activate(self, menu_item):
-        print 'paste'
+        print('paste')
 
     def populate(self):
         return [Item('test')]

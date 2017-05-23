@@ -25,6 +25,7 @@
 Runner - executes recorded scripts
 """
 
+from __future__ import print_function
 import doctest
 import logging
 import os
@@ -128,8 +129,8 @@ class Runner(object):
         sys.stdout = self._fakeout
 
         try:
-            exec compile(ex.source, self._filename,
-                         'single', 0, 1) in self._ns
+            exec(compile(ex.source, self._filename,
+                         'single', 0, 1), self._ns)
         finally:
             sys.stdout = save_stdout
 
@@ -137,12 +138,12 @@ class Runner(object):
             got = self._fakeout.getvalue()
             self._fakeout.truncate(0)
             if not self._checker.check_output(ex.want, got, self._options):
-                print >> sys.stderr, (
+                print(
                     "\nERROR at %s:%d\n"
                     "    >>> %s\n"
                     "Expected %s, but got %s"
                     % (self._filename, ex.lineno, ex.source,
-                       ex.want[:-1], got[:-1]))
+                       ex.want[:-1], got[:-1]), file=sys.stderr)
                 self.error()
 
     def _iterate(self):
@@ -163,10 +164,10 @@ class Runner(object):
                 break
             except (SystemExit, KeyboardInterrupt):
                 raise SystemExit
-            except MissingWidget, e:
+            except MissingWidget as e:
                 raise SystemExit(
                     "ERROR: Could not find widget: %s" % str(e))
-            except Exception, e:
+            except Exception as e:
                 import traceback
                 traceback.print_exc()
 
@@ -176,7 +177,7 @@ class Runner(object):
     # Public API
 
     def quit(self):
-        print '* Executed successfully'
+        print('* Executed successfully')
         sys.exit(0)
 
     def error(self):

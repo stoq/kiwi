@@ -50,7 +50,7 @@ class deprecated(object):
             return func(*args, **kwargs)
         try:
             wrapper.__name__ = func.__name__
-        except TypeError, e:
+        except TypeError as e:
             # __name__ is readonly in Python 2.3
             if e.args and e.args[0].find('readonly') != -1:
                 pass

@@ -21,6 +21,7 @@
 
 """Internationalization utilities. Requires intltool and gettext"""
 
+from __future__ import print_function
 from distutils.dep_util import newer
 from distutils.filelist import FileList, findall
 from optparse import OptionParser
@@ -59,7 +60,7 @@ def check_pot_file(root, package):
 def get_translatable_files(root):
     pofiles = os.path.join(root, 'po', POTFILES)
     if not os.path.exists(pofiles):
-        print 'Warning: Could not find %s' % pofiles
+        print('Warning: Could not find %s' % pofiles)
         return []
 
     filelist = FileList()
@@ -172,7 +173,7 @@ def _extract_rml_files(root):
 
 def compile_po_files(root, package):
     if os.system('msgfmt 2> /dev/null') != 256:
-        print 'msgfmt could not be found, disabling translations'
+        print('msgfmt could not be found, disabling translations')
         return
 
     mo_file = package + '.mo'
@@ -230,7 +231,7 @@ def main(args):
         return
     elif options.list:
         for lang in list_languages(root):
-            print lang
+            print(lang)
         return
 
     if options.update:

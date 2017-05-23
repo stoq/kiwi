@@ -1,3 +1,4 @@
+from __future__ import print_function
 import fnmatch
 import inspect
 import os
@@ -72,8 +73,8 @@ def _get_all_classes(root):
         except ImportError as e:
             # FIXME: Some modules (like db.sqlobj, db.sqlalch) will try to
             # import things that we don't have on out development environment
-            print ("module %s is trying to import something "
-                   "not importable: %s" % (modulename, e))
+            print("module %s is trying to import something "
+                  "not importable: %s" % (modulename, e))
             continue
 
         for unused, klass in inspect.getmembers(module, inspect.isclass):

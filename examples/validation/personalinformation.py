@@ -1,5 +1,6 @@
 # This example illustrates the use of entries with validations
 
+from __future__ import print_function
 import datetime
 
 from gi.repository import Gtk
@@ -85,14 +86,14 @@ form.show_all()
 
 
 def on_ok_btn_clicked(widget):
-    print "Name:", person.name
-    print "Age:", person.age
-    print "Birthday:", person.birthdate
-    print "Height:", person.height
-    print "Weight:", person.weight
-    print "Nationality:", person.nationality
-    print "About Your self:", person.about
-    print "Status:", person.status
+    print("Name:", person.name)
+    print("Age:", person.age)
+    print("Birthday:", person.birthdate)
+    print("Height:", person.height)
+    print("Weight:", person.weight)
+    print("Nationality:", person.nationality)
+    print("About Your self:", person.about)
+    print("Status:", person.status)
 
     Gtk.main_quit()
 

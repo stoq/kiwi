@@ -23,6 +23,7 @@
 
 """Currency and datatype converter"""
 
+from __future__ import print_function
 import gettext
 import decimal
 
@@ -64,8 +65,8 @@ class currency(decimal.Decimal):
             if value == ValueUnset:
                 raise decimal.InvalidOperation
         elif isinstance(value, float):
-            print ('Warning: losing precision converting float %r to currency'
-                   % value)
+            print('Warning: losing precision converting float %r to currency'
+                  % value)
             value = unicode(value)
         elif not isinstance(value, (int, long, decimal.Decimal)):
             raise TypeError(

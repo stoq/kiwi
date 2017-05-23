@@ -285,7 +285,7 @@ class ListSlave(SlaveDelegate):
         try:
             return self.add_item()
         # Don't look, PyGObject workaround.
-        except NotImplementedError, e:
+        except NotImplementedError as e:
             return e
 
     def _on_listcontainer__remove_item(self, listcontainer, item):

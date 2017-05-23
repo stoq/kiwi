@@ -1,6 +1,7 @@
 """
 kiwi.tasklet demo program
 """
+from __future__ import print_function
 from gi.repository import Gtk
 
 from kiwi import tasklet
@@ -45,7 +46,7 @@ def main():
 
     event = tasklet.get_event()
     if isinstance(event, tasklet.WaitForSignal):
-        print "signal '%s', stopping counter" % event.signal
+        print("signal '%s', stopping counter" % event.signal)
         yield tasklet.Message("quit", dest=counter)  # stop the counter
 
         if event.signal == 'close':
@@ -59,7 +60,7 @@ def main():
                                    buttons=Gtk.ButtonsType.OK,
                                    message_format=("Thank you "
                                                    "for your kind answer!"))
-        print "response was", response
+        print("response was", response)
         if response == Gtk.ResponseType.YES:
             msgbox.format_secondary_markup(
                 "Your response was <i><b>Yes</b></i>")
@@ -68,15 +69,15 @@ def main():
                 "Your response was <i><b>No</b></i>")
         else:
             ## must have been a delete event
-            print "response was delete event"
+            print("response was delete event")
             Gtk.main_quit()
             return
         msgbox.show()
 
-        print "showing dialog"
+        print("showing dialog")
         yield (tasklet.WaitForSignal(msgbox, "response"),
                tasklet.WaitForSignal(msgbox, "close"))
-        print "event", tasklet.get_event()
+        print("event", tasklet.get_event())
 
     else:
         ## timeout must have exausted..

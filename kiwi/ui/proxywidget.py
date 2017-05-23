@@ -58,7 +58,7 @@ class _PixbufConverter(BaseConverter):
     def from_string(self, value, format='png'):
         try:
             return pixbuf_from_string(value, format)
-        except GObject.GError, e:
+        except GObject.GError as e:
             raise ValidationError(_("Could not load image: %s") % e)
 
 converter.add(_PixbufConverter)
@@ -288,7 +288,7 @@ class ValidatableProxyWidgetMixin(ProxyWidgetMixin):
 
             self.set_valid()
             return data
-        except ValidationError, e:
+        except ValidationError as e:
             self.set_invalid(str(e))
             return ValueUnset
 
