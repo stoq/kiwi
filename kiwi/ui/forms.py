@@ -415,7 +415,7 @@ class NumericField(Field):
     def build_widget(self):
         entry = ProxySpinButton()
         entry.set_adjustment(Gtk.Adjustment(lower=0, step_incr=1,
-                                            upper=sys.maxint, page_incr=10))
+                                            upper=sys.maxsize, page_incr=10))
         entry.set_digits(self.digits)
         return entry
 

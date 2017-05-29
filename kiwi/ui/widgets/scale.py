@@ -48,7 +48,7 @@ class ProxyHScale(Gtk.HScale, ProxyWidgetMixin):
     def __init__(self, adjustment=None):
         if not adjustment:
             adjustment = Gtk.Adjustment(
-                lower=-sys.maxint, upper=sys.maxint, value=0)
+                lower=-sys.maxsize, upper=sys.maxsize, value=0)
         Gtk.HScale.__init__(self, adjustment=adjustment)
         ProxyWidgetMixin.__init__(self)
 
@@ -85,7 +85,7 @@ class ProxyVScale(Gtk.VScale, ProxyWidgetMixin):
     def __init__(self, adjustment=None):
         if not adjustment:
             adjustment = Gtk.Adjustment(
-                lower=-sys.maxint, upper=sys.maxint, value=0)
+                lower=-sys.maxsize, upper=sys.maxsize, value=0)
         Gtk.VScale.__init__(self, adjustment=adjustment)
         ProxyWidgetMixin.__init__(self)
 
