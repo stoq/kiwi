@@ -107,6 +107,12 @@ class ProxyWidgetMixin(object):
         elif data_type == '':
             return None
 
+        # FIXME: This is to make the python3 transition easier for stoq
+        if data_type == 'str':
+            data_type = 'unicode'
+        elif data_type == 'bytes':
+            data_type = 'str'
+
         # This may convert from string to type,
         # A type object will always be returned
         data_type = converter.check_supported(data_type)
