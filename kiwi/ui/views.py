@@ -30,6 +30,7 @@ Defines the View classes that are included in the Kiwi Framework, which
 are the base of Delegates and Proxies.
 """
 
+import collections
 import logging
 import os
 
@@ -116,7 +117,7 @@ class SlaveView(GObject.GObject):
         GObject.GObject.__init__(self)
 
         self._broker = None
-        self.slaves = {}
+        self.slaves = collections.OrderedDict()
         self._proxies = []
         self.is_valid = True
 
