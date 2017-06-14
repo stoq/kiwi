@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kiwi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-16 15:36-0200\n"
-"PO-Revision-Date: 2016-02-12 17:49+0000\n"
+"POT-Creation-Date: 2017-06-13 02:10-0300\n"
+"PO-Revision-Date: 2017-06-13 05:10+0000\n"
 "Last-Translator: Async Jenkins <asyncjenkins@hackedbellini.org>\n"
 "Language-Team: French (http://www.transifex.com/async/kiwi/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -28,226 +28,222 @@ msgid "%s can not be converted to a currency"
 msgstr "%s n'a pu être converti vers une devise"
 
 #: ../kiwi/datatypes.py:239
+msgid "Bytes"
+msgstr ""
+
+#: ../kiwi/datatypes.py:254
 msgid "String"
 msgstr "Chaîne"
 
-#: ../kiwi/datatypes.py:254
-msgid "Unicode"
-msgstr "Unicode"
-
-#: ../kiwi/datatypes.py:269
+#: ../kiwi/datatypes.py:271
 msgid "Integer"
 msgstr "Entier"
 
-#: ../kiwi/datatypes.py:292
+#: ../kiwi/datatypes.py:294
 #, python-format
 msgid "%s could not be converted to an integer"
 msgstr "%s n'a pu être converti en entier"
 
-#: ../kiwi/datatypes.py:299
-msgid "Long"
-msgstr "Entier long"
-
-#: ../kiwi/datatypes.py:306
+#: ../kiwi/datatypes.py:301
 msgid "Boolean"
 msgstr "Booléen"
 
-#: ../kiwi/datatypes.py:322
+#: ../kiwi/datatypes.py:317
 #, python-format
 msgid "'%s' can not be converted to a boolean"
 msgstr "'%s' n'a pu être converti en un booléen"
 
-#: ../kiwi/datatypes.py:329
+#: ../kiwi/datatypes.py:324
 msgid "Float"
 msgstr "Nombre en virgule flottante"
 
-#: ../kiwi/datatypes.py:372 ../kiwi/datatypes.py:395
+#: ../kiwi/datatypes.py:367 ../kiwi/datatypes.py:390
 #, python-format
 msgid "This field requires a number, not %r"
 msgstr "Ce champ nécessite un nombre et non pas %r"
 
-#: ../kiwi/datatypes.py:382
+#: ../kiwi/datatypes.py:377
 msgid "Decimal"
 msgstr "Nombre décimal"
 
-#: ../kiwi/datatypes.py:424 ../kiwi/datatypes.py:429
+#: ../kiwi/datatypes.py:419 ../kiwi/datatypes.py:424
 msgid "mm"
 msgstr ""
 
-#: ../kiwi/datatypes.py:425
+#: ../kiwi/datatypes.py:420
 msgid "yy"
 msgstr ""
 
-#: ../kiwi/datatypes.py:426
+#: ../kiwi/datatypes.py:421
 msgid "dd"
 msgstr ""
 
-#: ../kiwi/datatypes.py:427
+#: ../kiwi/datatypes.py:422
 msgid "yyyy"
 msgstr ""
 
-#: ../kiwi/datatypes.py:428
+#: ../kiwi/datatypes.py:423
 msgid "hh"
 msgstr ""
 
-#: ../kiwi/datatypes.py:430
+#: ../kiwi/datatypes.py:425
 msgid "ss"
 msgstr ""
 
-#: ../kiwi/datatypes.py:431
+#: ../kiwi/datatypes.py:426
 msgid "hh:mm:ss"
 msgstr ""
 
 #. FIXME: locale specific
-#: ../kiwi/datatypes.py:433
+#: ../kiwi/datatypes.py:428
 msgid "hh:mm:ss LL"
 msgstr ""
 
-#: ../kiwi/datatypes.py:531 ../kiwi/datatypes.py:567
+#: ../kiwi/datatypes.py:526 ../kiwi/datatypes.py:562
 msgid "You cannot enter a year before 1900"
 msgstr ""
 
-#: ../kiwi/datatypes.py:561
+#: ../kiwi/datatypes.py:556
 #, python-format
 msgid "This field requires a date of the format \"%s\" and not \"%s\""
 msgstr "Ce champ nécessite une date de la forme \"%s\" et non pas \"%s\""
 
-#: ../kiwi/datatypes.py:573
+#: ../kiwi/datatypes.py:568
 msgid "Time"
 msgstr "Heure"
 
-#: ../kiwi/datatypes.py:591
+#: ../kiwi/datatypes.py:586
 msgid "Date and Time"
 msgstr "Date et Heure"
 
-#: ../kiwi/datatypes.py:609
+#: ../kiwi/datatypes.py:604
 msgid "Date"
 msgstr "Date"
 
-#: ../kiwi/datatypes.py:627
+#: ../kiwi/datatypes.py:622
 msgid "Object"
 msgstr "Objet"
 
-#: ../kiwi/datatypes.py:637
+#: ../kiwi/datatypes.py:632
 msgid "Enum"
 msgstr ""
 
-#: ../kiwi/datatypes.py:709
+#: ../kiwi/datatypes.py:704
 msgid "You have a thousand separator to the right of the decimal point"
 msgstr "Un séparateur des milliers se trouve dans la partie décimale"
 
-#: ../kiwi/datatypes.py:721
+#: ../kiwi/datatypes.py:716
 msgid "Inproperly placed thousands separator"
 msgstr "Séparateur des milliers mal placé"
 
-#: ../kiwi/datatypes.py:726
+#: ../kiwi/datatypes.py:721
 #, python-format
 msgid "Inproperly placed thousand separators: %r"
 msgstr "Séparateur des milliers mal placé : %r"
 
-#: ../kiwi/datatypes.py:744
+#: ../kiwi/datatypes.py:739
 #, python-format
 msgid "You have more than one decimal point (\"%s\")  in your number \"%s\""
 msgstr "Il y a plus d'un séparateur décimal (\"%s\") dans le nombre \"%s\""
 
-#: ../kiwi/ui/dateentry.py:72
+#: ../kiwi/ui/dateentry.py:71
 msgid "_Today"
 msgstr "_Aujourd'hui"
 
-#: ../kiwi/ui/dateentry.py:73
+#: ../kiwi/ui/dateentry.py:72
 msgid "_Cancel"
 msgstr "_Annuler"
 
-#: ../kiwi/ui/dateentry.py:74
+#: ../kiwi/ui/dateentry.py:73
 msgid "_Select"
 msgstr "_Séléctionner"
 
-#: ../kiwi/ui/dialogs.py:105
+#: ../kiwi/ui/dialogs.py:106
 msgid "Show more _details"
 msgstr "Afficher plus de _détails"
 
-#: ../kiwi/ui/dialogs.py:274
+#: ../kiwi/ui/dialogs.py:276
 msgid "Select file"
 msgstr ""
 
-#: ../kiwi/ui/dialogs.py:304
+#: ../kiwi/ui/dialogs.py:306
 msgid "Select folder"
 msgstr ""
 
-#: ../kiwi/ui/dialogs.py:327
+#: ../kiwi/ui/dialogs.py:329
 #, python-format
 msgid "Could not select folder \"%s\""
 msgstr ""
 
-#: ../kiwi/ui/dialogs.py:328
+#: ../kiwi/ui/dialogs.py:330
 #, python-format
 msgid "The folder \"%s\" could not be selected. Permission denied."
 msgstr ""
 
-#: ../kiwi/ui/dialogs.py:336
+#: ../kiwi/ui/dialogs.py:338
 #, python-format
 msgid "A file named \"%s\" already exists"
 msgstr "Un fichier nommé \"%s\" existe déjà"
 
-#: ../kiwi/ui/dialogs.py:337
+#: ../kiwi/ui/dialogs.py:339
 msgid "Do you wish to replace it with the current one?"
 msgstr "Souhaitez-vous le remplacer par l'élément courant ?"
 
-#: ../kiwi/ui/dialogs.py:344
+#: ../kiwi/ui/dialogs.py:346
 msgid "Replace"
 msgstr "Remplacer"
 
-#: ../kiwi/ui/dialogs.py:351
+#: ../kiwi/ui/dialogs.py:353
 msgid "Save"
 msgstr "Enregistrer"
 
-#: ../kiwi/ui/dialogs.py:407
+#: ../kiwi/ui/dialogs.py:409
 msgid "Password:"
 msgstr "Mot de passe :"
 
-#: ../kiwi/ui/forms.py:155
+#: ../kiwi/ui/forms.py:160
 #, python-format
 msgid "Add a %s"
 msgstr ""
 
-#: ../kiwi/ui/forms.py:166
+#: ../kiwi/ui/forms.py:171
 #, python-format
 msgid "Edit the selected %s"
 msgstr ""
 
-#: ../kiwi/ui/forms.py:177
+#: ../kiwi/ui/forms.py:182
 #, python-format
 msgid "Delete the selected %s"
 msgstr ""
 
-#: ../kiwi/ui/listdialog.py:196
+#: ../kiwi/ui/listdialog.py:195
 #, python-format
 msgid "Do you want to remove %s ?"
 msgstr ""
 
-#: ../kiwi/ui/multicombo.py:298
+#: ../kiwi/ui/multicombo.py:275
 msgid "No items to select..."
 msgstr ""
 
-#: ../kiwi/ui/objectlist.py:2427
+#: ../kiwi/ui/objectlist.py:2455
 msgid "Total:"
 msgstr "Total :"
 
-#: ../kiwi/ui/proxywidget.py:66
+#: ../kiwi/ui/proxywidget.py:62
 #, python-format
 msgid "Could not load image: %s"
 msgstr "Impossible de charger l'image : %s"
 
-#: ../kiwi/ui/proxywidget.py:335
+#: ../kiwi/ui/proxywidget.py:327
 #, python-format
 msgid "'%s' is not a valid value for this field"
 msgstr "'%s' n'est pas une valeur autorisée pour ce champ"
 
-#: ../kiwi/ui/proxywidget.py:371
+#: ../kiwi/ui/proxywidget.py:344
 msgid "This field is mandatory"
 msgstr "Ce champ est obligatoire"
 
-#: ../kiwi/ui/widgets/entry.py:170
+#: ../kiwi/ui/widgets/entry.py:157
 #, python-format
 msgid "'%s' is not a valid object"
 msgstr "'%s' n'est pas un objet valide"
