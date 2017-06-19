@@ -156,7 +156,7 @@ class BaseDialog(Gtk.Dialog):
         self.vbox.set_spacing(6)
 
 
-def messagedialog(dialog_type, short, long=None, parent=None,
+def messagedialog(dialog_type, short, description=None, parent=None,
                   buttons=Gtk.ButtonsType.OK, default=-1, bold=True):
     """Create and show a MessageDialog.
 
@@ -166,7 +166,7 @@ def messagedialog(dialog_type, short, long=None, parent=None,
       - Gtk.MessageType.QUESTION
       - Gtk.MessageType.ERROR
     :param short:       A header text to be inserted in the dialog.
-    :param long:        A long description of message.
+    :param description: A long description of message.
     :param parent:      The parent widget of this dialog
     :type parent:       a Gtk.Window subclass
     :param buttons:     The button type that the dialog will be display,
@@ -204,14 +204,14 @@ def messagedialog(dialog_type, short, long=None, parent=None,
 
     d.set_primary(short, bold=bold)
 
-    if long:
-        if isinstance(long, Gtk.Widget):
-            d.set_details_widget(int)
-        elif isinstance(long, str):
-            d.set_details(int)
+    if description:
+        if isinstance(description, Gtk.Widget):
+            d.set_details_widget(description)
+        elif isinstance(description, str):
+            d.set_details(description)
         else:
             raise TypeError(
-                "long must be a Gtk.Widget or a string, not %r" % long)
+                "description must be a Gtk.Widget or a string, not %r" % description)
 
     if default != -1:
         d.set_default_response(default)
@@ -225,27 +225,27 @@ def messagedialog(dialog_type, short, long=None, parent=None,
     return response
 
 
-def _simple(type, short, long=None, parent=None, buttons=Gtk.ButtonsType.OK,
+def _simple(type, short, description=None, parent=None, buttons=Gtk.ButtonsType.OK,
             default=-1):
     if buttons == Gtk.ButtonsType.OK:
         default = Gtk.ResponseType.OK
-    return messagedialog(type, short, long,
+    return messagedialog(type, short, description,
                          parent=parent, buttons=buttons,
                          default=default)
 
 
-def error(short, long=None, parent=None, buttons=Gtk.ButtonsType.OK, default=-1):
-    return _simple(Gtk.MessageType.ERROR, short, long, parent=parent,
+def error(short, description=None, parent=None, buttons=Gtk.ButtonsType.OK, default=-1):
+    return _simple(Gtk.MessageType.ERROR, short, description, parent=parent,
                    buttons=buttons, default=default)
 
 
-def info(short, long=None, parent=None, buttons=Gtk.ButtonsType.OK, default=-1):
-    return _simple(Gtk.MessageType.INFO, short, long, parent=parent,
+def info(short, description=None, parent=None, buttons=Gtk.ButtonsType.OK, default=-1):
+    return _simple(Gtk.MessageType.INFO, short, description, parent=parent,
                    buttons=buttons, default=default)
 
 
-def warning(short, long=None, parent=None, buttons=Gtk.ButtonsType.OK, default=-1):
-    return _simple(Gtk.MessageType.WARNING, short, long, parent=parent,
+def warning(short, description=None, parent=None, buttons=Gtk.ButtonsType.OK, default=-1):
+    return _simple(Gtk.MessageType.WARNING, short, description, parent=parent,
                    buttons=buttons, default=default)
 
 
@@ -434,10 +434,10 @@ def _test():
     yesno('Kill?', default=Gtk.ResponseType.NO)
 
     info('Some information displayed not too long\nbut not too short',
-         long=('foobar ba asdjaiosjd oiadjoisjaoi aksjdasdasd kajsdhakjsdh\n'
-               'askdjhaskjdha skjdhasdasdjkasldj alksdjalksjda lksdjalksdj\n'
-               'asdjaslkdj alksdj lkasjdlkjasldkj alksjdlkasjd jklsdjakls\n'
-               'ask;ldjaklsjdlkasjd alksdj laksjdlkasjd lkajs kjaslk jkl\n'),
+         description=('foobar ba asdjaiosjd oiadjoisjaoi aksjdasdasd kajsdhakjsdh\n'
+                      'askdjhaskjdha skjdhasdasdjkasldj alksdjalksjda lksdjalksdj\n'
+                      'asdjaslkdj alksdj lkasjdlkjasldkj alksjdlkasjd jklsdjakls\n'
+                      'ask;ldjaklsjdlkasjd alksdj laksjdlkasjd lkajs kjaslk jkl\n'),
          default=Gtk.ResponseType.OK,
          )
 
