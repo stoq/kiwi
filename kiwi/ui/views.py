@@ -979,8 +979,9 @@ def _open_glade(view, gladefile, domain, translation_domain):
                 "Glade resource %s was not found on domain %s" % (
                     gladefile, domain))
 
-    fp = open(gladefile)
-    sniff = fp.read(200)
+    # XXX: Opening this not in binary mode was raising an weird error on win32
+    fp = open(gladefile, 'rb')
+    sniff = fp.read(200).decode()
     fp.close()
 
     if '<interface' in sniff:

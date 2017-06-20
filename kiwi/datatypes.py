@@ -54,9 +54,9 @@ if sys.platform == 'win32':
         import ctypes
 
         def GetLocaleInfo(value):
-            s = ctypes.create_string_buffer("\000" * 255)
+            s = ctypes.create_string_buffer(b"\000" * 255)
             ctypes.windll.kernel32.GetLocaleInfoA(0, value, s, 255)
-            return str(s.value)
+            return s.value.decode()
     except ImportError:
         def _GetLocaleInfo(value):
             raise Exception(
