@@ -97,7 +97,7 @@ class HIGAlertDialog(Gtk.Dialog):
         hbox.pack_start(self._image, False, False, 0)
 
         vbox = Gtk.VBox(False, 0)
-        hbox.pack_start(vbox, False, False, 0)
+        hbox.pack_start(vbox, True, True, 0)
         vbox.pack_start(self._primary_label, False, False, 0)
         vbox.pack_start(self._secondary_label, False, False, 0)
         self.main_vbox = vbox
@@ -107,7 +107,7 @@ class HIGAlertDialog(Gtk.Dialog):
         self._expander.set_spacing(6)
         self._expander.add(self._details_label)
         vbox.pack_start(self._expander, False, False, 0)
-        self.get_content_area().pack_start(hbox, False, False, 0)
+        self.get_content_area().pack_start(hbox, True, True, 0)
         hbox.show_all()
         self._expander.hide()
         self.add_buttons(*_BUTTON_TYPES[buttons])
