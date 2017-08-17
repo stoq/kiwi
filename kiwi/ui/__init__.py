@@ -39,7 +39,9 @@ from kiwi.environ import environ
 style_provider = Gtk.CssProvider()
 style_provider.load_from_path(
     environ.get_resource_filename('kiwi', 'css', 'kiwi.css'))
-Gtk.StyleContext.add_provider_for_screen(
-    Gdk.Screen.get_default(),
-    style_provider,
-    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+screen = Gdk.Screen.get_default()
+if screen is not None:
+    Gtk.StyleContext.add_provider_for_screen(
+        screen,
+        style_provider,
+        Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
