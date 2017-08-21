@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (C) 2005 by Async Open Source 
+# Copyright (C) 2005 by Async Open Source
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License
@@ -42,7 +42,7 @@ if sys.hexversion < int('%02x%02x0000' % REQUIRED_VERSION, 16):
 main_module = 'kiwi.ui.test.main'
 try:
     module = __import__(main_module, globals(), locals(), 'main')
-except Exception, e:
+except Exception as e:
     raise SystemExit("ERROR: Failed to import required module %s\n\n"
                      "Exception raised during import:\n %s: %s\n" %
                      (main_module, e.__class__.__name__, e))

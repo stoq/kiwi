@@ -42,7 +42,7 @@ if sys.hexversion < int('%02x%02x0000' % REQUIRED_VERSION, 16):
 main_module = 'kiwi.i18n.i18n'
 try:
     module = __import__(main_module, globals(), locals(), 'main')
-except Exception, e:
+except Exception as e:
     raise SystemExit("ERROR: Failed to import required module %s\n\n"
                      "Exception raised during import:\n %s: %s\n" %
                      (main_module, e.__class__.__name__, e))
