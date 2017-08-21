@@ -562,7 +562,7 @@ class KiwiEntry(Gtk.Entry):
         if not self._mask or self._block_insert:
             return
 
-        self.stop_emission('insert-text')
+        self.stop_emission_by_name('insert-text')
 
         text = self.get_text()
         pos = self.get_position()
@@ -629,7 +629,7 @@ class KiwiEntry(Gtk.Entry):
         if not self._mask or self._block_delete:
             return
 
-        self.stop_emission('delete-text')
+        self.stop_emission_by_name('delete-text')
 
         if end == -1:
             end = len(self.get_text())
@@ -716,7 +716,7 @@ class KiwiEntry(Gtk.Entry):
 
     def _on_changed(self, widget):
         if self._block_changed:
-            self.stop_emission('changed')
+            self.stop_emission_by_name('changed')
         self._update_current_object(widget.get_text())
 
     def _on_move_cursor(self, entry, step, count, extend_selection):

@@ -92,11 +92,11 @@ class HIGAlertDialog(Gtk.Dialog):
             label.set_alignment(0.0, 0.5)
             label.set_max_width_chars(80)
 
-        hbox = Gtk.HBox(False, 12)
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
         hbox.set_border_width(5)
         hbox.pack_start(self._image, False, False, 0)
 
-        vbox = Gtk.VBox(False, 0)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
         hbox.pack_start(vbox, True, True, 0)
         vbox.pack_start(self._primary_label, False, False, 0)
         vbox.pack_start(self._secondary_label, False, False, 0)
@@ -401,7 +401,7 @@ def password(primary='', secondary='', parent=None):
         secondary += '\n'
         d.set_secondary(secondary)
 
-    hbox = Gtk.HBox()
+    hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
     hbox.set_border_width(6)
     hbox.show()
     d.label_vbox.pack_start(hbox, True, True, 0)
@@ -451,6 +451,7 @@ def _test():
                    'To be able to continue the wizard you need to enter the '
                    'administrator password for the database on host anthem'))
     print(selectfolder())
+
 
 if __name__ == '__main__':
     _test()

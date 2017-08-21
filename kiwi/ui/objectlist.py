@@ -2343,8 +2343,8 @@ class ObjectTree(ObjectList):
 type_register(ObjectTree)
 
 
-class ListLabel(Gtk.HBox):
-    """I am a subclass of a GtkHBox which you can use if you want
+class ListLabel(Gtk.Box):
+    """I am a subclass of a GtkBox which you can use if you want
     to vertically align a label with a column
     """
 
@@ -2375,7 +2375,7 @@ class ListLabel(Gtk.HBox):
         self._column = klist.get_column_by_name(column)
         self._value_format = value_format
 
-        Gtk.HBox.__init__(self)
+        super(ListLabel, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
 
         self._create_ui()
 

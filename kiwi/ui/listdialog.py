@@ -33,7 +33,7 @@ from kiwi.utils import gsignal
 _ = lambda m: gettext.dgettext('kiwi', m)
 
 
-class ListContainer(Gtk.HBox):
+class ListContainer(Gtk.Box):
     """A ListContainer is an :class:`ObjectList` with buttons to be able
     to modify the content of the list.
     Depending on the list_mode, @see :class:`set_list_mode` you will
@@ -77,7 +77,7 @@ class ListContainer(Gtk.HBox):
         """
         self._list_type = None
 
-        super(ListContainer, self).__init__()
+        super(ListContainer, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
 
         self._orientation = orientation
 
@@ -104,7 +104,7 @@ class ListContainer(Gtk.HBox):
         self.edit_button.set_sensitive(False)
         self.edit_button.connect('clicked', self._on_edit_button__clicked)
 
-        self._vbox = Gtk.VBox(spacing=6)
+        self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
 
         if self._orientation == Gtk.Orientation.VERTICAL:
             self.pack_start(self.list, True, True, 0)
@@ -114,7 +114,7 @@ class ListContainer(Gtk.HBox):
         elif self._orientation == Gtk.Orientation.HORIZONTAL:
             self._vbox.pack_start(self.list, True, True, 0)
             self.list.show()
-            hbox = Gtk.HBox(spacing=6)
+            hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
             self._add_buttons_to_box(hbox)
             self._vbox.pack_start(hbox, False, True, 0)
             hbox.show()
@@ -252,6 +252,7 @@ class ListContainer(Gtk.HBox):
     def _on_edit_button__clicked(self, button):
         self._edit_item(self.list.get_selected())
 
+
 GObject.type_register(ListContainer)
 
 
@@ -377,6 +378,7 @@ class ListSlave(SlaveDelegate):
         """This will be called when the selection changes in the ListDialog
         :param selection: selected object or None if nothing is selected
         """
+
     def populate(self):
         """This will be called once after the user interface construction is done.
         It should return a list of objects which will initially be inserted
@@ -411,6 +413,7 @@ class ListDialog(Gtk.Dialog, ListSlave):
         >>> dialog.run()
 
     """
+
     def __init__(self, columns=None):
         Gtk.Dialog.__init__(self)
         self.add_button(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)

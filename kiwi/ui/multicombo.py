@@ -61,7 +61,7 @@ class _MultiComboPopup(PopupWindow):
         self._activate_selected_item()
 
     def get_main_widget(self):
-        vbox = Gtk.VBox()
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         self._sw = Gtk.ScrolledWindow()
         self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
@@ -206,7 +206,7 @@ class _MultiComboCloseButton(Gtk.Button):
 type_register(_MultiComboCloseButton)
 
 
-class MultiCombo(Gtk.HBox):
+class MultiCombo(Gtk.Box):
     """Multi selection combo.
 
     Just like a combo entry, but allows multiple items to be selected
@@ -226,7 +226,7 @@ class MultiCombo(Gtk.HBox):
     scrolling_threshold = GObject.Property(type=int, default=3)
 
     def __init__(self, **kwargs):
-        super(MultiCombo, self).__init__(**kwargs)
+        super(MultiCombo, self).__init__(orientation=Gtk.Orientation.HORIZONTAL, **kwargs)
 
         self.model = Gtk.ListStore(str, object, GdkPixbuf.Pixbuf, object)
         self._row_height = None
@@ -398,7 +398,7 @@ class MultiCombo(Gtk.HBox):
         self._update_no_items_marker()
 
     def _get_item_widget(self, row):
-        hbox = Gtk.HBox()
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
 
         button = _MultiComboCloseButton()
         button.connect('clicked', self._on_remove_button__clicked, row)

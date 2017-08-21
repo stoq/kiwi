@@ -35,7 +35,7 @@ class PopupWindow(Gtk.Window):
     def __init__(self, widget):
         self.visible = False
         self.attached_widget = widget
-        super(PopupWindow, self).__init__(Gtk.WindowType.POPUP)
+        super(PopupWindow, self).__init__(type=Gtk.WindowType.POPUP)
         self._setup()
 
     #
@@ -188,7 +188,7 @@ class PopupWindow(Gtk.Window):
         alignment.show()
 
         self.main_widget = self.get_main_widget()
-        self.main_box = Gtk.VBox()
+        self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.main_box.add(self.main_widget)
         alignment.add(self.main_box)
 

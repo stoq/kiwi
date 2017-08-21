@@ -57,7 +57,7 @@ class _ComboEntryPopup(PopupWindow):
         self._filter_model = None
 
     def get_main_widget(self):
-        vbox = Gtk.VBox()
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         vbox.show()
 
         self._sw = Gtk.ScrolledWindow()
@@ -66,7 +66,7 @@ class _ComboEntryPopup(PopupWindow):
         self._sw.show()
 
         self._model = Gtk.ListStore(str)
-        self._treeview = Gtk.TreeView(self._model)
+        self._treeview = Gtk.TreeView(model=self._model)
         self._treeview.set_enable_search(False)
         self._treeview.connect('motion-notify-event',
                                self._on_treeview__motion_notify_event)
@@ -242,6 +242,7 @@ class _ComboEntryPopup(PopupWindow):
     def set_details_callback(self, callable):
         self._renderer.set_details_callback(callable)
 
+
 type_register(_ComboEntryPopup)
 
 
@@ -270,7 +271,7 @@ class ComboEntry(Gtk.Box):
         if isinstance(entry, KiwiEntry):
             entry.set_normal_completion()
 
-        self.hbox = Gtk.HBox()
+        self.hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.hbox.set_valign(Gtk.Align.CENTER)
 
         # FIXME: Why are those EventBox here?
@@ -304,7 +305,7 @@ class ComboEntry(Gtk.Box):
         self._button.show()
         self._sizegroup.add_widget(self._button)
 
-        arrow = Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.NONE)
+        arrow = Gtk.Arrow(arrow_type=Gtk.ArrowType.DOWN, shadow_type=Gtk.ShadowType.NONE)
         self._button.add(arrow)
         arrow.show()
 
@@ -670,5 +671,6 @@ class ComboEntry(Gtk.Box):
     def remove_css_class(self, css_class):
         sc = self.entry.get_style_context()
         sc.remove_class(css_class)
+
 
 type_register(ComboEntry)

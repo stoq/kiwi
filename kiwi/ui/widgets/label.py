@@ -53,7 +53,7 @@ class ProxyLabel(Gtk.Label, ProxyWidgetMixin):
         :param label: initial text
         :param data_type: data type of label
         """
-        Gtk.Label.__init__(self, label)
+        super(ProxyLabel, self).__init__(label=label)
         ProxyWidgetMixin.__init__(self)
         self.props.data_type = data_type
         self.set_use_markup(True)
@@ -161,7 +161,7 @@ class ProxyLabel(Gtk.Label, ProxyWidgetMixin):
         :type size: string
         """
         if (size is not None and
-            size not in self._size_list):
+                size not in self._size_list):
             raise ValueError('Size of "%s" label is not valid' %
                              self.get_text())
 
@@ -179,5 +179,6 @@ class ProxyLabel(Gtk.Label, ProxyWidgetMixin):
 
     def set_color(self, color):
         set_foreground(self, color)
+
 
 type_register(ProxyLabel)

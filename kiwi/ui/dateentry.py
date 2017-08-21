@@ -52,7 +52,7 @@ class _DateEntryPopup(PopupWindow):
         super(_DateEntryPopup, self).__init__(dateentry)
 
     def get_main_widget(self):
-        vbox = Gtk.VBox()
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         vbox.show()
         self._vbox = vbox
 
@@ -71,7 +71,8 @@ class _DateEntryPopup(PopupWindow):
         for label, callback in [(_('_Today'), self._on_today__clicked),
                                 (_('_Cancel'), self._on_cancel__clicked),
                                 (_('_Select'), self._on_select__clicked)]:
-            button = Gtk.Button(label, use_underline=True)
+            button = Gtk.Button.new_with_label(label=label)
+            button.set_use_underline(True)
             button.connect('clicked', callback)
             buttonbox.pack_start(button, True, True, 0)
             button.show()
@@ -103,7 +104,7 @@ class _DateEntryPopup(PopupWindow):
             return False
 
         if (date is not None and
-            date is not ValueUnset):
+                date is not ValueUnset):
             self.set_date(date)
         self.grab_focus()
 
@@ -196,7 +197,7 @@ class DateEntry(Gtk.Box):
         self._sizegroup.add_widget(self._button)
         self._button.show()
 
-        arrow = Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.NONE)
+        arrow = Gtk.Arrow(arrow_type=Gtk.ArrowType.DOWN, shadow_type=Gtk.ShadowType.NONE)
         self._button.add(arrow)
         arrow.show()
 
@@ -311,5 +312,6 @@ class DateEntry(Gtk.Box):
         if date == ValueUnset:
             date = None
         return date
+
 
 type_register(DateEntry)

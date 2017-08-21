@@ -414,8 +414,8 @@ class NumericField(Field):
 
     def build_widget(self):
         entry = ProxySpinButton()
-        entry.set_adjustment(Gtk.Adjustment(lower=0, step_incr=1,
-                                            upper=sys.maxsize, page_incr=10))
+        entry.set_adjustment(Gtk.Adjustment(lower=0, step_increment=1,
+                                            upper=sys.maxsize, page_increment=10))
         entry.set_digits(self.digits)
         return entry
 
@@ -431,8 +431,8 @@ class PercentageField(Field):
 
     def build_widget(self):
         entry = ProxySpinButton()
-        entry.set_adjustment(Gtk.Adjustment(lower=0, step_incr=1,
-                                            upper=100, page_incr=10))
+        entry.set_adjustment(Gtk.Adjustment(lower=0, step_increment=1,
+                                            upper=100, page_increment=10))
         entry.set_range(0, 100)
         entry.set_digits(2)
         return entry
@@ -521,7 +521,8 @@ class FormTableLayout(FormLayout):
         #   11 required_spaces, 3 column = 4 rows (4 x 3 = 12 spaces)
         rows = int(math.ceil(required_spaces / float(columns)))
 
-        table = Gtk.Table(rows, columns * self.COLUMNS_PER_FIELD, False)
+        table = Gtk.Table(n_rows=rows, n_columns=columns * self.COLUMNS_PER_FIELD,
+                          homogeneous=False)
         table.props.row_spacing = 6
         table.props.column_spacing = 6
 
@@ -572,7 +573,7 @@ class FormTableLayout(FormLayout):
                          Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL, 0, 0, 0)
 
             # Build and attach the extra buttons
-            hbox = Gtk.HBox(spacing=0)
+            hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
             for button in [field.add_button, field.edit_button, field.delete_button]:
                 if not button:
                     continue
