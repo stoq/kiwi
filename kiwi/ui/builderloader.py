@@ -22,6 +22,7 @@
 #
 
 import logging
+import platform
 
 from gi.repository import Gtk
 
@@ -89,6 +90,30 @@ class BuilderWidgetTree:
 
         if domain is not None:
             self._builder.set_translation_domain(domain)
+
+        if platform.system() == 'Windows' and gladefile:
+            # Windows with python3 and Gtk3/pygi has this really nasty bug that
+            # translations are actually working, but somehow the enconding is
+            # messed up by Gtk. This might be fixed in newer versions of
+            # Gtk/pygi, but currently, we are stuck with 3.24 on Windows. Other
+            # References from a user with the same issue
+            # https://stackoverflow.com/questions/32037573/
+            # https://sourceforge.net/p/pygobjectwin32/tickets/22/
+            # https://bugzilla.gnome.org/show_bug.cgi?id=753991
+            # And the source of the workaround
+            # https://github.com/tobias47n9e/pygobject-locale/issues/1#issuecomment-222287650
+            import xml.etree.ElementTree as ET
+            from io import BytesIO
+            import gettext
+            tree = ET.parse(gladefile)
+            for node in tree.iter():
+                if 'translatable' in node.attrib:
+                    del node.attrib['translatable']
+                    node.text = gettext.dgettext(domain, node.text)
+            temp_file = BytesIO()
+            tree.write(temp_file, encoding='utf-8', xml_declaration=True)
+            data = temp_file.getvalue().decode()
+            gladefile = None
 
         if gladefile is not None:
             self._builder.add_from_file(gladefile)
