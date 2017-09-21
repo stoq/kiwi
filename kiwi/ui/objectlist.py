@@ -881,6 +881,7 @@ class _ContextMenu(Gtk.Menu):
             if len(active_children) == 1:
                 active_children[0].set_sensitive(False)
 
+
 COL_MODEL = 0
 
 _marker = object()
@@ -1936,13 +1937,15 @@ class ObjectList(Gtk.Box):
         self._iters = collections.OrderedDict()
         self.clear_message()
 
-    def get_next(self, instance):
+    def get_next(self, instance, is_circular=True):
         """
         Returns the item after instance in the list.
         Note that the instance must be inserted before this can be called
         If there are no instances after,  the first item will be returned.
 
         :param instance: the instance
+        :param is_circular: if instance is the last object in this list, this indicates
+          whether we should get the first element or not.
         """
 
         objid = instance
@@ -1954,18 +1957,22 @@ class ObjectList(Gtk.Box):
         model = self._model
         pos = model[treeiter].path[0]
         if pos >= len(model) - 1:
+            if not is_circular:
+                return model[pos][COL_MODEL]
             pos = 0
         else:
             pos += 1
         return model[pos][COL_MODEL]
 
-    def get_previous(self, instance):
+    def get_previous(self, instance, is_circular=True):
         """
         Returns the item before instance in the list.
         Note that the instance must be inserted before this can be called
         If there are no instances before,  the last item will be returned.
 
         :param instance: the instance
+        :param is_circular: if instance is the first object in this list, this indicates
+          whether we should get the last element or not.
         """
 
         objid = instance
@@ -1976,6 +1983,8 @@ class ObjectList(Gtk.Box):
         model = self._model
         pos = model[treeiter].path[0]
         if pos == 0:
+            if not is_circular:
+                return model[pos][COL_MODEL]
             pos = len(model) - 1
         else:
             pos -= 1
@@ -2134,6 +2143,7 @@ class ObjectList(Gtk.Box):
             for attribute in attributes:
                 row.append(getattr(item, attribute, None))
             yield row
+
 
 type_register(ObjectList)
 
@@ -2328,6 +2338,7 @@ class ObjectTree(ObjectList):
 
         for row in self._model:
             flattern(row)
+
 
 type_register(ObjectTree)
 
