@@ -2,7 +2,8 @@ Source: kiwi
 Section: python
 Priority: optional
 Maintainer: Stoq Team <stoq-devel@async.com.br>
-Build-Depends: debhelper (>= 8.0.0), python3-all (>= 3.4), python-setuptools
+Build-Depends: debhelper (>= 8.0.0), python3-all (>= 3.4), python3-setuptools,
+ python3-gi, gir1.2-gtk-3.0, python3-zope.interface
 Build-Depends-Indep: gettext, intltool, python3-mock (>= 0.7)
 Homepage: http://www.async.com.br/projects/kiwi/
 Vcs-Git: https://github.com/stoq/kiwi.git
@@ -14,9 +15,9 @@ Package: python3-kiwi
 Architecture: all
 Depends: ${misc:Depends}, ${python:Depends},
  python3-gi (>= 3.12), python3-gi-cairo (>= 3.12), gir1.2-gtk-3.0 (>= 3.10),
- python3-setuptools (>= 0.6b3-1), python3-zope.interface
+ python3-setuptools (>= 20.7.0), python3-zope.interface
 Breaks: stoq (< 2.1.90)
-Replaces: kiwi
+Replaces: kiwi, python-kiwi
 Homepage: http://www.async.com.br/projects/kiwi/
 Description: a graphical framework to construct simple UI
  Kiwi is a framework and a set of enhanced PyGTK widgets designed to

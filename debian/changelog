@@ -1,3 +1,9 @@
+kiwi (3.0.0) xenial; urgency=medium
+
+  * New release
+
+ -- Felipe Nehmi <felipe@async.com.br>  Tue, 05 Oct 2017 10:45:35 -0300
+
 kiwi (1.11.90) trusty; urgency=low
 
   * Experimental gtk3 build
