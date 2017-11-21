@@ -183,7 +183,7 @@
                 <property name="is_focus">True</property>
                 <property name="text" translatable="yes">(  )     -    </property>
                 <property name="mask">(00) 0000-0000</property>
-                <property name="data_type">str</property>
+                <property name="data_type">unicode</property>
                 <property name="mandatory">True</property>
               </object>
               <packing>
@@ -227,7 +227,7 @@
               <object class="ProxyComboEntry" id="nationality">
                 <property name="visible">True</property>
                 <property name="mandatory">True</property>
-                <property name="data_type">str</property>
+                <property name="data_type">unicode</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -258,7 +258,7 @@
             <child>
               <object class="ProxyComboBox" id="gender">
                 <property name="visible">True</property>
-                <property name="data_type">str</property>
+                <property name="data_type">unicode</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -301,7 +301,7 @@
           <object class="ProxyTextView" id="about">
             <property name="visible">True</property>
             <property name="border_width">10</property>
-            <property name="data_type">str</property>
+            <property name="data_type">unicode</property>
             <property name="mandatory">True</property>
           </object>
           <packing>

@@ -1,5 +1,5 @@
 # encoding: iso-8859-1
-from gi.repository import Gtk
+from gi.repository import Gtk, Gio
 
 from kiwi.datatypes import ValidationError
 from kiwi.ui.widgets.combo import ProxyComboEntry
@@ -11,6 +11,17 @@ class Dialog(GladeDelegate):
         GladeDelegate.__init__(self, gladefile='lang.ui',
                                delete_handler=self.quit_if_last)
         self.register_validate_function(self.validity)
+        hb = Gtk.HeaderBar()
+        hb.set_title('Foobar')
+        hb.set_show_close_button(True)
+
+        button = Gtk.Button()
+        icon = Gio.ThemedIcon(name="mail-send-receive-symbolic")
+        image = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON)
+        button.add(image)
+        hb.pack_end(button)
+
+        self.toplevel.set_titlebar(hb)
 
     def validity(self, data):
         self.ok_button.set_sensitive(data)

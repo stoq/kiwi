@@ -44,6 +44,7 @@ import locale
 import re
 import sys
 import time
+import six
 
 from kiwi import ValueUnset
 from kiwi.enums import Alignment
@@ -110,6 +111,9 @@ class ConverterRegistry:
         del self._converters[ctype]
 
     def get_converter(self, converter_type):
+        if converter_type == 'unicode':
+            converter_type = six.text_type
+
         try:
             converter = self._converters[converter_type]
         except KeyError:
@@ -117,7 +121,7 @@ class ConverterRegistry:
             # If we're a subclass of enum, create a dynamic subclass on the
             # fly and register it, it's necessary for enum.from_string to work.
             if (issubclass(converter_type, enum) and
-                not converter_type in self._converters):
+                    not converter_type in self._converters):
                 return self.add(
                     type(enum.__class__.__name__ + 'EnumConverter',
                          (_EnumConverter,), dict(type=converter_type)))
@@ -235,7 +239,7 @@ class BaseConverter(object):
 
 
 class _BytesConverter(BaseConverter):
-    type = bytes
+    type = six.binary_type
     name = _('Bytes')
 
     def as_string(self, value, format=None):
@@ -244,13 +248,13 @@ class _BytesConverter(BaseConverter):
         return ''.join(chr(i) for i in value)
 
     def from_string(self, value):
-        return bytes(ord(i) for i in value)
+        return six.binary_type(ord(i) for i in value)
 
 converter.add(_BytesConverter)
 
 
 class _StringConverter(BaseConverter):
-    type = str
+    type = six.text_type
     name = _('String')
 
     def as_string(self, value, format=None):
@@ -261,7 +265,7 @@ class _StringConverter(BaseConverter):
     def from_string(self, value):
         if isinstance(value, bytes):
             value = value.decode('utf-8')
-        return str(value)
+        return six.text_type(value)
 
 converter.add(_StringConverter)
 
@@ -301,7 +305,7 @@ class _BoolConverter(BaseConverter):
     name = _('Boolean')
 
     def as_string(self, value, format=None):
-        return str(value)
+        return six.text_type(value)
 
     def from_string(self, value):
         "Convert a string to a boolean"

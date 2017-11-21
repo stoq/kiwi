@@ -33,6 +33,7 @@ they contain methods to easily insert and retrieve data from combos.
 """
 
 from gi.repository import Gtk, GObject
+import six
 
 from kiwi import ValueUnset
 from kiwi.component import implementer
@@ -86,7 +87,7 @@ class _EasyComboBoxHelper(object):
 
         if self.mode == ComboMode.UNKNOWN:
             first = itemdata[0]
-            if isinstance(first, str):
+            if isinstance(first, six.string_types):
                 self.set_mode(ComboMode.STRING)
             elif isinstance(first, (tuple, list)):
                 self.set_mode(ComboMode.DATA)
@@ -132,7 +133,7 @@ class _EasyComboBoxHelper(object):
         - label: a string with the text to be added
         - data: the data to be associated with that item
         """
-        if not isinstance(label, str):
+        if not isinstance(label, six.string_types):
             raise TypeError("label must be string, found %s" % (label,))
 
         if self.mode == ComboMode.UNKNOWN:
@@ -159,7 +160,7 @@ class _EasyComboBoxHelper(object):
         :param label: a string with the text to be added
         :param data: the data to be associated with that item
         """
-        if not isinstance(label, str):
+        if not isinstance(label, six.string_types):
             raise TypeError("label must be string, found %s" % (label,))
 
         if self.mode == ComboMode.UNKNOWN:
@@ -264,7 +265,7 @@ class _EasyComboBoxHelper(object):
 class ProxyComboBox(Gtk.ComboBox, ProxyWidgetMixin):
 
     __gtype_name__ = 'ProxyComboBox'
-    allowed_data_types = (str, object) + number
+    allowed_data_types = (six.string_types, object) + number
 
     data_type = GObject.Property(
         getter=ProxyWidgetMixin.get_data_type,
@@ -451,7 +452,7 @@ GObject.type_register(ProxyComboBox)
 
 class ProxyComboEntry(ComboEntry, ValidatableProxyWidgetMixin):
     __gtype_name__ = 'ProxyComboEntry'
-    allowed_data_types = (str, object) + number
+    allowed_data_types = (six.string_types, object) + number
 
     data_type = GObject.Property(
         getter=ProxyWidgetMixin.get_data_type,

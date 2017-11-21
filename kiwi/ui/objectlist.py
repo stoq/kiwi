@@ -34,6 +34,7 @@ import gettext
 import locale
 import logging
 import pickle
+import six
 
 from gi.repository import Gtk, GLib, GObject, Gdk, Pango, GdkPixbuf
 
@@ -456,7 +457,7 @@ class Column(GObject.GObject):
                              model, self, self.from_string)
             prop = 'text'
         elif issubclass(data_type, (datetime.date, datetime.time,
-                                    str, number,
+                                    six.string_types, number,
                                     currency)):
             if self.use_markup:
                 prop = 'markup'
@@ -1398,7 +1399,7 @@ class ObjectList(Gtk.Box):
             self._model.set_sort_column_id(index, column.order)
 
         if column.searchable:
-            if not issubclass(column.data_type, str):
+            if not issubclass(column.data_type, six.string_types):
                 raise TypeError("Unsupported data type for "
                                 "searchable column: %s" % column.data_type)
             self._treeview.set_search_column(index)

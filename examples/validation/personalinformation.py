@@ -21,10 +21,10 @@ class Form(GladeDelegate):
                                gladefile="personalinformation.ui",
                                delete_handler=self.quit_if_last)
 
-        self.nationality.prefill(['Brazilian',
-                                  'Yankee',
-                                  'Other'])
-        self.gender.prefill(('Male', 'Female'))
+        self.nationality.prefill([u'Brazilian',
+                                  u'Yankee',
+                                  u'Other'])
+        self.gender.prefill([u'Male', u'Female'])
         self.age.set_mask('00')
 
         self.register_validate_function(self.validity)
@@ -67,15 +67,15 @@ class Form(GladeDelegate):
             return ValidationError("use a better language")
 
 person = Person()
-person.name = 'John Doe'
+person.name = u'John Doe'
 person.age = 36
 person.birthdate = datetime.datetime(year=1969, month=2, day=20)
 person.height = 183.0
 person.weight = 86.0
-person.nationality = 'Yankee'
-person.about = 'Kinda fat'
+person.nationality = u'Yankee'
+person.about = u'Kinda fat'
 person.status = True
-person.gender = 'Female'
+person.gender = u'Female'
 person.salary = currency(1234)
 
 form = Form()
