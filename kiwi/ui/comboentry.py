@@ -273,6 +273,7 @@ class ComboEntry(Gtk.Box):
 
         self.hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.hbox.set_valign(Gtk.Align.CENTER)
+        self.hbox.get_style_context().add_class(Gtk.STYLE_CLASS_LINKED)
 
         # FIXME: Why are those EventBox here?
         self.pack_start(Gtk.EventBox(), True, True, 0)

@@ -163,6 +163,7 @@ class DateEntry(Gtk.Box):
 
     def __init__(self):
         super(DateEntry, self).__init__(orientation=Gtk.Orientation.HORIZONTAL)
+        self.get_style_context().add_class(Gtk.STYLE_CLASS_LINKED)
 
         self._popping_down = False
         self._old_date = None
