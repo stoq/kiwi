@@ -1025,7 +1025,8 @@ class ObjectList(Gtk.Box):
         # menu
 
         self._sw = Gtk.ScrolledWindow()
-        self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.ALWAYS)
+        self._sw.set_property('overlay_scrolling', False)
+        self._sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self._sw.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         # This is required for GObject.new to work, since scrolledwindow.add
         # requires valid adjustments and they are for some reason not
