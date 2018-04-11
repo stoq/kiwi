@@ -1,3 +1,9 @@
+kiwi (3.0.1) xenial; urgency=medium
+
+  * New bugfix release
+
+ -- Felipe Nehmi <felipe@async.com.br>  Wed, 11 Apr 2018 09:28:21 -0300
+
 kiwi (3.0.0) xenial; urgency=medium
 
   * New release
