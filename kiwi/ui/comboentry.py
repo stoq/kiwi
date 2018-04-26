@@ -63,6 +63,7 @@ class _ComboEntryPopup(PopupWindow):
 
         self._sw = Gtk.ScrolledWindow()
         self._sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
+        self._sw.set_property('overlay_scrolling', False)
         vbox.pack_start(self._sw, True, True, 0)
         self._sw.show()
 
@@ -206,6 +207,9 @@ class _ComboEntryPopup(PopupWindow):
         elif height < 0:
             height = 0
 
+        # There are some issues with scrolled windows that they are not filling the
+        # parent box. Force it to have the calculated width/height here.
+        self._sw.set_size_request(allocation.width, height)
         return allocation.width, height
 
     def get_selected_iter(self):
