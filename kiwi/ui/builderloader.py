@@ -23,6 +23,7 @@
 
 import logging
 import platform
+import tempfile
 
 from gi.repository import Gtk
 
@@ -103,19 +104,16 @@ class BuilderWidgetTree:
             # And the source of the workaround
             # https://github.com/tobias47n9e/pygobject-locale/issues/1#issuecomment-222287650
             import xml.etree.ElementTree as ET
-            from io import BytesIO
             import gettext
             tree = ET.parse(gladefile)
             for node in tree.iter():
                 if 'translatable' in node.attrib:
                     del node.attrib['translatable']
                     node.text = gettext.dgettext(domain, node.text)
-            temp_file = BytesIO()
-            tree.write(temp_file, encoding='utf-8', xml_declaration=True)
-            data = temp_file.getvalue().decode()
-            gladefile = None
-
-        if gladefile is not None:
+            with tempfile.NamedTemporaryFile(delete=False) as tmp:
+                tree.write(tmp, encoding='utf-8', xml_declaration=True)
+            self._builder.add_from_file(tmp.name)
+        elif gladefile is not None:
             self._builder.add_from_file(gladefile)
         elif data is not None:
             self._builder.add_from_string(data)
