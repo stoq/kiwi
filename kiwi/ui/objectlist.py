@@ -38,6 +38,7 @@ import six
 
 from gi.repository import Gtk, GLib, GObject, Gdk, Pango, GdkPixbuf
 
+from kiwi import ValueUnset
 from kiwi.accessor import kgetattr
 from kiwi.datatypes import converter, number, ValidationError
 from kiwi.currency import currency  # after datatypes
@@ -603,6 +604,9 @@ class Column(GObject.GObject):
             value = from_string(text)
         except ValidationError:
             return
+        if value is ValueUnset:
+            value = None
+
         setattr(obj, column.attribute, value)
         self._objectlist.emit('cell-edited', obj, column)
 
