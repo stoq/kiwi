@@ -1,3 +1,7 @@
+# XXX: This file is outdated, as it refers to an older version of kiwi that is
+# now unsupported. Kiwi has now moved to Python3 and is hosted at
+# https://gerrit.async.com.br/#/admin/projects/kiwi
+
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %{!?python_sitearch: %define python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 

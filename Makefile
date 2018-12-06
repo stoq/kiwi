@@ -5,7 +5,7 @@ WEBDIR=/mondo/htdocs/async.com.br/www/projects/kiwi
 TESTS_RUNNER=python3 -m nose --nocapture --nologcapture --verbose --detailed-errors
 
 all:
-	python setup.py build_ext -i
+	python3 setup.py build_ext -i
 
 clean-docs:
 	rm -fr doc/api

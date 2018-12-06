@@ -96,10 +96,13 @@ class DateTimeTest(unittest.TestCase):
         if not set_locale(locale.LC_TIME, 'pt_BR'):
             return
 
-        self.assertEqual(self.conv.as_string(self.dt), "Seg 12 Fev 1979 12:15")
+        # The double lowers() here are to deal with the fact that in mid-2016
+        # glibc changed the month and day names to be lowercase, as per
+        # https://sourceware.org/bugzilla/show_bug.cgi?id=19133
+        self.assertEqual(self.conv.as_string(self.dt).lower(), "seg 12 fev 1979 12:15")
         with mock.patch.object(self.conv, '_keep_seconds', True):
-            self.assertEqual(self.conv.as_string(self.dt),
-                             "Seg 12 Fev 1979 12:15:30")
+            self.assertEqual(self.conv.as_string(self.dt).lower(),
+                             "seg 12 fev 1979 12:15:30")
 
     def testAsStringUS(self):
         if not set_locale(locale.LC_TIME, 'en_US'):
