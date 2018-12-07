@@ -46,7 +46,7 @@ class ProxyColorButton(Gtk.ColorButton, ProxyWidgetMixin):
     def read(self):
         color = self.get_color()
         return self._from_string('#%02x%02x%02x' % (
-            color.red / 256, color.green / 256, color.blue / 256))
+            int(color.red / 256), int(color.green / 256), int(color.blue / 256)))
 
     def update(self, data):
         if data is ValueUnset or data is None:
