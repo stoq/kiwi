@@ -3,3 +3,5 @@
 tags
 TAGS
 locale
+dist/
+kiwi.egg-info/
