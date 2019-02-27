@@ -1,4 +1,10 @@
-kiwi (3.0.2) UNRELEASED; urgency=medium
+kiwi (3.0.3) xenial; urgency=medium
+
+  * Bugfix release
+
+ -- Ronaldo Maia <romaia@async.com.br>  Wed, 27 Feb 2019 15:27:52 -0300
+
+kiwi (3.0.2) xenial; urgency=medium
 
   * Bugfix release
 
