@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from gi.repository import Gtk
 
-from kiwi.ui.views import BaseView, SlaveView
+from kiwi.ui.views import BaseView, SubordinateView
 from kiwi.ui.gadgets import quit_if_last
 
 news = [
@@ -23,7 +23,7 @@ news = [
 ]
 
 
-class News(SlaveView):
+class News(SubordinateView):
     def __init__(self):
         model = Gtk.ListStore(str, str)
         treeview = Gtk.TreeView(model)
@@ -35,13 +35,13 @@ class News(SlaveView):
         treeview.get_selection().set_mode(Gtk.SelectionMode.BROWSE)
         for item in news:
             model.append(item[:-1])
-        SlaveView.__init__(self, treeview)
+        SubordinateView.__init__(self, treeview)
 
 news = News()
 
 shell = BaseView(gladefile="news_shell.ui",
                  delete_handler=quit_if_last)
-shell.attach_slave("placeholder", news)
+shell.attach_subordinate("placeholder", news)
 
 news.show_all()
 news.focus_toplevel()  # explained next section, don't worry

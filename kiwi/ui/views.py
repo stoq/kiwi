@@ -78,7 +78,7 @@ if hasattr(Gtk, 'Progress'):
     _non_interactive.append(Gtk.Progress)
 
 
-class SlaveView(GObject.GObject):
+class SubordinateView(GObject.GObject):
     """
     Base class for all View classes. Defines the essential class
     attributes (controller, toplevel, widgets) and handles
@@ -106,22 +106,22 @@ class SlaveView(GObject.GObject):
     gsignal("result", object)
 
     # This is emitted when validation changed for a view
-    # Used by parents views to know when child slaves changes
+    # Used by parents views to know when child subordinates changes
     gsignal('validation-changed', bool)
 
     def __init__(self, toplevel=None, widgets=None, gladefile=None,
                  toplevel_name=None, domain=None):
-        """ Creates a new SlaveView. Sets up self.toplevel and self.widgets
+        """ Creates a new SubordinateView. Sets up self.toplevel and self.widgets
         and checks for reserved names.
         """
         GObject.GObject.__init__(self)
 
         self._broker = None
-        self.slaves = collections.OrderedDict()
+        self.subordinates = collections.OrderedDict()
         self._proxies = []
         self.is_valid = True
 
-        # slave/widget name -> validation status
+        # subordinate/widget name -> validation status
         self._validation = {}
         self._forms = {}
         self._forms_attached = False
@@ -152,7 +152,7 @@ class SlaveView(GObject.GObject):
         self._check_reserved()
 
         # Make it possible to run a view without a glade file, to be able
-        # to attach slaves we need the toplevel widget to be an EventBox.
+        # to attach subordinates we need the toplevel widget to be an EventBox.
         if not self.gladefile and self.toplevel is None:
             self.toplevel = Gtk.Window()
             self.toplevel.set_name('KiwiViewWindow')
@@ -170,7 +170,7 @@ class SlaveView(GObject.GObject):
 
         # XXX: support normal widgets
         # notebook page label widget ->
-        #   dict (slave name -> validation status)
+        #   dict (subordinate name -> validation status)
         self._notebook_validation = {}
         self._notebooks = self._get_notebooks()
         if len(self._notebooks) == 1:
@@ -178,7 +178,7 @@ class SlaveView(GObject.GObject):
 
         # FIXME: This is a hack to avoid a toplevel window
         #        showing up, I cannot quite figure out how it works
-        #        probably related to attach_slave(), Johan 2012-06-19
+        #        probably related to attach_subordinate(), Johan 2012-06-19
         if self.fields and not self.gladefile:
             self.toplevel.hide()
 
@@ -230,8 +230,8 @@ class SlaveView(GObject.GObject):
                 "but you didn't give me a toplevel/container name!" %
                 self.gladefile)
 
-        # a SlaveView inside a glade file needs to come inside a toplevel
-        # window, so we pull our slave out from it, grab its groups and
+        # a SubordinateView inside a glade file needs to come inside a toplevel
+        # window, so we pull our subordinate out from it, grab its groups and
         # muerder it later
         shell = glade_adaptor.get_widget(container_name)
         if not isinstance(shell, (Gtk.Window, Gtk.Dialog)):
@@ -246,7 +246,7 @@ class SlaveView(GObject.GObject):
 
     def add_form(self, fields, holder_name=None):
         """ Adds a new form given a dictionary of fields and attaches
-        it to the view as a slave at the holder_name location.
+        it to the view as a subordinate at the holder_name location.
         This needs to be called before the View constructor is called.
         """
         if holder_name is None:
@@ -265,7 +265,7 @@ class SlaveView(GObject.GObject):
 
     def _attach_forms(self):
         for holder_name, form in self._forms.items():
-            self.attach_slave(holder_name, form)
+            self.attach_subordinate(holder_name, form)
             form.populate()
             form.add_proxy()
             form.show()
@@ -276,7 +276,7 @@ class SlaveView(GObject.GObject):
     #
 
     def on_attach(self, parent):
-        """ Hook function called when attach_slave is performed on slave views.
+        """ Hook function called when attach_subordinate is performed on subordinate views.
         """
         pass
 
@@ -358,7 +358,7 @@ class SlaveView(GObject.GObject):
         """Shows all widgets attached to the toplevel widget"""
         if self._glade_adaptor is not None:
             raise AssertionError("You don't want to call show_all on a "
-                                 "SlaveView. Use show() instead.")
+                                 "SubordinateView. Use show() instead.")
         self.toplevel.show_all()
 
     def focus_toplevel(self):
@@ -457,22 +457,22 @@ class SlaveView(GObject.GObject):
         self._attach_forms()
 
     #
-    # Slave handling
+    # Subordinate handling
     #
 
-    def attach_slave(self, name, slave, placeholder_widget=None):
-        """Attaches a slaveview to the current view, substituting the
+    def attach_subordinate(self, name, subordinate, placeholder_widget=None):
+        """Attaches a subordinateview to the current view, substituting the
         widget specified by placeholder_widget. If placeholder_widget is not
         specified, an widget with the name specified must exist.
 
         The widget specified *must* be a eventbox; its child widget will be
-        removed and substituted for the specified slaveview's toplevel widget::
+        removed and substituted for the specified subordinateview's toplevel widget::
 
          .-----------------------. the widget that is indicated in the diagram
          |window/view (self.view)| as placeholder will be substituted for the
-         |  .----------------.   | slaveview's toplevel.
+         |  .----------------.   | subordinateview's toplevel.
          |  | eventbox (name)|   |  .-----------------.
-         |  |.--------------.|      |slaveview (slave)|
+         |  |.--------------.|      |subordinateview (subordinate)|
          |  || placeholder  <----.  |.---------------.|
          |  |'--------------'|    \___ toplevel      ||
          |  '----------------'   |  ''---------------'|
@@ -482,33 +482,33 @@ class SlaveView(GObject.GObject):
         instead of the eventbox) is still supported for compatibility
         reasons but will print a warning.
         """
-        log.debug('%s: Attaching slave %s of type %s' %
-                  (self.__class__.__name__, name, slave.__class__.__name__))
+        log.debug('%s: Attaching subordinate %s of type %s' %
+                  (self.__class__.__name__, name, subordinate.__class__.__name__))
 
-        if name in self.slaves:
+        if name in self.subordinates:
             # XXX: TypeError
-            log.warn("A slave with name %s is already attached to %r" % (
+            log.warn("A subordinate with name %s is already attached to %r" % (
                      name, self))
-        self.slaves[name] = slave
+        self.subordinates[name] = subordinate
 
-        if not isinstance(slave, SlaveView):
-            raise TypeError("slave must be a SlaveView, not a %s" %
-                            type(slave))
+        if not isinstance(subordinate, SubordinateView):
+            raise TypeError("subordinate must be a SubordinateView, not a %s" %
+                            type(subordinate))
 
-        shell = slave.get_toplevel()
+        shell = subordinate.get_toplevel()
 
         if isinstance(shell, (Gtk.Window, Gtk.Dialog)):  # view with toplevel window
             new_widget = shell.get_child()
             shell.remove(new_widget)  # remove from window to allow reparent
-        else:  # slaveview
+        else:  # subordinateview
             new_widget = shell
 
         placeholder = placeholder_widget or self.get_widget(name)
-        placeholder._kiwi_slave = self
+        placeholder._kiwi_subordinate = self
 
         if not placeholder:
             raise AttributeError(
-                "slave container widget `%s' not found" % name)
+                "subordinate container widget `%s' not found" % name)
 
         # This is for glade-less Views, create an EventBox automatically
         # for a holder
@@ -521,9 +521,9 @@ class SlaveView(GObject.GObject):
         else:
             parent = placeholder.get_parent()
 
-        if slave._accel_groups:
+        if subordinate._accel_groups:
             # take care of accelerator groups; attach to parent window if we
-            # have one; if embedding a slave into another slave, store its
+            # have one; if embedding a subordinate into another subordinate, store its
             # accel groups; otherwise complain if we're dropping the
             # accelerators
             win = parent.get_toplevel()
@@ -531,13 +531,13 @@ class SlaveView(GObject.GObject):
                 # use idle_add to be sure we attach the groups as late
                 # as possible and avoid reattaching groups -- see
                 # comment in _attach_groups.
-                Gtk.idle_add(self._attach_groups, win, slave._accel_groups)
-            elif isinstance(self, SlaveView):
-                self._accel_groups.extend(slave._accel_groups)
+                Gtk.idle_add(self._attach_groups, win, subordinate._accel_groups)
+            elif isinstance(self, SubordinateView):
+                self._accel_groups.extend(subordinate._accel_groups)
             else:
-                log.warn("attached slave %s to parent %s, but parent lacked "
-                         "a window and was not a slave view" % (slave, self))
-            slave._accel_groups = []
+                log.warn("attached subordinate %s to parent %s, but parent lacked "
+                         "a window and was not a subordinate view" % (subordinate, self))
+            subordinate._accel_groups = []
 
         if isinstance(placeholder, Gtk.EventBox):
             # standard mechanism
@@ -548,23 +548,23 @@ class SlaveView(GObject.GObject):
             placeholder.add(new_widget)
         elif isinstance(parent, Gtk.EventBox):
             # backwards compatibility
-            log.warn("attach_slave's api has changed: read docs, update code!")
+            log.warn("attach_subordinate's api has changed: read docs, update code!")
             parent.remove(placeholder)
             parent.add(new_widget)
         else:
             raise TypeError(
                 "widget to be replaced must be wrapped in eventbox")
 
-        # when attaching a slave we usually want it visible, the exception is
+        # when attaching a subordinate we usually want it visible, the exception is
         # views that are glade less are have a window created for them automatically,
         # they need to be showed explicitly using view.show/show_all.
         if parent.get_name() != 'KiwiViewWindow':
             parent.show()
 
-        # call slave's callback
-        slave.on_attach(self)
+        # call subordinate's callback
+        subordinate.on_attach(self)
 
-        slave.connect('validation-changed',
+        subordinate.connect('validation-changed',
                       self._on_child__validation_changed,
                       name)
 
@@ -574,13 +574,13 @@ class SlaveView(GObject.GObject):
                     continue
 
                 label = notebook.get_tab_label(child)
-                slave.connect('validation-changed',
-                              self._on_notebook_slave__validation_changed,
+                subordinate.connect('validation-changed',
+                              self._on_notebook_subordinate__validation_changed,
                               name, label)
                 self._notebook_validation[label] = {}
 
         # Fire of an initial notification
-        slave.check_and_notify_validity(force=True)
+        subordinate.check_and_notify_validity(force=True)
 
         # return placeholder we just removed
         return placeholder
@@ -594,14 +594,14 @@ class SlaveView(GObject.GObject):
 
         return self._glade_adaptor.get_sizegroups()
 
-    def detach_slave(self, name):
+    def detach_subordinate(self, name):
         """
-        Detatch a slave called name from view
+        Detatch a subordinate called name from view
         """
-        if not name in self.slaves:
-            raise LookupError("There is no slaved called %s attached to %r" %
+        if not name in self.subordinates:
+            raise LookupError("There is no subordinated called %s attached to %r" %
                               (name, self))
-        del self.slaves[name]
+        del self.subordinates[name]
 
         if name in self._validation:
             del self._validation[name]
@@ -626,8 +626,8 @@ class SlaveView(GObject.GObject):
                 continue
             win.add_accel_group(group)
 
-    def get_slave(self, holder):
-        return self.slaves.get(holder)
+    def get_subordinate(self, holder):
+        return self.subordinates.get(holder)
 
     #
     # Signal connection
@@ -737,7 +737,7 @@ class SlaveView(GObject.GObject):
     #
 
     def _on_child__validation_changed(self, child, value, name):
-        # Children of the view, eg slaves or widgets are connected to
+        # Children of the view, eg subordinates or widgets are connected to
         # this signal. When validation changes of a validatable child
         # this callback is called
         if isinstance(child, Gtk.Widget):
@@ -752,7 +752,7 @@ class SlaveView(GObject.GObject):
 
         self.check_and_notify_validity()
 
-    def _on_notebook_slave__validation_changed(self, slave, value, name,
+    def _on_notebook_subordinate__validation_changed(self, subordinate, value, name,
                                                label):
         if not label:
             return
@@ -807,15 +807,15 @@ class SlaveView(GObject.GObject):
         """
         self._validate_function = function
 
-type_register(SlaveView)
+type_register(SubordinateView)
 
 
-class BaseView(SlaveView):
+class BaseView(SubordinateView):
     """A view with a toplevel window."""
 
     def __init__(self, toplevel=None, widgets=None, gladefile=None,
                  toplevel_name=None, domain=None, delete_handler=None):
-        SlaveView.__init__(self, toplevel, widgets, gladefile, toplevel_name,
+        SubordinateView.__init__(self, toplevel, widgets, gladefile, toplevel_name,
                            domain)
 
         if not isinstance(self.toplevel, (Gtk.Window, Gtk.Dialog)):
@@ -859,7 +859,7 @@ class BaseView(SlaveView):
         if hasattr(view, 'toplevel') and isinstance(view.toplevel, Gtk.Window):
             self.toplevel.set_transient_for(view.toplevel)
         # In certain cases, it is more convenient to send in a window;
-        # for instance, in a deep slaveview hierarchy, getting the
+        # for instance, in a deep subordinateview hierarchy, getting the
         # top view is difficult. We used to print a warning here, I
         # removed it for convenience; we might want to put it back when
         # http://bugs.async.com.br/show_bug.cgi?id=682 is fixed

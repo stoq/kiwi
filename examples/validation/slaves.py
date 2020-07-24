@@ -3,7 +3,7 @@ from gi.repository import Gtk, Gio
 
 from kiwi.datatypes import ValidationError
 from kiwi.ui.widgets.combo import ProxyComboEntry
-from kiwi.ui.delegates import GladeDelegate, SlaveDelegate
+from kiwi.ui.delegates import GladeDelegate, SubordinateDelegate
 
 
 class Dialog(GladeDelegate):
@@ -30,7 +30,7 @@ class Dialog(GladeDelegate):
         raise SystemExit
 
 
-class English(SlaveDelegate):
+class English(SubordinateDelegate):
     def __init__(self):
         box = Gtk.HBox(spacing=6)
         box.set_border_width(6)
@@ -48,14 +48,14 @@ class English(SlaveDelegate):
         box.pack_start(combo, True, True, 0)
         self.combo = combo
 
-        SlaveDelegate.__init__(self, toplevel=box, widgets=['combo'])
+        SubordinateDelegate.__init__(self, toplevel=box, widgets=['combo'])
 
     def on_combo__validate(self, widget, data):
         if data != 'Two':
             return ValidationError("foo")
 
 
-class Swedish(SlaveDelegate):
+class Swedish(SubordinateDelegate):
     def __init__(self):
         box = Gtk.HBox(spacing=6)
         box.set_border_width(6)
@@ -73,7 +73,7 @@ class Swedish(SlaveDelegate):
         box.pack_start(combo, True, True, 0)
         self.combo = combo
 
-        SlaveDelegate.__init__(self, toplevel=box, widgets=['combo'])
+        SubordinateDelegate.__init__(self, toplevel=box, widgets=['combo'])
 
     def on_combo__validate(self, widget, data):
         if data != 'Tre':
@@ -96,7 +96,7 @@ babe.number = 'One'
 
 eng = English()
 eng.show()
-dialog.attach_slave("english", eng)
+dialog.attach_subordinate("english", eng)
 eng.add_proxy(babe, ['combo'])
 
 # Swedish part
@@ -105,7 +105,7 @@ brud.nummer = 'Ett'
 
 swe = Swedish()
 swe.show()
-dialog.attach_slave("swedish", swe)
+dialog.attach_subordinate("swedish", swe)
 swe.add_proxy(brud, ['combo'])
 dialog.show_all()
 

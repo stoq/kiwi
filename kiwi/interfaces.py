@@ -166,11 +166,11 @@ class AbstractGladeAdaptor(Interface):
     def get_widgets(self):
         """Return a tuple with all the widgets in the glade file"""
 
-    def attach_slave(self, name, slave):
-        """Attaches a slaveview to the view this adaptor belongs to,
+    def attach_subordinate(self, name, subordinate):
+        """Attaches a subordinateview to the view this adaptor belongs to,
         substituting the widget specified by name.
         The widget specified *must* be a eventbox; its child widget will be
-        removed and substituted for the specified slaveview's toplevel widget
+        removed and substituted for the specified subordinateview's toplevel widget
         """
 
     def signal_autoconnect(self, dic):

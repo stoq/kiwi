@@ -25,7 +25,7 @@
 
 """Defines the Delegate classes that are included in the Kiwi Framework."""
 
-from kiwi.ui.views import SlaveView, BaseView
+from kiwi.ui.views import SubordinateView, BaseView
 from kiwi.controllers import BaseController
 
 
@@ -66,26 +66,26 @@ class GladeDelegate(BaseView, BaseController):
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
 
-class SlaveDelegate(SlaveView, BaseController):
+class SubordinateDelegate(SubordinateView, BaseController):
     """A class that combines view and controller functionality into a
     single package. It does not possess a top-level window, but is instead
-    intended to be plugged in to a View or Delegate using attach_slave().
+    intended to be plugged in to a View or Delegate using attach_subordinate().
     """
     def __init__(self, toplevel=None, widgets=None,
                  toplevel_name=None, keyactions=None):
         """
         The keyactions parameter is sent to :class:`kiwi.controllers.BaseController`,
-        the rest are sent to :class:`kiwi.ui.views.SlaveView`
+        the rest are sent to :class:`kiwi.ui.views.SubordinateView`
         """
         widgets = widgets or []
-        SlaveView.__init__(self, toplevel, widgets, toplevel_name)
+        SubordinateView.__init__(self, toplevel, widgets, toplevel_name)
         BaseController.__init__(self, view=self, keyactions=keyactions)
 
 
-class GladeSlaveDelegate(SlaveView, BaseController):
+class GladeSubordinateDelegate(SubordinateView, BaseController):
     """A class that combines view and controller functionality into a
     single package. It does not possess a top-level window, but is instead
-    intended to be plugged in to a View or Delegate using attach_slave().
+    intended to be plugged in to a View or Delegate using attach_subordinate().
     """
     def __init__(self, gladefile=None,
                  toplevel_name=None, domain=None,
@@ -94,7 +94,7 @@ class GladeSlaveDelegate(SlaveView, BaseController):
         The keyactions parameter is sent to :class:`kiwi.controllers.BaseController`,
         the rest are sent to :class:`kiwi.ui.views.SlavseView`
         """
-        SlaveView.__init__(self,
+        SubordinateView.__init__(self,
                            gladefile=gladefile,
                            toplevel_name=toplevel_name,
                            domain=domain)
@@ -145,10 +145,10 @@ class ProxyDelegate(Delegate):
         self.proxy.update(attribute)
 
 
-class ProxySlaveDelegate(GladeSlaveDelegate):
+class ProxySubordinateDelegate(GladeSubordinateDelegate):
     """A class that combines view, controller and proxy functionality into a
     single package. It does not possess a top-level window, but is instead
-    intended to be plugged in to a View or Delegate using attach_slave()
+    intended to be plugged in to a View or Delegate using attach_subordinate()
 
     :ivar model: the model
     :ivar proxy: the proxy
@@ -162,7 +162,7 @@ class ProxySlaveDelegate(GladeSlaveDelegate):
         the rest are sent to :class:`kiwi.ui.views.BaseView`
         """
 
-        GladeSlaveDelegate.__init__(self, gladefile, toplevel_name,
+        GladeSubordinateDelegate.__init__(self, gladefile, toplevel_name,
                                     domain, keyactions)
         self.model = model
         self.proxy = self.add_proxy(model, proxy_widgets)

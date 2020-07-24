@@ -5,7 +5,7 @@ import os
 
 from gi.repository import Gtk, Gdk
 
-from kiwi.ui.delegates import GladeDelegate, SlaveDelegate
+from kiwi.ui.delegates import GladeDelegate, SubordinateDelegate
 from kiwi.ui.gadgets import quit_if_last, set_background, set_foreground
 from kiwi.ui.objectlist import Column, ObjectList
 
@@ -30,14 +30,14 @@ news = [
 ]
 
 
-class ListSlave(SlaveDelegate):
+class ListSubordinate(SubordinateDelegate):
     def __init__(self, parent):
         self.parent = parent
         self.news_list = ObjectList([
             Column('title', 'Title of article', str),
             Column('author', 'Author of article', str),
             Column('url', 'Address of article', str)])
-        SlaveDelegate.__init__(self, toplevel=self.news_list)
+        SubordinateDelegate.__init__(self, toplevel=self.news_list)
         self.news_list.add_list(news)
         self.news_list.select(self.news_list[0])
 
@@ -64,13 +64,13 @@ class Shell(GladeDelegate):
         set_background(self.footer, "#A0A0A0")
         set_foreground(self.title, "blue")
 
-        self.slave = ListSlave(self)
-        self.attach_slave("placeholder", self.slave)
-        self.slave.show()
-        self.slave.focus_toplevel()  # Must be done after attach
+        self.subordinate = ListSubordinate(self)
+        self.attach_subordinate("placeholder", self.subordinate)
+        self.subordinate.show()
+        self.subordinate.focus_toplevel()  # Must be done after attach
 
     def on_ok__clicked(self, button):
-        item = self.slave.news_list.get_selected()
+        item = self.subordinate.news_list.get_selected()
         self.emit('result', item.url)
         self.hide_and_quit()
 

@@ -1,32 +1,32 @@
 #!/usr/bin/env python
 from gi.repository import Gtk
 
-from kiwi.ui.delegates import GladeDelegate, GladeSlaveDelegate
+from kiwi.ui.delegates import GladeDelegate, GladeSubordinateDelegate
 from kiwi.ui.gadgets import quit_if_last
 
 
-class NestedSlave(GladeSlaveDelegate):
+class NestedSubordinate(GladeSubordinateDelegate):
     def __init__(self, parent):
         self.parent = parent
-        GladeSlaveDelegate.__init__(self, gladefile="slave_view2.ui",
+        GladeSubordinateDelegate.__init__(self, gladefile="subordinate_view2.ui",
                                     toplevel_name="window_container")
 
 
-# This slave will be attached to the toplevel view, and will contain another
-# slave
-class TestSlave(GladeSlaveDelegate):
+# This subordinate will be attached to the toplevel view, and will contain another
+# subordinate
+class TestSubordinate(GladeSubordinateDelegate):
     def __init__(self, parent):
         self.parent = parent
         # Be carefull that, when passing the widget list, the sizegroups
         # that you want to be merged are in the list, otherwise, they wont
         # be.
-        GladeSlaveDelegate.__init__(self, gladefile="slave_view.ui",
+        GladeSubordinateDelegate.__init__(self, gladefile="subordinate_view.ui",
                                     toplevel_name="window_container")
 
-        self.slave = NestedSlave(self)
-        self.attach_slave("eventbox", self.slave)
-        self.slave.show()
-        self.slave.focus_toplevel()  # Must be done after attach
+        self.subordinate = NestedSubordinate(self)
+        self.attach_subordinate("eventbox", self.subordinate)
+        self.subordinate.show()
+        self.subordinate.focus_toplevel()  # Must be done after attach
 
 
 class Shell(GladeDelegate):
@@ -34,10 +34,10 @@ class Shell(GladeDelegate):
         GladeDelegate.__init__(self, gladefile="shell.ui",
                                delete_handler=quit_if_last)
 
-        self.slave = TestSlave(self)
-        self.attach_slave("placeholder", self.slave)
-        self.slave.show()
-        self.slave.focus_toplevel()  # Must be done after attach
+        self.subordinate = TestSubordinate(self)
+        self.attach_subordinate("placeholder", self.subordinate)
+        self.subordinate.show()
+        self.subordinate.focus_toplevel()  # Must be done after attach
 
     def on_ok__clicked(self, *args):
         self.hide_and_quit()
