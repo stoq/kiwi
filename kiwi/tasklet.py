@@ -115,7 +115,7 @@ Launching a tasklet
     @tasklet.task
     def my_task(x):
         [...]
-        raise StopIteration("return value")
+        return "return value"
 
     yield my_task(x=0)
     retval = tasklet.get_event().retval
@@ -129,7 +129,7 @@ Examples
       from gi.repository import GObject
       from kiwi import tasklet
 
-      mainloop = GObject.MainLoop()
+      mainloop = GLib.MainLoop()
 
       def simple_counter(numbers):
           timeout = tasklet.WaitForTimeout(1000)
@@ -149,7 +149,7 @@ Examples
       from gi.repository import GObject
       from kiwi import tasklet
 
-      mainloop = GObject.MainLoop()
+      mainloop = GLib.MainLoop()
 
       @tasklet.task
       def printer():
@@ -183,6 +183,7 @@ import warnings
 
 try:
     from gi.repository import GObject, GLib
+
     GObject  # pyflakes
     GLib  # pyflakes
 except:
@@ -196,6 +197,7 @@ class task(object):
     """A decorator that modifies a tasklet function to avoid the need
     to call C{tasklet.run(func())} or C{tasklet.Tasklet(func())}.
     """
+
     def __init__(self, func):
         self._func = func
         self.__name__ = func.__name__
@@ -233,19 +235,19 @@ def run(gen):
 
 
 class WaitCondition(object):
-    '''
+    """
     Base class for all wait-able condition objects.
 
     WaitConditions are used in a yield statement inside tasklets body
     for specifying what event(s) it should wait for in order to
-    receive control once more.'''
+    receive control once more."""
 
     def __init__(self):
-        '''Abstract base class, do not call directly'''
+        """Abstract base class, do not call directly"""
         self.triggered = False
 
     def arm(self, tasklet):
-        '''Prepare the wait condition to receive events.
+        """Prepare the wait condition to receive events.
 
         When a wait condition receives the event it is waiting for, it
         should call the method
@@ -260,47 +262,48 @@ class WaitCondition(object):
         @note: this method normally should not be called directly
           by the programmer.
 
-        '''
+        """
         raise NotImplementedError
 
     def disarm(self):
-        '''Stop the wait condition from receiving events.
+        """Stop the wait condition from receiving events.
 
         @note: this method normally should not be called by the
-        programmer.'''
+        programmer."""
         raise NotImplementedError
 
 
 class WaitForCall(WaitCondition):
-    '''An object that waits until it is called.
+    """An object that waits until it is called.
 
-      This example demonstrates how a tasklet waits for a callback::
-        from gi.repository import GObject
-        from kiwi import tasklet
+    This example demonstrates how a tasklet waits for a callback::
+      from gi.repository import GObject
+      from kiwi import tasklet
 
-        mainloop = GObject.MainLoop()
+      mainloop = GLib.MainLoop()
 
-        def my_task():
-            callback = tasklet.WaitForCall()
-            GObject.timeout_add(1000, callback)
-            yield callback
-            mainloop.quit()
+      def my_task():
+          callback = tasklet.WaitForCall()
+          GLib.timeout_add(1000, callback)
+          yield callback
+          mainloop.quit()
 
-        tasklet.run(my_task())
-        mainloop.run()
+      tasklet.run(my_task())
+      mainloop.run()
 
-      :ivar return_value: value to return when called
+    :ivar return_value: value to return when called
 
-    '''
+    """
+
     def __init__(self, return_value=None):
-        '''
+        """
         Creates a wait condition that is actually a callable object, and
         waits for a call to be made on it.
 
         :param return_value: value to return when called; can also be
         modified dynamically from the tasklet as the C{return_value}
         instance variable.
-        '''
+        """
         WaitCondition.__init__(self)
         self.return_value = return_value
         self.args = None
@@ -308,11 +311,11 @@ class WaitForCall(WaitCondition):
         self._callback = None
 
     def arm(self, tasklet):
-        '''Overrides WaitCondition.arm'''
+        """Overrides WaitCondition.arm"""
         self._callback = tasklet.wait_condition_fired
 
     def disarm(self):
-        '''Overrides WaitCondition.disarm'''
+        """Overrides WaitCondition.disarm"""
         self._callback = None
 
     def __call__(self, *args, **kwargs):
@@ -325,12 +328,12 @@ class WaitForCall(WaitCondition):
 
 
 class WaitForIO(WaitCondition):
-    '''An object that waits for IO conditions on sockets or file
+    """An object that waits for IO conditions on sockets or file
     descriptors.
-    '''
-    def __init__(self, filedes, condition=GObject.IO_IN,
-                 priority=GObject.PRIORITY_DEFAULT):
-        '''
+    """
+
+    def __init__(self, filedes, condition=GLib.IO_IN, priority=GLib.PRIORITY_DEFAULT):
+        """
         Create a new WaitForIO object.
 
         :param filedes: object to monitor for IO
@@ -341,7 +344,7 @@ class WaitForIO(WaitCondition):
         :param condition: IO event mask
         :type condition: a set of C{GObject.IO_*} flags ORed together
         :param priority: mainloop source priority
-        '''
+        """
 
         WaitCondition.__init__(self)
         self.filedes = filedes
@@ -352,31 +355,23 @@ class WaitForIO(WaitCondition):
         self._priority = priority
 
     def arm(self, tasklet):
-        '''Overrides WaitCondition.arm'''
+        """Overrides WaitCondition.arm"""
         self._callback = tasklet.wait_condition_fired
         if self._id is None:
-            try:
-                ## http://bugzilla.gnome.org/show_bug.cgi?id=139176
-                iochan = isinstance(self.filedes, GLib.IOChannel)
-            except AttributeError:
-                iochan = False
-            if iochan:
-                self._id = self.filedes.add_watch(self._condition,
-                                                  self._io_cb,
-                                                  priority=self._priority)
+            if isinstance(self.filedes, int):
+                filedes = self.filedes
+            elif isinstance(self.filedes, GLib.IOChannel):
+                filedes = self.filedes.unix_get_fd()
             else:
-                if isinstance(self.filedes, int):
-                    filedes = self.filedes
-                else:
-                    filedes = self.filedes.fileno()
-                self._id = GObject.io_add_watch(filedes, self._condition,
-                                                self._io_cb,
-                                                priority=self._priority)
+                filedes = self.filedes.fileno()
+            self._id = GLib.io_add_watch(
+                filedes, self._priority, self._condition, self._io_cb
+            )
 
     def disarm(self):
-        '''Overrides WaitCondition.disarm'''
+        """Overrides WaitCondition.disarm"""
         if self._id is not None:
-            GObject.source_remove(self._id)
+            GLib.source_remove(self._id)
             self._id = None
             self._callback = None
 
@@ -391,13 +386,14 @@ class WaitForIO(WaitCondition):
 
 
 class WaitForTimeout(WaitCondition):
-    '''An object that waits for a specified ammount of time (a timeout)'''
-    def __init__(self, timeout, priority=GObject.PRIORITY_DEFAULT):
-        '''An object that waits for a specified ammount of time.
+    """An object that waits for a specified ammount of time (a timeout)"""
+
+    def __init__(self, timeout, priority=GLib.PRIORITY_DEFAULT):
+        """An object that waits for a specified ammount of time.
 
         :param timeout: ammount of time to wait, in miliseconds
         :param priority: mainloop priority for the timeout event
-        '''
+        """
 
         WaitCondition.__init__(self)
         self.timeout = timeout
@@ -406,21 +402,22 @@ class WaitForTimeout(WaitCondition):
         self._priority = priority
 
     def arm(self, tasklet):
-        '''See :class:`WaitCondition.arm`'''
+        """See :class:`WaitCondition.arm`"""
         if self._id is None:
             self._tasklet = tasklet
-            self._id = GObject.timeout_add(self.timeout, self._timeout_cb,
-                                           priority=self._priority)
+            self._id = GLib.timeout_add(
+                self.timeout, self._timeout_cb, priority=self._priority
+            )
 
     def disarm(self):
-        '''See :class:`WaitCondition.disarm`'''
+        """See :class:`WaitCondition.disarm`"""
         if self._id is not None:
-            GObject.source_remove(self._id)
+            GLib.source_remove(self._id)
             self._id = None
             self._tasklet = None
 
     def restart(self):
-        '''Restart the timeout.  Makes time counting start again from zero.'''
+        """Restart the timeout.  Makes time counting start again from zero."""
         tasklet = self._tasklet
         self.disarm()
         self.arm(tasklet)
@@ -436,26 +433,26 @@ class WaitForTimeout(WaitCondition):
 
 
 class WaitForIdle(WaitCondition):
-    '''An object that waits for the main loop to become idle'''
+    """An object that waits for the main loop to become idle"""
 
-    def __init__(self, priority=GObject.PRIORITY_DEFAULT_IDLE):
-        '''An object that waits for the main loop to become idle, with a
-        priority indicated by @priority'''
+    def __init__(self, priority=GLib.PRIORITY_DEFAULT_IDLE):
+        """An object that waits for the main loop to become idle, with a
+        priority indicated by @priority"""
         WaitCondition.__init__(self)
         self._callback = None
         self._id = None
         self._priority = priority
 
     def arm(self, tasklet):
-        '''See :class:`WaitCondition.arm`'''
+        """See :class:`WaitCondition.arm`"""
         if self._id is None:
             self._callback = tasklet.wait_condition_fired
-            self._id = GObject.idle_add(self._idle_cb, self._priority)
+            self._id = GLib.idle_add(self._idle_cb, self._priority)
 
     def disarm(self):
-        '''See :class:`WaitCondition.disarm`'''
+        """See :class:`WaitCondition.disarm`"""
         if self._id is not None:
-            GObject.source_remove(self._id)
+            GLib.source_remove(self._id)
             self._id = None
             self._callback = None
 
@@ -469,9 +466,10 @@ class WaitForIdle(WaitCondition):
 
 
 class WaitForTasklet(WaitCondition):
-    '''An object that waits for a tasklet to complete'''
+    """An object that waits for a tasklet to complete"""
+
     def __init__(self, tasklet):
-        '''An object that waits for another tasklet to complete'''
+        """An object that waits for another tasklet to complete"""
 
         WaitCondition.__init__(self)
         self._tasklet = tasklet
@@ -481,7 +479,7 @@ class WaitForTasklet(WaitCondition):
         self.retval = None
 
     def arm(self, tasklet):
-        '''See :class:`WaitCondition.arm`'''
+        """See :class:`WaitCondition.arm`"""
         self._callback = tasklet.wait_condition_fired
         if self._id is None:
             self._id = self._tasklet.add_join_callback(self._join_cb)
@@ -490,9 +488,9 @@ class WaitForTasklet(WaitCondition):
             self._join_cb(self._tasklet, self._tasklet.return_value)
 
     def disarm(self):
-        '''See :class:`WaitCondition.disarm`'''
+        """See :class:`WaitCondition.disarm`"""
         if self._idle_id is not None:
-            GObject.source_remove(self._idle_id)
+            GLib.source_remove(self._idle_id)
             self._idle_id = None
         if self._id is not None:
             self._tasklet.remove_join_callback(self._id)
@@ -503,7 +501,7 @@ class WaitForTasklet(WaitCondition):
         assert tasklet is self._tasklet
         assert self._idle_id is None
         self._id = None
-        self._idle_id = GObject.idle_add(self._idle_cb)
+        self._idle_id = GLib.idle_add(self._idle_cb)
         self.retval = retval
 
     def _idle_cb(self):
@@ -518,16 +516,16 @@ class WaitForTasklet(WaitCondition):
 
 
 class WaitForSignal(WaitCondition):
-    '''An object that waits for a signal emission'''
+    """An object that waits for a signal emission"""
 
     def __init__(self, obj, signal):
-        '''Waits for a signal to be emitted on a specific GObject instance or class.
+        """Waits for a signal to be emitted on a specific GObject instance or class.
 
         :param obj: object monitor for the signal
         :type obj: GObject.GObject
         :param signal: signal name
         :type signal: str
-        '''
+        """
         WaitCondition.__init__(self)
         if isinstance(obj, type):
             if not issubclass(obj, GObject.GObject):
@@ -540,8 +538,9 @@ class WaitForSignal(WaitCondition):
             self.object = obj
             self.class_ = None
         if not GObject.signal_lookup(signal, obj):
-            raise ValueError("gobject %r does not have a signal called %r" %
-                             (obj, signal))
+            raise ValueError(
+                "gobject %r does not have a signal called %r" % (obj, signal)
+            )
         self.signal = signal
         self._callback = None
         self._id = None
@@ -549,16 +548,19 @@ class WaitForSignal(WaitCondition):
         self.signal_args = None
 
     def arm(self, tasklet):
-        '''See :class:`WaitCondition.arm`'''
+        """See :class:`WaitCondition.arm`"""
         if self._id is None:
             self._callback = tasklet.wait_condition_fired
             if self.class_ is not None:
-                self._id = GObject.add_emission_hook(self.class_, self.signal, self._signal_cb)
+                self._id = GObject.add_emission_hook(
+                    self.class_, self.signal, self._signal_cb
+                )
             else:
                 self._id = self.object.connect(self.signal, self._signal_cb)
                 if GObject.signal_lookup("destroy", self.object):
-                    self._destroy_id = self.object.connect("destroy",
-                                                           self._object_destroyed)
+                    self._destroy_id = self.object.connect(
+                        "destroy", self._object_destroyed
+                    )
 
     def _object_destroyed(self, dummy_obj):
         self.object = None
@@ -567,7 +569,7 @@ class WaitForSignal(WaitCondition):
         self._callback = None
 
     def disarm(self):
-        '''See WaitCondition.disarm'''
+        """See WaitCondition.disarm"""
         if self._id is not None:
             if self.class_ is not None:
                 GObject.remove_emission_hook(self.class_, self.signal, self._id)
@@ -596,14 +598,15 @@ class WaitForSignal(WaitCondition):
 
 
 class WaitForProcess(WaitCondition):
-    '''An object that waits for a process to end'''
+    """An object that waits for a process to end"""
+
     def __init__(self, pid):
-        '''
+        """
         Creates an object that waits for a subprocess.
 
         :param pid: Process identifier
         :type pid: int
-        '''
+        """
         WaitCondition.__init__(self)
         self.pid = pid
         self._callback = None
@@ -611,15 +614,15 @@ class WaitForProcess(WaitCondition):
         self.status = None
 
     def arm(self, tasklet):
-        '''See :class:`WaitCondition.arm`'''
+        """See :class:`WaitCondition.arm`"""
         self._callback = tasklet.wait_condition_fired
         if self._id is None:
-            self._id = GObject.child_watch_add(self.pid, self._child_cb)
+            self._id = GLib.child_watch_add(self.pid, self._child_cb)
 
     def disarm(self):
-        '''See :class:`WaitCondition.disarm`'''
+        """See :class:`WaitCondition.disarm`"""
         if self._id is not None:
-            GObject.source_remove(self._id)
+            GLib.source_remove(self._id)
             self._id = None
             self._callback = None
 
@@ -633,14 +636,14 @@ class WaitForProcess(WaitCondition):
 
 
 class Message(object):
-    '''A message that can be received by or sent to a tasklet.'''
+    """A message that can be received by or sent to a tasklet."""
 
-    _slots_ = 'name', 'dest', 'value', 'sender'
+    _slots_ = "name", "dest", "value", "sender"
 
     ACCEPT, DEFER, DISCARD = range(3)
 
     def __init__(self, name, dest=None, value=None, sender=None):
-        '''
+        """
         Create a new Message object.
 
         :param name: name of message
@@ -651,7 +654,7 @@ class Message(object):
         :param sender: sender tasklet for this message
         :type sender: :class:`Tasklet`
 
-        '''
+        """
         assert isinstance(sender, (Tasklet, type(None)))
         assert isinstance(dest, (Tasklet, type(None)))
         assert isinstance(name, str)
@@ -659,6 +662,7 @@ class Message(object):
         self.value = value
         self.sender = sender
         self.dest = dest
+
 
 #     def get_name(self):
 #         """Return the message name"""
@@ -685,14 +689,17 @@ def _normalize_list_argument(arg, name):
         return [arg]
     elif isinstance(arg, (list, tuple)):
         return arg
-    raise TypeError("Argument '%s' must be None, a string, or "
-                    "a sequence of strings, not %r" % (name, type(arg)))
+    raise TypeError(
+        "Argument '%s' must be None, a string, or "
+        "a sequence of strings, not %r" % (name, type(arg))
+    )
 
 
 class WaitForMessages(WaitCondition):
-    '''An object that waits for messages to arrive'''
+    """An object that waits for messages to arrive"""
+
     def __init__(self, accept=None, defer=None, discard=None):
-        '''Creates an object that waits for a set of messages to
+        """Creates an object that waits for a set of messages to
         arrive.
 
         @note: unlike other wait conditions, when a message
@@ -707,12 +714,12 @@ class WaitForMessages(WaitCondition):
         :param discard: message name or names to discard (drop) in the
           current state
         :type discard: string or sequence of string
-        '''
+        """
         WaitCondition.__init__(self)
         self._tasklet = None
-        accept = _normalize_list_argument(accept, 'accept')
-        defer = _normalize_list_argument(defer, 'defer')
-        discard = _normalize_list_argument(discard, 'discard')
+        accept = _normalize_list_argument(accept, "accept")
+        defer = _normalize_list_argument(defer, "defer")
+        discard = _normalize_list_argument(discard, "discard")
         self.actions = dict()
         for name in accept:
             self.actions[name] = Message.ACCEPT
@@ -722,19 +729,19 @@ class WaitForMessages(WaitCondition):
             self.actions[name] = Message.DISCARD
 
     def arm(self, tasklet):
-        '''Overrides WaitCondition.arm'''
+        """Overrides WaitCondition.arm"""
         self._tasklet = tasklet
         tasklet.message_actions.update(self.actions)
 
     def disarm(self):
-        '''Overrides WaitCondition.disarm'''
+        """Overrides WaitCondition.disarm"""
         assert self._tasklet is not None
         for name in self.actions:
             del self._tasklet.message_actions[name]
 
 
 class Tasklet(object):
-    '''An object that launches and manages a tasklet.
+    """An object that launches and manages a tasklet.
 
     :ivar state: current execution state of the tasklet, one of the STATE_* contants.
 
@@ -744,12 +751,12 @@ class Tasklet(object):
     :cvar STATE_SUSPENDED: the tasklet function is currently waiting for an event
     :cvar STATE_MSGSEND: the tasklet function is currently sending a message
     :cvar STATE_ZOMBIE: the tasklet function has ended
-    '''
+    """
 
     STATE_RUNNING, STATE_SUSPENDED, STATE_MSGSEND, STATE_ZOMBIE = range(4)
 
     def __init__(self, gen=None, start=True):
-        '''
+        """
         Launch a generator tasklet.
 
         :param gen: a generator object that implements the tasklet main body
@@ -758,7 +765,7 @@ class Tasklet(object):
         If `gen` is omitted or None, :class:`run` should be overridden in a
         subclass.
 
-        '''
+        """
         self._event = None
         self._join_callbacks = {}
         self.wait_list = []
@@ -801,12 +808,13 @@ class Tasklet(object):
         """
         raise NotImplementedError(
             "Should be overridden in a subclass "
-            "if no generator is passed into the constructor")
+            "if no generator is passed into the constructor"
+        )
 
     def _invoke(self):
         global _event
         assert _event is None
-        had_event = (self._event is not None)
+        had_event = self._event is not None
         _event = self._event
         self.state = Tasklet.STATE_RUNNING
         try:
@@ -814,7 +822,7 @@ class Tasklet(object):
         except StopIteration as ex:
             self.state = Tasklet.STATE_ZOMBIE
             if ex.args:
-                retval, = ex.args
+                (retval,) = ex.args
             else:
                 retval = None
             self._join(retval)
@@ -832,7 +840,6 @@ class Tasklet(object):
         assert self.state == Tasklet.STATE_SUSPENDED
         old_wait_list = self.wait_list
         while True:  # loop while tasklet yields tasklet.post_message(...)
-
             gen_value = self._invoke()
             if gen_value is None:
                 return
@@ -858,8 +865,10 @@ class Tasklet(object):
                 elif isinstance(val, Tasklet):
                     self.wait_list[i] = WaitForTasklet(val)
                 else:
-                    raise TypeError("yielded values must be WaitConditions,"
-                                    " generators, or a single Message")
+                    raise TypeError(
+                        "yielded values must be WaitConditions,"
+                        " generators, or a single Message"
+                    )
 
             self._update_wait_conditions(old_wait_list)
 
@@ -871,8 +880,8 @@ class Tasklet(object):
             break
 
     def _dispatch_message(self):
-        '''get next message that a tasklet wants to receive; discard
-        messages that should be discarded'''
+        """get next message that a tasklet wants to receive; discard
+        messages that should be discarded"""
         ## while sending out messages, the tasklet implicitly queues
         ## all incoming messages
         if self.state == Tasklet.STATE_MSGSEND:
@@ -883,18 +892,28 @@ class Tasklet(object):
             try:
                 return self._message_actions[msg.name]
             except KeyError:
-                warnings.warn("Implicitly discarding message %s"
-                              " directed to tasklet %s" % (msg, self))
+                warnings.warn(
+                    "Implicitly discarding message %s"
+                    " directed to tasklet %s" % (msg, self)
+                )
                 return Message.DISCARD
+
         if __debug__:
-            self._message_queue = [msg
-                                   for msg in self._message_queue
-                                   if _get_action(msg) != Message.DISCARD]
+            self._message_queue = [
+                msg
+                for msg in self._message_queue
+                if _get_action(msg) != Message.DISCARD
+            ]
         else:
             ## slightly more efficient version of the above
-            self._message_queue = [msg for msg in self._message_queue
-                                   if (self._message_actions.get(msg.name, Message.DISCARD)
-                                       != Message.DISCARD)]
+            self._message_queue = [
+                msg
+                for msg in self._message_queue
+                if (
+                    self._message_actions.get(msg.name, Message.DISCARD)
+                    != Message.DISCARD
+                )
+            ]
 
         ## find next ACCEPT-able message from queue, and pop it out
         for idx, msg in enumerate(self._message_queue):
@@ -903,7 +922,7 @@ class Tasklet(object):
         return None
 
     def _update_wait_conditions(self, old_wait_list):
-        '''disarm wait conditions removed and arm new wait conditions'''
+        """disarm wait conditions removed and arm new wait conditions"""
 
         ## disarm conditions removed from the wait list
         for cond in old_wait_list:
@@ -925,10 +944,10 @@ class Tasklet(object):
         if self.wait_list is None:
             return False
         else:
-            return (triggered_cond in self.wait_list)
+            return triggered_cond in self.wait_list
 
     def add_join_callback(self, callback, *extra_args):
-        '''
+        """
         Add a callable to be invoked when the tasklet finishes.
         Return a connection handle that can be used in
         remove_join_callback()
@@ -942,7 +961,7 @@ class Tasklet(object):
         so calling :class:`remove_join_callback` afterwards produces a KeyError
         exception.
 
-        '''
+        """
         handle = hash(callback)
         while handle in self._join_callbacks:  # handle collisions
             handle += 1
@@ -950,7 +969,7 @@ class Tasklet(object):
         return handle
 
     def remove_join_callback(self, handle):
-        '''Remove a join callback previously added with :class:`add_join_callback`'''
+        """Remove a join callback previously added with :class:`add_join_callback`"""
         del self._join_callbacks[handle]
 
     def _join(self, retval):

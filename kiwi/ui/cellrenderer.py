@@ -23,7 +23,7 @@
 
 from gi.repository import Gtk, GLib, GObject
 
-from kiwi.ui.gadgets import gdk_color_to_string, draw_editable_border
+from kiwi.ui.gadgets import draw_editable_border
 
 
 class EditableTextRenderer(Gtk.CellRendererText):
@@ -31,8 +31,9 @@ class EditableTextRenderer(Gtk.CellRendererText):
 
     def do_render(self, drawable, widget, background_area, cell_area, flags):
         draw_editable_border(widget, drawable, cell_area)
-        Gtk.CellRendererText.do_render(self, drawable, widget, background_area,
-                                       cell_area, flags)
+        Gtk.CellRendererText.do_render(
+            self, drawable, widget, background_area, cell_area, flags
+        )
 
 
 GObject.type_register(EditableTextRenderer)
@@ -43,8 +44,9 @@ class EditableSpinRenderer(Gtk.CellRendererSpin):
 
     def do_render(self, drawable, widget, background_area, cell_area, flags):
         draw_editable_border(widget, drawable, cell_area)
-        Gtk.CellRendererText.do_render(self, drawable, widget, background_area,
-                                       cell_area, flags)
+        Gtk.CellRendererText.do_render(
+            self, drawable, widget, background_area, cell_area, flags
+        )
 
 
 GObject.type_register(EditableSpinRenderer)
@@ -71,7 +73,7 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
         """
         self.use_markup = use_markup
         label = Gtk.Label()
-        self._label_layout = label.create_pango_layout('')
+        self._label_layout = label.create_pango_layout("")
         self._details_callback = None
 
         super(ComboDetailsCellRenderer, self).__init__()
@@ -87,17 +89,24 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
 
         # Draws label
         context = widget.get_style_context()
-        Gtk.render_layout(context, cr,
-                          cell_area.x + x_offset,
-                          cell_area.y + y_offset,
-                          self._label_layout)
+        Gtk.render_layout(
+            context,
+            cr,
+            cell_area.x + x_offset,
+            cell_area.y + y_offset,
+            self._label_layout,
+        )
         if not self._details_callback:
             return
 
-        Gtk.render_line(context, cr,
-                        cell_area.x, cell_area.y,
-                        cell_area.x + cell_area.width,
-                        cell_area.y + cell_area.height - 1)
+        Gtk.render_line(
+            context,
+            cr,
+            cell_area.x,
+            cell_area.y + y_offset + height,
+            cell_area.x + cell_area.width,
+            cell_area.y + y_offset + height,
+        )
 
     def _escape(self, text):
         if not self.use_markup:
@@ -107,9 +116,15 @@ class ComboDetailsCellRenderer(Gtk.CellRenderer):
     def do_get_size(self, widget, cell_area):
         if self._details_callback:
             details = self._details_callback(self.data)
-            mark_up = '%s\n%s'
-            color = gdk_color_to_string(widget.style.fg[Gtk.StateType.NORMAL])
-            text = mark_up % (self.label, color, self._escape(details))
+            mark_up = '%s\n<span foreground="%s">%s</span>'
+            context = widget.get_style_context()
+            color = context.get_color(Gtk.StateFlags.NORMAL)
+            color_str = "#%02X%02X%02X" % (
+                int(color.red * 255),
+                int(color.green * 255),
+                int(color.blue * 255),
+            )
+            text = mark_up % (self.label, color_str, details)
         else:
             text = self._escape(self.label)
 

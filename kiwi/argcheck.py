@@ -28,7 +28,7 @@ Argument checking decorator and support
 import inspect
 
 from kiwi.datatypes import number as number_type
-import collections
+import collections.abc
 
 _NoValue = object()
 
@@ -103,15 +103,18 @@ class argcheck(object):
         cls.__enabled__ = False
 
     def __call__(self, func):
-        if not isinstance(func, collections.Callable):
+        if not isinstance(func, collections.abc.Callable):
             raise TypeError("%r must be callable" % func)
 
         # Useful for optimized runs
         if not self.__enabled__:
             return func
 
-        spec = inspect.getargspec(func)
-        arg_names, is_varargs, is_kwargs, default_values = spec
+        spec = inspect.getfullargspec(func)
+        arg_names = spec.args
+        is_varargs = spec.varargs
+        is_kwargs = spec.varkw
+        default_values = spec.defaults
         if not default_values:
             default_values = []
         else:

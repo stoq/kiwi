@@ -26,7 +26,6 @@
 
 import gettext
 import decimal
-import six
 
 from kiwi.datatypes import ValidationError, ValueUnset
 from kiwi.datatypes import converter, get_localeconv, filter_locale
@@ -48,7 +47,7 @@ class currency(decimal.Decimal):
         :param value: value to convert
         :type value: string or number
         """
-        if isinstance(value, six.string_types):
+        if isinstance(value, str):
             conv = get_localeconv()
             currency_symbol = conv.get('currency_symbol')
             text = value.strip(currency_symbol)
@@ -68,7 +67,7 @@ class currency(decimal.Decimal):
         elif isinstance(value, float):
             print('Warning: losing precision converting float %r to currency'
                   % value)
-            value = six.text_type(value)
+            value = str(value)
         elif not isinstance(value, (int, decimal.Decimal)):
             raise TypeError(
                 "cannot convert %r of type %s to a currency" % (

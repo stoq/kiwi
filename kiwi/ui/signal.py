@@ -26,7 +26,7 @@
 Defines a set of objects to work with GObject signals within a view
 """
 
-import collections
+import collections.abc
 import inspect
 import re
 
@@ -263,6 +263,6 @@ class GladeSignalBroker(SignalBroker):
 
         dict = {}
         for name, method in methods.items():
-            if isinstance(method, collections.Callable):
+            if isinstance(method, collections.abc.Callable):
                 dict[name] = method
         view._glade_adaptor.signal_autoconnect(dict)

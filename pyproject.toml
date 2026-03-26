@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kiwi"
+description = "A framework and a set of enhanced widgets based on PyGTK"
+readme = "README"
+license = {text = "LGPL-2.1"}
+requires-python = ">=3.12"
+authors = [
+    {name = "Stoq Team", email = "dev@stoq.com.br"}
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU Lesser General Public License v2.1 (LGPLv2.1)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0", "pytest-rerunfailures>=10.0", "mock>=4.0"]
+
+[tool.setuptools.packages.find]
+include = ["kiwi*"]
+exclude = ["tests*", "examples*", "doc*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = ["-v"]

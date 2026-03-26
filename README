@@ -1,73 +1,49 @@
 Kiwi: A Framework for developing graphical applications in Python.
 
-Kiwi is a framework composed of a set of modules, which eases Python
-development using PyGTK. Kiwi makes graphical applications *much* faster
-to code, with good architecture and more Python-like bindings; it also
-offers extended widgets based upon the original PyGTK widgets.
+Kiwi is a framework, composed of a set of modules, which eases Python
+development using PyGObject and GTK3. Kiwi makes graphical applications
+*much* faster to code, with good architecture and bindings that are more
+Pythonic; it also offers extended widgets based upon the original GTK+
+widgets.
 
 * Requirements
 
-    - GTK+ 2.24.x      http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.24/
-    - PyGTK 2.24.x     http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/
-    - Python >= 2.6    http://www.python.org/download/
+    - Python >= 3.12
+    - PyGObject (gi)    https://pygobject.readthedocs.io/
+    - GTK+ 3.x          https://gtk.org/
 
   Optional
 
-    - zope.interfaces    http://www.zope.org/Products/ZopeInterface
-    - sqlobject > 0.6.0  http://www.sqlobject.org/
-
-  Some features of the ui test framework requires PyGObject 2.10.0 or higher
-  to function properly. It'll work without but some features are disabled.
+    - zope.interface    https://pypi.org/project/zope.interface/
 
 * Installation
 
-    To install (having made sure that the dependencies are installed and
-    working) do (as root normally):
+    System dependencies (Ubuntu/Debian):
 
-        python setup.py install
+        sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-3.0 \
+                         python3-cairo python3-zope.interface
 
-    (You can optionally provide a prefix using the following form,
-    but if you do remember to setup PYTHONPATH accordingly)
+    Install with pip:
 
-        python setup.py install [--prefix=<prefix>]
+        pip install .
+
+    Or install in development mode:
+
+        pip install -e .
 
     You can also fetch the latest source code from github:
 
-        $ git clone http://github.com/stoq/kiwi.git
+        git clone https://github.com/stoq/kiwi.git
 
 * Contribute
 
-    For complete instructions on how to install all dependencies and setting
-    up a database so you can test Stoq, look at the wiki:
+    Development dependencies (Ubuntu/Debian):
 
-        http://wiki.stoq.com.br/index.php/Getting_started (English)
-        http://wiki.stoq.com.br/index.php/Come%C3%A7ando (Português)
+        sudo apt install make python3-pytest python3-mock python3-gi
 
-* Documentation
+    Run tests:
 
-    Included in doc/howto/ and doc/api/ are HTML versions of the
-    developer's guide and API reference, respectively. You can also
-    browse the online versions at:
-
-        - Developer's guide: http://www.async.com.br/projects/kiwi/howto/
-        - API documentation: http://www.async.com.br/projects/kiwi/api/
-
-    The developer's guide is available in compressed PostScript format from:
-
-        http://www.async.com.br/projects/kiwi/howto.ps.gz
-
-    You can regenerate all the documentation; just see doc/Makefile.
-    To generate the API docs you will need:
-
-        - epydoc                        http://epydoc.sf.net/
-
-    To generate the developer's guide you will need:
-
-        - Python source (the tarball)   http://www.python.org/download/
-        - LaTeX                         (various distributions)
-        - latex2html    http://saftsack.fs.uni-bayreuth.de/~latex2ht/current/
-        - GhostScript                   http://www.cs.wisc.edu/~ghost/
-        - NetPBM (for latex2html)       http://netbpm.sf.net/
+        make check
 
 * Directory Layout
 
@@ -93,8 +69,7 @@ offers extended widgets based upon the original PyGTK widgets.
 
     extra/
 
-        Contains patches to GTK+ and PyGTK code, and helper scripts that
-        can be used to accelerate certain tasks.
+        Helper scripts that can be used to accelerate certain tasks.
 
     glade/
 
@@ -120,8 +95,5 @@ offers extended widgets based upon the original PyGTK widgets.
 
 * Contact info:
 
-    URL and download: http://www.async.com.br/projects/kiwi/
-
-    Maintainer: Johan Dahlin <jdahlin@async.com.br>
-    Original author: Christian Reis <kiko@async.com.br>
+    URL and download: https://github.com/stoq/kiwi
 

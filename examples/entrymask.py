@@ -1,8 +1,8 @@
 import sys
 
+from kiwi.ui.entry import KiwiEntry
 from gi.repository import Gtk
 
-from kiwi.ui.entry import KiwiEntry
 
 
 def main(args):

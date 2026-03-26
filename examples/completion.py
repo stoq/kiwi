@@ -1,8 +1,8 @@
 # encoding: iso-8859-1
 
+from kiwi.ui.widgets.entry import ProxyEntry
 from gi.repository import Gtk
 
-from kiwi.ui.widgets.entry import ProxyEntry
 
 
 def on_entry_activate(entry):

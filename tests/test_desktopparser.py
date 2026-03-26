@@ -1,5 +1,4 @@
 # encoding: utf-8
-import io
 import unittest
 
 from kiwi.desktopparser import DesktopParser
@@ -16,7 +15,7 @@ Categories=GNOME;Application;AudioVideo
 class TestTotem(unittest.TestCase):
     def setUp(self):
         self.parser = DesktopParser()
-        self.parser.readfp(io.StringIO(desktop_data))
+        self.parser.read_string(desktop_data)
 
     def test(self):
         self.assertEqual(self.parser.get('Desktop Entry', 'Name'),

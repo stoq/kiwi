@@ -31,7 +31,7 @@ class TestWaitForSignal(unittest.TestCase):
         def some_task(obj):
             yield tasklet.WaitForSignal(obj, 'my-signal')
             tasklet.get_event()
-            raise StopIteration("return-val")
+            return "return-val"
 
         task = tasklet.run(some_task(obj))
         obj.emit("my-signal", 1)
@@ -44,7 +44,7 @@ class TestWaitForSignal(unittest.TestCase):
         def some_task():
             yield tasklet.WaitForSignal(C, 'my-signal')
             tasklet.get_event()
-            raise StopIteration("return-val")
+            return "return-val"
 
         task = tasklet.run(some_task())
         obj.emit("my-signal", 1)
@@ -63,9 +63,9 @@ class TestWaitForTimeout(unittest.TestCase):
         def some_task():
             yield tasklet.WaitForTimeout(100)
             tasklet.get_event()
-            raise StopIteration("return-val")
+            return "return-val"
 
-        mainloop = GObject.MainLoop()
+        mainloop = GLib.MainLoop()
         t1 = self.time()
         task = tasklet.run(some_task())
         task.add_join_callback(lambda task, retval: mainloop.quit())
@@ -86,7 +86,7 @@ class TestMessages(unittest.TestCase):
             yield tasklet.Message('echo-request', dest=remote, value=value)
             yield tasklet.WaitForMessages(accept='echo-reply')
             msg = tasklet.get_event()
-            raise StopIteration(msg.value)
+            return msg.value
 
         def echoer():
             yield tasklet.WaitForMessages(accept='echo-request')
@@ -106,7 +106,7 @@ class TestIO(unittest.TestCase):
         # Disable this test for win32, because it fails and warns:
         #
         # File "tests\test_tasklet.py", line 81, in pipe_reader
-        #    assert chan.get_flags() & GObject.IO_FLAG_IS_READABLE
+        #    assert chan.get_flags() & GLib.IOFlags.IS_READABLE
         #
         # ???:81: g_io_channel_get_flags: assertion `channel != NULL' failed
         # ???:95: giowin32.c:1669: 4 is neither a file descriptor or a socket
@@ -116,31 +116,31 @@ class TestIO(unittest.TestCase):
             return
 
         def pipe_reader(chan):
-            assert chan.get_flags() & GObject.IO_FLAG_IS_READABLE
-            yield tasklet.WaitForIO(chan, GObject.IO_IN)
+            assert chan.get_flags() & GLib.IOFlags.IS_READABLE
+            yield tasklet.WaitForIO(chan, GLib.IO_IN)
             tasklet.get_event()
             c = chan.read(1)
-            raise StopIteration(c)
+            return c
 
         def pipe_writer(chan, c):
-            assert chan.get_flags() & GObject.IO_FLAG_IS_WRITEABLE
-            yield tasklet.WaitForIO(chan, GObject.IO_OUT)
+            assert chan.get_flags() & GLib.IOFlags.IS_WRITABLE
+            yield tasklet.WaitForIO(chan, GLib.IO_OUT)
             tasklet.get_event()
             chan.write(c)
 
         read_fd, write_fd = os.pipe()
 
         read_chan = GLib.IOChannel(read_fd)
-        read_chan.set_flags(GObject.IO_FLAG_NONBLOCK)
+        read_chan.set_flags(GLib.IOFlags.NONBLOCK)
         reader = tasklet.run(pipe_reader(read_chan))
 
         write_chan = GLib.IOChannel(write_fd)
-        write_chan.set_flags(GObject.IO_FLAG_NONBLOCK)
+        write_chan.set_flags(GLib.IOFlags.NONBLOCK)
         write_chan.set_encoding(None)
         write_chan.set_buffered(False)
         tasklet.run(pipe_writer(write_chan, b'{'))
 
-        mainloop = GObject.MainLoop()
+        mainloop = GLib.MainLoop()
         reader.add_join_callback(lambda task, retval: mainloop.quit())
         mainloop.run()
 
@@ -156,7 +156,7 @@ class TestCallback(unittest.TestCase):
             return False
 
         def register_callback(callback):
-            GObject.timeout_add(100, dispatch_callback, callback)
+            GLib.timeout_add(100, dispatch_callback, callback)
 
         def task_func():
             callback = tasklet.WaitForCall()
@@ -165,11 +165,11 @@ class TestCallback(unittest.TestCase):
             tasklet.get_event()
             callback.return_value = False
             mainloop.quit()
-            raise StopIteration((callback.args, callback.kwargs))
+            return (callback.args, callback.kwargs)
 
         task = tasklet.run(task_func())
 
-        mainloop = GObject.MainLoop()
+        mainloop = GLib.MainLoop()
         mainloop.run()
 
         self.assertEqual(task.state, tasklet.Tasklet.STATE_ZOMBIE)
@@ -184,15 +184,15 @@ class TestWaitForTasklet(unittest.TestCase):
 
         def quick_task():
             if 1:
-                raise StopIteration(123)
+                return 123
             yield None
 
         def task_waiter():
             yield quick_task()
             taskwait = tasklet.get_event()
-            raise StopIteration(taskwait.retval)
+            return taskwait.retval
 
-        mainloop = GObject.MainLoop()
+        mainloop = GLib.MainLoop()
         task = tasklet.run(task_waiter())
         task.add_join_callback(lambda task, retval: mainloop.quit())
         mainloop.run()

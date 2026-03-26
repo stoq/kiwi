@@ -26,14 +26,14 @@
 import subprocess
 import errno
 import gettext
-import imp
 import locale
 import logging
 import os
 import platform
 import sys
 
-import pkg_resources
+from importlib.resources import as_file, files
+
 
 __all__ = ['Library', 'environ']
 
@@ -45,26 +45,20 @@ EnvironmentError = EnvironmentError
 # From http://tinyurl.com/77ukj
 def _is_frozen():
     "Helper function to check if we're frozen in a py2exe'd file"
-    return (hasattr(sys, "frozen") or  # new py2exe
-            hasattr(sys, "importers")  # old py2exe
-            or imp.is_frozen("__main__"))  # tools/freeze
+    return (hasattr(sys, "frozen") or
+            hasattr(sys, "importers"))
 
 
-class _KiwiProvider(pkg_resources.DefaultProvider):
-    _my_resources = {}
-
-    def __init__(self, module):
-        pkg_resources.DefaultProvider.__init__(self, module)
-
-        if module.__name__ in self._my_resources:
-            self.module_path = self._my_resources[module.__name__]
+class _ResourceRegistry:
+    _resources = {}
 
     @classmethod
     def add_resource(cls, name, path=None):
-        cls._my_resources[name] = path
+        cls._resources[name] = path
 
-
-_KiwiProvider._register()
+    @classmethod
+    def get_path(cls, name):
+        return cls._resources.get(name)
 
 
 class Environment:
@@ -85,21 +79,46 @@ class Environment:
     def get_root(self):
         return self._root
 
+    def _get_resource_path(self, domain, *resource):
+        resource_path = '/'.join(resource)
+        custom_path = _ResourceRegistry.get_path(domain)
+        if custom_path:
+            full_path = os.path.join(custom_path, resource_path)
+            if os.path.exists(full_path):
+                return full_path, True
+        return resource_path, False
+
     def get_resource_string(self, domain, *resource):
-        resource = '/'.join(resource)
-        return pkg_resources.resource_string(domain, resource)
+        path, is_custom = self._get_resource_path(domain, *resource)
+        if is_custom:
+            with open(path, 'rb') as f:
+                return f.read()
+        return files(domain).joinpath(path).read_bytes()
 
     def get_resource_filename(self, domain, *resource):
-        resource = '/'.join(resource)
-        return pkg_resources.resource_filename(domain, resource)
+        path, is_custom = self._get_resource_path(domain, *resource)
+        if is_custom:
+            return path
+        ref = files(domain) / path
+        with as_file(ref) as p:
+            return str(p)
 
     def get_resource_exists(self, domain, *resource):
-        resource = '/'.join(resource)
-        return pkg_resources.resource_exists(domain, resource)
+        path, is_custom = self._get_resource_path(domain, *resource)
+        if is_custom:
+            return os.path.exists(path)
+        return (files(domain) / path).exists()
 
     def get_resource_names(self, domain, *resource):
-        resource = '/'.join(resource)
-        return pkg_resources.resource_listdir(domain, resource)
+        path, is_custom = self._get_resource_path(domain, *resource)
+        if is_custom:
+            if os.path.isdir(path):
+                return os.listdir(path)
+            return []
+        base = files(domain) / path
+        if base.is_dir():
+            return [item.name for item in base.iterdir()]
+        return []
 
 
 class Library(Environment):
@@ -207,7 +226,7 @@ class Library(Environment):
         self.uninstalled = uninstalled
         self.module = module
 
-        _KiwiProvider.add_resource(name, path=resource_path)
+        _ResourceRegistry.add_resource(name, path=resource_path)
 
     #
     #  Private
@@ -248,11 +267,15 @@ class Library(Environment):
         if not domain:
             domain = self.name
 
-        if (not self.uninstalled and
-                pkg_resources.resource_exists(domain, 'locale')):
-            localedir = pkg_resources.resource_filename(domain, 'locale')
-        elif not self.uninstalled:
-            localedir = None
+        if not self.uninstalled:
+            try:
+                locale_ref = files(domain) / 'locale'
+                if locale_ref.is_dir():
+                    localedir = str(locale_ref)
+                else:
+                    localedir = None
+            except (ModuleNotFoundError, TypeError, FileNotFoundError):
+                localedir = None
         else:
             localedir = os.path.join(self.get_root(), 'locale')
 

@@ -2,7 +2,7 @@ import sys
 import unittest
 
 from gi.repository import Gtk, Gdk
-from nose.exc import SkipTest
+import pytest
 from .utils import refresh_gui
 
 from kiwi.ui.delegates import Delegate
@@ -222,7 +222,7 @@ class TestMasks(unittest.TestCase):
 
     def testBackspace(self):
         if sys.platform == 'win32':
-            raise SkipTest("Not supported on windows")
+            pytest.skip("Not supported on windows")
 
         entry = self.entry
         entry.set_mask('(00) 0000-0000')
@@ -255,7 +255,7 @@ class TestMasks(unittest.TestCase):
 
     def testDelete(self):
         if sys.platform == 'win32':
-            raise SkipTest("Not supported on windows")
+            pytest.skip("Not supported on windows")
 
         entry = self.entry
         entry.set_mask('(00) 0000-0000')
@@ -292,7 +292,7 @@ class TestMasks(unittest.TestCase):
 
     def testDeleteSelection(self):
         if sys.platform == 'win32':
-            raise SkipTest("Not supported on windows")
+            pytest.skip("Not supported on windows")
 
         entry = self.entry
         entry.set_mask('(00) 0000-0000')

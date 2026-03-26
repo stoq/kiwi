@@ -39,8 +39,8 @@ class Foo(X, Y, Delegate):
 
     def __init__(self):
         self.win = Gtk.Window()
-        self.foo = Gtk.Button("CLICK ME AND BE HAPPY")
-        self.bar = Gtk.Button("CLICK ME AND BE HAPPY")
+        self.foo = Gtk.Button(label="CLICK ME AND BE HAPPY")
+        self.bar = Gtk.Button(label="CLICK ME AND BE HAPPY")
         v = Gtk.VBox()
         v.add(self.foo)
         v.add(self.bar)
@@ -60,7 +60,7 @@ class ClickCounter(Delegate):
     """In this delegate we count the number of clicks we do"""
     def __init__(self):
         self.win = Gtk.Window()
-        self.button = Gtk.Button('Click me!')
+        self.button = Gtk.Button(label='Click me!')
         self.win.add(self.button)
         Delegate.__init__(self, toplevel=self.win,
                           delete_handler=self.quit_if_last)

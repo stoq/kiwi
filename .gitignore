@@ -1,7 +1,10 @@
 *.pyc
-.noseids
 tags
 TAGS
 locale
 dist/
 kiwi.egg-info/
+.coverage
+.pytest_cache/
+__pycache__/
+*.egg-info/

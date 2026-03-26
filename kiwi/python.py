@@ -27,8 +27,6 @@ import unicodedata
 import sys
 import warnings
 
-import six
-
 __all__ = ['ClassInittableMetaType', 'ClassInittableObject']
 
 
@@ -39,8 +37,7 @@ class ClassInittableMetaType(type):
         self.__class_init__(namespace)
 
 
-@six.add_metaclass(ClassInittableMetaType)
-class ClassInittableObject(object):
+class ClassInittableObject(metaclass=ClassInittableMetaType):
     """
     I am an object which will call a classmethod called
     __class_init__ when I am created.
@@ -241,8 +238,7 @@ def disabledeprecationcall(func, *args, **kwargs):
     return retval
 
 
-@six.add_metaclass(ClassInittableMetaType)
-class enum(int):
+class enum(int, metaclass=ClassInittableMetaType):
     """
     enum is an enumered type implementation in python.
 
@@ -343,7 +339,7 @@ def strip_accents(string):
     :returns: the string without accentuantion
     """
     # FIXME: Probably no one should be using this with bytes.
-    if isinstance(string, six.binary_type):
+    if isinstance(string, bytes):
         # unicode don't need this
         string = string.decode()
         is_bytes = True

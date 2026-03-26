@@ -44,7 +44,6 @@ import locale
 import re
 import sys
 import time
-import six
 
 from kiwi import ValueUnset
 from kiwi.enums import Alignment
@@ -112,7 +111,7 @@ class ConverterRegistry:
 
     def get_converter(self, converter_type):
         if converter_type == 'unicode':
-            converter_type = six.text_type
+            converter_type = str
 
         try:
             converter = self._converters[converter_type]
@@ -239,7 +238,7 @@ class BaseConverter(object):
 
 
 class _BytesConverter(BaseConverter):
-    type = six.binary_type
+    type = bytes
     name = _('Bytes')
 
     def as_string(self, value, format=None):
@@ -248,13 +247,13 @@ class _BytesConverter(BaseConverter):
         return ''.join(chr(i) for i in value)
 
     def from_string(self, value):
-        return six.binary_type(ord(i) for i in value)
+        return bytes(ord(i) for i in value)
 
 converter.add(_BytesConverter)
 
 
 class _StringConverter(BaseConverter):
-    type = six.text_type
+    type = str
     name = _('String')
 
     def as_string(self, value, format=None):
@@ -265,7 +264,7 @@ class _StringConverter(BaseConverter):
     def from_string(self, value):
         if isinstance(value, bytes):
             value = value.decode('utf-8')
-        return six.text_type(value)
+        return str(value)
 
 converter.add(_StringConverter)
 
@@ -305,7 +304,7 @@ class _BoolConverter(BaseConverter):
     name = _('Boolean')
 
     def as_string(self, value, format=None):
-        return six.text_type(value)
+        return str(value)
 
     def from_string(self, value):
         "Convert a string to a boolean"
@@ -654,7 +653,7 @@ converter.add(_EnumConverter)
 
 def lformat(format, value):
     """Like locale.format but with grouping enabled"""
-    return locale.format(format, value, 1)
+    return locale.format_string(format, value, True)
 
 
 def get_localeconv():

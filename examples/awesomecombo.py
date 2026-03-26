@@ -1,9 +1,9 @@
 # encoding: utf-8
 import random
 
+from kiwi.ui.comboentry import ComboEntry
 from gi.repository import Gtk
 
-from kiwi.ui.comboentry import ComboEntry
 
 
 class Person:
@@ -19,6 +19,7 @@ data = (Person('Evandro', 23, 'Belo Horizonte'),
         Person('Henrique', 21, 'São Carlos'),
         Person('Gustavo', 23, 'São Jose do Santos'),
         Person('Johan', 23, 'Göteborg'),
+        Person('John', 60, 'Seattle'),
         Person('Lorenzo', 26, 'Granada')
         )
 

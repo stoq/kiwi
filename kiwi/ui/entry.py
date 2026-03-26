@@ -175,6 +175,8 @@ class KiwiEntry(Gtk.Entry):
             self.delete_text(0, -1)
             self.insert_text(text, 0)
         else:
+            # XXX Currently raises a warning; see
+            # https://bugzilla.gnome.org/show_bug.cgi?id=708676#c4
             Gtk.Entry.set_text(self, text)
 
         if isinstance(completion, KiwiEntryCompletion):

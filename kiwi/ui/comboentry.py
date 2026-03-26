@@ -24,7 +24,6 @@
 """Widget for displaying a list of objects"""
 
 import logging
-import six
 
 from gi.repository import Gtk, Gdk
 
@@ -624,7 +623,7 @@ class ComboEntry(Gtk.Box):
         """
         See :class:`kiwi.interfaces.IEasyCombo.append_item`
         """
-        if not isinstance(label, six.string_types):
+        if not isinstance(label, str):
             raise TypeError("label must be string, found %s" % label)
 
         if self.mode == ComboMode.UNKNOWN:

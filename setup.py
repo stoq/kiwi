@@ -47,6 +47,7 @@ setup(name=name,
       author_email="kiwi@async.com.br",
       url="http://www.async.com.br/projects/kiwi/",
       license="GNU LGPL 2.1 (see COPYING)",
+      python_requires='>=3.12',
       data_files=[
           # Data
           ('$datadir/css', ['data/css/kiwi.css']),

@@ -34,21 +34,21 @@ __all__ = ['error', 'info', 'messagedialog', 'warning', 'yesno', 'save',
 _ = lambda m: gettext.dgettext('kiwi', m)
 
 _IMAGE_TYPES = {
-    Gtk.MessageType.INFO: Gtk.STOCK_DIALOG_INFO,
-    Gtk.MessageType.WARNING: Gtk.STOCK_DIALOG_WARNING,
-    Gtk.MessageType.QUESTION: Gtk.STOCK_DIALOG_QUESTION,
-    Gtk.MessageType.ERROR: Gtk.STOCK_DIALOG_ERROR,
+    Gtk.MessageType.INFO: "dialog-information",
+    Gtk.MessageType.WARNING: "dialog-warning",
+    Gtk.MessageType.QUESTION: "dialog-question",
+    Gtk.MessageType.ERROR: "dialog-error",
 }
 
 _BUTTON_TYPES = {
     Gtk.ButtonsType.NONE: (),
-    Gtk.ButtonsType.OK: (Gtk.STOCK_OK, Gtk.ResponseType.OK,),
-    Gtk.ButtonsType.CLOSE: (Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE,),
-    Gtk.ButtonsType.CANCEL: (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,),
-    Gtk.ButtonsType.YES_NO: (Gtk.STOCK_NO, Gtk.ResponseType.NO,
-                             Gtk.STOCK_YES, Gtk.ResponseType.YES),
-    Gtk.ButtonsType.OK_CANCEL: (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                Gtk.STOCK_OK, Gtk.ResponseType.OK)
+    Gtk.ButtonsType.OK: ("_OK", Gtk.ResponseType.OK,),
+    Gtk.ButtonsType.CLOSE: ("_Close", Gtk.ResponseType.CLOSE,),
+    Gtk.ButtonsType.CANCEL: ("_Cancel", Gtk.ResponseType.CANCEL,),
+    Gtk.ButtonsType.YES_NO: ("_No", Gtk.ResponseType.NO,
+                             "_Yes", Gtk.ResponseType.YES),
+    Gtk.ButtonsType.OK_CANCEL: ("_Cancel", Gtk.ResponseType.CANCEL,
+                                "_OK", Gtk.ResponseType.OK)
 }
 
 
@@ -273,11 +273,13 @@ def selectfile(title='', parent=None, folder=None, filters=None):
       folder)
     :param filters: a list of filters to use, is incompatible with patterns"""
 
-    filechooser = Gtk.FileChooserDialog(title or _('Select file'),
-                                        parent,
-                                        Gtk.FileChooserAction.OPEN,
-                                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                         Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+    filechooser = Gtk.FileChooserDialog(
+        title=title or _('Select file'), action=Gtk.FileChooserAction.OPEN)
+    filechooser.add_buttons(
+        "_Cancel", Gtk.ResponseType.CANCEL,
+        "_Open", Gtk.ResponseType.OK)
+    if parent is not None:
+        filechooser.set_transient_for(parent)
 
     if filters is None:
         filters = []
@@ -303,11 +305,10 @@ def selectfolder(title='', parent=None, folder=None):
     """
 
     filechooser = Gtk.FileChooserDialog(
-        title or _('Select folder'),
-        parent,
-        Gtk.FileChooserAction.SELECT_FOLDER,
-        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-         Gtk.STOCK_OK, Gtk.ResponseType.OK))
+        title=title or _('Select folder'), action=Gtk.FileChooserAction.SELECT_FOLDER)
+    filechooser.add_buttons("_Cancel", Gtk.ResponseType.CANCEL, "_OK", Gtk.ResponseType.OK)
+    if parent is not None:
+        filechooser.set_transient_for(parent)
 
     if folder:
         filechooser.set_current_folder(folder)
@@ -341,7 +342,7 @@ def ask_overwrite(filename, parent=None):
             % (submsg1, submsg2))
     result = messagedialog(Gtk.MessageType.ERROR, text, parent=parent,
                            bold=False,
-                           buttons=((Gtk.STOCK_CANCEL,
+                           buttons=(("_Cancel",
                                      Gtk.ResponseType.CANCEL),
                                     (_("Replace"),
                                      Gtk.ResponseType.YES)))
@@ -350,11 +351,13 @@ def ask_overwrite(filename, parent=None):
 
 def save(title='', parent=None, current_name='', folder=None):
     """Displays a save dialog."""
-    filechooser = Gtk.FileChooserDialog(title or _('Save'),
-                                        parent,
-                                        Gtk.FileChooserAction.SAVE,
-                                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                         Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
+    filechooser = Gtk.FileChooserDialog(
+        title=title or _('Save'), action=Gtk.FileChooserAction.SAVE)
+    filechooser.add_buttons(
+        "_Cancel", Gtk.ResponseType.CANCEL,
+        "_Save", Gtk.ResponseType.OK)
+    if parent is not None:
+        filechooser.set_transient_for(parent)
     if current_name:
         filechooser.set_current_name(current_name)
     filechooser.set_default_response(Gtk.ResponseType.OK)

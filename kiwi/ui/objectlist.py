@@ -29,12 +29,11 @@
 
 import datetime
 import decimal
-import collections
+import collections.abc
 import gettext
 import locale
 import logging
 import pickle
-import six
 
 from gi.repository import Gtk, GLib, GObject, Gdk, Pango, GdkPixbuf
 
@@ -248,7 +247,7 @@ class Column(GObject.GObject):
 
         format_func = kwargs.get('format_func')
         if format_func:
-            if not isinstance(format_func, collections.Callable):
+            if not isinstance(format_func, collections.abc.Callable):
                 raise TypeError("format_func must be callable")
             if 'format' in kwargs:
                 raise TypeError(
@@ -269,7 +268,7 @@ class Column(GObject.GObject):
 
         sort_func = kwargs.get('sort_func')
         if sort_func:
-            if not isinstance(sort_func, collections.Callable):
+            if not isinstance(sort_func, collections.abc.Callable):
                 raise TypeError("sort_func must be callable")
             self.compare = sort_func
 
@@ -458,7 +457,7 @@ class Column(GObject.GObject):
                              model, self, self.from_string)
             prop = 'text'
         elif issubclass(data_type, (datetime.date, datetime.time,
-                                    six.string_types, number,
+                                    str, number,
                                     currency)):
             if self.use_markup:
                 prop = 'markup'
@@ -764,7 +763,7 @@ class ColoredColumn(Column):
 
     def __init__(self, attribute, title=None, data_type=None,
                  color=None, data_func=None, use_data_model=False, **kwargs):
-        if not isinstance(data_func, collections.Callable):
+        if not isinstance(data_func, collections.abc.Callable):
             raise TypeError("data func must be callable")
 
         self._color = None
@@ -1051,6 +1050,7 @@ class ObjectList(Gtk.Box):
                                self._on_treeview__button_press_event)
         self._treeview.connect_after('row-activated',
                                      self._after_treeview__row_activated)
+        # Deprecated, see https://bugzilla.gnome.org/show_bug.cgi?id=733312
         self._treeview.set_rules_hint(True)
         self._treeview.show()
         self._sw.add(self._treeview)
@@ -1404,7 +1404,7 @@ class ObjectList(Gtk.Box):
             self._model.set_sort_column_id(index, column.order)
 
         if column.searchable:
-            if not issubclass(column.data_type, six.string_types):
+            if not issubclass(column.data_type, str):
                 raise TypeError("Unsupported data type for "
                                 "searchable column: %s" % column.data_type)
             self._treeview.set_search_column(index)
@@ -2476,7 +2476,7 @@ class SummaryLabel(ListLabel):
         the signedness of the object being summed. Returns a bool, ``True``
         means positive, ``False`` means negative.
         """
-        if data_func and not isinstance(data_func, collections.Callable):
+        if data_func and not isinstance(data_func, collections.abc.Callable):
             raise ValueError("data_func must be callable, not %r"
                              % (data_func,))
 

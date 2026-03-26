@@ -1,8 +1,8 @@
 import sys
 
+from kiwi.ui.comboentry import ComboEntry
 from gi.repository import Gtk
 
-from kiwi.ui.comboentry import ComboEntry
 
 
 def main(args):
